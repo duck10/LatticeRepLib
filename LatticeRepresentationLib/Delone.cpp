@@ -1,0 +1,116 @@
+#pragma warning( disable : 4189) //   local variable is initialized but not referenced
+
+#include "stdafx.h"
+
+#include "Delone.h"
+
+#include "LRL_Cell.h"
+#include "LRL_CoordinateConversionMatrices.h"
+#include "S6.h"
+#include "S6Dist.h"
+#include "D7.h"
+#include "D7Dist.h"
+#include "G6.h"
+#include "LRL_MinMaxTools.h"
+#include "MatB4.h"
+#include "MatS6.h"
+#include "MatD7.h"
+#include "Selling.h"
+
+#include <algorithm>
+#include <cfloat>
+#include <map>
+#include <utility>
+#include <vector>
+
+bool Delone::IsReduced(const G6& v) {
+   return IsReduced(v, 0.0);
+}
+
+bool Delone::IsReduced(const G6& v, const double delta) {
+   return v[3] <= delta && v[4] <= delta && v[5] <= delta;
+}
+
+bool Delone::Reduce(const S6& d, MatS6& m, S6& dd, const double delta) {
+   delta;
+   return Reduce(d, m, dd);
+}
+
+bool Delone::Reduce(const S6& d, MatS6& m, S6& dd) {
+   const bool b = Selling::Reduce(d, m, dd);
+   MatD7 m7;
+   dd = sort(D7(dd), m7);
+   m = m7*MatD7(m);
+   return true;
+}
+
+std::vector<MatD7> Delone::GetD7Reflections() {
+   std::vector<MatD7> r;
+   if (r.empty()) {
+      MatD7 m;
+      for (unsigned long i = 0; i < 24; ++i) {
+         for (unsigned long j = 0; j < 49; ++j) {
+            m[j] = D7Refl[i][j];
+         }
+         r.push_back(m);
+      }
+   }
+   return r;
+}
+
+int Delone::GenMaxMinKey(const D7& d) {
+   std::vector < std::pair<double, int> > v;
+   for (int i = 0; i < 4; ++i) {
+      v.push_back(std::make_pair(d[i], i));
+   }
+   const std::vector < std::pair<double, int> > vx(v);
+   for (int j = 0; j < 3; ++j) {
+      for (int i = 0; i < 3; ++i) {
+         if (v[i].first > v[i + 1].first) {
+            std::swap(v[i], v[i + 1]);
+         }
+      }
+   }
+   D7 dd;
+   int key = 1000 * v[0].second + 100 * v[1].second + 10 * v[2].second + v[3].second;
+   return key;
+}
+
+unsigned long Delone::FindRefl(const unsigned long key, const D7& random, std::set<unsigned long>& sr) {
+   const static std::vector<MatD7> refl = GetD7Reflections();
+   unsigned long n = INT_MAX;
+   for (unsigned long i = 0; i < 24; ++i) {
+      if (GenMaxMinKey(refl[i] * random) == 123) {
+         sr.insert(key);
+         n = i;
+         break;
+      }
+   }
+   return n;
+}
+
+bool Delone::IsDelone(const D7& v, const double delta) {
+   const double Delonesum = v[0] + v[1] + v[2] + v[3] - v[4] - v[5] - v[6];
+   return std::fabs(Delonesum) < delta;
+}
+
+D7 Delone::sort(const D7& d, MatD7& m) {
+   m = MatD7::Eye();
+   const static std::vector<MatD7> refl = GetD7Reflections();
+   static std::set<unsigned long> sr;
+   static std::map<unsigned long, unsigned long> sm;
+
+   D7 random(d);
+   unsigned long key = GenMaxMinKey(random);
+   if (sr.find(key) == sr.end()) {
+      const unsigned long n = FindRefl(key, random, sr);
+      sm.insert(std::make_pair(key, n));
+      m = (m*refl[n]).Reduce();
+      return refl[n] * random;
+   }
+   else {
+      m = (m*refl[sm[key]]).Reduce();
+      return refl[sm[key]] * random;
+   }
+}
+
