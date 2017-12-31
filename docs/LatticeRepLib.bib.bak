@@ -1,0 +1,864 @@
+% This file was created with JabRef 2.11.1.
+% Encoding: MacRoman
+
+
+@Article{Allen1973,
+  Title                    = {Cambridge crystallographic data centre. II. Structural data file},
+  Author                   = {Allen, F. H. and Kennard, O. and Motherwell, W. D. S. and Town, W. G. and Watson, D. G.},
+  Journal                  = {J. Chem. Doc.},
+  Year                     = {1973},
+  Number                   = {3},
+  Pages                    = {119--123},
+  Volume                   = {13},
+  Owner                    = {yaya},
+  Publisher                = {ACS Publications},
+  Timestamp                = {2013.05.21}
+}
+
+@Article{Allmann1968,
+  Title                    = {Some remarks on reduced cells},
+  Author                   = {Allmann, Rudolf},
+  Journal                  = {Zeitschrift f{\"u}r Kristallographie-Crystalline Materials},
+  Year                     = {1968},
+  Number                   = {1-6},
+  Pages                    = {272--276},
+  Volume                   = {126},
+  Owner                    = {yaya},
+  Timestamp                = {2015.05.02}
+}
+
+@Article{Andrews2001,
+  Title                    = {{A template for the nearest neighbor problem}},
+  Author                   = {Andrews, L.},
+  Journal                  = {C/C++ Users Journal},
+  Year                     = {2001},
+  Note                     = {\url{http://sf.net/projects/neartree}},
+  Pages                    = {40 -- 49},
+  Volume                   = {19},
+  Owner                    = {yaya},
+  Timestamp                = {2009.09.04}
+}
+
+@Article{Andrews1976,
+  Title                    = {The squared power method to fit a plane to a set of points},
+  Author                   = {L. C. Andrews and H. J. Bernstein},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {1976},
+  Pages                    = {504 -- 506},
+  Volume                   = {A32},
+  Owner                    = {yaya},
+  Timestamp                = {2011.10.31}
+}
+
+@Article{andrews1988,
+  Title                    = {Lattices and reduced cells as points in 6-space and selection of Bravais lattice type by projections},
+  Author                   = {Andrews, Lawrence C and Bernstein, Herbert J},
+  Journal                  = {Acta Crystallographica Section A: Foundations of Crystallography},
+  Year                     = {1988},
+  Number                   = {6},
+  Pages                    = {1009--1018},
+  Volume                   = {44},
+  Publisher                = {International Union of Crystallography}
+}
+
+@Article{Andrews2012,
+  Title                    = {The Geometry of Niggli Reduction},
+  Author                   = {Andrews, L. C. and Bernstein, H. J.},
+  Journal                  = {arXiv preprint arXiv:1203.5146},
+  Year                     = {2012},
+  Note                     = {\url{http://arxiv.org/abs/1203.5146}},
+  Owner                    = {yaya},
+  Timestamp                = {2012.10.29}
+}
+
+@Article{Andrews2013,
+  Title                    = {The Geometry of Niggli Reduction: BGAOL, Embedding Niggli Reduction and Analysis of Boundaries },
+  Author                   = {Andrews, Lawrence C and Bernstein, Herbert J},
+  Journal                  = {J. Appl. Cryst.},
+  Year                     = {2013},
+  Volume                   = {{to~appear}},
+  Owner                    = {yaya},
+  Timestamp                = {2013.08.02}
+}
+
+@Article{andrews2014,
+  Title                    = {The geometry of Niggli reduction: BGAOL--embedding Niggli reduction and analysis of boundaries},
+  Author                   = {Andrews, Lawrence C. and Bernstein, Herbert J.},
+  Journal                  = {Journal of applied crystallography},
+  Year                     = {2014},
+  Number                   = {1},
+  Pages                    = {346--359},
+  Volume                   = {47},
+  Publisher                = {International Union of Crystallography}
+}
+
+@Article{Andrews1980,
+  Title                    = {A perturbation stable cell comparison technique},
+  Author                   = {L. C. Andrews and H. J. Bernstein and G. A. Pelletier},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {1980},
+  Pages                    = {248 -- 252},
+  Volume                   = {A36},
+  Owner                    = {yaya},
+  Timestamp                = {2011.11.06}
+}
+
+@InBook{Azaroff1958,
+  Title                    = {The powder method in X-ray crystallography},
+  Author                   = {L. V. Azaroff and M. J. Buerger},
+  Chapter                  = {Chapter 11, Reduced cells and their application},
+  Editor                   = {L. V. Azaroff and M. J. Buerger},
+  Pages                    = {124 -- 159},
+  Publisher                = {McGraw-Hill},
+  Year                     = {1958},
+  Owner                    = {yaya},
+  Timestamp                = {2011.12.31}
+}
+
+@Article{Beltrami1873,
+  Title                    = {Sulle funzioni bilineari},
+  Author                   = {E. Beltrami},
+  Journal                  = {Giornale di Matematiche ad Uso degli Studenti Delle Universita},
+  Year                     = {1873},
+  Pages                    = {98 -- 106},
+  Volume                   = {11},
+  Owner                    = {yaya},
+  Timestamp                = {2011.11.10}
+}
+
+@Article{Berman2000,
+  Title                    = {{The Protein Data Bank}},
+  Author                   = {H. M. Berman and J. Westbrook and Z. Feng and G. Gilliland and T. N. Bhat and H. Weissig and I. N. Shindyalov and P. E. Bourne},
+  Journal                  = {Nucleic Acids Res.},
+  Year                     = {2000},
+  Pages                    = {235 -- 242},
+  Volume                   = {28},
+  __markedentry            = {[yaya]},
+  Owner                    = {yaya},
+  Timestamp                = {2009.09.04}
+}
+
+@Article{Bernstein1977,
+  Title                    = {The Protein Data Bank: a computer-based archival file for macromolecular structures},
+  Author                   = {F. C. Bernstein and T. F. Koetzle and G. J. B. Williams and E. F. {Meyer, Jr.} and M. D. Brice and J. R. Rodgers and O. Kennard and T. Shimanouchi and M. Tasumi},
+  Journal                  = {J. Mol. Biol.},
+  Year                     = {1977},
+  Pages                    = {535 -- 542},
+  Volume                   = {112},
+  __markedentry            = {[yaya]},
+  Owner                    = {yaya},
+  Timestamp                = {2009.09.04}
+}
+
+@Article{Bernstein1979,
+  Title                    = {The NIH-EPA Chemical Information System.},
+  Author                   = {Bernstein, H. J. and Andrews, L. C.},
+  Journal                  = {Database},
+  Year                     = {1979},
+  Number                   = {1},
+  Pages                    = {35 -- 43},
+  Volume                   = {2},
+  Owner                    = {yaya},
+  Publisher                = {ERIC},
+  Timestamp                = {2013.05.18}
+}
+
+@Article{Buerger1960,
+  Title                    = {Note on reduced cells},
+  Author                   = {M. J. Buerger},
+  Journal                  = {Zeitschrift f{\"u}r Kristallographie},
+  Year                     = {1960},
+  Pages                    = {52 -- 56},
+  Volume                   = {113},
+  Owner                    = {yaya},
+  Timestamp                = {2011.10.31}
+}
+
+@Article{burchard1998history,
+  Title                    = {History of the development of the crystallographic goniometer},
+  Author                   = {Burchard, U.},
+  Journal                  = {The Mineralogical Record},
+  Year                     = {1998},
+  Number                   = {6},
+  Pages                    = {517 -- 583},
+  Volume                   = {29},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.22}
+}
+
+@InBook{Burzlaff1992,
+  Title                    = {International Tables for Crystallography, Vol. A},
+  Author                   = {H. Burzlaff and H. Zimmermann and P. M. de Wolff},
+  Chapter                  = {9. Crystal Lattices},
+  Editor                   = {T. Hahn},
+  Pages                    = {734 -- 744},
+  Publisher                = {Dordrecht: Kluwer Academic Publishers},
+  Year                     = {1992},
+  Owner                    = {yaya},
+  Timestamp                = {2011.11.06}
+}
+
+@Article{Byram1996,
+  Title                    = {Using NIST Crystal Data Within Siemens Software for Four-Circle and SMART CCD Diffractometers},
+  Author                   = {Byram, S. K. and Campana, C. F. and Fait, J. and Sparks, R. A.},
+  Journal                  = {Journal of Research - National Institute of Standards and Technology},
+  Year                     = {1996},
+  Pages                    = {295 -- 300},
+  Volume                   = {101},
+  Owner                    = {yaya},
+  Timestamp                = {2012.11.04}
+}
+
+@Article{Craigsubmitted,
+  Title                    = {Estimation of Protein Function Using Template-Based Alignment of Enzyme Active Sites},
+  Author                   = {P. A. Craig and B. Hanson and C. Westin and M. Rosa and H. J. Bernstein and A. Grier and M. Osipovitch and M. MacDonald and G. Dodge and P. M. Boli and C. W. Corwin and H. Kessler},
+  Journal                  = {B. M. C. Bioinformatics},
+  Year                     = {submitted},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.26}
+}
+
+@Book{international1959international,
+  Title                    = {International tables for X-ray crystallography},
+  Author                   = {International Union of Crystallography},
+  Publisher                = {Kynock Press},
+  Year                     = {1959},
+  Volume                   = {2}
+}
+
+@Article{Delaunay1933,
+  Title                    = {{Neue Darstellung der geometrices Kristallographie}},
+  Author                   = {B. N. Delaunay},
+  Journal                  = {Zeitschrift f{\"u}r Kristallographie},
+  Year                     = {1933},
+  Pages                    = {109 -- 149},
+  Volume                   = {84},
+  Owner                    = {yaya},
+  Timestamp                = {2011.12.27}
+}
+
+@Article{Delone1975,
+  Title                    = {ON THE BRAVAIS TYPES OF LATTICES},
+  Author                   = {B. N. Delone and R. V. Galiulin and M. I. Shtogrin},
+  Journal                  = {Journal of Soviet Mathematics},
+  Year                     = {1975},
+  Number                   = {1},
+  Pages                    = {79-156},
+  Volume                   = {4},
+  Abstract                 = {The principal achievement of Bravais - the separation of lattices into 14
+types and the derivation of the so-called Bravais parallelepipeds for these
+types [32] -- had an immense significance for the whole of geometric crystallography.
+This work can be put into line with such notable achievements as the
+derivation of the 32 crystal classes, 47 simple forms, and 230 spatial groups.
+At the present time 4-dimensional and n-dimensional crystallography are
+being strongly developed, which are now difficult to construct on the basis of
+the elementary-geometric considerations used in 3-dimensional crystallography.
+The basis method in n-dimensional crystallography today is the so-called arithmetic
+method, i.e., the application of finite groups of integral matrices. The
+most important application of this method was, in its time (1948),that by Zassenhaus
+[54] who showed that if all the nonequivalent n-dimensional groups of integral
+matrices are known for any n, then all the n-dimensional Fedorov groups are
+now obtained automatically. But at the present time (1971), the German scientists
+Wondratschek, Neub~ser, and B~low have obtained by this method the farfrom-
+easy-to-get solution to the problem of 4-dimensional Bravais types of lattices
+[34, 47, 53].
+In the present paper we dwell in detail only on those aspects of the arithmetic
+method which are directly connected with Bravais' papers. At the end we
+give two further directions in the development of the arithmetic method, one of
+which is connected with the use of the so-called perfect polytope of Voronoi [6],
+while the other, particularly important as far as we are concerned, is connected
+with the analysis of the absolute region of reduction.
+In conclusion the authors can report with satisfaction on the recent great
+achievement of Ryshkov who, using the methods described, found once again all
+the 4-dimensional Bravais types as well as the Bravais types of 5-dimensional
+lattices.},
+  Doi                      = {doi.org/10.1007/BF01084661},
+  Owner                    = {lca},
+  Timestamp                = {2017.12.28}
+}
+
+@Article{Donnay1943,
+  Title                    = {Rules for the conventional orientation of crystals},
+  Author                   = {Donnay, J. D. H.},
+  Journal                  = {Am. Mineral.},
+  Year                     = {1943},
+  Pages                    = {313},
+  Volume                   = {28},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.21}
+}
+
+@Book{Donnay1963,
+  Title                    = {Crystal data: Determinative tables},
+  Author                   = {Donnay, J. D. H. and Donnay, G. and Cox, E. X. and Kennard, O and King, M. V.},
+  Publisher                = {American crystallographic association the University of California},
+  Year                     = {1963},
+  Volume                   = {547},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.21}
+}
+
+@Unpublished{Fait1993,
+  Author                   = {J. Fait},
+  Note                     = {Private Communication},
+  Year                     = {1993},
+  Owner                    = {yaya},
+  Timestamp                = {2012.11.04}
+}
+
+@Article{Frechet1906,
+  Title                    = {Sur quelques points du calcul fonctionnel},
+  Author                   = {Fr{\'e}chet, M Maurice},
+  Journal                  = {Rend. Circ. Mat. Palermo},
+  Year                     = {1906},
+  Number                   = {1},
+  Pages                    = {1 -- 72},
+  Volume                   = {22},
+  Owner                    = {yaya},
+  Publisher                = {Springer},
+  Timestamp                = {2013.10.21}
+}
+
+@Article{Gruber1973,
+  Title                    = {The Relationship between Reduced Cells in a General Bravais lattice},
+  Author                   = {B. Gruber},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {1973},
+  Pages                    = {433 -- 440},
+  Volume                   = {A29},
+  Owner                    = {yaya},
+  Timestamp                = {2011.10.21}
+}
+
+@Article{Gruber1997,
+  Title                    = {Classification of Lattices: a New Step},
+  Author                   = {B. Gruber},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {1997},
+  Pages                    = {505 -- 521},
+  Volume                   = {A53},
+  Owner                    = {yaya},
+  Timestamp                = {2011.12.31}
+}
+
+@InBook{Gruber2006,
+  Title                    = {International Tables for Crystallography, Vol. A},
+  Author                   = {B. Gruber},
+  Chapter                  = {9.3, ``Further properties of lattices''},
+  Editor                   = {T. Hahn},
+  Pages                    = {756 -- 760},
+  Publisher                = {Wiley Online Library},
+  Year                     = {2006},
+  Owner                    = {yaya},
+  Timestamp                = {2011.11.06}
+}
+
+@Book{Helgason1962,
+  Title                    = {Differential Geometry and Symmetric Spaces},
+  Author                   = {Helgason, S.},
+  Publisher                = {Academic Press},
+  Year                     = {1962},
+  Address                  = {New York and London},
+  Owner                    = {yaya},
+  Pages                    = {486pp.},
+  Timestamp                = {2012.11.05}
+}
+
+@Article{Himes1987,
+  Title                    = {A matrix approach to symmetry},
+  Author                   = {Himes, V. L. and Mighell, A. D.},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {1987},
+  Number                   = {3},
+  Pages                    = {375 -- 384},
+  Volume                   = {A43},
+  Owner                    = {yaya},
+  Publisher                = {International Union of Crystallography},
+  Timestamp                = {2012.11.03}
+}
+
+@Article{Ho1986,
+  Title                    = {Structure of terpin},
+  Author                   = {Ho, T. I. and Cheng, M. C. and Peng, S. M. and Chen, F. C. and Tsau, C. C.},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {1986},
+  Number                   = {12},
+  Pages                    = {1787 -- 1789},
+  Volume                   = {C42},
+  Owner                    = {yaya},
+  Publisher                = {International Union of Crystallography},
+  Timestamp                = {2012.11.03}
+}
+
+@Article{Hosoya1990,
+  Title                    = {The Least Set of Conditions to Specify a Bravais Lattice Uniquely in its Parameter Space},
+  Author                   = {M. Hosoya},
+  Journal                  = {Bulletin of the College of Science. University of the Ryukyus},
+  Year                     = {1990},
+  Pages                    = {1 -- 13},
+  Volume                   = {50},
+  Owner                    = {yaya},
+  Timestamp                = {2011.11.10}
+}
+
+@Article{Hosoya2000,
+  Title                    = {A finite group that derives all the 14 {Bravais} lattices as its subgroups},
+  Author                   = {Hosoya, M.},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {2000},
+  Number                   = {3},
+  Pages                    = {259--263},
+  Volume                   = {A56},
+  Owner                    = {yaya},
+  Publisher                = {International Union of Crystallography},
+  Timestamp                = {2012.10.29}
+}
+
+@Book{Ito1950,
+  Title                    = {X-ray studies on polymorphism},
+  Author                   = {Ito, Teiichi},
+  Publisher                = {Maruzen Co. Ltd.},
+  Year                     = {1950},
+  City                     = {Tokyo},
+  Owner                    = {yaya},
+  Timestamp                = {2015.05.04}
+}
+
+@Unpublished{GGJohnson2013,
+  Author                   = {G. G. Johnson},
+  Note                     = {Private Communication},
+  Year                     = {2013}
+}
+
+@Article{Johnson2014,
+  Title                    = {Eiger: a single-photon counting x-ray detector},
+  Author                   = {Johnson, I and Bergamaschi, A and Billich, H and Cartier, S and Dinapoli, R and Greiffenberg, D and Guizar-Sicairos, M and Henrich, B and Jungmann, J and Mezza, D and others},
+  Journal                  = {Journal of Instrumentation},
+  Year                     = {2014},
+  Number                   = {05},
+  Pages                    = {C05032},
+  Volume                   = {9},
+  Owner                    = {yaya},
+  Publisher                = {IOP Publishing},
+  Timestamp                = {2015.01.13}
+}
+
+@Article{Jordan1874,
+  Title                    = {M{\'e}moire sur les formes bilin{\'e}aires},
+  Author                   = {C. Jordan},
+  Journal                  = {Journal de Math{\'e}matiques Pures et Appliqu{\'e}es, deuxi{\`e}me S{\'e}rie},
+  Year                     = {1874},
+  Pages                    = {35 -- 54},
+  Volume                   = {19},
+  Owner                    = {yaya},
+  Timestamp                = {2011.11.10}
+}
+
+@Article{Kabsch1993,
+  Title                    = {Automatic Processing of Rotation Diffraction Data from Crystals of Initially Unknown Symmetry and Cell Constants},
+  Author                   = {W. Kabsch},
+  Journal                  = {J. Appl. Crystallogr.},
+  Year                     = {1993},
+  Pages                    = {795 -- 800},
+  Volume                   = {26},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.20}
+}
+
+@Article{Kabsch2010,
+  Title                    = {Integration, scaling, space-group assignment and post-refinement},
+  Author                   = {W. Kabsch},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {2010},
+  Month                    = {February},
+  Note                     = {PMCID: PMC2815666},
+  Pages                    = {133 -- 144},
+  Volume                   = {D66 (Pt 2)},
+  Owner                    = {yaya},
+  Part                     = {II},
+  Timestamp                = {2013.05.20}
+}
+
+@Unpublished{Kabsch2013,
+  Author                   = {W. Kabsch},
+  Note                     = {private communication},
+  Month                    = {May},
+  Year                     = {2013},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.21}
+}
+
+@Book{Knuth1973,
+  Title                    = {Sorting and Searching (The Art of Computer Programming volume 3)},
+  Author                   = {Knuth, D. E},
+  Publisher                = {Addison Wesley, Reading, MA},
+  Year                     = {1973},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.21}
+}
+
+@Article{Trong2007,
+  Title                    = {{An alternate description of two crystal structure of phospholipase $A_2$ from {\it Bungarus caeruleus}}},
+  Author                   = {{Le Trong}, I. and Stenkamp, R. E},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {2007},
+  Pages                    = {548 -- 549},
+  Volume                   = {D63},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.23}
+}
+
+@Article{Macicek1992,
+  Title                    = {{BLAF}-a robust program for tracking out admittable {Bravais} lattice (s) from the experimental unit-cell data},
+  Author                   = {J. Mac{\'\i}cek and A. Yordanov},
+  Journal                  = {J. Appl. Crystallogr.},
+  Year                     = {1992},
+  Pages                    = {73 -- 80},
+  Volume                   = {25},
+  Owner                    = {yaya},
+  Timestamp                = {2011.12.31}
+}
+
+@Article{McGill2013,
+  Title                    = {Unit Cell Search Alternatives},
+  Author                   = {K. J. McGill and M. Asadi and M. T. Karakasheva and L. C. Andrews and H. J. Bernstein},
+  Journal                  = {In preparation},
+  Year                     = {2013},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.18}
+}
+
+@Article{Mighell2001,
+  Title                    = {Lattice symmetry and identification-The fundamental role of reduced cells in materials characterization},
+  Author                   = {Mighell, A. D.},
+  Journal                  = {J. Res. Natl. Inst. Stand. Technol.},
+  Year                     = {2001},
+  Number                   = {6},
+  Pages                    = {983--996},
+  Volume                   = {106},
+  Owner                    = {yaya},
+  Timestamp                = {2012.11.03}
+}
+
+@Article{mighell2002lattice,
+  Title                    = {Lattice Matching (LM)-Prevention of Inadvertent Duplicate Publications of Crystal Structures},
+  Author                   = {Mighell, A. D.},
+  Journal                  = {J. Res. Natl. Inst. Stand. Technol.},
+  Year                     = {2002},
+  Number                   = {5},
+  Pages                    = {425--430},
+  Volume                   = {107},
+  Publisher                = {UNITED STATES DEPT OF COMMERCE N IS T}
+}
+
+@Article{Minkowski1905,
+  Title                    = {Diskontinuit{\"a}tsbereich f{\"u}r arithmetische {\"A}quivalenz.},
+  Author                   = {Minkowski, Hermann},
+  Journal                  = {Journal f{\"u}r die reine und angewandte Mathematik},
+  Year                     = {1905},
+  Pages                    = {220--274},
+  Volume                   = {129},
+  Owner                    = {yaya},
+  Timestamp                = {2015.05.06}
+}
+
+@InProceedings{Minor1997,
+  Title                    = {Advances in accuracy and automation of data collection and processing},
+  Author                   = {W. Minor and Z. Otwinowski},
+  Booktitle                = {Proceedings of the IUCr computing school},
+  Year                     = {1997},
+  Owner                    = {yaya},
+  Timestamp                = {2011.12.31}
+}
+
+@Article{Nash1956,
+  Title                    = {The imbedding problem for Riemannian manifolds},
+  Author                   = {Nash, J.},
+  Journal                  = {Ann. of Math},
+  Year                     = {1956},
+  Number                   = {1},
+  Pages                    = {20 -- 63},
+  Volume                   = {63},
+  Owner                    = {yaya},
+  Timestamp                = {2012.10.29}
+}
+
+@Misc{Niggli1928,
+  Title                    = {{Krystallographische und Strukturtheoretische Grundbegriffe, Handbuch der Experimentalphysik, Vol. 7, part 1}},
+  Author                   = {P. Niggli},
+  HowPublished             = {Akademische Verlagsgesellschaft, Leipzig},
+  Year                     = {1928},
+  Owner                    = {yaya},
+  Timestamp                = {2011.10.31}
+}
+
+@InBook{NIH/EPA1980,
+  Title                    = {User's Manual NIH-EPA Chemical Information System},
+  Author                   = {NIH/EPA},
+  Chapter                  = {{User's Guide to {CRYST} The X-Ray Crystallographic Search System}},
+  Publisher                = {National Institutes of Health, Environmental Protections Agency},
+  Year                     = {1980},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.18}
+}
+
+@Article{Oishi-Tomiyasu2012,
+  Title                    = {Rapid {Bravais}-lattice determination algorithm for lattice parameters containing large observation errors},
+  Author                   = {R. Oishi-Tomiyasu},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {2012},
+  Number                   = {5},
+  Pages                    = {525 -- 535},
+  Volume                   = {A68},
+  Owner                    = {yaya},
+  Publisher                = {International Union of Crystallography},
+  Timestamp                = {2012.10.29}
+}
+
+@Article{Patterson1957,
+  Title                    = {Remarks on the Delaunay reduction},
+  Author                   = {Patterson, A.L. and Love, Warner E.},
+  Journal                  = {Acta Crystallographica},
+  Year                     = {1957},
+  Number                   = {2},
+  Pages                    = {111--116},
+  Volume                   = {10},
+  Owner                    = {yaya},
+  Publisher                = {International Union of Crystallography},
+  Timestamp                = {2017.12.28}
+}
+
+@Book{Pearson1958,
+  Title                    = {Handbook of Lattice Spacings and Structures of Metals and Alloys},
+  Author                   = {Pearson, W. B.},
+  Publisher                = {Pergamon Press},
+  Year                     = {1958},
+  Series                   = {International Series of Monographs on Metal and Physics and Physical Metallurgy, G. V. Raynor (ed.)},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.25}
+}
+
+@TechReport{Ramraj2011,
+  Title                    = {{{Nearest-Cell} A fast and easy tool for locating crystal matches in the {PDB}}},
+  Author                   = {V. Ramraj and R. Esnouf and J. Diprose},
+  Institution              = {Division of Structural Biology, University of Oxford},
+  Year                     = {2011},
+  Note                     = {\url{http://www.strubi.ox.ac.uk/nearest-cell/nearest-cell.cgi}},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.18}
+}
+
+@InProceedings{Rodgers1992,
+  Title                    = {{Robust and Discriminating Search Parameters for Lattice Retrieval from Crystallographic Databases in the Presences of Large Experimental Uncertainties}},
+  Author                   = {J. R. Rodgers and Y. {Le\ Page}},
+  Booktitle                = {American Crystallographic Association 1992 Annual Meeting and Pittsburgh Diffraction Conference 50th Annual Meeting, 9 -- 14 August 1992},
+  Year                     = {1992},
+  Note                     = {Poster Abstract PA106},
+  Owner                    = {yaya},
+  Timestamp                = {2012.10.31}
+}
+
+@TechReport{Roof1967,
+  Title                    = {Theoretical Extension of the Reduced-Cell Concept in Crystallography},
+  Author                   = {Roof, R. B. Jr.},
+  Institution              = {Los Alamos Scientific Lab., NM},
+  Year                     = {1967},
+  Note                     = {\url{http://lib-www.lanl.gov/cgi-bin/getfile?00378045.pdf}},
+  Number                   = {LA-4038, TID-4500},
+  Owner                    = {yaya},
+  Timestamp                = {2011.11.06}
+}
+
+@Article{igut,
+  Title                    = {Passive Acquisition of Ligand by the MopII Molbindin fromClostridium pasteurianum: structures of apo and oxygen-bound forms},
+  Author                   = {Sch{\"u}ttelkopf, Alexander W and Harrison, Jennifer A and Boxer, David H and Hunter, William N},
+  Journal                  = {J. Biol. Chem.},
+  Year                     = {2002},
+  Number                   = {17},
+  Pages                    = {15013--15020},
+  Volume                   = {277},
+  Owner                    = {yaya},
+  Publisher                = {ASBMB},
+  Timestamp                = {2013.05.26}
+}
+
+@Book{Seeber1831,
+  Title                    = {Untersuchungen {\"u}ber die Eigenschaften der positiven tern{\ae}ren quadratischen Formen},
+  Author                   = {L. A. Seeber},
+  Publisher                = {Tobais L{\oe}ffler},
+  Year                     = {1831},
+  Address                  = {Mannheim},
+  Series                   = {Mathematische Abhandlungen von Ludwig August Seeber},
+  Volume                   = {1},
+  Owner                    = {yaya},
+  Pages                    = {248 pp.},
+  Timestamp                = {2011.12.31}
+}
+
+@Article{Selling1874,
+  Title                    = {{{\"U}ber die bin{\"a}ren und tern{\"a}ren quadratischen Formen.}},
+  Author                   = {E. Selling},
+  Journal                  = {Journal f{\"u}r die reine und angewandte Mathematik (Crelle's Journal)},
+  Year                     = {1874},
+  Number                   = {77},
+  Pages                    = {143 -- 229},
+  Volume                   = {1874},
+  Owner                    = {yaya},
+  Timestamp                = {2011.12.31}
+}
+
+@Article{1g2x,
+  Title                    = {Sequence-induced trimerization of phospholipase A2: structure of a trimeric isoform of PLA2 from common krait (Bungarus caeruleus) at 2.5 A resolution},
+  Author                   = {Singh, G. and Gourinath, S. and Saravanan, K. and Sharma, S. and Bhanumathi, S. and Betzel, Ch. and Srinivasan, A. and Singh, T. P.},
+  Journal                  = {Acta Crystallogr.},
+  Year                     = {2004},
+  Number                   = {1},
+  Pages                    = {8 -- 13},
+  Volume                   = {F61},
+  Owner                    = {yaya},
+  Publisher                = {International Union of Crystallography},
+  Timestamp                = {2013.05.26}
+}
+
+@Article{1u4j,
+  Title                    = {{Crystal structure of a carbohydrate induced homodimer of phospholipase A2 from Bungarus caeruleus at 2.1A resolution}},
+  Author                   = {Singh, G. and Gourinath, S. and Sarvanan, K. and Sharma, S. and Bhanumathi, S. and Betzel, Ch. and Yadav, S. and Srinivasan, A. and Singh, T. P.},
+  Journal                  = {J. Struct. Biol.},
+  Year                     = {2005},
+  Number                   = {3},
+  Pages                    = {264 -- 272},
+  Volume                   = {149},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.26}
+}
+
+@Article{1fe5,
+  Title                    = {Sequence and crystal structure determination of a basic phospholipase A2 from common krait (< i> Bungarus caeruleus</i>) at 2.4 {\AA} resolution: identification and characterization of its pharmacological sites},
+  Author                   = {Singh, G. and Gourinath, S. and Sharma, S. and Paramasivam, M. and Srinivasan, A. and Singh, T. P.},
+  Journal                  = {J. Mol. Biol.},
+  Year                     = {2001},
+  Number                   = {4},
+  Pages                    = {1049 -- 1059},
+  Volume                   = {307},
+  Owner                    = {yaya},
+  Publisher                = {Elsevier},
+  Timestamp                = {2013.05.26}
+}
+
+@Book{Skiena2001,
+  Title                    = {The algorithm design manual},
+  Author                   = {Skiena, S. S.},
+  Publisher                = {Springer, New York, NY, USA},
+  Year                     = {2001},
+  Owner                    = {yaya},
+  Timestamp                = {2013.05.21}
+}
+
+@Article{Stewart1993,
+  Title                    = {On the early history of the singular value decomposition},
+  Author                   = {G. W. Stewart},
+  Journal                  = {SIAM Review},
+  Year                     = {1993},
+  Pages                    = {551 -- 566},
+  Owner                    = {yaya},
+  Timestamp                = {2011.11.09}
+}
+
+@Article{Thomas2010,
+  Title                    = {{WebCSD}: the online portal to the {Cambridge Structural Database}},
+  Author                   = {Thomas, I. R. and Bruno, I. J. and Cole, J. C. and Macrae, C. F. and Pidcock, E. and Wood, P. A.},
+  Journal                  = {J. Appl. Crystallogr.},
+  Year                     = {2010},
+  Number                   = {2},
+  Pages                    = {362--366},
+  Volume                   = {43},
+  Owner                    = {yaya},
+  Publisher                = {International Union of Crystallography},
+  Timestamp                = {2013.05.18}
+}
+
+@Unpublished{Toby1994,
+  Author                   = {B. Toby},
+  Note                     = {Private Communication},
+  Year                     = {1994},
+  Owner                    = {yaya},
+  Timestamp                = {2012.11.03}
+}
+
+@InBook{vonLaue1952,
+  Title                    = {International tables for X-ray Crystallography},
+  Author                   = {M. {von\ Laue}},
+  Chapter                  = {Historical Introduction},
+  Editor                   = {Norman F. M. Henry and Kathleen Lonsdale},
+  Pages                    = {1 -- 5},
+  Publisher                = {Kynoch Press},
+  Year                     = {1952},
+  Volume                   = {I, Symmetry Groups},
+  Owner                    = {yaya},
+  Timestamp                = {2012.11.03}
+}
+
+@Article{Wong-Ng1982,
+  Title                    = {The JCPDS Database--Present and Future},
+  Author                   = {Wong-Ng, W. and Holomany, M. and McClune, W.F. and Hubbard, C.R.},
+  Journal                  = {{Advances in X Ray Analysis}},
+  Year                     = {1982},
+  Pages                    = {87},
+  Volume                   = {26},
+  Owner                    = {yaya},
+  Publisher                = {Plenum Press},
+  Timestamp                = {2012.11.04}
+}
+
+@Book{wyckoff1931structure,
+  Title                    = {The structure of crystals},
+  Author                   = {Wyckoff, R. W. G.},
+  Publisher                = {The Chemical Catalog Company, Inc.},
+  Year                     = {1931},
+  Number                   = {19}
+}
+
+@Article{Zimmermann1985,
+  Title                    = {{{DELOS} -- A computer program for the determination of a unique conventional cell}},
+  Author                   = {H. Zimmermann and H. Burzlaff},
+  Journal                  = {Zeitschrift f{\"u}r Kristallographie},
+  Year                     = {1985},
+  Pages                    = {241 -- 246},
+  Volume                   = {170},
+  Owner                    = {yaya},
+  Timestamp                = {2011.12.31}
+}
+
+@InBook{ASocietyofGentlemen1771,
+  Title                    = {{Encyclop{\ae}dia Britannica or, a Dictionary of Arts and Sciences, Compiled upon a New Plan}},
+  Chapter                  = {Geography},
+  Editor                   = {{{A Society of Gentlemen in Scotland}}},
+  Pages                    = {677},
+  Publisher                = {A. Bell and C. Macfarquhar},
+  Year                     = {1771},
+  Number                   = {54},
+  Volume                   = {II},
+  Owner                    = {yaya},
+  Timestamp                = {2012.11.04}
+}
+
+@InBook{Henry1952,
+  Title                    = {International tables for X-ray Crystallography},
+  Chapter                  = {5.1 Reduction of General Primitive Reciprocal-lattice Triplet to the Corresponding Conventional Bravais-lattice Triplet},
+  Editor                   = {Norman F. M. Henry and Kathleen Lonsdale},
+  Pages                    = {530 -- 535},
+  Publisher                = {Kynoch Press},
+  Year                     = {1952},
+  Volume                   = {I, Symmetry Groups},
+  Owner                    = {yaya},
+  Timestamp                = {2015.05.04}
+}
+
+@comment{jabref-meta: selector_author:}
+
+@comment{jabref-meta: selector_journal:}
+
+@comment{jabref-meta: selector_keywords:}
+
+@comment{jabref-meta: selector_publisher:}
+

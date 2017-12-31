@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D7Dist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CellInputData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D7.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D7_boundary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D7_BoundaryList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D7_ClassifySubboundaries.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D7_Subboundary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Delone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G6.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatD7.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatG6.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatMN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VecN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="S6.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatS6.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="S6Dist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="B4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatB4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Niggli.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_Cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_inverse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_MaximaTools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LatticeConverter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_RandTools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_CreateFileName.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_ReadLatticeData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Selling.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_StringTools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_Vector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BasisBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CellInputData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstSingleton_T.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CoordinateConversionMatrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D7.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D7_boundary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D7_BoundaryList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D7_ClassifySubboundaries.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D7_Subboundary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D7Dist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D7Dist_.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Delone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatD7.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatG6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatMN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rhrand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StoreResults.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Theta.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VecN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="S6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatS6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="S6Dist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="B4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatB4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Niggli.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_Cell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_inverse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_MaximaTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LatticeConverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_RandTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_CreateFileName.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_ReadLatticeData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_MatrixBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Selling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_MinMaxTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_StringTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_ToString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_Vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TNear.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_CoordinateConversionMatrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+</Project>

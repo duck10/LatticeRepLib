@@ -1,0 +1,199 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+\usepackage{textcomp}
+\usepackage{amsmath}
+\usepackage{caption}
+% These packages are all incorporated in the memoir class to one degree or another...
+\usepackage{fixltx2e}
+\usepackage{hyperref}
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{Lattice Representation Library}
+\author{Lawrence C. Andrews}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+
+Identification of lattices has several important uses. Bravais lattice identification and the constructing of unit cell databases have been the most important and often cited uses. Lately, serial crystallography has necessitated merging of many (sometimes hundreds of thousands) individual partial images of crystal lattices. All of these benefit from methods to measure how much two lattices differ.
+
+Lattice Representation Library (LRL) is a package of C++ classes and functions for representing and manipulating lattices and crystallographic unit cells. Included are methods for easily displaying the representations and converting between them. many other tools are also included, such as simple output functions and Niggli and Delone reduction.
+
+\section{Lattice Representations}
+
+Lattice Representation Library includes a number of classes to represent lattice information.
+
+\textbf{LRL\_Cell} – the standard crystallographic unit cell, a,b,c, alpha, beta, gamma. Note that the internal angle representation is radians, but input and output may be in degrees, depending on user manipulations.
+
+\textbf{B4} – The tetrahedron of four 3-space vectors that are used in the description and manipulation of Delone reduction. They are usually described as a,b,c, d, where d is the negative sum of a,b,c. The letter “B” is chosen because this representation was originally suggested by Bravais as a way to geometrically represent the Selling reduction. The space \textbf{B\textsuperscript{4}} is a vector space with four 3-space vectors.
+
+\textbf{S6} – The six scalar used in Delone reduction. The corresponding vector space is \textbf{S\textsuperscript{6}}. They are the partially sorted set of the six dot products of the Bravais tetrahedron’s vectors. The letter “S” is chosen because this reduction is due to Selling.
+
+\textbf{D7} – Experimental representation of Bernstein and Andrews.
+
+\textbf{G6} – The representation described by Andrews and Bernstein, 1988. The corresponding vector space is \textbf{G\textsuperscript{6}}. The six dot products of a,b,c (with some doubled).
+
+
+\subsection{Basics}
+
+Each LRL lattice class includes constructors and assignment operators for conversion to each of the others. Each includes operator$<<$, and simple representation as a string is implemented by LRL\_ToString.
+
+Matrix classes corresponding to each LRL type are complete (\textbf{MatB4}, \textbf{MatG6}, \textbf{MatD7}, \textbf{MatS6}).
+
+Interchange of crystallographic axes (without transformation) can be accomplished for each type. The appropriate 24 matrices are available in each matrix class. \textbf{B4}, \textbf{S6}, \textbf{D7}, and \textbf{G6} each have a function \textbf{GetReflection(n)} to retrieve one of the appropriate matrices. Each also has \textbf{GetReflections()} to retrieve a vector of all 24.
+
+\subsection{Input/Output}
+
+Several class are included to improve the flexibility of usage. 
+
+\textbf{LRL\_ReadLatticeData} reads cell/lattice input strings. Each line begins with S, G, or D for respectfully S6, G6, or D7 input, followed by free-form numeric input. Crystallographic unit cell parameters can be input; for those each line should begin with P,A,B,C,I,F, or R for the lattice type. (R is used for rhombohedral input as hexagonal.) ``RANDOM'' can be used to choose some random unit cell. \textbf{LRL\_ReadLatticeData} is supported by the class\textbf{ ReadCellData}, which contains the input data from \textbf{LRL\_ReadLatticeData}.
+
+\textbf{LRL\_MaximaTools} is a namespace that contains a few functions for outputting vector data (such as lattice parameters) in maxima format. Currently, there are no input functions for maxima format.
+
+\textbf{LRL\_ToString} is a class for converting numeric, vector, or lattice information into a string. It can provide a simple way to get consistent output of data. \textbf{LRL\_ToString}  allows multiple parameters that will be concatenated to produce the single output string.
+
+In addition, each lattice and matrix class include operator$<<$ for simple output.
+
+Class \textbf{LRL\_CreateFileName} is useful to produce unique file names by time stamp. Resolution is limited to one second.
+
+Sample$\colon$ \mbox{\textbf{RANDOM\_2017-12-12.16\_57\_26.svg}}.
+
+\subsection{Random Unit Cells/Lattices, for Testing}
+
+
+The small group of random number generators, written by Rob Harrison, is included as file rhrand.h. The file LRL\_rand includes a few more functions.
+
+In addition, each lattice class (\textbf{LRL\_Cell}, \textbf{B4}, \textbf{S6}, \textbf{D7}, and \textbf{G6}) includes functions \textbf{rand()}, \textbf{randDeloneReduced()}, and \textbf{randDeloneUnreduced(}). These are scaled so that, at least roughly, they correspond to a unit cell with maximum edge length 10 or a norm either approximately 10 (for \textbf{LRL\_Cell} sand \textbf{B4}) and 100 for the others. Each function has two forms; the second takes an input scale factor to replace the default 10.0.
+
+\section{Lattice Reductions}
+
+Lattice Representation Library implements three reduction methods: Niggli, Selling, and Delone. The Delone reduction has mostly fallen out of favor. Today, the Niggli reduction is the one most used. 
+
+\begin{center}
+\begin{tabular}{|l|l|c|} % 3 cols (left, left, center); vert. lines
+\hline % draw horizontal line
+Unsorted & Sorted & Dimensions \\
+\hline
+Minkowski & ? & n \\
+Buerger & Niggli & 3 \\
+Selling & Delone & 3 \\
+Dirichlet & ? & 3 \\
+\hline
+\end{tabular}
+\end{center}
+
+Minkowski reduction\cite{Minkowski1905} is finding the n shortest vectors in an n-dimensional space. Buerger reduction\cite{Buerger1960} is Minkowski reduction in 3-space. No sorting or special conditions for ambiguities are specified. Niggli reduction\cite{Niggli1928} is Buerger reduction plus sorting of the vectors' lengths plus special conditions for equalities. The equalities may be among the three shortest vectors, or there may be other vectors that are the same length as the three shortest. Selling reduction\cite{Selling1874} examines the dot products of the lattice; for a cell with edges a,b,c and the negative of their sum d, \textit{[b{\textbullet}c, a{\textbullet}c, a{\textbullet}b, a{\textbullet}d, b{\textbullet}d, c{\textbullet}d]} are all required to be negative. Delone reduction extends Selling reduction by requiring that the three shortest of a,b,c,d be the sorted list of the unit cell lengths.
+
+\section{Niggli Reduction}
+
+Niggli reduction is now the common method for use in identifying lattice types. The methods are well documented in multiple places, and the list of the Bravais lattice types is simple to understand. However, actual implementation runs into unexpected complications (Andrews and Bernstein, 1988\cite{Andrews1988})
+
+A Niggli-reduced unit cell is defined as the three shortest (non-coplanar) edges of the entire lattice. They are sorted so that the lengths are a$<$b$<$c. Further, the cell angles must all be either greater than or less than 90 degrees. In case of equality, the sorting is decided by the sizes of the corresponding dot products. (There is no third level criterion.) Although that definition seems simple enough, comparing two Niggli-reduced cell turns out to have many, deep complications (see Andrews and Bernstein,2014\cite{Andrews2014})
+
+Each reduction step consists of several steps. First, the edge lengths are sorted. If there are equalities of the lengths, then the sorting is decided by sorting the corresponding angle's dot products. Then the cell angles must be put to all less than 90 degrees or all greater or equal to 90 degrees. That final step is accomplished because any pair of cell angles can be changed to their supplements without changing the lattice (just the cell angles). 
+
+The reductions steps are repeated until the set of shortest edge lengths is found. In difficult starting case, this can require many steps. Usually, those are cases where one edge length is initially much larger than the reduced lengths.
+
+\subsection{G6 Vector Space}
+
+Andrews and Bernstein, 1988\cite{Andrews1988} proposed a metric space G\textsuperscript{6} to define a distance measure between lattice. A point in G\textsuperscript{6} is described by \textit{[a{\textbullet}a, b{\textbullet}b, c{\textbullet}c,2b{\textbullet}c, 2a{\textbullet}c, 2a{\textbullet}b]} 
+
+\subsection{The Niggli Fundamental Unit (The Niggli Cone)}
+	
+The Niggli cone is defined as the region of space in G\textsuperscript{6} that contains all of the unit cells that are Niggli reduced. The cone has 15 boundaries; for example, the simplest are of the form a$\leq$b. Because of the definition that all reduced cell angles are either greater than or less than or equal to 90 degrees, there are two branches of the cone. The branches are partially disjunct, contacting each other when one (or more) angles equals 90 degrees. However, the cone is not convex; It is simple to find a pair of points, one in each branch, where their midpoint is not a reduced cell, and might not even be a valid unit cell.
+
+The Niggli cone is further complicated by the fact that some boundaries are reduced and others are not, and some are reduced in some regions, but not others.
+
+\section{Delone Reduction}
+
+The first edition of the International Tables for X-ray Crystallography based its discussion of Bravais lattice type assignment on Delone's methods, but later editions have transitioned to Niggli. The problem is at least in part to the rather complex description of Delone reduction, and the fact the it usually requires working with three different systems for describing a lattice: unit cell, the Bravais tetrahedron, and the Selling parameters. A further problem is the scalars of Selling reduction are not sorted.
+
+The situation is seen clearly in the quote from Patterson and Love, 1975\cite{Patterson1957}, who say “It is unfortunate, however, that no one of these descriptions of the method is sufficient to permit the completion of the Delaunay reduction.”
+
+On the other hand, a complete and sufficient description is that of Delone, Galiulin and Shtogrin, 1975\cite{Delone1975}, who say “Select any positive parameter of the symbol and subtract it from the parameter
+standing on the opposite edge of the symbol (the symbol is at all times
+thought of as spatial), add it to the parameters standing on the remaining four
+edges, interchange the places of the obtained parameters on two or these four
+edges, converging to one of the ends of the original edge (it makes no difference
+to which), and, finally, change the sign of the positive parameter itself being
+considered.”
+
+To understand that description, let's begin with the definitions needed.
+
+\subsection{Unit Cell}
+Unit Cell: this is simply the cell description we are used to.
+
+\subsection{Parameter}
+Parameters: by parameters, they mean the 6 scalars used in Selling's reduction: \textit{[b{\textbullet}c, a{\textbullet}c, a{\textbullet}b, a{\textbullet}d, b{\textbullet}d, c{\textbullet}d]}.
+
+\subsection{Tetrahedron}
+Tetrahedron: by this they refer to the Bravais tetrahedron. After Selling published his reduction, Bravais realized that the scalars could be described as sitting on the edges of a tetrahedron. That is composed of 4 base vectors: the edges of the unit cell and the negative of the sum of those. So if one face has its vertices as a,b,c, then the edges of that face of the tetrahedron will be a.b, a.c, and b.c. Opposite has two (equivalent) meanings. An the one hand, it can mean opposite in terms of the diagrams that are used to discuss Bravais lattice types in Delone reduction. On the other hand, it can mean opposite in terms of the edges of the tetrahedron; i.e. those along a 2-fold axis of the tetrahedron. As a concrete example scalar a.b is opposite c.d.
+
+\subsection{"Reflections"}
+Finally, there is the matter of ``reflections''. By this, we mean the rearrangements of the labeling of the axes. There are 24 reflections. Note that each does not change the physical position of the base vectors of the tetrahedron, just its labeling. So two scalars that are opposite will still be opposite after any reflection. One such reflection is to exchange which of two opposite scalars one considers first. Consequently, for any general Delone-reduced Selling scalars, there are 24 others that are the same lattice, but the scalars rearranged. Again, in the general case there 24 different Selling- reduced cell that are all the same lattice. They also all have the same Delone-reduced unit cell. Part of the problem with identifying Bravais lattice type by the Delone reduction is relating the set of scalars to the pictures of projections of the tetrahedra.
+
+\subsection{Scalars}
+
+The scalars in this description are the "parameters" described above: \textit{[b{\textbullet}c, a{\textbullet}c, a{\textbullet}b, a{\textbullet}d, b{\textbullet}d, c{\textbullet}d]}. For convenience, we will label them \textit{[r,s,t,u,v,w]}, respectfully.
+
+\subsection{Reduction}
+
+Selling reduction is the key to Delone reduction. The simple requirement is that all 
+
+\bibliography{LatticeRepLib}
+\bibliographystyle{plain}
+\end{document}

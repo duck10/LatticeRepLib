@@ -1,0 +1,643 @@
+/**
+* @file spline_under_tension.hpp
+* @author  Bill Brouwer <whiskeyjulietb@gmail.com>
+* @version 1.0
+*
+* @section LICENSE
+* Copyright 2013 William J. Brouwer
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+* @section DESCRIPTION
+*
+* A port of the spline under tension package of A. K. CLINE AND R. J. RENKA
+*
+*/
+
+
+
+
+#ifndef __SPLINE_U_TENSION_HPP
+#define __SPLINE_U_TENSION_HPP
+
+#include <cmath>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+class spline_under_tension {
+
+private:
+   float sigmap;
+   /// x values
+   std::vector<float> xValues;
+   /// y values
+   std::vector<float> yValues;
+   /// second derivative
+   std::vector<float> secondDerivatives;
+
+   /// 
+   int getInterval(float value, std::vector<float>& array);
+
+   /// use in the spline under tension calculation
+   class coefficient;
+
+   /// the second derivative calculation
+   class acceleration;
+
+public:
+   spline_under_tension();
+
+   spline_under_tension(float sigma,
+      std::vector<float>& xVal,
+      std::vector<float>& yVal,
+      float slp1,
+      float slp2,
+      int islpsw);
+
+   /// get the interpolated value
+   float getInterpValue(float value);
+
+   std::vector<float> getSecondDer() {
+
+      return secondDerivatives;
+   }
+
+   ~spline_under_tension();
+
+};
+
+#endif
+
+
+***********************************************************************
+/**
+* @file spline_under_tension.hpp
+* @author  Bill Brouwer <whiskeyjulietb@gmail.com>
+* @version 1.0
+*
+* @section LICENSE
+* Copyright 2013 William J. Brouwer
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+* @section DESCRIPTION
+*
+* A port of the spline under tension package of A. K. CLINE AND R. J. RENKA
+*
+*/
+
+
+
+#include "spline_under_tension.hpp"
+
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <algorithm>
+
+
+
+class spline_under_tension::coefficient {
+
+
+private:
+   float c1;
+   float c2;
+   float c3;
+
+public:
+   coefficient() {}
+
+   coefficient(float del1,
+      float del2,
+      float sigma,
+      bool calculateAll) {
+
+      if (!calculateAll) {
+
+         c1 = -1.0f / del1;
+         c2 = -c1;
+      }
+      else {
+
+
+         if ((int)sigma == 0) {
+            //no tension
+            float del = del2 - del1;
+            c1 = -(del1 + del2) / (del1*del2);
+            c2 = del2 / (del1*del);
+            c3 = -del1 / (del2*del);
+
+
+         }
+         else {
+            //tension
+            float coshm1 = coshf(sigma*del1) - 1.0f;
+            float coshm2 = coshf(sigma*del2) - 1.0f;
+
+            float delp = (sigma * (del2 + del1) / 2.0f);
+            float delm = (sigma * (del2 - del1) / 2.0f);
+
+            float sinhmp = sinhf(delp);
+            float sinhmm = sinhf(delm);
+
+            float denom = coshm1 * (del2 - del1) - 2.0f * del1 * sinhmp * sinhmm;
+
+            c1 = 2.0f * sinhmp * sinhmm / denom;
+            c2 = -coshm2 / denom;
+            c3 = coshm1 / denom;
+
+         }
+      }
+
+
+   }
+
+   ~coefficient() {
+
+
+   }
+
+   float getCoeffOne() { return c1; }
+   float getCoeffTwo() { return c2; }
+   float getCoeffThree() { return c3; }
+
+};
+
+
+
+class spline_under_tension::acceleration {
+
+private:
+   std::vector<float> yOutput;
+   float* diagTermsPrior;
+   float* diagTermsNext;
+   float slpp1, slppn;
+
+public:
+   acceleration() {}
+   acceleration(float sigmap,
+      std::vector<float>& xValues,
+      std::vector<float>& yValues,
+      float slp1,
+      float slpn,
+      int islpsw) {
+
+
+      int n = xValues.size();
+
+      if (n <= 1)
+         sparseDataError();
+      if (xValues[n - 1] <= xValues[0])
+         monotonicError();
+
+      float delx1, delx2, delxn, delxnm;
+
+      coefficient firstConstants, lastConstants;
+
+
+      switch (islpsw) {
+
+      case 0:
+
+         slpp1 = slp1;
+         slppn = slpn;
+         break;
+
+      case 1:
+
+         slpp1 = slp1;
+         delxn = xValues[n - 1] - xValues[n - 2];
+         delxnm = delxn + delxn;
+
+         if (delxn <= 0 || delxnm <= delxn)
+            monotonicError();
+
+         lastConstants = spline_under_tension::coefficient(-delxn, -delxnm, sigmap, false);
+         slppn = lastConstants.getCoeffOne() * yValues[n - 1] + lastConstants.getCoeffTwo() * yValues[n - 2];
+         
+            break;
+         
+            					//last given
+            case 2:
+               
+                  slppn = slpn;
+               delx1 = xValues[1] - xValues[0];
+               delx2 = delx1 + delx1;
+               
+                  if (delx1 <= 0 || delx2 <= delx1)
+                   monotonicError();
+               
+                  
+                  firstConstants = spline_under_tension::coefficient(delx1, delx2, sigmap, false);
+               slpp1 = firstConstants.getCoeffOne() * yValues[0] + firstConstants.getCoeffTwo() * yValues[1];
+               
+                  break;
+               
+                  					//both calculated
+                  case 3:
+                     delx1 = xValues[1] - xValues[0];
+                     delx2 = xValues[2] - xValues[0];
+                     
+                        delxn = xValues[n - 1] - xValues[n - 2];
+                     delxnm = xValues[n - 1] - xValues[n - 3];
+                     
+                        firstConstants = spline_under_tension::coefficient(delx1, delx2, sigmap, true);
+                     lastConstants = spline_under_tension::coefficient(-delxn, -delxnm, sigmap, true);
+                     
+                        slpp1 = firstConstants.getCoeffOne() * yValues[0] + firstConstants.getCoeffTwo() * yValues[1] +
+                        firstConstants.getCoeffThree() * yValues[2];
+                     
+                        slppn = lastConstants.getCoeffOne() * yValues[n - 1] + lastConstants.getCoeffTwo() * yValues[n - 2] +
+                        lastConstants.getCoeffThree() * yValues[n - 3];
+                     
+                        break;
+                     
+                        
+                        
+      }
+      
+         
+         secondDerivative(xValues, yValues, sigmap);
+      
+         
+   }
+   
+      void secondDerivative(std::vector<float>& xValues, std::vector<float>& yValues, float sigmap) {
+      
+         int n = xValues.size();
+      
+         float delx1, delx2, dx1, dx2, diag;
+      for (int i = 0; i<n; i++) yOutput.push_back(-1);
+      
+         delx1 = xValues[1] - xValues[0];
+      std::vector<float> temp(n);
+      
+         if (delx1 == 0)
+          monotonicError();
+      
+         dx1 = (yValues[1] - yValues[0]) / delx1;
+      
+         diagTermsPrior = tridiagonalTerms(sigmap, delx1);
+      yOutput[0] = (dx1 - slpp1) / diagTermsPrior[0];
+      temp[0] = diagTermsPrior[1] / diagTermsPrior[0];
+      
+         
+         if (n > 2) {
+         
+            for (int i = 1; i<n - 1; i++) {
+            
+               delx2 = xValues[i + 1] - xValues[i];
+            
+               
+               if (delx2 == 0)
+                monotonicError();
+            
+               dx2 = (yValues[i + 1] - yValues[i]) / delx2;
+            diagTermsNext = tridiagonalTerms(sigmap, delx2);
+            diag = diagTermsPrior[0] + diagTermsNext[0] - diagTermsPrior[1] * temp[i - 1];
+            yOutput[i] = (dx2 - dx1 - diagTermsPrior[1] * yOutput[i - 1]) / diag;
+            
+               temp[i] = diagTermsNext[1] / diag;
+            dx1 = dx2;
+            
+               diagTermsPrior[0] = diagTermsNext[0];
+            diagTermsPrior[1] = diagTermsNext[1];
+            
+               
+               
+         }
+         
+            
+      }
+      
+         diag = diagTermsPrior[0] - diagTermsPrior[1] * temp[n - 2];
+      yOutput[n - 1] = (slppn - dx1 - diagTermsPrior[1] * yOutput[n - 2]) / diag;
+      
+         
+         for (int i = n - 2; i>0; i--) {
+         
+            yOutput[i] = yOutput[i] - temp[i] * yOutput[i + 1];
+         
+            
+      }
+      
+         
+   }
+   
+      float* tridiagonalTerms(float sigma, float del) {
+      
+         
+         float* ret = new float[2];
+      
+         if (sigma == 0) {
+         
+            ret[0] = del / 3.0f;
+         ret[1] = del / 6.0f;
+         
+            
+      }
+         else {
+            
+               double sigdel = (sigma * del);
+            double denom = del / (sinhf(sigdel) * sigdel * sigdel);
+            
+               ret[0] = (float)(denom * (sigdel * (coshf(sigdel) - 1) - sinhf(sigdel) + sigdel));
+            ret[1] = (float)(denom * (sinhf(sigdel) - sigdel));
+            
+         }
+         
+            
+            return ret;
+         
+            
+   }
+   
+      
+      std::vector<float> getOutput() {
+      
+         
+         return yOutput;
+      
+   }
+   
+      void sparseDataError() {
+      
+         std::cerr << "Insufficient samples in data \n";
+      exit(1);
+      
+   }
+   +
+      void monotonicError() {
+      
+         std::cerr << "Data not strictly increasing \n";
+      exit(1);
+      
+   }
+   
+      ~acceleration() {
+      
+   }
+   
+      
+};
+float spline_under_tension::getInterpValue(float value) {
+   
+      
+      int im1 = getInterval(value, xValues, size);
+   
+      float del1 = value - xValues[im1];
+   float del2 = xValues[im1 + 1] - value;
+   float dels = xValues[im1 + 1] - xValues[im1];
+   float sum = (yValues[im1 + 1] * del1 + yValues[im1] * del2) / dels;
+   
+      if ((int)sigmap == 0) {
+      return sum - del1*del2*(secondDerivative[im1 + 1] * (del1 + dels)
+          +secondDerivative[im1] * (del2 + dels)) / (6.0f * dels);
+      
+         
+   }
+      else {
+         
+            
+            float delp1 = sigmap * (del1 + dels) / 2.0f;
+         float delp2 = sigmap * (del2 + dels) / 2.0f;
+         
+            float sinhm1 = sinhf(sigmap*del1) - sigmap*del1;
+         float sinhm2 = sinhf(sigmap*del2) - sigmap*del2;
+         float sinhms = sinhf(sigmap*dels) - sigmap*dels;
+         
+            float sinhp1 = sinhf(sigmap*del1 / 2.0f) - sigmap*del1 / 2.0f;
+         float sinhp2 = sinhf(sigmap*del2 / 2.0f) - sigmap*del2 / 2.0f;
+         
+            float coshp1 = coshf(delp1) - 1;
+         float coshp2 = coshf(delp2) - 1;
+         
+            return sum + (secondDerivative[im1 + 1] * (sinhm1*del2 - del1*(2.0f * (coshp1 + 1.0f) * sinhp2 + sigmap*coshp1*del2))
+                +secondDerivative[im1] * (sinhm2*del1 - del2*(2.0f * (coshp2 + 1.0f) * sinhp1 + sigmap*coshp2*del1)))
+             / (sigmap * sigmap *dels * (sinhms + sigmap*dels));
+         
+            
+      }
+      
+         
+}
+
+int spline_under_tension::getInterval(float value, std::vector<float>& array, int size) {
+   
+      return binarySearch(array, value, 0, array.size() - 1, 0);
+   
+      
+}
+
+int spline_under_tension::binarySearch(std::vector<float>& input, float value, int low, int high, int lastMid) {
+   
+      int mid;
+   
+      if ((high < low) && (lastMid != (input.size() / 2)))
+       return (lastMid % 2 == 0) ? lastMid : lastMid + 1;
+   else if ((high < low) && (lastMid == (input.size() / 2)))
+       return -1;
+   
+      mid = low + (high - low) / 2;
+   
+      if (input[mid] && input[mid + 1] > value)
+       return binarySearch(input, value, low, mid - 1, mid);
+   else if (input[mid] && input[mid + 1] < value)
+       return binarySearch(input, value, mid + 1, high, mid);
+   else
+       return mid;
+   
+      
+      
+      
+};
+
+
+spline_under_tension::spline_under_tension() {};
+
+spline_under_tension::spline_under_tension(float sigma,
+   std::vector<float>& xVal,
+   std::vector<float>& yVal,
+   float slp1,
+   float slp2,
+   int islpsw) {
+   
+     int n = xVal.size();
+   
+     sigmap = fabs(sigma) * (float)(n - 1) / (xVal[n - 1] - xVal[0]);
+   xValues = xVal;
+   yValues = yVal;
+   size = n;
+   
+     secondDerivative = acceleration(sigmap, xValues, yValues, slp1, slp2, islpsw).getOutput();
+   
+}
+
+
+spline_under_tension::~spline_under_tension() {};
+
+******************************************************************************
+// splineundertension.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+
+
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+#include "spline_under_tension.hpp"
+
+using namespace std;
+
+/*
+spline_under_tension(float sigma,  ??? tension
+std::vector<float>& xVal,
+std::vector<float>& yVal,
+float slp1,  front end slope (if any)
+float slp2,  end slope (if any)
+int islpsw); 3 = calculate both end derivatives
+*/
+
+
+int main() {
+
+
+   vector<float> xvals, yvals;
+   yvals.push_back(2.84217E-14F);
+   yvals.push_back(1.11494F);
+   yvals.push_back(2.22988F);
+   yvals.push_back(3.34482F);
+   yvals.push_back(4.45976F);
+   yvals.push_back(5.5747F);
+   yvals.push_back(6.68964F);
+   yvals.push_back(7.80458F);
+   yvals.push_back(8.91952F);
+   yvals.push_back(10.0345F);
+   yvals.push_back(11.1494F);
+   yvals.push_back(12.2643F);
+   yvals.push_back(13.3793F);
+   yvals.push_back(14.4942F);
+   yvals.push_back(15.6092F);
+   yvals.push_back(16.7241F);
+   yvals.push_back(17.839F);
+   yvals.push_back(18.954F);
+   yvals.push_back(20.0689F);
+   yvals.push_back(21.1839F);
+   yvals.push_back(22.2988F);
+   yvals.push_back(23.4137F);
+   yvals.push_back(24.5287F);
+   yvals.push_back(25.6436F);
+   yvals.push_back(26.7586F);
+   yvals.push_back(27.8735F);
+   yvals.push_back(28.9884F);
+   yvals.push_back(30.1034F);
+   yvals.push_back(31.2183F);
+   yvals.push_back(32.3333F);
+   yvals.push_back(33.4482F);
+   yvals.push_back(34.5631F);
+   yvals.push_back(35.6781F);
+   yvals.push_back(36.1702F);
+   yvals.push_back(35.4794F);
+   yvals.push_back(34.8106F);
+   yvals.push_back(34.165F);
+   yvals.push_back(33.5442F);
+   yvals.push_back(31.4762F);
+   yvals.push_back(29.5466F);
+   yvals.push_back(27.8458F);
+   yvals.push_back(26.3113F);
+   yvals.push_back(25.095F);
+   yvals.push_back(24.2447F);
+   yvals.push_back(23.7998F);
+   yvals.push_back(23.7829F);
+   yvals.push_back(24.195F);
+   yvals.push_back(25.0148F);
+   yvals.push_back(26.2043F);
+
+   for (int i = 0; i<yvals.size(); i++) {
+      xvals.push_back(float(i));
+   }
+
+   //for (int i = 0; i<2048; i++) {
+   //   xvals.push_back(i*0.05f);
+   //   yvals.push_back(sin(xvals[i]));
+   //}
+
+
+   spline_under_tension foo(0.1F, xvals, yvals, -1, -1, 3);
+
+   //vector<float> out=foo.getSecondDer();
+
+   //for (vector<float>::iterator it = out.begin(); it != out.end(); it++)
+   //	cout << *it << endl;
+
+   //exit(0);
+
+   //cout << "#yvals; interp" << endl;
+   //cout << foo.getInterpValue(xvals[0] + 0.03333F);
+   //for (int i = 0; i<xvals.size()-1; i++) {
+   //   cout << "," << foo.getInterpValue(xvals[i]);
+
+   //}
+
+   //cout << endl;
+   //cout << "#actual yvals" << endl;
+   //cout << sin(xvals[0] + 0.03333);
+   //for (int i = 1; i<xvals.size()-1; i++) {
+   //   cout << "," << sin(xvals[i] + 0.3333);
+   //}
+   //cout << endl;
+   //cout << "#xvals" << endl;
+   //cout << xvals[0] + 0.03333;
+   //for (int i = 1; i<xvals.size(); i++) {
+   //   cout << "," << xvals[i] + 0.3333;
+
+   //}
+   //cout << endl;
+
+   //const std::vector<float> der = foo.getSecondDer();
+   //std::cout << "#2nd Derivatives" << std::endl;
+   //for (int i = 0; i < der.size(); ++i) std::cout << der[i] << std::endl;
+
+   std::cout << "#data points" << std::endl;
+   const float f3 = foo.getInterpValue(47.0F);
+   const float f4 = foo.getInterpValue(48.0F);
+   const float f5 = foo.getInterpValue(49.0F);
+   const float f1 = foo.getInterpValue(-1.0F);
+   const float f2 = foo.getInterpValue(-2.0F);
+   //for (int i = 0; i < xvals.size(); ++i) {
+   //   std::cout << i << "  " << xvals[i] << "  " << yvals[i] << "  " << foo.getInterpValue(xvals[i]) << std::endl;
+   //}
+
+   for (int i = -2; i < 31; ++i) {
+      std::cout << i << "  " << foo.getInterpValue(float(i)) << std::endl;
+   }
+
+   return 0;
+};
+
+
