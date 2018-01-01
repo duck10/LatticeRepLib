@@ -165,20 +165,19 @@
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\TestBasesLib\D7_BoundaryTests.cpp" />
+    <ClCompile Include="..\MultiMetricDists\D7_BoundaryTests.cpp" />
     <ClCompile Include="MAIN_MultiMetricDists.cpp" />
-    <ClCompile Include="..\TestBasesLib\NCDist.c" />
-    <ClCompile Include="..\TestBasesLib\PrintTable.cpp" />
-    <ClCompile Include="..\TestBasesLib\SuperFastHash.cpp" />
-    <ClCompile Include="..\TestBasesLib\Triangle.cpp" />
+    <ClCompile Include="..\MultiMetricDists\NCDist.c" />
+    <ClCompile Include="..\MultiMetricDists\PrintTable.cpp" />
+    <ClCompile Include="..\MultiMetricDists\SuperFastHash.cpp" />
+    <ClCompile Include="..\MultiMetricDists\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\TestBasesLib\D7_BoundaryTests.h" />
-    <ClInclude Include="..\TestBasesLib\NCDist.h" />
-    <ClInclude Include="..\TestBasesLib\NCDist_.hpp" />
-    <ClInclude Include="..\TestBasesLib\PrintTable.h" />
-    <ClInclude Include="..\TestBasesLib\SuperFastHash.h" />
-    <ClInclude Include="..\TestBasesLib\Triangle.h" />
+    <ClInclude Include="..\MultiMetricDists\D7_BoundaryTests.h" />
+    <ClInclude Include="..\MultiMetricDists\NCDist_.hpp" />
+    <ClInclude Include="..\MultiMetricDists\PrintTable.h" />
+    <ClInclude Include="..\MultiMetricDists\SuperFastHash.h" />
+    <ClInclude Include="..\MultiMetricDists\Triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

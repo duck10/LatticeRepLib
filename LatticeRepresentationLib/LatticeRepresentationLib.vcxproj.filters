@@ -235,6 +235,9 @@
     <ClInclude Include="LRL_CoordinateConversionMatrices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NCDist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

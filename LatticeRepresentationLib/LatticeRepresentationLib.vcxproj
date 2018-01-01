@@ -192,6 +192,7 @@
     <ClInclude Include="CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
+    <ClInclude Include="NCDist.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6Dist.h" />
     <ClInclude Include="D7.h" />
