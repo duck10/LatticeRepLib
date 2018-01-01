@@ -48,9 +48,6 @@
     <ClInclude Include="MapBoundaryStrings2Colors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NCDist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NCDist_.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

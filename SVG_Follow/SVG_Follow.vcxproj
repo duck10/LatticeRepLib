@@ -167,7 +167,6 @@
     <ClInclude Include="GlitchElement.h" />
     <ClInclude Include="LinearAxis.h" />
     <ClInclude Include="MapBoundaryStrings2Colors.h" />
-    <ClInclude Include="NCDist.h" />
     <ClInclude Include="NCDist_.hpp" />
     <ClInclude Include="OutlierFinder.h" />
     <ClInclude Include="ReadGlobalData.h" />
