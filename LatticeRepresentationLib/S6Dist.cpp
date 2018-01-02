@@ -10,7 +10,6 @@
 #include "LRL_inverse.h"
 #include "LRL_ToString.h"
 #include "S6Dist.h"
-#include "triple.h"
 
 
 std::vector< S6(*)(const S6&)> S6Dist::m_reductionFunctions;

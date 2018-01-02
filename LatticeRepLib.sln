@@ -38,6 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{F04B16EA-D
 		docs\LatticeRepLib.synctex.gz = docs\LatticeRepLib.synctex.gz
 		docs\LatticeRepLib.tex = docs\LatticeRepLib.tex
 		docs\LatticeRepLib.toc = docs\LatticeRepLib.toc
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
