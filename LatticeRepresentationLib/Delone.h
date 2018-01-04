@@ -16,8 +16,10 @@ public:
    template<typename TVEC>
    static bool Reduce(const TVEC& d, TVEC& dd) {
       S6 s6out;
-      const bool b = Selling::Reduce(S6(d), s6out);
-      dd = s6out;
+      const S6 s6in(d);
+      const bool b = Selling::Reduce(s6in, s6out);
+      MatD7 mat;
+      dd = sort(s6out, mat);
       return b;
    }
 
@@ -27,7 +29,7 @@ public:
       S6 s6out;
       const bool b = Reduce(S6(d), mS6, s6out, 0.0);
       m = mS6;
-      dd = d6out;
+      dd = sort(s6out, mS6);
       return b;
    }
 

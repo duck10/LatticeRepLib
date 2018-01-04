@@ -209,13 +209,13 @@ S6 S6::operator- (void) const {
    return *this; // unary
 }
 
-S6 S6::operator+= (const S6& s6) {
+S6& S6::operator+= (const S6& s6) {
    for (unsigned long i = 0; i < s6.size(); ++i)
       m_vec[i] += s6.m_vec[i];
    return *this;
 }
 
-S6 S6::operator-= (const S6& s6) {
+S6& S6::operator-= (const S6& s6) {
    for (unsigned long i = 0; i < s6.size(); ++i)
       m_vec[i] -= s6.m_vec[i];
    return *this;
@@ -292,50 +292,29 @@ bool S6::IsAllMinus() const {
 }
 
 S6 S6::rand() {
-   G6 g6;
-   for (int i = 0; i < 6; ++i)
-      g6[i] = randfg(randSeed1);
-
-   const S6 s6(g6);
-   const double randsNorm = g6.norm();
-   return(s6 / randsNorm);
+   S6 s6(LRL_Cell::rand());
+   return s6 * LRL_Cell::randomLatticeNormalizationConstantSquared / s6.norm();
 }
 
 S6 S6::randDeloneReduced() {
-   S6 vRan;
-   S6 v;
-
-   MatS6 m;
-   vRan = S6(1000.0 * rand());
-
-   while (!Delone::IsReduced(vRan)) {
-      vRan = 1000.0 * rand();
-   }
-   return v;
+   S6 s6(LRL_Cell::randDeloneReduced());
+   return s6 * LRL_Cell::randomLatticeNormalizationConstantSquared / s6.norm();
 }
 
 S6 S6::randDeloneUnreduced() {
-   S6 vRan;
-   S6 v;
-
-   MatS6 m;
-   vRan = 1000.0 * rand();
-
-   while (Delone::IsReduced(vRan)) {
-      vRan = S6(1000.0 * rand());
-   }
-   return v;
+   S6 s6(LRL_Cell::randDeloneUnreduced());
+   return s6 * LRL_Cell::randomLatticeNormalizationConstantSquared / s6.norm();
 }
 
 S6 S6::rand(const double d) {
-   return d*rand();
+   return d*rand() / LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 S6 S6::randDeloneReduced(const double d) {
-   return d*randDeloneReduced();
+   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 S6 S6::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced();
+   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstant;
 }
 

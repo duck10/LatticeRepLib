@@ -53,8 +53,9 @@ public:
    virtual void SetRowDim(const unsigned long n) { m_rowdim = n; }
    virtual void SetColDim(const unsigned long n) { m_rowdim = n; }
 
-   virtual MatN Eye( void ) const;
+   virtual MatN Eye( const MatN& m_in ) const;
    static MatN Eye( const unsigned long n );
+   void Eye(void);
    std::vector<double> GetVector(void) const { return m_mat; }
    void SetVector(const std::vector<double>& m) { m_mat = m; }
 

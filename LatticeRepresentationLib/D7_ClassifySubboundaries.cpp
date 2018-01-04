@@ -346,7 +346,7 @@ void D7_ClassifySubboundaries::TestClassify(const int ntest, const D7_Boundary& 
    int maxtest = ntest;
    for (int i = 0; i < maxtest; ++i) {
       if (i%maxtest / 100 == 0 && i > 100 - 1) std::cout << i << std::endl;
-      const D7 ranvec = D7(LRL_Cell::RandCell(10, 400));
+      const D7 ranvec = D7(LRL_Cell::rand() * 200.0);
       s6out = ranvec;
       const bool b1 = Delone::Reduce(S6(ranvec), m6, s6out, 0.0);
       if (!b1) continue;

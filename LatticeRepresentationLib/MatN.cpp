@@ -156,8 +156,8 @@ MatN operator/ ( const double d, const MatN& m ) {
    return m/d;
 }
 
-MatN MatN::Eye( ) const {
-   MatN m( ( *this ).size( ) );
+MatN MatN::Eye( const MatN& m_in ) const {
+   MatN m(m_in);
    const unsigned long rowsize = (unsigned long)( std::sqrt( double(m.size( ) ) ) );
    for ( unsigned long i=0; i<m_dim; ++i )
       m.m_mat[i] = 0.0;
@@ -167,10 +167,14 @@ MatN MatN::Eye( ) const {
 }
 
 MatN MatN::Eye( const unsigned long n ) {
-   throw("this no longer works and needs to be fleshed out explicitly");
    MatN m(n);
-   return m.Eye();
+   return m.Eye(m);
 }
+
+void MatN::Eye(void) {
+   (*this) = Eye(*this);
+}
+
 
 bool MatN::IsUnit( void ) const {
    const MatN& m(*this);
@@ -252,9 +256,9 @@ std::ostream& operator<< ( std::ostream& o, const MatN& m ) {
    return o;
 }
 
-MatN Eye( const MatN& m ) {
+MatN Eye( const MatN& m ) { // this is a free, local function only
    throw("this no longer works and needs to be fleshed out explicitly");
-   return MatN( m ).Eye( );
+   return Eye( m );
 }
 
 double MatN::operator() (const unsigned long i) {

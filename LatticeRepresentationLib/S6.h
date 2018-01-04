@@ -41,8 +41,8 @@ public:
    S6& operator*= (const double d);
    S6 operator+ (const S6& ds) const;
    S6 operator- (const S6& ds) const;
-   S6 operator+= (const S6& ds);
-   S6 operator-= (const S6& ds);
+   S6& operator+= (const S6& ds);
+   S6& operator-= (const S6& ds);
    S6 operator* (const double d) const;
    S6 operator/ (const double d) const;
    S6 operator- (void) const; // unary

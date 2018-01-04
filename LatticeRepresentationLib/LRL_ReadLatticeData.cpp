@@ -32,7 +32,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          m_cell = LRL_Cell(g6Cell);
          m_strCell = LRL_ToString(LRL_Cell(m_cell));
       }
-      else if (toupper(m_inputDataType[0]) == 'V') {
+      else if (toupper(m_inputDataType[0]) == 'V' ||toupper(m_inputDataType[0]) == 'G') {
          G6 v6;
          for (unsigned long i = 0; i < 6; ++i)
             iss >> v6[i];

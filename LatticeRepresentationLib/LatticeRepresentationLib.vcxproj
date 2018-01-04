@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="C3.cpp" />
     <ClCompile Include="LatticeConverter.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
     <ClCompile Include="CellInputData.cpp" />
@@ -185,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
+    <ClInclude Include="C3.h" />
     <ClInclude Include="LatticeConverter.h" />
     <ClInclude Include="LRL_Cell.h" />
     <ClInclude Include="CellInputData.h" />
