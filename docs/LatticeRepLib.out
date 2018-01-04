@@ -1,18 +1,17 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
 \BOOKMARK [1][-]{section.2}{Lattice Representations}{}% 2
 \BOOKMARK [2][-]{subsection.2.1}{Basics}{section.2}% 3
-\BOOKMARK [3][-]{subsubsection.2.1.1}{this is a test}{subsection.2.1}% 4
-\BOOKMARK [2][-]{subsection.2.2}{Input/Output}{section.2}% 5
-\BOOKMARK [2][-]{subsection.2.3}{Random Unit Cells/Lattices, for Testing}{section.2}% 6
-\BOOKMARK [1][-]{section.3}{Lattice Reductions}{}% 7
-\BOOKMARK [1][-]{section.4}{Niggli Reduction}{}% 8
-\BOOKMARK [2][-]{subsection.4.1}{G6 Vector Space}{section.4}% 9
-\BOOKMARK [2][-]{subsection.4.2}{The Niggli Fundamental Unit \(The Niggli Cone\)}{section.4}% 10
-\BOOKMARK [1][-]{section.5}{Delone Reduction}{}% 11
-\BOOKMARK [2][-]{subsection.5.1}{Unit Cell}{section.5}% 12
-\BOOKMARK [2][-]{subsection.5.2}{Parameter}{section.5}% 13
-\BOOKMARK [2][-]{subsection.5.3}{Tetrahedron}{section.5}% 14
-\BOOKMARK [2][-]{subsection.5.4}{"Reflections"}{section.5}% 15
-\BOOKMARK [2][-]{subsection.5.5}{Scalars}{section.5}% 16
-\BOOKMARK [2][-]{subsection.5.6}{Reduction}{section.5}% 17
-\BOOKMARK [1][-]{section*.2}{References}{}% 18
+\BOOKMARK [2][-]{subsection.2.2}{Input/Output}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Random Unit Cells/Lattices, for Testing}{section.2}% 5
+\BOOKMARK [1][-]{section.3}{Lattice Reductions}{}% 6
+\BOOKMARK [1][-]{section.4}{Niggli Reduction}{}% 7
+\BOOKMARK [2][-]{subsection.4.1}{G6 Vector Space}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.2}{The Niggli Fundamental Unit \(The Niggli Cone\)}{section.4}% 9
+\BOOKMARK [1][-]{section.5}{Delone Reduction}{}% 10
+\BOOKMARK [2][-]{subsection.5.1}{Unit Cell}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.2}{Parameter}{section.5}% 12
+\BOOKMARK [2][-]{subsection.5.3}{Tetrahedron}{section.5}% 13
+\BOOKMARK [2][-]{subsection.5.4}{"Reflections"}{section.5}% 14
+\BOOKMARK [2][-]{subsection.5.5}{Scalars}{section.5}% 15
+\BOOKMARK [2][-]{subsection.5.6}{Reduction}{section.5}% 16
+\BOOKMARK [1][-]{section*.2}{References}{}% 17

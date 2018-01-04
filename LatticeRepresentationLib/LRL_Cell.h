@@ -26,6 +26,10 @@ class MatG6;
 class LRL_Cell : private BasisBase<LRL_Cell>
 {
 public:
+
+   static double randomLatticeNormalizationConstant;
+   static double randomLatticeNormalizationConstantSquared;
+
    friend std::ostream& operator<< (std::ostream& o, const LRL_Cell& c);
    friend LRL_Cell operator* (const double d, const LRL_Cell& v);
    LRL_Cell(void);
@@ -56,8 +60,8 @@ public:
    LRL_Cell operator* (const double d) const;
    LRL_Cell operator/ (const double d) const;
    LRL_Cell operator- (void) const { return *this; } // unary
-   LRL_Cell operator+= (const LRL_Cell& cl);
-   LRL_Cell operator-= (const LRL_Cell& cl);
+   LRL_Cell& operator+= (const LRL_Cell& cl);
+   LRL_Cell& operator-= (const LRL_Cell& cl);
       bool operator== (const LRL_Cell& cl) const;
    bool operator!= (const LRL_Cell& cl) const;
 
@@ -79,8 +83,6 @@ public:
 
 
    LRL_Cell Inverse(void) const;
-   static LRL_Cell RandCell(const double minEdge, const double maxEdge);
-   static LRL_Cell RandCell(const double minEdgeA, const double maxEdgeA, const double minEdgeB, const double maxEdgeB, const double minEdgeC, const double maxEdgeC);
    MatG6 LatSymMatG6(const std::string& latsym) const;
    static MatG6 LatSymMatG6(const std::string& latsym, const LRL_Cell& c);
 
@@ -89,8 +91,7 @@ public:
 
    bool IsRhomobhedralAsHex(void) const;
    static bool IsRhomobhedralAsHex(const LRL_Cell& c);
-   static bool IsRhomobhedralAsHex(const G6& v);
-
+   static bool LRL_Cell::IsRhomobhedralAsHex(const G6& v);
 
    static LRL_Cell rand();
    static LRL_Cell randDeloneReduced();
@@ -100,6 +101,8 @@ public:
    static LRL_Cell randDeloneUnreduced(const double d);
 
    static std::string GetName(void) { return "LRL_Cell, unit cell"; }
+
+   static double GetNormalization(void) { return randomLatticeNormalizationConstant; }
 
 private:
    std::vector<double> m_cell;

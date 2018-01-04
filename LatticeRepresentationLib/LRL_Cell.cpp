@@ -15,6 +15,7 @@
 #include "D7.h"
 #include "Delone.h"
 #include "G6.h"
+#include "LRL_MinMaxTools.h"
 #include "LRL_RandTools.h"
 #include "MatG6.h"
 #include "MatS6.h"
@@ -24,6 +25,9 @@
 #include "LRL_StringTools.h"
 
 int randSeed1 = 19191;
+
+double LRL_Cell::randomLatticeNormalizationConstant = 10.0;
+double LRL_Cell::randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
 
 /*  class LRL_Cell
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -163,28 +167,6 @@ void Prepare2CellElements( const double minEdge, const double maxEdge, const uns
    c[i] = range * d1 + std::sqrt( minEdge * maxEdge );
    const double d2 = r.urand( );
    c[i + 3] = d2 * oneeightyDegrees;
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-// Name: RandCell()
-// Description: Generate a cell with random edge lengths within the specified
-//              range and angles (in radians) in 60-120 degrees
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-LRL_Cell LRL_Cell::RandCell( const double minEdge, const double maxEdge )
-{
-   LRL_Cell c;
-   Prepare2CellElements( minEdge, maxEdge, 0, c );
-   Prepare2CellElements( minEdge, maxEdge, 1, c );
-   Prepare2CellElements( minEdge, maxEdge, 2, c );
-   return( c );
-}
-
-LRL_Cell LRL_Cell::RandCell( const double minEdgeA, const double maxEdgeA, const double minEdgeB, const double maxEdgeB, const double minEdgeC, const double maxEdgeC ) {
-   LRL_Cell c;
-   Prepare2CellElements( minEdgeA, maxEdgeA, 0, c );
-   Prepare2CellElements( minEdgeB, maxEdgeB, 1, c );
-   Prepare2CellElements( minEdgeC, maxEdgeC, 2, c );
-   return c;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -344,9 +326,8 @@ bool LRL_Cell::IsRhomobhedralAsHex( void ) const {
    return IsRhomobhedralAsHex( G6(c) );
 }
 
-
 // Assumes the cell EITHER has alpha=beta=gamma or a=b & alpha=beta=90 and gamma=120 (approximately)
-/*static*/ bool LRL_Cell::IsRhomobhedralAsHex( const G6& v ) {
+/*static*/ bool LRL_Cell::IsRhomobhedralAsHex(const G6& v) {
    return (HexPerp*v).norm() < (RhmPerp*v).norm();
 }
 
@@ -367,47 +348,47 @@ LRL_Cell LRL_Cell::rand() {
    g6[5] = 0.5*std::sqrt(g6[1] * g6[0]) * g6[5];
 
    const double g6Norm = g6.norm();
-   const LRL_Cell result = LRL_Cell(g6 / g6Norm);
-   return result;
+   const LRL_Cell result = LRL_Cell(g6);
+   return randomLatticeNormalizationConstant * result / maxNC(result[0],result[1],result[2]);
 }
 
-LRL_Cell LRL_Cell::randDeloneReduced() {
+LRL_Cell LRL_Cell::randDeloneReduced() {//LRL_Cell::randomLatticeNormalizationConstant
    S6 vRan;
    S6 v;
 
    MatS6 m;
-   vRan = 100.0 * LRL_Cell::rand();
+   vRan = LRL_Cell::rand();
 
    const bool test = Delone::Reduce(vRan, m, v, 0.0);
    while (!Delone::IsReduced(vRan)) {
-      vRan = 100.0 * LRL_Cell::rand();
+      vRan = LRL_Cell::rand();
    }
    return LRL_Cell(v);
 }
 
-LRL_Cell LRL_Cell::randDeloneUnreduced() {
+LRL_Cell LRL_Cell::randDeloneUnreduced() {//LRL_Cell::randomLatticeNormalizationConstant
    S6 vRan;
 
    MatS6 m;
-   vRan = 100.0 * LRL_Cell::rand();
+   vRan = LRL_Cell::rand();
 
    while (Delone::IsReduced(vRan)) {
-      vRan = 100.0 * LRL_Cell::rand();
+      vRan = LRL_Cell::rand();
    }
    LRL_Cell celltemp(vRan);
    return LRL_Cell(vRan);
 }
 
-LRL_Cell LRL_Cell::rand(const double d) {
-   return d*rand();
+LRL_Cell LRL_Cell::rand(const double d) {//LRL_Cell::randomLatticeNormalizationConstant
+   return d*rand()/ randomLatticeNormalizationConstant;
 }
 
-LRL_Cell LRL_Cell::randDeloneReduced(const double d) {
-   return d*randDeloneReduced();
+LRL_Cell LRL_Cell::randDeloneReduced(const double d) {//LRL_Cell::randomLatticeNormalizationConstant
+   return d*randDeloneReduced()/ randomLatticeNormalizationConstant;
 }
 
-LRL_Cell LRL_Cell::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced();
+LRL_Cell LRL_Cell::randDeloneUnreduced(const double d) {//LRL_Cell::randomLatticeNormalizationConstant
+   return d*randDeloneUnreduced()/ randomLatticeNormalizationConstant;
 }
 
 
@@ -455,12 +436,14 @@ LRL_Cell LRL_Cell::operator- (const LRL_Cell& c) const {
       return LRL_Cell(G6(v1 - v2));
 }
 
-LRL_Cell LRL_Cell::operator+= (const LRL_Cell& cl) {
-   return (*this) + cl;
+LRL_Cell& LRL_Cell::operator+= (const LRL_Cell& cl) {
+   (*this) = (*this) + cl;
+   return *this;
 }
 
-LRL_Cell LRL_Cell::operator-= (const LRL_Cell& cl) {
-   return (*this) - cl;
+LRL_Cell& LRL_Cell::operator-= (const LRL_Cell& cl) {
+   *this = (*this) - cl;
+   return *this;
 }
 
 LRL_Cell operator* (const double d, const LRL_Cell& c) {

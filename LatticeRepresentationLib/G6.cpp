@@ -224,13 +224,13 @@ G6 G6::operator- (void) const {
    return *this; // unary
 }
 
-G6 G6::operator+= (const G6& g6) {
+G6& G6::operator+= (const G6& g6) {
    for (unsigned long i = 0; i < g6.size(); ++i)
       m_vec[i] += g6.m_vec[i];
    return *this;
 }
 
-G6 G6::operator-= (const G6& g6) {
+G6& G6::operator-= (const G6& g6) {
    for (unsigned long i = 0; i < g6.size(); ++i)
       m_vec[i] -= g6.m_vec[i];
    return *this;
@@ -456,61 +456,30 @@ std::vector<std::pair<std::string, std::string> > G6::ClassifyVector(const doubl
 }
 
 G6 G6::rand() {
-   G6 g6;
-
-   for (int i = 0; i < 6; ++i)
-      g6[i] = randfg(randSeed1);
-
-   g6[0] = std::fabs(g6[0]);
-   g6[1] = std::fabs(g6[1]);
-   g6[2] = std::fabs(g6[2]);
-
-   g6[3] = 0.5*std::sqrt(g6[1] * g6[2]) * g6[3];
-   g6[4] = 0.5*std::sqrt(g6[0] * g6[2]) * g6[4];
-   g6[5] = 0.5*std::sqrt(g6[1] * g6[0]) * g6[5];
-
-   const double g6Norm = g6.norm();
-   const G6 result = g6 / g6Norm;
-   return result;
+   G6 g6(LRL_Cell::rand());
+   return g6 * LRL_Cell::randomLatticeNormalizationConstantSquared / g6.norm();
 }
 
 G6 G6::randDeloneReduced() {
-   S6 vRan;
-   S6 v;
-
-   MatS6 m;
-   vRan = S6(1000.0 * rand());
-
-   while ( !Delone::IsReduced(vRan)) {
-      vRan = S6(1000.0 * rand());
-   }
-   return G6(v);
+   G6 g6(LRL_Cell::randDeloneReduced());
+   return g6 * LRL_Cell::randomLatticeNormalizationConstantSquared / g6.norm();
 }
 
 G6 G6::randDeloneUnreduced() {
-   S6 vRan;
-   S6 v;
-
-   MatS6 m;
-   vRan = S6(1000.0 * rand());
-
-   while (Delone::IsReduced(vRan)) {
-      std::cout << v << std::endl;
-      vRan = S6(1000.0 * rand());
-   }
-   return G6(vRan);
+   G6 g6(LRL_Cell::randDeloneUnreduced());
+   return g6 * LRL_Cell::randomLatticeNormalizationConstantSquared / g6.norm();
 }
 
 G6 G6::rand(const double d) {
-   return d*rand();
+   return d*rand() / LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 G6 G6::randDeloneReduced(const double d) {
-   return d*randDeloneReduced();
+   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 G6 G6::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced();
+   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstant;
 }
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 std::pair<int, std::string> G6::IdentifyNearbyBoundaries(const G6& v, const double cutoff)

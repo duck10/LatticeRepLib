@@ -201,13 +201,13 @@ D7& D7::operator*= (const double d) {
    return *this;
 }
 
-D7 D7::operator+= (const D7& d7) {
+D7& D7::operator+= (const D7& d7) {
    for (unsigned long i = 0; i < d7.size(); ++i)
       m_vec[i] += d7.m_vec[i];
    return *this;
 }
 
-D7 D7::operator-= (const D7& d7) {
+D7& D7::operator-= (const D7& d7) {
    for (unsigned long i = 0; i < d7.size(); ++i)
       m_vec[i] -= d7.m_vec[i];
    return *this;
@@ -291,51 +291,30 @@ std::vector<std::pair<std::string, std::string> > D7::ClassifyVector(const doubl
 }
 
 D7 D7::rand() {
-   G6 g6;
-   for (int i = 0; i < 6; ++i)
-      g6[i] = randfg(randSeed1);
-
-   D7 d7(g6);
-   const double randsNorm = d7.norm();
-   return(d7 / randsNorm);
+   D7 d7(LRL_Cell::rand());
+   return d7 * LRL_Cell::randomLatticeNormalizationConstantSquared / d7.norm();
 }
 
 D7 D7::randDeloneReduced() {
-   S6 vRan;
-   S6 v;
-
-   MatS6 m;
-   vRan = S6(G6::rand(1000.0));
-
-   while (!Delone::IsReduced(vRan,0.0)) {
-      vRan = S6(G6::rand(1000.0));
-   }
-   return D7(v);
+   D7 d7(LRL_Cell::randDeloneReduced());
+   return d7 * LRL_Cell::randomLatticeNormalizationConstantSquared / d7.norm();
 }
 
 D7 D7::randDeloneUnreduced() {
-   S6 vRan;
-   S6 v;
-
-   MatS6 m;
-   vRan = S6(1000.0 * rand());
-
-   while (Delone::IsReduced(vRan,0.0)) {
-      vRan = S6(1000.0 * rand());
-   }
-   return D7(v);
+   D7 d7(LRL_Cell::randDeloneUnreduced());
+   return d7 * LRL_Cell::randomLatticeNormalizationConstantSquared / d7.norm();
 }
 
 D7 D7::rand(const double d) {
-   return d*rand();
+   return d*rand() / LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 D7 D7::randDeloneReduced(const double d) {
-   return d*randDeloneReduced();
+   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 D7 D7::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced();
+   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

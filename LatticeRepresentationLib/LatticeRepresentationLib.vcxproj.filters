@@ -104,6 +104,9 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -236,6 +239,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NCDist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

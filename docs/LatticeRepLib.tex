@@ -81,20 +81,22 @@ Lattice Representation Library includes a number of classes to represent lattice
 
 \textbf{B4} – The tetrahedron of four 3-space vectors that are used in the description and manipulation of Delone reduction. They are usually described as a,b,c, d, where d is the negative sum of a,b,c. The letter “B” is chosen because this representation was originally suggested by Bravais as a way to geometrically represent the Selling reduction. The space \textbf{B\textsuperscript{4}} is a vector space with four 3-space vectors.
 
-\textbf{S6} – The six scalar used in Delone reduction. The corresponding vector space is \textbf{S\textsuperscript{6}}. They are the partially sorted set of the six dot products of the Bravais tetrahedron’s vectors. The letter “S” is chosen because this reduction is due to Selling.
+\textbf{S6} – The six scalar used in Delone reduction. The corresponding vector space is \textbf{S\textsuperscript{6}}. They are the partially sorted set of the six dot products of the Bravais tetrahedron’s vectors. The letter “S” is chosen because this reduction is due to Selling. the corresponding vector space is \textbf{R\textsuperscript{6}}.
 
-\textbf{D7} – Experimental representation of Bernstein and Andrews.
+\textbf{D7} – Experimental representation of Bernstein and Andrews. The corresponding vector space is \textbf{R\textsuperscript{7}}.
 
-\textbf{G6} – The representation described by Andrews and Bernstein, 1988. The corresponding vector space is \textbf{G\textsuperscript{6}}. The six dot products of a,b,c (with some doubled).
+\textbf{G6} – The representation described by Andrews and Bernstein, 1988. The corresponding vector space is \textbf{R\textsuperscript{6}}. The six dot products of a,b,c (with some doubled).
+
+\textbf{C3} – Experimental representation of Bernstein and Andrews. This is a simple reuse of \textbf{S6}, with each pair of ``opposite'' scalars in a single complex number. The corresponding vector space is \textbf{C\textsuperscript{3}}.
 
 
 \subsection{Basics}
 
 Each LRL lattice class includes constructors and assignment operators for conversion to each of the others. Each includes operator$<<$, and simple representation as a string is implemented by LRL\_ToString.
 
-Matrix classes corresponding to each LRL type are complete (\textbf{MatB4}, \textbf{MatG6}, \textbf{MatD7}, \textbf{MatS6}).
+Matrix classes corresponding to each LRL type are complete (\textbf{MatB4}, \textbf{MatG6}, \textbf{MatD7}, \textbf{MatS6}, \textbf{MatC3}).
 
-Interchange of crystallographic axes (without transformation) can be accomplished for each type. The appropriate 24 matrices are available in each matrix class. \textbf{B4}, \textbf{S6}, \textbf{D7}, and \textbf{G6} each have a function \textbf{GetReflection(n)} to retrieve one of the appropriate matrices. Each also has \textbf{GetReflections()} to retrieve a vector of all 24.
+Interchange of crystallographic axes (without transformation) can be accomplished for each type. The appropriate 24 matrices are available in each matrix class. \textbf{B4}, \textbf{S6}, \textbf{D7},, \textbf{C3}, and \textbf{G6} each have a function \textbf{GetReflection(n)} to retrieve one of the appropriate matrices. Each also has \textbf{GetReflections()} to retrieve a vector of all 24.
 
 \subsection{Input/Output}
 

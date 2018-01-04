@@ -69,6 +69,10 @@ B4::B4(const S6& ds) {
    (*this) = B4(LRL_Cell(ds));
 }
 
+double B4::DistanceBetween(const B4& v1, const B4& v2) {
+   return (v1 - v2).norm();
+}
+
 Vector_3 B4::operator[] (const unsigned long n) const {
    return m_vec[n];
 }
@@ -110,7 +114,7 @@ B4& B4::operator= (const LRL_Cell& cl) {
 
 B4& B4::operator= (const std::string& s)
 {
-   throw;
+   *this = B4(s);
    return *this;
 }
 
@@ -144,12 +148,13 @@ B4 B4::operator/ (const double d) const
    return dt;
 }
 
-B4 B4::operator- (void) { // unary
-   m_vec[0] = -m_vec[0];
-   m_vec[1] = -m_vec[1];
-   m_vec[2] = -m_vec[2];
-   m_vec[3] = -m_vec[3];
-   return *this;
+B4 B4::operator- (void) const { // unary
+   B4 b4;
+   b4.m_vec[0] = -m_vec[0];
+   b4.m_vec[1] = -m_vec[1];
+   b4.m_vec[2] = -m_vec[2];
+   b4.m_vec[3] = -m_vec[3];
+   return b4;
 }
 
 B4& B4::operator*= (const double d) {
@@ -193,16 +198,8 @@ B4 operator* (const double d, const B4& dt)
    return (dt*d);
 }
 
-double DistanceBetween(const B4& v1, const B4& v2) {
-   return (v1 - v2).norm();
-}
-
 double B4::norm(void) const {
    return norm(*this);
-}
-
-double B4::DistanceBetween(const B4& v1, const B4& v2) {
-   return ((v1 - v2).norm());
 }
 
 double B4::norm(const B4& dt) const {
@@ -214,52 +211,33 @@ double B4::norm(const B4& dt) const {
 }
 
 B4 B4::rand() {
-   G6 g6;
-   for (int i = 0; i < 6; ++i)
-      g6[i] = randfg(randSeed1);
-
-   const D7 d7(g6);
-   const double randsNorm = d7.norm();
-   return(d7 / randsNorm);
+   B4 b4(LRL_Cell::rand());
+   return b4 * LRL_Cell::randomLatticeNormalizationConstant / b4.norm();
 }
 
 B4 B4::randDeloneReduced() {
-   S6 vRan;
-   S6 v;
-
-   MatS6 m;
-   vRan = S6(1000.0 * rand());
-
-   while (!Delone::Reduce(vRan, m, v, 0.0) || !v.IsAllMinus()) {
-      vRan = S6(1000.0 * rand());
-   }
-   return D7(v);
+   B4 b4(LRL_Cell::randDeloneReduced());
+   return b4 * LRL_Cell::randomLatticeNormalizationConstant / b4.norm();
 }
 
 B4 B4::randDeloneUnreduced() {
-   S6 vRan;
-   S6 v;
-
-   MatS6 m;
-   vRan = S6(1000.0 * rand());
-
-   while (!Delone::Reduce(vRan, m, v, 0.0) || v.IsAllMinus()) {
-      vRan = S6(1000.0 * rand());
-   }
-   return D7(v);
+   B4 b4(LRL_Cell::randDeloneUnreduced());
+   return b4 * LRL_Cell::randomLatticeNormalizationConstant / b4.norm();
 }
 
 B4 B4::rand(const double d) {
-   return d*rand();
+   return d*rand() / LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 B4 B4::randDeloneReduced(const double d) {
-   return d*randDeloneReduced();
+   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstant;
 }
 
 B4 B4::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced();
+   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstant;
 }
+
+
 
 
 B4 B4::sort(const B4& din) {

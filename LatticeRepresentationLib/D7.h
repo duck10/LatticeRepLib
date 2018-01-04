@@ -43,8 +43,8 @@ public:
    D7& operator= (const LRL_Cell& v);
    D7& operator/= (const double d);
    D7& operator*= (const double d);
-   D7 operator+= (const D7& v);
-   D7 operator-= (const D7& v);
+   D7& operator+= (const D7& v);
+   D7& operator-= (const D7& v);
    D7 operator+ (const D7& v) const;
    D7 operator- (const D7& v) const;
    D7 operator* (const double d) const;

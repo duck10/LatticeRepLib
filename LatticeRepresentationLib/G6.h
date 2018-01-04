@@ -47,8 +47,8 @@ public:
    G6& operator= (const LRL_Cell& v);
    G6& operator/= (const double d);
    G6& operator*= (const double d);
-   G6 operator+= (const G6& v);
-   G6 operator-= (const G6& v);
+   G6& operator+= (const G6& v);
+   G6& operator-= (const G6& v);
    G6 operator+ (const G6& v) const;
    G6 operator- (const G6& v) const;
    G6 operator* (const double d) const;
