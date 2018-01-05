@@ -3,11 +3,11 @@
 
 #include "BasisBase.h"
 
-   class LRL_Cell;
-   class B4;
-   class D7;
-   class S6;
-   class G6;
+class LRL_Cell;
+class B4;
+class D7;
+class S6;
+class G6;
 
 #include <complex>
 #include <ostream>
@@ -55,7 +55,7 @@ public:
    void report() const;
    operator S6() const;
 
-   double DistanceBetween( const C3& v1, const C3& v2 );
+   double DistanceBetween(const C3& v1, const C3& v2);
    unsigned long size(void) const { return (unsigned long)(m_c.size()); }
    double norm(void) const;
    double norm(const C3& c3) const;
@@ -65,9 +65,9 @@ public:
    std::vector<std::complex<double> > GetVector(void) const;
    void SetVector(const std::vector<std::complex<double> >& v);
    typedef std::vector<std::complex<double> > C3Type;
-   std::complex<double>* data() const { return const_cast<std::complex<double>* >(&m_c[0]); }  //???????????????????????????????
+   std::complex<double>* data() const { return const_cast<std::complex<double>*>(&m_c[0]); }  //???????????????????????????????
    bool GetValid(void) const { return m_valid; }
-   void SetValid(const bool b) {m_valid = b; }
+   void SetValid(const bool b) { m_valid = b; }
 
    std::complex<double> at(const unsigned long n) const { return m_c[n]; }
 
@@ -120,6 +120,7 @@ public:
    bool IsAllMinus() const;
    static std::string GetName(void) { return "C3, Selling as complex"; }
 
+public:
    static std::vector< C3(*)(const C3&)> m_reductionFunctions;
 
 private:

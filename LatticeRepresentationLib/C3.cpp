@@ -90,24 +90,27 @@ C3::C3(const std::string& s)
 {
    VecN v = LRL_StringTools::FromString(s);
    if (v.size() == 6) {
-      C3::m_reductionFunctions = C3::GetReduceFunctions();      m_c.resize(3);
+      C3::m_reductionFunctions = C3::GetReduceFunctions();
+      m_c.resize(3);
       m_valid = true;
       m_c[0] = std::complex<double>(v[0], v[1]);
       m_c[1] = std::complex<double>(v[2], v[3]);
-      m_c[2] = std::complex<double>(v[3], v[5]);
+      m_c[2] = std::complex<double>(v[4], v[5]);
    }
 }
 
 C3::C3(const G6& v6)
    : m_valid(true)
 {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();   (*this) = S6(v6);
+   C3::m_reductionFunctions = C3::GetReduceFunctions();
+   (*this) = S6(v6);
 }
 
 C3::C3(const S6& s6)
    : m_valid(true)
 {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();   m_c.resize(3);
+   C3::m_reductionFunctions = C3::GetReduceFunctions();
+   m_c.resize(3);
    m_c[0] = std::complex<double>(s6[0], s6[3]);
    m_c[1] = std::complex<double>(s6[1], s6[4]);
    m_c[2] = std::complex<double>(s6[2], s6[5]);
@@ -117,7 +120,8 @@ C3::C3(const std::vector<double>& v)
    : m_valid(false)
 {
    if (v.size() == 6) {
-      C3::m_reductionFunctions = C3::GetReduceFunctions();      m_c.resize(3);
+      C3::m_reductionFunctions = C3::GetReduceFunctions();
+      m_c.resize(3);
       m_valid = true;
       for (unsigned long i = 0; i < C3::size(); ++i)
          m_c[i] = std::complex<double>(v[i], v[i + 3]);
