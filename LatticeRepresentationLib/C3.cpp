@@ -281,10 +281,14 @@ double C3::norm(const C3& c3) const {
 }
 
 void C3::report(void) const {
+   double norm = 0;
    for (unsigned long i = 0; i < C3::size(); ++i) {
-      std::cout << i << std::endl;
-      std::cout << m_c[i] << "  magnitude  " << std::abs(m_c[i]) << std::endl << std::endl;
+      norm += std::abs(m_c[i]) * std::abs(m_c[i]);
+      std::cout << i << "   ";
+      std::cout << m_c[i] << "  magnitude  " << std::abs(m_c[i]);
+      if (i < C3::size() - 1) std::cout << std::endl;
    }
+   std::cout << "   norm " << sqrt(norm) << std::endl << std::endl;
 }
 
 
@@ -547,17 +551,17 @@ C3 C3::Reduce3(const C3& c) {
 C3 C3::Reduce4(const C3& c) {
    C3 co;
    co.m_c.resize(3);
-   co[0] = std::complex<double>(c[0].real() + c[1].imag(), c[2].real() + c[1].imag());
-   co[2] = std::complex<double>(c[0].imag() + c[1].imag(), c[2].imag() + c[1].imag());
-   co[1] = std::complex<double>(c[1].imag() - c[1].imag(), -c[1].imag());
+   co[0] = std::complex<double>(c[0].real() + c[2].imag(), c[1].real() + c[1].imag());
+   co[2] = std::complex<double>(c[0].imag() + c[2].imag(), c[1].imag() + c[1].imag());
+   co[1] = std::complex<double>(c[2].imag() - c[2].imag(), -c[2].imag());
    return co;
 }
 
 C3 C3::Reduce5(const C3& c) {
    C3 co;
    co.m_c.resize(3);
-   co[0] = std::complex<double>(c[0].real() + c[2].real(), c[1].real() + c[1].real());
-   co[1] = std::complex<double>(c[0].imag() + c[2].real(), c[1].imag() + c[1].real());
+   co[0] = std::complex<double>(c[0].real() + c[2].real(), c[1].real() + c[2].real());
+   co[1] = std::complex<double>(c[0].imag() + c[2].real(), c[1].imag() + c[2].real());
    co[2] = std::complex<double>(-c[2].real(), c[2].imag() - c[2].real());
    return co;
 }
