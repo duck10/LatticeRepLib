@@ -48,9 +48,6 @@
     <ClInclude Include="MapBoundaryStrings2Colors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PairReporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ProcessTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>

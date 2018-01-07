@@ -6,6 +6,7 @@
 #include "G6.h"
 #include "B4.h"
 #include "LRL_Cell.h"
+#include "LRL_Cell_Degrees.h"
 #include "S6.h"
 #include "LatticeConverter.h"
 #include "LRL_MaximaTools.h"
@@ -46,7 +47,7 @@ void LatticeConverter::SetOutputMaxima(void) { m_OutputType = emaxima; }
 void LatticeConverter::SetOutputText  (void) { m_OutputType = etext; }
 
 void LatticeConverter::Output(const std::string& label, const std::string& lattice, const LRL_Cell& cell) const {
-   (m_OutputType == etext) ? TextOutput(label, lattice, cell) : MaximaOutput(label, lattice, cell.CellWithDegrees());
+   (m_OutputType == etext) ? TextOutput(label, lattice, cell) : MaximaOutput(label, lattice, LRL_Cell_Degrees(cell));
 }
 
 LRL_Cell LatticeConverter::NiggliReduceCell(const std::string& lattice, const LRL_Cell& cell) {

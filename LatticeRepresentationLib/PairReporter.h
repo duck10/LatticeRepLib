@@ -7,6 +7,9 @@ public:
    PairReporter(const std::pair<T1, T2>& p)
       : m_pair(p) {}
 
+   PairReporter(const T1& t1, T2& t2 )
+      : m_pair(std::make_pair(t1,t2)) {}
+
    friend std::ostream& operator<< (std::ostream& o, const PairReporter& pr)
    {
       o << pr.m_pair.first << " " << pr.m_pair.second << std::endl;
