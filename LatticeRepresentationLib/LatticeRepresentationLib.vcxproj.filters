@@ -107,6 +107,9 @@
     <ClCompile Include="C3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LRL_Cell_Degrees.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -242,6 +245,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PairReporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_Cell_Degrees.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

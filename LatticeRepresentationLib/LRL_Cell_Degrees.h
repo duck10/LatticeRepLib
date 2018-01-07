@@ -1,0 +1,17 @@
+#ifndef LRL_CELL_DEGREES_H
+#define LRL_CELL_DEGREES_H
+
+#include "LRL_Cell.h"
+
+class LRL_Cell_Degrees : public LRL_Cell {
+public:
+   friend std::ostream& operator<< (std::ostream& o, const LRL_Cell_Degrees& c);
+
+   LRL_Cell_Degrees(const LRL_Cell& cell);
+
+   std::vector<double> GetVector(void) const { return m_cell; }
+
+};
+
+
+#endif  // LRL_CELL_DEGREES_H

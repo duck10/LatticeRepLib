@@ -155,6 +155,7 @@
     <ClCompile Include="LatticeConverter.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
     <ClCompile Include="CellInputData.cpp" />
+    <ClCompile Include="LRL_Cell_Degrees.cpp" />
     <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="S6.cpp" />
     <ClCompile Include="S6Dist.cpp" />
@@ -192,9 +193,11 @@
     <ClInclude Include="CellInputData.h" />
     <ClInclude Include="ConstSingleton_T.h" />
     <ClInclude Include="CoordinateConversionMatrices.h" />
+    <ClInclude Include="LRL_Cell_Degrees.h" />
     <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
     <ClInclude Include="NCDist.h" />
+    <ClInclude Include="PairReporter.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6Dist.h" />
     <ClInclude Include="D7.h" />

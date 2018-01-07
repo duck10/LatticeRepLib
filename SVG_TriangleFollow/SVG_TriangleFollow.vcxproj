@@ -35,7 +35,6 @@
     <ClInclude Include="LabeledVectorBoundaries.h" />
     <ClInclude Include="LinearAxis.h" />
     <ClInclude Include="MapBoundaryStrings2Colors.h" />
-    <ClInclude Include="PairReporter.h" />
     <ClInclude Include="ProcessTriangle.h" />
     <ClInclude Include="ProgressData.h" />
     <ClInclude Include="ReadGlobalData.h" />

@@ -44,8 +44,6 @@ public:
    ~LRL_Cell(void);
 
    double Volume(void) const;
-   G6 CellWithDegrees(void) const;
-   static G6 CellWithDegrees(const LRL_Cell& c); // specialized for G6
 
    LRL_Cell& operator= (const std::string& s);
    LRL_Cell& operator= (const D7& v);
@@ -104,7 +102,7 @@ public:
 
    static double GetNormalization(void) { return randomLatticeNormalizationConstant; }
 
-private:
+protected:
    std::vector<double> m_cell;
 };
 

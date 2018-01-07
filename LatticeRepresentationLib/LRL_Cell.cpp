@@ -38,7 +38,6 @@ A class to implement some common operations for unit cells as usually
    LRL_Cell(void)                                  == default constructor
    LRL_Cell( const G6& v )                 == constructor to convert a G6 vector to unit cell
    double Volume(void)                         == return the volume of a unit cell
-   G6 LRL_Cell::CellWithDegrees            == return the unit cell as a vector with the angles as DEGREES
    double LRL_Cell::operator[](const int& n) const == return the n-th element of a cell (zero-based)
    LRL_Cell LRL_Cell::Inverse( void ) const            == compute the reciprocal cell
    G6 LRL_Cell::Cell2V6( void ) const      == return the G6 vector corresponding to a unit cell
@@ -133,7 +132,7 @@ std::vector<double> V62Cell(const G6& v) {
 // Description: constructor to convert an input G6 vector (as a vector of
 //              doubles to E3 lengths and angles. The angles are 
 //              stored as RADIANS (only). For angles as degrees, use the
-//              function CellWithDegrees to obtain a VECTOR (G6)
+//              class LRL_Cell_Degrees.
 //              with lengths and angles as DEGREES. For consistency, a
 //              "LRL_Cell" object will never contain degrees.
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -185,41 +184,6 @@ double LRL_Cell::Volume( void ) const
    return volume;
 }
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-// Name: CellWithDegrees()
-// Description: Return the E3 cell with the angles as DEGREES in an
-//              G6 vector of doubles.
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-G6 LRL_Cell::CellWithDegrees( void ) const
-{
-   G6 v;
-   v[0] = m_cell[0];
-   v[1] = m_cell[1];
-   v[2] = m_cell[2];
-   v[3] = 57.2957795130823 * m_cell[3];
-   v[4] = 57.2957795130823 * m_cell[4];
-   v[5] = 57.2957795130823 * m_cell[5];
-
-   return v;
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-// Name: CellWithDegrees()
-// Description: Return the E3 cell with the angles as DEGREES in an
-//              G6 vector of doubles.
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-G6 LRL_Cell::CellWithDegrees( const LRL_Cell& c )
-{
-   G6 v;
-   v[0] = c.m_cell[0];
-   v[1] = c.m_cell[1];
-   v[2] = c.m_cell[2];
-   v[3] = 57.2957795130823 *c.m_cell[3];
-   v[4] = 57.2957795130823 *c.m_cell[4];
-   v[5] = 57.2957795130823 *c.m_cell[5];
-
-   return v;
-}
 
 bool LRL_Cell::operator== (const LRL_Cell& cl) const {
    return m_cell == cl.m_cell;
@@ -227,7 +191,6 @@ bool LRL_Cell::operator== (const LRL_Cell& cl) const {
 bool LRL_Cell::operator!= (const LRL_Cell& cl) const {
    return !((*this) == cl);
 }
-
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 // Name: operator[]()
