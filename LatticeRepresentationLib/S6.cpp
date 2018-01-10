@@ -20,6 +20,8 @@
 #include "LRL_Vector3.h"
 
 static int randSeed1 = 19191;
+const double pi = 4.0*atan(1.0);
+const double twopi = 2.0*pi;
 
 S6::S6( void )
    : m_dim(6)
@@ -73,6 +75,7 @@ S6::S6(const LRL_Cell& c)
 {
    m_vec.resize(6);
    (*this) = G6(c);
+   m_valid = c.GetValid() && c[3] < pi && c[4] < pi && c[5] < pi && (c[3] + c[4] + c[5])< twopi;
 }
 
 S6::S6(const D7& v7)
@@ -200,13 +203,15 @@ S6& S6::operator= (const B4& v) {
 
 S6& S6::operator= (const LRL_Cell& v) {
    (*this) = G6(v);
+   m_valid = GetValid() && v.GetValid() && v[3] < pi && v[4] < pi && v[5] < pi && (v[3] + v[4] + v[5])< twopi;
    return *this;
 }
 
 S6 S6::operator- (void) const {
    S6 s6;
-   s6.m_vec = -s6.m_vec;
-   return *this; // unary
+   for (unsigned long i = 0; i < 6; ++i)
+      s6.m_vec[i] = -m_vec[i];
+   return s6; // unary
 }
 
 S6& S6::operator+= (const S6& s6) {

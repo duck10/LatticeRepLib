@@ -12,7 +12,7 @@ public:
 
    friend std::ostream& operator<< (std::ostream& o, const PairReporter& pr)
    {
-      o << pr.m_pair.first << " " << pr.m_pair.second << std::endl;
+      o << pr.m_pair.first << " " << pr.m_pair.second;
       return o;
    }
 

@@ -41,7 +41,7 @@ C3::C3(void)
 }
 
 C3::C3(const C3& c3)
-   : m_valid(true)
+   : m_valid(c3.GetValid())
 {
    C3::m_reductionFunctions = C3::GetReduceFunctions();  m_c.resize(3);
    for (unsigned long i = 0; i < 3; ++i)
@@ -53,23 +53,24 @@ C3::C3(const std::complex<double>& c1, const std::complex<double>& c2, const std
    m_c[0] = c1;
    m_c[1] = c2;
    m_c[2] = c3;
+   m_valid = true;
 }
 
 C3::C3(const LRL_Cell& c)
-   : m_valid(true)
+   : m_valid(c.GetValid())
 {
    C3::m_reductionFunctions = C3::GetReduceFunctions();  m_c.resize(3);
    (*this) = G6(c);
 }
 
 C3::C3(const D7& v7)
-   : m_valid(true)
+   : m_valid(v7.GetValid())
 {
    C3::m_reductionFunctions = C3::GetReduceFunctions();   (*this) = G6(v7);
 }
 
 C3::C3( const B4& del )
-   : m_valid(true)
+   : m_valid(del.GetValid())
 {
    C3::m_reductionFunctions = C3::GetReduceFunctions();  (*this) = S6(del);
 }
@@ -100,14 +101,14 @@ C3::C3(const std::string& s)
 }
 
 C3::C3(const G6& v6)
-   : m_valid(true)
+   : m_valid(v6.GetValid())
 {
    C3::m_reductionFunctions = C3::GetReduceFunctions();
    (*this) = S6(v6);
 }
 
 C3::C3(const S6& s6)
-   : m_valid(true)
+   : m_valid(s6.GetValid())
 {
    C3::m_reductionFunctions = C3::GetReduceFunctions();
    m_c.resize(3);

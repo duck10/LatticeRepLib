@@ -76,6 +76,7 @@ public:
    double* data() const { return const_cast<double*>(m_cell.data()); }
 
    void SetVector(const std::vector<double>& v) { m_cell = v; }
+   bool GetValid(void) const { return m_valid; }
    void SetValid(const bool b) { b; };
    double at(const unsigned long n) const { return (*this)[n]; }
 
@@ -104,6 +105,7 @@ public:
 
 protected:
    std::vector<double> m_cell;
+   bool m_valid;
 };
 
 #endif // LRL_CELL_H
