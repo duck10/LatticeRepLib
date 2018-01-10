@@ -9,7 +9,6 @@
 #include <sstream>
 #include <string>
 
-
 #include "LRL_Cell.h"
 #include "B4.h"
 #include "D7.h"
@@ -40,7 +39,6 @@ A class to implement some common operations for unit cells as usually
    double Volume(void)                         == return the volume of a unit cell
    double LRL_Cell::operator[](const int& n) const == return the n-th element of a cell (zero-based)
    LRL_Cell LRL_Cell::Inverse( void ) const            == compute the reciprocal cell
-   G6 LRL_Cell::Cell2V6( void ) const      == return the G6 vector corresponding to a unit cell
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 */
 
@@ -50,25 +48,34 @@ A class to implement some common operations for unit cells as usually
 // Description: default constructor
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 LRL_Cell::LRL_Cell(void)
+   : m_valid(false)
 {
    m_cell.resize(6);
 }
 
 LRL_Cell::LRL_Cell(const LRL_Cell& c)
-: m_cell(c.m_cell)
+   : m_cell(c.m_cell)
+   , m_valid(c.m_valid)
 {
 }
 
+const double pi = 4.0*atan(1.0);
+const double twopi = 2.0*pi;
+
 LRL_Cell::LRL_Cell(const std::string& s)
+   : m_valid(true)
 {
    m_cell = LRL_StringTools::FromString(s);
+   m_valid = m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3]+m_cell[4]+m_cell[5])< twopi;
+
    for (unsigned long i = 3; i < 6; ++i)
       m_cell[i] *= 4.0*atan(1.0) / 180.0;
 }
 
 LRL_Cell::LRL_Cell(const S6& ds)
 {
-   (*this) = G6(ds);
+   *this = G6(ds);
+   m_valid = ds.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
 }
 
 LRL_Cell::LRL_Cell(const B4& dt)
@@ -100,31 +107,9 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    m_cell[3] = alpha / 57.2957795130823;
    m_cell[4] = beta / 57.2957795130823;
    m_cell[5] = gamma / 57.2957795130823;
-}
-
-std::vector<double> V62Cell(const G6& v) {
-   std::vector<double> vd(6);
-   if (v.norm() < 1.0E-10)
-      return LRL_Cell(0, 0, 0, 0, 0, 0).GetVector();
-   else {
-      vd[0] = sqrt(v[0]);
-      vd[1] = sqrt(v[1]);
-      vd[2] = sqrt(v[2]);
-
-      const double cosalpha(0.5*v[3] / (vd[1] * vd[2]));
-      const double cosbeta(0.5*v[4] / (vd[0] * vd[2]));
-      const double cosgamma(0.5*v[5] / (vd[0] * vd[1]));
-      const double sinalpha(sqrt(std::max(0.0, 1.0 - cosalpha*cosalpha)));
-      const double sinbeta(sqrt(std::max(0.0, 1.0 - cosbeta *cosbeta)));
-      const double singamma(sqrt(std::max(0.0, 1.0 - cosgamma*cosgamma)));
-
-      // compute the vd angles in radians
-      vd[3] = atan2(sinalpha, cosalpha);
-      vd[4] = atan2(sinbeta, cosbeta);
-      vd[5] = atan2(singamma, cosgamma);
-
-      return vd;
-   }
+   const double lowerlimit = 0.001;
+   m_valid = a > lowerlimit && b > lowerlimit && c > lowerlimit && alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit
+      && alpha < 179.99 && beta < 179.99 && gamma < 179.99 && (alpha + beta + gamma)< twopi;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -136,12 +121,43 @@ std::vector<double> V62Cell(const G6& v) {
 //              with lengths and angles as DEGREES. For consistency, a
 //              "LRL_Cell" object will never contain degrees.
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-LRL_Cell::LRL_Cell( const G6& v )
+LRL_Cell::LRL_Cell(const G6& g6)
 {
-   m_cell = V62Cell(v);
+   m_cell.resize(6);
+   const double lowerlimit = 0.001;
+   if ( (!g6.GetValid()) || g6.norm() < 1.0E-10 || g6[0] <= lowerlimit || g6[1] <= lowerlimit || g6[2] <= lowerlimit) {
+      *this = LRL_Cell(0, 0, 0, 0, 0, 0);
+      return;
+   }
+   else {
+      m_cell[0] = sqrt(g6[0]);
+      m_cell[1] = sqrt(g6[1]) ;
+      m_cell[2] = sqrt(g6[2]);
+
+      const double cosalpha(0.5*g6[3] / (m_cell[1] * m_cell[2]));
+      const double cosbeta(0.5*g6[4] /  (m_cell[0] * m_cell[2]));
+      const double cosgamma(0.5*g6[5] / (m_cell[0] * m_cell[1]));
+
+      if (std::abs(cosalpha) >= 0.9999 || std::abs(cosbeta) >= 0.9999 || std::abs(cosgamma) >= 0.9999) {
+         *this = LRL_Cell(0, 0, 0, 0, 0, 0);
+         return;
+      }
+      const double sinalpha(sqrt(1.0 - cosalpha * cosalpha));
+      const double sinbeta(sqrt(1.0 - cosbeta * cosbeta));
+      const double singamma(sqrt(1.0 - cosgamma * cosgamma));
+
+      // compute the v angles in radians
+      m_cell[3] = atan2(sinalpha, cosalpha);
+      m_cell[4] = atan2(sinbeta, cosbeta);
+      m_cell[5] = atan2(singamma, cosgamma);
+      m_valid = m_cell[0] > lowerlimit && m_cell[1] > lowerlimit && m_cell[2] > lowerlimit && 
+         m_cell[3] > lowerlimit && m_cell[4] > lowerlimit && m_cell[5] > lowerlimit &&
+         m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
+   }
 }
 
 LRL_Cell::LRL_Cell(const D7& v7)
+   : m_valid(v7.GetValid())
 {
    (*this) = G6(v7);
 }
@@ -414,30 +430,31 @@ LRL_Cell operator* (const double d, const LRL_Cell& c) {
 }
 
 LRL_Cell& LRL_Cell::operator= (const D7& v) {
-   m_cell = LRL_Cell(v).m_cell;
+   *this = LRL_Cell(v);
    return *this;
 }
 LRL_Cell& LRL_Cell::operator= (const S6& v) {
-   m_cell =LRL_Cell(v).m_cell;
+   *this = LRL_Cell(v);
    return *this;
 }
 LRL_Cell& LRL_Cell::operator= (const B4& v) {
-   m_cell = LRL_Cell(v).m_cell;
+   *this = LRL_Cell(v);
    return *this;
 }
 
 LRL_Cell& LRL_Cell::operator= (const LRL_Cell& v) {
    m_cell = v.m_cell;
+   m_valid = v.m_valid;
    return *this;
 }
 
 LRL_Cell& LRL_Cell::operator= (const G6& v) {
-   m_cell = V62Cell(v);
+   *this = LRL_Cell(v);
    return *this;
 }
 
 LRL_Cell& LRL_Cell::operator= (const std::string& s) {
-   (*this) = LRL_Cell(s);
+   *this = LRL_Cell(s);
    return *this;
 }
 

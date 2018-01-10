@@ -22,26 +22,31 @@ std::ostream& operator<< (std::ostream& o, const B4& dt) {
 
 B4::B4(void) {
    m_vec.resize(4);
+   m_valid = false;
 }
 
 B4::B4(const B4& dt) 
    : m_vec(dt.m_vec)
+   , m_valid(dt.GetValid())
 {
    m_vec.resize(4);
 }
 
 B4::B4(const G6& v6) {
    m_vec.resize(4);
+   m_valid = v6.GetValid();
    (*this) = B4(LRL_Cell(v6));
 }
 
 B4::B4(const D7& v7) {
    m_vec.resize(4);
+   m_valid = v7.GetValid();
    (*this) = B4(LRL_Cell(v7));
 }
 
 B4::B4(const std::string& v7) {
    m_vec.resize(4);
+   m_valid = false;
    throw;
 }
 
@@ -51,9 +56,11 @@ B4::B4(const Vector_3& v0, const Vector_3& v1, const Vector_3& v2, const Vector_
    m_vec[1] = v1;
    m_vec[2] = v2;
    m_vec[3] = v3;
+   m_valid = true;
 }
 
 B4::B4(const LRL_Cell& c) {
+   m_valid = c.GetValid();
    static const double rad = 180.0 / (4 * atan(1.0));
    m_vec.resize(4);
    const Matrix_3x3 amat = Matrix_3x3::Cart(c[0], c[1], c[2], c[3] * rad, c[4] * rad, c[5] * rad);
@@ -65,6 +72,7 @@ B4::B4(const LRL_Cell& c) {
 }
 
 B4::B4(const S6& ds) {
+   m_valid = ds.GetValid();
    m_vec.resize(4);
    (*this) = B4(LRL_Cell(ds));
 }

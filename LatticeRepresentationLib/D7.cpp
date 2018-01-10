@@ -28,7 +28,7 @@ static int randSeed1 = 19191;
 D7::D7( void ) {
    m_vec.resize(7);
    m_dim = 7;
-   m_valid = true;
+   m_valid = false;
 }
 
 D7::D7( const D7& v )
@@ -57,20 +57,20 @@ D7::D7(const LRL_Cell& c) {
    m_vec.resize(7);
    (*this) = G6(c);
    m_dim = 7;
-   m_valid = true;
+   m_valid = c.GetValid();
 }
 
 D7::D7(const S6& ds) {
    m_dim = 7;
    (*this) = G6(ds);
-   m_valid = true;
+   m_valid = ds.GetValid();
 }
 
 D7::D7(const B4& dt) {
    m_vec.resize(7);
    m_dim = 7;
    (*this) = G6(dt);
-   m_valid = true;
+   m_valid = dt.GetValid();
 }
 
 
@@ -106,7 +106,7 @@ D7::D7(const G6& v6) {
    d5 = g2 + g3 + g4;  // (b+c).(b+c)
    s6 = g1 + g3 + g5;  // (a+c).(a+c)
    d7 = g1 + g2 + g6; // (a+b).(a+b)
-   m_valid = true;
+   m_valid = v6.GetValid();
    m_dim = 7;
 }
 
