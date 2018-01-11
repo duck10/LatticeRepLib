@@ -90,7 +90,7 @@ public:
 
    bool IsRhomobhedralAsHex(void) const;
    static bool IsRhomobhedralAsHex(const LRL_Cell& c);
-   static bool LRL_Cell::IsRhomobhedralAsHex(const G6& v);
+   static bool IsRhomobhedralAsHex(const G6& v);
 
    static LRL_Cell rand();
    static LRL_Cell randDeloneReduced();
