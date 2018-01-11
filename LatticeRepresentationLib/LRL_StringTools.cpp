@@ -4,6 +4,7 @@
 #include "LRL_StringTools.h"
 
 #include <algorithm>
+#include <cfloat>
 #include <iostream>
 #include <iterator>
 #include <sstream>

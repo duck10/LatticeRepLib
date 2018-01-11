@@ -43,6 +43,7 @@ class StoreResults {
 public:
    StoreResults(const unsigned long nMax = 1)
       : m_nmax(nMax)
+      , m_keyName("Key")
    {}
 
    unsigned long size(void) const { return (unsigned long)(m_tree.size()); }
@@ -136,7 +137,7 @@ public:
    void ShowItem(const TKEY& key) const {
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it = m_tree.find(key);
 
-      std::cout << "Key= " << key << "    (total=" << (*it).second.m_countPerKey << ")" << std::endl;
+      std::cout << m_keyName << "= " << key << "    (total=" << (*it).second.m_countPerKey << ")" << std::endl;
       for (unsigned long k = 0; k < (*it).second.m_sampleData.size(); ++k) {
          std::cout << (*it).second.m_sampleData[k] << std::endl;
       }
@@ -155,7 +156,7 @@ public:
       for (unsigned long i = 0; i < keylist.size(); ++i) {
          if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
          it = m_tree.find(keylist[i]);
-         std::cout << "item " << i << "  key = " << keylist[i] << "  count=" << (*it).second.GetCount() << std::endl;
+         std::cout << "item " << i << "  " << m_keyName << "= " << keylist[i] << "  count=" << (*it).second.GetCount() << std::endl;
 
          if (m_nmax > 0) {
             for (unsigned long k = 0; k < (*it).second.m_sampleData.size(); ++k) {
@@ -182,7 +183,7 @@ public:
 
       for (unsigned long i = 0; i < indexToSort.size(); ++i) {
          if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
-         std::cout << "item " << i << "    (total=" << indexToSort[i].first << ")" << "  key = " << indexToSort[i].second.m_key << std::endl;
+         std::cout << "item " << i << "    (total=" << indexToSort[i].first << ")" << "  " << m_keyName << " = " << indexToSort[i].second.m_key << std::endl;
          it = m_tree.find(indexToSort[i].second.m_key);
 
          if (m_nmax > 0) {
@@ -194,7 +195,7 @@ public:
          }
       }
 
-      if (!indexToSort.empty()) std::cout << "item   count   key" << std::endl;
+      if (!indexToSort.empty()) std::cout << "item   count   " << m_keyName << std::endl;
       for (unsigned long i = 0; i < indexToSort.size(); ++i)
          if (indexToSort[i].first > 0) std::cout << i << "      " << indexToSort[i].first << "       " << indexToSort[i].second.m_key << std::endl;
       std::cout << m_footer << std::endl;
@@ -209,6 +210,8 @@ public:
    void SetFooter(const std::string& s) {
       m_footer = s;
    }
+
+   void SetKeyName(const std::string& s) { m_keyName = s; }
 
    void AppendTitle(const std::string s) { m_title += " " + s; }
 
@@ -248,6 +251,7 @@ private:
    std::string m_title;
    std::string m_footer;
    std::string m_notes;
+   std::string m_keyName;
 };
 
 #endif
