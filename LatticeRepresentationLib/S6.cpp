@@ -9,6 +9,7 @@
 
 #include "LRL_Cell.h"
 #include "Delone.h"
+#include "C3.h"
 #include "B4.h"
 #include "D7.h"
 #include "G6.h"
@@ -35,14 +36,26 @@ S6::S6( void )
    
 }
 
-S6::S6( const S6& v ) 
+S6::S6(const S6& v)
    : m_dim(6)
    , m_valid(true)
    , m_vec(VecN(6))
 {
-
    m_vec = v.m_vec;
    m_valid = v.m_valid;
+}
+S6::S6(const C3& c3)
+   : m_dim(6)
+   , m_valid(true)
+   , m_vec(VecN(6))
+{
+   m_vec[0] = c3[0].real();
+   m_vec[1] = c3[0].imag();
+   m_vec[2] = c3[1].real();
+   m_vec[3] = c3[1].imag();
+   m_vec[4] = c3[2].real();
+   m_vec[5] = c3[2].imag();
+   m_valid = c3.GetValid();
 }
 
 S6::S6(const double v[6])
@@ -189,6 +202,12 @@ S6& S6::operator= (const std::string& s)
    (*this) = S6(s);
    return *this;
 }
+
+S6& S6::operator= (const C3& c3) {
+   *this = S6(c3);
+   return *this;
+}
+
 S6& S6::operator= (const G6& v) {
    *this = S6(v);
    return *this;

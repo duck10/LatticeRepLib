@@ -8,6 +8,7 @@
 #include <string>
 
 #include "LRL_Cell.h"
+#include "C3.h"
 #include "D7.h"
 #include "D7_BoundaryList.h"
 #include "D7_ClassifySubboundaries.h"
@@ -58,6 +59,12 @@ D7::D7(const LRL_Cell& c) {
    (*this) = G6(c);
    m_dim = 7;
    m_valid = c.GetValid();
+}
+
+D7::D7(const C3& c3) {
+   m_dim = 7;
+   (*this) = S6(c3);
+   m_valid = c3.GetValid();
 }
 
 D7::D7(const S6& ds) {
@@ -176,6 +183,12 @@ D7& D7::operator= (const G6& v6)
 D7& D7::operator= (const S6& v)
 {
    (*this) = G6(v);
+   return *this;
+}
+
+D7& D7::operator= (const C3& c3)
+{
+   (*this) = S6(c3);
    return *this;
 }
 

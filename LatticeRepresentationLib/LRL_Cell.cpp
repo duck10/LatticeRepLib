@@ -10,6 +10,7 @@
 #include <string>
 
 #include "LRL_Cell.h"
+#include "C3.h"
 #include "B4.h"
 #include "D7.h"
 #include "Delone.h"
@@ -76,6 +77,12 @@ LRL_Cell::LRL_Cell(const S6& ds)
 {
    *this = G6(ds);
    m_valid = ds.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
+}
+
+LRL_Cell::LRL_Cell(const C3& c3)
+{
+   *this = S6(c3);
+   m_valid = c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
 }
 
 LRL_Cell::LRL_Cell(const B4& dt)
@@ -418,10 +425,17 @@ LRL_Cell& LRL_Cell::operator= (const D7& v) {
    *this = LRL_Cell(v);
    return *this;
 }
+
+LRL_Cell& LRL_Cell::operator= (const C3& c3) {
+   *this = LRL_Cell(c3);
+   return *this;
+}
+
 LRL_Cell& LRL_Cell::operator= (const S6& v) {
    *this = LRL_Cell(v);
    return *this;
 }
+
 LRL_Cell& LRL_Cell::operator= (const B4& v) {
    *this = LRL_Cell(v);
    return *this;

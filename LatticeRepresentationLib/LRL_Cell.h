@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+class C3;
 class S6;
 class D7;
 class B4;
@@ -39,7 +40,8 @@ public:
       const double alpha, const double beta, const double gamma);
    LRL_Cell(const G6& v6); // specialized for G6
    LRL_Cell(const D7& v7); // specialized for d7
-   LRL_Cell(const S6& dt); // specialized for d7
+   LRL_Cell(const S6& dt); // specialized for S6
+   LRL_Cell(const C3& c3); // specialized for C3
    LRL_Cell(const B4& ds); // specialized for Delone tetrahedron
    ~LRL_Cell(void);
 
@@ -47,6 +49,7 @@ public:
 
    LRL_Cell& operator= (const std::string& s);
    LRL_Cell& operator= (const D7& v);
+   LRL_Cell& operator= (const C3& c3);
    LRL_Cell& operator= (const S6& v);
    LRL_Cell& operator= (const B4& v);
    LRL_Cell& operator= (const LRL_Cell& v);

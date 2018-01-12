@@ -95,6 +95,12 @@ G6::G6(const S6& ds) {
    m_valid = g1 > 0.001 && g2 > 0.001 && g3 > 0.001 && ds.GetValid();
 }
 
+G6::G6(const C3& c3) {
+   m_dim = 6;
+   m_vec.resize(6);
+   *this = S6(c3);
+}
+
 G6::G6(const B4& dt) {
    m_vec.resize(6);
    m_dim = 6;
@@ -185,6 +191,11 @@ G6& G6::operator= (const S6& v)
    return *this;
 }
 
+G6& G6::operator= (const C3& c3)
+{
+   (*this) = S6(c3);
+   return *this;
+}
 
 G6& G6::operator= (const B4& v)
 {

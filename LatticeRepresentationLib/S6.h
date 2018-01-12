@@ -6,6 +6,7 @@
 #include "VecN.h"
 
 class LRL_Cell;
+class C3;
 class D7;
 class B4;
 class G6;
@@ -23,6 +24,7 @@ public:
    S6(const G6& v6);
    S6(const double v[6]);
    S6(const S6& s6);
+   S6(const C3& c3);
    S6(const LRL_Cell& c);
    S6(const VecN& v);
    S6(const D7& v7);
@@ -35,6 +37,7 @@ public:
    S6& operator= (const S6& v);
    S6& operator= (const std::string& s);
    S6& operator= (const G6& v);
+   S6& operator= (const C3& c3);
    S6& operator= (const D7& v);
    S6& operator= (const B4& v);
    S6& operator= (const LRL_Cell& v);

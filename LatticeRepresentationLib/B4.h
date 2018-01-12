@@ -7,6 +7,7 @@
 #include <vector>
 
    class LRL_Cell;
+   class C3;
    class D7;
    class S6;
    class G6;
@@ -21,6 +22,7 @@ public:
    friend B4 operator* (const double d, const B4& dt);
 
    B4(void);
+   B4(const C3& v6);
    B4(const B4& dt);
    B4(const G6& v6);
    B4(const S6& c);
@@ -33,6 +35,7 @@ public:
    B4& operator= (const B4& v);
    B4& operator= (const std::string& s);
    B4& operator= (const G6& v);
+   B4& operator= (const C3& c3);
    B4& operator= (const S6& v);
    B4& operator= (const D7& v);
    B4& operator= (const LRL_Cell& v);

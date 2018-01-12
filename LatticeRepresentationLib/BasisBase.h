@@ -5,6 +5,7 @@
 #include <vector>
 
 class LRL_Cell;
+class C3;
 class S6;
 class D7;
 class B4;
@@ -24,6 +25,7 @@ public:
    virtual T& operator= (const B4& v) = 0;
    virtual T& operator= (const LRL_Cell& v) = 0;
    virtual T& operator= (const G6& v) = 0;
+   virtual T& operator= (const C3& v) = 0;
 
    virtual T& operator/= (const double d) = 0;
    virtual T& operator*= (const double d) = 0;
