@@ -304,43 +304,27 @@ void SwapRealImag(std::complex<double>& c) {
 }
 
 C3 C3::rand() {
-   G6 g6;
-   for (int i = 0; i < 6; ++i)
-      g6[i] = randfg(randSeed1);
-
-   const C3 C3(g6);
-   const double randsNorm = g6.norm();
-   return(C3 / randsNorm);
+   return S6::rand();
 }
 
 C3 C3::randDeloneReduced() {
-   C3 vRan = C3(1000.0 * rand());
-
-   while (!Delone::IsReduced(S6(vRan))) {
-      vRan = 1000.0 * C3::rand();
-   }
-   return vRan;
+   return S6::randDeloneReduced();
 }
 
 C3 C3::randDeloneUnreduced() {
-   C3 vRan = rand()*1000.0;
-
-   while (Delone::IsReduced(S6(vRan))) {
-      vRan = 1000.0*C3::rand();
-   }
-   return vRan;
+   return S6::randDeloneUnreduced();
 }
 
 C3 C3::rand(const double d) {
-   return d*rand();
+   return d*rand() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 C3 C3::randDeloneReduced(const double d) {
-   return d*randDeloneReduced();
+   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 C3 C3::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced();
+   return d*randDeloneUnreduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 C3 C3::Refl1(const C3& c) {
