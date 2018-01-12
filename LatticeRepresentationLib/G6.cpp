@@ -460,30 +460,27 @@ std::vector<std::pair<std::string, std::string> > G6::ClassifyVector(const doubl
 }
 
 G6 G6::rand() {
-   G6 g6(LRL_Cell::rand());
-   return g6 * LRL_Cell::randomLatticeNormalizationConstantSquared / g6.norm();
+   return S6::rand();
 }
 
 G6 G6::randDeloneReduced() {
-   G6 g6(LRL_Cell::randDeloneReduced());
-   return g6 * LRL_Cell::randomLatticeNormalizationConstantSquared / g6.norm();
+   return S6::randDeloneReduced();
 }
 
 G6 G6::randDeloneUnreduced() {
-   G6 g6(LRL_Cell::randDeloneUnreduced());
-   return g6 * LRL_Cell::randomLatticeNormalizationConstantSquared / g6.norm();
+   return S6::randDeloneUnreduced();
 }
 
 G6 G6::rand(const double d) {
-   return d*rand() / LRL_Cell::randomLatticeNormalizationConstant;
+   return d*rand() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 G6 G6::randDeloneReduced(const double d) {
-   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstant;
+   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 G6 G6::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstant;
+   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 std::pair<int, std::string> G6::IdentifyNearbyBoundaries(const G6& v, const double cutoff)

@@ -219,30 +219,27 @@ double B4::norm(const B4& dt) const {
 }
 
 B4 B4::rand() {
-   B4 b4(LRL_Cell::rand());
-   return b4 * LRL_Cell::randomLatticeNormalizationConstant / b4.norm();
+   return S6::rand();
 }
 
 B4 B4::randDeloneReduced() {
-   B4 b4(LRL_Cell::randDeloneReduced());
-   return b4 * LRL_Cell::randomLatticeNormalizationConstant / b4.norm();
+   return S6::randDeloneReduced();
 }
 
 B4 B4::randDeloneUnreduced() {
-   B4 b4(LRL_Cell::randDeloneUnreduced());
-   return b4 * LRL_Cell::randomLatticeNormalizationConstant / b4.norm();
+   return S6::randDeloneUnreduced();
 }
 
 B4 B4::rand(const double d) {
-   return d*rand() / LRL_Cell::randomLatticeNormalizationConstant;
+   return d*rand() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 B4 B4::randDeloneReduced(const double d) {
-   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstant;
+   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 B4 B4::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstant;
+   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 

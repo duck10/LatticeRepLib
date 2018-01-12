@@ -291,30 +291,27 @@ std::vector<std::pair<std::string, std::string> > D7::ClassifyVector(const doubl
 }
 
 D7 D7::rand() {
-   D7 d7(LRL_Cell::rand());
-   return d7 * LRL_Cell::randomLatticeNormalizationConstantSquared / d7.norm();
+   return S6::rand();
 }
 
 D7 D7::randDeloneReduced() {
-   D7 d7(LRL_Cell::randDeloneReduced());
-   return d7 * LRL_Cell::randomLatticeNormalizationConstantSquared / d7.norm();
+   return S6::randDeloneReduced();
 }
 
 D7 D7::randDeloneUnreduced() {
-   D7 d7(LRL_Cell::randDeloneUnreduced());
-   return d7 * LRL_Cell::randomLatticeNormalizationConstantSquared / d7.norm();
+   return S6::randDeloneUnreduced();
 }
 
 D7 D7::rand(const double d) {
-   return d*rand() / LRL_Cell::randomLatticeNormalizationConstant;
+   return d*rand() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 D7 D7::randDeloneReduced(const double d) {
-   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstant;
+   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 D7 D7::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstant;
+   return d*randDeloneUnreduced( )/ LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

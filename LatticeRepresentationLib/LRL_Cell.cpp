@@ -313,22 +313,7 @@ bool LRL_Cell::IsRhomobhedralAsHex( void ) const {
 static int iseed;
 
 LRL_Cell LRL_Cell::rand() {
-   G6 g6;
-
-   for (int i = 0; i < 6; ++i)
-      g6[i] = randfg(iseed);
-
-   g6[0] = std::fabs(g6[0]);
-   g6[1] = std::fabs(g6[1]);
-   g6[2] = std::fabs(g6[2]);
-
-   g6[3] = 0.5*std::sqrt(g6[1] * g6[2]) * g6[3];
-   g6[4] = 0.5*std::sqrt(g6[0] * g6[2]) * g6[4];
-   g6[5] = 0.5*std::sqrt(g6[1] * g6[0]) * g6[5];
-
-   const double g6Norm = g6.norm();
-   const LRL_Cell result = LRL_Cell(g6);
-   return randomLatticeNormalizationConstant * result / maxNC(result[0],result[1],result[2]);
+   return S6::rand();
 }
 
 LRL_Cell LRL_Cell::randDeloneReduced() {//LRL_Cell::randomLatticeNormalizationConstant
