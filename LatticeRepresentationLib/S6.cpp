@@ -318,8 +318,8 @@ S6 S6::rand(const double d) {
 S6 S6::randDeloneReduced() {
    S6 s6;
    for (unsigned long i = 0; i < 6; ++i)
-      s6[i] = -rhrand.urand();
-   return s6 * LRL_Cell::randomLatticeNormalizationConstantSquared;
+      s6[i] = -rhrand.urand() * LRL_Cell::randomLatticeNormalizationConstantSquared;
+   return s6;
 }
 
 S6 S6::randDeloneUnreduced() {
@@ -329,7 +329,7 @@ S6 S6::randDeloneUnreduced() {
 }
 
 S6 S6::randDeloneReduced(const double d) {
-   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;;
+   return d*randDeloneReduced( ) / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 S6 S6::randDeloneUnreduced(const double d) {
