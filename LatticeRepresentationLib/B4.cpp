@@ -3,11 +3,12 @@
 #include "stdafx.h"
 
 #include "LRL_Cell.h"
-#include "S6.h"
 #include "Delone.h"
+#include "C3.h"
 #include "B4.h"
 #include "G6.h"
 #include "D7.h"
+#include "S6.h"
 #include "MatS6.h"
 #include "LRL_RandTools.h"
 #include "LRL_Vector3.h"
@@ -36,6 +37,12 @@ B4::B4(const G6& v6) {
    m_vec.resize(4);
    m_valid = v6.GetValid();
    (*this) = B4(LRL_Cell(v6));
+}
+
+B4::B4(const C3& c3) {
+   m_vec.resize(4);
+   m_valid = c3.GetValid();
+   (*this) = S6(c3);
 }
 
 B4::B4(const D7& v7) {
@@ -99,6 +106,12 @@ B4& B4::operator= (const B4& dt)
 B4& B4::operator= (const S6& s6) {
    m_vec.resize(4);
    *this = B4(s6);
+   return *this;
+}
+
+B4& B4::operator= (const C3& c3) {
+   m_vec.resize(4);
+   *this = B4(S6(c3));
    return *this;
 }
 

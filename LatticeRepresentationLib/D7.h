@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 class LRL_Cell;
+class C3;
 class S6;
 class B4;
 class G6;
@@ -29,6 +30,7 @@ public:
    D7( const G6& v );
    D7(const LRL_Cell& c);
    D7( const VecN& v );
+   D7(const C3& c3);
    D7(const S6& ds);
    D7(const B4& dt);
    D7( const std::string& s );
@@ -38,6 +40,7 @@ public:
    D7& operator= (const D7& v);
    D7& operator= (const std::string& s);
    D7& operator= (const G6& v);
+   D7& operator= (const C3& c3);
    D7& operator= (const S6& v);
    D7& operator= (const B4& v);
    D7& operator= (const LRL_Cell& v);

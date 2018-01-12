@@ -14,6 +14,7 @@
 #include "VecN.h"
 
 class LRL_Cell;
+class C3;
 class S6;
 class D7;
 class B4;
@@ -34,6 +35,7 @@ public:
    G6(const LRL_Cell& c);
    G6(const VecN& v);
    G6(const S6& ds);
+   G6(const C3& c3);
    G6(const B4& dt);
    G6(const std::string& s);
    G6(const std::vector<double>& v);
@@ -43,6 +45,7 @@ public:
    G6& operator= (const std::string& s);
    G6& operator= (const D7& v);
    G6& operator= (const S6& v);
+   G6& operator= (const C3& c3);
    G6& operator= (const B4& v);
    G6& operator= (const LRL_Cell& v);
    G6& operator/= (const double d);
