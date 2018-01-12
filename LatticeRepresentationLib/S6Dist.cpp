@@ -330,644 +330,113 @@ std::vector<std::pair<MatS6, MatS6> > S6Dist::SetunreductionReductionMatricesFro
 }
 
 std::vector<std::pair<MatS6, MatS6> > S6Dist::SetUnreductionMatrices() {
-   std::vector<std::pair<MatS6, MatS6> > vUnRed;
-
-   // For unreducing scalar 11
-   vUnRed.push_back(std::make_pair(MatS6(" -1 0 0 0 0 0    1 1 0 0 0 0    1 0 0 0 1 0 -1 0 0 1 0 0    1 0 1 0 0 0    1 0 0 0 0 1"),
-
-      // For unreducing scalar 12
-      MatS6(" -1 0 0 0 0 0    1 0 0 0 0 1    1 0 1 0 0 0 -1 0 0 1 0 0    1 0 0 0 1 0    1 1 0 0 0 0")));
-
-   // For unreducing scalar 21
-   vUnRed.push_back(std::make_pair(MatS6("1 1 0 0 0 0    0 -1 0 0 0 0    0 1 0 1 0 0    0 1 1 0 0 0    0 -1 0 0 1 0    0 1 0 0 0 1"),
-
-      // For unreducing scalar 22
-      MatS6("0 1 0 0 0 1    0 -1 0 0 0 0    0 1 1 0 0 0    0 1 0 1 0 0    0 -1 0 0 1 0    1 1 0 0 0 0")));
-
-   // For unreducing scalar 31
-   vUnRed.push_back(std::make_pair(MatS6("1 0 1 0 0 0    0 0 1 1 0 0    0 0 -1 0 0 0    0 1 1 0 0 0    0 0 1 0 1 0    0 0 -1 0 0 1"),
-
-      // For unreducing scalar 32
-      MatS6("0 0 1 0 1 0    0 1 1 0 0 0    0 0 -1 0 0 0    0 0 1 1 0 0    1 0 1 0 0 0    0 0 -1 0 0 1")));
-
-   // For unreducing scalar 41
-   vUnRed.push_back(std::make_pair(MatS6("1 0 0 -1 0 0    0 0 1 1 0 0    0 1 0 1 0 0    0 0 0 -1 0 0    0 0 0 1 1 0    0 0 0 1 0 1"),
-
-      // For unreducing scalar 42
-      MatS6("1 0 0 -1 0 0    0 1 0 1 0 0    0 0 1 1 0 0    0 0 0 -1 0 0    0 0 0 1 0 1    0 0 0 1 1 0")));
-
-   // For unreducing scalar 51
-   vUnRed.push_back(std::make_pair(MatS6("0 0 1 0 1 0    0 1 0 0 -1 0    1 0 0 0 1 0    0 0 0 1 1 0    0 0 0 0 -1 0    0 0 0 0 1 1"),
-
-      // For unreducing scalar 52
-      MatS6("1 0 0 0 1 0    0 1 0 0 -1 0    0 0 1 0 1 0    0 0 0 0 1 1    0 0 0 0 -1 0    0 0 0 1 1 0")));
-
-   // For unreducing scalar 61
-   vUnRed.push_back(std::make_pair(MatS6("0 1 0 0 0 1    1 0 0 0 0 1    0 0 1 0 0 -1    0 0 0 1 0 1    0 0 0 0 1 1    0 0 0 0 0 -1"),
-
-      // For unreducing scalar 62
-      MatS6("1 0 0 0 0 1    0 1 0 0 0 1    0 0 1 0 0 -1    0 0 0 0 1 1    0 0 0 1 0 1    0 0 0 0 0 -1")));
-
-   return vUnRed;
+   return S6::SetUnreductionMatrices();
 }
 
 S6 S6Dist::Reduce11(const S6& din) {
-   // reduce scale 1 non-zero
-   //   vRed.push_back(std::make_pair(Inverse(MatS6("-1 0 0 0 0 0   1 1 0 0  0 0   1 0 0 0 1 0   -1 0 0 1 0 0   1 0 1 0 0 0   1 0 0 0 0 1")),
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = -s1;
-   ss2 = s1 + s2;
-   ss3 = s1 + s5;
-   ss4 = -s1 + s4;
-   ss5 = s1 + s3;
-   ss6 = s1 + s6;
-   return d;
+   return S6::Reduce11(din);
 }
 
 S6 S6Dist::Reduce12(const S6& din) {
-   // reduce scale 1 non-zero
-   //                                 Inverse(MatS6("-1 0 0 0 0 0   1 0 0 0  0 1   1 0 1 0 0 0   -1 0 0 1 0 0   1 0 0 0 1 0   1 1 0 0 0 0"))));  // g or p
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = -s1;
-   ss2 = s1 + s6;
-   ss3 = s1 + s3;
-   ss4 = -s1 + s4;
-   ss5 = s1 + s5;
-   ss6 = s1 + s2;
-   return d;
+   return S6::Reduce12(din);
 }
 
 S6 S6Dist::Reduce21(const S6& din) {
-   // reduce scale 2 non-zero
-   //   vRed.push_back(std::make_pair(Inverse(MatS6(" 1 1 0 0 0 0   0 -1 0 0 0 0   0 1 0 1 0 0   0 1 1 0 0 0   0 -1 0 0 1 0   0 1 0 0 0 1")),
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s2 + s6;
-   ss2 = -s2;
-   ss3 = s2 + s3;
-   ss4 = s2 + s4;
-   ss5 = -s2 + s5;
-   ss6 = s2 + s1;
-   return d;
+   return S6::Reduce21(din);
 }
 
 S6 S6Dist::Reduce22(const S6& din) {
-   // reduce scale 2 non-zero
-   //                                 Inverse(MatS6(" 0 1 0 0 0 1   0 -1 0 0 0 0   0 1 1 0 0 0   0 1 0 1 0 0   0 -1 0 0 1 0   1 1 0 0 0 0"))));  // h or q
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s2 + s6;
-   ss2 = -s2;
-   ss3 = s2 + s3;
-   ss4 = s2 + s4;
-   ss5 = -s2 + s5;
-   ss6 = s2 + s1;
-   return d;
+   return S6::Reduce22(din);
 }
 
 S6 S6Dist::Reduce31(const S6& din) {
-   // reduce scale 3 non-zero
-   //   vRed.push_back(std::make_pair(Inverse(MatS6(" 1 0 1 0 0 0   0  0 1 1 0 0   0 0 -1 0 0 0   0 1 1 0 0 0   0 0 1 0  1 0   0 0 -1 0 0 1")),
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s3 + s1;
-   ss2 = s3 + s4;
-   ss3 = -s3;
-   ss4 = s3 + s2;
-   ss5 = s3 + s5;
-   ss6 = -s3 + s6;
-   return d;
+   return S6::Reduce31(din);
 }
 
 S6 S6Dist::Reduce32(const S6& din) {
-   // reduce scale 3 non-zero
-   //                                 Inverse(MatS6(" 0 0 1 0 1 0   0  1 1 0 0 0   0 0 -1 0 0 0   0 0 1 1 0 0   1 0 1 0  0 0   0 0 -1 0 0 1"))));  // k or r
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s3 + s5;
-   ss2 = s3 + s2;
-   ss3 = -s3;
-   ss4 = s3 + s4;
-   ss5 = s3 + s1;
-   ss6 = -s3 + s6;
-   return d;
+   return S6::Reduce32(din);
+
 }
 
 S6 S6Dist::Reduce41(const S6& din) {
-   // reduce scale 4 non-zero
-   //   vRed.push_back(std::make_pair(Inverse(MatS6(" 1 0 0 -1 0 0   0 0 1 1 0 0   0 1 0 1 0 0   0 0 0 -1 0 0   0 0 0 1 1 0   0 0 0 1 0 1")),
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = -s4 + s1;
-   ss2 = s4 + s3;
-   ss3 = s4 + s2;
-   ss4 = -s4;
-   ss5 = s4 + s5;
-   ss6 = s4 + s6;
-   return d;
+   return S6::Reduce41(din);
 }
 
 S6 S6Dist::Reduce42(const S6& din) {
-   // reduce scale 4 non-zero
-   //                                 Inverse(MatS6(" 1 0 0 -1 0 0   0 1 0 1 0 0   0 0 1 1 0 0   0 0 0 -1 0 0   0 0 0 1 0 1   0 0 0 1 1 0"))));  // l or s
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = -s4 + s1;
-   ss2 = s4 + s2;
-   ss3 = s4 + s3;
-   ss4 = -s4;
-   ss5 = s4 + s6;
-   ss6 = s4 + s5;
-   return d;
+   return S6::Reduce42(din);
 }
 
 S6 S6Dist::Reduce51(const S6& din) {
-   // reduce scale 5 non-zero
-   //   vRed.push_back(std::make_pair(Inverse(MatS6(" 0 0 1 0 1 0   0 1 0 0 -1 0   1 0 0 0 1 0   0 0 0 1 1 0   0 0 0 0 -1 0   0 0 0 0 1 1")),
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s5 + s3;
-   ss2 = -s5 + s2;
-   ss3 = s5 + s1;
-   ss4 = s5 + s4;
-   ss5 = -s5;
-   ss6 = s5 + s6;
-   return d;
+   return S6::Reduce51(din);
 }
 
 S6 S6Dist::Reduce52(const S6& din) {
-   // reduce scale 5 non-zero
-   //                                 Inverse(MatS6(" 1 0 0 0 1 0   0 1 0 0 -1 0   0 0 1 0 1 0   0 0 0 0 1 1   0 0 0 0 -1 0   0 0 0 1 1 0"))));  // m or t
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s5 + s1;
-   ss2 = -s5 + s2;
-   ss3 = s5 + s3;
-   ss4 = s5 + s6;
-   ss5 = -s5;
-   ss6 = s5 + s4;
-   return d;
+   return S6::Reduce52(din);
 }
 
 S6 S6Dist::Reduce61(const S6& din) {
-   // reduce scale 6 non-zero
-//   vRed.push_back(std::make_pair(Inverse(MatS6(" 0 1 0 0 0 1   1 0 0 0 0 1   0 0 1 0 0 -1   0 0 0 1 0 1   0 0 0 0 1 1   0 0 0 0 0 -1")),
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s6 + s2;
-   ss2 = s6 + s1;
-   ss3 = -s6 + s3;
-   ss4 = s6 + s4;
-   ss5 = s6 + s5;
-   ss6 = -s6;
-   return d;
+   return S6::Reduce61(din);
 }
 
 S6 S6Dist::Reduce62(const S6& din) {
-   // reduce scale 6 non-zero
-   //                                 Inverse(MatS6(" 1 0 0 0 0 1   0 1 0 0 0 1   0 0 1 0 0 -1   0 0 0 0 1 1   0 0 0 1 0 1   0 0 0 0 0 -1"))));  // n or u
-   S6 d(din);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s6 + s1;
-   ss2 = s6 + s2;
-   ss3 = -s6 + s3;
-   ss4 = s6 + s5;
-   ss5 = s6 + s4;
-   ss6 = -s6;
-   return d;
+   return S6::Reduce62(din);
 }
 
 S6 S6Dist::Unreduce11(const S6& din) {
-   // For unreducing scalar 11
-   // MatS6(“-1 0 0 0 0 0    1 1 0 0 0 0    1 0 0 0 1 0    -1 0 0 1 0 0    1 0 1 0 0 0    1 0 0 0 0 1”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = -s1;
-   ss2 = s1 + s2;
-   ss3 = s1 + s5;
-   ss4 = -s1 + s4;
-   ss5 = s1 + s3;
-   ss6 = s1 + s6;
-   return d;
+   return S6::Unreduce11(din);
 }
 
 S6 S6Dist::Unreduce12(const S6& din) {
-   // For unreducing scalar 12
-   // MatS6(“-1 0 0 0 0 0    1 0 0 0 0 1    1 0 1 0 0 0    -1 0 0 1 0 0    1 0 0 0 1 0    1 1 0 0 0 0”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = -s1;
-   ss2 = s1 + s6;
-   ss3 = s1 + s3;
-   ss4 = -s1 + s4;
-   ss5 = s1 + s5;
-   ss6 = s1 + s2;
-   return d;
+   return S6::Unreduce12(din);
+
 }
 
 S6 S6Dist::Unreduce21(const S6& din) {
-   // For unreducing scalar 21
-   // MatS6(“1 1 0 0 0 0    0 -1 0 0 0 0    0 1 0 1 0 0    0 1 1 0 0 0    0 -1 0 0 1 0    0 1 0 0 0 1”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s2 + s1;
-   ss2 = -s2;
-   ss3 = s2 + s4;
-   ss4 = s2 + s3;
-   ss5 = -s2 + s5;
-   ss6 = s2 + s6;
-   return d;
+   return S6::Unreduce21(din);
+
 }
 
 S6 S6Dist::Unreduce22(const S6& din) {
-   // For unreducing scalar 22
-   // MatS6(“0 1 0 0 0 1    0 -1 0 0 0 0    0 1 1 0 0 0    0 1 0 1 0 0    0 -1 0 0 1 0    1 1 0 0 0 0”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s2 + s6;
-   ss2 = -s2;
-   ss3 = s2 + s3;
-   ss4 = s2 + s4;
-   ss5 = -s2 + s5;
-   ss6 = s2 + s1;
-   return d;
+   return S6::Unreduce22(din);
+
 }
 
 S6 S6Dist::Unreduce31(const S6& din) {
-   // For unreducing scalar 31
-   // MatS6(“1 0 1 0 0 0    0 0 1 1 0 0    0 0 -1 0 0 0    0 1 1 0 0 0    0 0 1 0 1 0    0 0 -1 0 0 1”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s3 + s1;
-   ss2 = s3 + s4;
-   ss3 = -s3;
-   ss4 = s3 + s2;
-   ss5 = s3 + s5;
-   ss6 = -s3 + s6;
-   return d;
+   return S6::Unreduce31(din);
+
 }
 
 S6 S6Dist::Unreduce32(const S6& din) {
-   // For unreducing scalar 32
-   // MatS6(“0 0 1 0 1 0    0 1 1 0 0 0    0 0 -1 0 0 0    0 0 1 1 0 0    1 0 1 0 0 0    0 0 -1 0 0 1”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s3 + s5;
-   ss2 = s3 + s2;
-   ss3 = -s3;
-   ss4 = s3 + s4;
-   ss5 = s3 + s1;
-   ss6 = -s3 + s6;
-   return d;
+   return S6::Unreduce32(din);
+
 }
 
 S6 S6Dist::Unreduce41(const S6& din) {
-   // For unreducing scalar 41
-   // MatS6(“1 0 0 -1 0 0    0 0 1 1 0 0    0 1 0 1 0 0    0 0 0 -1 0 0    0 0 0 1 1 0    0 0 0 1 0 1”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = -s4 + s1;
-   ss2 = s4 + s3;
-   ss3 = s4 + s2;
-   ss4 = -s4;
-   ss5 = s4 + s5;
-   ss6 = s4 + s6;
-   return d;
+   return S6::Unreduce41(din);
+
 }
 
 S6 S6Dist::Unreduce42(const S6& din) {
-   // For unreducing scalar 42
-   // MatS6(“1 0 0 -1 0 0    0 1 0 1 0 0    0 0 1 1 0 0    0 0 0 -1 0 0    0 0 0 1 0 1    0 0 0 1 1 0”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = -s4 + s1;
-   ss2 = s4 + s2;
-   ss3 = s4 + s3;
-   ss4 = -s4;
-   ss5 = s4 + s6;
-   ss6 = s4 + s5;
-   return d;
+   return S6::Unreduce42(din);
+
 }
 
 S6 S6Dist::Unreduce51(const S6& din) {
-   // For unreducing scalar 51
-   // MatS6(“0 0 1 0 1 0    0 1 0 0 -1 0    1 0 0 0 1 0    0 0 0 1 1 0    0 0 0 0 -1 0    0 0 0 0 1 1”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s5 + s3;
-   ss2 = -s5 + s2;
-   ss3 = s5 + s1;
-   ss4 = s5 + s4;
-   ss5 = -s5;
-   ss6 = s5 + s6;
-   return d;
+   return S6::Unreduce51(din);
+
 }
 
 S6 S6Dist::Unreduce52(const S6& din) {
-   // For unreducing scalar 52
-   // MatS6(“1 0 0 0 1 0    0 1 0 0 -1 0    0 0 1 0 1 0    0 0 0 0 1 1    0 0 0 0 -1 0    0 0 0 1 1 0”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s5 + s1;
-   ss2 = -s5 + s2;
-   ss3 = s5 + s3;
-   ss4 = s5 + s6;
-   ss5 = -s5;
-   ss6 = s5 + s4;
-   return d;
+   return S6::Unreduce52(din);
+
 }
 
 S6 S6Dist::Unreduce61(const S6& din) {
-   // For unreducing scalar 61
-   // MatS6(“0 1 0 0 0 1    1 0 0 0 0 1    0 0 1 0 0 -1    0 0 0 1 0 1    0 0 0 0 1 1    0 0 0 0 0 -1”);
-   S6 d;
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s6 + s2;
-   ss2 = s6 + s1;
-   ss3 = -s6 + s3;
-   ss4 = s6 + s4;
-   ss5 = s6 + s5;
-   ss6 = -s6;
-   return d;
+   return S6::Unreduce61(din);
+
 }
 
 S6 S6Dist::Unreduce62(const S6& din) {
-   S6 d;
-   // For unreducing scalar 62
-   // MatS6(“1 0 0 0 0 1    0 1 0 0 0 1    0 0 1 0 0 -1    0 0 0 0 1 1    0 0 0 1 0 1    0 0 0 0 0 -1”);
-   const double& s1 = din[0];
-   const double& s2 = din[1];
-   const double& s3 = din[2];
-   const double& s4 = din[3];
-   const double& s5 = din[4];
-   const double& s6 = din[5];
-   double& ss1 = d[0];
-   double& ss2 = d[1];
-   double& ss3 = d[2];
-   double& ss4 = d[3];
-   double& ss5 = d[4];
-   double& ss6 = d[5];
-   ss1 = s6 + s1;
-   ss2 = s6 + s2;
-   ss3 = -s6 + s3;
-   ss4 = s6 + s5;
-   ss5 = s6 + s4;
-   ss6 = -s6;
-   return d;
+   return S6::Unreduce62(din);
 }
 
