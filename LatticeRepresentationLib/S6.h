@@ -2,6 +2,7 @@
 #define S6_H
 
 #include "BasisBase.h"
+#include "MatS6.h"
 #include "VecN.h"
 
 class LRL_Cell;
@@ -76,7 +77,41 @@ public:
    bool IsAllMinus() const;
    static std::string GetName(void) { return "S6, Selling scalars"; }
 
+   static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();
+   static std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > SetUnreduceFunctionPairs();
+   void SetReduceFunctions();
+   void SetUnreduceFunctions();
+   static S6 Reduce11(const S6& din);
+   static S6 Reduce12(const S6& din);
+   static S6 Reduce21(const S6& din);
+   static S6 Reduce22(const S6& din);
+   static S6 Reduce31(const S6& din);
+   static S6 Reduce32(const S6& din);
+   static S6 Reduce41(const S6& din);
+   static S6 Reduce42(const S6& din);
+   static S6 Reduce51(const S6& din);
+   static S6 Reduce52(const S6& din);
+   static S6 Reduce61(const S6& din);
+   static S6 Reduce62(const S6& din);
+   static S6 Unreduce11(const S6& din);
+   static S6 Unreduce12(const S6& din);
+   static S6 Unreduce21(const S6& din);
+   static S6 Unreduce22(const S6& din);
+   static S6 Unreduce31(const S6& din);
+   static S6 Unreduce32(const S6& din);
+   static S6 Unreduce41(const S6& din);
+   static S6 Unreduce42(const S6& din);
+   static S6 Unreduce51(const S6& din);
+   static S6 Unreduce52(const S6& din);
+   static S6 Unreduce61(const S6& din);
+   static S6 Unreduce62(const S6& din);
+   static unsigned long CountPositive(const S6& s6);
+
 private:
+   static S6 RandomUnreduceOne(const S6& s6);
+   static S6 RandomUnreduceTwo(const S6& s6);
+   static S6 RandomUnreduceThree(const S6& s6);
+
    VecN m_vec;
    unsigned long m_dim;
    bool m_valid;
