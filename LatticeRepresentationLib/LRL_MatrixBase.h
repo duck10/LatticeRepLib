@@ -21,7 +21,7 @@ class MatG6;
 
 #include <iostream>
 
-template< typename TVEC, typename TMAT>
+template< typename TVEC, typename TMAT, typename TELEMENT=double>
 class LRL_MatrixBase {
 public:
 
@@ -43,8 +43,8 @@ public:
 
    virtual TMAT& operator+= (const TMAT& d) = 0;
    virtual TMAT& operator-= (const TMAT& d) = 0;
-   virtual TMAT& operator*= (const double d) = 0;
-   virtual TMAT& operator/= (const double d) = 0;
+   virtual TMAT& operator*= (const TELEMENT d) = 0;
+   virtual TMAT& operator/= (const TELEMENT d) = 0;
 
    virtual bool operator== (const TMAT& m) const = 0;
    virtual bool operator!= (const TMAT& m) const = 0;
@@ -54,13 +54,13 @@ public:
    virtual TMAT operator- (void) const = 0;  // unary
    virtual TMAT operator* (const TMAT& m2) const = 0;
 
-   virtual TMAT operator* (const double d) const = 0;
-   virtual TMAT operator/ (const double d) const = 0;
+   virtual TMAT operator* (const TELEMENT d) const = 0;
+   virtual TMAT operator/ (const TELEMENT d) const = 0;
 
    virtual TVEC operator* (const TVEC& v) const = 0;
 
-   virtual double operator[] (const unsigned long n) const = 0;
-   virtual double& operator[] (const unsigned long n) = 0;
+   virtual TELEMENT operator[] (const unsigned long n) const = 0;
+   virtual TELEMENT& operator[] (const unsigned long n) = 0;
 
    virtual double DistanceBetween(const TMAT& v1, const TMAT& v2) = 0;
    virtual unsigned long size(void) const = 0;
@@ -72,11 +72,11 @@ public:
    virtual unsigned long GetRowDim(void) const = 0;
    virtual bool IsUnit() const = 0;
 
-   virtual std::vector<double> GetVector(void) const = 0;
+   virtual std::vector<TELEMENT> GetVector(void) const = 0;
    virtual TMAT transpose(const TMAT& m) const = 0;
    virtual void transpose(void) = 0;
 
-   virtual double at(const unsigned long n) const = 0;
+   virtual TELEMENT at(const unsigned long n) const = 0;
 
 };
 

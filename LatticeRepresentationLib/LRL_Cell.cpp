@@ -26,6 +26,15 @@
 
 int randSeed1 = 19191;
 
+const double thirtyDegrees = 30.0 / 180.0 * 4 * atan(1.0);
+const double sixtyDegrees = 2.0*thirtyDegrees;
+const double ninetyDegrees = 3.0*thirtyDegrees;
+const double oneeightyDegrees = 180.0;
+const double threesixtyDegrees = 360.0;
+
+const double pi = 4.0*atan(1.0);
+const double twopi = 2.0*pi;
+
 double LRL_Cell::randomLatticeNormalizationConstant = 10.0;
 double LRL_Cell::randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
 
@@ -60,14 +69,11 @@ LRL_Cell::LRL_Cell(const LRL_Cell& c)
 {
 }
 
-const double pi = 4.0*atan(1.0);
-const double twopi = 2.0*pi;
-
 LRL_Cell::LRL_Cell(const std::string& s)
    : m_valid(true)
 {
    m_cell = LRL_StringTools::FromString(s);
-   m_valid = m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3]+m_cell[4]+m_cell[5])< twopi;
+   m_valid = m_cell[3] < oneeightyDegrees && m_cell[4] < oneeightyDegrees && m_cell[5] < oneeightyDegrees && (m_cell[3]+m_cell[4]+m_cell[5])< threesixtyDegrees;
 
    for (unsigned long i = 3; i < 6; ++i)
       m_cell[i] *= 4.0*atan(1.0) / 180.0;
@@ -176,11 +182,6 @@ LRL_Cell::LRL_Cell(const D7& v7)
 LRL_Cell::~LRL_Cell(void)
 {
 }
-
-const double thirtyDegrees = 30.0 / 180.0 * 4 * atan( 1.0 );
-const double sixtyDegrees = 2.0*thirtyDegrees;
-const double ninetyDegrees = 3.0*thirtyDegrees;
-const double oneeightyDegrees = 6.0*thirtyDegrees;
 
 void Prepare2CellElements( const double minEdge, const double maxEdge, const unsigned long i, LRL_Cell& c ) {
    static RHrand r;
