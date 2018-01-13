@@ -100,6 +100,7 @@ B4& B4::operator= (const B4& dt)
 {
    for (unsigned long i = 0; i < 4; ++i)
       m_vec[i] = dt.m_vec[i];
+   m_valid = dt.m_valid;
    return *this;
 }
 

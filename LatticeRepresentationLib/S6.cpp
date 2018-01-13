@@ -338,6 +338,7 @@ S6 S6::randDeloneReduced() {
    S6 s6;
    for (unsigned long i = 0; i < 6; ++i)
       s6[i] = -rhrand.urand() * LRL_Cell::randomLatticeNormalizationConstantSquared;
+   s6.m_valid = true;
    return s6;
 }
 
