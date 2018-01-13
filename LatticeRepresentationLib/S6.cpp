@@ -327,7 +327,8 @@ S6 S6::rand(void) {
    // but they are somewhat random and can be adjusted.
    if (choice < 0.055) return s6;
    else if (choice < 0.68) return S6::RandomUnreduceOne(s6);
-   else return S6::RandomUnreduceTwo(s6);
+   else if ( choice < 0.995) return S6::RandomUnreduceTwo(s6);
+   else return S6::RandomUnreduceThree(s6);
 }
 
 S6 S6::rand(const double d) {
@@ -388,8 +389,10 @@ S6 S6::RandomUnreduceTwo(const S6& s6) {
 
 S6 S6::RandomUnreduceThree(const S6& s6) {
    S6 s(s6);
-   while (CountPositive(s) < 3)
+   while (CountPositive(s) < 3) {
       s = RandomUnreduceOne(s);
+      if ( !LRL_Cell(s).GetValid()) s = S6( "-1 -1 -1 -1 -1 -1");
+   }
    return s;
 }
 

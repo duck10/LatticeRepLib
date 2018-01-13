@@ -34,18 +34,16 @@ std::ostream& operator<< (std::ostream& o, const C3& v) {
 }
 
 C3::C3(void)
-   : m_valid(true)
+   : m_valid(false)
 {
    m_c.resize(3);
    C3::m_reductionFunctions = C3::GetReduceFunctions();
 }
 
 C3::C3(const C3& c3)
-   : m_valid(c3.GetValid())
 {
    C3::m_reductionFunctions = C3::GetReduceFunctions();  m_c.resize(3);
-   for (unsigned long i = 0; i < 3; ++i)
-      m_c[i] = c3[i];
+   *this = c3;
 }
 
 C3::C3(const std::complex<double>& c1, const std::complex<double>& c2, const std::complex<double>& c3) {
