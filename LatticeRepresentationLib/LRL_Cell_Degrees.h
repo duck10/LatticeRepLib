@@ -16,6 +16,7 @@ public:
    }
 
    std::vector<double> GetVector(void) const { return m_cell; }
+   static std::string GetName(void) { return "LRL_Cell_Degrees, unit cell"; }
 
 };
 
