@@ -95,7 +95,7 @@ void S6Dist::UnreduceAndAddToList(const S6& d, const unsigned long n, std::vecto
    }
 }
 
-const double g_percent = 0.10;
+const double g_fractionToAssessNearZero = 0.02;
 
 std::vector<S6> S6Dist::UnreduceAndAddToList(const std::vector<S6>& v6, const unsigned long n) const {
    std::vector<S6> vToReduce(v6);
@@ -103,7 +103,7 @@ std::vector<S6> S6Dist::UnreduceAndAddToList(const std::vector<S6>& v6, const un
       for (unsigned long k = 0; k < v6.size(); ++k) {
          const double d = v6[k].norm();
          for (unsigned long i = 0; i < 6; ++i) {
-            if (v6[k][i] > -d * g_percent && v6[k][i] <= 0.0) {
+            if (v6[k][i] > -d * g_fractionToAssessNearZero && v6[k][i] <= 0.0) {
                S6 stemp = ApplyUnreduceFunction(i, v6[k]);
                vToReduce.push_back(stemp);
             }
@@ -121,31 +121,139 @@ std::vector<S6> S6Dist::UnreduceAndAddToList(const S6& s6, const unsigned long n
    return vToReflect;
 }
 
-std::vector<S6> S6Dist::ResetNearZeroAndAddToList(const std::vector<S6>& v6, const unsigned long n) const {
-   std::vector<S6> vToReduce(v6);
-   if (n > 0) {
-      for (unsigned long k = 0; k < v6.size(); ++k) {
-         const double d = v6[k].norm();
-         for (unsigned long i = 0; i < 6; ++i) {
-            if (v6[k][i] > -d* g_percent && v6[k][i] <= 0.0) {
-               S6 stemp = v6[k];
-               stemp[i] = 0.1;
-               vToReduce.push_back(stemp);
-               //S6 out;
-               //const bool b = Selling::Reduce(stemp, out);
-               //if (b) vToReduce.push_back(out);
-            }
-         }
+std::vector<unsigned long> GetListOfNearZero(const S6& vs6) {
+   const double d = vs6.norm();
+   std::vector<unsigned long> v;
+   for (unsigned long i = 0; i < 6; ++i) {
+      if (vs6[i] > -d * g_fractionToAssessNearZero && vs6[i] <= 0.0) v.push_back(i);
+   }
+   return v;
+}
+
+bool HasNearZero(const S6& v6) {
+   const double d = v6.norm();
+   for (unsigned long i = 0; i < 6; ++i) {
+      if (v6[i] > -d * g_fractionToAssessNearZero && v6[i] <= 0.0) return true;
+   }
+   return false;
+}
+
+S6 MakeOneNearZeroPositive(const S6& vv6) {
+   S6 v6(vv6);
+   const double d = v6.norm();
+   const double cutoff = d * g_fractionToAssessNearZero;
+   for (unsigned long i = 0; i < 6; ++i) {
+      if (v6[i] > -cutoff && v6[i] <= 0.0) {
+         v6[i] = 0.001 * d;
+         break;
       }
    }
+   return v6;
+}
+
+std::vector<S6> ResetNearZeroAndAddToList3(const std::vector<S6>& vs6, const unsigned long n) /*const*/ {
+   std::vector<S6>v6(vs6);
+   if (n < 3) return v6;
+
+   for (unsigned long k = 0; k < v6.size(); ++k) {
+      if (S6::CountPositive(v6[k]) < 3 && HasNearZero(v6[k])) {
+         v6.push_back(MakeOneNearZeroPositive(v6[k]));
+      }
+   }
+   return v6;
+}
+
+std::vector<S6> ResetNearZeroAndAddToList2(const std::vector<S6>& vs6, const unsigned long n) /*const*/ {
+   std::vector<S6>v6(vs6);
+   if (n < 2) return v6;
+
+   for (unsigned long k = 0; k < v6.size(); ++k) {
+      if (S6::CountPositive(v6[k]) < 2 && HasNearZero(v6[k])) {
+         v6.push_back(MakeOneNearZeroPositive(v6[k]));
+      }
+   }
+   ResetNearZeroAndAddToList3(v6, n);
+   return v6;
+}
+
+std::vector<S6> ResetNearZeroAndAddToList1(const std::vector<S6>& vs6, const unsigned long n) /*const*/ {
+   std::vector<S6>v6(vs6);
+   if (n < 1) return v6;
+
+   for (unsigned long k = 0; k < v6.size(); ++k) {
+      if (S6::CountPositive(v6[k]) < 1 && HasNearZero(v6[k])) {
+         v6.push_back(MakeOneNearZeroPositive(v6[k]));
+      }
+   }
+   ResetNearZeroAndAddToList2(v6, n);
+   return v6;
+}
+
+std::vector<S6> S6Dist::ResetNearZeroAndAddToList(const std::vector<S6>& v6, const unsigned long n) const {
+   std::vector<S6> vToReduce = ResetNearZeroAndAddToList1(v6, n);
+   vToReduce = ResetNearZeroAndAddToList1(v6, n);
    return vToReduce;
 }
 
+std::vector<S6> ResetNearZeros1(const S6& s6, const std::vector<unsigned long>& vul) {
+   std::vector<S6> v;
+   v.push_back(s6);
+   S6 s6out;
+   for (unsigned long i = 0; i < vul.size(); ++i) {
+      S6 temp(s6);
+      temp[i] = 0.1;
+      v.push_back(temp);
+      Selling::Reduce(temp, s6out);
+      v.push_back(s6out);
+   }
+   return v;
+}
+
+std::vector<S6> ResetNearZeros2(const S6& s6, const std::vector<unsigned long>& vul) {
+   std::vector<S6> v;
+   if (vul.size() >= 2) {
+      S6 s6out;
+      for (unsigned long k = 0; k < vul.size() - 1; ++k) {
+         S6 temp(s6);
+         temp[k] = 0.1;
+         for (unsigned long i = 0; i < vul.size(); ++i) {
+            temp[i] = 0.1;
+         }
+         v.push_back(temp);
+         Selling::Reduce(temp, s6out);
+         v.push_back(s6out);
+      }
+   }
+   return v;
+}
+
+std::vector<S6> ResetNearZeros3(const S6& s6, const std::vector<unsigned long>& vul) {
+   std::vector<S6> v;
+   if (vul.size() >= 3) {
+      for (unsigned long j = 0; j < vul.size() - 2; ++j) {
+         S6 temp(s6);
+         temp[j] = 0.1;
+         for (unsigned long k = j + 1; k < vul.size() - 1; ++k) {
+            temp[k] = 0.1;
+            for (unsigned long i = k + 1; i < vul.size(); ++i) {
+               temp[i] = 0.1;
+            }
+            v.push_back(temp);
+         }
+      }
+   }
+   return v;
+}
+
 std::vector<S6> S6Dist::ResetNearZeroAndAddToList(const S6& s6, const unsigned long n) const {
-   std::vector<S6> vToReflect(1,s6);
-   vToReflect = ResetNearZeroAndAddToList(vToReflect, n);
-   //std::cout << LRL_ToString(vToReflect) << std::endl;
-   return vToReflect;
+   std::vector<S6> vs6;
+   std::vector<unsigned long> v = GetListOfNearZero(s6);
+   vs6 = ResetNearZeros1(s6, v);
+   std::vector<S6> temp2 = ResetNearZeros2(s6, v);
+   vs6.insert(vs6.end(), temp2.begin(), temp2.end());
+   std::vector<S6> temp3 = ResetNearZeros3(s6, v);
+   vs6.insert(vs6.end(), temp3.begin(), temp3.end());
+   return vs6;
 }
 
 std::vector<S6> S6Dist::GenerateReflectionsAtZero(const S6& s6) const {
@@ -154,7 +262,7 @@ std::vector<S6> S6Dist::GenerateReflectionsAtZero(const S6& s6) const {
 
    const double d = s6.norm();
    for (unsigned long i = 0; i < 6; ++i) {
-      if (s6[i] > -d*g_percent && s6[i] <= 0.0) {
+      if (s6[i] > -d*g_fractionToAssessNearZero && s6[i] <= 0.0) {
          UnreduceAndAddToList(s6, i, vToReflect);
       }
    }
@@ -269,8 +377,8 @@ double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
 
 double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
    const unsigned long n = 2;
-   const std::vector<S6> vinside = ResetNearZeroAndAddToList(s1, 1);
-   const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(ResetNearZeroAndAddToList(s2, n), 1));
+   const std::vector<S6> vinside = Generate24Reflections(ResetNearZeroAndAddToList(s1, 0));
+   const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(ResetNearZeroAndAddToList(s2, n), 2));
    if (m_debug) {
       std::cout << "vinside  " << vinside.size() << std::endl << LRL_ToString(vinside) << std::endl << std::endl;
       std::cout << "voutside " << voutside.size() << std::endl << LRL_ToString(voutside) << std::endl << std::endl;
