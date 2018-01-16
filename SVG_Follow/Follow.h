@@ -70,10 +70,8 @@ public:
       G6 test;
       const bool bG6 = Niggli::Reduce(niggliReduced_1, test);
       if (!bG6) throw;
-      G6 g6DeloneReduced_1;
       S6 s6DeloneReduced_1;
       const bool testtest = Delone::Reduce(S6(niggliReduced_1), s6DeloneReduced_1);   // for Delone::Reduce
-      g6DeloneReduced_1 = s6DeloneReduced_1;
 
       S6Dist s6dist(1.0);
       for (unsigned long istep = 0; istep < m_steps; ++istep) {
@@ -81,13 +79,12 @@ public:
          TVEC vNext;
          vNext = TVEC(TVEC((1.0 - t)*probe) + TVEC(t*niggliReduced_1));
          G6 g6vNext(vNext);
-         G6 g6NiggliReduced_2, g6DeloneReduced_2;
+         G6 g6NiggliReduced_2;
          S6 s6DeloneReduced_2;
          MatG6 mG6;
          MatS6 mS6;
          const bool b6 = Niggli::Reduce(g6vNext, mG6, g6NiggliReduced_2, 0.0);   // for Niggli::Reduce
          const bool b7 = Delone:: Reduce(S6(g6vNext), mS6, s6DeloneReduced_2, 0.0);   // for Delone::Reduce
-         g6DeloneReduced_2 = s6DeloneReduced_2;
          if (b6&&b7) {
             //const double distG6 = NCDist_<double[6], double[6] >(g6NiggliReducedArray_1, g6NiggliReducedArray_2);
             const double distS6 = s6dist.DistanceBetween(s6DeloneReduced_1, s6DeloneReduced_2);
@@ -95,7 +92,7 @@ public:
 
             m_rnPath.AddDistance(distS6);
             m_rnPath.AddDeloneDistance(distD7);
-            m_rnPath.Add(vNext, TVEC(g6DeloneReduced_2));
+            m_rnPath.Add(vNext, TVEC(s6DeloneReduced_2));
          }
          else {
             std::cout << "Reduce failed in Procession " << vNext << std::endl;
