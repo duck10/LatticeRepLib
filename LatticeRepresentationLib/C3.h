@@ -72,10 +72,11 @@ public:
    std::complex<double> at(const unsigned long n) const { return m_c[n]; }
 
 
-   //static C3(*)(void) SetUnreduceFunctions();
+   //static std::vector<C3(*)(const C3&)> SetUnreduceFunctions();
+
+
 
    static std::vector< C3(*)(const C3&)> SetReflections();
-
 
    static C3 Refl1(const C3& c);
    static C3 Refl2(const C3& c);
@@ -102,6 +103,7 @@ public:
    static C3 Refl23(const C3& c);
    static C3 Refl24(const C3& c);
 
+   static std::vector<C3(*)(const C3&)> SetReduceFunctions();
    static C3 Reduce1(const C3& c);
    static C3 Reduce2(const C3& c);
    static C3 Reduce3(const C3& c);
@@ -109,7 +111,6 @@ public:
    static C3 Reduce5(const C3& c);
    static C3 Reduce6(const C3& c);
 
-   static std::vector<C3(*)(const C3&)> GetReduceFunctions();
    static C3 rand();
    static C3 randDeloneReduced();
    static C3 randDeloneUnreduced();
@@ -122,6 +123,7 @@ public:
 
 public:
    static std::vector< C3(*)(const C3&)> m_reductionFunctions;
+   static std::vector< C3(*)(const C3&)> m_reflectionFunctions;
 
 private:
    std::vector<std::complex<double> > m_c;

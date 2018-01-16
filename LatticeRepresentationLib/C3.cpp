@@ -21,7 +21,8 @@
 #include "LRL_StringTools.h"
 
 static int randSeed1 = 19191;
-std::vector< C3(*)(const C3&)> C3::m_reductionFunctions = C3::GetReduceFunctions();
+std::vector< C3(*)(const C3&)> C3::m_reductionFunctions = C3::SetReduceFunctions();
+std::vector< C3(*)(const C3&)> m_reflectionFunctions = C3::SetReflections();
 
 std::ostream& operator<< (std::ostream& o, const C3& v) {
    std::streamsize oldPrecision = o.precision();
@@ -37,17 +38,17 @@ C3::C3(void)
    : m_valid(false)
 {
    m_c.resize(3);
-   C3::m_reductionFunctions = C3::GetReduceFunctions();
+   C3::m_reductionFunctions = C3::SetReduceFunctions();
 }
 
 C3::C3(const C3& c3)
 {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();  m_c.resize(3);
+   C3::m_reductionFunctions = C3::SetReduceFunctions();  m_c.resize(3);
    *this = c3;
 }
 
 C3::C3(const std::complex<double>& c1, const std::complex<double>& c2, const std::complex<double>& c3) {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();  m_c.resize(3);
+   C3::m_reductionFunctions = C3::SetReduceFunctions();  m_c.resize(3);
    m_c[0] = c1;
    m_c[1] = c2;
    m_c[2] = c3;
@@ -57,27 +58,27 @@ C3::C3(const std::complex<double>& c1, const std::complex<double>& c2, const std
 C3::C3(const LRL_Cell& c)
    : m_valid(c.GetValid())
 {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();  m_c.resize(3);
+   C3::m_reductionFunctions = C3::SetReduceFunctions();  m_c.resize(3);
    (*this) = G6(c);
 }
 
 C3::C3(const D7& v7)
    : m_valid(v7.GetValid())
 {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();   (*this) = G6(v7);
+   C3::m_reductionFunctions = C3::SetReduceFunctions();   (*this) = G6(v7);
 }
 
 C3::C3( const B4& del )
    : m_valid(del.GetValid())
 {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();  (*this) = S6(del);
+   C3::m_reductionFunctions = C3::SetReduceFunctions();  (*this) = S6(del);
 }
 
 C3::C3(const VecN& v)
    : m_valid(false)
 {
    if (v.size() == 6) {
-      C3::m_reductionFunctions = C3::GetReduceFunctions();      m_c.resize(3);
+      C3::m_reductionFunctions = C3::SetReduceFunctions();      m_c.resize(3);
       m_valid = true;
       for (unsigned long i = 0; i < C3::size(); ++i)
          m_c[i] = std::complex<double>(v[i], v[i + 3]);
@@ -89,7 +90,7 @@ C3::C3(const std::string& s)
 {
    VecN v = LRL_StringTools::FromString(s);
    if (v.size() == 6) {
-      C3::m_reductionFunctions = C3::GetReduceFunctions();
+      C3::m_reductionFunctions = C3::SetReduceFunctions();
       m_c.resize(3);
       m_valid = true;
       m_c[0] = std::complex<double>(v[0], v[1]);
@@ -101,14 +102,14 @@ C3::C3(const std::string& s)
 C3::C3(const G6& v6)
    : m_valid(v6.GetValid())
 {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();
+   C3::m_reductionFunctions = C3::SetReduceFunctions();
    (*this) = S6(v6);
 }
 
 C3::C3(const S6& s6)
    : m_valid(s6.GetValid())
 {
-   C3::m_reductionFunctions = C3::GetReduceFunctions();
+   C3::m_reductionFunctions = C3::SetReduceFunctions();
    m_c.resize(3);
    m_c[0] = std::complex<double>(s6[0], s6[3]);
    m_c[1] = std::complex<double>(s6[1], s6[4]);
@@ -119,7 +120,7 @@ C3::C3(const std::vector<double>& v)
    : m_valid(false)
 {
    if (v.size() == 6) {
-      C3::m_reductionFunctions = C3::GetReduceFunctions();
+      C3::m_reductionFunctions = C3::SetReduceFunctions();
       m_c.resize(3);
       m_valid = true;
       for (unsigned long i = 0; i < C3::size(); ++i)
@@ -474,6 +475,7 @@ C3 C3::Refl24(const C3& c) {
    return c3;
 }
 
+
 std::vector< C3(*)(const C3&)> C3::SetReflections() {
    std::vector<C3(*)(const C3&)> v;
    // The order is to agree with the reflection in D7Dist.h
@@ -558,7 +560,7 @@ C3 C3::Reduce6(const C3& c) {
    return co;
 }
 
-std::vector<C3(*)(const C3&)> C3::GetReduceFunctions()
+std::vector<C3(*)(const C3&)> C3::SetReduceFunctions()
 {
    if (m_reductionFunctions.empty()) {
       m_reductionFunctions.push_back(C3::Reduce1);
