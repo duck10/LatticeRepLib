@@ -125,7 +125,9 @@ std::vector<unsigned long> GetListOfNearZero(const S6& vs6) {
    const double d = vs6.norm();
    std::vector<unsigned long> v;
    for (unsigned long i = 0; i < 6; ++i) {
-      if (vs6[i] > -d * g_fractionToAssessNearZero && vs6[i] <= 0.0) v.push_back(i);
+      if (vs6[i] > -d * g_fractionToAssessNearZero && vs6[i] <= 0.0) {
+         v.push_back(i);
+      }
    }
    return v;
 }
@@ -377,8 +379,9 @@ double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
 
 double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
    const unsigned long n = 2;
-   const std::vector<S6> vinside = Generate24Reflections(ResetNearZeroAndAddToList(s1, 0));
-   const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(ResetNearZeroAndAddToList(s2, n), 2));
+   const std::vector<S6> vinside = ResetNearZeroAndAddToList(s1, 0);
+   const std::vector<S6> voutside = Generate24Reflections(ResetNearZeroAndAddToList(s2, 2));
+   //const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(ResetNearZeroAndAddToList(s2, n), 2));
    if (m_debug) {
       std::cout << "vinside  " << vinside.size() << std::endl << LRL_ToString(vinside) << std::endl << std::endl;
       std::cout << "voutside " << voutside.size() << std::endl << LRL_ToString(voutside) << std::endl << std::endl;
