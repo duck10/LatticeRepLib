@@ -111,7 +111,7 @@ void PrintDistanceData(const std::vector<LRL_ReadLatticeData>& cellDataList) {
       for (size_t i1 = 0; i1 < cellDataList.size(); ++i1) {
          ReduceAll(cellDataList[i1], s6red1, d7red1, g6red1);
          S6Dist s6dist(10000.0);
-//         s6dist.SetDebug(true);
+         s6dist.SetDebug(true);
          for (size_t i2 = i1; i2 < cellDataList.size(); ++i2) {
             ReduceAll(cellDataList[i2], s6red2, d7red2, g6red2);
             const double g12 = NCDist(g6red1.GetVector().data(), g6red2.GetVector().data());
