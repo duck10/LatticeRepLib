@@ -41,10 +41,34 @@ public:
 template <typename TKEY, typename TDATA>
 class StoreResults {
 public:
+
+   friend std::ostream& operator<<(std::ostream& os, const StoreResults<TKEY, TDATA>& store) {
+      os << "Contents of StoreResults" << std::endl;
+      os << "m_title          " << store.GetTitle() << std::endl;
+      os << "m_nmax           " << store.GetNmax() << std::endl; 
+      os << "Total Seen       " << store.GetTotalSeen() << std::endl;
+      os << "m_data.size()    " << store.size() << std::endl;
+      os << "m_itemSeparator  " << store.GetItemSeparator() << std::endl;
+      os << "m_valueSeparator " << store.GetValueSeparator() << std::endl;
+      return os;
+   }
+
    StoreResults(const unsigned long nMax = 1)
       : m_nmax(nMax)
       , m_keyName("Key")
    {}
+
+   void Store(const TKEY& key, const TDATA& data) {
+      typename std::map<TKEY, SampleData<TKEY, TDATA> >::iterator itfind = m_tree.find(key);
+      if (itfind == m_tree.end()) {
+         m_tree.insert(std::make_pair(key, SampleData<TKEY, TDATA>(key, data)));
+      }
+      else {
+         if ((*itfind).second.m_sampleData.size() < m_nmax)
+            (*itfind).second.m_sampleData.push_back(data);
+         ++(*itfind).second.m_countPerKey;
+      }
+   }
 
    unsigned long size(void) const { return (unsigned long)(m_tree.size()); }
 
@@ -84,11 +108,11 @@ public:
 
    std::string Herald() const {
       std::ostringstream ostr;
-      if (m_title.empty()) {
+      if (m_herald.empty()) {
          ostr << "ShowResults       ";
       }
       else {
-         ostr << m_title << std::endl;
+         ostr << m_herald << std::endl;
       }
       ostr << GetTime() << std::endl;
       ostr << "Total Keys = " << GetKeys().size()
@@ -97,17 +121,7 @@ public:
       return ostr.str();
    }
 
-   void Store(const TKEY& key, const TDATA& data) {
-      typename std::map<TKEY, SampleData<TKEY, TDATA> >::iterator itfind = m_tree.find(key);
-      if (itfind == m_tree.end()) {
-         m_tree.insert(std::make_pair(key, SampleData<TKEY, TDATA>(key, data)));
-      }
-      else {
-         if ((*itfind).second.m_sampleData.size() < m_nmax)
-            (*itfind).second.m_sampleData.push_back(data);
-         ++(*itfind).second.m_countPerKey;
-      }
-   }
+   unsigned long GetNmax(void) const { return m_nmax; }
 
    std::vector<std::pair<TKEY, TDATA> > FindResult(const TKEY& key) const {
       const typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it = m_tree.find(key);
@@ -143,31 +157,16 @@ public:
       }
    }
 
-   void ShowResultsByKey(void) const {
+   void ShowResultsByKeyDAscending(void) const {
       std::vector<TKEY> v(GetKeys());
-      std::reverse(v.begin(), v.end());
+      std::sort(v.begin(), v.end());
       ShowResultsBySortedKey(v);
    }
 
-   void ShowResultsBySortedKey(const std::vector<TKEY>& keylist) const {
-      std::cout << Herald() << std::endl;
-      typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
-
-      for (unsigned long i = 0; i < keylist.size(); ++i) {
-         if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
-         it = m_tree.find(keylist[i]);
-         std::cout << "item " << i << "  " << m_keyName << "= " << keylist[i] << "  count=" << (*it).second.GetCount() << std::endl;
-
-         if (m_nmax > 0) {
-            for (unsigned long k = 0; k < (*it).second.m_sampleData.size(); ++k) {
-               if (!m_valueSeparator.empty()) std::cout << m_valueSeparator << std::endl;
-               std::cout << (*it).second.m_sampleData[k] << std::endl;
-            }
-            if (m_itemSeparator.empty()) std::cout << std::endl;
-         }
-      }
-      std::cout << m_footer << std::endl;
-
+   void ShowResultsByKeyDescending(void) const {
+      std::vector<TKEY> v(GetKeys());
+      std::reverse(v.begin(), v.end());
+      ShowResultsBySortedKey(v);
    }
 
    void ShowResults(void) const {
@@ -203,23 +202,26 @@ public:
 
    }
 
-   void SetTitle(const std::string& s) {
-      m_title = s;
+   void SetHerald(const std::string& s) {
+      m_herald = s;
    }
 
    void SetFooter(const std::string& s) {
       m_footer = s;
    }
 
-   void SetKeyName(const std::string& s) { m_keyName = s; }
+   void SetKeyLabel(const std::string& s) { m_keyName = s; }
 
-   void AppendTitle(const std::string s) { m_title += " " + s; }
+   void AppendTitle(const std::string s) { m_herald += " " + s; }
 
    void SetMaxItemStore(const int n) { m_nmax = n; }
-   //int GetItemCount(const int n) const { return m_storeCount[n]; }
    void SetItemSeparator(const std::string& s) { m_itemSeparator = s; }
    void SetValueSeparator(const std::string& s) { m_valueSeparator = s; }
    bool HasKey(const TKEY& key) const { return (m_tree.find(key) != m_tree.end()); }
+
+   std::string GetItemSeparator(void) const { return m_itemSeparator; }
+   std::string GetValueSeparator(void) const { return m_valueSeparator; }
+   std::string GetTitle(void) const { return m_herald; }
 
    StoreResults operator= (const StoreResults& sr) {
       m_nmax = sr.m_nmax;
@@ -233,22 +235,40 @@ public:
    void clear(void) {
       m_tree.clear();
       m_notes.clear();
-      m_title.clear();
+      m_herald.clear();
       m_itemSeparator.clear();
       m_valueSeparator.clear();
    }
 
-   unsigned long GetNmax(void) const { return m_nmax; }
-   std::string GetItemSeparator(void) const { return m_itemSeparator; }
-   std::string GetValueSeparator(void) const { return m_valueSeparator; }
-   std::string GetTitle(void) const { return m_title; }
+private:
+
+   void ShowResultsBySortedKey(const std::vector<TKEY>& keylist) const {
+      std::cout << Herald() << std::endl;
+      typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
+
+      for (unsigned long i = 0; i < keylist.size(); ++i) {
+         if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
+         it = m_tree.find(keylist[i]);
+         std::cout << "item " << i << "  " << m_keyName << "= " << keylist[i] << "  count=" << (*it).second.GetCount() << std::endl;
+
+         if (m_nmax > 0) {
+            for (unsigned long k = 0; k < (*it).second.m_sampleData.size(); ++k) {
+               if (!m_valueSeparator.empty()) std::cout << m_valueSeparator << std::endl;
+               std::cout << (*it).second.m_sampleData[k] << std::endl;
+            }
+            if (m_itemSeparator.empty()) std::cout << std::endl;
+         }
+      }
+      std::cout << m_footer << std::endl;
+
+   }
 
 private:
    unsigned long m_nmax;
    std::map<TKEY, SampleData<TKEY, TDATA> > m_tree;
    std::string m_itemSeparator;
    std::string m_valueSeparator;
-   std::string m_title;
+   std::string m_herald;
    std::string m_footer;
    std::string m_notes;
    std::string m_keyName;

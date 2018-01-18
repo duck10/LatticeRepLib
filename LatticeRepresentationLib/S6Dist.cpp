@@ -282,7 +282,7 @@ std::vector<S6> S6Dist::GenerateReflectionsAtZero(const S6& s6) const {
 StoreResults<double, std::string> g_debug(1);
 std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree) const {
    g_debug.clear();
-   g_debug.SetTitle("    *************** *************** *************** *************** S6 Distance Calculations ********************");
+   g_debug.SetHerald("    *************** *************** *************** *************** S6 Distance Calculations ********************");
    g_debug.SetFooter("    *************** *************** *************** END END END END S6 Distance Calculations ********************");
    S6 s6min(tree[0]);
    double dmin = (v1[0] - s6min).norm();
@@ -316,13 +316,13 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
          }
       }
    }
-   if (m_debug) g_debug.ShowResultsByKey();
+   if (m_debug) g_debug.ShowResultsByKeyDescending();
    return p;
 }
 
 std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2) const {
    g_debug.clear();
-   g_debug.SetTitle("    *************** *************** *************** *************** S6 Distance Calculations ********************");
+   g_debug.SetHerald("    *************** *************** *************** *************** S6 Distance Calculations ********************");
    g_debug.SetFooter("    *************** *************** *************** END END END END S6 Distance Calculations ********************");
    double dmin = DBL_MAX;
    std::pair<double, unsigned long> p = std::make_pair(dmin, 0);
@@ -335,7 +335,7 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
       }
       if ( m_debug) std::cout << "dmin A " << dmin << std::endl;
    }
-   if (m_debug) g_debug.ShowResultsByKey();
+   if (m_debug) g_debug.ShowResultsByKeyDescending();
    return p;
 }
 
