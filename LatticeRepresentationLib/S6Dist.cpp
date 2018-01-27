@@ -95,7 +95,7 @@ void S6Dist::UnreduceAndAddToList(const S6& d, const unsigned long n, std::vecto
    }
 }
 
-const double g_fractionToAssessNearZero = 0.02;
+const double g_fractionToAssessNearZero = 0.10;
 
 std::vector<S6> S6Dist::UnreduceAndAddToList(const std::vector<S6>& v6, const unsigned long n) const {
    std::vector<S6> vToReduce(v6);
@@ -203,7 +203,7 @@ std::vector<S6> ResetNearZeros1(const S6& s6, const std::vector<unsigned long>& 
    S6 s6out;
    for (unsigned long i = 0; i < vul.size(); ++i) {
       S6 temp(s6);
-      temp[i] = 0.1;
+      temp[vul[i]] = 0.1;
       v.push_back(temp);
       Selling::Reduce(temp, s6out);
       v.push_back(s6out);
@@ -217,9 +217,9 @@ std::vector<S6> ResetNearZeros2(const S6& s6, const std::vector<unsigned long>& 
       S6 s6out;
       for (unsigned long k = 0; k < vul.size() - 1; ++k) {
          S6 temp(s6);
-         temp[k] = 0.1;
+         temp[vul[k]] = 0.1;
          for (unsigned long i = 0; i < vul.size(); ++i) {
-            temp[i] = 0.1;
+            temp[vul[i]] = 0.1;
          }
          v.push_back(temp);
          Selling::Reduce(temp, s6out);
@@ -234,11 +234,11 @@ std::vector<S6> ResetNearZeros3(const S6& s6, const std::vector<unsigned long>& 
    if (vul.size() >= 3) {
       for (unsigned long j = 0; j < vul.size() - 2; ++j) {
          S6 temp(s6);
-         temp[j] = 0.1;
+         temp[vul[j]] = 0.1;
          for (unsigned long k = j + 1; k < vul.size() - 1; ++k) {
-            temp[k] = 0.1;
+            temp[vul[k]] = 0.1;
             for (unsigned long i = k + 1; i < vul.size(); ++i) {
-               temp[i] = 0.1;
+               temp[vul[i]] = 0.1;
             }
             v.push_back(temp);
          }
