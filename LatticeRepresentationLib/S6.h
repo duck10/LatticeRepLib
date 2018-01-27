@@ -82,7 +82,7 @@ public:
 
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();
 
-   static std::vector< S6(*)(const S6&)> S6::SetReduceFunctions();
+   static std::vector< S6(*)(const S6&)> SetReduceFunctions();
    static S6 Reduce11(const S6& din);
    static S6 Reduce12(const S6& din);
    static S6 Reduce21(const S6& din);
@@ -96,7 +96,7 @@ public:
    static S6 Reduce61(const S6& din);
    static S6 Reduce62(const S6& din);
 
-   static std::vector< S6(*)(const S6&)> S6::SetUnreduceFunctions();
+   static std::vector< S6(*)(const S6&)> SetUnreduceFunctions();
    static S6 Unreduce11(const S6& din);
    static S6 Unreduce12(const S6& din);
    static S6 Unreduce21(const S6& din);
