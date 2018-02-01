@@ -15,8 +15,6 @@ public:
    S6Dist(const double dnearzero = 1.0);
 
    double DistanceBetween(const S6& d1, const S6& d2);
-   double DistanceBetween1(const S6& d1, const S6& d2);
-   double DistanceBetween2(const S6& d1, const S6& d2);
 
    static std::vector<std::pair<MatS6, MatS6> > SetunreductionReductionMatricesFromReductionMatrices();
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();
@@ -63,7 +61,7 @@ public:
    std::vector<S6> GenerateReflectionsAtZero(const S6& s6) const;
 
    std::vector<S6> ResetNearZeroAndAddToList(const std::vector<S6>& v6, const unsigned long n) const;
-   std::vector<S6> ResetNearZeroAndAddToList(const S6& s6, const unsigned long n) const;
+   std::vector<S6> ResetNearZeroAndAddToList(const S6& s6) const;
 
    static const std::vector<S6> Generate24Reflections(const S6& s6in);
    static const std::vector<S6> Generate24Reflections(const std::vector<S6>& vin);
@@ -75,6 +73,7 @@ private:
    static std::vector<MatG6> vG6_Refl;
 
    double m_nearzero;
+   double m_dmin;
    bool m_debug;
 
    static std::vector< S6(*)(const S6&)> m_reductionFunctions;

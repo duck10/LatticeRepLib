@@ -31,6 +31,7 @@ public:
    S6(const B4& del);
    S6(const std::string& s);
    S6(const std::vector<double>& v);
+   S6(const double d1, const double d2, const double d3, const double d4, const double d5, const double d6);
    ~S6(void) {}
 
 
@@ -67,6 +68,7 @@ public:
    void SetVector(const std::vector<double>& v) { m_vec = v; }
    bool GetValid(void) const { return m_valid; }
    void SetValid(const bool b) {m_valid = b; }
+   bool IsValid(void) const;
 
    double at(const unsigned long n) const { return m_vec[n]; }
 
@@ -79,6 +81,8 @@ public:
 
    bool IsAllMinus() const;
    static std::string GetName(void) { return "S6, Selling scalars"; }
+   static S6 InvertCoord(const unsigned long n, const S6& din);
+   S6 InvertCoord(const unsigned long n) const;
 
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();
 
@@ -110,6 +114,7 @@ public:
    static S6 Unreduce61(const S6& din);
    static S6 Unreduce62(const S6& din);
    static unsigned long CountPositive(const S6& s6);
+   unsigned long CountZeros(void) const;
 
 private:
    static S6 RandomUnreduceOne(const S6& s6);

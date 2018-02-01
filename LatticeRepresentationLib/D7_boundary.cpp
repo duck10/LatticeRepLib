@@ -11,6 +11,21 @@
 
 #pragma warning( disable : 4100) //  unreferenced formal parameter
 
+
+std::ostream& operator<< (std::ostream& o, const D7_Boundary& v) {
+   o << "Boundary ------------------------------------ " << v.GetName() << std::endl;
+   o << "Subspace: " << v.GetSubspace() << std::endl;
+   o << "Condition: " << v.GetCondition() << std::endl << std::endl;
+   o << "Projector " << std::endl << v.GetProjector() << std::endl << std::endl;
+   o << "Perp " << std::endl << v.GetPerp() << std::endl << std::endl;
+
+   const unsigned int nsubbounds = v.GetSubboundaryCount();
+   for (unsigned int i = 0; i < nsubbounds; ++i) {
+      o << v.GetSubboundary(i) << " ";
+   }
+   return o;
+}
+
 D7_Boundary::D7_Boundary( )
    : m_externalUnitNormalVector(ComputeExternalNormalUnitVector())
 {

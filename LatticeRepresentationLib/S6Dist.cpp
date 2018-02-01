@@ -46,6 +46,7 @@ void S6Dist::SetUnreduceFunctions() {
 
 S6Dist::S6Dist(const double dnearzero/* = 1.0*/)
    : m_nearzero(dnearzero)
+   , m_dmin(DBL_MAX)
    , m_debug(false)
 {
    SetReduceFunctions();
@@ -118,7 +119,6 @@ std::vector<S6> S6Dist::UnreduceAndAddToList(const S6& s6, const unsigned long n
    std::vector<S6> vToReflect;
    vToReflect.push_back(s6);
    return UnreduceAndAddToList(vToReflect, n);
-   return vToReflect;
 }
 
 std::vector<unsigned long> GetListOfNearZero(const S6& vs6) {
@@ -247,7 +247,7 @@ std::vector<S6> ResetNearZeros3(const S6& s6, const std::vector<unsigned long>& 
    return v;
 }
 
-std::vector<S6> S6Dist::ResetNearZeroAndAddToList(const S6& s6, const unsigned long n) const {
+std::vector<S6> S6Dist::ResetNearZeroAndAddToList(const S6& s6) const {
    std::vector<S6> vs6;
    std::vector<unsigned long> v = GetListOfNearZero(s6);
    vs6 = ResetNearZeros1(s6, v);
@@ -374,31 +374,32 @@ const std::vector<S6> S6Dist::Generate24Reflections(const std::vector<S6>& vin) 
 }
 
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
-   return DistanceBetween1(s1, s2);
+   m_dmin = (s1 - s2).norm();
+   return -1;
 }
-
-double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
-   const unsigned long n = 2;
-   const std::vector<S6> vinside = ResetNearZeroAndAddToList(s1, 0);
-   const std::vector<S6> voutside = Generate24Reflections(ResetNearZeroAndAddToList(s2, 2));
-   //const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(ResetNearZeroAndAddToList(s2, n), 2));
-   if (m_debug) {
-      std::cout << "vinside  " << vinside.size() << std::endl << LRL_ToString(vinside) << std::endl << std::endl;
-      std::cout << "voutside " << voutside.size() << std::endl << LRL_ToString(voutside) << std::endl << std::endl;
-   }
-   const double smallest = MinForListOfS6(vinside, voutside).first;
-   return smallest;
-}
-
-double S6Dist::DistanceBetween2(const S6& s1, const S6& s2) {
-   const unsigned long n = 2;
-   const std::vector<S6> vinside = UnreduceAndAddToList(s1, n);
-   const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(s2, n));
-   const CNearTree<S6> tree = voutside;
-
-   const double smallest = MinForListOfS6(vinside, tree).first;
-   return smallest;
-}
+//
+//double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
+//   const unsigned long n = 2;
+//   const std::vector<S6> vinside = ResetNearZeroAndAddToList(s1, 0);
+//   const std::vector<S6> voutside = Generate24Reflections(ResetNearZeroAndAddToList(s2, 2));
+//   //const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(ResetNearZeroAndAddToList(s2, n), 2));
+//   if (m_debug) {
+//      std::cout << "vinside  " << vinside.size() << std::endl << LRL_ToString(vinside) << std::endl << std::endl;
+//      std::cout << "voutside " << voutside.size() << std::endl << LRL_ToString(voutside) << std::endl << std::endl;
+//   }
+//   const double smallest = MinForListOfS6(vinside, voutside).first;
+//   return smallest;
+//}
+//
+//double S6Dist::DistanceBetween2(const S6& s1, const S6& s2) {
+//   const unsigned long n = 2;
+//   const std::vector<S6> vinside = UnreduceAndAddToList(s1, n);
+//   const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(s2, n));
+//   const CNearTree<S6> tree = voutside;
+//
+//   const double smallest = MinForListOfS6(vinside, tree).first;
+//   return smallest;
+//}
 
 MatS6 Inverse(const MatS6& min) {
    MatS6 m(min);

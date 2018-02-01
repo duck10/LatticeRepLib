@@ -184,6 +184,33 @@ S6::S6(const std::vector<double>& v)
    m_vec = v;
 }
 
+S6::S6(const double d1, const double d2, const double d3, const double d4, const double d5, const double d6)
+{
+   m_vec.resize(6);
+   m_vec[0] = d1;
+   m_vec[1] = d2;
+   m_vec[2] = d3;
+   m_vec[3] = d4;
+   m_vec[4] = d5;
+   m_vec[5] = d6;
+   m_dim = 6;
+   m_valid = IsValid();
+}
+
+bool S6::IsValid(void) const {
+   const unsigned long nPositive = CountPositive(*this);
+   if (nPositive > 4) return false;
+   if (nPositive < 3) return true;
+   if (CountZeros() > 3) return false;
+   return LRL_Cell(*this).GetValid();
+}
+
+unsigned long S6::CountZeros(void) const {
+   unsigned long sum = 0;
+   for (unsigned long i = 0; i < 6; ++i) sum += ((*this)[i] == 0.0) ? 1 : 0;
+   return sum;
+}
+
 double S6::DistanceBetween( const S6& v1, const S6& v2 ) {
    double sum = 0.0;
    for( unsigned long i=0; i<6; ++i )  sum += (v1[i]-v2[i])*(v1[i]-v2[i]);
@@ -318,6 +345,18 @@ bool S6::IsAllMinus() const {
    return true;
 }
 
+S6 S6::InvertCoord(const unsigned long n, const S6& din) {
+   S6 temp(din);
+   temp[n] = -temp[n];
+   return temp;
+}
+
+S6 S6::InvertCoord(const unsigned long n) const {
+   S6 temp(*this);
+   temp[n] = -temp[n];
+   return temp;
+}
+
 S6 S6::rand(void) {
    S6 s6(randDeloneReduced());
 
@@ -397,7 +436,6 @@ S6 S6::RandomUnreduceThree(const S6& s6) {
 }
 
 std::vector<std::pair<MatS6, MatS6> > S6::SetUnreductionMatrices() {
-   return  S6::SetUnreductionMatrices();
    std::vector<std::pair<MatS6, MatS6> > vUnRed;
 
    // For unreducing scalar 11

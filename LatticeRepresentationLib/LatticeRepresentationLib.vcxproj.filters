@@ -127,9 +127,6 @@
     <ClInclude Include="D7.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="D7_boundary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="D7_BoundaryList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -251,6 +248,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LRL_Cell_Degrees.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D7_Boundary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
