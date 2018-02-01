@@ -10,20 +10,6 @@
 std::vector<MatD7> D7_BoundaryList::m_interchangematrics = D7_BoundaryList::Calculate24InterchangeMatrices();
 std::vector<D7_Boundary> D7_BoundaryList::m_boundaries;
 
-std::ostream& operator<< (std::ostream& o, const D7_Boundary& v) {
-   o << "Boundary ------------------------------------ " << v.GetName() << std::endl;
-   o << "Subspace: " << v.GetSubspace() << std::endl;
-   o << "Condition: " << v.GetCondition() << std::endl << std::endl;
-   o << "Projector " << std::endl << v.GetProjector() << std::endl << std::endl;
-   o << "Perp " << std::endl << v.GetPerp() << std::endl << std::endl;
-
-   const unsigned int nsubbounds = v.GetSubboundaryCount();
-   for (unsigned int i = 0; i < nsubbounds; ++i) {
-      o << v.GetSubboundary(i) << " ";
-   }
-   return o;
-}
-
 D7_Boundary D7_BoundaryList::GetBoundary(const std::string& name) {
    int nreturn = -1;
    for (unsigned int i = 0; i < D7_BoundaryList::size(); ++i) {

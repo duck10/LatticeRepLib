@@ -20,34 +20,33 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{BF25D7AA-648C-48D2-B857-D383FAF1E215}</ProjectGuid>
+    <ProjectGuid>{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>LatticeRepresentationLib</RootNamespace>
+    <RootNamespace>DevelopS6Boundaries</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
-    <ProjectName>LatticeRepresentationLib</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -71,11 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <TargetExt>.lib</TargetExt>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,29 +82,29 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <PrecompiledHeaderFile />
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\LatticeRepresentationLib;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,33 +113,32 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <PrecompiledHeaderFile />
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,91 +148,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="C3.cpp" />
-    <ClCompile Include="LatticeConverter.cpp" />
-    <ClCompile Include="LRL_Cell.cpp" />
-    <ClCompile Include="CellInputData.cpp" />
-    <ClCompile Include="LRL_Cell_Degrees.cpp" />
-    <ClCompile Include="LRL_CreateFileName.cpp" />
-    <ClCompile Include="S6.cpp" />
-    <ClCompile Include="S6Dist.cpp" />
-    <ClCompile Include="D7.cpp" />
-    <ClCompile Include="D7Dist.c" />
-    <ClCompile Include="D7_boundary.cpp" />
-    <ClCompile Include="D7_BoundaryList.cpp" />
-    <ClCompile Include="D7_ClassifySubboundaries.cpp" />
-    <ClCompile Include="D7_Subboundary.cpp" />
-    <ClCompile Include="Delone.cpp" />
-    <ClCompile Include="B4.cpp" />
-    <ClCompile Include="G6.cpp" />
-    <ClCompile Include="LRL_inverse.cpp" />
-    <ClCompile Include="MatB4.cpp" />
-    <ClCompile Include="MatS6.cpp" />
-    <ClCompile Include="MatD7.cpp" />
-    <ClCompile Include="MatG6.cpp" />
-    <ClCompile Include="MatMN.cpp" />
-    <ClCompile Include="MatN.cpp" />
-    <ClCompile Include="LRL_MaximaTools.cpp" />
-    <ClCompile Include="LRL_RandTools.cpp" />
-    <ClCompile Include="LRL_ReadLatticeData.cpp" />
-    <ClCompile Include="Niggli.cpp" />
-    <ClCompile Include="Selling.cpp" />
-    <ClCompile Include="LRL_StringTools.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="VecN.cpp" />
-    <ClCompile Include="LRL_Vector3.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BasisBase.h" />
-    <ClInclude Include="C3.h" />
-    <ClInclude Include="LatticeConverter.h" />
-    <ClInclude Include="LRL_Cell.h" />
-    <ClInclude Include="CellInputData.h" />
-    <ClInclude Include="ConstSingleton_T.h" />
-    <ClInclude Include="CoordinateConversionMatrices.h" />
-    <ClInclude Include="LRL_Cell_Degrees.h" />
-    <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
-    <ClInclude Include="LRL_CreateFileName.h" />
-    <ClInclude Include="NCDist.h" />
-    <ClInclude Include="PairReporter.h" />
-    <ClInclude Include="S6.h" />
-    <ClInclude Include="S6Dist.h" />
-    <ClInclude Include="D7.h" />
-    <ClInclude Include="D7Dist.h" />
-    <ClInclude Include="D7Dist_.hpp" />
-    <ClInclude Include="D7_Boundary.h" />
-    <ClInclude Include="D7_BoundaryList.h" />
-    <ClInclude Include="D7_ClassifySubboundaries.h" />
-    <ClInclude Include="D7_Subboundary.h" />
-    <ClInclude Include="Delone.h" />
-    <ClInclude Include="B4.h" />
-    <ClInclude Include="G6.h" />
-    <ClInclude Include="LRL_inverse.h" />
-    <ClInclude Include="MatB4.h" />
-    <ClInclude Include="MatS6.h" />
-    <ClInclude Include="MatD7.h" />
-    <ClInclude Include="MatG6.h" />
-    <ClInclude Include="MatMN.h" />
-    <ClInclude Include="MatN.h" />
-    <ClInclude Include="LRL_MatrixBase.h" />
-    <ClInclude Include="LRL_MaximaTools.h" />
-    <ClInclude Include="LRL_MinMaxTools.h" />
-    <ClInclude Include="LRL_RandTools.h" />
-    <ClInclude Include="LRL_ReadLatticeData.h" />
-    <ClInclude Include="Niggli.h" />
-    <ClInclude Include="rhrand.h" />
-    <ClInclude Include="Selling.h" />
+    <ClInclude Include="S6_Boundary.h" />
+    <ClInclude Include="S6_BoundaryList.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StoreResults.h" />
-    <ClInclude Include="LRL_StringTools.h" />
-    <ClInclude Include="Theta.h" />
-    <ClInclude Include="LRL_ToString.h" />
-    <ClInclude Include="TNear.h" />
-    <ClInclude Include="VecN.h" />
-    <ClInclude Include="LRL_Vector3.h" />
+    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt" />
+    <ClCompile Include="MAIN_DevelopS6Boundaries.cpp" />
+    <ClCompile Include="S6_Boundary.cpp" />
+    <ClCompile Include="S6_BoundaryList.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
+      <Project>{bf25d7aa-648c-48d2-b857-d383faf1e215}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

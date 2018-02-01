@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LatticeRepresentationLib", "LatticeRepresentationLib\LatticeRepresentationLib.vcxproj", "{BF25D7AA-648C-48D2-B857-D383FAF1E215}"
 EndProject
@@ -42,6 +42,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{F04B16EA-D
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestBases", "TestBases\TestBases.vcxproj", "{FF58142E-5506-4A00-B0E4-ADC50D9D260E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevelopS6Boundaries", "DevelopS6Boundaries\DevelopS6Boundaries.vcxproj", "{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +149,14 @@ Global
 		{FF58142E-5506-4A00-B0E4-ADC50D9D260E}.Release|x64.Build.0 = Release|x64
 		{FF58142E-5506-4A00-B0E4-ADC50D9D260E}.Release|x86.ActiveCfg = Release|Win32
 		{FF58142E-5506-4A00-B0E4-ADC50D9D260E}.Release|x86.Build.0 = Release|Win32
+		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Debug|x64.ActiveCfg = Debug|x64
+		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Debug|x64.Build.0 = Debug|x64
+		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Debug|x86.ActiveCfg = Debug|Win32
+		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Debug|x86.Build.0 = Debug|Win32
+		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Release|x64.ActiveCfg = Release|x64
+		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Release|x64.Build.0 = Release|x64
+		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Release|x86.ActiveCfg = Release|Win32
+		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
