@@ -26,6 +26,7 @@ void LatticeConverter::TextOutput(const std::string& label, const std::string& l
    std::cout << "G6 " << LRL_ToString(G6(cell)) << std::endl;
    std::cout << "D7  " << LRL_ToString(D7(G6(cell))) << std::endl;
    std::cout << "Scalars " << LRL_ToString(S6(cell)) << std::endl;
+   std::cout << "C3 " << LRL_ToString(C3(cell)) << std::endl;
 }
 
 void LatticeConverter::MaximaOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) const {
@@ -35,6 +36,7 @@ void LatticeConverter::MaximaOutput(const std::string& label, const std::string&
    std::cout << "G6 " << LRL_MaximaTools::MaximaFromString(LRL_ToString(G6(cell))) << std::endl;
    std::cout << "D7  " << LRL_MaximaTools::MaximaFromString(LRL_ToString(D7(G6(cell)))) << std::endl;
    std::cout << "Scalars " << LRL_MaximaTools::MaximaFromString(LRL_ToString(S6(cell))) << std::endl;
+   std::cout << "C3 " << LRL_MaximaTools::MaximaFromString(LRL_ToString(C3(cell))) << std::endl;
 }
 
 LatticeConverter::LatticeConverter(const eOutputType type)

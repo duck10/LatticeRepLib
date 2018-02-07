@@ -11,7 +11,7 @@
 #endif
 
 #include "BasisBase.h"
-
+#include "C3.h"
 #include "VecN.h"
 
 #include <string>

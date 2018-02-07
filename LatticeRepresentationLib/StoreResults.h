@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-static std::string GetTime(void) {
+static std::string StoreResults_GetTime(void) {
    const time_t now = time(NULL);
    char buft[256];
    struct tm tm_time;
@@ -45,7 +45,7 @@ public:
    friend std::ostream& operator<<(std::ostream& os, const StoreResults<TKEY, TDATA>& store) {
       os << "Contents of StoreResults" << std::endl;
       os << "m_title          " << store.GetTitle() << std::endl;
-      os << "m_nmax           " << store.GetNmax() << std::endl; 
+      os << "m_nmax           " << store.GetNmax() << std::endl;
       os << "Total Seen       " << store.GetTotalSeen() << std::endl;
       os << "m_data.size()    " << store.size() << std::endl;
       os << "m_itemSeparator  " << store.GetItemSeparator() << std::endl;
@@ -74,7 +74,7 @@ public:
 
    bool empty(void) const { return m_tree.empty(); }
 
-   TKEY GetTKEY(const unsigned long index) const {
+   TKEY GetByTreeIndex(const unsigned long index) const {
       return m_tree[index];
    }
 
@@ -106,15 +106,15 @@ public:
       return totalSeen;
    }
 
-   std::string Herald() const {
+   std::string GetHerald() const {
       std::ostringstream ostr;
-      if (m_herald.empty()) {
+      if (m_title.empty()) {
          ostr << "ShowResults       ";
       }
       else {
-         ostr << m_herald << std::endl;
+         ostr << m_title << std::endl;
       }
-      ostr << GetTime() << std::endl;
+      ostr << StoreResults_GetTime() << std::endl;
       ostr << "Total Keys = " << GetKeys().size()
          << "  Total Samples = " << GetTotalSampleCount()
          << "  Total Seen = " << GetTotalSeen() << std::endl;
@@ -157,7 +157,7 @@ public:
       }
    }
 
-   void ShowResultsByKeyDAscending(void) const {
+   void ShowResultsByKeyAscending(void) const {
       std::vector<TKEY> v(GetKeys());
       std::sort(v.begin(), v.end());
       ShowResultsBySortedKey(v);
@@ -170,7 +170,7 @@ public:
    }
 
    void ShowResults(void) const {
-      std::cout << Herald() << std::endl;
+      std::cout << GetHerald() << std::endl;
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
       std::vector<std::pair<int, SampleData<TKEY, TDATA> > > indexToSort;
 
@@ -202,8 +202,8 @@ public:
 
    }
 
-   void SetHerald(const std::string& s) {
-      m_herald = s;
+   void SetTitle(const std::string& s) {
+      m_title = s;
    }
 
    void SetFooter(const std::string& s) {
@@ -212,7 +212,7 @@ public:
 
    void SetKeyLabel(const std::string& s) { m_keyName = s; }
 
-   void AppendTitle(const std::string s) { m_herald += " " + s; }
+   void AppendTitle(const std::string s) { m_title += " " + s; }
 
    void SetMaxItemStore(const int n) { m_nmax = n; }
    void SetItemSeparator(const std::string& s) { m_itemSeparator = s; }
@@ -221,7 +221,7 @@ public:
 
    std::string GetItemSeparator(void) const { return m_itemSeparator; }
    std::string GetValueSeparator(void) const { return m_valueSeparator; }
-   std::string GetTitle(void) const { return m_herald; }
+   std::string GetTitle(void) const { return m_title; }
 
    StoreResults operator= (const StoreResults& sr) {
       m_nmax = sr.m_nmax;
@@ -236,6 +236,7 @@ public:
       m_tree.clear();
       m_notes.clear();
       m_herald.clear();
+      m_title.clear();
       m_itemSeparator.clear();
       m_valueSeparator.clear();
    }
@@ -243,7 +244,7 @@ public:
 private:
 
    void ShowResultsBySortedKey(const std::vector<TKEY>& keylist) const {
-      std::cout << Herald() << std::endl;
+      std::cout << GetHerald() << std::endl;
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
 
       for (unsigned long i = 0; i < keylist.size(); ++i) {
@@ -269,6 +270,7 @@ private:
    std::string m_itemSeparator;
    std::string m_valueSeparator;
    std::string m_herald;
+   std::string m_title;
    std::string m_footer;
    std::string m_notes;
    std::string m_keyName;

@@ -15,6 +15,10 @@ public:
    S6Dist(const double dnearzero = 1.0);
 
    double DistanceBetween(const S6& d1, const S6& d2);
+   void OneBoundaryDistance(const S6& s1, const S6& s2);
+   S6 Create_VCP_ForOneScalar(const unsigned long n, const S6& s);
+   std::vector<S6> Create_VCP_s(const S6& s);
+
 
    static std::vector<std::pair<MatS6, MatS6> > SetunreductionReductionMatricesFromReductionMatrices();
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();
@@ -49,9 +53,9 @@ public:
    S6 ApplyReductionFunction(const unsigned long n, const S6& d) const;
    S6 ApplyUnreduceFunction(const unsigned long n, const S6& d) const;
 
-   std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2) const;
-   std::pair<double, unsigned long> MinForListOfS6(const double dminSofar, const S6& d1, const std::vector<S6>& v) const;
-   std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree) const;
+   std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2);
+   std::pair<double, unsigned long> MinForListOfS6(const S6& d1, const std::vector<S6>& v);
+   std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree);
    void SetDebug(const bool b) { m_debug = b; }
 
    void UnreduceAndAddToList(const S6& d, const unsigned long n, std::vector<S6>& v) const;

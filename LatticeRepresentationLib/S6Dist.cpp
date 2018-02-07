@@ -6,6 +6,7 @@
 #include <cmath>
 #include <utility>
 
+#include "C3.h"
 #include "Delone.h"
 #include "LRL_inverse.h"
 #include "LRL_ToString.h"
@@ -66,7 +67,7 @@ S6 S6Dist::ApplyUnreduceFunction(const unsigned long n, const S6& d) const {
 void PrintVector(const std::vector<S6>& v1, const std::vector<S6>& v2) {
    S6Dist s6dist(50000.0);
    for (unsigned long i = 0; i < v2.size(); ++i) {
-      const std::pair<double, unsigned long> p = s6dist.MinForListOfS6(DBL_MAX, v2[i], v1);
+      const std::pair<double, unsigned long> p = s6dist.MinForListOfS6(v2[i], v1);
       std::cout << v2[i] << "              " << p.first << "   (" << p.second << "," << i << ")" << std::endl;
    }
 
@@ -280,32 +281,33 @@ std::vector<S6> S6Dist::GenerateReflectionsAtZero(const S6& s6) const {
 }
 
 StoreResults<double, std::string> g_debug(1);
-std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree) const {
+std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree) {
    g_debug.clear();
-   g_debug.SetHerald("    *************** *************** *************** *************** S6 Distance Calculations ********************");
+   g_debug.SetTitle("    *************** *************** *************** *************** S6 Distance Calculations ********************");
    g_debug.SetFooter("    *************** *************** *************** END END END END S6 Distance Calculations ********************");
    S6 s6min(tree[0]);
-   double dmin = (v1[0] - s6min).norm();
-   std::pair<double, unsigned long> p = std::make_pair(dmin, 0);
+   m_dmin = (v1[0] - s6min).norm();
+   const double diff = std::abs(m_dmin - 37.183);
+   std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
    const std::string itemA = LRL_ToString(v1[0]) + std::string("\n") + LRL_ToString(s6min);
-   g_debug.Store(dmin, itemA);
+   g_debug.Store(m_dmin, itemA);
    for (unsigned long i = 0; i < v1.size(); ++i) {
-      const CNearTree<S6>::iterator it = tree.NearestNeighbor(dmin, v1[i]);
+      const CNearTree<S6>::iterator it = tree.NearestNeighbor(m_dmin, v1[i]);
       if (it != tree.end()) {
          const double test = (*it)[0];
          std::string item;
          if (m_debug /*&& it != tree.end()*/) {
             item = LRL_ToString(v1[i]) + std::string("\n") + LRL_ToString(*it);
-            g_debug.Store(std::min(dmin, (v1[i] - (*it)).norm()), item);
+            g_debug.Store(std::min(m_dmin, (v1[i] - (*it)).norm()), item);
          }
          if (it != tree.end()) {
             const double first = (*it)[0];
             const double dist = (v1[i] - (*it)).norm();
             std::pair<double, unsigned long> ptemp = std::make_pair(dist, 0);
-            if (ptemp.first < dmin) {
+            if (ptemp.first < m_dmin) {
                p.second = i;
                p.first = ptemp.first;
-               dmin = p.first;
+               m_dmin = p.first;
                s6min = *it;
             }
          }
@@ -320,37 +322,39 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
    return p;
 }
 
-std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2) const {
-   g_debug.clear();
-   g_debug.SetHerald("    *************** *************** *************** *************** S6 Distance Calculations ********************");
+std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2) {
+   g_debug.SetTitle("    *************** *************** *************** *************** S6 Distance Calculations ********************");
    g_debug.SetFooter("    *************** *************** *************** END END END END S6 Distance Calculations ********************");
-   double dmin = DBL_MAX;
-   std::pair<double, unsigned long> p = std::make_pair(dmin, 0);
+   std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
    for (unsigned long iouter = 0; iouter < v1.size(); ++iouter) {
-      std::pair<double, unsigned long> ptemp = MinForListOfS6(dmin, v1[iouter], v2);
-      if (ptemp.first < dmin) {
-         dmin = ptemp.first;
+      std::pair<double, unsigned long> ptemp = MinForListOfS6(v1[iouter], v2);
+      if (ptemp.first < m_dmin) {
+         m_dmin = ptemp.first;
          p.second = iouter;
          p.first = ptemp.first;
       }
-      if ( m_debug) std::cout << "dmin A " << dmin << std::endl;
+      if ( m_debug) std::cout << "m_dmin A " << m_dmin << std::endl;
    }
    if (m_debug) g_debug.ShowResultsByKeyDescending();
+   g_debug.clear();
    return p;
 }
 
-std::pair<double, unsigned long> S6Dist::MinForListOfS6( const double dminSoFar, const S6& d1, const std::vector<S6>& v) const {
-   double dmin = std::min(dminSoFar,(d1 - v[0]).norm());
-   std::pair<double, unsigned long> p = std::make_pair(dmin, 0);
+std::pair<double, unsigned long> S6Dist::MinForListOfS6( const S6& d1, const std::vector<S6>& v) {
+   ////double dmin = std::min(dminSoFar,(d1 - v[0]).norm());
+   //const double diff = std::abs(m_dmin - 37.183);
+   //const std::string itemA = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[0]);
+   //g_debug.Store(m_dmin, itemA);
+   std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
    for (unsigned long i = 0; i < v.size(); ++i) {
       double dtemp = (d1 - v[i]).norm();
-      if (dtemp < dmin) {
+      if (dtemp < m_dmin) {
          p = std::make_pair(dtemp, i);
-         dmin = p.first;
-      }
-      if (m_debug) {
-         const std::string item = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[i]);
-         g_debug.Store(dmin, item);
+         m_dmin = p.first;
+         if (m_debug) {
+            const std::string item = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[i]);
+            g_debug.Store(m_dmin, item);
+         }
       }
    }
    return p;
@@ -373,33 +377,65 @@ const std::vector<S6> S6Dist::Generate24Reflections(const std::vector<S6>& vin) 
    return vout;
 }
 
+// VCP = Virtual Cartesian Point
+
+S6 ZeroOneScalar(const unsigned long n, const S6& s) {
+   S6 s6(s);
+   s6[n] = 0.0;
+   return s6;
+}
+
+S6 S6Dist::Create_VCP_ForOneScalar(const unsigned long n, const S6& s) {
+   static const std::vector< S6(*)(const S6&)> unreducers(S6::SetUnreduceFunctions());
+
+   const S6 szu(unreducers[n](ZeroOneScalar(n, s)));
+   S6 vcp(szu);
+   vcp[n] = -s[n];
+   return vcp;
+}
+
+//
+// VCP == Virtual Cartesian Point(s)
+//
+std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
+   std::vector<S6> voutside(Generate24Reflections(s));
+
+   for (unsigned long i = 0; i < 6; ++i) {
+      const std::vector<S6> v(Generate24Reflections(Create_VCP_ForOneScalar(i, s)));
+      voutside.insert(voutside.end(), v.begin(), v.end());
+   }
+   return voutside;
+}
+
+void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
+   std::vector<S6> vinside(1, s1);
+   std::vector<S6> voutside(Create_VCP_s(s2));
+   voutside.push_back(s2);
+   std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
+   //std::cout << LRL_ToString(voutside) << std::endl;
+   m_dmin = std::min(m_dmin, p.first);
+   const std::string item = LRL_ToString(s2) + std::string("\n ") + LRL_ToString(voutside[p.second]);
+   g_debug.Store(m_dmin, item);
+}
+
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
    m_dmin = (s1 - s2).norm();
-   return -1;
+   const double diff = std::abs(m_dmin - 37.183);
+   if (m_debug) {
+      const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
+      g_debug.Store(m_dmin, item);
+   }
+   OneBoundaryDistance(s1, s2);
+   const double dmin1 = m_dmin;
+   m_dmin = (s1 - s2).norm();
+   if (m_debug) {
+      const std::string item = LRL_ToString(s2) + std::string("\n ") + LRL_ToString(s1);
+      g_debug.Store(m_dmin, item);
+   }
+   OneBoundaryDistance(s2, s1);
+   m_dmin = std::min(m_dmin, dmin1);
+   return m_dmin;
 }
-//
-//double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
-//   const unsigned long n = 2;
-//   const std::vector<S6> vinside = ResetNearZeroAndAddToList(s1, 0);
-//   const std::vector<S6> voutside = Generate24Reflections(ResetNearZeroAndAddToList(s2, 2));
-//   //const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(ResetNearZeroAndAddToList(s2, n), 2));
-//   if (m_debug) {
-//      std::cout << "vinside  " << vinside.size() << std::endl << LRL_ToString(vinside) << std::endl << std::endl;
-//      std::cout << "voutside " << voutside.size() << std::endl << LRL_ToString(voutside) << std::endl << std::endl;
-//   }
-//   const double smallest = MinForListOfS6(vinside, voutside).first;
-//   return smallest;
-//}
-//
-//double S6Dist::DistanceBetween2(const S6& s1, const S6& s2) {
-//   const unsigned long n = 2;
-//   const std::vector<S6> vinside = UnreduceAndAddToList(s1, n);
-//   const std::vector<S6> voutside = Generate24Reflections(UnreduceAndAddToList(s2, n));
-//   const CNearTree<S6> tree = voutside;
-//
-//   const double smallest = MinForListOfS6(vinside, tree).first;
-//   return smallest;
-//}
 
 MatS6 Inverse(const MatS6& min) {
    MatS6 m(min);

@@ -10,6 +10,7 @@
 #include "S6Dist.h"
 #include "LatticeConverter.h"
 #include "NCDist_.hpp"
+#include "PairReporter.h"
 #include "PrintTable.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
@@ -134,8 +135,37 @@ void PrintDistanceData(const std::vector<LRL_ReadLatticeData>& cellDataList) {
    PrintModifiedTable(stbl, true, false, '#', " | ");
 }
 
+void ListReflections(const S6& s) {
+   const std::vector<S6> v = S6Dist::Generate24Reflections(s);
+   std::cout << LRL_ToString(v) << std::endl;
+}
+
+void ListReflectionsByC3() {
+   StoreResults<int, PairReporter<C3, MatS6> > storeMat(100);
+   const std::vector<MatS6> vmR = MatS6::GetReflections();
+   for (unsigned long i = 0; i < vmR.size(); ++i) {
+      int index = 0;
+      const S6 ord("1 2 3 4 5 6");
+      const C3 c(vmR[i] * ord);
+      for (unsigned long kk = 0; kk < 3; ++kk) {
+         if (c[kk] == std::complex<double>(1, 4)) index += 1;
+         if (c[kk] == std::complex<double>(4, 1)) index += 2;
+         if (c[kk] == std::complex<double>(2, 5)) index += 10;
+         if (c[kk] == std::complex<double>(5, 2)) index += 20;
+         if (c[kk] == std::complex<double>(3, 6)) index += 100;
+         if (c[kk] == std::complex<double>(6, 3)) index += 200;
+      }
+      storeMat.Store(index, PairReporter<C3, MatS6>(c, vmR[i]));
+
+   }
+   storeMat.ShowResults();
+}
+
 int main(int argc, char* argv[]) {
+   ListReflectionsByC3();
    std::cout << "main file name *** " << __FILE__ << " ***" << std::endl;
+
+   ListReflections(S6(" -35.78280 -90.89944 -16.76471 -22.15936 -105.64854 -94.23607"));
 
    //D7_BoundaryTests bt;
    //bt.MainTests();

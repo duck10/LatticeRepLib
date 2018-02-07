@@ -19,7 +19,7 @@
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
 
-static int s6RandomSeed = 19191;
+static int s6RandomSeed = 19194;
 
 const double pi = 4.0*atan(1.0);
 const double twopi = 2.0*pi;
@@ -500,17 +500,17 @@ std::vector< S6(*)(const S6&)> S6::SetUnreduceFunctions() {
    std::vector<S6(*)(const S6&)> v;
    // The order is to agree with the reflection in D7Dist.h
    v.push_back(Unreduce11);
-   v.push_back(Unreduce12);
+   //v.push_back(Unreduce12);
    v.push_back(Unreduce21);
-   v.push_back(Unreduce22);
+   //v.push_back(Unreduce22);
    v.push_back(Unreduce31);
-   v.push_back(Unreduce32);
+   //v.push_back(Unreduce32);
    v.push_back(Unreduce41);
-   v.push_back(Unreduce42);
+   //v.push_back(Unreduce42);
    v.push_back(Unreduce51);
-   v.push_back(Unreduce52);
+   //v.push_back(Unreduce52);
    v.push_back(Unreduce61);
-   v.push_back(Unreduce62);
+   //v.push_back(Unreduce62);
    return v;
 }
 
