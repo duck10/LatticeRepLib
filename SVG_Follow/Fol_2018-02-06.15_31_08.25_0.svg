@@ -1,0 +1,316 @@
+<?xml version="1.0" standalone="no"?>
+<!-- the width and height set the total pixel output of the image in the browser -->
+<!-- whatever is within the viewbox will be remapped to show in this size -->
+<svg width="1000" height="1000" viewBox="1 0 1000 1000"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <desc>ID (and file name) = Fol_2018-02-06.15_31_08.25_0.svg </desc> 
+ <text x="280"  y="30"  font-family="sans-serif" font-size="20" > Trial vector = 0  </text> 
+ <text x="700" y="30" font-family="sans-serif" font-size="20">Wall time passed: 31904 msec.</text>
+<text x="450" y="30" font-family="sans-serif" font-size="20" fill="black" > Plotting g5 vs. g4</text>
+<text x="300" y="60"  font-family="sans-serif" font-size="20" > Beginning vector  -93.97287 -107.75434  62.70356 -143.64631 -144.22768  54.10774 </text>
+<text x="300" y="85"  font-family="sans-serif" font-size="20" > Beginning cell   13.73671  13.24753  12.14988   2.19425   2.27264   1.21902 </text>
+<text x="300" y="110"  font-family="sans-serif" font-size="20" > Ending vector   53.64660  39.86513   8.59581 -169.26882 -197.41314 -241.13120 </text>
+<text x="300" y="135"  font-family="sans-serif" font-size="20" > Ending cell   10.99126  11.62629  12.14988   1.18124   1.26765   1.50348 </text>
+
+
+
+
+ <!--DISTANCE PLOT BEGINS-->
+
+
+<!-- the following will scale and place the distance plot -->
+<g  transform="translate(0,50) ">
+<g transform="translate(150,700) scale(1 -1)">
+   <polyline fill="none" stroke="black" stroke-width="10" points=" 5.2 ,2.20405e-05  10.4 ,14.9596  15.6 ,29.9192  20.8 ,44.8788  26 ,59.8385  31.2 ,74.7981  36.4 ,89.7577  41.6 ,104.717  46.8 ,119.677  52 ,134.637  57.2 ,149.596  62.4 ,164.556  67.6 ,178.613  72.8 ,187.546  78 ,197.21  83.2 ,207.504  88.4 ,218.338  93.6 ,229.635  98.8 ,241.332  104 ,251.269  109.2 ,261.101  114.4 ,271.401  119.6 ,282.118  124.8 ,293.208  130 ,304.628  135.2 ,316.344  140.4 ,328.323  145.6 ,339.99  150.8 ,350.029  156 ,360.41  161.2 ,371.103  166.4 ,382.083  171.6 ,393.325  176.8 ,404.809  182 ,409.654  187.2 ,413.916  192.4 ,418.386  197.6 ,419.745  202.8 ,420.29  208 ,421.082  213.2 ,422.121  218.4 ,423.405  223.6 ,424.931  228.8 ,426.697  234 ,428.7  239.2 ,430.937  244.4 ,433.403  249.6 ,436.096  254.8 ,438.682  260 ,441.354  265.2 ,444.246  270.4 ,447.353  275.6 ,450.67  280.8 ,454.195  286 ,457.92  291.2 ,461.842  296.4 ,465.956  301.6 ,470.256  306.8 ,474.738  312 ,479.396  317.2 ,484.226  322.4 ,489.222  327.6 ,494.379  332.8 ,499.693  338 ,501.854  343.2 ,504.217  348.4 ,506.857  353.6 ,509.771  358.8 ,510.526  364 ,505.607  369.2 ,500.129  374.4 ,494.178  379.6 ,490.587  384.8 ,483.822  390 ,476.717  395.2 ,469.959  400.4 ,463.563  405.6 ,457.188  410.8 ,450.547  416 ,444.288  421.2 ,438.426  426.4 ,432.978  431.6 ,427.96  436.8 ,423.387  442 ,413.778  447.2 ,387.953  452.4 ,360.242  457.6 ,332.531  462.8 ,304.821  468 ,277.11  473.2 ,249.399  478.4 ,221.688  483.6 ,193.977  488.8 ,166.266  494 ,138.555  499.2 ,110.844  504.4 ,83.1329  509.6 ,55.4219  514.8 ,27.711  520 ,2.20405e-05  " />
+
+<!--Draw the X and Y axes -->
+<polyline fill="none" stroke="black" stroke-width="6"  points=" 600,0 0,0 0,520" />
+<!-- -->
+
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="0" y1="1.56327e-13" x2="5.2" y2="1.56327e-13" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="5.2" y1="1.56327e-13" x2="10.4" y2="9.06151" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="10.4" y1="9.06151" x2="15.6" y2="18.123" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="15.6" y1="18.123" x2="20.8" y2="27.1845" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="20.8" y1="27.1845" x2="26" y2="36.246" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="26" y1="36.246" x2="31.2" y2="45.3076" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="31.2" y1="45.3076" x2="36.4" y2="54.3691" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="36.4" y1="54.3691" x2="41.6" y2="63.4306" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="41.6" y1="63.4306" x2="46.8" y2="72.4921" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="46.8" y1="72.4921" x2="52" y2="81.5536" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="52" y1="81.5536" x2="57.2" y2="90.6151" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="57.2" y1="90.6151" x2="62.4" y2="99.6766" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="62.4" y1="99.6766" x2="67.6" y2="107.993" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="67.6" y1="107.993" x2="72.8" y2="112.041" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="72.8" y1="112.041" x2="78" y2="116.654" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="78" y1="116.654" x2="83.2" y2="121.768" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="83.2" y1="121.768" x2="88.4" y2="127.322" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="88.4" y1="127.322" x2="93.6" y2="133.262" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="93.6" y1="133.262" x2="98.8" y2="139.537" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="98.8" y1="139.537" x2="104" y2="144.278" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="104" y1="144.278" x2="109.2" y2="148.906" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="109.2" y1="148.906" x2="114.4" y2="153.93" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="114.4" y1="153.93" x2="119.6" y2="159.311" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="119.6" y1="159.311" x2="124.8" y2="165.014" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="124.8" y1="165.014" x2="130" y2="171.007" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="130" y1="171.007" x2="135.2" y2="177.262" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="135.2" y1="177.262" x2="140.4" y2="183.75" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="140.4" y1="183.75" x2="145.6" y2="189.958" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="145.6" y1="189.958" x2="150.8" y2="194.704" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="150.8" y1="194.704" x2="156" y2="199.748" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="156" y1="199.748" x2="161.2" y2="205.069" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="161.2" y1="205.069" x2="166.4" y2="210.645" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="166.4" y1="210.645" x2="171.6" y2="216.457" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="171.6" y1="216.457" x2="176.8" y2="222.486" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="176.8" y1="222.486" x2="182" y2="223.772" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="182" y1="223.772" x2="187.2" y2="224.678" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="187.2" y1="224.678" x2="192.4" y2="225.779" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="192.4" y1="225.779" x2="197.6" y2="226.933" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="197.6" y1="226.933" x2="202.8" y2="225.113" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="202.8" y1="225.113" x2="208" y2="223.479" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="208" y1="223.479" x2="213.2" y2="222.035" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="213.2" y1="222.035" x2="218.4" y2="220.785" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="218.4" y1="220.785" x2="223.6" y2="219.733" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="223.6" y1="219.733" x2="228.8" y2="218.881" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="228.8" y1="218.881" x2="234" y2="218.231" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="234" y1="218.231" x2="239.2" y2="217.785" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="239.2" y1="217.785" x2="244.4" y2="217.545" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="244.4" y1="217.545" x2="249.6" y2="217.51" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="249.6" y1="217.51" x2="254.8" y2="217.351" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="254.8" y1="217.351" x2="260" y2="217.26" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="260" y1="217.26" x2="265.2" y2="217.376" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="265.2" y1="217.376" x2="270.4" y2="217.698" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="270.4" y1="217.698" x2="275.6" y2="218.225" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="275.6" y1="218.225" x2="280.8" y2="218.956" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="280.8" y1="218.956" x2="286" y2="219.889" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="286" y1="219.889" x2="291.2" y2="221.021" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="291.2" y1="221.021" x2="296.4" y2="222.349" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="296.4" y1="222.349" x2="301.6" y2="223.87" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="301.6" y1="223.87" x2="306.8" y2="225.579" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="306.8" y1="225.579" x2="312" y2="227.474" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="312" y1="227.474" x2="317.2" y2="229.548" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="317.2" y1="229.548" x2="322.4" y2="231.797" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="322.4" y1="231.797" x2="327.6" y2="234.216" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="327.6" y1="234.216" x2="332.8" y2="236.8" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="332.8" y1="236.8" x2="338" y2="238.683" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="338" y1="238.683" x2="343.2" y2="240.821" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="343.2" y1="240.821" x2="348.4" y2="243.228" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="348.4" y1="243.228" x2="353.6" y2="245.898" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="353.6" y1="245.898" x2="358.8" y2="248.82" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="358.8" y1="248.82" x2="364" y2="247.837" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="364" y1="247.837" x2="369.2" y2="245.592" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="369.2" y1="245.592" x2="374.4" y2="243.615" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="374.4" y1="243.615" x2="379.6" y2="241.912" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="379.6" y1="241.912" x2="384.8" y2="240.43" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="384.8" y1="240.43" x2="390" y2="239.217" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="390" y1="239.217" x2="395.2" y2="238.301" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="395.2" y1="238.301" x2="400.4" y2="237.685" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="400.4" y1="237.685" x2="405.6" y2="237.027" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="405.6" y1="237.027" x2="410.8" y2="236.054" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="410.8" y1="236.054" x2="416" y2="235.383" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="416" y1="235.383" x2="421.2" y2="235.017" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="421.2" y1="235.017" x2="426.4" y2="234.957" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="426.4" y1="234.957" x2="431.6" y2="235.204" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="431.6" y1="235.204" x2="436.8" y2="235.757" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="436.8" y1="235.757" x2="442" y2="232.74" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="442" y1="232.74" x2="447.2" y2="219.288" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="447.2" y1="219.288" x2="452.4" y2="203.625" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="452.4" y1="203.625" x2="457.6" y2="187.961" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="457.6" y1="187.961" x2="462.8" y2="172.298" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="462.8" y1="172.298" x2="468" y2="156.634" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="468" y1="156.634" x2="473.2" y2="140.971" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="473.2" y1="140.971" x2="478.4" y2="125.307" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="478.4" y1="125.307" x2="483.6" y2="109.644" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="483.6" y1="109.644" x2="488.8" y2="93.9806" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="488.8" y1="93.9806" x2="494" y2="78.3172" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="494" y1="78.3172" x2="499.2" y2="62.6537" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="499.2" y1="62.6537" x2="504.4" y2="46.9903" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="504.4" y1="46.9903" x2="509.6" y2="31.3269" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="509.6" y1="31.3269" x2="514.8" y2="15.6634" />
+<line fill="none" stroke-width="3" boundary-string=""  stroke="lightblue" x1="514.8" y1="15.6634" x2="520" y2="1.04667e-13" />
+
+<!--Draw the X and Y axes -->
+<polyline fill="none" stroke="black" stroke-width="6"  points=" 600,0 0,0 0,520" />
+<!-- -->
+
+
+<!--Draw labels and tics for X axis -->
+
+<line fill="none" stroke="black"  stroke-width="6"  x1="0.5" y1="0" x2="0.5" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="-24.5" y="45" >0 </text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="104.5" y1="0" x2="104.5" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="79.5" y="45" >20 </text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="208.5" y1="0" x2="208.5" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="183.5" y="45" >40 </text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="312.5" y1="0" x2="312.5" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="287.5" y="45" >60 </text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="416.5" y1="0" x2="416.5" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="391.5" y="45" >80 </text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="520.5" y1="0" x2="520.5" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="495.5" y="45" >100 </text>
+
+
+<!--Draw labels and tics for Y axis -->
+
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="0" x2="-20" y2="0" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="10" >0 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="57.7778" x2="-20" y2="57.7778" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-47.7778" >20 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="115.556" x2="-20" y2="115.556" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-105.556" >40 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="173.333" x2="-20" y2="173.333" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-163.333" >60 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="231.111" x2="-20" y2="231.111" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-221.111" >80 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="288.889" x2="-20" y2="288.889" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-278.889" >100 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="346.667" x2="-20" y2="346.667" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-336.667" >120 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="404.444" x2="-20" y2="404.444" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-394.444" >140 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="462.222" x2="-20" y2="462.222" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-452.222" >160 </text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="520" x2="-20" y2="520" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-510" >180 </text>
+
+
+<!-- Reduced vector followed by D7dist from the final reduced cell
+-81.52413 -31.26931  -8.59581 -80.94275 -45.05079 -62.70356    (5.41133e-14,  7.62939e-06)   
+-82.60789 -30.32475 -11.03148 -81.74811 -44.10622 -62.15701    (3.13668,  5.17833)   
+-83.69166 -29.38019 -13.46715 -82.55346 -43.16166 -61.61047    (6.27335,  10.3567)   
+-84.77543 -28.43563 -15.90282 -83.35882 -42.21710 -61.06393    (9.41003,  15.535)   
+-85.85920 -27.49106 -18.33849 -84.16417 -41.27253 -60.51738    (12.5467,  20.7133)   
+-86.94297 -26.54650 -20.77416 -84.96953 -40.32797 -59.97084    (15.6834,  25.8916)   
+-88.02674 -25.60194 -23.20983 -85.77489 -39.38341 -59.42430    (18.8201,  31.07)   
+-89.11051 -24.65737 -25.64549 -86.58024 -38.43885 -58.87776    (21.9567,  36.2483)   
+-90.19428 -23.71281 -28.08116 -87.38560 -37.49428 -58.33121    (25.0934,  41.4266)   
+-91.27805 -22.76825 -30.51683 -88.19095 -36.54972 -57.78467    (28.2301,  46.605)   
+-92.36182 -21.82369 -32.95250 -88.99631 -35.60516 -57.23813    (31.3668,  51.7833)   
+-93.44559 -20.87912 -35.38817 -89.80167 -34.66059 -56.69158    (34.5035,  56.9616)   
+-94.52936 -19.93456 -37.82384 -90.60702 -33.71603 -56.14504    (37.3821,  61.8276)   
+-95.61313 -18.99000 -40.25951 -91.41238 -32.77147 -55.59850    (38.7835,  64.9197)   
+-96.69690 -42.69517 -18.04543 -92.21774 -55.05196 -31.82691    (40.3804,  68.2651)   
+-97.78067 -45.13084 -17.10087 -93.02309 -54.50541 -30.88234    (42.1505,  71.8282)   
+-98.86444 -47.56651 -16.15631 -93.82845 -53.95887 -29.93778    (44.0731,  75.5784)   
+-53.41233 -94.63380 -15.21175 -50.00218 -99.94821 -28.99322    (46.129,  79.4892)   
+-52.86578 -95.43916 -14.26718 -52.43785 -101.03198 -28.04865    (48.3012,  83.538)   
+-52.31924 -96.24452 -13.32262 -54.87352 -102.11575 -27.10409    (49.9423,  86.9778)   
+-51.77270 -97.04987 -12.37806 -57.30919 -103.19952 -26.15953    (51.5446,  90.381)   
+-97.85523 -51.22616 -11.43349 -104.28329 -59.74486 -25.21497    (53.2834,  93.9464)   
+-98.66058 -50.67961 -10.48893 -105.36706 -62.18052 -24.27040    (55.146,  97.6563)   
+-99.46594  -9.54437 -50.13307 -106.45083 -23.32584 -64.61619    (57.1202,  101.495)   
+-100.27130  -8.59981 -49.58653 -107.53460 -22.38128 -67.05186    (59.1949,  105.448)   
+-101.07665  -7.65524 -49.03998 -108.61837 -21.43671 -69.48753    (61.3598,  109.504)   
+-101.88201  -6.71068 -48.49344 -109.70214 -20.49215 -71.92320    (63.6058,  113.65)   
+-102.68737  -5.76612 -47.94690 -110.78591 -19.54759 -74.35887    (65.7547,  117.689)   
+-103.49272  -4.82155 -47.40036 -111.86968 -18.60303 -76.79454    (67.3974,  121.164)   
+-104.29808  -3.87699 -46.85381 -112.95345 -17.65846 -79.23021    (69.1435,  124.757)   
+-105.10343  -2.93243 -46.30727 -114.03722 -16.71390 -81.66587    (70.9853,  128.459)   
+-105.90879  -1.98786 -45.76073 -115.12099 -15.76934 -84.10154    (72.9155,  132.26)   
+-106.71415  -1.04330 -45.21418 -116.20476 -14.82477 -86.53721    (74.9274,  136.151)   
+-107.51950  -0.09874 -44.66764 -117.28853 -13.88021 -88.97288    (77.0145,  140.126)   
+ -0.84582 -90.56272 -43.27527 -13.78147 -117.52647 -107.47903    (77.4595,  141.803)   
+ -1.79039 -92.05383 -41.78417 -13.78147 -117.66568 -107.33983    (77.773,  143.278)   
+ -2.73495 -93.54494 -40.29306 -13.78147 -117.80488 -107.20062    (78.1541,  144.826)   
+ -3.67951 -95.03604 -38.80196 -13.78147 -117.94409 -107.06141    (78.5536,  145.296)   
+ -4.62408 -96.52715 -37.31085 -13.78147 -118.08330 -106.92221    (77.9236,  145.485)   
+ -5.56864 -98.01825 -35.81975 -13.78147 -118.22250 -106.78300    (77.3581,  145.759)   
+ -6.51320 -99.50936 -34.32864 -13.78147 -118.36171 -106.64379    (76.8583,  146.119)   
+ -7.45776 -101.00046 -32.83753 -13.78147 -118.50092 -106.50459    (76.4257,  146.563)   
+ -8.40233 -102.49157 -31.34643 -13.78147 -118.64012 -106.36538    (76.0614,  147.092)   
+ -9.34689 -103.98268 -29.85532 -13.78147 -118.77933 -106.22617    (75.7664,  147.703)   
+-10.29145 -105.47378 -28.36422 -13.78147 -118.91854 -106.08697    (75.5414,  148.396)   
+-11.23602 -106.96489 -26.87311 -13.78147 -119.05775 -105.94776    (75.3871,  149.17)   
+-12.18058 -108.45599 -25.38201 -13.78147 -119.19695 -105.80855    (75.3039,  150.024)   
+-13.12514 -109.94710 -23.89090 -13.78147 -119.33616 -105.66935    (75.2921,  150.956)   
+-14.06970 -111.43821 -22.39979 -13.78147 -119.47537 -105.53014    (75.2369,  151.851)   
+-15.01427 -112.92931 -20.90869 -13.78147 -119.61457 -105.39093    (75.2054,  152.776)   
+-15.95883 -114.42042 -19.41758 -13.78147 -119.75378 -105.25173    (75.2455,  153.777)   
+-16.90339 -115.91152 -17.92648 -13.78147 -119.89299 -105.11252    (75.3569,  154.853)   
+-120.03219 -13.78147 -16.43537 -117.40263 -17.84796 -104.97331    (75.5394,  156.001)   
+-120.17140 -13.78147 -14.94427 -118.89373 -18.79252 -104.83411    (75.7925,  157.221)   
+-120.31061 -13.78147 -13.45316 -120.38484 -19.73708 -104.69490    (76.1153,  158.511)   
+-120.44981 -13.78147 -11.96205 -121.87595 -20.68165 -104.55569    (76.5072,  159.868)   
+-120.58902 -13.78147 -10.47095 -123.36705 -21.62621 -104.41648    (76.9669,  161.292)   
+-120.72823 -13.78147  -8.97984 -124.85816 -22.57077 -104.27728    (77.4934,  162.781)   
+-120.86743 -13.78147  -7.48874 -126.34926 -23.51533 -104.13807    (78.0852,  164.332)   
+-121.00664 -13.78147  -5.99763 -127.84037 -24.45990 -103.99886    (78.7408,  165.945)   
+-121.14585 -13.78147  -4.50652 -129.33147 -25.40446 -103.85966    (79.4588,  167.617)   
+-121.28505 -13.78147  -3.01542 -130.82258 -26.34902 -103.72045    (80.2374,  169.346)   
+-121.42426 -13.78147  -1.52431 -132.31369 -27.29359 -103.58124    (81.0748,  171.131)   
+-121.56347 -13.78147  -0.03321 -133.80479 -28.23815 -103.44204    (81.9694,  172.971)   
+ -1.45790 -27.72481 -12.32357 -104.76073 -133.83800 -120.24478    (82.6209,  173.719)   
+ -2.94900 -27.17827 -10.83247 -106.11263 -133.83800 -118.89288    (83.361,  174.537)   
+ -4.44011 -26.63173  -9.34136 -107.46453 -133.83800 -117.54098    (84.1944,  175.45)   
+ -5.93122 -26.08518  -7.85026 -108.81643 -133.83800 -116.18908    (85.1184,  176.459)   
+ -7.42232 -25.53864  -6.35915 -110.16832 -133.83800 -114.83718    (86.1301,  176.721)   
+ -8.91343  -4.86804 -24.99210 -111.52022 -113.48528 -133.83800    (85.7897,  175.018)   
+-10.40453  -3.37694 -24.44556 -112.87212 -112.13338 -133.83800    (85.0128,  173.122)   
+-11.89564  -1.88583 -23.89901 -114.22402 -110.78148 -133.83800    (84.3284,  171.062)   
+-13.38674  -0.39473 -23.35247 -115.57592 -109.42958 -133.83800    (83.7388,  169.819)   
+-13.78147 -115.83144  -1.09638 -21.70955 -132.74162 -109.17406    (83.2256,  167.477)   
+-13.78147 -115.69223  -2.58748 -19.67190 -131.25051 -109.31327    (82.8059,  165.017)   
+-13.78147 -115.55303  -4.07859 -17.63425 -129.75941 -109.45248    (82.4887,  162.678)   
+-13.78147 -115.41382  -5.56970 -15.59660 -128.26830 -109.59168    (82.2754,  160.464)   
+-13.78147 -115.27461  -7.06080 -13.55895 -126.77720 -109.73089    (82.048,  158.257)   
+-13.78147 -115.13541  -8.55191 -11.52131 -125.28609 -109.87010    (81.711,  155.959)   
+-13.78147 -114.99620 -10.04301  -9.48366 -123.79499 -110.00930    (81.4787,  153.792)   
+-13.78147 -114.85699 -11.53412  -7.44601 -122.30388 -110.14851    (81.352,  151.763)   
+-120.81277  -5.40836 -13.02522 -114.71779 -13.78147 -110.28772    (81.3313,  149.877)   
+-119.32167  -3.37071 -14.51633 -114.57858 -13.78147 -110.42692    (81.4168,  148.14)   
+-117.83056  -1.33306 -16.00744 -114.43937 -13.78147 -110.56613    (81.6081,  146.557)   
+-110.00075  -0.70459 -16.79396 -113.59558 -14.48606 -115.63487    (80.5637,  143.231)   
+-108.10231  -2.74223 -16.24741 -111.41873 -16.52371 -112.10612    (75.9074,  134.292)   
+-106.20387  -4.77988 -15.70087 -109.24187 -18.56135 -108.57736    (70.4854,  124.699)   
+-104.30543  -6.81753 -15.15433 -107.06501 -20.59900 -105.04861    (65.0635,  115.107)   
+-102.40699  -8.85518 -14.60778 -104.88816 -22.63665 -101.51985    (59.6415,  105.515)   
+-100.50854 -10.89283 -14.06124 -102.71130 -24.67430 -97.99110    (54.2196,  95.9225)   
+-98.61010 -12.93048 -13.51470 -100.53445 -26.71195 -94.46235    (48.7976,  86.3303)   
+-96.71166 -14.96813 -12.96816 -98.35759 -28.74960 -90.93359    (43.3757,  76.738)   
+-94.81322 -17.00577 -12.42161 -96.18074 -30.78725 -87.40484    (37.9537,  67.1458)   
+-92.91478 -19.04342 -11.87507 -94.00388 -32.82489 -83.87608    (32.5317,  57.5535)   
+-91.01633 -21.08107 -11.32853 -91.82703 -34.86254 -80.34733    (27.1098,  47.9613)   
+-89.11789 -23.11872 -10.78198 -89.65017 -36.90019 -76.81857    (21.6878,  38.369)   
+-87.21945 -25.15637 -10.23544 -87.47332 -38.93784 -73.28982    (16.2659,  28.7768)   
+-85.32101 -27.19402  -9.68890 -85.29646 -40.97549 -69.76106    (10.8439,  19.1845)   
+-83.42257 -29.23167  -9.14236 -83.11961 -43.01314 -66.23231    (5.42196,  9.59225)   
+-81.52413 -31.26931  -8.59581 -80.94275 -45.05079 -62.70356    (3.62307e-14,  7.62939e-06)   
+-->
+</g>
+</g>
+<!-- Run Constants
+CIRCLEPLOT bool false
+DISTANCEPLOT bool true
+PRINTDISTANCEDATA bool true
+GLITCHESONLY bool false
+PLOT 2doubles 3 4
+PERTURBBY double 0.05
+GLITCHLEVEL double 3
+BOUNDARYWINDOW double 0.065
+FRAMESPERPATH int 200
+STEPSPERFRAME int 100
+TRIALS int 1
+ALLBLACK bool false
+FILEPREFIX string Fol
+GRAPHSIZE int 0
+BORDER int 0
+PLOTSIZE int 0
+CIRCLEPLOTSIZE int 2000
+CIRCLERADIUS int 300
+CIRCLESTROKEWIDTH int 30
+G6LINEWIDTH int 3
+DELONELINEWIDTH int 10
+AXISWIDTH int 6
+TICLENGTH int 20
+VECTOR g6 
+PERTURB g6Perturb 
+MOVIEMODE MovieMode STAR
+FOLLOWERMODE FollowerMode Follow
+FIXRANDOMSEED fixRandomSeed true
+RANDOMSEED int 18
+TIMESTAMP bool true
+END end 
+
+
+
+
+-->
+</svg>
