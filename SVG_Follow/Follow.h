@@ -11,6 +11,7 @@
 #include "Delone.h"
 //#include "D7Dist.h"
 #include "D7Dist_.hpp"
+#include "FollowerConstants.h"
 #include "Glitch.h"
 #include "LRL_Cell.h"
 #include "NCDist_.hpp"

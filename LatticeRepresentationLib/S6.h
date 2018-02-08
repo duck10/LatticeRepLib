@@ -83,6 +83,7 @@ public:
    static std::string GetName(void) { return "S6, Selling scalars"; }
    static S6 InvertCoord(const unsigned long n, const S6& din);
    S6 InvertCoord(const unsigned long n) const;
+   static std::string Signature(const S6& s6);
 
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();
 
