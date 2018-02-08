@@ -188,6 +188,7 @@
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
     <ClInclude Include="C3.h" />
+    <ClInclude Include="GenerateRandomLattice.h" />
     <ClInclude Include="LatticeConverter.h" />
     <ClInclude Include="LRL_Cell.h" />
     <ClInclude Include="CellInputData.h" />

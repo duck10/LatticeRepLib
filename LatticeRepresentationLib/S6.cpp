@@ -19,11 +19,11 @@
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
 
-static int s6RandomSeed = 19194;
 
 const double pi = 4.0*atan(1.0);
 const double twopi = 2.0*pi;
 
+static int s6RandomSeed = 19194;
 static RHrand rhrand(s6RandomSeed);
 
 
@@ -355,6 +355,14 @@ S6 S6::InvertCoord(const unsigned long n) const {
    S6 temp(*this);
    temp[n] = -temp[n];
    return temp;
+}
+std::string S6::Signature(const S6& s6) {
+   std::string s;
+   for (unsigned long i = 0; i < 6; ++i) {
+      s.push_back((s6[i] <= 0.0) ? '-' : '+');
+      if (i == 2) s.push_back(',');
+   }
+   return s;
 }
 
 S6 S6::rand(void) {
