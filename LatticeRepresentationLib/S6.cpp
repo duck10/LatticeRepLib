@@ -14,6 +14,7 @@
 #include "D7.h"
 #include "G6.h"
 #include "LRL_RandTools.h"
+#include "Rhrand.h"
 #include "S6.h"
 #include "Selling.h"
 #include "LRL_StringTools.h"
@@ -23,7 +24,7 @@
 const double pi = 4.0*atan(1.0);
 const double twopi = 2.0*pi;
 
-static int s6RandomSeed = 19194;
+static int s6RandomSeed = 19195;
 static RHrand rhrand(s6RandomSeed);
 
 
