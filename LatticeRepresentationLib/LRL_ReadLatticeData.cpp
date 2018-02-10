@@ -10,8 +10,10 @@
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
+#include "LRL_StringTools.h"
 
 #include <algorithm>
+#include <complex>
 #include <cmath>
 #include <sstream>
 #include <string>
@@ -52,7 +54,21 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          S6 e;
          for (unsigned long i = 0; i < 6; ++i)
             iss >> e[i];
-         m_cell = G6(e);
+         m_cell = e;
+      }
+      else if (LRL_StringTools::strToupper(m_inputDataType).substr(0, m_inputDataType.length()) == "C3") {
+         C3 e;
+         std::vector<double> vd(20);
+         double d;
+         for (unsigned long i = 0; i < 6; ++i) {
+            iss >> d;
+            vd[i] = d;
+         }
+         e[0] = std::complex<double>(vd[0], vd[1]);
+         e[1] = std::complex<double>(vd[2], vd[3]);
+         e[2] = std::complex<double>(vd[4], vd[5]);
+         e.SetValid(true);
+         m_cell = e;
       }
       else {
          for (unsigned long i = 0; i < 6; ++i)

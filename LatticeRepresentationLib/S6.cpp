@@ -51,10 +51,10 @@ S6::S6(const C3& c3)
    , m_vec(VecN(6))
 {
    m_vec[0] = c3[0].real();
-   m_vec[1] = c3[0].imag();
-   m_vec[2] = c3[1].real();
-   m_vec[3] = c3[1].imag();
-   m_vec[4] = c3[2].real();
+   m_vec[3] = c3[0].imag();
+   m_vec[1] = c3[1].real();
+   m_vec[4] = c3[1].imag();
+   m_vec[2] = c3[2].real();
    m_vec[5] = c3[2].imag();
    m_valid = c3.GetValid();
 }
