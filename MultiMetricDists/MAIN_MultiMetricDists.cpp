@@ -43,6 +43,15 @@ std::string OutputIntialInput(const std::vector<LRL_ReadLatticeData>& cellDataLi
       s += LRL_ToString("Input ", i, ":  ") + cellDataList[i].GetStrCell() + boundary + "\n";
    }
 
+   for (size_t i = 0; i < cellDataList.size(); ++i) {
+      const std::vector<std::pair<std::string, std::string > > boundaryCases = D7(cellDataList[i].GetCell()).ClassifyVector(0.5);
+      std::string boundary;
+      for (unsigned long k = 0; k < boundaryCases.size(); ++k) {
+         boundary += " " + boundaryCases[k].second;
+      }
+      s += LRL_ToString("Input ", i, ":  ") + LRL_ToString(C3(cellDataList[i].GetCell())) + "\n";
+   }
+
    return s;
 }
 

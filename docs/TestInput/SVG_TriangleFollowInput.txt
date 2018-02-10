@@ -1,0 +1,16 @@
+fixrandomseed true
+randomseed 18
+trials 3
+end
+end
+
+
+
+fixrandomseed true
+randomseed 18
+trials 30
+stepsperframe 1000
+end
+v 100 100 100 100 100 100
+end
+

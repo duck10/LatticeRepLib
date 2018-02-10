@@ -27,6 +27,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MultiMetricDists", "MultiMe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{F04B16EA-D8B9-4434-8051-829B5FE3F5A6}"
 	ProjectSection(SolutionItems) = preProject
+		docs\TestInput\FollowerInput.txt = docs\TestInput\FollowerInput.txt
 		docs\LatticeRepLib.aux = docs\LatticeRepLib.aux
 		docs\LatticeRepLib.bbl = docs\LatticeRepLib.bbl
 		docs\LatticeRepLib.bib = docs\LatticeRepLib.bib
@@ -38,12 +39,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{F04B16EA-D
 		docs\LatticeRepLib.synctex.gz = docs\LatticeRepLib.synctex.gz
 		docs\LatticeRepLib.tex = docs\LatticeRepLib.tex
 		docs\LatticeRepLib.toc = docs\LatticeRepLib.toc
+		docs\TestInput\MultMetricDistInput.txt = docs\TestInput\MultMetricDistInput.txt
 		README.md = README.md
+		docs\TestInput\SVG_TriangleFollowInput.txt = docs\TestInput\SVG_TriangleFollowInput.txt
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestBases", "TestBases\TestBases.vcxproj", "{FF58142E-5506-4A00-B0E4-ADC50D9D260E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DevelopS6Boundaries", "DevelopS6Boundaries\DevelopS6Boundaries.vcxproj", "{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConvertToC3", "ConvertToC3\ConvertToC3.vcxproj", "{3A9A1BA5-BC77-4124-BADE-D84CFE861573}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,6 +162,14 @@ Global
 		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Release|x64.Build.0 = Release|x64
 		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Release|x86.ActiveCfg = Release|Win32
 		{D2263B5B-A488-4EAD-9CE8-4B6E9075B0E9}.Release|x86.Build.0 = Release|Win32
+		{3A9A1BA5-BC77-4124-BADE-D84CFE861573}.Debug|x64.ActiveCfg = Debug|x64
+		{3A9A1BA5-BC77-4124-BADE-D84CFE861573}.Debug|x64.Build.0 = Debug|x64
+		{3A9A1BA5-BC77-4124-BADE-D84CFE861573}.Debug|x86.ActiveCfg = Debug|Win32
+		{3A9A1BA5-BC77-4124-BADE-D84CFE861573}.Debug|x86.Build.0 = Debug|Win32
+		{3A9A1BA5-BC77-4124-BADE-D84CFE861573}.Release|x64.ActiveCfg = Release|x64
+		{3A9A1BA5-BC77-4124-BADE-D84CFE861573}.Release|x64.Build.0 = Release|x64
+		{3A9A1BA5-BC77-4124-BADE-D84CFE861573}.Release|x86.ActiveCfg = Release|Win32
+		{3A9A1BA5-BC77-4124-BADE-D84CFE861573}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
