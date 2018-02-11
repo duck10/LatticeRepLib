@@ -1,0 +1,34 @@
+
+r r r   r r r       K1   (r,r) (r,r) (r,r)  cI
+r r 0   r r 0       K3   (r,r) (r,r) (0,0)  cF
+0 0 0   r r r       K5   (0,r) (0,r) (0,r)  cP
+
+r r s   r r s       Q1   (r,r) (r,r) (s,s)  tI
+r r 0   r r s       Q2   (r,r) (r,r) (0,s)  tI
+0 0 0   r r s       Q5   (0,r) (0,r) (0,s)  tP
+
+r r r   s s s       R1   (r,s) (r,s) (r,s)  rP
+r 0 r   s r 0       R3   (r,s) (0,r) (r,0)  rP
+
+r r s   r r t       O1A  (r,r) (r,r) (s,t)  oF
+r r s   r r s       O1B  (r,r) (r,r) (s,s)  oI
+r s 0   s r 0       O2   (r,s) (s,r) (0,0)  oI
+r s 0   r s 0       O3   (r,r) (s,s) (0,0)  oI
+0 0 r   s s t       O4   (0,s) (0,s) (s,t)  oP
+0 0 0   r s t       O5   (0,r) (0,s) (0,t)  oP
+       
+r r s   t t u       M1A  (r,t) (r,t) (s,u)  mC
+r s t   r s u       M1B  (r,r) (s,s) (t,u)  mC
+r s 0   r s t       M2A  (r,r) (s,s) (0,u)  mC
+r s 0   s t u       M2B  (r,s) (s,t) (0,u)  mC
+r s 0   t s 0       M3   (r,t) (s,s) (0,0)  mC
+0 0 r   s t u       M4   (0,s) (0,t) (r,u)  mP
+
+r s t   u v w       T1   (r,u) (s,v) (t,w)  aP
+r s 0   t u v       T2   (r,t) (s,u) (0,v)  aP
+r s 0   t u 0       T3   (r,t) (s,u) (0,0)  aP
+                  
+0 0 r   r r s       H4   (0,r) (0,r) (r,s)  hP
+
+
+

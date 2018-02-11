@@ -33,8 +33,8 @@ std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransition
 
          const double normalizedPercent = 100.0*difpair / interpolatedMiddle;
 
-         if ((normalizedPercent > 1.0E-1)
-             && (absDataDiff > 1.5*prevDataDiff) )
+         if ((normalizedPercent > 1.0)
+             && (absDataDiff > prevDataDiff) )
             biggiesL.push_back(std::make_pair(double(i), normalizedPercent));
       }
 
@@ -45,6 +45,7 @@ std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransition
 }
 
 std::vector<std::pair<double, double> > OutlierFinder::InsertSeparatorsBetweenRuns(const std::vector<std::pair<double, double> >& biggies) {
+   if (biggies.size() < 2) return biggies;
    std::vector<std::pair<double, double> > biggiesL(biggies);
    std::vector<std::pair<double, double> > biggiesL2;
    std::vector<std::pair<double, double> >::iterator it2(biggiesL.begin());
