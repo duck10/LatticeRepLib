@@ -27,7 +27,6 @@ end
 
 
 
-circleplot flase
 circleplot false
 randomseed 18
 trials 1

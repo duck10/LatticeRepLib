@@ -49,6 +49,7 @@ bool Selling::Reduce(const S6& in, S6& out) {
       }
 
       out = vf[maxIndex](out);
+      double out1 = out[0];
 
       if (m_debugInstrument) std::cout << "   cycle = " << cycle << "  current vector = " << out << std::endl;
       ++cycle;

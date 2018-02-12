@@ -2,6 +2,7 @@
 #define GENERATERANDOMLATTICE_H
 
 #include "LRL_Cell.h"
+#include "LRL_MinMaxTools.h"
 #include "rhrand.h"
 #include "S6.h"
 
@@ -12,7 +13,9 @@ public:
    GenerateRandomLattice(const int seed)
       : m_seed(seed)
       , m_perturb(1.0)
-   {}
+   {
+      m_rhrand.srandom(seed);
+   }
 
    T Generate(void) {
       S6 s6(randDeloneReduced());
@@ -43,8 +46,72 @@ public:
 
    void SetSeed(const int n) { m_seed = n; }
    void PerturbBy(const double perturb) { m_perturb = perturb; }
+   
+   LRL_Cell RandCell(const double minEdgeA, const double maxEdgeA) {
+      return RandCell(minEdgeA, maxEdgeA, minEdgeA, maxEdgeA, minEdgeA, maxEdgeA);
+   }
+
+   LRL_Cell RandCell(const double minEdgeA, const double maxEdgeA, 
+                     const double minEdgeB, const double maxEdgeB, 
+                     const double minEdgeC, const double maxEdgeC) {
+      LRL_Cell c;
+      Prepare2CellElements(minEdgeA, maxEdgeA, 0, c);
+      Prepare2CellElements(minEdgeB, maxEdgeB, 1, c);
+      Prepare2CellElements(minEdgeC, maxEdgeC, 2, c);
+      PrepareAngles(c[3], c[4], c[5]);
+      c.SetValid(true);
+      return c;
+   }
 
 private:
+
+   void GenerateThreeRandomFractionsThatSumToOne( RHrand& rhrand, double& r1, double& r2, double& r3 ) {
+      const double a1 = rhrand.urand();
+      const double a2 = rhrand.urand();
+      const double a3 = rhrand.urand();
+      const double sum = a1 + a2 + a3;
+      r1 = a1 / sum;
+      r2 = a2 / sum;
+      r3 = a3 / sum;
+   }
+
+   void PrepareAngles( double& a3, double& a4, double& a5 ) {
+      static const double thirtyDegrees = 30.0 / 180.0 * 4 * atan(1.0);
+      static const double sixtyDegrees = 2.0*thirtyDegrees;
+      static const double ninetyDegrees = 3.0*thirtyDegrees;
+      static const double oneeightyDegrees = 6.0*thirtyDegrees;
+      static const double threesixtyDegrees = 12.0*thirtyDegrees;
+      static const double tenDegrees = thirtyDegrees / 3.0;
+      static const double oneDegree = thirtyDegrees / 30.0;
+
+      static RHrand r;
+      double totalAngles = 0.0;
+      while ( totalAngles < 2.0*tenDegrees)
+         totalAngles = r.urand() * threesixtyDegrees;
+      double r1;
+      double r2;
+      double r3;
+
+      a3 = DBL_MAX;
+
+      while (a3 > oneeightyDegrees || a4 > oneeightyDegrees || a5 > oneeightyDegrees || a3 + a4 + a5 > 2.0*oneeightyDegrees ||
+         (a3 + a4 + a5 - 2.0*maxNC(a3, a4, a5) < 0.0)  || 
+         a3 < oneDegree || a4 < oneDegree || a5 < oneDegree)
+      {
+         GenerateThreeRandomFractionsThatSumToOne(r, r1, r2, r3);
+         a3 = r1 * totalAngles;
+         a4 = r2 * totalAngles;
+         a5 = r3 * totalAngles;
+      }
+      return;
+   }
+
+   void Prepare2CellElements(const double minEdge, const double maxEdge, const unsigned long i, LRL_Cell& c) {
+      static RHrand r;
+      const double range = std::fabs(minEdge - maxEdge);
+      const double d1 = r.urand();
+      c[i] = range * d1 + minEdge;
+   }
 
    unsigned long CountPositive(const S6& s6) {
       unsigned long sum = 0;
