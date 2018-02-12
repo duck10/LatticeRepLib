@@ -6,11 +6,13 @@
 #include "S6.h"
 #include "B4.h"
 #include "D7.h"
+#include "GenerateRandomLattice.h"
 #include "LRL_RandTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "LRL_StringTools.h"
+
 
 #include <algorithm>
 #include <complex>
@@ -23,14 +25,18 @@ void LRL_ReadLatticeData::CellReader(const std::string& lattice, const std::stri
    CellReader(lattice + " " + cell);
 }
 
+static int folseed = 19192;
+
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
    if ((LRL_StringTools::strToupper(s.substr(0, 3)) != std::string("END"))) {
+      GenerateRandomLattice<S6> generator(folseed);
       std::istringstream iss(s);
       iss >> m_inputDataType;
       if (LRL_StringTools::strToupper(m_inputDataType) == "RANDOM") {
          m_inputDataType = "P";
          m_lattice = "P";
-         const G6 g6Cell = LRL_Cell::randDeloneUnreduced();
+         //const G6 g6Cell = LRL_Cell::randDeloneUnreduced();
+         const G6 g6Cell = generator.RandCell(10., 100.);
          m_cell = LRL_Cell(g6Cell);
          m_strCell = LRL_ToString(LRL_Cell(m_cell));
       }

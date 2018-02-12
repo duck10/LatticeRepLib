@@ -80,7 +80,7 @@ public:
 
    void SetVector(const std::vector<double>& v) { m_cell = v; }
    bool GetValid(void) const { return m_valid; }
-   void SetValid(const bool b) { b; };
+   void SetValid(const bool b) { m_valid = b; };
    double at(const unsigned long n) const { return (*this)[n]; }
 
 
