@@ -63,12 +63,12 @@ public:
 
       MarkTriangleViolations( );
 
-      m_dataType = eArea;
-      const std::vector<std::string> graph4 = PlaceSubPicture( Xpos( 1 ), 0, DrawGraph( border, 0 * border + -1 * m_plotHeight, "Sqrt Area", tf.m_triangleArea ) );
-      svg.insert( svg.end( ), graph4.begin( ), graph4.end( ) );
+      //m_dataType = eArea;
+      //const std::vector<std::string> graph4 = PlaceSubPicture( Xpos( 1 ), 0, DrawGraph( border, 0 * border + -1 * m_plotHeight, "Sqrt Area", tf.m_triangleArea ) );
+      //svg.insert( svg.end( ), graph4.begin( ), graph4.end( ) );
 
       m_dataType = edist23;
-      const std::vector<std::string> graph2 = PlaceSubPicture( Xpos( 1 ), 0, DrawGraph( border, -3 * border + -2 * m_plotHeight, "Dist23", tf.m_dist23 ) );
+      const std::vector<std::string> graph2 = PlaceSubPicture( Xpos(0), 0, DrawGraph( border, -3 * border + -2 * m_plotHeight, "Dist23", tf.m_dist23 ) );
       svg.insert( svg.end( ), graph2.begin( ), graph2.end( ) );
 
       //m_dataType = etanhDeltaDist23;
@@ -83,15 +83,15 @@ public:
       svg.insert( svg.end( ), graph3.begin( ), graph3.end( ) );
 
       m_dataType = enormedDist23;
-      const std::vector<std::string> graph7  = DrawGraph( border, Ypos( 1 ), "Dist12", tf.m_dist12);
+      const std::vector<std::string> graph7  = DrawGraph( Xpos(1), Ypos(0), "Dist12", tf.m_dist12);
       svg.insert( svg.end( ), graph7.begin( ), graph7.end( ) );
 
       m_dataType = eDeltaDist23;
-      const std::vector<std::string> graph1A = DrawGraph( border, Ypos( 2 ), std::string( "Dist13" ), tf.m_dist13 );
+      const std::vector<std::string> graph1A = DrawGraph(Xpos(1), Ypos( 1 ), std::string( "Dist13" ), tf.m_dist13 );
       svg.insert( svg.end( ), graph1A.begin( ), graph1A.end( ) );
 
       m_dataType = eLegend;
-      const std::vector<std::string> graph6  = DrawLegend( border, Ypos( 3 ) );
+      const std::vector<std::string> graph6  = DrawLegend( border, Ypos( 2 ) );
       svg.insert( svg.end( ), graph6.begin( ), graph6.end( ) );
 
 
@@ -472,8 +472,10 @@ public:
       svgFig.push_back( DrawTitle( "LEGEND" ) );
       int line = 1;
       const int spacing = -50;
-      s = PlaceSubPicture( 0, spacing*( line++ ), DrawTitle( "Blue -- Input vector #1 fixed" ) );
-      svgFig.insert( svgFig.end( ), s.begin( ), s.end( ) );
+      s = PlaceSubPicture(0, spacing*(line++), DrawTitle("Triangles are all scaled to 10K"));
+      svgFig.insert(svgFig.end(), s.begin(), s.end());
+      s = PlaceSubPicture(0, spacing*(line++), DrawTitle("Blue -- Input vector #1 fixed"));
+      svgFig.insert(svgFig.end(), s.begin(), s.end());
       s = PlaceSubPicture( 0, spacing*( line++ ), DrawTitle( "-  #2 = Input 2, #3 = Input 3" ) );
       svgFig.insert( svgFig.end( ), s.begin( ), s.end( ) );
       s = PlaceSubPicture( 0, spacing*( line++ ), DrawTitle( "Orange -- Input vector #2 fixed" ) );

@@ -143,15 +143,9 @@ public:
          svg += LRL_ToString(v1, "\n");
          svg += LRL_ToString(v2, "\n");
          svg += LRL_ToString(v3, "\n");
-         //const std::string s1= LRL_ToString(vin1[i], "\n");
-         //const std::string s2= LRL_ToString(vin2[i], "\n");
-         //const std::string s3= LRL_ToString(vin3[i], "\n");
          const double dist12 = DIST(v1, v2);
          const double dist13 = DIST(v1, v3);
          const double dist23 = DIST(v2, v3);
-         //const std::string s1a = LRL_ToString(v1);
-         //const std::string s2a = LRL_ToString(v2);
-         //const std::string s3a = LRL_ToString(v3);
 
          svg += LRL_ToString(" distances 12,13,23 ", dist12, dist13, dist23, "\n");
          if (area[i] > 0)
@@ -182,34 +176,35 @@ public:
       m_followData[1].clear();
       m_followData[2].clear();
       const double maxd = ScalingInitialPoint(1.0, vin1, vin2, vin3);
-      const TVEC v1(vin1/**1.0 / maxd*/);
-      const TVEC v2(vin2/**1.0 / maxd*/);
-      const TVEC v3(vin3/**1.0 / maxd*/);
       const double minFactor = 0.01;   /// FOR HJB
       const double maxFactor = double(m_maxX - 1) / double(npoints - 1);
       const double smallestFactorAllowed = 0.001 / double(npoints - 1);
       const double deltaFactor = (maxFactor - minFactor) / double(npoints - 1);
-      double factor = std::max(minFactor, smallestFactorAllowed);
 
-      const TVEC centerPoint(v1);
+      const TVEC centerPoint(vin1);
+      const TVEC& v2(vin2);
+      const TVEC& v3(vin3);
 
-      S6 reducedCenterPoint;  // used in Niggli::Reduce
+      S6 reducedCenterPoint;  // used in TREDUCEMETHOD::Reduce
       MatS6 m;
       const bool btemp = TREDUCEMETHOD::Reduce(S6(centerPoint), m, reducedCenterPoint, 0.0);
+      double factor = std::max(minFactor, smallestFactorAllowed);
 
       if (btemp) {
          for (int i = 0; i < npoints; ++i)
          {
-            const double factorM = 1.0 - factor;;
-            S6 red2, red3;  // used in Niggli::Reduce
-            S6 red2A, red3A;  // used in Niggli::Reduce
-            const bool btemp2 = TREDUCEMETHOD::Reduce(S6(factorM*centerPoint + factor*v2), m, red2, 0.0);
-            const bool btemp3 = TREDUCEMETHOD::Reduce(S6(factorM*centerPoint + factor*v3), m, red3, 0.0);
-            factor += deltaFactor;
-            if (btemp2 && btemp3) {
-               m_followData[0].push_back(TVEC(reducedCenterPoint) / factor);;   /// FOR HJB
-               m_followData[1].push_back(TVEC(red2) / factor);;   /// FOR HJB
-               m_followData[2].push_back(TVEC(red3) / factor);;   /// FOR HJB
+            {
+               const double factorM = 1.0 - factor;;
+               S6 red2, red3;  // used in TREDUCEMETHOD::Reduce
+               S6 red2A, red3A;  // used in TREDUCEMETHOD::Reduce
+               const bool btemp2 = TREDUCEMETHOD::Reduce(S6(factorM*centerPoint + factor * v2), m, red2, 0.0);
+               const bool btemp3 = TREDUCEMETHOD::Reduce(S6(factorM*centerPoint + factor * v3), m, red3, 0.0);
+               factor += deltaFactor;
+               if (btemp2 && btemp3) {
+                  m_followData[0].push_back(TVEC(reducedCenterPoint));;   /// FOR HJB
+                  m_followData[1].push_back(TVEC(red2));;   /// FOR HJB
+                  m_followData[2].push_back(TVEC(red3));;   /// FOR HJB
+               }
             }
          }
       }
@@ -227,13 +222,25 @@ public:
    }
 
    static double DIST(const B4& v1, const B4& v2) {
-      throw; // not implement for Delone scalars
+      throw; // not implemented for Bravais tetrahedron
              //double a1[6], a2[6];
              //ProjectorTools::ConvertB4ToArray(v1, a1);
              //ProjectorTools::ConvertB4ToArray(v2, a2);
              //return B4Dist(a1, a2);
       return -19191.;
    }
+
+   template<typename T>
+   double GetMidpointArea(T&  followData1, T&  followData2, T&  followData3) {
+      const unsigned long npoints = followData1.size();
+      const unsigned long mid = npoints/2;
+      const double dist12(DIST(m_followData[0][mid], m_followData[1][mid]));
+      const double dist13(DIST(m_followData[0][mid], m_followData[2][mid]));
+      const double dist23(DIST(m_followData[1][mid], m_followData[2][mid]));
+      const double area(SqrtTriangleAreaFromSides(dist12, dist13, dist23));
+      return area;
+   }
+
 
    std::string SetProgressData(std::ostream& folOut, const int npoints, const std::string& label,
       ProgressData<double>& dist23Delta,
@@ -256,18 +263,25 @@ public:
       normedDist23.clear();
       tanhdist23Delta.clear();
 
-      double sumDeltaDist23 = 0.0;
       double prevDist23 = 0.0;
       int worstViolationIndex = -INT_MAX;
       double worstViolation = -DBL_MAX;
       //      const unsigned long dataPointCount = maxNC(m_data.sl1.size(), m_data.sl2.size(), m_data.sl3.size());
       const unsigned long dataPointCount = (unsigned long)maxNC(m_followData[0].size(), m_followData[1].size(), m_followData[2].size());
+
+      const double midArea = GetMidpointArea(m_followData[0], m_followData[1], m_followData[2]);
+
       for (unsigned long i = 0; i < dataPointCount; ++i)
       {
-         const double dist12(DIST(m_followData[0][i], m_followData[1][i]));
-         const double dist13(DIST(m_followData[0][i], m_followData[2][i]));
-         const double dist23(DIST(m_followData[1][i], m_followData[2][i]));
-         sumDeltaDist23 += dist23;
+         double dist12(DIST(m_followData[0][i], m_followData[1][i]));
+         double dist13(DIST(m_followData[0][i], m_followData[2][i]));
+         double dist23(DIST(m_followData[1][i], m_followData[2][i]));
+         double area  (SqrtTriangleAreaFromSides(dist12, dist13, dist23));
+            dist12 *= 10000.0 / area;
+            dist13 *= 10000.0 / area;
+            dist23 *= 10000.0 / area;
+            area    = 10000.0;
+
          const double maxDist = maxNC(dist12, dist13, dist23);
          const double trianglediff(100.0*(2.0*maxDist - (dist12 + dist13 + dist23)) / maxDist);
          if (trianglediff > worstViolation) {
@@ -278,15 +292,11 @@ public:
          double test = trianglediff - testDiff;
          const double absTest = std::abs(test);
          const double anglediff(AngleDiffFromSides(dist12, dist13, dist23));
-         const double maxCosineDiff = MaxCosineDelta(dist12, dist13, dist23);
 
-         const double area(SqrtTriangleAreaFromSides(dist12, dist13, dist23));
          const double deltaDist23 = dist23 - prevDist23;
          vdist12.push_back(dist12);
          vdist13.push_back(dist13);
          vdist23.push_back(dist23);
-
-
 
          const double factor = std::max(double(i), 1.0) / double(dataPointCount - 1);
          const double normalizer23 = (m_maxRawDistance * factor);
@@ -307,47 +317,6 @@ public:
       std::string svg;
       svg += PrepareTrianglesOutput(label, m_followData[0], m_followData[1], m_followData[2], triangleArea);
 
-      const double filterValue = 500.0;
-      std::vector<double> vtemp = MakeHaarOfDeltas(filterValue, normedDist23.GetVector());
-      dist23Delta.SetVector(vtemp);
-      dist23Delta.push_back(0.0);
-
-
-      double maxAbsDeltaDist23 = GetMaxAbsValue(dist23Delta.GetVector());
-
-      const double averageDeltaDist23 = sumDeltaDist23 / dataPointCount;
-      const double factor = GetOptimalFactor(maxAbsDeltaDist23, averageDeltaDist23, 0.95);
-
-      for (unsigned long i = 0; i < dist23Delta.size(); ++i)
-         tanhdist23Delta.push_back(TanhValue(dist23Delta[i], averageDeltaDist23, factor));
-
-      for (unsigned long i = 0; i < dist23Delta.size() - 1; ++i) {
-         //  LCA
-         if (std::abs(triangleDiff[i]) > 0.1) {
-            const unsigned long startPoint = std::max(0UL, i);
-            const unsigned long tanhSize = triangleDiff.size();
-            const unsigned long endPoint = std::min(tanhSize, i + 4);
-            double maxLocalValue = 0.0;
-            double signedLocalMax = 0.0;
-            for (unsigned long point = startPoint + 1; point < endPoint; ++point) {
-               if (std::abs(triangleDiff[point]) > maxLocalValue) {
-                  maxLocalValue = std::abs(triangleDiff[point]);
-                  signedLocalMax = triangleDiff[point];
-               }
-            }
-
-            //        if (maxLocalValue < 0.5 *std::abs(triangleDiff[i]) || triangleDiff[i] * signedLocalMax < 0.0) {
-            //if (std::abs(triangleDiff[i] - triangleDiff[i + 1])> 0.01*(std::abs(triangleDiff[i]) + std::abs(triangleDiff[i + 1]))) {
-            if (std::abs(triangleDiff[i] - triangleDiff[i + 1]) > GlobalConstants::globalAboveThisValueIsBad) { // triangleDiff is in percent
-               //for (unsigned long point = startPoint; point < endPoint; ++point) {
-               //   const std::string s(LogWork(point, label, m_followData[0][point], m_followData[1][point], m_followData[2][point], vdist12[point], vdist13[point], vdist23[point], angleDiff[point], triangleDiff[point], triangleArea[point]));
-               //   m_ProblemLog.push_back(s);
-               //}
-               //m_ProblemLog.push_back("==============================================");
-            }
-         }
-      }
-      //normedDist23.SetPointIsError( tanhdist23Delta.GetVector() );
       return svg;
    }
 
@@ -403,10 +372,8 @@ private:
    const int m_trialNumber;
 
 public:
-   //void ReportTriangleResults( std::ostream& folOut, const std::string& prefix, const std::string& label, const Triple<double>& t );
-   void ReportTriangleResults(std::ostream& folOut, const std::string& prefix, const std::string& label, const ProgressData<double> t[3])/*;
 
-static void ReportTriangleResults( std::ostream& folOut, const std::string& prefix, const std::string& label, const TVEC& t ) */ {
+   void ReportTriangleResults(std::ostream& folOut, const std::string& prefix, const std::string& label, const ProgressData<double> t[3]) {
       folOut << std::endl << label << std::endl;
       const unsigned long n1 = t[0].size();
       const unsigned long n2 = t[1].size();
@@ -419,7 +386,6 @@ static void ReportTriangleResults( std::ostream& folOut, const std::string& pref
          + ((i < n2) ? LRL_ToString(t[1][i]) : "XXXX") + "  "
          + ((i < n3) ? LRL_ToString(t[2][i]) : "XXXX") << std::endl;
    }
-
 
    void SetMinMaxX(const int minX, const int maxX) { m_minX = minX; m_maxX = maxX; }
 
@@ -447,61 +413,6 @@ static void ReportTriangleResults( std::ostream& folOut, const std::string& pref
 
 private:
 
-   static std::vector<double> MakeHaarOfDeltas(const double slack, const std::vector<double>& v) {
-      const unsigned long n = (unsigned long)v.size();
-      const unsigned long nMinusOne = (n == 0) ? 1 : n - 1;;
-      std::vector<double> ar1(nMinusOne);
-
-      for (unsigned long i = 1; i < n; ++i) ar1[i - 1] = v[i] - v[i - 1];
-
-      haar_1d(nMinusOne, ar1);
-
-      //   for( unsigned long i = 0; i<unsigned long(nMinusOne*0.8); ++i) ar1[i] = 0.0;
-
-      const double maxv = *std::max_element(ar1.begin(), ar1.end());
-
-      for (unsigned long i = 0; i < nMinusOne; ++i) if (std::abs(ar1[i]) < maxv / slack) ar1[i] = 0.0;
-      ar1[0] = 0.0;
-
-      haar_1d_inverse(nMinusOne, ar1);
-      return ar1;
-   }
-
-   static std::vector<double> MakeHaar(const double slack, const std::vector<double>& v) {
-      const unsigned long n = v.size();
-      std::vector<double> ar1(v);
-
-      haar_1d(n, ar1);
-
-      double maxv = 0.0;
-      for (unsigned long i = 0; i < n; ++i) maxv = std::max(std::abs(ar1[i]), maxv);
-
-      for (unsigned long i = 0; i < n; ++i) if (std::abs(ar1[i]) < maxv / slack) ar1[i] = 0.0;
-      ar1[0] = 0.0;
-
-      haar_1d_inverse(n, ar1);
-      return ar1;
-   }
-
-   static double TanhValue(const double inputValue, const double averageDeltaDist23, const double factor) {
-      return tanh(factor*inputValue / averageDeltaDist23);
-   }
-
-   static double GetOptimalFactor(const double maxAbsDeltaDist23, const double averageDeltaDist23, const double targetTanhValue) {
-      double factor = 0.2;
-      int count = 0;
-      while (std::abs(TanhValue(maxAbsDeltaDist23, averageDeltaDist23, factor) < targetTanhValue) && count++ < 500)
-         factor *= 1.1;
-      return factor;
-   }
-
-   static double GetMaxAbsValue(const std::vector<double>& valueList) {
-      const std::vector<double>::const_iterator start = valueList.begin();
-      const std::vector<double>::const_iterator end = valueList.end();
-      return std::max(std::abs(*std::min_element(start, end)),
-         std::abs(*std::max_element(start, end)));
-   }
-
    static std::string PrintHighPrecisionArrayVectorData(const std::string& label, const double ar[]) {
       std::ostringstream ostr;
       ostr << std::setprecision(16) << label << " "
@@ -523,21 +434,6 @@ private:
          return std::sqrt(sinSq1*sinSq2) + cos1*cos2;
       else // here, one and only one sinSq is negative, so we're in complex plane
          return std::sqrt(-sinSq1*sinSq2 + cos1*cos2*cos1*cos2);
-   }
-
-   static double MaxCosineDelta(const double dist12, const double dist13, const double dist23) {
-      const double cos12 = AngleCosineFromSides(dist12, dist13, dist23);
-      const double cos13 = AngleCosineFromSides(dist13, dist23, dist12);
-      const double cos23 = AngleCosineFromSides(dist23, dist12, dist13);
-
-      const double sinsq12 = 1.0 - cos12*cos12;
-      const double sinsq13 = 1.0 - cos13*cos13;
-      const double sinsq23 = 1.0 - cos23*cos23;
-
-      const double anglediff1(DifferenceOfCosinesOfTwoAngles(cos12, cos13));
-      const double anglediff2(DifferenceOfCosinesOfTwoAngles(cos12, cos23));
-      const double anglediff3(DifferenceOfCosinesOfTwoAngles(cos23, cos13));
-      return maxNC(anglediff1, anglediff2, anglediff3);
    }
 
 };
