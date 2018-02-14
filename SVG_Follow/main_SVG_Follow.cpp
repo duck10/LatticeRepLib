@@ -197,8 +197,10 @@ int main( int argc, char* argv [ ] ) {
    
    std::vector<CellInputData> celldata;
    std::string lattice( "" );
+   LRL_ReadLatticeData rcd(GLOBAL_RunInputVector::globalInputRandomSeed);
    while ( lattice != "EOF" ) {
-      LRL_ReadLatticeData rcd;
+      rcd.read();
+      lattice = "EOF";
       lattice = rcd.GetLattice( );
       if ( lattice != "EOF" && ! lattice.empty() ) {
          rcd.SetVarietyRange( std::make_pair( 0, 23 ) );
