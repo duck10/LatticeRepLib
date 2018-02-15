@@ -386,6 +386,17 @@ S6 ZeroOneScalar(const unsigned long n, const S6& s) {
    return s6;
 }
 
+std::vector<S6> S6Dist::Create_VCP_ForTwoScalars(const S6& s) {
+   std::vector<S6> v;
+   for (unsigned long j = 0; j < 5; ++j ) {
+      const S6 s1 = Create_VCP_ForOneScalar(j, s);
+      for (unsigned long k=j+1; k<6; ++k) {
+         v.push_back(Create_VCP_ForOneScalar(k, s1));
+      }
+   }
+   return Generate24Reflections(v);
+}
+
 S6 S6Dist::Create_VCP_ForOneScalar(const unsigned long n, const S6& s) {
    static const std::vector< S6(*)(const S6&)> unreducers(S6::SetUnreduceFunctions());
 
@@ -418,14 +429,22 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    g_debug.Store(m_dmin, item);
 }
 
+void S6Dist::TwoBoundaryDistance( const S6& s1, const S6& s2) {
+   std::vector<S6> vinside(1, s1);
+   std::vector<S6> voutside(Create_VCP_ForTwoScalars(s2));
+   voutside.push_back(s2);
+   std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
+   m_dmin = std::min(m_dmin, p.first);
+}
+
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
    m_dmin = (s1 - s2).norm();
-   const double diff = std::abs(m_dmin - 37.183);
    if (m_debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
       g_debug.Store(m_dmin, item);
    }
    OneBoundaryDistance(s1, s2);
+   TwoBoundaryDistance(s1, s2);
    g_debug.clear();
    return m_dmin;
 }
