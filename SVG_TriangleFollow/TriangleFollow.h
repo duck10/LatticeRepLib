@@ -230,17 +230,38 @@ public:
       return -19191.;
    }
 
-   template<typename T>
-   double GetMidpointArea(T&  followData1, T&  followData2, T&  followData3) {
-      const unsigned long npoints = followData1.size();
-      const unsigned long mid = npoints/2;
-      const double dist12(DIST(m_followData[0][mid], m_followData[1][mid]));
-      const double dist13(DIST(m_followData[0][mid], m_followData[2][mid]));
-      const double dist23(DIST(m_followData[1][mid], m_followData[2][mid]));
-      const double area(SqrtTriangleAreaFromSides(dist12, dist13, dist23));
-      return area;
-   }
+   void ScalePointsAndStoreDistances(const int npoints,
+      ProgressData<double>& vdist12,
+      ProgressData<double>& vdist13,
+      ProgressData<double>& vdist23) {
 
+      const double d12 = (m_inputVector1 - m_inputVector2).norm();
+      const double d13 = (m_inputVector1 - m_inputVector3).norm();
+      const double d23 = (m_inputVector2 - m_inputVector3).norm();
+      const double sqrtInputArea(SqrtTriangleAreaFromSides(d12, d13, d23));
+
+
+      for ( unsigned long i=0; i<(unsigned long)(npoints); ++i ) {
+         {
+            double dist12(DIST(m_followData[0][i], m_followData[1][i]));
+            double dist13(DIST(m_followData[0][i], m_followData[2][i]));
+            double dist23(DIST(m_followData[1][i], m_followData[2][i]));
+            double sqrtArea(SqrtTriangleAreaFromSides(dist12, dist13, dist23));
+            dist12 *= sqrtInputArea / sqrtArea;
+            dist13 *= sqrtInputArea / sqrtArea; //  !!!!!!!!!!!!!!!!!!!!!!! but followData has not been SCALED !!!!!!!!!!!!!!!!
+            dist23 *= sqrtInputArea / sqrtArea;
+
+            vdist12.push_back(dist12);
+            vdist13.push_back(dist13);
+            vdist23.push_back(dist23);
+
+            m_followData[0][i] *= sqrtInputArea / sqrtArea;
+            m_followData[1][i] *= sqrtInputArea / sqrtArea;
+            m_followData[2][i] *= sqrtInputArea / sqrtArea;
+         }
+
+      }
+   }
 
    std::string SetProgressData(std::ostream& folOut, const int npoints, const std::string& label,
       ProgressData<double>& dist23Delta,
@@ -253,54 +274,29 @@ public:
       ProgressData<double>& vdist13,
       ProgressData<double>& vdist23) {
 
-      angleDiff.clear();
       triangleDiff.clear();
-      triangleArea.clear();
       vdist12.clear();
       vdist13.clear();
       vdist23.clear();
-      dist23Delta.clear();
-      normedDist23.clear();
-      tanhdist23Delta.clear();
 
-      double prevDist23 = 0.0;
       int worstViolationIndex = -INT_MAX;
       double worstViolation = -DBL_MAX;
       //      const unsigned long dataPointCount = maxNC(m_data.sl1.size(), m_data.sl2.size(), m_data.sl3.size());
       const unsigned long dataPointCount = (unsigned long)maxNC(m_followData[0].size(), m_followData[1].size(), m_followData[2].size());
 
-      const double midArea = GetMidpointArea(m_followData[0], m_followData[1], m_followData[2]);
+      ScalePointsAndStoreDistances(npoints, vdist12, vdist13, vdist23);
 
       for (unsigned long i = 0; i < dataPointCount; ++i)
       {
-         double dist12(DIST(m_followData[0][i], m_followData[1][i]));
-         double dist13(DIST(m_followData[0][i], m_followData[2][i]));
-         double dist23(DIST(m_followData[1][i], m_followData[2][i]));
-         double area  (SqrtTriangleAreaFromSides(dist12, dist13, dist23));
-            dist12 *= 10000.0 / area;
-            dist13 *= 10000.0 / area;
-            dist23 *= 10000.0 / area;
-            area    = 10000.0;
-
+         const double& dist12(vdist12[i]);
+         const double& dist13(vdist13[i]);
+         const double& dist23(vdist23[i]);
          const double maxDist = maxNC(dist12, dist13, dist23);
-         const double trianglediff(100.0*(2.0*maxDist - (dist12 + dist13 + dist23)) / maxDist);
-         if (trianglediff > worstViolation) {
-            worstViolation = trianglediff;
+         const double triangleDifference(100.0*(2.0*maxDist - (dist12 + dist13 + dist23)) / maxDist);
+         if (triangleDifference > worstViolation) {
+            worstViolation = triangleDifference;
             worstViolationIndex = i;
          }
-         const double testDiff = 100.0*FollowerTools::TriangleInequality(dist12, dist13, dist23);
-         double test = trianglediff - testDiff;
-         const double absTest = std::abs(test);
-         const double anglediff(AngleDiffFromSides(dist12, dist13, dist23));
-
-         const double deltaDist23 = dist23 - prevDist23;
-         vdist12.push_back(dist12);
-         vdist13.push_back(dist13);
-         vdist23.push_back(dist23);
-
-         const double factor = std::max(double(i), 1.0) / double(dataPointCount - 1);
-         const double normalizer23 = (m_maxRawDistance * factor);
-         normedDist23.push_back(dist23 / normalizer23);
 
          if (worstViolation > m_worstViolationFound) {
             m_worstViolationFound = worstViolation;
@@ -309,9 +305,7 @@ public:
             m_worstVec3 = m_followData[2][worstViolationIndex];
          }
 
-         angleDiff.push_back(anglediff);
-         triangleDiff.push_back(trianglediff);
-         triangleArea.push_back(area);
+         triangleDiff.push_back(triangleDifference);
       }
 
       std::string svg;

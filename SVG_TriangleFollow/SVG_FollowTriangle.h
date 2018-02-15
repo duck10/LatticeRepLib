@@ -472,7 +472,7 @@ public:
       svgFig.push_back( DrawTitle( "LEGEND" ) );
       int line = 1;
       const int spacing = -50;
-      s = PlaceSubPicture(0, spacing*(line++), DrawTitle("Triangles are all scaled to 10K"));
+      s = PlaceSubPicture(0, spacing*(line++), DrawTitle("Triangles are all scaled to area of input!"));
       svgFig.insert(svgFig.end(), s.begin(), s.end());
       s = PlaceSubPicture(0, spacing*(line++), DrawTitle("Blue -- Input vector #1 fixed"));
       svgFig.insert(svgFig.end(), s.begin(), s.end());
