@@ -148,7 +148,7 @@ public:
          const double dist23 = DIST(v2, v3);
 
          svg += LRL_ToString(" distances 12,13,23 ", dist12, dist13, dist23, "\n");
-         if (area[i] > 0)
+         if ( (area.empty()) || (area.size()-1<i) || (area[i] > 0) )
          {
             svg += LRL_ToString("====  ", label, i + 1, "\n");
          }

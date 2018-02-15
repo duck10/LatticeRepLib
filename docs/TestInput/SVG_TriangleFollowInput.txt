@@ -14,11 +14,11 @@ end
 v 100 100 100 100 100 100
 end
 
-FilePrefix twoBound_3K_
+FilePrefix test_
 fixrandomseed true
 randomseed 18
 trials 1
-stepsperframe 3000
+stepsperframe 100
 end
 v 100 100 100 100 100 100
 end
