@@ -325,15 +325,16 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
 std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2) {
    g_debug.SetTitle("    *************** *************** *************** *************** S6 Distance Calculations ********************");
    g_debug.SetFooter("    *************** *************** *************** END END END END S6 Distance Calculations ********************\n");
-   std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
+   std::pair<double, unsigned long> p;
+   double dmin = DBL_MAX;
    for (unsigned long iouter = 0; iouter < v1.size(); ++iouter) {
       std::pair<double, unsigned long> ptemp = MinForListOfS6(v1[iouter], v2);
-      if (ptemp.first < m_dmin) {
-         m_dmin = ptemp.first;
+      if (ptemp.first < dmin) {
+         dmin = ptemp.first;
          p.second = iouter;
          p.first = ptemp.first;
       }
-      if ( m_debug) std::cout << "m_dmin A " << m_dmin << std::endl;
+      if ( m_debug) std::cout << "dmin A " << dmin << std::endl;
    }
    if (m_debug) g_debug.ShowResultsByKeyDescending();
    g_debug.clear();
