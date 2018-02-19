@@ -36,7 +36,6 @@ public:
    {
       assert(!follow.empty());
       assert(!probePath.empty());
-      assert(probePath.size() == secondProbePath.size());
       assert(probePath.size() == distances.size());
    }
 

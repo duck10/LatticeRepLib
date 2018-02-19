@@ -42,7 +42,7 @@ bool WalkFromOnePointToAnother( const TVEC& v1, const TVEC& v2, const unsigned l
 
    // a tiny diagonal means that the probe is essentially reduced before we start
    // just dump those
-   if ( follow.GetCirclePlotDiagonal( ) < 1.0E-3 )
+   if (FollowerConstants::globalDrawCirclePlot && follow.GetCirclePlotDiagonal( ) < 1.0E-3 )
    {
       std::cout << "rejected because of tiny diagonal " << follow.GetCirclePlotDiagonal( ) << std::endl;
       return( false );
@@ -213,7 +213,8 @@ int main( int argc, char* argv [ ] ) {
       std::vector<CellInputData>::const_iterator it = celldata.begin( );
       for ( ; it!=celldata.end( ); ++it ) {
          const std::string sBaseFileName =
-            LRL_ToString( LRL_CreateFileName::Create(FollowerConstants::globalFileNamePrefix, LRL_ToString( cellcount) + "_" ) );
+            LRL_ToString( LRL_CreateFileName::Create(FollowerConstants::globalFileNamePrefix, LRL_ToString( cellcount) + "_", 
+               GLOBAL_Files::globalShouldTimeStamp) );
          ++cellcount;
          unsigned long goodCellCount = ProbeOneRegion<S6,MatS6>( *it, FollowerConstants::globalStepsPerFrame, sBaseFileName );
          std::cout << goodCellCount << std::endl;

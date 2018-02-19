@@ -250,18 +250,19 @@ private:
    {
       const std::vector<TVEC> secondProbeList( m_follow.GetSecondProbeList( ) );
 
-      m_svg.push_back( "\n<!-- Reduced vector followed by D7dist from the final reduced cell" );
+      m_svg.push_back( "\n<!-- Reduced vector followed by specified type distance, and then (if two) D7dist from the final reduced cell" );
 
       typename std::list<double>::const_iterator iDist1 = distances.begin();
       typename std::list<double>::const_iterator iDist2 = Delonedistances.begin();
       typename std::vector<TVEC>::const_iterator iProbe = secondProbeList.begin( );
       int count = 0;
+      std::string strDist2 = iDist2 == Delonedistances.end() ? "": LRL_ToString(",  ", *iDist2 );
 
-      for (; iProbe != secondProbeList.end( ); ++iProbe, ++iDist1, ++iDist2, ++count)
+      for (; iProbe != secondProbeList.end( ); ++iProbe, ++iDist1, ++count)
       {
          m_svg.push_back( LRL_ToString( *iProbe  )
             + "   (" + LRL_ToString(*iDist1)
-            + LRL_ToString(",  ", *iDist2, ")")
+            + strDist2 + ")"
             + LRL_ToString( "   ", m_follow.GetBoundaryString( count ) ) );
       }
 
@@ -275,8 +276,16 @@ private:
 
       // compute the limits and increments along the x and y axes
       LinearAxis la;
-      double yAxisMin = std::min(*std::min_element(distances.begin(), distances.end()), *std::min_element(Delonedistances.begin(), Delonedistances.end()));
-      double yAxisMax = std::max(*std::max_element(distances.begin(), distances.end()), *std::max_element(Delonedistances.begin(), Delonedistances.end()));
+      double yAxisMin;
+      double yAxisMax;
+      if (Delonedistances.empty() ) {
+         yAxisMin = *std::min_element(distances.begin(), distances.end());
+         yAxisMax = *std::max_element(distances.begin(), distances.end());
+      }
+      else {
+         yAxisMin = std::min(*std::min_element(distances.begin(), distances.end()), *std::min_element(Delonedistances.begin(), Delonedistances.end()));
+         yAxisMax = std::max(*std::max_element(distances.begin(), distances.end()), *std::max_element(Delonedistances.begin(), Delonedistances.end()));
+      }
       const AxisLimits alX = la.LinearAxisLimits( 1, int( distances.size( ) ) );
       const AxisLimits alY = la.LinearAxisLimits(yAxisMin, yAxisMax);
 

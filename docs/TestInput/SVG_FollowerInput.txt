@@ -43,11 +43,11 @@ end
 random
 end
 
-
+timestamp false
 circleplot false
 randomseed 18
 trials 1
-stepsperframe 100
+stepsperframe 1000
 fixrandomseed true
 end
 random

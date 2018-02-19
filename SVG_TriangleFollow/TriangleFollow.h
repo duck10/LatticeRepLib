@@ -61,7 +61,7 @@ public:
          m_dist23[i].resize(3);
          m_angleDiff[i].resize(3);
          m_triangleDiff[i].resize(3);
-         m_triangleArea[i].resize(3);
+         //m_triangleArea[i].resize(3);
          m_tanhDist23Delta[i].resize(3);
          m_dist12[i].resize(3);
          m_dist13[i].resize(3);
@@ -93,19 +93,19 @@ public:
       bool b = CreateVectorList("first line, point 1 constant, followed by 2,3 ", vin1, vin2, vin3, m_points);
 
       if (b) {
-         const std::string svg1 = SetProgressData(folOut, m_points, "(first line, point 1 constant, followed by 2,3, blue)", m_dist23Delta[0], m_tanhDist23Delta[0], m_angleDiff[0], m_triangleDiff[0], m_triangleArea[0],
+         const std::string svg1 = SetProgressData(folOut, "blue", m_points, "(first line, point 1 constant, followed by 2,3, blue)", m_dist23Delta[0], m_tanhDist23Delta[0], m_angleDiff[0], m_triangleDiff[0], m_triangleArea[0],
             m_normedDist23[0], m_dist12[0], m_dist13[0], m_dist23[0]);
          svgTriangles += svg1;
 
          b = CreateVectorList("second line, point 1 constant, followed by 1,2 ", vin3, vin1, vin2, m_points);
          if (b) {
-            const std::string  svg2 = SetProgressData(folOut, m_points, "(second line, point 1 constant, followed by 1,2, orange)", m_dist23Delta[1], m_tanhDist23Delta[1], m_angleDiff[1], m_triangleDiff[1], m_triangleArea[1],
+            const std::string  svg2 = SetProgressData(folOut, "orange", m_points, "(second line, point 1 constant, followed by 1,2, orange)", m_dist23Delta[1], m_tanhDist23Delta[1], m_angleDiff[1], m_triangleDiff[1], m_triangleArea[1],
                m_normedDist23[1], m_dist12[1], m_dist13[1], m_dist23[1]);
             svgTriangles += svg2;
 
             b = CreateVectorList("third line, point 1 constant, followed by3,1", vin2, vin3, vin1, m_points);
             if (b) {
-               const std::string svg3 = SetProgressData(folOut, m_points, "(third line, point 1 constant, followed by3,1, black)", m_dist23Delta[2], m_tanhDist23Delta[2], m_angleDiff[2], m_triangleDiff[2], m_triangleArea[2],
+               const std::string svg3 = SetProgressData(folOut, "black",  m_points, "(third line, point 1 constant, followed by3,1, black)", m_dist23Delta[2], m_tanhDist23Delta[2], m_angleDiff[2], m_triangleDiff[2], m_triangleArea[2],
                   m_normedDist23[2], m_dist12[2], m_dist13[2], m_dist23[2]);
                svgTriangles += svg3;
 
@@ -131,8 +131,11 @@ public:
       return svgTriangles;
    }
 
-   std::string PrepareTrianglesOutput(const std::string& label, const FollowVectors<TVEC>& vin1,
-      const FollowVectors<TVEC>& vin2, const FollowVectors<TVEC>& vin3, const ProgressData<double>& area) {
+   std::string PrepareTrianglesOutput( const std::string& color, const std::string& label, const FollowVectors<TVEC>& vin1,
+      const FollowVectors<TVEC>& vin2, const FollowVectors<TVEC>& vin3, 
+      const ProgressData<double>& vdist12,
+      const ProgressData<double>& vdist13,
+      const ProgressData<double>& vdist23 ) {
       std::string svg;
       svg += "  start  " + label + "\n";
       const unsigned long nmax = maxNC(vin1.size(), vin2.size(), vin3.size());
@@ -143,19 +146,12 @@ public:
          svg += LRL_ToString(v1, "\n");
          svg += LRL_ToString(v2, "\n");
          svg += LRL_ToString(v3, "\n");
-         const double dist12 = DIST(v1, v2);
-         const double dist13 = DIST(v1, v3);
-         const double dist23 = DIST(v2, v3);
+         const double& dist12 = vdist12[i];
+         const double& dist13 = vdist13[i];
+         const double& dist23 = vdist23[i];
 
-         svg += LRL_ToString(" distances 12,13,23 ", dist12, dist13, dist23, "\n");
-         if ( (area.empty()) || (area.size()-1<i) || (area[i] > 0) )
-         {
-            svg += LRL_ToString("====  ", label, i + 1, "\n");
-         }
-         else
-         {
-            svg += LRL_ToString("====  ", label, i + 1, "     ************negative area*************\n");
-         }
+         svg += LRL_ToString(color, "distances 12,13,23 ", i+1, dist12, dist13, dist23, "\n");
+         svg += LRL_ToString("====  ", label, i + 1, "\n");
       }
       svg += LRL_ToString("  end    ", label, "\n\n");
 
@@ -263,7 +259,7 @@ public:
       }
    }
 
-   std::string SetProgressData(std::ostream& folOut, const int npoints, const std::string& label,
+   std::string SetProgressData(std::ostream& folOut, const std::string& color, const int npoints, const std::string& label,
       ProgressData<double>& dist23Delta,
       ProgressData<double>& tanhdist23Delta,
       ProgressData<double>&  angleDiff,
@@ -309,10 +305,27 @@ public:
       }
 
       std::string svg;
-      svg += PrepareTrianglesOutput(label, m_followData[0], m_followData[1], m_followData[2], triangleArea);
+      svg += PrepareTrianglesOutput(color, label, 
+         m_followData[0], m_followData[1], m_followData[2], 
+         vdist12, vdist13, vdist23);
+      svg += PrepareDistancesOutput(color, vdist12, vdist13, vdist23);
 
       return svg;
    }
+
+   std::string PrepareDistancesOutput(const std::string& color, 
+      const ProgressData<double>& vdist12, 
+      const ProgressData<double>& vdist13, 
+      const ProgressData<double>& vdist23) {
+      std::string svg;
+      svg += "  start distances " + color + "\n";
+      for ( unsigned long i=0; i<vdist12.size(); ++i ){
+         svg += LRL_ToString(color, i + 1, vdist12[i], vdist13[i], vdist23[i], "\n");
+      }
+      svg += "  end distances " + color + "\n";
+      return svg;
+   }
+
 
    std::string GetFileNameFragment(void) const { return m_fileNameFragment; }
    int GetMinX(void) const { return m_minX; }

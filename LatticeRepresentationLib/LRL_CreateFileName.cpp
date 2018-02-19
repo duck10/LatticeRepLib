@@ -10,14 +10,15 @@
 ///////////////////////////////////////////////////////////////////////
 // Create a unique file name from the date and time
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-/*static*/ std::string LRL_CreateFileName::Create( const std::string& prefix, const std::string& extension )
+/*static*/ std::string LRL_CreateFileName::Create( const std::string& prefix, 
+   const std::string& extension, const bool includeTimestamp/*=true*/ )
 //---------------------------------------------------------------------
 {
    const time_t       now        = time(NULL);
          char         buft[256];
    const int          len        = sizeof(buft);
 
-   strftime( buft, sizeof(buft), "%Y-%m-%d.%X", localtime(&now) );
+   if (includeTimestamp) strftime( buft, sizeof(buft), "%Y-%m-%d.%X", localtime(&now) );
 
    for ( int i=0; i<len; ++i )
    {
