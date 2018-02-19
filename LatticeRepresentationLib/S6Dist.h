@@ -15,6 +15,7 @@ public:
    S6Dist(const double dnearzero = 1.0);
 
    double DistanceBetween(const S6& d1, const S6& d2);
+   double DistanceBetween2(const S6& d1, const S6& d2);
    void OneBoundaryDistance(const S6& s1, const S6& s2);
    void TwoBoundaryDistance(const S6& s1, const S6& s2);
    static std::vector<S6> Create_VCP_ForTwoScalars(const S6& s);

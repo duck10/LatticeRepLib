@@ -21,6 +21,7 @@
 #include "Glitch.h"
 #include "MapBoundaryStrings2Colors.h"
 #include "LRL_ToString.h"
+#include "LRL_Cell_Degrees.h"
 #include "SVG_CirclePlot.h"
 #include "SVG_DistancePlot.h"
 #include "SVG_Writer.h"
@@ -225,7 +226,7 @@ private:
                  s += "<text x=\"300\" y=\"85\"  font-family=\"sans-serif\" font-size=\"20\" > Beginning cell  " + LRL_ToString( LRL_Cell(vec) ) + "</text>\n";
       vec = m_follow.GetSecondProbe( );
       s += "<text x=\"300\" y=\"110\"  font-family=\"sans-serif\" font-size=\"20\" > Ending vector  " + LRL_ToString(vec) + "</text>\n";
-      s += "<text x=\"300\" y=\"135\"  font-family=\"sans-serif\" font-size=\"20\" > Ending cell  " + LRL_ToString( LRL_Cell(vec)  ) + "</text>\n";
+      s += "<text x=\"300\" y=\"135\"  font-family=\"sans-serif\" font-size=\"20\" > Ending cell  " + LRL_ToString(LRL_Cell_Degrees(vec)  ) + "</text>\n";
       return(s);
    }
 
