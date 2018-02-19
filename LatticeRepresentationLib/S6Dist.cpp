@@ -449,6 +449,16 @@ double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
    g_debug.clear();
    return m_dmin;
 }
+double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
+   m_dmin = (s1 - s2).norm();
+   if (m_debug) {
+      const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
+      g_debug.Store(m_dmin, item);
+   }
+   OneBoundaryDistance(s1, s2);
+   g_debug.clear();
+   return m_dmin;
+}
 
 double S6Dist::DistanceBetween2(const S6& s1, const S6& s2) {
    m_dmin = (s1 - s2).norm();
