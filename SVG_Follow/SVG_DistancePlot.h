@@ -25,13 +25,13 @@
 #include "MapBoundaryStrings2Colors.h"
 #include "LinearAxis.h"
 
-template<typename TVEC, typename TMAT>
+template<typename TVEC, typename TMAT, typename TREDUCE>
 class SVG_DistancePlot
 {
 public:
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   SVG_DistancePlot( Follow<TVEC, TMAT>& follow, MapBoundaryStrings2Colors& colorMap, const std::string& fileName, const std::vector<Glitch<TVEC> >& glitches )
+   SVG_DistancePlot( Follow<TVEC, TMAT,TREDUCE>& follow, MapBoundaryStrings2Colors& colorMap, const std::string& fileName, const std::vector<Glitch<TVEC> >& glitches )
       : m_follow( follow )
       , m_fileName( fileName )
       , m_glitches( glitches )
@@ -338,7 +338,7 @@ private:
    }
 
    std::list<std::string> m_svg;
-   const Follow<TVEC, TMAT> m_follow;
+   const Follow<TVEC, TMAT,TREDUCE> m_follow;
    const std::string m_fileName;
    const std::vector<Glitch<TVEC> >& m_glitches;
    MapBoundaryStrings2Colors& m_colorMap;

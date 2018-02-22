@@ -31,7 +31,7 @@
 #include <utility>
 
 
-template<typename TVEC, typename TMAT>
+template<typename TVEC, typename TMAT, typename TREDUCE>
 class Follow
 {
 public:
@@ -72,10 +72,11 @@ public:
       const bool bG6 = Niggli::Reduce(niggliReduced_1, test);
       if (!bG6) throw;
       S6 s6DeloneReduced_1;
-      const bool testtest = Selling::Reduce(S6(niggliReduced_1), s6DeloneReduced_1);   // for Delone::Reduce
+      const bool testtest = TREDUCE::Reduce(S6(niggliReduced_1), s6DeloneReduced_1);   // for Delone::Reduce
 
       S6Dist s6dist(1.0);
-      for (unsigned long istep = 0; istep < m_steps; ++istep) {
+      for (int istep = 0; istep < m_steps; ++istep) {
+         //if (std::abs(istep - 516) > 1 && istep >0) continue;
          const double t(double(istep) / tend);
          TVEC vNext;
          vNext = TVEC(TVEC((1.0 - t)*probe) + TVEC(t*niggliReduced_1));
@@ -84,7 +85,7 @@ public:
          S6 s6DeloneReduced_2;
          MatG6 mG6;
          MatS6 mS6;
-         const bool b6 = Selling::Reduce(S6(g6vNext), s6DeloneReduced_2);   // for Niggli::Reduce
+         const bool b6 = TREDUCE::Reduce(S6(g6vNext), s6DeloneReduced_2);   // for Niggli::Reduce
          //const double distG6 = NCDist_<double[6], double[6] >(g6NiggliReducedArray_1, g6NiggliReducedArray_2);
          if (b6) {
             const double distS6 = s6dist.DistanceBetween(s6DeloneReduced_1, s6DeloneReduced_2);

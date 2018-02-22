@@ -86,6 +86,21 @@ LRL_Cell LatticeConverter::DeloneReduceCell(const std::string& lattice, const LR
    }
 }
 
+LRL_Cell LatticeConverter::SellingReduceCell(const std::string& lattice, const LRL_Cell& cell) {
+   const G6 g6 = G6(cell);
+   const MatG6 mLattice = LRL_Cell::LatSymMatG6(lattice, cell);
+   MatS6 m66;
+   S6 redVec;
+   //const bool b = Delone::Reduce(S6(mLattice*g6), m66, redVec, 0.00000001);
+   const bool b = Selling::Reduce(S6(mLattice*g6), redVec);
+   if (b) {
+      return LRL_Cell(redVec);;
+   }
+   else {
+      return LRL_Cell();
+   }
+}
+
 void LatticeConverter::DeloneReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) {
    const LRL_Cell reducedCell = DeloneReduceCell(lattice, cell);
    Output(label, "P", reducedCell);

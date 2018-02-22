@@ -56,7 +56,7 @@ public:
 
    T randDeloneReduced() {
       S6 out;
-      Selling::Reduce(S6(RandCell(), out));
+      Selling::Reduce(S6(RandCell()), out);
       return T(out);
    }
 

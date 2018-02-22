@@ -19,6 +19,7 @@ public:
    double DistanceBetween2(const S6& d1, const S6& d2);
    void OneBoundaryDistance(const S6& s1, const S6& s2);
    void TwoBoundaryDistance(const S6& s1, const S6& s2);
+   std::vector<S6> ReduceIfLessThanDmin(const double dmin, const S6 s) const;
    static std::vector<S6> Create_VCP_ForTwoScalars(const S6& s);
    static S6 Create_VCP_ForOneScalar(const unsigned long n, const S6& s);
    std::vector<S6> Create_VCP_s(const S6& s);
@@ -86,6 +87,7 @@ private:
 
    static std::vector< S6(*)(const S6&)> m_reductionFunctions;
    static std::vector< S6(*)(const S6&)> m_UnReduceFunctions;
+   static std::vector< S6(*)(const S6&)> m_reflectionFunctions;
 
 };
 #endif // S6DIST_H

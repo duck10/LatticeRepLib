@@ -380,7 +380,7 @@ const MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1
    bool again = true;
    const bool debug = true;
 
-   const int maxCycle = 26;
+   const int maxCycle = 260;
 
    m1 = MatG6::Eye();
    vin = vi;

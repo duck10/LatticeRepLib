@@ -20,6 +20,7 @@ public:
    LRL_Cell NiggliReduceCell(const std::string& lattice, const LRL_Cell& cell);
    void NiggliReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell);
    LRL_Cell DeloneReduceCell(const std::string& lattice, const LRL_Cell& cell);
+   LRL_Cell SellingReduceCell(const std::string& lattice, const LRL_Cell& cell);
    void DeloneReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell);
 };
 #endif //LATTICECONVERTER_H
