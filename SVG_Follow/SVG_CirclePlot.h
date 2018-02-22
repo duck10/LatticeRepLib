@@ -15,15 +15,15 @@
 #include "LRL_ToString.h"
 #include "triple.h"
 
-template<typename TVEC, typename TMAT> class Follow;
+template<typename TVEC, typename TMAT, typename TREDUCE> class Follow;
 
-template<typename TVEC, typename TMAT>
+template<typename TVEC, typename TMAT, typename TREDUCE>
 class SVG_CirclePlot
 {
 public:
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   SVG_CirclePlot( Follow<TVEC, TMAT>& follow,
+   SVG_CirclePlot( Follow<TVEC, TMAT,TREDUCE>& follow,
       MapBoundaryStrings2Colors& colorMap,
       const std::string fileName )
       : m_follow( follow )
@@ -261,7 +261,7 @@ private:
    std::pair<double, double>                                              m_use;
    const std::pair<int, int>                                              m_which2plot;
    const std::pair< std::pair<double, double>, std::pair<double, double> > m_MinMax; //xlimits, ylimits
-   const Follow<TVEC, TMAT>&                                              m_follow;
+   const Follow<TVEC, TMAT,TREDUCE>&                                              m_follow;
 
 private: // don't implement
    SVG_CirclePlot& operator=(const SVG_CirclePlot&) const;

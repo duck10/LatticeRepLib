@@ -29,14 +29,14 @@
 
 class MapBoundaryStrings2Colors;
 
-template<typename TVEC, typename TMAT>
+template<typename TVEC, typename TMAT, typename TREDUCE>
 class SVG_Writer
 {
 public:
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    SVG_Writer( const std::string&               sFileName,
-      Follow<TVEC, TMAT>&                    follow,
+      Follow<TVEC, TMAT,TREDUCE>&                    follow,
       const int                        startingVectorCounter,
       MapBoundaryStrings2Colors& colorMap,
       const std::vector<Glitch<TVEC> >&       glitches,
@@ -54,9 +54,9 @@ public:
          SVG_Header( sFileName, startingVectorCounter );
          std::list<std::string> svgProgressBars( DrawProgressBars( ordinalBeingWorkedOn, fractionWalked, numberToWalk, rejectedFrames ) );
          m_svg.splice( m_svg.end( ), svgProgressBars );
-         std::list<std::string> svgDistancePlot( SVG_DistancePlot<TVEC, TMAT>( follow, colorMap, sFileName, glitches ).Format( ) );
+         std::list<std::string> svgDistancePlot( SVG_DistancePlot<TVEC, TMAT,TREDUCE>( follow, colorMap, sFileName, glitches ).Format( ) );
          m_svg.splice( m_svg.end( ), svgDistancePlot );
-         std::list<std::string> svgCirclePlot( SVG_CirclePlot<TVEC, TMAT>( follow, colorMap, sFileName ).Format( ) );
+         std::list<std::string> svgCirclePlot( SVG_CirclePlot<TVEC, TMAT, TREDUCE>( follow, colorMap, sFileName ).Format( ) );
          m_svg.splice( m_svg.end( ), svgCirclePlot );
 
          SVG_Footer( );
@@ -379,7 +379,7 @@ private:
    std::pair<double, double>                                        m_viewboxXYSize;
    const std::pair<int, int>                                        m_which2plot;
    const std::string                                               m_fileName;
-   const Follow<TVEC, TMAT>&                                        m_follow;
+   const Follow<TVEC, TMAT,TREDUCE>&                                        m_follow;
 
 private: // don't implement
    SVG_Writer& operator=(const SVG_Writer&) const;

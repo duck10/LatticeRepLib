@@ -26,13 +26,14 @@
 #include "Niggli.h"
 #include "SVG_Writer.h"
 
+typedef Selling TREDUCE;
 
-template<typename TVEC, typename TMAT>
+template<typename TVEC, typename TMAT, typename TREDUCE>
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 bool WalkFromOnePointToAnother( const TVEC& v1, const TVEC& v2, const unsigned long nSteps, const std::string& s_BaseSVG_FileName, MapBoundaryStrings2Colors& colorMap, const unsigned long goodCellCount )
    /*-------------------------------------------------------------------------------------*/
 {
-   Follow<TVEC,TMAT>  follow( v1, v2 );
+   Follow<TVEC,TMAT,TREDUCE>  follow( v1, v2 );
    const std::clock_t start = std::clock();
    follow.SetStepCount( nSteps )
       .SetWhichComponentsToPlot(FollowerConstants::globalWhichComponentsToPlot.first, FollowerConstants::globalWhichComponentsToPlot.second )
@@ -57,7 +58,7 @@ bool WalkFromOnePointToAnother( const TVEC& v1, const TVEC& v2, const unsigned l
 
       if (FollowerConstants::globalPrintAllDistanceData || ! glitches.empty( ) )
       {
-         FileWriter<TVEC, TMAT>(s_BaseSVG_FileName + ".txt", follow, glitches).Write();
+         FileWriter<TVEC, TMAT, TREDUCE>(s_BaseSVG_FileName + ".txt", follow, glitches).Write();
 
 //#define DisableForHJB
 #ifndef DisableForHJB
@@ -65,7 +66,7 @@ bool WalkFromOnePointToAnother( const TVEC& v1, const TVEC& v2, const unsigned l
          const std::string s_SVG_FileName = LRL_ToString( s_BaseSVG_FileName, goodCellCount, ".svg" );
          const std::vector<triple<double,double,double> > angles( follow.GetLinesFromAngles( ) );
          const std::vector<int> rejectedFrames;
-         SVG_Writer<TVEC, TMAT>( s_SVG_FileName, follow, 0, colorMap, glitches, rejectedFrames, 0 );
+         SVG_Writer<TVEC, TMAT,TREDUCE>( s_SVG_FileName, follow, 0, colorMap, glitches, rejectedFrames, 0 );
          if (FollowerConstants::globalFollowerMode == FollowerConstants::globalWeb )
             exit( 19191 );
 #endif
@@ -80,9 +81,9 @@ template<typename TVEC, typename TMAT>
 unsigned long ProbeOneRegion( const CellInputData& probe, const unsigned long nSteps, const std::string& sBaseFileName )
 /*-------------------------------------------------------------------------------------*/
 {
-   G6 vR;
+   S6 vR;
    MapBoundaryStrings2Colors colorMap;
-   MatG6 m;
+   MatS6 m;
    unsigned long goodCellCount = 0;
 
    for (unsigned long iloop=0; iloop<FollowerConstants::globalNumberOfTrialsToAttempt; ++iloop )
@@ -90,11 +91,11 @@ unsigned long ProbeOneRegion( const CellInputData& probe, const unsigned long nS
       const G6 v1( ReadGlobalData::GeneratePerturbation( G6(probe.GetCell()) ) );
       m.Eye();
       //const bool bTestReduce(Delone::Delone(v1, m, vR, 0.0));  lca Delone code
-      const bool bTestReduce(Niggli::Reduce(v1, m, vR, 0.0));
+      const bool bTestReduce(TREDUCE::Reduce(S6(v1), m, vR, 0.0));
 
       if ( bTestReduce && ! (m==MatG6().Eye()) )
       {
-         const bool bTestWalk = WalkFromOnePointToAnother<TVEC,TMAT>( TVEC(v1), TVEC(vR), nSteps, sBaseFileName, colorMap, goodCellCount );
+         const bool bTestWalk = WalkFromOnePointToAnother<TVEC,TMAT,TREDUCE>( TVEC(v1), TVEC(vR), nSteps, sBaseFileName, colorMap, goodCellCount );
          if ( bTestWalk ) ++goodCellCount;
       } else if( ! bTestReduce ) {
          //std::cout << "Delone failed " << v1 << std::endl;
@@ -120,11 +121,11 @@ int ProbeOneRegion( const G6& probe, const int nSteps, const std::string& sBaseF
       const G6 v1( ReadGlobalData::GeneratePerturbation( probe ) );
       m.Eye();
       //const bool bTestReduce( Delone::Delone( v1, m, vR, 0.0 ) );
-      const bool bTestReduce(Niggli::Reduce(v1, m, vR, 0.0));
+      const bool bTestReduce(TREDUCE::Reduce(v1, m, vR, 0.0));
 
       if ( bTestReduce && ! (m==Mat66().Eye()) )
       {
-         const bool bTestWalk = WalkFromOnePointToAnother<TVEC,TMAT>( v1, vR, nSteps, sBaseFileName, colorMap, goodCellCount );
+         const bool bTestWalk = WalkFromOnePointToAnother<TVEC,TMAT,TREDUCE>( v1, vR, nSteps, sBaseFileName, colorMap, goodCellCount );
          if ( bTestWalk ) ++goodCellCount;
       } else if( ! bTestReduce ) {
          //std::cout << "Delone failed " << v1 << std::endl;
@@ -216,6 +217,7 @@ int main( int argc, char* argv [ ] ) {
             LRL_ToString( LRL_CreateFileName::Create(FollowerConstants::globalFileNamePrefix, LRL_ToString( cellcount) + "_", 
                GLOBAL_Files::globalShouldTimeStamp) );
          ++cellcount;
+         //if (cellcount != 38) continue;
          unsigned long goodCellCount = ProbeOneRegion<S6,MatS6>( *it, FollowerConstants::globalStepsPerFrame, sBaseFileName );
          std::cout << goodCellCount << std::endl;
       }

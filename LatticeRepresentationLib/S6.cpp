@@ -1,3 +1,5 @@
+static const double randomLatticeNormalizationConstant = 10.0;
+static const double randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
 
 #include "stdafx.h"
 
@@ -380,13 +382,13 @@ S6 S6::rand(void) {
 }
 
 S6 S6::rand(const double d) {
-   return d*rand() / LRL_Cell::randomLatticeNormalizationConstantSquared;
+   return d*rand() / randomLatticeNormalizationConstantSquared;
 }
 
 S6 S6::randDeloneReduced() {
    S6 s6;
    for (unsigned long i = 0; i < 6; ++i)
-      s6[i] = -rhrand.urand() * LRL_Cell::randomLatticeNormalizationConstantSquared;
+      s6[i] = -rhrand.urand() * randomLatticeNormalizationConstantSquared;
    s6.m_valid = true;
    return s6;
 }
@@ -398,11 +400,11 @@ S6 S6::randDeloneUnreduced() {
 }
 
 S6 S6::randDeloneReduced(const double d) {
-   return d*randDeloneReduced( ) / LRL_Cell::randomLatticeNormalizationConstantSquared;
+   return d*randDeloneReduced( ) / randomLatticeNormalizationConstantSquared;
 }
 
 S6 S6::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced( ) / LRL_Cell::randomLatticeNormalizationConstantSquared;
+   return d*randDeloneUnreduced( ) / randomLatticeNormalizationConstantSquared;
 }
 
 unsigned long S6::CountPositive(const S6& s6) {
@@ -1123,4 +1125,449 @@ S6 S6::Unreduce62(const S6& din) {
    return d;
 }
 
+std::vector< S6(*)(const S6&)> S6::SetRelectionFunctions() {
+   std::vector<S6(*)(const S6&)> v;
+   v.push_back(Relection01);
+   v.push_back(Relection02);
+   v.push_back(Relection03);
+   v.push_back(Relection04);
+   v.push_back(Relection05);
+   v.push_back(Relection06);
+   v.push_back(Relection07);
+   v.push_back(Relection08);
+   v.push_back(Relection09);
+   v.push_back(Relection10);
+   v.push_back(Relection11);
+   v.push_back(Relection12);
+   v.push_back(Relection13);
+   v.push_back(Relection14);
+   v.push_back(Relection15);
+   v.push_back(Relection16);
+   v.push_back(Relection17);
+   v.push_back(Relection18);
+   v.push_back(Relection19);
+   v.push_back(Relection20);
+   v.push_back(Relection21);
+   v.push_back(Relection22);
+   v.push_back(Relection23);
+   v.push_back(Relection24);
+   return v;
+}
+
+S6 S6::Relection01(const S6& din) {
+   return din;
+}
+
+S6 S6::Relection02(const S6& din) {
+   S6 d(din);
+   std::swap(d.m_vec[0], d.m_vec[4]);
+   std::swap(d.m_vec[1], d.m_vec[3]);
+   return d;
+}
+S6 S6::Relection03(const S6& din) {
+   S6 d(din);
+   std::swap(d.m_vec[1], d.m_vec[2]);
+   std::swap(d.m_vec[4], d.m_vec[5]);
+   return d;
+}
+
+S6 S6::Relection04(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s6;
+   ss2 = s4;
+   ss3 = s2;
+   ss4 = s3;
+   ss5 = s1;
+   ss6 = s5;
+   return d;
+}
+
+S6 S6::Relection05(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s5;
+   ss2 = s3;
+   ss3 = s4;
+   ss4 = s2;
+   ss5 = s6;
+   ss6 = s1;
+   return d;
+}
+
+S6 S6::Relection06(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s6;
+   ss3 = s4;
+   ss4 = s3;
+   ss6 = s1;
+   return d;
+}
+
+S6 S6::Relection07(const S6& din) {
+   S6 d(din);
+   std::swap(d.m_vec[1], d.m_vec[0]);
+   std::swap(d.m_vec[3], d.m_vec[4]);
+   std::swap(d.m_vec[3], d.m_vec[4]);
+   return d;
+}
+
+S6 S6::Relection08(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s4;
+   ss2 = s5;
+   ss4 = s1;
+   ss5 = s2;
+   return d;
+}
+
+S6 S6::Relection09(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s2;
+   ss2 = s3;
+   ss3 = s1;
+   ss4 = s5;
+   ss5 = s6;
+   ss6 = s4;
+   return d;
+}
+
+S6 S6::Relection10(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s6;
+   ss2 = s5;
+   ss3 = s1;
+   ss4 = s3;
+   ss5 = s2;
+   ss6 = s4;
+   return d;
+}
+
+S6 S6::Relection11(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s4;
+   ss2 = s3;
+   ss3 = s5;
+   ss4 = s1;
+   ss5 = s6;
+   ss6 = s2;
+   return d;
+}
+
+S6 S6::Relection12(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s6;
+   ss2 = s1;
+   ss3 = s5;
+   ss4 = s3;
+   ss5 = s4;
+   ss6 = s2;
+   return d;
+}
+
+S6 S6::Relection13(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s3;
+   ss2 = s1;
+   ss3 = s2;
+   ss4 = s6;
+   ss5 = s4;
+   ss6 = s5;
+   return d;
+}
+
+S6 S6::Relection14(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s4;
+   ss2 = s6;
+   ss3 = s2;
+   ss4 = s1;
+   ss5 = s3;
+   ss6 = s5;
+   return d;
+}
+
+S6 S6::Relection15(const S6& din) {
+   S6 d(din);
+   std::swap(d.m_vec[2], d.m_vec[0]);
+   std::swap(d.m_vec[3], d.m_vec[5]);
+   return d;
+}
+
+S6 S6::Relection16(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s5;
+   ss2 = s6;
+   ss3 = s1;
+   ss4 = s2;
+   ss5 = s3;
+   ss6 = s4;
+   return d;
+}
+
+S6 S6::Relection17(const S6& din) {
+   S6 d(din);
+   std::swap(d.m_vec[0], d.m_vec[3]);
+   std::swap(d.m_vec[2], d.m_vec[5]);
+   return d;
+}
+
+S6 S6::Relection18(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s5;
+   ss2 = s1;
+   ss3 = s6;
+   ss4 = s2;
+   ss5 = s4;
+   ss6 = s3;
+   return d;
+}
+
+S6 S6::Relection19(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s3;
+   ss2 = s5;
+   ss3 = s4;
+   ss4 = s6;
+   ss5 = s2;
+   ss6 = s1;
+   return d;
+}
+
+S6 S6::Relection20(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s2;
+   ss2 = s6;
+   ss3 = s4;
+   ss4 = s5;
+   ss5 = s3;
+   ss6 = s1;
+   return d;
+}
+
+S6 S6::Relection21(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s3;
+   ss2 = s4;
+   ss3 = s5;
+   ss4 = s6;
+   ss5 = s1;
+   ss6 = s2;
+   return d;
+}
+
+S6 S6::Relection22(const S6& din) {
+   S6 d(din);
+   std::swap(d.m_vec[1], d.m_vec[5]);
+   std::swap(d.m_vec[2], d.m_vec[4]);
+   return d;
+}
+
+S6 S6::Relection23(const S6& din) {
+   S6 d(din);
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = s2;
+   ss2 = s4;
+   ss3 = s6;
+   ss4 = s5;
+   ss5 = s1;
+   ss6 = s3;
+   return d;
+}
+
+S6 S6::Relection24(const S6& din) {
+   S6 d(din);
+   std::swap(d.m_vec[1], d.m_vec[4]);
+   std::swap(d.m_vec[2], d.m_vec[5]);
+   return d;
+}
 

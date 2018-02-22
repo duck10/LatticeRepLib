@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 
+#include "C3.h"
 #include "Follow.h"
 #include "Glitch.h"
 #include "G6.h"
@@ -17,7 +18,7 @@
 #include <cstdlib>
 #include <string>
 
-template<typename TVEC, typename TMAT>
+template<typename TVEC, typename TMAT, typename TREDUCE>
 class FileWriter
 {
 public:
@@ -25,7 +26,7 @@ public:
 
    //void Write( void );
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   FileWriter(const std::string& sFileName, const Follow<TVEC, TMAT> & follow, const std::vector<Glitch<TVEC> >& glitches)
+   FileWriter(const std::string& sFileName, const Follow<TVEC, TMAT,TREDUCE> & follow, const std::vector<Glitch<TVEC> >& glitches)
       : sFileName(sFileName)
       , follow(follow)
       , m_glitches(glitches)
@@ -68,7 +69,7 @@ public:
       const typename std::vector<TVEC>::const_iterator& itP2,
       const int counter) const {
       std::string s =
-         LRL_ToString(*itP1, "    ", *itP2, "    ")
+         LRL_ToString(*itP1, "    ", C3(*itP2), "    ")
          + LRL_ToString(*itDist, follow.GetBoundaryString(counter));
       const Glitch<TVEC>  singleGlitch = FindGlitch(counter, m_glitches);
       if (singleGlitch.GetGlitchElement1().GetPosition() > 0)
@@ -108,7 +109,7 @@ public:
    }
 private:
    const std::string sFileName;
-   const Follow<TVEC,TMAT> & follow;
+   const Follow<TVEC,TMAT,TREDUCE> & follow;
    const std::vector<Glitch<TVEC> >& m_glitches;
    const std::vector<TVEC> probePath;
    const std::vector<TVEC> secondProbePath;

@@ -29,7 +29,7 @@ void Header(void) {
 }
 
 std::string Letters(void) {
-   return "V,D,S,P,A,B,C,I,F,R";
+   return "V,D,S,P,A,B,C,I,F,R,C3";
 }
 
 std::string OutputIntialInput(const std::vector<LRL_ReadLatticeData>& cellDataList) {
@@ -69,18 +69,18 @@ void PrintModifiedTable(const PrintTable& tbl, const bool labelColumns, const bo
 void ReduceAll(const LRL_ReadLatticeData& cellDataList, S6& s6, D7& d7, G6& g6) {
    LatticeConverter converter;
    g6 = converter.NiggliReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
-   s6 = converter.DeloneReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
-   d7 = s6;
+   d7 = converter.DeloneReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
+   s6 = converter.SellingReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
 }
 
 std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    const std::string letters = Letters();
    std::string lattice;
    std::vector<LRL_ReadLatticeData> cellDataList;
+   LRL_ReadLatticeData rcd;
    while (lattice != "EOF") {
-      LRL_ReadLatticeData rcd;
+      rcd.read();
       lattice = rcd.GetLattice();
-      const size_t quest = letters.find(lattice);
       if ((!lattice.empty()) && (letters.find(toupper(lattice[0])) != std::string::npos))
          cellDataList.push_back(rcd);
    }
@@ -118,9 +118,9 @@ void PrintDistanceData(const std::vector<LRL_ReadLatticeData>& cellDataList) {
    D7 d7red2;
    if (cellDataList.size() > 1) {
       std::cout << "Distance_Summary  NCDist(23) D7Dist(23) S6Dist(23)" << std::endl;
+      S6Dist s6dist(10000.0);
       for (size_t i1 = 0; i1 < cellDataList.size(); ++i1) {
          ReduceAll(cellDataList[i1], s6red1, d7red1, g6red1);
-         S6Dist s6dist(10000.0);
          s6dist.SetDebug(true);
          for (size_t i2 = i1; i2 < cellDataList.size(); ++i2) {
             ReduceAll(cellDataList[i2], s6red2, d7red2, g6red2);
@@ -171,16 +171,16 @@ void ListReflectionsByC3() {
 }
 
 int main(int argc, char* argv[]) {
-   ListReflectionsByC3();
+   //ListReflectionsByC3();
    std::cout << "main file name *** " << __FILE__ << " ***" << std::endl;
 
-   ListReflections(S6(" -35.78280 -90.89944 -16.76471 -22.15936 -105.64854 -94.23607"));
+   //ListReflections(S6(" -35.78280 -90.89944 -16.76471 -22.15936 -105.64854 -94.23607"));
 
    //D7_BoundaryTests bt;
    //bt.MainTests();
 
    //TestConversions(cellDataList);
-   //Selling::SetDebug(true);
+   //TREDUCE::SetDebug(true);
 
    LatticeConverter converter;
    Header();

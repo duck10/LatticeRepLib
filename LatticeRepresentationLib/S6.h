@@ -117,6 +117,31 @@ public:
    static unsigned long CountPositive(const S6& s6);
    unsigned long CountZeros(void) const;
 
+   static std::vector< S6(*)(const S6&)> SetRelectionFunctions();
+   static S6 Relection01(const S6& din);
+   static S6 Relection02(const S6& din);
+   static S6 Relection03(const S6& din);
+   static S6 Relection04(const S6& din);
+   static S6 Relection05(const S6& din);
+   static S6 Relection06(const S6& din);
+   static S6 Relection07(const S6& din);
+   static S6 Relection08(const S6& din);
+   static S6 Relection09(const S6& din);
+   static S6 Relection10(const S6& din);
+   static S6 Relection11(const S6& din);
+   static S6 Relection12(const S6& din);
+   static S6 Relection13(const S6& din);
+   static S6 Relection14(const S6& din);
+   static S6 Relection15(const S6& din);
+   static S6 Relection16(const S6& din);
+   static S6 Relection17(const S6& din);
+   static S6 Relection18(const S6& din);
+   static S6 Relection19(const S6& din);
+   static S6 Relection20(const S6& din);
+   static S6 Relection21(const S6& din);
+   static S6 Relection22(const S6& din);
+   static S6 Relection23(const S6& din);
+   static S6 Relection24(const S6& din);
 private:
    static S6 RandomUnreduceOne(const S6& s6);
    static S6 RandomUnreduceTwo(const S6& s6);
