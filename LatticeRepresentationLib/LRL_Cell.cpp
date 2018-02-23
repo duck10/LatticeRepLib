@@ -444,17 +444,19 @@ LRL_Cell& LRL_Cell::operator= (const B4& v) {
 
 LRL_Cell& LRL_Cell::operator= (const LRL_Cell& v) {
    m_cell = v.m_cell;
-   m_valid = v.m_valid;
+   m_valid = v.GetValid();
    return *this;
 }
 
 LRL_Cell& LRL_Cell::operator= (const G6& v) {
    *this = LRL_Cell(v);
+   m_valid = v.GetValid();
    return *this;
 }
 
 LRL_Cell& LRL_Cell::operator= (const std::string& s) {
    *this = LRL_Cell(s);
+   m_valid = true;
    return *this;
 }
 
@@ -462,6 +464,7 @@ LRL_Cell& LRL_Cell::operator/= (const double d) {
    (*this)[0] /= d;
    (*this)[1] /= d;
    (*this)[2] /= d;
+   m_valid = true;
    return *this;
 }
 
@@ -469,6 +472,7 @@ LRL_Cell& LRL_Cell::operator*= (const double d) {
    (*this)[0] *= d;
    (*this)[1] *= d;
    (*this)[2] *= d;
+   m_valid = true;
    return *this;
 }
 

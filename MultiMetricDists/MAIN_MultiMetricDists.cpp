@@ -21,7 +21,7 @@
 
 void Header(void) {
    std::cout << "Input:" << std::endl;
-   std::cout << "\"v\" for G6" << std::endl;
+   std::cout << "\"v or g\" for G6" << std::endl;
    std::cout << "\"d\" for D7" << std::endl;
    std::cout << "\"s\" for Delone scalars" << std::endl;
    std::cout << "\"p\",\"a\",\"b\",\"c\",\"i\",\"f\",or \"r\" for unit cells or \"random\"" << std::endl;
@@ -29,7 +29,7 @@ void Header(void) {
 }
 
 std::string Letters(void) {
-   return "V,D,S,P,A,B,C,I,F,R,C3";
+   return "V,G,D,S,P,A,B,C,I,F,R,C3";
 }
 
 std::string OutputIntialInput(const std::vector<LRL_ReadLatticeData>& cellDataList) {

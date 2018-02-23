@@ -53,6 +53,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
             iss >> d;
             v7[i] = d;
          }
+         v7.SetValid(true);
          G6 v6(v7);
          m_cell = v6;
       }
@@ -74,6 +75,8 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          e[1] = std::complex<double>(vd[2], vd[3]);
          e[2] = std::complex<double>(vd[4], vd[5]);
          e.SetValid(true);
+         m_lattice = "P";
+         m_inputDataType = "P";
          m_cell = e;
       }
       else {
@@ -84,6 +87,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
       }
       iss >> m_lattice;
       m_lattice = m_inputDataType;
+      m_cell.SetValid(true);
       if (LRL_StringTools::strToupper(m_lattice) == "END" || LRL_StringTools::strToupper(m_lattice) == "EOF") {
          m_lattice = "EOF";
          return;
