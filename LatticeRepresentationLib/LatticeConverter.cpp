@@ -49,7 +49,7 @@ void LatticeConverter::SetOutputMaxima(void) { m_OutputType = emaxima; }
 void LatticeConverter::SetOutputText  (void) { m_OutputType = etext; }
 
 void LatticeConverter::Output(const std::string& label, const std::string& lattice, const LRL_Cell& cell) const {
-   (m_OutputType == etext) ? TextOutput(label, lattice, cell) : MaximaOutput(label, lattice, LRL_Cell_Degrees(cell));
+   (m_OutputType == etext) ? TextOutput(label, lattice, LRL_Cell(cell)) : MaximaOutput(label, lattice, LRL_Cell(cell));
 }
 
 LRL_Cell LatticeConverter::NiggliReduceCell(const std::string& lattice, const LRL_Cell& cell) {
