@@ -72,12 +72,9 @@ public:
 
    double at(const unsigned long n) const { return m_vec[n]; }
 
-   static S6 rand();
-   static S6 randDeloneReduced();
-   static S6 randDeloneUnreduced();
-   static S6 rand(const double d);
-   static S6 randDeloneReduced(const double d);
-   static S6 randDeloneUnreduced(const double d);
+   static S6 rand(const double d=1.0);
+   static S6 randDeloneReduced(const double d=1.0);
+   static S6 randDeloneUnreduced(const double d=1.0);
 
    bool IsAllMinus() const;
    static std::string GetName(void) { return "S6, Selling scalars"; }
