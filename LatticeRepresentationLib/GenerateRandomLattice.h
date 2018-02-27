@@ -77,6 +77,48 @@ public:
    void SetSeed(const int n) { m_seed = n; rhrand.srandom(n); }
    void PerturbBy(const double perturb) { m_perturb = perturb; }
 
+   GenerateRandomLattice& SetLengthLimits(
+      const double minA, const double maxA,
+      const double minB, const double maxB,
+      const double minC, const double maxC)
+   {
+      m_hasLengthLimits = true;
+      m_minA = minA;
+      m_maxA = maxA;
+      m_minB = minB;
+      m_maxB = maxB;
+      m_minC = minC;
+      m_maxC = maxC;
+      return *this;
+   }
+
+   GenerateRandomLattice& SetLengthLimits(const double minA, const double maxA)
+   {
+      m_hasLengthLimits = true;
+      m_minA = minA;
+      m_maxA = maxA;
+      m_minB = minA;
+      m_maxB = maxA;
+      m_minC = minA;
+      m_maxC = maxA;
+      return *this;
+   }
+
+   GenerateRandomLattice& SetAngleLimits(const double m_minAlpha, const double m_maxAlpha)
+   {
+      m_hasAngleLimits = true;
+      m_minAlpha = minAlpha;
+      m_maxAlpha = maxAlpha;
+      m_minBeta = minAlpha;
+      m_maxBeta = maxAlpha;
+      m_minGamma = minAlpha;
+      m_maxGamma = maxAlpha;
+      return *this;
+   }
+
+
+private:
+
    LRL_Cell RandCell()
    {
       if (m_hasLengthLimits && m_hasAngleLimits ){
@@ -108,8 +150,6 @@ public:
       c.SetValid(true);
       return c;
    }
-
-private:
 
    bool VerifyAngleLimits(const double minAngle, const double maxAngle) const {
       if (!m_hasAngleLimits) return true;
@@ -200,43 +240,6 @@ private:
       }
       return s;
    }
-
-   void SetLengthLimits(
-      const double minA, const double maxA,
-      const double minB, const double maxB,
-      const double minC, const double maxC)
-   {
-      m_hasLengthLimits = true;
-      m_minA = minA;
-      m_maxA = maxA;
-      m_minB = minB;
-      m_maxB = maxB;
-      m_minC = minC;
-      m_maxC = maxC;
-   }
-
-   void SetLengthLimits( const double minA, const double maxA)
-   {
-      m_hasLengthLimits = true;
-      m_minA = minA;
-      m_maxA = maxA;
-      m_minB = minA;
-      m_maxB = maxA;
-      m_minC = minA;
-      m_maxC = maxA;
-   }
-
-   void SetAngleLimits( const double m_minAlpha, const double m_maxAlpha)
-   {
-      m_hasAngleLimits = true;
-      m_minAlpha = minAlpha;
-      m_maxAlpha = maxAlpha;
-      m_minBeta = minAlpha;
-      m_maxBeta = maxAlpha;
-      m_minGamma = minAlpha;
-      m_maxGamma = maxAlpha;
-   }
-
    S6 S6_randDeloneReduced() {
       S6 s6;
       for (unsigned long i = 0; i < 6; ++i)

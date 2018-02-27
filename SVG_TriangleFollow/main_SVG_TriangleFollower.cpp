@@ -94,13 +94,9 @@ int main( int argc, char* argv[] )
          std::cerr << count / 1000 << "K" << std::endl;
       }
 
-      //const TVEC v1 = TVEC(G6::randDeloneUnreduced());
-      //const TVEC v2 = TVEC(G6::randDeloneUnreduced());
-      //const TVEC v3 = TVEC(G6::randDeloneUnreduced());
-
-      const TVEC v1 = TVEC(grl.RandCell());
-      const TVEC v2 = TVEC(grl.RandCell());
-      const TVEC v3 = TVEC(grl.RandCell());
+      const TVEC v1 = TVEC(grl.Generate());
+      const TVEC v2 = TVEC(grl.Generate());
+      const TVEC v3 = TVEC(grl.Generate());
 
       const double d1 = TriangleFollow<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD >::DIST(v1, v3);
       const double d2 = TriangleFollow<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD >::DIST(v2, v3);

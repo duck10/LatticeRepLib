@@ -368,7 +368,7 @@ std::string S6::Signature(const S6& s6) {
    return s;
 }
 
-S6 S6::rand(void) {
+S6 S6::rand(const double d) {
    S6 s6(randDeloneReduced());
 
    const double choice = rhrand.urand();
@@ -381,11 +381,7 @@ S6 S6::rand(void) {
    else return S6::RandomUnreduceThree(s6);
 }
 
-S6 S6::rand(const double d) {
-   return d*rand() / randomLatticeNormalizationConstantSquared;
-}
-
-S6 S6::randDeloneReduced() {
+S6 S6::randDeloneReduced(const double d) {
    S6 s6;
    for (unsigned long i = 0; i < 6; ++i)
       s6[i] = -rhrand.urand() * randomLatticeNormalizationConstantSquared;
@@ -393,18 +389,10 @@ S6 S6::randDeloneReduced() {
    return s6;
 }
 
-S6 S6::randDeloneUnreduced() {
+S6 S6::randDeloneUnreduced(const double d) {
    S6 s6(S6::rand());
    while (S6::CountPositive(s6) == 0) s6 = S6::rand();
    return s6;
-}
-
-S6 S6::randDeloneReduced(const double d) {
-   return d*randDeloneReduced( ) / randomLatticeNormalizationConstantSquared;
-}
-
-S6 S6::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced( ) / randomLatticeNormalizationConstantSquared;
 }
 
 unsigned long S6::CountPositive(const S6& s6) {

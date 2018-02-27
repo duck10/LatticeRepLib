@@ -11,35 +11,36 @@
 #include <utility>
 #include <vector>
 
-static std::string StoreResults_GetTime(void) {
-   const time_t now = time(NULL);
-   char buft[256];
-   struct tm tm_time;
-   localtime_s(&tm_time, &now);
-   strftime(buft, sizeof(buft), "%Y/%m/%d %X", &tm_time);
-   return std::string(buft);
-}
+template <typename TKEY, typename TDATA>
+class StoreResults {
 
 template<typename TSAMPLEKEY, typename TSAMPLE>
 class SampleData {
 public:
    SampleData(const TSAMPLEKEY& key, const TSAMPLE& sample)
-      : m_countPerKey(1)
+         : m_sampleData(1,sample)
+         , m_countPerKey(1)
       , m_key(key)
-   {
-      m_sampleData.push_back(sample);
-   }
+         , m_creationTime()
+      {}
 
    bool operator< (const SampleData<TSAMPLEKEY, TSAMPLE>& ts) const { return m_key < ts.m_key; }
 
    unsigned long GetCount(void) const { return m_countPerKey; }
+      SampleData operator= ( const SampleData& data ){ 
+         m_sampleData = data.m_sampleData;
+         m_key = data.m_key;
+         m_countPerKey = data.m_countPerKey;
+         m_creationTime = data.m_creationTime;
+         return *this;
+      }
    std::vector<TSAMPLE> m_sampleData;
    unsigned long m_countPerKey;
    TSAMPLEKEY m_key;
+   protected:
+      time_t m_creationTime;
 };
 
-template <typename TKEY, typename TDATA>
-class StoreResults {
 public:
 
    friend std::ostream& operator<<(std::ostream& os, const StoreResults<TKEY, TDATA>& store) {
@@ -241,6 +242,46 @@ public:
       m_valueSeparator.clear();
    }
 
+   unsigned long DeleteIfCountLessThan(const unsigned long n) {
+      typename std::map<TKEY, SampleData<TKEY, TDATA> >::iterator it;
+      unsigned long count = 0;
+      for (it = m_tree.begin(); it != m_tree.end();) {
+         if ((*it).second.m_countPerKey < n) {
+            it = m_tree.erase(it);
+            ++count;
+         }
+         else {
+            ++it;
+         }
+      }
+      return count;
+   }
+   long DeleteIfCountGreaterThan(const long n) {
+      typename std::map<TKEY, SampleData<TKEY, TDATA> >::iterator it;
+      long count = 0;
+      for (it = m_tree.begin(); it != m_tree.end();) {
+         if ((*it).second.m_countPerKey > (unsigned long)(n)) {
+            it = m_tree.erase(it);
+            ++count;
+         }
+         else {
+            ++it;
+         }
+      }
+      return count;
+   }
+
+   TKEY GetMaxKey() const {
+      typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it =
+         std::max_element(m_tree.begin(), m_tree.end());
+      return (*it).first;
+   }
+   TKEY GetMinKey() const {
+      typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it =
+         std::min_element(m_tree.begin(), m_tree.end());
+      return (*it).first;
+   }
+
 private:
 
    void ShowResultsBySortedKey(const std::vector<TKEY>& keylist) const {
@@ -261,7 +302,16 @@ private:
          }
       }
       std::cout << m_footer << std::endl;
+   }
 
+private:
+   static std::string StoreResults_GetTime(void) {
+      const time_t now = time(NULL);
+      char buft[256];
+      struct tm tm_time;
+      localtime_s(&tm_time, &now);
+      strftime(buft, sizeof(buft), "%Y/%m/%d %X", &tm_time);
+      return std::string(buft);
    }
 
 private:
