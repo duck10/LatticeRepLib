@@ -10,6 +10,12 @@ public:
    PairReporter(const T1& t1, const T2& t2 )
       : m_pair(std::make_pair(t1,t2)) {}
 
+   PairReporter& operator=(std::pair<T1, T2>& p) {
+      m_pair.first = p.m_pair.first;
+      m_pair.second = p.m_pair.second;
+      return *this;
+   }
+
    friend std::ostream& operator<< (std::ostream& o, const PairReporter& pr)
    {
       o << pr.m_pair.first << " " << pr.m_pair.second;

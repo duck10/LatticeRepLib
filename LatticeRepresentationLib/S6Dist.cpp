@@ -10,6 +10,7 @@
 #include "Delone.h"
 #include "LRL_inverse.h"
 #include "LRL_ToString.h"
+#include "PairReporter.h"
 #include "S6Dist.h"
 #include "Selling.h"
 
@@ -268,7 +269,7 @@ std::vector<S6> S6Dist::GenerateReflectionsAtZero(const S6& s6) const {
 
    const double d = s6.norm();
    for (unsigned long i = 0; i < 6; ++i) {
-      if (s6[i] > -d*g_fractionToAssessNearZero && s6[i] <= 0.0) {
+      if (s6[i] > -d * g_fractionToAssessNearZero && s6[i] <= 0.0) {
          UnreduceAndAddToList(s6, i, vToReflect);
       }
    }
@@ -284,8 +285,11 @@ std::vector<S6> S6Dist::GenerateReflectionsAtZero(const S6& s6) const {
 }
 
 StoreResults<double, std::string> g_debug(1);
+StoreResults<double, std::pair<S6, S6> >g_bestVectors(1);
+
 std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree) {
    g_debug.clear();
+   g_bestVectors.clear();
    g_debug.SetTitle("    MinForListOfS6 vector tree*************** *************** *************** *************** S6 Distance Calculations ********************");
    g_debug.SetFooter("    MinForListOfS6 vector tree*************** *************** *************** END END END END S6 Distance Calculations ********************\n");
    S6 s6min(tree[0]);
@@ -294,12 +298,16 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
    std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
    const std::string itemA = LRL_ToString(v1[0]) + std::string("\n") + LRL_ToString(s6min);
    const int nzero = s6min.CountZeros();
-   g_debug.Store(dmin, itemA);
+   if (m_debug)
+      g_debug.Store(dmin, itemA);
+   g_bestVectors.Store(dmin, std::make_pair(v1[0], s6min));
+
    for (unsigned long i = 0; i < v1.size(); ++i) {
       const CNearTree<S6>::iterator it = tree.NearestNeighbor(m_dmin, v1[i]);
       if (it != tree.end()) {
          const double test = (*it)[0];
          std::string item;
+         g_bestVectors.Store(std::min(dmin, (v1[i] - (*it)).norm()), std::make_pair(v1[i], *it));
          if (m_debug /*&& it != tree.end()*/) {
             item = LRL_ToString(v1[i]) + std::string("\n") + LRL_ToString(*it);
             const int nzero2 = (*it).CountZeros();
@@ -340,22 +348,24 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
          ptemp = MinForListOfS6(v1[iouter], v2);
          if (ptemp.first < dmin) {
             dmin = ptemp.first;
-            if (m_debug) {
-               const std::string item = LRL_ToString(v1[iouter]) + std::string("\n ") + LRL_ToString(v2[ptemp.second]);
-               const int nzero = v2[ptemp.second].CountZeros();
-               g_debug.Store(dmin, item);
-            }
-            p.second = iouter;
-            p.first = ptemp.first;
          }
+         g_bestVectors.Store(dmin, std::make_pair(v1[iouter], v2[ptemp.second]));
+         if (m_debug) {
+            const std::string item = LRL_ToString(v1[iouter]) + std::string("\n ") + LRL_ToString(v2[ptemp.second]);
+            const int nzero = v2[ptemp.second].CountZeros();
+            g_debug.Store(dmin, item);
+         }
+         p.second = iouter;
+         p.first = ptemp.first;
       }
    }
-   if (m_debug) g_debug.ShowResultsByKeyDescending();
-   g_debug.clear();
+   //if (m_debug) g_debug.ShowResultsByKeyDescending();   LCA  LCA
+   //g_debug.clear();
+   //g_bestVectors.clear();
    return p;
 }
 
-std::pair<double, unsigned long> S6Dist::MinForListOfS6( const S6& d1, const std::vector<S6>& v) {
+std::pair<double, unsigned long> S6Dist::MinForListOfS6(const S6& d1, const std::vector<S6>& v) {
    ////double dmin = std::min(dminSoFar,(d1 - v[0]).norm());
    //const double diff = std::abs(m_dmin - 37.183);
    //const std::string itemA = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[0]);
@@ -367,6 +377,7 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6( const S6& d1, const std
       if (dtemp < dmin) {
          p = std::make_pair(dtemp, i);
          dmin = p.first;
+         g_bestVectors.Store(dmin, std::make_pair(d1, v[i]));
          if (m_debug) {
             const std::string item = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[i]);
             const int nzero = v[i].CountZeros();
@@ -407,7 +418,7 @@ std::vector<S6> S6Dist::Create_VCP_ForTwoScalars(const S6& s) {
    std::vector<S6> v;
    for (unsigned long j = 0; j < 5; ++j) {
       const S6 s1 = Create_VCP_ForOneScalar(j, s);
-      for (unsigned long k = j + 1; k<6; ++k) {
+      for (unsigned long k = j + 1; k < 6; ++k) {
          v.push_back(Create_VCP_ForOneScalar(k, s1));
       }
    }
@@ -418,7 +429,7 @@ std::vector<S6> S6Dist::Create_VCP_ForTwoScalars(const std::vector<S6>& v) {
    std::vector<S6> voutside;
    for (unsigned long j = 0; j < v.size(); ++j) {
       const S6 s1 = Create_VCP_ForOneScalar(j, v[j]);
-      for (unsigned long k = j + 1; k<6; ++k) {
+      for (unsigned long k = j + 1; k < 6; ++k) {
          voutside.push_back(Create_VCP_ForOneScalar(k, s1));
       }
    }
@@ -455,18 +466,7 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    m_dmin = std::min(m_dmin, p.first);
 }
 
-void S6Dist::ProcessIfLessThanDmin( const S6& s1, const S6& s2) {
-   std::vector<S6> voutside = Generate24Reflections(ReduceIfLessThanDmin(m_dmin, s2));
-   std::pair<double, unsigned long> p = MinForListOfS6(s1, voutside);
-   m_dmin = std::min(m_dmin, p.first);
-   if (!voutside.empty()) {
-      const int nzero = voutside[p.second].CountZeros();
-      const std::string item = LRL_ToString(s2) + std::string("\n ") + LRL_ToString(voutside[p.second]);
-      g_debug.Store(m_dmin, item);
-   }
-}
-
-void S6Dist::TwoBoundaryDistance( const S6& s1, const S6& s2) {
+void S6Dist::TwoBoundaryDistance(const S6& s1, const S6& s2) {
    std::vector<S6> vinside(1, s1);
    std::vector<S6> voutside(Create_VCP_ForTwoScalars(s2));
    voutside.push_back(s2);
@@ -496,30 +496,33 @@ std::vector<S6> S6Dist::ReduceIfLessThanDmin(const double dmin, const S6 s) cons
 
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
    g_debug.clear();
+   g_bestVectors.clear();
    m_dmin = (s1 - s2).norm();
+   g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
    if (m_debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
       g_debug.Store(m_dmin, item);
    }
    OneBoundaryDistance(s1, s2);
-   //ProcessIfLessThanDmin(s1, s2);
    TwoBoundaryDistance(s1, s2);
-   g_debug.clear();
    return m_dmin;
 }
 double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
    m_dmin = (s1 - s2).norm();
+   g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
    if (m_debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
       g_debug.Store(m_dmin, item);
    }
    OneBoundaryDistance(s1, s2);
    g_debug.clear();
+   g_bestVectors.clear();
    return m_dmin;
 }
 
 double S6Dist::DistanceBetween2(const S6& s1, const S6& s2) {
    m_dmin = (s1 - s2).norm();
+   g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
    if (m_debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
       g_debug.Store(m_dmin, item);
@@ -527,6 +530,7 @@ double S6Dist::DistanceBetween2(const S6& s1, const S6& s2) {
    OneBoundaryDistance(s1, s2);
    TwoBoundaryDistance(s1, s2);
    g_debug.clear();
+   g_bestVectors.clear();
    return m_dmin;
 }
 
@@ -681,3 +685,23 @@ S6 S6Dist::Unreduce62(const S6& din) {
    return S6::Unreduce62(din);
 }
 
+std::pair< double, std::pair<S6, S6> > S6Dist::GetBestPosition() const {
+   if (g_bestVectors.empty())
+      return std::make_pair(DBL_MAX, std::make_pair(S6(), S6()));
+   const double dmin = g_bestVectors.GetMinKey();
+   const std::pair< double, std::pair<S6, S6> >p = g_bestVectors.GetFirstItem(dmin);
+   return p;
+}
+
+std::string S6Dist::ReportS6Best(const S6Dist& s6dist) {
+   const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
+   if ( p_report.first > 1.0E20) {
+      return "NO S6 RESULTS";
+   }
+   else {
+      return LRL_ToString( " ",
+      p_report.first, "  ",
+      p_report.second.first, "   ",
+      p_report.second.second);
+   }
+}
