@@ -57,6 +57,8 @@ public:
    static S6 Unreduce61(const S6& din);
    static S6 Unreduce62(const S6& din);
 
+   std::pair< double, std::pair<S6, S6> > GetBestPosition() const;
+
    S6 ApplyReductionFunction(const unsigned long n, const S6& d) const;
    S6 ApplyUnreduceFunction(const unsigned long n, const S6& d) const;
 
@@ -77,6 +79,7 @@ public:
    static const std::vector<S6> Generate24Reflections(const S6& s6in);
    static const std::vector<S6> Generate24Reflections(const std::vector<S6>& vin);
    std::string GetName(void) const { return "S6Dist"; }
+   static std::string ReportS6Best(const S6Dist& s6dist);
 
 private:
    static std::vector<MatB4> vB4_Refl;
