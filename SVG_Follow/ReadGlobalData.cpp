@@ -147,7 +147,10 @@ void SetGlobalValue( const std::string& dataType,
 // add some small random perturbation
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 G6 ReadGlobalData::GeneratePerturbation(const G6& v) {
-   return( v + FollowerConstants::globalFractionalAmountToPerturb * G6::rand( ) );
+   const G6 random = G6::rand();
+   const G6 perturbation = FollowerConstants::globalFractionalAmountToPerturb * random;
+   const G6 perturbedVector = v + perturbation;
+   return(perturbedVector);
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

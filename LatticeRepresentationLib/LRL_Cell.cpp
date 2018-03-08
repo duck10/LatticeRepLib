@@ -73,7 +73,7 @@ LRL_Cell::LRL_Cell(const std::string& s)
    : m_valid(true)
 {
    m_cell = LRL_StringTools::FromString(s);
-   m_valid = m_cell[3] < oneeightyDegrees && m_cell[4] < oneeightyDegrees && m_cell[5] < oneeightyDegrees && (m_cell[3]+m_cell[4]+m_cell[5])< threesixtyDegrees;
+   m_valid = m_valid && m_cell[3] < oneeightyDegrees && m_cell[4] < oneeightyDegrees && m_cell[5] < oneeightyDegrees && (m_cell[3]+m_cell[4]+m_cell[5])< threesixtyDegrees;
 
    for (unsigned long i = 3; i < 6; ++i)
       m_cell[i] *= 4.0*atan(1.0) / 180.0;
@@ -81,14 +81,16 @@ LRL_Cell::LRL_Cell(const std::string& s)
 
 LRL_Cell::LRL_Cell(const S6& ds)
 {
-   *this = G6(ds);
-   m_valid = ds.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
-}
+   m_valid = true;
+   const G6 g6(ds);
+   *this = g6;
+   m_valid = m_valid && ds.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
+} 
 
 LRL_Cell::LRL_Cell(const C3& c3)
 {
    *this = S6(c3);
-   m_valid = c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
+   m_valid = m_valid && c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
 }
 
 LRL_Cell::LRL_Cell(const B4& dt)
@@ -121,7 +123,7 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    m_cell[4] = beta / 57.2957795130823;
    m_cell[5] = gamma / 57.2957795130823;
    const double lowerlimit = 0.001;
-   m_valid = a > lowerlimit && b > lowerlimit && c > lowerlimit && alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit
+   m_valid = m_valid && a > lowerlimit && b > lowerlimit && c > lowerlimit && alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit
       && alpha < 179.99 && beta < 179.99 && gamma < 179.99 && (alpha + beta + gamma)< twopi;
 }
 
@@ -137,7 +139,7 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
 LRL_Cell::LRL_Cell(const G6& g6)
 {
    m_cell.resize(6);
-   const double lowerlimit = 0.001;
+   const double lowerlimit = 0.0001;
    if ( (!g6.GetValid()) || g6.norm() < 1.0E-10 || g6[0] <= lowerlimit || g6[1] <= lowerlimit || g6[2] <= lowerlimit) {
       *this = LRL_Cell(0, 0, 0, 0, 0, 0);
       return;
@@ -153,6 +155,7 @@ LRL_Cell::LRL_Cell(const G6& g6)
 
       if (std::abs(cosalpha) >= 0.9999 || std::abs(cosbeta) >= 0.9999 || std::abs(cosgamma) >= 0.9999) {
          *this = LRL_Cell(0, 0, 0, 0, 0, 0);
+         m_valid = false;
          return;
       }
       const double sinalpha(sqrt(1.0 - cosalpha * cosalpha));
@@ -163,7 +166,7 @@ LRL_Cell::LRL_Cell(const G6& g6)
       m_cell[3] = atan2(sinalpha, cosalpha);
       m_cell[4] = atan2(sinbeta, cosbeta);
       m_cell[5] = atan2(singamma, cosgamma);
-      m_valid = m_cell[0] > lowerlimit && m_cell[1] > lowerlimit && m_cell[2] > lowerlimit && 
+      m_valid = m_valid && m_cell[0] > lowerlimit && m_cell[1] > lowerlimit && m_cell[2] > lowerlimit &&
          m_cell[3] > lowerlimit && m_cell[4] > lowerlimit && m_cell[5] > lowerlimit &&
          m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
    }
@@ -275,6 +278,7 @@ LRL_Cell LRL_Cell::Inverse( void ) const
    cell.m_cell[3] = atan2( sqrt(1.0-pow(cosAlphaStar,2)), cosAlphaStar);
    cell.m_cell[4] = atan2( sqrt(1.0-pow(cosBetaStar ,2)), cosBetaStar );
    cell.m_cell[5] = atan2( sqrt(1.0-pow(cosGammaStar,2)), cosGammaStar);
+   cell.m_valid = m_valid;
 
    return cell;
 }

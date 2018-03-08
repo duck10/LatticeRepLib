@@ -88,6 +88,32 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    return cellDataList;
 }
 
+static double TriangleAreaFromSides(const double a, const double b, const double c) {
+   const double s = (a + b + c) / 2.0; // s is half the perimeter
+   const double trialValue = s * (s - a)*(s - b)*(s - c); // Heron's formula
+   const double sign = (trialValue >= 0.0) ? 1.0 : -1.0;
+}
+
+static double SqrtTriangleAreaFromSides(const double a, const double b, const double c)
+{
+   const double trialValue = TriangleAreaFromSides(a, b, c);
+   const double sign = (trialValue >= 0.0) ? 1.0 : -1.0;
+   return sign * std::sqrt(std::abs(trialValue));
+}
+
+void ComputeFaceAreasOfBravaisTetrahedron (const S6& s6in, double& a1, double& a2, double& a3, double& a4) {
+   const double& s1 = s6in[0];
+   const double& s2 = s6in[1];
+   const double& s3 = s6in[2];
+   const double& s4 = s6in[3];
+   const double& s5 = s6in[4];
+   const double& s6 = s6in[5];
+   a1 = TriangleAreaFromSides(s1, s2, s3);
+   a2 = TriangleAreaFromSides(s3, s4, s5);
+   a3 = TriangleAreaFromSides(s2, s4, s6);
+   a4 = TriangleAreaFromSides(s1, s5, s6);
+}
+
 void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatticeData>& cellDataList) {
    const std::string letters = Letters();
    std::string lattice;
@@ -103,6 +129,10 @@ void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatti
       std::cout << std::endl;
       converter.DeloneReducedOutput("Delone Reduced", lattice, rcd.GetCell());
       std::cout << std::endl;
+      double f1, f2, f3, f4;
+      const LRL_Cell reducedCell = converter.DeloneReduceCell(lattice, rcd.GetCell());
+      ComputeFaceAreasOfBravaisTetrahedron(S6(reducedCell), f1, f2, f3, f4);
+      std::cout << "AREAS " << f1 << " " << f2 << " " << f3 << " " << f4 << std::endl;
    }
 }
 

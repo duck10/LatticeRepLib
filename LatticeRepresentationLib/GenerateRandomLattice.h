@@ -9,7 +9,7 @@
 
 
 static int s6RandomSeed = 19195;
-extern RHrand rhrand(s6RandomSeed);
+static  RHrand rhrand(s6RandomSeed);
 
 
 template<typename T = S6>
@@ -48,6 +48,27 @@ public:
       else if (choice < 0.68) return T(RandomUnreduceOne(s6));
       else if (choice < 0.995) return T(RandomUnreduceTwo(s6));
       else return T(RandomUnreduceThree(s6));
+   }
+
+   static std::pair<T,T> GenerateExtreme() {
+      bool again = true;
+      S6 s6out;
+      T t;
+      S6 s1;
+      while (again) {
+         s1 = S6::randDeloneReduced();
+         S6 s2 = S6::randDeloneReduced();
+         for (unsigned k = 0; k < 6; ++k) s2[k] = std::abs(s2[k]);
+         s2.SetValid(false);
+
+         t = BinarySearchExtreme(s1, s2, 12);
+         //if (!LRL_Cell_Degrees(t).GetValid())
+         //std::cout << "in GenerateExtreme  " << t.GetValid() << "  " << t.IsValid() << "   "
+         //   << LRL_Cell_Degrees(t).GetValid() << "  " << t << "     "
+         //   << LRL_Cell_Degrees(t) << std::endl;
+         again = !(S6::CountPositive(S6(t)) > 0 && G6(t).GetValid() && t.GetValid());
+      }
+      return std::make_pair(s1,t);
    }
 
    T rand() {
@@ -246,6 +267,25 @@ private:
          s6[i] = -rhrand.urand() * LRL_Cell::randomLatticeNormalizationConstantSquared;
       s6.m_valid = true;
       return s6;
+   }
+
+   static T BinarySearchExtreme(const S6& s1, const S6& s2, const int npass) {
+      if (npass <= 0) return s1;
+      // norm doesn't work here because s2 is invalid !!!!!!!!!!
+      // operator- doesn't work here because s2 is invalid !!!!!!!!!!
+      S6 s6delta;
+      for (unsigned long i = 0; i < 6; ++i ) s6delta[i] = s2[i] - s1[i];
+      const double diff = s6delta.norm();
+      S6 midpoint = s1 + 0.5 * s6delta;
+      const bool bmid  = LRL_Cell(midpoint).GetValid();
+      midpoint.SetValid(bmid);
+
+      if (bmid) {
+         return BinarySearchExtreme(midpoint, s2, npass - 1);
+      }
+      else {
+         return BinarySearchExtreme(s1, midpoint, npass - 1);
+      }
    }
 
    int m_seed;

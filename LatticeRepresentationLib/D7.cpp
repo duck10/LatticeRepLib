@@ -175,7 +175,7 @@ D7& D7::operator= (const G6& v6)
    m_vec[4] = g2 + g3 + g4;  // (b+c).(b+c)
    m_vec[5] = g1 + g3 + g5;  // (a+c).(a+c)
    m_vec[6] = g1 + g2 + g6; // (a+b).(a+b)
-   m_valid = true;
+   m_valid = v6.GetValid();
 
    return *this;
 }

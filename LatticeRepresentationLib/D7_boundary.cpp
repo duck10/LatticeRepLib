@@ -63,7 +63,8 @@ const D7 D7_Boundary::ComputeExternalNormalUnitVector( void ) const {
    static const LRL_Cell cell( 1, 12, 15, 91, 95, 97 );
    S6 s6red;
    const bool b = Selling::Reduce(S6(cell),s6red);
-   D7 perpVector = (*this).GetPerp()*D7(s6red);
+   const D7 d7from6s = D7(s6red);
+   D7 perpVector = (*this).GetPerp()*d7from6s;
    perpVector /= -perpVector.norm();
 
    const D7 check = (*this).GetPerp()*perpVector;

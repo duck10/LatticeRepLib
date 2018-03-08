@@ -54,9 +54,6 @@
     <ClInclude Include="ReadGlobalData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rhrand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Rn_Path.h">
       <Filter>Header Files</Filter>
     </ClInclude>

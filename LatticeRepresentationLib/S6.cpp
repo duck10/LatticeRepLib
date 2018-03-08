@@ -33,23 +33,21 @@ static RHrand rhrand(s6RandomSeed);
 S6::S6( void )
    : m_dim(6)
    , m_valid(true)
-   , m_vec(VecN(6))
 {
    m_vec.resize(6);
-   
 }
 
 S6::S6(const S6& v)
    : m_dim(6)
-   , m_valid(true)
+   , m_valid(v.m_valid)
    , m_vec(VecN(6))
 {
    m_vec = v.m_vec;
-   m_valid = v.m_valid;
 }
+
 S6::S6(const C3& c3)
    : m_dim(6)
-   , m_valid(true)
+   , m_valid(c3.GetValid())
    , m_vec(VecN(6))
 {
    m_vec[0] = c3[0].real();
@@ -98,7 +96,7 @@ S6::S6(const LRL_Cell& c)
 }
 
 S6::S6(const D7& v7)
-   : m_valid(true)
+   : m_valid(v7.GetValid())
    , m_dim(6)
 {
    (*this) = G6(v7);
@@ -203,9 +201,10 @@ S6::S6(const double d1, const double d2, const double d3, const double d4, const
 bool S6::IsValid(void) const {
    const unsigned long nPositive = CountPositive(*this);
    if (nPositive > 4) return false;
-   if (nPositive < 3) return true;
    if (CountZeros() > 3) return false;
-   return LRL_Cell(*this).GetValid();
+   const bool btest = LRL_Cell(*this).GetValid();
+   //std::cout << "in IsValid  " << btest << "   " << *this << "   " << LRL_Cell(*this) << std::endl;
+   return btest;
 }
 
 unsigned long S6::CountZeros(void) const {
@@ -427,10 +426,8 @@ S6 S6::RandomUnreduceTwo(const S6& s6) {
 
 S6 S6::RandomUnreduceThree(const S6& s6) {
    S6 s(s6);
-   while (CountPositive(s) < 3) {
+   while (CountPositive(s) < 3)
       s = RandomUnreduceOne(s);
-      if ( !LRL_Cell(s).GetValid()) s = S6( "-1 -1 -1 -1 -1 -1");
-   }
    return s;
 }
 

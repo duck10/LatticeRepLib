@@ -25,7 +25,7 @@ public:
    static std::vector<S6> Create_VCP_ForTwoScalars(const std::vector<S6>& v);
    static S6 Create_VCP_ForOneScalar(const unsigned long n, const S6& s);
    std::vector<S6> Create_VCP_s(const S6& s);
-
+   std::vector<S6> S6Dist::Create_VCP_s(const std::vector<S6>& s);
 
    static std::vector<std::pair<MatS6, MatS6> > SetunreductionReductionMatricesFromReductionMatrices();
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();

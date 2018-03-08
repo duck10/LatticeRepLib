@@ -18,11 +18,11 @@ template<typename TSAMPLEKEY, typename TSAMPLE>
 class SampleData {
 public:
    SampleData(const TSAMPLEKEY& key, const TSAMPLE& sample)
-         : m_sampleData(1,sample)
-         , m_countPerKey(1)
+      : m_sampleData(1, sample)
+      , m_countPerKey(1)
       , m_key(key)
-         , m_creationTime()
-      {}
+      , m_creationTime()
+   {}
 
    bool operator< (const SampleData<TSAMPLEKEY, TSAMPLE>& ts) const { return m_key < ts.m_key; }
 
@@ -57,6 +57,8 @@ public:
    StoreResults(const unsigned long nMax = 1)
       : m_nmax(nMax)
       , m_keyName("Key")
+      , m_creationTime(time(NULL))
+
    {}
 
    void Store(const TKEY& key, const TDATA& data) {
@@ -115,7 +117,7 @@ public:
       else {
          ostr << m_title << std::endl;
       }
-      ostr << StoreResults_GetTime() << std::endl;
+      ostr << StoreResults_GetTime() << "  elapsed time(sec) " << time(NULL) - m_creationTime << std::endl;
       ostr << "Total Keys = " << GetKeys().size()
          << "  Total Samples = " << GetTotalSampleCount()
          << "  Total Seen = " << GetTotalSeen() << std::endl;
@@ -332,6 +334,7 @@ private:
    std::string m_footer;
    std::string m_notes;
    std::string m_keyName;
+   int m_creationTime;
 };
 
 #endif

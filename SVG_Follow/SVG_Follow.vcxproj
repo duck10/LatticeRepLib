@@ -170,7 +170,6 @@
     <ClInclude Include="NCDist_.hpp" />
     <ClInclude Include="OutlierFinder.h" />
     <ClInclude Include="ReadGlobalData.h" />
-    <ClInclude Include="rhrand.h" />
     <ClInclude Include="Rn_Path.h" />
     <ClInclude Include="spline_under_tension.hpp" />
     <ClInclude Include="SuperFastHash.h" />
