@@ -66,7 +66,12 @@ G6::G6(const LRL_Cell& c) {
    m_vec[5] = 2.0 * c[0] * c[1] * cos(c[5]);
    for (unsigned long i = 3; i<6; ++i) if (std::fabs(m_vec[i]) < 1.0E-10) m_vec[i] = 0.0;
 
-   m_valid = c.GetValid() && c[3] < pi && c[4] < pi && c[5] < pi && (c[3] + c[4] + c[5])< twopi;
+   bool b1 = c.GetValid();
+   bool b2 = c[3] < pi;
+   bool b3 = c[4] < pi;
+   bool b4 = c[5] < pi;
+   bool b5 = (c[3] + c[4] + c[5])< twopi;
+   m_valid = b1 && b2 && b3 && b4 && b5;
 }
 
 G6::G6(const S6& ds) {
@@ -92,7 +97,11 @@ G6::G6(const S6& ds) {
    g4 = 2.0*p;
    g5 = 2.0*q;
    g6 = 2.0*r;
-   m_valid = g1 > 0.001 && g2 > 0.001 && g3 > 0.001 && ds.GetValid();
+   m_valid = g1 > 0.001 && g2 > 0.001 && g3 > 0.001 &&
+      g4*g4 / g2 / g3 <= 2.0 &&
+      g5*g5 / g1 / g3 <= 2.0 &&
+      g6*g6 / g1 / g2 <= 2.0 &&
+      ds.GetValid();
 }
 
 G6::G6(const C3& c3) {

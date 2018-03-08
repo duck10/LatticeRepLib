@@ -445,6 +445,15 @@ S6 S6Dist::Create_VCP_ForOneScalar(const unsigned long n, const S6& s) {
    return szu;
 }
 
+std::vector<S6> S6Dist::Create_VCP_s(const std::vector<S6>& vs) {
+   std::vector<S6> voutside;
+   for ( unsigned long i=0; i<vs.size(); ++i ) {
+      const std::vector<S6> v(Create_VCP_s(vs[i]));
+      voutside.insert(voutside.end(), v.begin(), v.end());
+   }
+   return voutside;
+}
+
 //
 // VCP == Virtual Cartesian Point(s)
 //
@@ -452,15 +461,26 @@ std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
    std::vector<S6> voutside(Generate24Reflections(s));
 
    for (unsigned long i = 0; i < 6; ++i) {
-      const std::vector<S6> v(Generate24Reflections(Create_VCP_ForOneScalar(i, s)));
-      voutside.insert(voutside.end(), v.begin(), v.end());
+      if (s[i] < m_dmin) {
+         const std::vector<S6> v(Generate24Reflections(Create_VCP_ForOneScalar(i, s)));
+         voutside.insert(voutside.end(), v.begin(), v.end());
+      }
    }
    return voutside;
+   /*
+   
+   for (unsigned long i24 = 0; i24 < 24; ++i24) {
+      for (unsigned long i = 0; i < 6; ++i) {
+         const std::vector<S6> v(Generate24Reflections(Create_VCP_ForOneScalar(i, voutside[i24])));
+         voutside.insert(voutside.end(), v.begin(), v.end());
+      }
+   }
+   */
 }
 
 void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    std::vector<S6> vinside(1, s1);
-   std::vector<S6> voutside(Create_VCP_s(s2));
+   std::vector<S6> voutside(Create_VCP_s(Generate24Reflections(s2)));
    voutside.push_back(s2);
    std::pair<double, unsigned long> p = MinForListOfS6(s1, voutside);
    m_dmin = std::min(m_dmin, p.first);
@@ -504,9 +524,10 @@ double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
       g_debug.Store(m_dmin, item);
    }
    OneBoundaryDistance(s1, s2);
-   TwoBoundaryDistance(s1, s2);
+   //TwoBoundaryDistance(s1, s2);
    return m_dmin;
 }
+
 double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
    m_dmin = (s1 - s2).norm();
    g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));

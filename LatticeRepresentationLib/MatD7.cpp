@@ -172,7 +172,9 @@ MatD7 operator/(const double d, const MatD7& m) {
 }
 
 D7 MatD7::operator* (const D7& v) const {
-   return m_mat * v.GetVector();
+   D7 d7 = m_mat * v.GetVector();
+   d7.SetValid(v.GetValid());
+   return d7;
 }
 
 
