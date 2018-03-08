@@ -90,9 +90,30 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
 
 static double TriangleAreaFromSides(const double a, const double b, const double c) {
    const double s = (a + b + c) / 2.0; // s is half the perimeter
-   const double trialValue = s * (s - a)*(s - b)*(s - c); // Heron's formula
+   const double trialValue = 0.5 * (s * (s - a)*(s - b)*(s - c)); // Heron's formula
    const double sign = (trialValue >= 0.0) ? 1.0 : -1.0;
    return sign * std::sqrt(std::abs(trialValue));
+}
+
+template<typename T>
+void TriangleArea(const T& t, double& area1, double& area2, double& area3, double& area4) {
+   const B4 tet(t);
+   const Vector_3 v1(tet[0]);
+   const Vector_3 v2(tet[1]);
+   const Vector_3 v3(tet[2]);
+   const Vector_3 v4(tet[3]);
+   area1 = TriangleAreaFromPoints(v1, v2, v3);
+   area2 = TriangleAreaFromPoints(v1, v2, v4);
+   area3 = TriangleAreaFromPoints(v1, v3, v4);
+   area4 = TriangleAreaFromPoints(v2, v3, v4);
+}
+
+static double TriangleAreaFromPoints( const Vector_3& a, const Vector_3& b, const Vector_3& c) {
+   const double dab = (a - b).Norm();
+   const double dac = (a - c).Norm();
+   const double dbc = (b - c).Norm();
+   const double area = TriangleAreaFromSides(dab, dac, dbc);
+   return area;
 }
 
 static double SqrtTriangleAreaFromSides(const double a, const double b, const double c)
@@ -132,7 +153,7 @@ void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatti
       std::cout << std::endl;
       double f1, f2, f3, f4;
       const LRL_Cell reducedCell = converter.DeloneReduceCell(lattice, rcd.GetCell());
-      ComputeFaceAreasOfBravaisTetrahedron(S6(reducedCell), f1, f2, f3, f4);
+      TriangleArea(reducedCell, f1, f2, f3, f4);
       std::cout << "AREAS " << f1 << " " << f2 << " " << f3 << " " << f4 << std::endl;
    }
 }
