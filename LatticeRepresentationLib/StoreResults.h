@@ -175,13 +175,7 @@ public:
    void ShowResults(void) const {
       std::cout << GetHerald() << std::endl;
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
-      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > indexToSort;
-
-      for (it = m_tree.begin(); it != m_tree.end(); ++it) {
-         indexToSort.push_back(std::make_pair((*it).second.m_countPerKey, (*it).second));
-      }
-
-      std::sort(indexToSort.begin(), indexToSort.end(), std::greater<std::pair<int, SampleData<TKEY, TDATA> > >());
+      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > indexToSort(PrepareListOfItemsSortedByCount());
 
       for (unsigned long i = 0; i < indexToSort.size(); ++i) {
          if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
@@ -197,12 +191,7 @@ public:
          }
       }
 
-      if (!indexToSort.empty()) std::cout << "item   count   " << m_keyName << std::endl;
-      for (unsigned long i = 0; i < indexToSort.size(); ++i)
-         if (indexToSort[i].first > 0) std::cout << i << "      " << indexToSort[i].first << "       " << indexToSort[i].second.m_key << std::endl;
-      std::cout << m_footer << std::endl;
-      std::cout << std::endl << std::endl;
-
+      ShowTableOfKeysVersusCount();
    }
 
    void SetTitle(const std::string& s) {
@@ -294,6 +283,27 @@ public:
 
 private:
 
+   std::vector<std::pair<int, SampleData<TKEY, TDATA> > > PrepareListOfItemsSortedByCount(void) const {
+      typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
+      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > indexToSort;
+
+      for (it = m_tree.begin(); it != m_tree.end(); ++it) {
+         indexToSort.push_back(std::make_pair((*it).second.m_countPerKey, (*it).second));
+      }
+
+      std::sort(indexToSort.begin(), indexToSort.end(), std::greater<std::pair<int, SampleData<TKEY, TDATA> > >());
+      return indexToSort;
+   }
+
+   void ShowTableOfKeysVersusCount() const {
+      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > v(PrepareListOfItemsSortedByCount());
+      if (!v.empty()) std::cout << "item   count   " << m_keyName << std::endl;
+      for (unsigned long i = 0; i<v.size(); ++i) {
+         std::cout << i << "      " << v[i].first << "       " << v[i].second.m_key << std::endl;
+      }
+
+   }
+
    void ShowResultsBySortedKey(const std::vector<TKEY>& keylist) const {
       std::cout << GetHerald() << std::endl;
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
@@ -311,6 +321,7 @@ private:
             if (m_itemSeparator.empty()) std::cout << std::endl;
          }
       }
+      ShowTableOfKeysVersusCount();
       std::cout << m_footer << std::endl;
    }
 
