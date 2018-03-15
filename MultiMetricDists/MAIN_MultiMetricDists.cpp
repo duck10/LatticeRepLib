@@ -123,13 +123,15 @@ static double SqrtTriangleAreaFromSides(const double a, const double b, const do
    return sign * std::sqrt(std::abs(trialValue));
 }
 
-void ComputeFaceAreasOfBravaisTetrahedron (const S6& s6in, double& a1, double& a2, double& a3, double& a4) {
-   const double& s1 = s6in[0];
-   const double& s2 = s6in[1];
-   const double& s3 = s6in[2];
-   const double& s4 = s6in[3];
-   const double& s5 = s6in[4];
-   const double& s6 = s6in[5];
+template<typename T>
+void ComputeFaceAreasOfBravaisTetrahedron (const T& tin, double& a1, double& a2, double& a3, double& a4) {
+   const S6 s(tin);
+   const double& s1 = s[0];
+   const double& s2 = s[1];
+   const double& s3 = s[2];
+   const double& s4 = s[3];
+   const double& s5 = s[4];
+   const double& s6 = s[5];
    a1 = TriangleAreaFromSides(s1, s2, s3);
    a2 = TriangleAreaFromSides(s3, s4, s5);
    a3 = TriangleAreaFromSides(s2, s4, s6);

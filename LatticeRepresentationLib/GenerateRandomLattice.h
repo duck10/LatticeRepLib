@@ -38,7 +38,7 @@ public:
    }
 
    T Generate(void) {
-      S6 s6(randDeloneReduced());
+      S6 s6(randSellingReduced());
 
       const double choice = rhrand.urand();
       // the constants are chosen from results for 
@@ -75,13 +75,17 @@ public:
       return RandCell();
    }
 
-   T randDeloneReduced() {
+   T randSellingReduced() {
       S6 out;
-      Selling::Reduce(S6(RandCell()), out);
+      bool valid = false;
+      while ( !valid) {
+         Selling::Reduce(S6(RandCell()), out);
+         valid = G6(out).GetValid();
+      }
       return T(out);
    }
 
-   T randDeloneUnreduced() {
+   T randSellingUnreduced() {
       LRL_Cell rcell = RandCell();
       while ( S6(rcell).CountPositive() == 0) 
          rcell = RandCell();

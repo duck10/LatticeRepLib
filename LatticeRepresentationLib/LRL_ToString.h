@@ -109,7 +109,7 @@ static std::string LRL_ToString( const std::vector<T>& t ) {
    std::string s;
    const unsigned long n = (unsigned long)t.size( );
    for( unsigned long i = 0; i < n; ++i ) {
-      s += LRL_ToString(t[i]) + "\n";
+      s += LRL_ToString(t[i]) + "\t";
    }
    return s;
 }
