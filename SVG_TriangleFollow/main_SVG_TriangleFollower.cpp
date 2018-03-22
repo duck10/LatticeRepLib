@@ -86,7 +86,7 @@ int main( int argc, char* argv[] )
    double aRan1[7], aRan2[7], aRan3[7];
    bool btemp;
 
-   GenerateRandomLattice<S6> grl(GLOBAL_RunInputVector::globalConstantRandomSeed);
+   GenerateRandomLattice<S6> grl(GLOBAL_RunInputVector::globalInputRandomSeed);
    while (count < GlobalConstants::globalNumberOfTrialsToAttempt) {
       ++count;
       if (count % 1000 == 0) {
@@ -94,9 +94,9 @@ int main( int argc, char* argv[] )
          std::cerr << count / 1000 << "K" << std::endl;
       }
 
-      const TVEC v1 = TVEC(grl.Generate());
-      const TVEC v2 = TVEC(grl.Generate());
-      const TVEC v3 = TVEC(grl.Generate());
+      const TVEC v1 = TVEC(grl.GenerateExtreme().second);
+      const TVEC v2 = TVEC(grl.GenerateExtreme().second);
+      const TVEC v3 = TVEC(grl.GenerateExtreme().second);
 
       const double d1 = TriangleFollow<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD >::DIST(v1, v3);
       const double d2 = TriangleFollow<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD >::DIST(v2, v3);
