@@ -212,6 +212,10 @@ public:
       return D7Dist(v1.GetVector().data(), v2.GetVector().data());
    }
 
+   static double DIST(const G6& v1, const G6& v2) {
+      return NCDist(v1.data(), v2.data());
+   }
+
    static double DIST(const S6& v1, const S6& v2) {
       S6Dist s6dist(50000.0);
       return s6dist.DistanceBetween(v1, v2);

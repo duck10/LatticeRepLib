@@ -183,6 +183,7 @@
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="LRL_StringTools.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="SuperFastHash.cpp" />
     <ClCompile Include="VecN.cpp" />
     <ClCompile Include="LRL_Vector3.cpp" />
   </ItemGroup>
@@ -230,6 +231,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StoreResults.h" />
     <ClInclude Include="LRL_StringTools.h" />
+    <ClInclude Include="SuperFastHash.h" />
     <ClInclude Include="Theta.h" />
     <ClInclude Include="LRL_ToString.h" />
     <ClInclude Include="TNear.h" />
