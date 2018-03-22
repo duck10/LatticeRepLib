@@ -26,9 +26,6 @@
     <ClCompile Include="..\MultiMetricDists\PrintTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\MultiMetricDists\SuperFastHash.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\MultiMetricDists\Triangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,9 +38,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\MultiMetricDists\PrintTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MultiMetricDists\SuperFastHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\MultiMetricDists\Triangle.h">

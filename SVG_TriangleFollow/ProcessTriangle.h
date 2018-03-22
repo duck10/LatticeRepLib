@@ -27,9 +27,9 @@ template<typename TVEC, typename TREDUCEMETHOD, typename TFOLLOWMETHOD>
       const TVEC v1 = violation.first;   // specialized for G6
       const TVEC v2 = violation.second;  // specialized for G6
       const TVEC v3 = violation.third;   // specialized for G6
-      const double d1 = DIST( v1, v3);  // specialized for G6
-      const double d2 = DIST( v2, v3);  // specialized for G6
-      const double d3 = DIST( v1, v2 );  // specialized for G6
+      const double d1 = DIST( v1, v3);
+      const double d2 = DIST( v2, v3);
+      const double d3 = DIST( v1, v2);
       return triple<double, double, double>( d1, d2, d3 );
    }
 
@@ -41,39 +41,7 @@ class ProcessTriangle
 public:
    // Triangle.cpp : Defines the entry point for the console application.
    //
-
-   G6 genRanV6( ) {
-      G6 g, vRan;  // specialized for G6
-
-      for (int i = 0; i < 7; ++i)
-         vRan[i] = randfg(GLOBAL_RunInputVector::globalInputRandomSeed);
-
-      vRan[0] = abs( vRan.at( 0 ) );
-      vRan[1] = abs( vRan.at( 1 ) );
-      vRan[2] = abs( vRan.at( 2 ) );
-
-      vRan[3] = 0.5*std::sqrt( vRan[1] * vRan[2] ) * vRan[3];
-      vRan[4] = 0.5*std::sqrt( vRan[0] * vRan[2] ) * vRan[4];
-      vRan[5] = 0.5*std::sqrt( vRan[1] * vRan[0] ) * vRan[5];
-
-      return(vRan);
-   }
-
-   static void ConvertVectorToArray( const D7& v, double a[6] ){
-      for (unsigned int i = 0; i < v.size( ); ++i)
-         a[i] = v[i];
-   }
-
-   static double TestDistances( std::vector<double>& dist ) {
-      const double maxElement = *std::max_element( dist.begin( ), dist.end( ) );
-      const double testValue = dist[0] + dist[1] + dist[2] - 2.0*maxElement;
-      return(testValue);
-   }
-
    //double VectorLength( const double* a ) {
-   //   return(sqrt( a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3] + a[4] * a[4] + a[5] * a[5] + a[6] * a[6] ));
-   //}
-
 
    void PrintProcessVector( const TVEC& v ) {
       std::cout << "\t";
@@ -246,6 +214,10 @@ public:
       const double d1 = violation.GetFirst();
       const double d2 = violation.GetSecond();
       const double d3 = violation.GetThird();
+      if (d1<1.0E-10 || d2<1.0E-10 || d3<1.0E-10) {
+         std::cout << "rejected due to zero area" << std::endl;
+         return false;
+      }
 
       tf.Follow( v1, v2, v3, minimumViolationToReport );
 

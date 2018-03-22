@@ -6,11 +6,24 @@ end
 
 fixrandomseed true
 randomseed 18
-trials 1
+trials 5
 stepsperframe 100
 end
 v 100 100 100 100 100 100
 end
+
+fixrandomseed true
+randomseed 18
+trials 5
+stepsperframe 10
+end
+v 100 100 100 100 100 100
+v 100 100 100 100 100 100
+v 100 100 100 100 100 100
+v 100 100 100 100 100 100
+v 100 100 100 100 100 100
+end
+
 
 
 
