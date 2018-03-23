@@ -7,10 +7,18 @@ end
 fixrandomseed true
 randomseed 18
 trials 5
-stepsperframe 100
+stepsperframe 1000
 end
 v 100 100 100 100 100 100
 end
+
+fixrandomseed true
+randomseed 19
+trials 2
+stepsperframe 10
+end
+end
+
 
 fixrandomseed true
 randomseed 18
