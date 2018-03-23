@@ -83,7 +83,7 @@ std::vector<CellInputData> OptionalCellInput(void) {
    std::vector<CellInputData> celldata;
    std::string lattice("");
    while (lattice != "EOF") {
-      LRL_ReadLatticeData rcd;
+      LRL_ReadLatticeData rcd(GLOBAL_RunInputVector::globalInputRandomSeed);
       rcd.read();
       lattice = rcd.GetLattice();
 
@@ -107,8 +107,6 @@ std::vector<CellInputData> Startup() {
 
    const std::vector<CellInputData> celldata = OptionalCellInput();
 
-   SetSeed( -std::abs(GLOBAL_RunInputVector::globalInputRandomSeed));
-
    std::cout << "minimum percent violation to report  " << g_minimumPercentViolationToReport << std::endl;
 
    return celldata;
@@ -118,7 +116,6 @@ long g_instanceCounter;
 
 int main( int argc, char* argv[] )
 {
-   GenerateRandomLattice<TVEC> grl(iseed);
    //NC_Distance ncDist;
    double a1[6];
    double a2[6];
@@ -138,6 +135,7 @@ int main( int argc, char* argv[] )
    G6 v2;
    G6 v3;
    const unsigned long trialsToAttempt = std::max(unsigned long(GlobalConstants::globalNumberOfTrialsToAttempt), (unsigned long)(celldata.size()));
+   GenerateRandomLattice<S6> grl(GLOBAL_RunInputVector::globalInputRandomSeed);
    while (triangleCount < trialsToAttempt) {
       ++triangleCount;
       if (triangleCount % 1000 == 0) {
@@ -154,11 +152,21 @@ int main( int argc, char* argv[] )
          const std::string lat1 = celldata[pos + 0].GetLattice();
          const std::string lat2 = celldata[pos + 1].GetLattice();
          const std::string lat3 = celldata[pos + 2].GetLattice();
-
-         v1 = LRL_Cell::GetPrimitiveV6Vector(lat1, cell1);
-         v2 = LRL_Cell::GetPrimitiveV6Vector(lat2, cell2);
-         v3 = LRL_Cell::GetPrimitiveV6Vector(lat3, cell3);
       }
+      //while (count < GlobalConstants::globalNumberOfTrialsToAttempt) {
+      //   ++count;
+      //   if (count % 1000 == 0) {
+      //      std::cout << count / 1000 << "K" << std::endl;
+      //      std::cerr << count / 1000 << "K" << std::endl;
+      //   }
+
+      //   const TVEC v1 = TVEC(grl.GenerateExtreme().second);
+      //   const TVEC v2 = TVEC(grl.GenerateExtreme().second);
+      //   const TVEC v3 = TVEC(grl.GenerateExtreme().second);
+      //      v1 = LRL_Cell::GetPrimitiveV6Vector(lat1, cell1);
+      //      v2 = LRL_Cell::GetPrimitiveV6Vector(lat2, cell2);
+      //      v3 = LRL_Cell::GetPrimitiveV6Vector(lat3, cell3);
+      //   }
       else {
          v1 = grl.Generate();
          v2 = grl.Generate();
