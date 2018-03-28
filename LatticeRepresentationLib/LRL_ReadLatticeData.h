@@ -7,7 +7,7 @@
 
 class LRL_ReadLatticeData : public CellInputData {
 public:
-   LRL_ReadLatticeData( const int seed /*= 0*/);
+   LRL_ReadLatticeData( const int seed = 0);
    LRL_ReadLatticeData read();
    void CellReader(const std::string& s);
    void CellReader(const std::string& lattice, const std::string& cell);

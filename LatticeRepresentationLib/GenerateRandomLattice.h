@@ -44,13 +44,25 @@ public:
       // the constants are chosen from results for 
       // random generation of valid cells !!!!!!!!!!!!!!!!
       // but they are somewhat random and can be adjusted.
-      if (choice < 0.055) return T(s6);
-      else if (choice < 0.68) return T(RandomUnreduceOne(s6));
-      else if (choice < 0.995) return T(RandomUnreduceTwo(s6));
-      else return T(RandomUnreduceThree(s6));
+      if (choice < 0.055) {
+         double test = std::abs(39.4918 - s6[0]);
+         return T(s6);
+      }
+      else if (choice < 0.68) {
+         double test = std::abs(39.4918 - s6[0]);
+         return T(RandomUnreduceOne(s6));
+      }
+      else if (choice < 0.995) {
+         double test = std::abs(39.4918 - s6[0]);
+         return T(RandomUnreduceTwo(s6));
+      }
+      else {
+         double test = std::abs(39.4918 - s6[0]);
+         return T(RandomUnreduceThree(s6));
+      }
    }
 
-   static std::pair<T,T> GenerateExtreme() {
+   static T GenerateExtreme() {
       bool again = true;
       S6 s6out;
       T t;
@@ -66,9 +78,10 @@ public:
          //std::cout << "in GenerateExtreme  " << t.GetValid() << "  " << t.IsValid() << "   "
          //   << LRL_Cell_Degrees(t).GetValid() << "  " << t << "     "
          //   << LRL_Cell_Degrees(t) << std::endl;
+
          again = !(S6::CountPositive(S6(t)) > 0 && G6(t).GetValid() && t.GetValid());
       }
-      return std::make_pair(s1,t);
+      return t;
    }
 
    T rand() {
@@ -80,14 +93,14 @@ public:
       bool valid = false;
       while ( !valid) {
          Selling::Reduce(S6(RandCell()), out);
-         valid = G6(out).GetValid();
+         valid = LRL_Cell(out).GetValid();
       }
       return T(out);
    }
 
    T randSellingUnreduced() {
       LRL_Cell rcell = RandCell();
-      while ( S6(rcell).CountPositive() == 0) 
+      while ( (!rcell.GetValid()) && S6(rcell).CountPositive() == 0) 
          rcell = RandCell();
       return T(rcell);
    }
@@ -129,19 +142,6 @@ public:
       return *this;
    }
 
-   GenerateRandomLattice& SetAngleLimits(const double m_minAlpha, const double m_maxAlpha)
-   {
-      m_hasAngleLimits = true;
-      m_minAlpha = minAlpha;
-      m_maxAlpha = maxAlpha;
-      m_minBeta = minAlpha;
-      m_maxBeta = maxAlpha;
-      m_minGamma = minAlpha;
-      m_maxGamma = maxAlpha;
-      return *this;
-   }
-
-
 private:
 
    LRL_Cell RandCell()
@@ -172,7 +172,8 @@ private:
       Prepare2CellElements(minEdgeB, maxEdgeB, 1, c);
       Prepare2CellElements(minEdgeC, maxEdgeC, 2, c);
       PrepareAngles(c[3], c[4], c[5]);
-      c.SetValid(true);
+      LRL_Cell cell = LRL_Cell(c);
+      c.SetValid(true); // PrepareAngles has checked the angles
       return c;
    }
 
@@ -259,9 +260,8 @@ private:
 
    S6 RandomUnreduceThree(const S6& s6) {
       S6 s(s6);
-      while (CountPositive(s) < 3) {
+      while (CountPositive(s) < 3 || !s.GetValid()) {
          s = RandomUnreduceOne(s);
-         if (!LRL_Cell(s).GetValid()) s = S6("-1 -1 -1 -1 -1 -1");
       }
       return s;
    }

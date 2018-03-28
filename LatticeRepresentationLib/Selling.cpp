@@ -8,10 +8,12 @@
 #include <algorithm>
 #include <utility>
 
+#include "C3.h"
 #include "MatS6.h"
 #include "S6Dist.h"
 
 bool Selling::m_debugInstrument = false;
+unsigned long Selling::m_ReductionCycleCount = 0;
 
 std::vector< S6(*)(const S6&)> FillReduceMatrixVector() {
    static std::vector< S6(*)(const S6&)> vf;
@@ -27,15 +29,33 @@ std::vector< S6(*)(const S6&)> FillReduceMatrixVector() {
    return vf;
 }
 
+bool Selling::listSteps = false;
+
+void Selling::ListSteps( const S6& in ) {
+   if (listSteps) {
+      C3 cin(in);
+      std::cout << " " << in << "  |  " <<
+         cin[0].real() << " " << cin[0].imag() << " " <<
+         cin[1].real() << " " << cin[1].imag() << " " <<
+         cin[2].real() << " " << cin[2].imag() << " " <<
+         "     " << S6::NegativeSumOfScalars(in) <<
+         std::endl;
+   }
+}
+
 bool Selling::Reduce(const S6& in, S6& out) {
-   if (m_debugInstrument) std::cout << "Enter Selling::Reduce, input = " << in << std::endl;
-   static std::vector< S6(*)(const S6&)> vf = FillReduceMatrixVector();
+   static const std::vector< S6(*)(const S6&)> vf = FillReduceMatrixVector();
    unsigned long maxIndex = INT_MAX;
-   int cycle = 0;
+   m_ReductionCycleCount = 0;
    out = in;
-   long countPositive = 0;
+
+   ListSteps(out);
+
+   if (S6::CountPositive(in) == 0) return true;
+
    while (true) {
       double maxScalar = -DBL_MAX;
+      double minPositiveScalar = DBL_MAX;
 
       for (unsigned long i = 0; i < 6; ++i) {
          if (out[i] > maxScalar) {
@@ -43,22 +63,15 @@ bool Selling::Reduce(const S6& in, S6& out) {
             maxScalar = out[i];
          }
       }
-      if (maxScalar <= 0.0) {
-         if (m_debugInstrument) std::cout << "Finish Selling::Reduce, positive scalars found = " << countPositive << "  output= " << out << std::endl;
-         return true;
-      }
-
+      
       out = vf[maxIndex](out);
-      double out1 = out[0];
 
-      if (m_debugInstrument) std::cout << "   cycle = " << cycle << "  current vector = " << out << std::endl;
-      ++cycle;
-      if (countPositive > 1000)
-      {
-         if (m_debugInstrument) std::cout << "Finish Selling::Reduce FAILED, positive scalars found = " << countPositive << "  output= " << out << std::endl;
-         return false;
-      }
-      if (maxScalar > 0.0) ++countPositive;
+      ListSteps(out);
+
+      if (S6::CountPositive(out) == 0) return true;
+
+      ++m_ReductionCycleCount;
+      if (m_ReductionCycleCount > 1000 || S6::NegativeSumOfScalars(out) < 0.0 ) return false;
    }
 }
 
