@@ -84,13 +84,15 @@ LRL_Cell::LRL_Cell(const S6& ds)
    m_valid = true;
    const G6 g6(ds);
    *this = g6;
-   m_valid = m_valid && ds.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
+   m_valid = m_valid && ds.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
+      && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3],m_cell[4],m_cell[5]) >= 0.0);
 } 
 
 LRL_Cell::LRL_Cell(const C3& c3)
 {
    *this = S6(c3);
-   m_valid = m_valid && c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
+   m_valid = m_valid && c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
+      && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3], m_cell[4], m_cell[5]) >= 0.0);
 }
 
 LRL_Cell::LRL_Cell(const B4& dt)
@@ -124,7 +126,8 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    m_cell[5] = gamma / 57.2957795130823;
    const double lowerlimit = 0.001;
    m_valid = m_valid && a > lowerlimit && b > lowerlimit && c > lowerlimit && alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit
-      && alpha < 179.99 && beta < 179.99 && gamma < 179.99 && (alpha + beta + gamma)< twopi;
+      && alpha < 179.99 && beta < 179.99 && gamma < 179.99 && (alpha + beta + gamma) < twopi &&
+      (alpha + beta + gamma - 2.0*maxNC(alpha, beta, gamma) >= 0.0);
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -168,7 +171,8 @@ LRL_Cell::LRL_Cell(const G6& g6)
       m_cell[5] = atan2(singamma, cosgamma);
       m_valid = m_valid && m_cell[0] > lowerlimit && m_cell[1] > lowerlimit && m_cell[2] > lowerlimit &&
          m_cell[3] > lowerlimit && m_cell[4] > lowerlimit && m_cell[5] > lowerlimit &&
-         m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
+         m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
+         && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3], m_cell[4], m_cell[5]) >= 0.0);
    }
 }
 

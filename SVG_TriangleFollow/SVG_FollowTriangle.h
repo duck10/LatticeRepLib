@@ -38,7 +38,7 @@ public:
       */
       const unsigned long n = (unsigned long)( rand( ) | 64 );
 
-      os << std::hex << std::setw( 1 ) << std::setfill( '0' ) << g_instanceCounter++;
+      os << std::setw( 3 ) << std::setfill( '0' ) << g_instanceCounter++;
       m_OutputFilename = LRL_CreateFileName::Create(GlobalConstants::globalFileNamePrefix, os.str() + std::string(".svg"));
       const unsigned long npoints = tf.m_triangleDiff[0].size( );
       m_rawDeltaDist12 = ( tf.m_inputVector1-tf.m_inputVector2 ).norm( )/( npoints-1U );

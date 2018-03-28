@@ -400,6 +400,10 @@ unsigned long S6::CountPositive(const S6& s6) {
    return sum;
 }
 
+unsigned long S6::CountPositive(void) const {
+   return CountPositive(*this);
+}
+
 S6 S6::RandomUnreduceOne(const S6& s6) {
    const double choice = 12.0 * rhrand.urand();
 

@@ -34,7 +34,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          m_inputDataType = "P";
          m_lattice = "P";
          //const G6 g6Cell = LRL_Cell::randDeloneUnreduced();
-         const G6 g6Cell = generator.SetLengthLimits(10.0, 100.0).Generate();
+         const G6 g6Cell = generator.SetLengthLimits(10.0, 100.0).GenerateExtreme();
          m_cell = LRL_Cell(g6Cell);
          m_strCell = LRL_ToString(LRL_Cell(m_cell));
       }
