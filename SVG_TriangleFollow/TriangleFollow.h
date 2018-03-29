@@ -13,6 +13,7 @@
 
 #include "LRL_CreateFileName.h"
 #include "Delone.h"
+#include "NCDist.h"
 #include "S6Dist.h"
 #include "D7Dist.h"
 #include "GlobalTriangleFollowerConstants.h"

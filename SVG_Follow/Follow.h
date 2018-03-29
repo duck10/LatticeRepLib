@@ -273,17 +273,6 @@ static const bool SameSlope(const double angle1, const double angle2) {
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-const std::vector<Glitch<TVEC> > DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distancesList)
-/*-------------------------------------------------------------------------------------*/
-{
-   std::list<double> ld
-      for (int i = 0; i < distanceList.size(); ++i) {
-         ld.push_back(distanceList[i]);
-      }
-   return DetermineIfSomeDeltaIsTooLarge(ld);
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 const std::vector<Glitch<TVEC> > DetermineIfSomeDeltaIsTooLarge(const std::list<double>& distancesList)
 /*-------------------------------------------------------------------------------------*/
 {

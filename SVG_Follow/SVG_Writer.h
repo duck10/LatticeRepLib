@@ -96,7 +96,7 @@ private:
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    static double Progress( const unsigned long position, const unsigned long totalCount ) {
-      return(800 * double( position + 1 ) / double( std::max( unsigned long(1), totalCount ) ));
+      return(800.0 * (double)( position + 1 ) / (double)(std::max(( 1UL, totalCount ) ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -263,8 +263,8 @@ private:
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::string ScaleToGraph( const unsigned long n, const unsigned long totalItemCount ) const {
-      const unsigned long placement = unsigned long( SVG_WriterConstants::globalGraphBorder +
-         n  * unsigned long( SVG_WriterConstants::globalGraphSpace / double( totalItemCount ) ) );
+      const unsigned long placement = (unsigned long)( SVG_WriterConstants::globalGraphBorder +
+         n  * (unsigned long)( SVG_WriterConstants::globalGraphSpace / double( totalItemCount ) ) );
       return(LRL_ToString( placement ));
    }
 
@@ -279,7 +279,7 @@ private:
          str += "<g>\n";
          str += "   <line x1=\"970\" y1=\"" +
             ScaleToGraph( reject1, FollowerConstants::globalFramesPerSegment ) + "\" x2=\"970\" y2=\"" +
-            ScaleToGraph( reject2 + unsigned long(1), FollowerConstants::globalFramesPerSegment ) +
+            ScaleToGraph( reject2 + 1UL, FollowerConstants::globalFramesPerSegment ) +
             "\" stroke-width=\"16\" fill=\"red\" stroke=\"red\"  opacity =\"0.4\" />\n";
          str += "</g>\n";
          return(str);

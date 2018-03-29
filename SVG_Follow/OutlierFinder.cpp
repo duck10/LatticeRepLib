@@ -4,6 +4,7 @@
 #include "spline_under_tension.hpp"
 
 #include <algorithm>
+#include <cfloat>
 #include <list>
 
 OutlierFinder::OutlierFinder( const std::vector<double>& data ) 

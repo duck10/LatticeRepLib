@@ -21,7 +21,6 @@
 #include "FollowerTools.h"
 #include "GenerateRandomLattice.h"
 #include "LRL_MaximaTools.h"
-#include "NCDist.h"
 #include "ProcessTriangle.h"
 #include "ProgressData.h"
 //#include "ProjectorTools.h"
@@ -50,6 +49,8 @@ const double g_maximunPercentViolationToReport = DBL_MAX;
 const double g_closeToBoundary = 0.005;
 const bool   g_printRawVectors = true;
 const int    g_maximumWorstCasesToReport = 11111;
+
+long g_instanceCounter;
 
 double VectorLength( const double* a ) {
    return(sqrt( a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3] + a[4] * a[4] + a[5] * a[5] + a[6] * a[6] ));
@@ -112,8 +113,6 @@ std::vector<CellInputData> Startup() {
    return celldata;
 }
 
-long g_instanceCounter;
-
 int main( int argc, char* argv[] )
 {
    //NC_Distance ncDist;
@@ -134,7 +133,7 @@ int main( int argc, char* argv[] )
    G6 v1;
    G6 v2;
    G6 v3;
-   const unsigned long trialsToAttempt = std::max(unsigned long(GlobalConstants::globalNumberOfTrialsToAttempt), (unsigned long)(celldata.size()));
+   const unsigned long trialsToAttempt = std::max( (unsigned long)(GlobalConstants::globalNumberOfTrialsToAttempt), (unsigned long)(celldata.size()));
    GenerateRandomLattice<S6> grl(GLOBAL_RunInputVector::globalInputRandomSeed);
    while (triangleCount < trialsToAttempt) {
       ++triangleCount;

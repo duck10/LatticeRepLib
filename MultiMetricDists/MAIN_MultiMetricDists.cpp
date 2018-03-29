@@ -5,11 +5,13 @@
 
 #include "stdafx.h"
 
+#include "D7.h"
+#include "G6.h"
 #include "S6.h"
-#include "D7Dist_.hpp"
+#include "D7Dist.h"
 #include "S6Dist.h"
 #include "LatticeConverter.h"
-#include "NCDist_.hpp"
+#include "NCDist.h"
 #include "PairReporter.h"
 #include "PrintTable.h"
 #include "LRL_ReadLatticeData.h"
@@ -24,6 +26,7 @@ void Header(void) {
    std::cout << "\"v or g\" for G6" << std::endl;
    std::cout << "\"d\" for D7" << std::endl;
    std::cout << "\"s\" for Delone scalars" << std::endl;
+   std::cout << "\"C3\" for C3 (Without parens or commas)" << std::endl;
    std::cout << "\"p\",\"a\",\"b\",\"c\",\"i\",\"f\",or \"r\" for unit cells or \"random\"" << std::endl;
    std::cout << "typical input:  f 10 10 10  90 90 90" << std::endl << std::endl;
 }
@@ -95,6 +98,21 @@ static double TriangleAreaFromSides(const double a, const double b, const double
    return sign * std::sqrt(std::abs(trialValue));
 }
 
+static double SqrtTriangleAreaFromSides(const double a, const double b, const double c)
+{
+   const double trialValue = TriangleAreaFromSides(a, b, c);
+   const double sign = (trialValue >= 0.0) ? 1.0 : -1.0;
+   return sign * std::sqrt(std::abs(trialValue));
+}
+
+static double TriangleAreaFromPoints( const Vector_3& a, const Vector_3& b, const Vector_3& c) {
+   const double dab = (a - b).Norm();
+   const double dac = (a - c).Norm();
+   const double dbc = (b - c).Norm();
+   const double area = TriangleAreaFromSides(dab, dac, dbc);
+   return area;
+}
+
 template<typename T>
 void TriangleArea(const T& t, double& area1, double& area2, double& area3, double& area4) {
    const B4 tet(t);
@@ -106,21 +124,6 @@ void TriangleArea(const T& t, double& area1, double& area2, double& area3, doubl
    area2 = TriangleAreaFromPoints(v1, v2, v4);
    area3 = TriangleAreaFromPoints(v1, v3, v4);
    area4 = TriangleAreaFromPoints(v2, v3, v4);
-}
-
-static double TriangleAreaFromPoints( const Vector_3& a, const Vector_3& b, const Vector_3& c) {
-   const double dab = (a - b).Norm();
-   const double dac = (a - c).Norm();
-   const double dbc = (b - c).Norm();
-   const double area = TriangleAreaFromSides(dab, dac, dbc);
-   return area;
-}
-
-static double SqrtTriangleAreaFromSides(const double a, const double b, const double c)
-{
-   const double trialValue = TriangleAreaFromSides(a, b, c);
-   const double sign = (trialValue >= 0.0) ? 1.0 : -1.0;
-   return sign * std::sqrt(std::abs(trialValue));
 }
 
 template<typename T>
