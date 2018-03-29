@@ -1,6 +1,8 @@
 #ifndef GENERATERANDOMLATTICE_H
 #define GENERATERANDOMLATTICE_H
 
+#include <cfloat>
+#include "G6.h"
 #include "LRL_Cell.h"
 #include "LRL_MinMaxTools.h"
 #include "rhrand.h"
@@ -78,7 +80,6 @@ public:
          //std::cout << "in GenerateExtreme  " << t.GetValid() << "  " << t.IsValid() << "   "
          //   << LRL_Cell_Degrees(t).GetValid() << "  " << t << "     "
          //   << LRL_Cell_Degrees(t) << std::endl;
-
          again = !(S6::CountPositive(S6(t)) > 0 && G6(t).GetValid() && t.GetValid());
       }
       return t;

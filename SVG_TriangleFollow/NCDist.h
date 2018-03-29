@@ -1338,7 +1338,7 @@ static double guncpmdistsq(double v1[6], double v2[6]) {
 
    double * plusvec;
    double * minusvec;
-   double s6, d8, d9, dB, dC, dE;
+   double d6, d8, d9, dB, dC, dE;
    double p6[6], p8[6], p9[6], pB[6], pC[6], pE[6];
    double mp6[6], mp8[6], mp9[6], mpB[6], mpC[6], mpE[6];
    double dist68sq, dist9Bsq, distCEsq, distsq, dist;
@@ -1370,7 +1370,7 @@ static double guncpmdistsq(double v1[6], double v2[6]) {
 
    /* now try for tunnels: 6-8, 9-B, C-E */
 
-   s6 = fabs(plusvec[3] - plusvec[1]) / sqrt(2.);
+   d6 = fabs(plusvec[3] - plusvec[1]) / sqrt(2.);
    d8 = fabs(minusvec[3] + minusvec[1]) / sqrt(2.);
    d9 = fabs(plusvec[4] - plusvec[0]) / sqrt(2.);
    dB = fabs(minusvec[4] + minusvec[0]) / sqrt(2.);
@@ -1485,7 +1485,7 @@ static double guncpmdistsq(double v1[6], double v2[6]) {
       and directly from the other end of the
       tunnel to minusvec, etc. */
 
-   dist = s6 + CNCM_gtestdist(mp6, minusvec);
+   dist = d6 + CNCM_gtestdist(mp6, minusvec);
    dist = CNCM_min(dist, d9 + CNCM_gtestdist(mp9, minusvec));
    dist = CNCM_min(dist, dC + CNCM_gtestdist(mpC, minusvec));
    dist = CNCM_min(dist, d8 + CNCM_gtestdist(mp8, plusvec));
@@ -1498,7 +1498,7 @@ static double guncpmdistsq(double v1[6], double v2[6]) {
    dist68sq = CNCM_min(dist68sq, CNCM_gtestdistsq(p6, mp8));
    dist68sq = CNCM_min(dist68sq, CNCM_gtestdistsq(mp6, p8));
    dist68sq = CNCM_min(dist68sq, CNCM_gtestdistsq(mp6, mp8));
-   dist68sq += (s6 + d8)*(s6 + d8);
+   dist68sq += (d6 + d8)*(d6 + d8);
    if (dist68sq < distsq) distsq = dist68sq;
 
    dist9Bsq = CNCM_gtestdistsq(p9, pB);

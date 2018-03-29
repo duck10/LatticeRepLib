@@ -13,6 +13,7 @@
 #include "TriangleFollow.h"
 #include "triple.h"
 
+extern long g_instanceCounter;
 
 template<typename TVEC, typename TREDUCEMETHOD, typename TFOLLOWMETHOD >
 class SVG_FollowTriangle {
