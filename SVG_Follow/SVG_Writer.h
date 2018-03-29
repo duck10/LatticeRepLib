@@ -96,7 +96,7 @@ private:
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    static double Progress( const unsigned long position, const unsigned long totalCount ) {
-      return(800.0 * (double)( position + 1 ) / (double)(std::max(( 1UL, totalCount ) ));
+      return 800.0 * (double)( position + 1 ) / (double)(std::max( 1UL, totalCount ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
