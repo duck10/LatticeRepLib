@@ -145,13 +145,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
     <Text Include="SaveMyVersion.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OutlierFinder.h" />
     <ClInclude Include="spline_under_tension.hpp" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MAIN_splineundertension.cpp" />

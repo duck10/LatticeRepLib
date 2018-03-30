@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "LRL_Cell.h"
 #include "G6.h"

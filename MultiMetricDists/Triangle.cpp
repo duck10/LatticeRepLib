@@ -6,7 +6,7 @@
 
 #include <algorithm>
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 Triangle::Triangle(const std::vector<LRL_ReadLatticeData>& cells) 
    : m_triangles( cells )

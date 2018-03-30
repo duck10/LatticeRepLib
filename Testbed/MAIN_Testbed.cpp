@@ -1,7 +1,7 @@
 // Testbed.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "B4.h"
 #include "LRL_CreateFileName.h"

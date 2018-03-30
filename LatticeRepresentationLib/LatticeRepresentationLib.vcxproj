@@ -182,7 +182,6 @@
     <ClCompile Include="Niggli.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="LRL_StringTools.cpp" />
-    <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="SuperFastHash.cpp" />
     <ClCompile Include="VecN.cpp" />
     <ClCompile Include="LRL_Vector3.cpp" />
@@ -228,7 +227,6 @@
     <ClInclude Include="Niggli.h" />
     <ClInclude Include="rhrand.h" />
     <ClInclude Include="Selling.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="StoreResults.h" />
     <ClInclude Include="LRL_StringTools.h" />
     <ClInclude Include="SuperFastHash.h" />

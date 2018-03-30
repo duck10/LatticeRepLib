@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "D7.h"
 #include "G6.h"

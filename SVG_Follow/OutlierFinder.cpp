@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "OutlierFinder.h"
 #include "spline_under_tension.hpp"
