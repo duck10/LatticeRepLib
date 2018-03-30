@@ -1,6 +1,6 @@
 #pragma warning( disable : 4189) //   local variable is initialized but not referenced
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "Delone.h"
 

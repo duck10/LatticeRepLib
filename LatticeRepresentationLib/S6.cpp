@@ -1,7 +1,7 @@
 static const double randomLatticeNormalizationConstant = 10.0;
 static const double randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include <cmath>
 #include <iomanip>

@@ -1,7 +1,7 @@
 // TestSuperCell.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "G6.h"
 #include "LRL_Cell.h"
