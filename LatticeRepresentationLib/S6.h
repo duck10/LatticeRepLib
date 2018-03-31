@@ -113,6 +113,12 @@ public:
    static S6 Unreduce62(const S6& din);
    static unsigned long CountPositive(const S6& s6);
    unsigned long CountZeros(void) const;
+   unsigned long CountPositive(void) const;
+
+
+   static double NegativeSumOfScalars(const S6& s) {
+      return -(s[0] + s[1] + s[2] + s[3] + s[4] + s[5]);
+   }
 
    static std::vector< S6(*)(const S6&)> SetRelectionFunctions();
    static S6 Relection01(const S6& din);

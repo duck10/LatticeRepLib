@@ -1,7 +1,7 @@
 static const double randomLatticeNormalizationConstant = 10.0;
 static const double randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include <cmath>
 #include <iomanip>
@@ -398,6 +398,10 @@ unsigned long S6::CountPositive(const S6& s6) {
    unsigned long sum = 0;
    for (unsigned long i = 0; i < 6; ++i) sum += (s6[i] > 0.0) ? 1 : 0;
    return sum;
+}
+
+unsigned long S6::CountPositive(void) const {
+   return CountPositive(*this);
 }
 
 S6 S6::RandomUnreduceOne(const S6& s6) {

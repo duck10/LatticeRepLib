@@ -1,6 +1,6 @@
 
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include "Delone.h"
 
 #include <algorithm>

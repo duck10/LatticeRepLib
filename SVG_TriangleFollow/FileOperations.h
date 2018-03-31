@@ -17,18 +17,6 @@ public:
    static void WriteFile( std::ofstream& fileout, const std::string& svg );
    static bool CloseFile( std::ofstream& fileout ) { fileout.close( ); }
    static void Write( const std::string& sFileName, const std::string& svg );
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   template<typename CONTAINER>
-   void Write(const std::string& sFileName, const typename CONTAINER& text) {
-      std::ofstream fileout;
-      if (OpenOutputFile(fileout, sFileName.c_str())) {
-         CONTAINER<std::string>::const_iterator it;
-         for (it = text.begin(); it != text.end(); ++it)
-            WriteFile(fileout, *it);
-         fileout.close();
-      }
-   }
 };
 
 #endif

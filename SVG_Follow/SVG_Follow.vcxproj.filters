@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SuperFastHash.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="D7Dist_.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -77,9 +74,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SuperFastHash.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Follow.h">
       <Filter>Header Files</Filter>
     </ClCompile>

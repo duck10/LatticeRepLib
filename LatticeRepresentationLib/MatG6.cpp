@@ -1,5 +1,5 @@
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "LRL_CoordinateConversionMatrices.h"
 #include "G6.h"

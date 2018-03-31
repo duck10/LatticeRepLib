@@ -60,12 +60,6 @@
     <ClInclude Include="Rn_Path.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SuperFastHash.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVG_FollowTriangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVG_Tools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,6 +70,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="triple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVG_FollowTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -102,9 +99,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ReadGlobalData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SuperFastHash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVG_Tools.cpp">

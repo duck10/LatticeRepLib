@@ -503,7 +503,7 @@ spline_under_tension::~spline_under_tension() {};
 // splineundertension.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 
 #include <iostream>

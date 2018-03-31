@@ -205,37 +205,6 @@ public:
 
    void SetWhichComponentsToPlot(const int c1, const int c2) { m_whichComponentsToPlot = std::make_pair(c1, c2); }
 
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   void ApplyPerspective2Positions(const int nTotal) {
-      const int first = GlobalConstants::globalWhichComponentsToPlot.first;
-      const int second = GlobalConstants::globalWhichComponentsToPlot.second;
-      const unsigned long nProbes = (unsigned long)m_reducedList.size();
-      double xMax = -DBL_MAX;
-      double yMax = -DBL_MAX;
-      double xMin = DBL_MAX;
-      double yMin = DBL_MAX;
-
-      for (unsigned long i = 0; i < nProbes; ++i)
-      {
-         xMax = std::max(xMax, m_reducedList[i][first]);
-         yMax = std::max(yMax, m_reducedList[i][second]);
-         xMin = std::min(xMin, m_reducedList[i][first]);
-         yMin = std::min(yMin, m_reducedList[i][second]);
-      }
-
-      const double xCenter = (xMax + xMin) / 2.0;
-      const double yCenter = (yMax + yMin) / 2.0;
-
-      for (unsigned long i = 0; i < nProbes; ++i)
-      {
-         const double factor = 1.0 - 0.75  * (double(i) / double(nTotal));
-         double& x = m_reducedList[i][first];
-         double& y = m_reducedList[i][second];
-         x = factor * (x - xCenter) + xCenter;
-         y = factor * (y - yCenter) + yCenter;
-      }
-   }
-
    bool empty(void) const { return(m_probeList.empty()); }
    unsigned long size(void) const { return(m_probeList.size()); }
 
