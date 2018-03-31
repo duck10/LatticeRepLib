@@ -5,9 +5,9 @@ end
 end
 
 fixrandomseed true
-randomseed 16
-trials 6
-stepsperframe 1000
+randomseed 18
+trials 1
+stepsperframe 100
 end
 v 100 100 100 100 100 100
 end
@@ -16,7 +16,7 @@ end
 
 fixrandomseed true
 randomseed 18
-trials 5
+trials 30
 stepsperframe 1000
 end
 v 100 100 100 100 100 100
