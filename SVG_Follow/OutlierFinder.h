@@ -1,6 +1,7 @@
 #ifndef OUTLIERFINDER_H
 #define OUTLIERFINDER_H
 
+#include <cmath>
 #include <list>
 #include <vector>
 

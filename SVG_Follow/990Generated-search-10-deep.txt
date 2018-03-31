@@ -4,7 +4,8 @@ trials 1
 stepsperframe 1000
 perturbby 0.0
 fixrandomseed true
-filenameprefix 10percent
+filenameprefix 2bounds
+glitchesonly true
 end
 p  3.45312   6.99898   5.47061  99.99683  45.68856 129.02596
 p  6.30478  11.26219   7.83337 134.98195  77.89271 115.83587

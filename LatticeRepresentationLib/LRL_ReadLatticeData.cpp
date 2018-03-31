@@ -1,12 +1,11 @@
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "LRL_Cell.h"
 #include "G6.h"
 #include "S6.h"
 #include "B4.h"
 #include "D7.h"
-#include "GenerateRandomLattice.h"
 #include "LRL_RandTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
@@ -26,7 +25,6 @@ void LRL_ReadLatticeData::CellReader(const std::string& lattice, const std::stri
 }
 
 static int folseed = 19192;
-static GenerateRandomLattice<S6> generator(folseed);
 
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
    if ((LRL_StringTools::strToupper(s.substr(0, 3)) != std::string("END"))) {
@@ -36,7 +34,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          m_inputDataType = "P";
          m_lattice = "P";
          //const G6 g6Cell = LRL_Cell::randDeloneUnreduced();
-         const G6 g6Cell = generator.SetLengthLimits(10.0, 100.0).Generate();
+         const G6 g6Cell = generator.SetLengthLimits(10.0, 100.0).GenerateExtreme();
          m_cell = LRL_Cell(g6Cell);
          m_strCell = LRL_ToString(LRL_Cell(m_cell));
       }
@@ -98,10 +96,10 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
    }
 }
 
-LRL_ReadLatticeData::LRL_ReadLatticeData(const int seed /*= 0*/) {
-
-   if (seed > 0) generator.SetSeed(seed);
+LRL_ReadLatticeData::LRL_ReadLatticeData(const int seed )
+: generator(seed) {
 }
+
 LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
    std::getline(std::cin, m_strCell);
    if (std::cin && (LRL_StringTools::strToupper(m_strCell.substr(0, 3)) != std::string("END"))) {

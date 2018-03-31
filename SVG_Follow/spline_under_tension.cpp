@@ -51,7 +51,7 @@ the return is done by extrapolation.
 
 */
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "spline_under_tension.hpp"
 

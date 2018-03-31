@@ -1,9 +1,10 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "OutlierFinder.h"
 #include "spline_under_tension.hpp"
 
 #include <algorithm>
+#include <cfloat>
 #include <list>
 
 OutlierFinder::OutlierFinder( const std::vector<double>& data ) 
@@ -23,11 +24,13 @@ std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransition
    const unsigned long endMask = std::max(3UL, (unsigned long)(0.03*(double)(m_data.size())));
    for (unsigned long i = endMask; i < m_data.size() - 1 - endMask; ++i) {
       const double& mdatai = m_data[i];
+      const double& mdataim1 = m_data[i - 1];
       const double& mdataip1 = m_data[i + 1];
+      const double percentDelta2Diff = 50.0 * std::abs(mdataim1 - mdataip1) / (mdataim1 + mdataip1);
       const double interpolatedMiddle = std::abs(GetValue(double(i) + 0.5));
       const double absDataDiff = std::abs(100.0*std::abs(mdatai - mdataip1) / std::max(mdatai, mdataip1));
 
-      if (absDataDiff > cutoff /*&& std::abs(mdatai - mdataip1) > 0.1*/) {
+      if (absDataDiff > cutoff && percentDelta2Diff > cutoff/*&& std::abs(mdatai - mdataip1) > 0.1*/) {
          const double avg = (mdatai + mdataip1) / 2.0;
          const double difpair = (absDataDiff < cutoff) ? 0.0 : std::abs(avg - interpolatedMiddle);
 

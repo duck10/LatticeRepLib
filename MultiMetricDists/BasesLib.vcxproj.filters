@@ -20,13 +20,7 @@
     <ClCompile Include="..\MultiMetricDists\D7_BoundaryTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\MultiMetricDists\NCDist.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\MultiMetricDists\PrintTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MultiMetricDists\SuperFastHash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\MultiMetricDists\Triangle.cpp">
@@ -37,13 +31,7 @@
     <ClInclude Include="..\MultiMetricDists\D7_BoundaryTests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\MultiMetricDists\NCDist_.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\MultiMetricDists\PrintTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MultiMetricDists\SuperFastHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\MultiMetricDists\Triangle.h">

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include "PrintTable.h"
 #include "LRL_ToString.h"

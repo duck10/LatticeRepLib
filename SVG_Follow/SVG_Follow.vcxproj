@@ -172,7 +172,6 @@
     <ClInclude Include="ReadGlobalData.h" />
     <ClInclude Include="Rn_Path.h" />
     <ClInclude Include="spline_under_tension.hpp" />
-    <ClInclude Include="SuperFastHash.h" />
     <ClInclude Include="SVG_CirclePlot.h" />
     <ClInclude Include="SVG_DistancePlot.h" />
     <ClInclude Include="SVG_Writer.h" />
@@ -188,7 +187,6 @@
     <ClCompile Include="OutlierFinder.cpp" />
     <ClCompile Include="ReadGlobalData.cpp" />
     <ClCompile Include="spline_under_tension.cpp" />
-    <ClCompile Include="SuperFastHash.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">

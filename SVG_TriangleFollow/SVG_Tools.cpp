@@ -7,7 +7,7 @@
 #include "LRL_ToString.h"
 #include "SVG_Tools.h"
 
-#include "stdafx.h"
+//#include "stdafx.h"
 
 std::vector< std::string> ScaleSubPicture(const double xscale, const double yscale, const std::vector< std::string>& s) {
    std::vector< std::string> svg;

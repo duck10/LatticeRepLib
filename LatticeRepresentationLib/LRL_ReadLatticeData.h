@@ -3,6 +3,7 @@
 
 #include "LRL_Cell.h"
 #include "CellInputData.h"
+#include "GenerateRandomLattice.h"
 
 class LRL_ReadLatticeData : public CellInputData {
 public:
@@ -10,6 +11,7 @@ public:
    LRL_ReadLatticeData read();
    void CellReader(const std::string& s);
    void CellReader(const std::string& lattice, const std::string& cell);
+   GenerateRandomLattice<S6> generator;
 };
 
 #endif // LRL_READLATTICEDATA_H

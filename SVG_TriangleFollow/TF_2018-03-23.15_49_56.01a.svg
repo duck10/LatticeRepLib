@@ -1,0 +1,483 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="2000" height ="5200" viewBox = "1 0 2000 5200" 
+version = "1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Creation date and time _2018-03-23.15_49_56.-->
+ inputVector1 -442.02323 -1781.74774 405.45719 -896.63504 -515.96532 231.50921  
+ inputVector2 -113.21677 -2564.55551  11.23671 -71.55390 -1190.20290 -246.61506  
+ inputVector3 -611.82821 -1163.03524 -1914.37076 -220.43399 -3830.96427 158.47269 
+
+<!--
+random seed 19  trial # 27
+-->
+
+
+<!--
+Original File Name TF_2018-03-23.15_49_56.01a.svg
+-->
+
+
+<!--
+worst case ==================     -3.63046%
+worst case distances, (12), (13), (23)   1743   1117.07   689.211 %
+-467.70357 -211.07296 -965.07308 -28.84790 -1709.83619 -73.78161  
+-578.03622 -161.97176 -510.78431 -150.80442 -1024.79421 -88.54919  
+-184.03810 -824.86480 -501.94432 -72.52678 -1249.67050  -8.12489  
+
+-->
+
+<g transform="translate(120,120) scale(1 1)" >
+<g transform="scale(1,-1) ">
+<g transform="translate(0,0) scale(1 1)" >
+<g transform="translate(30,-1540) scale(1 1)" >
+<!--  Dist23  -->
+<rect x ="0" y ="0" width ="855" height ="725" style ="fill:whitesmoke; stroke:black; stroke-width:5; " />
+<line label="Xaxis" fill="none" stroke-width="3" stroke="black" x1="30" y1="30" x2="769.5" y2="30" />
+<line label="Yaxis" fill="none" stroke-width="3" stroke="black" x1="30" y1="30" x2="30" y2="652.5" />
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Dist23</text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="35" y="24.9" >1 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="140" y="24.9" >2 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="246" y="24.9" >3 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="351" y="24.9" >4 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="457" y="24.9" >5 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="563" y="24.9" >6 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="668" y="24.9" >7 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="774" y="24.9" >8 </text>
+
+<line fill="none" stroke="black" stroke-width="6" x1="30" y1="10" x2="30" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="135" y1="10" x2="135" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="241" y1="10" x2="241" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="346" y1="10" x2="346" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="452" y1="10" x2="452" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="558" y1="10" x2="558" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="663" y1="10" x2="663" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="769" y1="10" x2="769" y2="30" />
+
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="85" >800</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="141" >750</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="197" >700</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="253" >650</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="309" >600</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="365" >550</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="421" >500</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="477" >450</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="533" >400</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="589" >350</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="645" >300</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="701" >250</text>
+
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="30" x2="30" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="86" x2="30" y2="86" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="142" x2="30" y2="142" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="198" x2="30" y2="198" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="254" x2="30" y2="254" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="310" x2="30" y2="310" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="366" x2="30" y2="366" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="422" x2="30" y2="422" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="478" x2="30" y2="478" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="534" x2="30" y2="534" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="590" x2="30" y2="590" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="646" x2="30" y2="646" />
+
+   <polyline fill="none" stroke= "blue"  stroke-width=" 3 " points=" 30 , 509.715  135.643 , 515.551  241.286 , 541.378  346.929 , 449.653  452.571 , 365.972  558.214 , 307.615  663.857 , 275.704  769.5 , 263.769  " />
+
+   <polyline fill="none" stroke= "orange"  stroke-width=" 3 " points=" 30 , 92.7168  135.643 , 92.7168  241.286 , 79.3809  346.929 , 146.65  452.571 , 133.224  558.214 , 139.168  663.857 , 165.084  769.5 , 177.787  " />
+
+   <polyline fill="none" stroke= "black"  stroke-width=" 3 " points=" 30 , 617.874  135.643 , 554.739  241.286 , 565.571  346.929 , 581.745  452.571 , 591.323  558.214 , 572.282  663.857 , 621.917  769.5 , 646.765  " />
+
+</g>
+</g>
+<g transform="translate(30,-725) scale(1 1)" >
+<!--  Triangle Violation Percent (of longest side)  -->
+<rect x ="0" y ="0" width ="855" height ="725" style ="fill:whitesmoke; stroke:black; stroke-width:5; " />
+<line label="Xaxis" fill="none" stroke-width="3" stroke="black" x1="30" y1="30" x2="769.5" y2="30" />
+<line label="Yaxis" fill="none" stroke-width="3" stroke="black" x1="30" y1="30" x2="30" y2="652.5" />
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Triangle Violation Percent (of longest side)</text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="35" y="24.9" >1 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="140" y="24.9" >2 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="246" y="24.9" >3 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="351" y="24.9" >4 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="457" y="24.9" >5 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="563" y="24.9" >6 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="668" y="24.9" >7 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="774" y="24.9" >8 </text>
+
+<line fill="none" stroke="black" stroke-width="6" x1="30" y1="10" x2="30" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="135" y1="10" x2="135" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="241" y1="10" x2="241" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="346" y1="10" x2="346" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="452" y1="10" x2="452" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="558" y1="10" x2="558" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="663" y1="10" x2="663" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="769" y1="10" x2="769" y2="30" />
+
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="85" >-5</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="162" >-10</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="239" >-15</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="316" >-20</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="393" >-25</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="470" >-30</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="547" >-35</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="624" >-40</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="701" >-45</text>
+
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="30" x2="30" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="107" x2="30" y2="107" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="184" x2="30" y2="184" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="261" x2="30" y2="261" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="338" x2="30" y2="338" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="415" x2="30" y2="415" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="492" x2="30" y2="492" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="569" x2="30" y2="569" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="646" x2="30" y2="646" />
+
+   <polyline fill="none" stroke= "blue"  stroke-width=" 3 " points=" 30 , 579.932  135.643 , 102.202  241.286 , 223.824  346.929 , 38.3744  452.571 , 240.243  558.214 , 455.634  663.857 , 583.341  769.5 , 647.728  " />
+
+   <polyline fill="none" stroke= "orange"  stroke-width=" 3 " points=" 30 , 207.812  135.643 , 207.812  241.286 , 490.124  346.929 , 650.063  452.571 , 592.951  558.214 , 576.464  663.857 , 577.679  769.5 , 647.728  " />
+
+   <polyline fill="none" stroke= "black"  stroke-width=" 3 " points=" 30 , 541.724  135.643 , 283.69  241.286 , 330.789  346.929 , 398.84  452.571 , 437.913  558.214 , 359.351  663.857 , 556.98  769.5 , 647.728  " />
+
+</g>
+<g transform="translate(975,-725) scale(1 1)" >
+<!--  Dist12  -->
+<rect x ="0" y ="0" width ="855" height ="725" style ="fill:whitesmoke; stroke:black; stroke-width:5; " />
+<line label="Xaxis" fill="none" stroke-width="3" stroke="black" x1="30" y1="30" x2="769.5" y2="30" />
+<line label="Yaxis" fill="none" stroke-width="3" stroke="black" x1="30" y1="30" x2="30" y2="652.5" />
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Dist12</text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="35" y="24.9" >1 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="140" y="24.9" >2 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="246" y="24.9" >3 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="351" y="24.9" >4 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="457" y="24.9" >5 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="563" y="24.9" >6 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="668" y="24.9" >7 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="774" y="24.9" >8 </text>
+
+<line fill="none" stroke="black" stroke-width="6" x1="30" y1="10" x2="30" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="135" y1="10" x2="135" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="241" y1="10" x2="241" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="346" y1="10" x2="346" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="452" y1="10" x2="452" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="558" y1="10" x2="558" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="663" y1="10" x2="663" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="769" y1="10" x2="769" y2="30" />
+
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="85" >800</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="173" >700</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="261" >600</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="349" >500</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="437" >400</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="525" >300</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="613" >200</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="701" >100</text>
+
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="30" x2="30" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="118" x2="30" y2="118" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="206" x2="30" y2="206" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="294" x2="30" y2="294" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="382" x2="30" y2="382" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="470" x2="30" y2="470" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="558" x2="30" y2="558" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="646" x2="30" y2="646" />
+
+   <polyline fill="none" stroke= "blue"  stroke-width=" 3 " points=" 30 , 100.956  135.643 , 248.806  241.286 , 187.664  346.929 , 246.686  452.571 , 279.168  558.214 , 285.152  663.857 , 284.098  769.5 , 279.511  " />
+
+   <polyline fill="none" stroke= "orange"  stroke-width=" 3 " points=" 30 , 562.441  135.643 , 562.441  241.286 , 614.763  346.929 , 648.511  452.571 , 636.079  558.214 , 632.571  663.857 , 632.828  769.5 , 647.994  " />
+
+   <polyline fill="none" stroke= "black"  stroke-width=" 3 " points=" 30 , 512.492  135.643 , 486.927  241.286 , 475.61  346.929 , 404.871  452.571 , 358.248  558.214 , 366.613  663.857 , 345.859  769.5 , 347.068  " />
+
+</g>
+<g transform="translate(975,-1540) scale(1 1)" >
+<!--  Dist13  -->
+<rect x ="0" y ="0" width ="855" height ="725" style ="fill:whitesmoke; stroke:black; stroke-width:5; " />
+<line label="Xaxis" fill="none" stroke-width="3" stroke="black" x1="30" y1="30" x2="769.5" y2="30" />
+<line label="Yaxis" fill="none" stroke-width="3" stroke="black" x1="30" y1="30" x2="30" y2="652.5" />
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Dist13</text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="35" y="24.9" >2 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="158" y="24.9" >3 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="281" y="24.9" >4 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="404" y="24.9" >5 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="528" y="24.9" >6 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="651" y="24.9" >7 </text>
+<text transform="translate(0,0)  scale(1,-1)" text-anchor="middle" font-family="sans-serif" font-size="30" x="774" y="24.9" >8 </text>
+
+<line fill="none" stroke="black" stroke-width="6" x1="30" y1="10" x2="30" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="153" y1="10" x2="153" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="276" y1="10" x2="276" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="399" y1="10" x2="399" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="523" y1="10" x2="523" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="646" y1="10" x2="646" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="769" y1="10" x2="769" y2="30" />
+
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="85" >800</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="188" >700</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="291" >600</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="394" >500</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="497" >400</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="600" >300</text>
+<text transform="translate(0,725) scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-15" y="703" >200</text>
+
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="30" x2="30" y2="30" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="133" x2="30" y2="133" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="236" x2="30" y2="236" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="339" x2="30" y2="339" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="442" x2="30" y2="442" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="545" x2="30" y2="545" />
+<line fill="none" stroke="black" stroke-width="6" x1="10" y1="648" x2="30" y2="648" />
+
+   <polyline fill="none" stroke= "blue"  stroke-width=" 3 " points=" 30 , 630.107  135.643 , 452.265  241.286 , 499.923  346.929 , 515.145  452.571 , 553.957  558.214 , 600.47  663.857 , 630.952  769.5 , 647.243  " />
+
+   <polyline fill="none" stroke= "orange"  stroke-width=" 3 " points=" 30 , 473.956  135.643 , 473.956  241.286 , 425.138  346.929 , 324.102  452.571 , 350.913  558.214 , 349.558  663.857 , 325.502  769.5 , 296.163  " />
+
+   <polyline fill="none" stroke= "black"  stroke-width=" 3 " points=" 30 , 50.8362  135.643 , 138.535  241.286 , 141.809  346.929 , 209.513  452.571 , 255.125  558.214 , 262.821  663.857 , 241.535  769.5 , 217.346  " />
+
+</g>
+<g transform="translate(30,-2355) scale(1 1)" >
+<rect x ="0" y ="0" width ="855" height ="725" style ="fill:whitesmoke; stroke:black; stroke-width:5; " />
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >LEGEND</text>
+<g transform="translate(0,-50) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Triangles are all scaled to area of input!</text>
+</g>
+<g transform="translate(0,-100) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Blue -- Input vector #1 fixed</text>
+</g>
+<g transform="translate(0,-150) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >-  #2 = Input 2, #3 = Input 3</text>
+</g>
+<g transform="translate(0,-200) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Orange -- Input vector #2 fixed</text>
+</g>
+<g transform="translate(0,-250) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >-  #2 = Input 3, #3 = Input 1</text>
+</g>
+<g transform="translate(0,-300) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Black -- Input vector #3 fixed</text>
+</g>
+<g transform="translate(0,-350) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >-  #2 = Input 1, #3 = Input 2</text>
+</g>
+<g transform="translate(0,-400) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Dist23 -- Distance between the two moving points</text>
+</g>
+<g transform="translate(0,-450) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" ></text>
+</g>
+<g transform="translate(0,-500) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Percent violation are percent of longest side</text>
+</g>
+<g transform="translate(0,-550) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >Impossible regions are surrounded by black bars</text>
+</g>
+<g transform="translate(0,-600) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >and filled by yellow</text>
+</g>
+<g transform="translate(0,-650) scale(1 1)" >
+<text transform="scale(1,-1)" text-anchor="start" font-family="sans-serif" font-size="30" x="71" y="-682.5" >See log file for data</text>
+</g>
+</g>
+</g>
+</g>
+
+<!--
+  start  (first line, point 1 constant, followed by 2,3, blue)
+-387.43188 -5204.22635 -4295.98167 -14582.35058 -1170.87797 -1843.04864  
+-394.36275 -5158.57493 -4254.21243 -14707.06145 -1284.08539 -1851.93858  
+-651.21848 -5378.37522 -4050.18659 -14762.59059 -1767.91050 -1604.99207  
+blue distances 12,13,23  1 179.79 778.416 673.844 
+====   (first line, point 1 constant, followed by 2,3, blue) 1 
+-49.24433 -661.48053 -546.03856 -1853.48223 -148.82385 -234.25976  
+-62.58437 -573.61411 -465.64425 -2093.51637 -366.71701 -251.37045  
+-1976.46100 -333.02732 -223.93370 -772.73553 -1074.01364 -296.88429  
+blue distances 12,13,23  2 346.047 607.003 679.001 
+====   (first line, point 1 constant, followed by 2,3, blue) 2 
+-25.77259 -346.19342 -285.77554 -970.04117 -77.88867 -122.60253  
+-39.27485 -257.25842 -204.40353 -1212.99444 -298.43170 -139.92131  
+-980.00939 -198.50062 -341.16317 -344.29529 -899.82386 -148.09736  
+blue distances 12,13,23  3 277.293 652.938 701.82 
+====   (first line, point 1 constant, followed by 2,3, blue) 3 
+-22.85022 -306.93845 -253.37137 -860.04794 -69.05685 -108.70059  
+-40.60270 -190.00873 -146.38529 -1179.47739 -359.02183 -131.47094  
+-820.65950 -197.45470 -501.04804 -251.94840 -1097.22418 -124.84966  
+blue distances 12,13,23  4 343.664 667.61 620.778 
+====   (first line, point 1 constant, followed by 2,3, blue) 4 
+-18.49024 -248.37240 -205.02630 -695.94462 -55.88031 -87.95974  
+-37.53355 -122.94038 -90.26096 -1038.60071 -366.92948 -112.38579  
+-625.04735 -177.14592 -566.12546 -160.73908 -1130.16385 -95.80419  
+blue distances 12,13,23  5 380.189 705.019 546.843 
+====   (first line, point 1 constant, followed by 2,3, blue) 5 
+-14.90938 -200.27212 -165.32051 -561.16665 -45.05842 -70.92529  
+-34.03688 -74.28555 -50.04778 -905.33767 -357.48278 -95.45932  
+-472.53260 -156.84317 -586.05171 -94.82803 -1106.66818 -73.03885  
+blue distances 12,13,23  6 386.918 749.851 495.282 
+====   (first line, point 1 constant, followed by 2,3, blue) 6 
+-12.14211 -163.10032 -134.63596 -457.01050 -36.69529 -57.76110  
+-30.79144 -40.26329 -22.24492 -792.57760 -341.30936 -81.68181  
+-359.20108 -139.13656 -582.79216 -48.90109 -1060.37477 -56.05237  
+blue distances 12,13,23  7 385.733 779.23 467.088 
+====   (first line, point 1 constant, followed by 2,3, blue) 7 
+-10.07634 -135.35172 -111.73006 -379.25833 -30.45224 -47.93408  
+-28.10220 -16.62134  -3.09645 -703.60683 -324.88253 -71.05508  
+-276.82288 -124.92919 -571.20435 -17.07440 -1012.01235 -43.66962  
+blue distances 12,13,23  8 380.575 794.933 456.543 
+====   (first line, point 1 constant, followed by 2,3, blue) 8 
+  end    (first line, point 1 constant, followed by 2,3, blue)
+
+  start distances blue
+blue 1 179.79 778.416 673.844 
+blue 2 346.047 607.003 679.001 
+blue 3 277.293 652.938 701.82 
+blue 4 343.664 667.61 620.778 
+blue 5 380.189 705.019 546.843 
+blue 6 386.918 749.851 495.282 
+blue 7 385.733 779.23 467.088 
+blue 8 380.575 794.933 456.543 
+  end distances blue
+  start  (second line, point 1 constant, followed by 1,2, orange)
+-16898.82854 -7626.38134 -34869.53202 -1042.31779 -61778.93581 -2665.83979  
+-16990.62257 -7585.53036 -34491.57503 -1143.78258 -61208.99788 -2678.12605  
+-17202.73753 -7610.64872 -34477.46067 -1085.41723 -61402.84908 -2597.69562  
+orange distances 12,13,23  1 698.729 627.91 305.412 
+====   (second line, point 1 constant, followed by 1,2, orange) 1 
+-1115.96038 -503.62896 -2302.70494 -68.83231 -4079.74104 -176.04602  
+-1207.75441 -462.77797 -1924.74796 -170.29711 -3509.80311 -188.33228  
+-1419.86936 -487.89633 -1910.63360 -111.93176 -3703.65431 -107.90185  
+orange distances 12,13,23  2 698.729 627.91 305.412 
+====   (second line, point 1 constant, followed by 1,2, orange) 2 
+-625.62199 -282.34098 -1290.92652 -38.58829 -2287.15620 -98.69370  
+-725.14549 -238.05016 -881.14384 -148.59689 -1669.22690 -112.01452  
+-955.12149 -265.28360 -865.84098 -85.31691 -1879.40125 -24.81148  
+orange distances 12,13,23  3 757.565 580.856 293.63 
+====   (second line, point 1 constant, followed by 1,2, orange) 3 
+-467.70357 -211.07296 -965.07308 -28.84790 -1709.83619 -73.78161  
+-578.03622 -161.97176 -510.78431 -150.80442 -1024.79421 -88.54919  
+-184.03810 -824.86480 -501.94432 -72.52678 -1249.67050  -8.12489  
+orange distances 12,13,23  4 795.515 483.472 353.064 
+====   (second line, point 1 constant, followed by 1,2, orange) 4 
+-369.04922 -166.55060 -761.50684 -22.76291 -1349.17446 -58.21860  
+-484.46073 -115.18916 -286.30614 -150.33337 -632.59846 -73.66596  
+-119.31192 -723.69204 -296.01857 -49.49308 -848.86697 -27.45824  
+orange distances 12,13,23  5 781.535 509.314 341.202 
+====   (second line, point 1 constant, followed by 1,2, orange) 5 
+-314.50300 -141.93409 -648.95459 -19.39851 -1149.76375 -49.61377  
+-437.01773 -87.41151 -144.50678 -154.82052 -389.08475 -66.01187  
+-79.60002 -678.78497 -167.00498 -35.58584 -606.47590 -41.33621  
+orange distances 12,13,23  6 777.59 508.007 346.454 
+====   (second line, point 1 constant, followed by 1,2, orange) 6 
+-298.33810 -134.63892 -615.59947 -18.40146 -1090.66792 -47.06371  
+-437.47521 -72.71891 -42.70989 -172.19707 -226.78257 -65.68665  
+-54.56609 -702.76313 -77.54205 -27.50354 -464.38712 -56.22605  
+orange distances 12,13,23  7 777.879 484.821 369.351 
+====   (second line, point 1 constant, followed by 1,2, orange) 7 
+-276.82288 -124.92919 -571.20435 -17.07440 -1012.01235 -43.66962  
+-10.07634 -135.35172 -111.73006 -379.25833 -30.45224 -47.93408  
+-28.10220 -16.62134  -3.09645 -703.60683 -324.88253 -71.05508  
+orange distances 12,13,23  8 794.933 456.543 380.575 
+====   (second line, point 1 constant, followed by 1,2, orange) 8 
+  end    (second line, point 1 constant, followed by 1,2, orange)
+
+  start distances orange
+orange 1 698.729 627.91 305.412 
+orange 2 698.729 627.91 305.412 
+orange 3 757.565 580.856 293.63 
+orange 4 795.515 483.472 353.064 
+orange 5 781.535 509.314 341.202 
+orange 6 777.59 508.007 346.454 
+orange 7 777.879 484.821 369.351 
+orange 8 794.933 456.543 380.575 
+  end distances orange
+  start  (third line, point 1 constant, followed by3,1, black)
+-1322.67585 -782.31073 -145.73948 -33116.40698 -15291.12782 -3344.32347  
+-1533.08496 -33080.37003 -104.01077 -947.35987 -15779.37262 -3146.04434  
+-1314.19169 -838.19312 -196.86966 -32963.74705 -15152.54938 -3333.44120  
+black distances 12,13,23  1 642.561 220.083 769.407 
+====   (third line, point 1 constant, followed by3,1, black) 1 
+-123.53303 -73.06492 -13.61153 -3092.94974 -1428.13470 -312.34742  
+-228.60596 -2849.47728 -339.60694 -113.98586 -1926.14697 -224.42975  
+-111.53399 -152.09865 -85.92427 -2877.04482 -1232.14505 -296.95677  
+black distances 12,13,23  2 613.813 304.612 713.625 
+====   (third line, point 1 constant, followed by3,1, black) 2 
+-64.29343 -38.02703  -7.08419 -1609.74234 -743.28039 -162.56290  
+-163.43728 -1358.06094 -348.44471 -72.59927 -1237.93383 -80.68651  
+-52.21590 -117.57773 -79.86994 -1392.42517 -546.00876 -147.07157  
+black distances 12,13,23  3 601.087 307.768 723.195 
+====   (third line, point 1 constant, followed by3,1, black) 3 
+-52.32386 -30.94751  -5.76532 -1310.05520 -604.90323 -132.29842  
+-169.19130 -1003.52952 -423.30439 -69.88674 -1199.09103 -36.27021  
+-37.74811 -126.95319 -93.60673 -1047.78619 -366.82616 -113.60272  
+black distances 12,13,23  4 521.541 373.024 737.485 
+====   (third line, point 1 constant, followed by3,1, black) 4 
+-44.36537 -26.24037  -4.88841 -1110.79495 -512.89705 -112.17575  
+-174.13528 -764.66063 -477.39644 -68.41708 -1179.18673  -5.82964  
+-27.98187 -134.15310 -103.62430 -815.99816 -245.29260 -91.16132  
+black distances 12,13,23  5 469.115 416.988 745.948 
+====   (third line, point 1 constant, followed by3,1, black) 5 
+-36.39183 -21.52434  -4.00985 -911.15800 -420.71694 -92.01503  
+-540.83645 -152.34090 -504.44290 -47.97220 -1084.87252 -15.66251  
+-19.65146 -131.78768 -104.89645 -609.93980 -147.28339 -70.54286  
+black distances 12,13,23  6 478.52 424.405 729.125 
+====   (third line, point 1 constant, followed by3,1, black) 6 
+-32.10003 -18.98591  -3.53695 -803.70236 -371.10051 -81.16341  
+-396.62891 -138.53828 -548.70831 -30.90905 -1056.45601 -31.84874  
+-14.42186 -135.42625 -110.07527 -485.60979 -82.34910 -58.48837  
+black distances 12,13,23  7 455.183 403.889 772.979 
+====   (third line, point 1 constant, followed by3,1, black) 7 
+-28.10220 -16.62134  -3.09645 -703.60683 -324.88253 -71.05508  
+-276.82288 -124.92919 -571.20435 -17.07440 -1012.01235 -43.66962  
+-10.07634 -135.35172 -111.73006 -379.25833 -30.45224 -47.93408  
+black distances 12,13,23  8 456.543 380.575 794.933 
+====   (third line, point 1 constant, followed by3,1, black) 8 
+  end    (third line, point 1 constant, followed by3,1, black)
+
+  start distances black
+black 1 642.561 220.083 769.407 
+black 2 613.813 304.612 713.625 
+black 3 601.087 307.768 723.195 
+black 4 521.541 373.024 737.485 
+black 5 469.115 416.988 745.948 
+black 6 478.52 424.405 729.125 
+black 7 455.183 403.889 772.979 
+black 8 456.543 380.575 794.933 
+  end distances black
+
+-->
+
+<!--
+
+-->
+<!-- Run Constants
+CIRCLEPLOT bool true
+DISTANCEPLOT bool true
+PRINTDISTANCEDATA bool true
+GLITCHESONLY bool false
+PLOT 2doubles 3 4
+PERTURBBY double 0.05
+GLITCHLEVEL double -1.79769e+308
+BOUNDARYWINDOW double 0.065
+FRAMESPERPATH int 200
+STEPSPERFRAME int 8
+TRIALS int 50
+ALLBLACK bool false
+FILEPREFIX string TF
+GRAPHSIZE int 0
+BORDER int 0
+PLOTSIZE int 0
+CIRCLEPLOTSIZE int 2000
+CIRCLERADIUS int 300
+CIRCLESTROKEWIDTH int 30
+G6LINEWIDTH int 3
+DELONELINEWIDTH int 10
+AXISWIDTH int 6
+TICLENGTH int 20
+VECTOR g6 
+PERTURB g6Perturb 
+MOVIEMODE MovieMode STAR
+FOLLOWERMODE FollowerMode Follow
+FIXRANDOMSEED fixRandomSeed true
+RANDOMSEED int 19
+TIMESTAMP bool true
+END end 
+
+
+
+
+-->
+</svg>

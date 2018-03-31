@@ -13,6 +13,7 @@
 
 #include "LRL_CreateFileName.h"
 #include "Delone.h"
+#include "NCDist.h"
 #include "S6Dist.h"
 #include "D7Dist.h"
 #include "GlobalTriangleFollowerConstants.h"
@@ -212,6 +213,10 @@ public:
       return D7Dist(v1.GetVector().data(), v2.GetVector().data());
    }
 
+   static double DIST(const G6& v1, const G6& v2) {
+      return NCDist(v1.data(), v2.data());
+   }
+
    static double DIST(const S6& v1, const S6& v2) {
       S6Dist s6dist(50000.0);
       return s6dist.DistanceBetween(v1, v2);
@@ -243,17 +248,18 @@ public:
             double dist13(DIST(m_followData[0][i], m_followData[2][i]));
             double dist23(DIST(m_followData[1][i], m_followData[2][i]));
             double sqrtArea(SqrtTriangleAreaFromSides(dist12, dist13, dist23));
-            dist12 *= sqrtInputArea / sqrtArea;
-            dist13 *= sqrtInputArea / sqrtArea; //  !!!!!!!!!!!!!!!!!!!!!!! but followData has not been SCALED !!!!!!!!!!!!!!!!
-            dist23 *= sqrtInputArea / sqrtArea;
+            const double scaleFactor = sqrtInputArea / (dist12 + dist13 + dist23);
+            dist12 *= scaleFactor;
+            dist13 *= scaleFactor; //  !!!!!!!!!!!!!!!!!!!!!!! but followData has not been SCALED !!!!!!!!!!!!!!!!
+            dist23 *= scaleFactor;
 
             vdist12.push_back(dist12);
             vdist13.push_back(dist13);
             vdist23.push_back(dist23);
 
-            m_followData[0][i] *= sqrtInputArea / sqrtArea;
-            m_followData[1][i] *= sqrtInputArea / sqrtArea;
-            m_followData[2][i] *= sqrtInputArea / sqrtArea;
+            m_followData[0][i] *= scaleFactor;
+            m_followData[1][i] *= scaleFactor;
+            m_followData[2][i] *= scaleFactor;
          }
 
       }
