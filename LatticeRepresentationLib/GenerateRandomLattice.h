@@ -274,15 +274,36 @@ private:
       return s6;
    }
 
+   static T BinarySearchReduced(const S6& s1, const S6& s2, const int npass) {
+      if (npass <= 0) return s1;
+      // norm doesn't work here because s2 is invalid !!!!!!!!!!
+      // operator- doesn't work here because s2 is invalid !!!!!!!!!!
+      S6 s6delta;
+      for (unsigned long i = 0; i < 6; ++i) s6delta[i] = s2[i] - s1[i];
+      const double diff = s6delta.norm();
+      S6 midpoint = s1 + 0.5 * s6delta;
+      const bool bmid = LRL_Cell(midpoint).GetValid();
+      midpoint.SetValid(bmid);
+
+      const bool isReduced = midpoint.IsAllMinus();
+
+      if (bmid && isReduced) {
+         return BinarySearchExtreme(midpoint, s2, npass - 1);
+      }
+      else {
+         return BinarySearchExtreme(s1, midpoint, npass - 1);
+      }
+   }
+
    static T BinarySearchExtreme(const S6& s1, const S6& s2, const int npass) {
       if (npass <= 0) return s1;
       // norm doesn't work here because s2 is invalid !!!!!!!!!!
       // operator- doesn't work here because s2 is invalid !!!!!!!!!!
       S6 s6delta;
-      for (unsigned long i = 0; i < 6; ++i ) s6delta[i] = s2[i] - s1[i];
+      for (unsigned long i = 0; i < 6; ++i) s6delta[i] = s2[i] - s1[i];
       const double diff = s6delta.norm();
       S6 midpoint = s1 + 0.5 * s6delta;
-      const bool bmid  = LRL_Cell(midpoint).GetValid();
+      const bool bmid = LRL_Cell(midpoint).GetValid();
       midpoint.SetValid(bmid);
 
       if (bmid) {
