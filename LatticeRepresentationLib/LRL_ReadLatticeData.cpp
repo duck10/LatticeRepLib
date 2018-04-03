@@ -38,13 +38,14 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          m_cell = LRL_Cell(g6Cell);
          m_strCell = LRL_ToString(LRL_Cell(m_cell));
       }
-      else if (toupper(m_inputDataType[0]) == 'V' ||toupper(m_inputDataType[0]) == 'G') {
+      else if (toupper(m_inputDataType[0]) == 'V' ||toupper(m_inputDataType[0]) == 'G' ||
+         LRL_StringTools::strToupper(m_inputDataType).substr(0, m_inputDataType.length()) == "G6") {
          G6 v6;
          for (unsigned long i = 0; i < 6; ++i)
             iss >> v6[i];
          m_cell = v6;
       }
-      else if (toupper(m_inputDataType[0]) == 'D') {
+      else if (toupper(m_inputDataType[0]) == 'D' || LRL_StringTools::strToupper(m_inputDataType).substr(0, m_inputDataType.length()) == "D7") {
          D7 v7;
          double d;
          for (unsigned long i = 0; i < 7; ++i) {
@@ -55,7 +56,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          G6 v6(v7);
          m_cell = v6;
       }
-      else if (toupper(m_inputDataType[0]) == 'S') {
+      else if (toupper(m_inputDataType[0]) == 'S' || LRL_StringTools::strToupper(m_inputDataType).substr(0, m_inputDataType.length()) == "S6") {
          S6 e;
          for (unsigned long i = 0; i < 6; ++i)
             iss >> e[i];
