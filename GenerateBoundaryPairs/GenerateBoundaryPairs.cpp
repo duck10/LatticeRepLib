@@ -281,6 +281,7 @@ int main()
 
 
 /*
+Projectors for Delone types
 K1 (cI)
 1 1 1  1 1 1
 1 1 1  1 1 1
