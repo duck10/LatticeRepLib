@@ -520,50 +520,6 @@ void TestDataForHJB() {
    exit(0);
 }
 
-double PositiveDistance( const S6& s6 ) {
-   double sum = 0;
-   double sqsum = 0;
-   for (unsigned long i = 0; i < 6; ++i) {
-      sum += (s6[i] > 0.0) ? s6[i] * s6[i] : 0.0;
-      sqsum += s6[i] * s6[i];
-   }
-   return sqrt(sum / sqsum);
-}
-
-void CatalogByReductionSteps( void ) {
-   GenerateRandomLattice<S6> grl(19191);
-   StoreResults<unsigned long, std::string> storeExtreme(3);
-   storeExtreme.SetTitle("Extreme Unreduced S6 Generation -- >1000 cycles means reduction failed");
-   storeExtreme.SetKeyLabel("cycles");
-   StoreResults<unsigned long, std::string> storesimple(3);
-   storesimple.SetTitle("S6 Selling Unreduced Generation -- >1000 cycles means reduction failed");
-   storesimple.SetKeyLabel("cycles");
-   S6 s6in, out;
-   bool b;
-
-   for (unsigned long i = 0; i < 10000; ++i) {
-      s6in = grl.GenerateExtreme();
-      if (s6in.GetValid()) {
-         b = Selling::Reduce(s6in, out);
-         storeExtreme.Store(Selling::GetCycles(), LRL_ToString(" ", s6in, " ", Selling::GetCycles(), " ", PositiveDistance(s6in)));
-      }
-
-      s6in = grl.randSellingUnreduced();
-      LRL_Cell cell = LRL_Cell(s6in);
-      if (cell.GetValid()) {
-         double test = std::abs(39.4918 - s6in[0]);
-         b = Selling::Reduce(s6in, out);
-         LRL_Cell cellout = LRL_Cell(out);
-         storesimple.Store(Selling::GetCycles(), LRL_ToString(" ", s6in, " ", Selling::GetCycles(), " ", PositiveDistance(s6in)));
-      }
-
-   }
-   storesimple.ShowResultsByKeyAscending();
-   std::cout << std::endl;
-   storeExtreme.ShowResultsByKeyAscending();
-   exit(0);
-}
-
 void ListS6ReductionSteps() {
    Selling::SetListSteps(true);
    std::cout << "begin ListS6ReductionSteps " << std::endl;
@@ -586,7 +542,6 @@ void ListS6ReductionSteps() {
 int main(int argc, char *argv[])
 {
    //ListS6ReductionSteps();
-   CatalogByReductionSteps();
    TestDataForHJB();
    TestFollowStarter();
    //ProgressStep ps;
