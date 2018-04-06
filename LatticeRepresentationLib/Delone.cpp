@@ -114,3 +114,33 @@ D7 Delone::sort(const D7& d, MatD7& m) {
    }
 }
 
+
+std::vector<MatS6> Delone::LoadLatticeTypeProjectors() {
+   std::vector<MatS6> vDeloneTypes;
+   vDeloneTypes.push_back(MatS6("1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1"));  //    K1 (cI)
+   vDeloneTypes.push_back(MatS6("1 1 0 1 1 0  1 1 0 1 1 0  0 0 0 0 0 0  1 1 0 1 1 0  1 1 0 1 1 0  0 0 0 0 0 0"));  //    K3 (cF)
+   vDeloneTypes.push_back(MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 1 1 1  0 0 0 1 1 1  0 0 0 1 1 1"));  //    K5 (cP)
+   vDeloneTypes.push_back(MatS6("1 1 0 1 1 0  1 1 0 1 1 0  0 0 1 0 0 1  1 1 0 1 1 0  1 1 0 1 1 0  0 0 1 0 0 1"));  //    Q1 (tI)
+   vDeloneTypes.push_back(MatS6("1 1 0 1 1 0  1 1 0 1 1 0  0 0 0 0 0 0  1 1 0 1 1 0  1 1 0 1 1 0  0 0 0 0 0 1"));  //    Q2 (tI)
+   vDeloneTypes.push_back(MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 1 1 0  0 0 0 1 1 0  0 0 0 0 0 1"));  //    Q5 (tP)
+   vDeloneTypes.push_back(MatS6("1 1 1 0 0 0  1 1 1 0 0 0  1 1 1 0 0 0  0 0 0 1 1 1  0 0 0 1 1 1  0 0 0 1 1 1"));  //    R1 (rP)
+   vDeloneTypes.push_back(MatS6("1 0 1 0 1 0  0 0 0 0 0 0  1 0 1 0 1 0  0 0 0 1 0 0  1 0 1 0 1 0  0 0 0 0 0 0"));  //    R3 (rP)
+   vDeloneTypes.push_back(MatS6("1 1 0 1 1 0  1 1 0 1 1 0  0 0 1 0 0 0  1 1 0 1 1 0  1 1 0 1 1 0  0 0 0 0 0 1"));  //    O1A (oF)
+   vDeloneTypes.push_back(MatS6("1 1 0 1 1 0  1 1 0 1 1 0  0 0 1 0 0 1  1 1 0 1 1 0  1 1 0 1 1 0  0 0 1 0 0 1"));  //    O1B (oI)
+   vDeloneTypes.push_back(MatS6("1 0 0 0 1 0  0 1 0 1 0 0  0 0 0 0 0 0  0 1 0 1 0 0  1 0 0 0 1 0  0 0 0 0 0 0"));  //    O2 (oI)
+   vDeloneTypes.push_back(MatS6("1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0  1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0"));  //    O3 (oI)
+   vDeloneTypes.push_back(MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 1 0 0 0  0 0 0 1 1 0  0 0 0 1 1 0  0 0 0 0 0 1"));  //    O4 (oP)
+   vDeloneTypes.push_back(MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1"));  //    O5 (oP)
+   vDeloneTypes.push_back(MatS6("1 1 0 0 0 0  1 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 1 0  0 0 0 1 1 0  0 0 0 0 0 1"));  //    M1A (mC)
+   vDeloneTypes.push_back(MatS6("1 0 0 1 0 0  0 1 0 0 1 0  0 0 1 0 0 0  1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 1"));  //    M1B (mC)
+   vDeloneTypes.push_back(MatS6("1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0  1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 1"));  //    M2A (mC)
+   vDeloneTypes.push_back(MatS6("1 0 0 0 0 0  0 1 0 1 0 0  0 0 0 0 0 0  0 1 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1"));  //    M2B (mC)
+   vDeloneTypes.push_back(MatS6("1 0 0 0 0 0  0 1 0 0 1 0  0 0 0 0 0 0  0 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0"));  //    M3 (mC)
+   vDeloneTypes.push_back(MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1"));  //    M4 (mP)
+   vDeloneTypes.push_back(MatS6("1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1"));  //    T1 (aP)
+   vDeloneTypes.push_back(MatS6("1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1"));  //    T2 (aP)
+   vDeloneTypes.push_back(MatS6("1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 0"));  //    T3 (aP)
+   vDeloneTypes.push_back(MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 1 1 1 0  0 0 1 1 1 0  0 0 1 1 1 0  0 0 0 0 0 1"));  //    H4 (hP)
+
+   return vDeloneTypes;
+}

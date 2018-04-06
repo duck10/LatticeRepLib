@@ -42,7 +42,8 @@ public:
    static bool IsReduced(const G6& v);
    static bool IsReduced(const G6& v, const double delta);
    static bool IsDelone( const D7& v, const double delta = 1.0E-6 );
-         static std::vector<MatD7> GetD7Reflections();
+   static std::vector<MatD7> GetD7Reflections();
+   static std::vector<MatS6> LoadLatticeTypeProjectors();
 
 private:
    static int GenMaxMinKey(const D7& d);
