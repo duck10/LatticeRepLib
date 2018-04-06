@@ -10,19 +10,19 @@
 class GeneratePairsOfTestData {
 public:
    static std::pair<S6, S6> ScalePairToSpecifedSeparation(const S6& s1, const S6& s2, const double factor);
-   static void GenerateRandomLatticesAndCatalogByReductionSteps(void);
-   static std::pair<S6, S6> GenerateLatticeTypeExamples(const unsigned long n);
+   static void GenerateRandomLatticesAndCatalogByReductionStepCount(const unsigned long n);
+   static std::pair<S6, S6> GenerateLatticeTypeExamplesNearDeloneTypes(const unsigned long n);
    static S6 DoRandomReflection(const S6& s);
 
 
-   static void MultiGeneratePair_Reduced_Other_ReducesFarAway();
+   static void MultiGeneratePair_Reduced_Other_ReducesFarAway(const unsigned long targetReducedUnreducedPairCount);
+   static double PositiveDistance(const S6& s6);
    static std::string FormatPairOfTestS6Vectors(const S6& s1, const S6& s2, const std::string& id);
 
 private:
    static bool IsGoodLatticeTypeForPerturbation(const unsigned long n);
    static std::pair<S6, S6> OneLatticeType(const MatS6& m);
    static std::pair<S6, S6> OneLatticeAttempt(const MatS6& m);
-   static double PositiveDistance(const S6& s6);
    static std::pair<S6, S6> GeneratePair_Reduced_Other_ReducesFarAway(const unsigned long numberOfZeros);
    static S6 DoReflection(const S6& s, const unsigned long n);
    static std::pair<S6, S6> BinarySearchReduced(const S6& s1, const S6& s2, const int npass);

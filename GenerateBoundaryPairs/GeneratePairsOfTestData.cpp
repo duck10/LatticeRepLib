@@ -70,12 +70,12 @@ std::string GeneratePairsOfTestData::FormatPairOfTestS6Vectors(const S6& s1, con
    return LRL_ToString("S ", s1, "    ", id) + " " + LRL_ToString("\nS ", s2, "    ", id, "\n");
 }
 
-void GeneratePairsOfTestData::MultiGeneratePair_Reduced_Other_ReducesFarAway() {
+void GeneratePairsOfTestData::MultiGeneratePair_Reduced_Other_ReducesFarAway(const unsigned long targetReducedUnreducedPairCount) {
    StoreResults<int, std::string > store(5);
    store.SetTitle("Generate Pairs with one reduced and the other nearby but reduces far.");
    std::pair<S6, S6> output;
 
-   for (unsigned long i = 0; i < 2000; ++i) {
+   for (unsigned long i = 0; i < targetReducedUnreducedPairCount; ++i) {
       output = GeneratePair_Reduced_Other_ReducesFarAway(0);
       const int rank = Rank(output.first);
       store.Store(rank, LRL_ToString("S", output.first, "\nS    ", output.second, "\n"));
@@ -98,7 +98,7 @@ int GeneratePairsOfTestData::Rank(const S6& s) {
    return (int)(log10(minS6));
 }
 
-void GeneratePairsOfTestData::GenerateRandomLatticesAndCatalogByReductionSteps(void) {
+void GeneratePairsOfTestData::GenerateRandomLatticesAndCatalogByReductionStepCount(const unsigned long n) {
    GenerateRandomLattice<S6> grl(19191);
    StoreResults<unsigned long, std::string> storeExtreme(3);
    storeExtreme.SetTitle("Extreme Unreduced S6 Generation -- >1000 cycles means reduction failed");
@@ -109,7 +109,7 @@ void GeneratePairsOfTestData::GenerateRandomLatticesAndCatalogByReductionSteps(v
    S6 s6in, out;
    bool b;
 
-   for (unsigned long i = 0; i < 10000; ++i) {
+   for (unsigned long i = 0; i < n; ++i) {
       s6in = grl.GenerateExtreme();
       if (s6in.GetValid()) {
          b = Selling::Reduce(s6in, out);
@@ -149,7 +149,7 @@ bool GeneratePairsOfTestData::IsGoodLatticeTypeForPerturbation(const unsigned lo
    return std::find(vAvoid.begin(), vAvoid.end(), n) == vAvoid.end();
 }
 
-std::pair<S6, S6> GeneratePairsOfTestData::GenerateLatticeTypeExamples(const unsigned long n) {
+std::pair<S6, S6> GeneratePairsOfTestData::GenerateLatticeTypeExamplesNearDeloneTypes(const unsigned long n) {
    StoreResults<int, std::string > store(20);
    store.SetTitle("Generation of perturbed Delone lattice types");
    store.SetKeyLabel("Delone type");
@@ -167,7 +167,7 @@ std::pair<S6, S6> GeneratePairsOfTestData::GenerateLatticeTypeExamples(const uns
             //std::cout << i << "  failed to find valid cell" << std::endl << vDeloneTypes[i] << std::endl;
          }
          else {
-            //std::cout /*<< "in GenerateLatticeTypeExamples, valid = " << LRL_Cell_Degrees(p.first).GetValid() */ <<
+            //std::cout /*<< "in GenerateLatticeTypeExamplesNearDeloneTypes, valid = " << LRL_Cell_Degrees(p.first).GetValid() */ <<
             //   "   " << (p.first) << "       " << DoRandomReflection(p.second) << std::endl;
             //std::cout << "S   " << (p.first) << std::endl;
             //std::cout << "S   " << (p.second) << std::endl << std::endl;
