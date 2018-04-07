@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "S6.h"
+#include "StoreResults.h"
 
 class GeneratePairsOfTestData {
 public:
@@ -18,7 +19,7 @@ public:
    static void MultiGeneratePair_Reduced_Other_ReducesFarAway(const unsigned long targetReducedUnreducedPairCount);
    static double PositiveDistance(const S6& s6);
    static std::string FormatPairOfTestS6Vectors(const S6& s1, const S6& s2, const std::string& id);
-
+   static void GeneratePairSamplesByHighReductionCycleCount(const unsigned long n);
 private:
    static bool IsGoodLatticeTypeForPerturbation(const unsigned long n);
    static std::pair<S6, S6> OneLatticeType(const MatS6& m);
@@ -29,7 +30,7 @@ private:
    static S6 GenerateStartingPoint(const MatS6& m);
    static int Rank(const S6& s);
    static S6 Perturb(const S6& s, const double fraction);
-
+   static void StoreOnePointIfValid(StoreResults<unsigned long, std::string >& store, const S6& s6in);
 };
 
 #endif  //  GENERATEPAIRSOFTESTDATA_H

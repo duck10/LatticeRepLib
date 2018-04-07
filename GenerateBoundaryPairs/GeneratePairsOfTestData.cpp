@@ -263,3 +263,30 @@ S6 GeneratePairsOfTestData::GenerateStartingPoint(const MatS6& m) {
    }
    return test;
 }
+
+void GeneratePairsOfTestData::StoreOnePointIfValid(StoreResults<unsigned long, std::string >& store, const S6& s6in) {
+   if (s6in.GetValid()) {
+      S6 out;
+      const bool b = Selling::Reduce(s6in, out);
+      if (b && out.GetValid()) {
+         const unsigned long ncycles = Selling::GetCycles();
+         const std::string label = LRL_ToString(ncycles) + " Ex";
+         store.Store(Selling::GetCycles(), GeneratePairsOfTestData::FormatPairOfTestS6Vectors(s6in, out, label));
+      }
+   }
+}
+
+void GeneratePairsOfTestData::GeneratePairSamplesByHighReductionCycleCount(const unsigned long n) {
+   GenerateRandomLattice<S6> grl(19191);
+   StoreResults<unsigned long, std::string > store(4);
+   store.SetKeyLabel("cycles");
+
+   for (unsigned long i = 0; i < n; ++i) {
+      StoreOnePointIfValid(store, grl.GenerateExtreme());
+   }
+
+   // select the portion of the result that you want to display
+   std::vector<unsigned long> v = store.GetKeys();
+   for (unsigned long i = 0; i<(unsigned long)(double(v.size()*0.667)); ++i) store.erase(v[i]);
+   store.ShowResultsByKeyDescending();
+}

@@ -77,6 +77,10 @@ public:
 
    bool empty(void) const { return m_tree.empty(); }
 
+   void erase( const TKEY& key) {
+      m_tree.erase(key);   
+   }
+
    TKEY GetByTreeIndex(const unsigned long index) const {
       return m_tree[index];
    }
