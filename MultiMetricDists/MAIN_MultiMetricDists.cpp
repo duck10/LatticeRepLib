@@ -146,7 +146,7 @@ void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatti
    std::string lattice;
    for (size_t i1 = 0; i1 < cellDataList.size(); ++i1) {
       const LRL_ReadLatticeData& rcd = cellDataList[i1];
-      lattice = rcd.GetLattice();
+      size_t place = letters.find(lattice);
       if (letters.find(LRL_StringTools::strToupper(lattice)) == std::string::npos) continue;
       std::cout << std::endl;
       std::cout << "LRL_Cell # " << i1 << "  *******************************" << std::endl;
@@ -158,8 +158,6 @@ void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatti
       std::cout << std::endl;
       double f1, f2, f3, f4;
       const LRL_Cell reducedCell = converter.DeloneReduceCell(lattice, rcd.GetCell());
-      TriangleArea(reducedCell, f1, f2, f3, f4);
-      std::cout << "AREAS " << f1 << " " << f2 << " " << f3 << " " << f4 << std::endl;
    }
 }
 
