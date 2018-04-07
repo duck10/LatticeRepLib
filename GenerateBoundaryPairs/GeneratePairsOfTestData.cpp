@@ -264,6 +264,20 @@ S6 GeneratePairsOfTestData::GenerateStartingPoint(const MatS6& m) {
    return test;
 }
 
+S6 AddOneToSingleScalar( const S6& s) {
+   double mins = DBL_MAX;
+   unsigned long minIndex;
+   for (unsigned long i = 0; i < 6; ++i) {
+      if (s[i] < mins) {
+         mins = s[i];
+         minIndex = i;
+      }
+   }
+   S6 s6(s);
+   s6[minIndex] += 1.0;
+   return s6;
+}
+
 void GeneratePairsOfTestData::StoreOnePointIfValid(StoreResults<unsigned long, std::string >& store, const S6& s6in) {
    if (s6in.GetValid()) {
       S6 out;
@@ -271,14 +285,16 @@ void GeneratePairsOfTestData::StoreOnePointIfValid(StoreResults<unsigned long, s
       if (b && out.GetValid()) {
          const unsigned long ncycles = Selling::GetCycles();
          const std::string label = LRL_ToString(ncycles) + " Ex";
-         store.Store(Selling::GetCycles(), GeneratePairsOfTestData::FormatPairOfTestS6Vectors(s6in, out, label));
+         store.Store(Selling::GetCycles(), GeneratePairsOfTestData::FormatPairOfTestS6Vectors(AddOneToSingleScalar(s6in), out, label));
       }
+      else
+         int i19191 = 19191;
    }
 }
 
 void GeneratePairsOfTestData::GeneratePairSamplesByHighReductionCycleCount(const unsigned long n) {
    GenerateRandomLattice<S6> grl(19191);
-   StoreResults<unsigned long, std::string > store(4);
+   StoreResults<unsigned long, std::string > store(8);
    store.SetKeyLabel("cycles");
 
    for (unsigned long i = 0; i < n; ++i) {
