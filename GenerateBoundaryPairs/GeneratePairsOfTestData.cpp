@@ -71,6 +71,10 @@ std::string GeneratePairsOfTestData::FormatPairOfTestS6Vectors(const S6& s1, con
 }
 
 void GeneratePairsOfTestData::MultiGeneratePair_Reduced_Other_ReducesFarAway(const unsigned long targetReducedUnreducedPairCount) {
+   /*
+   One point is generated. It is slightly modified, and it is reduced. If the reduced one is
+   somewhat or more farther away than the modification, then the pair is kept and output.
+   */
    StoreResults<int, std::string > store(5);
    store.SetTitle("Generate Pairs with one reduced and the other nearby but reduces far.");
    std::pair<S6, S6> output;
@@ -150,6 +154,9 @@ bool GeneratePairsOfTestData::IsGoodLatticeTypeForPerturbation(const unsigned lo
 }
 
 std::pair<S6, S6> GeneratePairsOfTestData::GenerateLatticeTypeExamplesNearDeloneTypes(const unsigned long n) {
+   /*
+   
+   */
    StoreResults<int, std::string > store(20);
    store.SetTitle("Generation of perturbed Delone lattice types");
    store.SetKeyLabel("Delone type");
@@ -293,6 +300,13 @@ void GeneratePairsOfTestData::StoreOnePointIfValid(StoreResults<unsigned long, s
 }
 
 void GeneratePairsOfTestData::GeneratePairSamplesByHighReductionCycleCount(const unsigned long n) {
+   /*
+   Generate a random unreduced lattice (GenerateExtreme picks a point nearly invalid). Then
+   the point is reduced, and the slightly modified point, and its unmodified reduced point
+   are stored, using the number of cycles in Selling::Reduce that were required as the key.
+   Finally, the result is trimmed such that only the highest 1/3 of the cycle counts are
+   kept. They are then displayed.
+   */
    GenerateRandomLattice<S6> grl(19191);
    StoreResults<unsigned long, std::string > store(8);
    store.SetKeyLabel("cycles");
