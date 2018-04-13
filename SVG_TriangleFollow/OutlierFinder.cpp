@@ -83,9 +83,8 @@ std::vector<std::pair<double, double> > OutlierFinder::FilterForPeakOfRun(const 
 
       biggiesL3.push_back(bigTemp[0]);
       if (it2 == biggiesL2.end()) break;
-      it = it2;
-      ++it;
-      if (it == biggiesL2.end()) break;
+      it = it2, ++it;
+      if (it ==biggiesL2.end()) break;
       it2 = it, ++it2;
    }
    return biggiesL3;

@@ -363,6 +363,14 @@ public:
       return errorString;
    }
 
+   void SetScalingData() {  // make this a class?
+      double m_xStartPos;
+      double m_yStartPos;
+      double m_xscale;
+      double m_yscale;
+      double m_dataLineXDelta;
+   }
+
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::vector<std::string> FormatAllPointsAsPolyline( const AxisLimits& alX, const AxisLimits& alY, const ProgressData<double>& d, const double minValue, const double range, const std::string& color )
       /*-------------------------------------------------------------------------------------*/
@@ -376,14 +384,14 @@ public:
 
       const double yStartPos = CalculateYStartPos( alY );
 
-      double xpos = m_borderWidth + xStartPos;
-      double ypos;
+      double xpos, ypos;
       const double yscale = ( 0.9*m_plotHeight-m_borderWidth )/( alY.m_upperLimit-alY.m_lowerLimit );
       std::string errorString;
       std::vector<std::string> errorSegments;
 
       bool previousPointIsError = false;
       for ( int i=0; i<xmax; ++i ) {
+         xpos = m_borderWidth + xStartPos + (double)(i)*dataLineXDelta;
          ypos = yStartPos + yscale*( d[i]-minValue );
          const std::string dataPoint( LRL_ToString( xpos, ",", ypos, " " ) );
          allDatapointsAsString += dataPoint;
@@ -400,7 +408,6 @@ public:
             errorString.clear( );
          }
 
-         xpos += dataLineXDelta;
          previousPointIsError = dataPointIsError;
       }
 

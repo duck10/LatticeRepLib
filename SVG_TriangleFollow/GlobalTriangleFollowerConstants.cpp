@@ -25,7 +25,7 @@ namespace {
    bool GlobalConstants::globalOutputGlitchesOnly   = false;
 
    double GlobalConstants::globalFractionalAmountToPerturb          = 0.05;
-   double GlobalConstants::globalAboveThisValueIsBad                = -DBL_MAX; // GLITCH DETECTION LEVEL - fraction of deltas in either of the top two histogram bins
+   double GlobalConstants::globalPercentChangeToDetect                = -DBL_MAX; // GLITCH DETECTION LEVEL - fraction of deltas in either of the top two histogram bins
    double GlobalConstants::globalFractionToDetermineCloseToBoundary = 0.065;
    double GlobalConstants::globalMovieMaxDistRejectionTest          = 0.1;
    

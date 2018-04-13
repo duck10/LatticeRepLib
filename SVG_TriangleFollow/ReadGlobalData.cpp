@@ -239,7 +239,7 @@ const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure
    v.push_back( ParseData(LRL_StringTools::strToupper( "Plot" ),             "2doubles", (void*)&GlobalConstants::globalWhichComponentsToPlot ) );
 
    v.push_back( ParseData( LRL_StringTools::strToupper( "PerturbBy" ),      "double", (void*)&GlobalConstants::globalFractionalAmountToPerturb ) );
-   v.push_back( ParseData( LRL_StringTools::strToupper( "GlitchLevel" ),    "double", (void*)&GlobalConstants::globalAboveThisValueIsBad ) );
+   v.push_back( ParseData( LRL_StringTools::strToupper( "GlitchLevel" ),    "double", (void*)&GlobalConstants::globalPercentChangeToDetect ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "BoundaryWindow" ), "double", (void*)&GlobalConstants::globalFractionToDetermineCloseToBoundary ) );
 
    v.push_back( ParseData( LRL_StringTools::strToupper( "FramesPerPath" ), "int",  (void*)&GlobalConstants::globalFramesPerSegment ) );
