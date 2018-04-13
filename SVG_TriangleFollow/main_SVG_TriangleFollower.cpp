@@ -183,11 +183,11 @@ int main( int argc, char* argv[] )
 
       ++(histogram[int(percentViolation) + 100]);
 
-      /*if (percentViolation > GlobalConstants::globalAboveThisValueIsBad)*/ {
+      /*if (percentViolation > GlobalConstants::globalPercentChangeToDetect)*/ {
 
          ProcessTriangle<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD> pt;
          TriangleFollow<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD > tf1(GLOBAL_RunInputVector::globalInputRandomSeed, triangleCount, GlobalConstants::globalStepsPerFrame);
-         pt.ProcessViolation(v1, v2, v3, worstCases, tf1, triangleCount, percentViolation, GlobalConstants::globalAboveThisValueIsBad);
+         pt.ProcessViolation(v1, v2, v3, worstCases, tf1, triangleCount, percentViolation, GlobalConstants::globalPercentChangeToDetect);
          std::list<double> worstCasesI;
       }
    }

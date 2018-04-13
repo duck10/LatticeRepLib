@@ -18,9 +18,6 @@
     <ClInclude Include="FileOperations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Follow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Follower.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,6 +72,12 @@
     <ClInclude Include="SVG_FollowTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OutlierFinder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_under_tension.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileOperations.cpp">
@@ -105,6 +108,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MAIN_SVG_TriangleFollower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutlierFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spline_under_tension.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

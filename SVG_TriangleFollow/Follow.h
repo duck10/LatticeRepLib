@@ -129,25 +129,29 @@ public:
       return(m_glitches);
    }
 
+   double DistanceRange(const std::vector& v) {
+      const double distmax = *std::max_element(distanceList.begin(), distanceList.end());
+      const double distmin = *std::min_element(distanceList.begin(), distanceList.end());
+      return distmax - distmin;
+   }
+
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::vector<Glitch<TVEC> > DetermineOutliers(const std::vector<double> distanceList, const std::pair<double, double>& minMaxDeltaDistance)
       /*-------------------------------------------------------------------------------------*/
    {
       const unsigned long nDistances = distanceList.size();
-      const std::vector<Glitch<TVEC> > temp;
 
       double prev = distanceList[0];
       const double distmax = *std::max_element(distanceList.begin(), distanceList.end());
-      if (distmax > 0.3) {
-         const double distmin = *std::min_element(distanceList.begin(), distanceList.end());
-         const double range = distmax - distmin;
-         if (range <= 1.0E-10 || range < 0.01*minMaxDeltaDistance.second) return(temp);
+      constd double range = DistanceRange(distanceList);
+      if (range > 0.3) {
+         if (range <= 1.0E-10 || range < 0.01*minMaxDeltaDistance.second) return std::vector<Glitch<TVEC> >();
          for (unsigned long i = 1; i < nDistances; ++i) {
             const double delta = std::abs(distanceList[i] - prev);
             if (delta > 0.01*range && GlobalConstants::globalAboveThisValueIsBad < delta / (distanceList[i] + prev)) {
                const std::vector<TVEC> probes(GetProbeList());
                const GlitchElement<TVEC> Glitch1(distanceList[i], i, probes[i]);
-               const GlitchElement<TVEC> Glitch2(distanceList[i - unsigned long(1)], i - unsigned long(1), probes[i - unsigned long(1)]);
+               const GlitchElement<TVEC> Glitch2(distanceList[i - 1UL], i -1UL, probes[i -1UL]);
                m_glitches.push_back(Glitch<TVEC>(Glitch1, Glitch2));
                ++i;
             }

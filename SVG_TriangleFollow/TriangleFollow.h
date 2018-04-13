@@ -13,11 +13,13 @@
 
 #include "LRL_CreateFileName.h"
 #include "Delone.h"
+#include "Glitch.h"
 #include "NCDist.h"
 #include "S6Dist.h"
 #include "D7Dist.h"
 #include "GlobalTriangleFollowerConstants.h"
 #include "haar.hpp"
+#include "OutlierFinder.h"
 #include "ProgressData.h"
 #include "SVG_Tools.h"
 #include "SVG_FollowTriangle.h"
@@ -132,29 +134,79 @@ public:
       return svgTriangles;
    }
 
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   static std::string DrawGlitchLabel(const double x, const double y, const int ordinal) {
+      return(
+         "<text transform=\"scale(1,-1)\" font-family=\"sans-serif\" font-size=\"30\""
+         + LRL_ToString(" x=\"", x + 5, "\"")
+         + LRL_ToString(" y=\"", -y + 60, "\" >")
+         + LRL_ToString(ordinal, "</text>"));
+   }
+
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   static std::string DrawGlitchLocation(const double x, const double y) {
+      return(
+         "<line fill=\"none\" stroke=\"black\" stroke-width=\"2\""
+         + LRL_ToString(" x1=\"", x, "\"")
+         + LRL_ToString(" y1=\"", y, "\"")
+         + LRL_ToString(" x2=\"", x, "\"")
+         + LRL_ToString(" y2=\"", y - 50, "\" />"));
+   }
+
+
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   std::list<std::string> DrawGlitches(const std::vector<Glitch<TVEC> >& glitches, const double minimumDistance, const double xscale, const double yscale) const
+      /*-------------------------------------------------------------------------------------*/
+   {
+      std::list<std::string> svg;
+      if (!glitches.empty()) {
+         svg.push_back("\nDraw Glitches \n");
+
+         for (unsigned long iglitch = 0; iglitch < glitches.size(); ++iglitch)
+         {
+            const double xGlitchOrdinal = double(glitches[iglitch].GetGlitchElement1().GetPosition());
+            const double x = double(xGlitchOrdinal * xscale);
+            const double y = (glitches[iglitch].GetGlitchElement1().GetDistance() - minimumDistance) * yscale;
+            svg.push_back(DrawGlitchLocation(x, y));
+            svg.push_back(DrawGlitchLabel(x, y, int(xGlitchOrdinal)));
+         }
+
+         svg.push_back("\n End Glitch \n");
+      }
+      return(svg);
+   }
+
+
    std::string PrepareTrianglesOutput( const std::string& color, const std::string& label, const FollowVectors<TVEC>& vin1,
       const FollowVectors<TVEC>& vin2, const FollowVectors<TVEC>& vin3, 
       const ProgressData<double>& vdist12,
       const ProgressData<double>& vdist13,
-      const ProgressData<double>& vdist23 ) {
+      const ProgressData<double>& vdist23,
+      const std::set<unsigned long>& glitchIndices) {
       std::string svg;
-      svg += "  start  " + label + "\n";
-      const unsigned long nmax = maxNC(vin1.size(), vin2.size(), vin3.size());
-      for (unsigned long i = 0; i < nmax; ++i) {
-         const TVEC& v1(vin1[i]);
-         const TVEC& v2(vin2[i]);
-         const TVEC& v3(vin3[i]);
-         svg += LRL_ToString(v1, "\n");
-         svg += LRL_ToString(v2, "\n");
-         svg += LRL_ToString(v3, "\n");
-         const double& dist12 = vdist12[i];
-         const double& dist13 = vdist13[i];
-         const double& dist23 = vdist23[i];
+      if (!glitchIndices.empty()) {
+         svg += "  start  " + label + "\n";
+         const unsigned long nmax = maxNC(vin1.size(), vin2.size(), vin3.size());
+         std::set<unsigned long>::iterator it;
+         for (unsigned long i = 0; i < nmax; ++i) {
+            if (i == 0 || glitchIndices.find(i) != glitchIndices.end()) {
+               const TVEC& v1(vin1[i]);
+               const TVEC& v2(vin2[i]);
+               const TVEC& v3(vin3[i]);
+               svg += LRL_ToString(v1, "\n");
+               svg += LRL_ToString(v2, "\n");
+               svg += LRL_ToString(v3, "\n");
+               const double& dist12 = vdist12[i];
+               const double& dist13 = vdist13[i];
+               const double& dist23 = vdist23[i];
 
-         svg += LRL_ToString(color, "distances 12,13,23 ", i+1, dist12, dist13, dist23, "\n");
-         svg += LRL_ToString("====  ", label, i + 1, "\n");
+               svg += LRL_ToString(color, "distances 12,13,23 ", i + 1, dist12, dist13, dist23, "\n");
+               svg += LRL_ToString("====  ", label, i + 1, "\n");
+            }
+         }
+            
+            svg += LRL_ToString("  end    ", label, "\n\n");
       }
-      svg += LRL_ToString("  end    ", label, "\n\n");
 
       return svg;
    }
@@ -265,6 +317,29 @@ public:
       }
    }
 
+
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   std::vector<Glitch<TVEC> > DetermineOutliers(const std::vector<double> distanceList, const std::pair<double, double>& minMaxDeltaDistance)
+      /*-------------------------------------------------------------------------------------*/
+   {
+      OutlierFinder of(distanceList);
+      std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(GlobalConstants::globalPercentChangeToDetect);
+      std::vector<Glitch<TVEC> >  glitches;
+
+      for (unsigned long i = 0; i < steps.size(); ++i) {
+         const unsigned long klow = (unsigned long)(steps[i].first);
+         const unsigned long khigh = klow + 1UL;
+         const std::vector<TVEC> probes(1)/*(GetProbeList())*/;
+         //if (!probes.empty()) {
+            const GlitchElement<TVEC> Glitch1(distanceList[khigh], khigh, TVEC()/*[khigh]*/);
+            const GlitchElement<TVEC> Glitch2(distanceList[klow], klow, TVEC()/*[klow]*/);
+            glitches.push_back(Glitch<TVEC>(Glitch1, Glitch2));
+         //}
+      }
+
+      return(glitches);
+   }
+
    std::string SetProgressData(std::ostream& folOut, const std::string& color, const int npoints, const std::string& label,
       ProgressData<double>& dist23Delta,
       ProgressData<double>& tanhdist23Delta,
@@ -310,11 +385,37 @@ public:
          triangleDiff.push_back(triangleDifference);
       }
 
+      std::vector<Glitch<TVEC> > glitches1(DetermineOutliers(vdist12.GetVector(), std::pair<double,double>()));
+      std::vector<Glitch<TVEC> > glitches2(DetermineOutliers(vdist13.GetVector(), std::pair<double,double>()));
+      std::vector<Glitch<TVEC> > glitches3(DetermineOutliers(vdist23.GetVector(), std::pair<double,double>()));
+
+      std::set<unsigned long> glitchIndices;
+      for ( unsigned long i=0; i<dataPointCount; ++i ) {
+         if (i<glitches1.size()) glitchIndices.insert(glitches1[i].GetGlitchElement1().GetPosition());
+         if (i<glitches2.size()) glitchIndices.insert(glitches2[i].GetGlitchElement1().GetPosition());
+         if (i<glitches3.size()) glitchIndices.insert(glitches3[i].GetGlitchElement1().GetPosition());
+         if (i<glitches1.size()) glitchIndices.insert(glitches1[i].GetGlitchElement2().GetPosition());
+         if (i<glitches2.size()) glitchIndices.insert(glitches2[i].GetGlitchElement2().GetPosition());
+         if (i<glitches3.size()) glitchIndices.insert(glitches3[i].GetGlitchElement2().GetPosition());
+      }
+
       std::string svg;
+
+      std::list<std::string> svgGlitches = DrawGlitches(glitches1, 0.0, 1.0, 1.0);
+      std::list<std::string>::const_iterator it = svgGlitches.begin();
+      while (it != svgGlitches.end()) svg += *it++;
+      svgGlitches = DrawGlitches(glitches2, 0.0, 1.0, 1.0);
+      it = svgGlitches.begin();
+      while (it != svgGlitches.end()) svg += *it++;
+      svgGlitches = DrawGlitches(glitches3, 0.0, 1.0, 1.0);
+      it = svgGlitches.begin();
+      while (it != svgGlitches.end()) svg += *it++;
+
       svg += PrepareTrianglesOutput(color, label, 
          m_followData[0], m_followData[1], m_followData[2], 
-         vdist12, vdist13, vdist23);
-      svg += PrepareDistancesOutput(color, vdist12, vdist13, vdist23);
+         vdist12, vdist13, vdist23, glitchIndices);
+
+      svg += PrepareDistancesOutput(color, vdist12, vdist13, vdist23, glitchIndices);
 
       return svg;
    }
@@ -322,7 +423,8 @@ public:
    std::string PrepareDistancesOutput(const std::string& color, 
       const ProgressData<double>& vdist12, 
       const ProgressData<double>& vdist13, 
-      const ProgressData<double>& vdist23) {
+      const ProgressData<double>& vdist23,
+      const std::set<unsigned long>& glitchIndices) {
       std::string svg;
       svg += "  start distances " + color + "\n";
       for ( unsigned long i=0; i<vdist12.size(); ++i ){

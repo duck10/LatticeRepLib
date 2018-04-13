@@ -21,7 +21,7 @@ namespace GlobalConstants {
    extern bool   globalOutputGlitchesOnly;
           
    extern double globalFractionalAmountToPerturb;
-   extern double globalAboveThisValueIsBad; // GLITCH DETECTION LEVEL - fraction of deltas in either of the top two histogram bins
+   extern double globalPercentChangeToDetect; // GLITCH DETECTION LEVEL - fraction of deltas in either of the top two histogram bins
    extern double globalFractionToDetermineCloseToBoundary;
    extern double globalMovieMaxDistRejectionTest;
 
