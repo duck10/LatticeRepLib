@@ -246,7 +246,7 @@ S6 GeneratePairsOfTestData::Perturb(const S6& s, const double fraction) {
    }
    if (npass >= maxPass) {
       temp.SetValid(false);
-      std::cout << "in Perturb attempt abandoned, npass = " << npass << std::endl;
+      //std::cout << "in Perturb attempt abandoned, npass = " << npass << std::endl;
    }
    bool b = temp.GetValid();
    return temp;
@@ -310,6 +310,8 @@ void GeneratePairsOfTestData::GeneratePairSamplesByHighReductionCycleCount(const
    GenerateRandomLattice<S6> grl(19191);
    StoreResults<unsigned long, std::string > store(8);
    store.SetKeyLabel("cycles");
+   GeneratePairsOfTestData::GeneratePairSamplesByHighReductionCycleCount(1000000);
+   store.SetTitle("GeneratePairSamplesByHighReductionCycleCount");
 
    for (unsigned long i = 0; i < n; ++i) {
       StoreOnePointIfValid(store, grl.GenerateExtreme());

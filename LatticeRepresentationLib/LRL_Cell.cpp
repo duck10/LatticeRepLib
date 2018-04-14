@@ -116,6 +116,7 @@ std::ostream& operator<< (std::ostream& o, const LRL_Cell& c) {
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 LRL_Cell::LRL_Cell( const double a, const double b, const double c,
            const double alpha, const double beta, const double gamma)
+   : m_valid(true)
 {
    m_cell.resize( 6 );
    m_cell[0] = a;
@@ -140,6 +141,7 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
 //              "LRL_Cell" object will never contain degrees.
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 LRL_Cell::LRL_Cell(const G6& g6)
+   : m_valid(true)
 {
    m_cell.resize(6);
    const double lowerlimit = 0.0001;
