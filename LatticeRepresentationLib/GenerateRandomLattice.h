@@ -4,6 +4,7 @@
 #include <cfloat>
 #include "G6.h"
 #include "LRL_Cell.h"
+#include "LRL_Cell_Degrees.h"
 #include "LRL_MinMaxTools.h"
 #include "rhrand.h"
 #include "S6.h"
@@ -69,6 +70,7 @@ public:
       S6 s6out;
       T t;
       S6 s1;
+      unsigned long count = 0;
       while (again) {
          s1 = S6::randDeloneReduced();
          S6 s2 = S6::randDeloneReduced();
@@ -76,11 +78,13 @@ public:
          s2.SetValid(false);
 
          t = BinarySearchExtreme(s1, s2, 12);
-         //if (!LRL_Cell_Degrees(t).GetValid())
-         //std::cout << "in GenerateExtreme  " << t.GetValid() << "  " << t.IsValid() << "   "
-         //   << LRL_Cell_Degrees(t).GetValid() << "  " << t << "     "
-         //   << LRL_Cell_Degrees(t) << std::endl;
+         //if (!LRL_Cell_Degrees(t).GetValid()) {
+         //   std::cout << "in GenerateExtreme  " << t.GetValid() << "  " << t.IsValid() << "   "
+         //      << LRL_Cell_Degrees(t).GetValid() << "  " << t << "     "
+         //      << LRL_Cell_Degrees(t) << std::endl;
+         //}
          again = !(S6::CountPositive(S6(t)) > 0 && G6(t).GetValid() && t.GetValid());
+         ++count;
       }
       return t;
    }
@@ -92,9 +96,15 @@ public:
    T randSellingReduced() {
       S6 out;
       bool valid = false;
+      unsigned long count = 0;
       while ( !valid) {
-         Selling::Reduce(S6(RandCell()), out);
+         const bool b = Selling::Reduce(S6(RandCell()), out);
+         //if ( count > 1000) std::cout << LRL_Cell(out) << std::endl;
          valid = LRL_Cell(out).GetValid();
+         ++count;
+         //if ( count > 2) {
+         //   std::cout << count << std::endl;
+         //}
       }
       return T(out);
    }
@@ -173,7 +183,6 @@ private:
       Prepare2CellElements(minEdgeB, maxEdgeB, 1, c);
       Prepare2CellElements(minEdgeC, maxEdgeC, 2, c);
       PrepareAngles(c[3], c[4], c[5]);
-      LRL_Cell cell = LRL_Cell(c);
       c.SetValid(true); // PrepareAngles has checked the angles
       return c;
    }
