@@ -120,6 +120,7 @@ public:
 
    bool IsAllMinus() const;
    static std::string GetName(void) { return "C3, Selling as complex"; }
+   static void ComplexInvertSwap(std::complex<double>& a1, std::complex<double>& a2);
 
 public:
    static std::vector< C3(*)(const C3&)> m_reductionFunctions;

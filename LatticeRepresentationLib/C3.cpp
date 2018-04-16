@@ -572,3 +572,9 @@ std::vector<C3(*)(const C3&)> C3::SetReduceFunctions()
    }
    return m_reductionFunctions;
 }
+
+void C3::ComplexInvertSwap(std::complex<double>& a1, std::complex<double>& a2) {
+   std::complex<double> temp = std::complex<double>(a1.imag(), a1.real());
+   a1 = std::complex<double>(a2.imag(), a2.real());
+   a2 = temp;
+}
