@@ -52,7 +52,7 @@ std::string LRL_ToString( const T1& t1, const T2& t2 ) {
 }
 
 template<typename T1, typename T2, typename T3>
-std::string LRL_ToString( const T1& t1, const T2& t2, const T2& t3 ) {
+std::string LRL_ToString( const T1& t1, const T2& t2, const T3& t3 ) {
    return LRL_ToString( t1 ) + " " + LRL_ToString( t2 ) + " " + LRL_ToString( t3 );
 }
 
@@ -132,11 +132,6 @@ std::string LRL_ToString( const std::string& s, const T& t ) {
 template<typename T>
 std::string LRL_ToString( const T& t, const std::string& s ) {
    return ( LRL_ToString( t ) + s );
-}
-
-template<typename T>
-std::string LRL_ToString( const std::string& s1, const T& t, const std::string& s2 ) {
-   return ( s1 + LRL_ToString( t ) + s2 );
 }
 
 template<typename T>

@@ -68,9 +68,9 @@ bool Selling::Reduce(const S6& in, S6& out) {
 
       ListSteps(out);
 
+      ++m_ReductionCycleCount;
       if (S6::CountPositive(out) == 0) return true;
 
-      ++m_ReductionCycleCount;
       if (m_ReductionCycleCount > 1000 || S6::NegativeSumOfScalars(out) < 0.0 ) return false;
    }
 }
