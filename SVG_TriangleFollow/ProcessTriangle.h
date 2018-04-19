@@ -228,7 +228,7 @@ public:
       const double worstd13 =  worstR.GetSecond();
       const double worstd23 =  worstR.GetThird();
       const double worstTriangleViolation = 100.0*FollowerTools::TriangleInequality( worstd12, worstd13, worstd23 );
-      if (worstTriangleViolation >= minimumViolationToReport) {
+      /*if (worstTriangleViolation >= minimumViolationToReport)*/ {  //  lca -- this should be changed to be on glitch or both
          std::cout << std::endl << std::endl << -GLOBAL_RunInputVector::globalInputRandomSeed << "   test# " << count << "    violation " << percentViolation << "%" << std::endl;
          std::cout << "Output File " << tf.GetOutputFilename( ) << std::endl;
          std::cout << "(1,3) " << d1 << "   (2,3) " << d2 << "   (1,3) " << d3 << std::endl;
