@@ -136,7 +136,7 @@ std::string LRL_ToString( const T& t, const std::string& s ) {
 
 template<typename T>
 std::string ToQuotedString( const T& t ) {
-   return ( LRL_ToString( "\"", t, "\"" ) );
+   return ("\"" + LRL_ToString(t) +"\"" );
 }
 
 #endif  // LRL_TOSTRING_H

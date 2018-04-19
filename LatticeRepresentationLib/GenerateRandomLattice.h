@@ -48,7 +48,6 @@ public:
       // random generation of valid cells !!!!!!!!!!!!!!!!
       // but they are somewhat random and can be adjusted.
       if (choice < 0.055) {
-         double test = std::abs(39.4918 - s6[0]);
          return T(s6);
       }
       else if (choice < 0.68) {
@@ -56,11 +55,9 @@ public:
          return T(RandomUnreduceOne(s6));
       }
       else if (choice < 0.995) {
-         double test = std::abs(39.4918 - s6[0]);
          return T(RandomUnreduceTwo(s6));
       }
       else {
-         double test = std::abs(39.4918 - s6[0]);
          return T(RandomUnreduceThree(s6));
       }
    }
