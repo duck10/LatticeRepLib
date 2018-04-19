@@ -123,7 +123,7 @@ public:
                const int border = (boxWidth * 30) / 1800;;
 
 
-               if (m_worstViolationFound >= minimumPercentViolationToReport) {
+               /*if (m_worstViolationFound >= minimumPercentViolationToReport)*/ {  //  lca -- this should be changed to be on glitch or both
                   SVG_FollowTriangle<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD> svg_FT(boxWidth, boxHeight, border, svgTriangles, *this);
                   this->m_OutputFilename = svg_FT.GetOutputFilename();
                }
