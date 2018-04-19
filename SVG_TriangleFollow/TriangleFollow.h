@@ -134,49 +134,6 @@ public:
       return svgTriangles;
    }
 
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   static std::string DrawGlitchLabel(const double x, const double y, const int ordinal) {
-      return(
-         "<text transform=\"scale(1,-1)\" font-family=\"sans-serif\" font-size=\"30\""
-         + LRL_ToString(" x=\"", x + 5, "\"")
-         + LRL_ToString(" y=\"", -y + 60, "\" >")
-         + LRL_ToString(ordinal, "</text>"));
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   static std::string DrawGlitchLocation(const double x, const double y) {
-      return(
-         "<line fill=\"none\" stroke=\"black\" stroke-width=\"2\""
-         + LRL_ToString(" x1=\"", x, "\"")
-         + LRL_ToString(" y1=\"", y, "\"")
-         + LRL_ToString(" x2=\"", x, "\"")
-         + LRL_ToString(" y2=\"", y - 50, "\" />"));
-   }
-
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::list<std::string> DrawGlitches(const std::vector<Glitch<TVEC> >& glitches, const double minimumDistance, const double xscale, const double yscale) const
-      /*-------------------------------------------------------------------------------------*/
-   {
-      std::list<std::string> svg;
-      if (!glitches.empty()) {
-         svg.push_back("\nDraw Glitches \n");
-
-         for (unsigned long iglitch = 0; iglitch < glitches.size(); ++iglitch)
-         {
-            const double xGlitchOrdinal = double(glitches[iglitch].GetGlitchElement1().GetPosition());
-            const double x = double(xGlitchOrdinal * xscale);
-            const double y = (glitches[iglitch].GetGlitchElement1().GetDistance() - minimumDistance) * yscale;
-            svg.push_back(DrawGlitchLocation(x, y));
-            svg.push_back(DrawGlitchLabel(x, y, int(xGlitchOrdinal)));
-         }
-
-         svg.push_back("\n End Glitch \n");
-      }
-      return(svg);
-   }
-
-
    std::string PrepareTrianglesOutput( const std::string& color, const std::string& label, const FollowVectors<TVEC>& vin1,
       const FollowVectors<TVEC>& vin2, const FollowVectors<TVEC>& vin3, 
       const ProgressData<double>& vdist12,
@@ -299,7 +256,7 @@ public:
             double dist12(DIST(m_followData[0][i], m_followData[1][i]));
             double dist13(DIST(m_followData[0][i], m_followData[2][i]));
             double dist23(DIST(m_followData[1][i], m_followData[2][i]));
-            double sqrtArea(SqrtTriangleAreaFromSides(dist12, dist13, dist23));
+
             const double scaleFactor = sqrtInputArea / (dist12 + dist13 + dist23);
             dist12 *= scaleFactor;
             dist13 *= scaleFactor; //  !!!!!!!!!!!!!!!!!!!!!!! but followData has not been SCALED !!!!!!!!!!!!!!!!
@@ -399,19 +356,7 @@ public:
          if (i<glitches3.size()) glitchIndices.insert(glitches3[i].GetGlitchElement2().GetPosition());
       }
 
-      std::string svg;
-
-      std::list<std::string> svgGlitches = DrawGlitches(glitches1, 0.0, 1.0, 1.0);
-      std::list<std::string>::const_iterator it = svgGlitches.begin();
-      while (it != svgGlitches.end()) svg += *it++;
-      svgGlitches = DrawGlitches(glitches2, 0.0, 1.0, 1.0);
-      it = svgGlitches.begin();
-      while (it != svgGlitches.end()) svg += *it++;
-      svgGlitches = DrawGlitches(glitches3, 0.0, 1.0, 1.0);
-      it = svgGlitches.begin();
-      while (it != svgGlitches.end()) svg += *it++;
-
-      svg += PrepareTrianglesOutput(color, label, 
+      std::string svg = PrepareTrianglesOutput(color, label, 
          m_followData[0], m_followData[1], m_followData[2], 
          vdist12, vdist13, vdist23, glitchIndices);
 
