@@ -15,6 +15,7 @@
 #include "Follow.h"
 #include "FollowerConstants.h"
 #include "Glitch.h"
+#include "LRL_DataToSVG.h"
 #include "LRL_ToString.h"
 #include "SVG_Writer.h"
 
@@ -77,8 +78,8 @@ private:
 
       std::list<double>::const_iterator it = distances.begin( );
       for (int i = 1; i <= xmax; ++i, ++it)
-         s += LRL_ToString( double( i )*xscale, "," ) +
-         LRL_ToString( ((*it)-minimumDistance) *yscale, " " );
+         s += LRL_DataToSVG( double( i )*xscale, "," ) +
+         LRL_DataToSVG( ((*it)-minimumDistance) *yscale, " " );
 
       s += "\" />";
       std::list<std::string> svg( 1, s );
@@ -157,8 +158,8 @@ private:
       return(
          std::string( "\n<!--Draw the X and Y axes -->\n" )
          + std::string( "<polyline fill=\"none\" stroke=\"black\"" )
-         + LRL_ToString( " stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\" " )
-         + LRL_ToString( " points=\" 600,0 0,0 0,", (alY.m_upperLimit - minimumDistance)*yscale, "\" />" )
+         + LRL_DataToSVG( " stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\" " )
+         + LRL_DataToSVG( " points=\" 600,0 0,0 0,", (alY.m_upperLimit - minimumDistance)*yscale, "\" />" )
          + "\n<!-- -->\n");
    }
 
@@ -188,10 +189,10 @@ private:
    static std::string DrawGlitchLocation( const double x, const double y ) {
       return(
          "<line fill=\"none\" stroke=\"black\" stroke-width=\"2\""
-         + LRL_ToString( " x1=\"", x, "\"" )
-         + LRL_ToString( " y1=\"", y, "\"" )
-         + LRL_ToString( " x2=\"", x, "\"" )
-         + LRL_ToString( " y2=\"", y - 50, "\" />" ));
+         + LRL_DataToSVG( " x1=\"", x, "\"" )
+         + LRL_DataToSVG( " y1=\"", y, "\"" )
+         + LRL_DataToSVG( " x2=\"", x, "\"" )
+         + LRL_DataToSVG( " y2=\"", y - 50, "\" />" ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -256,14 +257,14 @@ private:
       typename std::list<double>::const_iterator iDist2 = Delonedistances.begin();
       typename std::vector<TVEC>::const_iterator iProbe = secondProbeList.begin( );
       int count = 0;
-      std::string strDist2 = iDist2 == Delonedistances.end() ? "": LRL_ToString(",  ", *iDist2 );
+      std::string strDist2 = iDist2 == Delonedistances.end() ? "": LRL_DataToSVG(",  ", *iDist2 );
 
       for (; iProbe != secondProbeList.end( ); ++iProbe, ++iDist1, ++count)
       {
-         m_svg.push_back( LRL_ToString( *iProbe  )
-            + "   (" + LRL_ToString(*iDist1)
+         m_svg.push_back(LRL_DataToSVG( *iProbe  )
+            + "   (" + LRL_DataToSVG(*iDist1)
             + strDist2 + ")"
-            + LRL_ToString( "   ", m_follow.GetBoundaryString( count ) ) );
+            + LRL_DataToSVG( "   ", m_follow.GetBoundaryString( count ) ) );
       }
 
       m_svg.push_back( "-->\n</g>\n</g>" );
@@ -327,14 +328,24 @@ private:
    std::string DrawSingleLineSegment( const std::string& bound, const double x1, const double y1, const double x2, const double y2 )
       /*-------------------------------------------------------------------------------------*/
    {
+      const std::string svg =
+         LRL_DataToSVG("<line fill=\"none\" stroke-width=\"", SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, "\"")
+         + LRL_DataToSVG(" boundary-string=\"", bound, "\" ")
+         + LRL_DataToSVG(" stroke=\"", m_colorMap(bound), "\"")
+         + LRL_DataToSVG(" x1=\"", x1, "\"")
+         + LRL_DataToSVG(" y1=\"", y1, "\"")
+         + LRL_DataToSVG(" x2=\"", x2, "\"")
+         + LRL_DataToSVG(" y2=\"", y2, "\" />");
+
+
       return(
-         LRL_ToString( "<line fill=\"none\" stroke-width=\"", SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, "\"" )
-         + LRL_ToString( " boundary-string=\"", bound, "\" " )
-         + LRL_ToString( " stroke=\"", m_colorMap( bound ), "\"" )
-         + LRL_ToString( " x1=\"", x1, "\"" )
-         + LRL_ToString( " y1=\"", y1, "\"" )
-         + LRL_ToString( " x2=\"", x2, "\"" )
-         + LRL_ToString( " y2=\"", y2, "\" />" ));
+         LRL_DataToSVG("<line fill=\"none\" stroke-width=\"", SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, "\"")
+         + LRL_DataToSVG(" boundary-string=\"", bound, "\" ")
+         + LRL_DataToSVG(" stroke=\"", m_colorMap(bound), "\"")
+         + LRL_DataToSVG(" x1=\"", x1, "\"")
+         + LRL_DataToSVG(" y1=\"", y1, "\"")
+         + LRL_DataToSVG(" x2=\"", x2, "\"")
+         + LRL_DataToSVG(" y2=\"", y2, "\" />"));
    }
 
    std::list<std::string> m_svg;
@@ -350,50 +361,50 @@ private: // don't implement
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    static std::string DrawOneY_AxisTicMark( const double y ) {
       return(
-         LRL_ToString( "<line fill=\"none\" stroke=\"black\"" )
-         + LRL_ToString( " stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\"" )
-         + LRL_ToString( " x1=\"0.0\"" )
-         + LRL_ToString( " y1=\"", y, "\"" )
-         + LRL_ToString( " x2=\"", -SVG_DistancePlotConstants::globalY_AxisTicMarkLength, "\"" )
-         + LRL_ToString( " y2=\"", y, "\" />" ));
+         LRL_DataToSVG( "<line fill=\"none\" stroke=\"black\"" )
+         + LRL_DataToSVG( " stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\"" )
+         + LRL_DataToSVG( " x1=\"0.0\"" )
+         + LRL_DataToSVG( " y1=\"", y, "\"" )
+         + LRL_DataToSVG( " x2=\"", -SVG_DistancePlotConstants::globalY_AxisTicMarkLength, "\"" )
+         + LRL_DataToSVG( " y2=\"", y, "\" />" ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    static std::string DrawOneY_AxisLabel( const double y, const double yscale, const double minimumDistance ) {
       return(
          "<text transform=\"scale(1,-1)\" text-anchor=\"end\" font-family=\"sans-serif\" font-size=\"30\""
-         + LRL_ToString( " x=\"", -SVG_DistancePlotConstants::globalY_AxisTicMarkLength - 5, "\"" )
-         + LRL_ToString( " y=\"", -y + 10, "\" >" )
-         + LRL_ToString( y / yscale + minimumDistance, "</text>" ));
+         + LRL_DataToSVG( " x=\"", -SVG_DistancePlotConstants::globalY_AxisTicMarkLength - 5, "\"" )
+         + LRL_DataToSVG( " y=\"", -y + 10, "\" >" )
+         + LRL_DataToSVG( y / yscale + minimumDistance, "</text>" ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::string DrawOneX_AxisTicMark( const double xTic, const double y ) {
       return(
          "<line fill=\"none\" stroke=\"black\" "
-         + LRL_ToString( " stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\" " )
-         + LRL_ToString( " x1=\"", xTic, "\"" )
-         + LRL_ToString( " y1=\"", 0.0, "\"" )
-         + LRL_ToString( " x2=\"", xTic, "\"" )
-         + LRL_ToString( " y2=\"", y, "\" />" ));
+         + LRL_DataToSVG( " stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\" " )
+         + LRL_DataToSVG( " x1=\"", xTic, "\"" )
+         + LRL_DataToSVG( " y1=\"", 0.0, "\"" )
+         + LRL_DataToSVG( " x2=\"", xTic, "\"" )
+         + LRL_DataToSVG( " y2=\"", y, "\" />" ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::string DrawOneX_AxisLabel( const double xTic, const double y, const double xPos, const double xMinAxis ) {
       return(
          "<text transform=\"scale(1,-1)\" font-family=\"sans-serif\" font-size=\"30\""
-         + LRL_ToString( " x=\"", xTic - 25, "\"" )
-         + LRL_ToString( " y=\"", -y + 25, "\" >" )
-         + LRL_ToString( xPos, "</text>" ));
+         + LRL_DataToSVG( " x=\"", xTic - 25, "\"" )
+         + LRL_DataToSVG( " y=\"", -y + 25, "\" >" )
+         + LRL_DataToSVG( xPos, "</text>" ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    static std::string DrawGlitchLabel( const double x, const double y, const int ordinal ) {
       return(
          "<text transform=\"scale(1,-1)\" font-family=\"sans-serif\" font-size=\"30\""
-         + LRL_ToString( " x=\"", x + 5, "\"" )
-         + LRL_ToString( " y=\"", -y + 60, "\" >" )
-         + LRL_ToString( ordinal, "</text>" ));
+         + LRL_DataToSVG( " x=\"", x + 5, "\"" )
+         + LRL_DataToSVG( " y=\"", -y + 60, "\" >" )
+         + LRL_DataToSVG( ordinal, "</text>" ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

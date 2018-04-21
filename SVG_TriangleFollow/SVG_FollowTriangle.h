@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 
+#include "DetermineOutliers.h"
 #include "GlobalTriangleFollowerConstants.h"
 #include "LinearAxis.h"
 #include "ProgressData.h"
@@ -370,28 +371,6 @@ public:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::vector<Glitch<TVEC> > DetermineOutliers(const std::vector<double> distanceList, const std::pair<double, double>& minMaxDeltaDistance)
-      /*-------------------------------------------------------------------------------------*/
-   {
-      OutlierFinder of(distanceList);
-      std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(GlobalConstants::globalPercentChangeToDetect);
-      std::vector<Glitch<TVEC> >  glitches;
-
-      for (unsigned long i = 0; i < steps.size(); ++i) {
-         const unsigned long klow = (unsigned long)(steps[i].first);
-         const unsigned long khigh = klow + 1UL;
-         const std::vector<TVEC> probes(1)/*(GetProbeList())*/;
-         //if (!probes.empty()) {
-         const GlitchElement<TVEC> Glitch1(distanceList[khigh], khigh, TVEC()/*[khigh]*/);
-         const GlitchElement<TVEC> Glitch2(distanceList[klow], klow, TVEC()/*[klow]*/);
-         glitches.push_back(Glitch<TVEC>(Glitch1, Glitch2));
-         //}
-      }
-
-      return(glitches);
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    static std::string DrawGlitchLabel(const double x, const double y, const int ordinal) {
       return
          std::string("<text transform=\"scale(1,-1)\" font-family=\"sans-serif\" font-size=\"30\"")
@@ -405,38 +384,15 @@ public:
       return
          std::string("<line fill=\"none\" stroke=\"black\" stroke-width=\"2\"")
          + " x1=\"" + LRL_ToString( x) + "\""
-         + " y1=\"" + LRL_ToString( y) + "\""
+         + " y1=\"" + LRL_ToString( y-5) + "\""
          + " x2=\"" + LRL_ToString( x) + "\""
-         + " y2=\"" + LRL_ToString( y-50) + "\" />";
-   }
-
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::list<std::string> DrawGlitches(const std::vector<Glitch<TVEC> >& glitches, const double xstart, const double ystart, const double xscale, const double yscale, const double minValue) const
-      /*-------------------------------------------------------------------------------------*/
-   {
-      std::list<std::string> svg;
-      if (!glitches.empty()) {
-         svg.push_back("<!--Draw Glitches -->");
-
-         for (unsigned long iglitch = 0; iglitch < glitches.size(); ++iglitch)
-         {
-            const double xGlitchOrdinal = double(glitches[iglitch].GetGlitchElement1().GetPosition());
-            const double x = double(xGlitchOrdinal * xscale) + xstart;
-            const double y = (glitches[iglitch].GetGlitchElement1().GetDistance()) * yscale + ystart -minValue;
-            svg.push_back(DrawGlitchLocation(x, y));
-            svg.push_back(DrawGlitchLabel(x, y, int(xGlitchOrdinal+1)));
-         }
-
-         svg.push_back("<!-- End Glitch -->");
-      }
-      return(svg);
+         + " y2=\"" + LRL_ToString( y-45) + "\" />";
    }
 
    std::string DrawGlitch( const std::set<unsigned long>& setOfGlitches, const unsigned long ordinal, const double x, const double y ) {
       std::string svg;
       if ( setOfGlitches.find(ordinal) != setOfGlitches.end() )
-         svg = DrawGlitchLocation(x, y) + DrawGlitchLabel(x, y, ordinal + 1);
+         svg = DrawGlitchLocation(x, y) + DrawGlitchLabel(x, y, ordinal + 1) + "\n";
       return svg;
    }
 
@@ -480,7 +436,7 @@ public:
 
       };  // end LOCAL class CalculateOneGraphScaling
 
-      const std::set<unsigned long> setOfGlitches(GetGlitchSet(DetermineOutliers(d.GetVector(), std::pair<double, double>())));
+      const std::set<unsigned long> setOfGlitches(GetGlitchSet(DetermineOutliers<TVEC>(d.GetVector(), std::pair<double, double>())));
 
       std::string allDatapointsAsString = LRL_ToString("   <polyline fill=\"none\" stroke=", ToQuotedString(color), " stroke-width=\"", SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, "\" points=\" ");
 
@@ -516,6 +472,9 @@ public:
 
          previousPointIsError = dataPointIsError;
       }
+
+      if (!setOfGlitches.empty()) svgGlitches = "<!--Draw Glitches -->\n" + svgGlitches + "<!-- End Glitches -->\n";
+
       
       if (!errorString.empty()) { // finished wihout outputting the last error string
          errorSegments.push_back(errorString);

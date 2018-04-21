@@ -24,6 +24,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DetermineOutliers.h" />
     <ClInclude Include="FileOperations.h" />
     <ClInclude Include="Follower.h" />
     <ClInclude Include="FollowerTools.h" />

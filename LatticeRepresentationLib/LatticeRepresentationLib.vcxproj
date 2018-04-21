@@ -198,6 +198,8 @@
     <ClInclude Include="LRL_Cell_Degrees.h" />
     <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
+    <ClInclude Include="LRL_DataStreamToString.h" />
+    <ClInclude Include="LRL_DataToSVG.h" />
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="PairReporter.h" />
     <ClInclude Include="S6.h" />
