@@ -11,6 +11,7 @@
 #include "GenerateRandomLattice.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
+#include "LRL_DataToSVG.h"
 #include "LRL_MinMaxTools.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
@@ -491,7 +492,6 @@ void TestFollowStarter()
    for (unsigned long i = 0; i < 100000; ++i) {
       const S6 s6 = GenerateRandomLattice<S6>::GenerateExtreme();
       LRL_Cell cell = LRL_Cell(s6);
-      double d = cell[0];
       //if (d < 1.e-6) std::cout << s6 << std::endl;
 
       store.Store(S6::CountPositive(s6), LRL_Cell_Degrees(cell));
@@ -541,6 +541,8 @@ void ListS6ReductionSteps() {
 
 int main(int argc, char *argv[])
 {
+   std::string svg = LRL_DataToSVG(1.0,2.0,3UL);
+   exit(0);
    //ListS6ReductionSteps();
    TestDataForHJB();
    TestFollowStarter();

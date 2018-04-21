@@ -11,13 +11,14 @@
 #include <iostream>
 #include <sstream>
 
-#include "LRL_CreateFileName.h"
 #include "Delone.h"
+#include "D7Dist.h"
+#include "DetermineOutliers.h"
 #include "Glitch.h"
+#include "GlobalTriangleFollowerConstants.h"
+#include "LRL_CreateFileName.h"
 #include "NCDist.h"
 #include "S6Dist.h"
-#include "D7Dist.h"
-#include "GlobalTriangleFollowerConstants.h"
 #include "haar.hpp"
 #include "OutlierFinder.h"
 #include "ProgressData.h"
@@ -274,29 +275,6 @@ public:
       }
    }
 
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::vector<Glitch<TVEC> > DetermineOutliers(const std::vector<double> distanceList, const std::pair<double, double>& minMaxDeltaDistance)
-      /*-------------------------------------------------------------------------------------*/
-   {
-      OutlierFinder of(distanceList);
-      std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(GlobalConstants::globalPercentChangeToDetect);
-      std::vector<Glitch<TVEC> >  glitches;
-
-      for (unsigned long i = 0; i < steps.size(); ++i) {
-         const unsigned long klow = (unsigned long)(steps[i].first);
-         const unsigned long khigh = klow + 1UL;
-         const std::vector<TVEC> probes(1)/*(GetProbeList())*/;
-         //if (!probes.empty()) {
-            const GlitchElement<TVEC> Glitch1(distanceList[khigh], khigh, TVEC()/*[khigh]*/);
-            const GlitchElement<TVEC> Glitch2(distanceList[klow], klow, TVEC()/*[klow]*/);
-            glitches.push_back(Glitch<TVEC>(Glitch1, Glitch2));
-         //}
-      }
-
-      return(glitches);
-   }
-
    std::string SetProgressData(std::ostream& folOut, const std::string& color, const int npoints, const std::string& label,
       ProgressData<double>& dist23Delta,
       ProgressData<double>& tanhdist23Delta,
@@ -342,9 +320,9 @@ public:
          triangleDiff.push_back(triangleDifference);
       }
 
-      std::vector<Glitch<TVEC> > glitches1(DetermineOutliers(vdist12.GetVector(), std::pair<double,double>()));
-      std::vector<Glitch<TVEC> > glitches2(DetermineOutliers(vdist13.GetVector(), std::pair<double,double>()));
-      std::vector<Glitch<TVEC> > glitches3(DetermineOutliers(vdist23.GetVector(), std::pair<double,double>()));
+      std::vector<Glitch<TVEC> > glitches1(DetermineOutliers<TVEC>(vdist12.GetVector(), std::pair<double,double>()));
+      std::vector<Glitch<TVEC> > glitches2(DetermineOutliers<TVEC>(vdist13.GetVector(), std::pair<double,double>()));
+      std::vector<Glitch<TVEC> > glitches3(DetermineOutliers<TVEC>(vdist23.GetVector(), std::pair<double,double>()));
 
       std::set<unsigned long> glitchIndices;
       for ( unsigned long i=0; i<dataPointCount; ++i ) {

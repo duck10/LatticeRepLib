@@ -24,6 +24,7 @@ fixrandomseed true
 randomseed 19
 trials 1
 stepsperframe 100
+glitchlevel .1
 end
 end
 
@@ -58,5 +59,14 @@ trials 1
 stepsperframe 100
 end
 v 100 100 100 100 100 100
+end
+
+FilePrefix test_
+TRIALS  10
+FILEPREFIX  TEST_
+fixrandomseed true
+RANDOMSEED int 18
+stepsperframe 100
+end
 end
 

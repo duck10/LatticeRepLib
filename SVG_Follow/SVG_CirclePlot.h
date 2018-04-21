@@ -12,7 +12,7 @@
 #include "Follow.h"
 #include "FollowerConstants.h"
 #include "MapBoundaryStrings2Colors.h"
-#include "LRL_ToString.h"
+#include "LRL_DataToSVG.h"
 #include "triple.h"
 
 template<typename TVEC, typename TMAT, typename TREDUCE> class Follow;
@@ -98,11 +98,11 @@ private:
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::string FormatOneLineBetweenCircles( const double x, const double y, const double angle ) {
       return(
-         LRL_ToString( "<line x1=\"", m_xprev *m_scale + m_use.first )
-         + LRL_ToString( "\" y1=\"", m_yprev *m_scale + m_use.second )
-         + LRL_ToString( "\" x2=\"", x     *m_scale )
-         + LRL_ToString( "\" y2=\"", y     *m_scale )
-         + LRL_ToString( "\" angle=\"", angle * 180.0 / 4.0 / std::atan( 1.0 ) )
+         LRL_DataToSVG( "<line x1=\"", m_xprev *m_scale + m_use.first )
+         + LRL_DataToSVG( "\" y1=\"", m_yprev *m_scale + m_use.second )
+         + LRL_DataToSVG( "\" x2=\"", x     *m_scale )
+         + LRL_DataToSVG( "\" y2=\"", y     *m_scale )
+         + LRL_DataToSVG( "\" angle=\"", angle * 180.0 / 4.0 / std::atan( 1.0 ) )
          + "\" stroke-width=\"15\"  fill=\"black\" stroke=\"black\" marker-end=\"url(#arrowhead)\"/>");
    }
 
@@ -155,10 +155,10 @@ private:
       /*-------------------------------------------------------------------------------------*/
    {
       m_svg.push_back(
-         LRL_ToString( "<text x=\"") + LRL_ToString( x + dx )
-         + LRL_ToString( "\" y=\"") + LRL_ToString( y - dy )
-         + LRL_ToString( "\" font-family=\"sans-serif\" font-size=\"", 2.0*SVG_CirclePlotConstants::globalCircleRadius )
-         + LRL_ToString( "px\" fill=\"black\">   ", index, "   </text>\n" ) );
+         LRL_DataToSVG( "<text x=\"") + LRL_DataToSVG( x + dx )
+         + LRL_DataToSVG( "\" y=\"") + LRL_DataToSVG( y - dy )
+         + LRL_DataToSVG( "\" font-family=\"sans-serif\" font-size=\"", 2.0*SVG_CirclePlotConstants::globalCircleRadius )
+         + LRL_DataToSVG( "px\" fill=\"black\">   ", index, "   </text>\n" ) );
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -173,11 +173,11 @@ private:
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::string Circle_SVG_ID( const std::pair<std::pair<double, double>, std::pair<double, double> >& xy_MinMax ) {
       return(
-         LRL_ToString( "<g id=\"CirclePlot\" transform=\" scale(.05) translate(",
+         LRL_DataToSVG( "<g id=\"CirclePlot\" transform=\" scale(.05) translate(",
          -xy_MinMax.first.first*m_scale, ", " )
-         + LRL_ToString( -xy_MinMax.second.first*m_scale )
-         + LRL_ToString( ") translate(", 400, ", " )
-         + LRL_ToString( 6000, ")\" >" ));
+         + LRL_DataToSVG( -xy_MinMax.second.first*m_scale )
+         + LRL_DataToSVG( ") translate(", 400, ", " )
+         + LRL_DataToSVG( 6000, ")\" >" ));
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -209,8 +209,8 @@ private:
       //   sample     <circle id="cir" r="150" fill="white" stroke="black" stroke-width="30"  />
       m_svg.push_back( "<defs>" );
       m_svg.push_back(
-         LRL_ToString( "        <circle id=\"cir\" r=\"", SVG_CirclePlotConstants::globalCircleRadius ) +
-         LRL_ToString( "\" stroke-width=\"", SVG_CirclePlotConstants::globalCircleStrokeWidth, "\"  />" ) );
+         LRL_DataToSVG( "        <circle id=\"cir\" r=\"", SVG_CirclePlotConstants::globalCircleRadius ) +
+         LRL_DataToSVG( "\" stroke-width=\"", SVG_CirclePlotConstants::globalCircleStrokeWidth, "\"  />" ) );
       m_svg.push_back( "</defs>\n" );
    };
 
@@ -231,11 +231,11 @@ private:
    {
       // sample <circle r="211.8" cx="2254.14" cy="3673.6" stroke-width="10"  fill="white" stroke="rgb( 14.1%, 14.1%, 14.1% )"/>
       m_svg.push_back(
-         LRL_ToString( "<use x=\"", p[m_which2plot.first] * m_scale )
-         + LRL_ToString( "\" y=\"", p[m_which2plot.second] * m_scale )
+         LRL_DataToSVG( "<use x=\"", p[m_which2plot.first] * m_scale )
+         + LRL_DataToSVG( "\" y=\"", p[m_which2plot.second] * m_scale )
          + "\" xlink:href=\"#cir\""
-         + LRL_ToString( " fill=\"", boundColor, "\"" )
-         + LRL_ToString( " stroke=\"", ((boundColor == "black") ? "white" : "black"), "\"  />" ) );
+         + LRL_DataToSVG( " fill=\"", boundColor, "\"" )
+         + LRL_DataToSVG( " stroke=\"", ((boundColor == "black") ? "white" : "black"), "\"  />" ) );
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

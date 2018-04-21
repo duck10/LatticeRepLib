@@ -256,6 +256,12 @@
     <ClInclude Include="SuperFastHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LRL_DataStreamToString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_DataToSVG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
