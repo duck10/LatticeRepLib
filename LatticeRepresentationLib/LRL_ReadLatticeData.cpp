@@ -42,9 +42,16 @@ std::vector<std::string> vC3_names(C3_names, C3_names + sizeof(C3_names) / sizeo
 std::string lattice_names[] = { "A ", "B ", "C ", "P ", "R ", "F ", "I " };
 std::vector<std::string> vlattice_names(lattice_names, lattice_names + sizeof(lattice_names) / sizeof(lattice_names[0]));
 
+bool LRL_ReadLatticeData::IsLatticeName( const std::string inputName,  std::vector<std::string>& nameList) {
+   return std::find(nameList.begin(), nameList.end(), inputName) != nameList.end();
+}
+
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
    bool valid = false;
-   if ((LRL_StringTools::strToupper(s.substr(0, 3)) != std::string("END"))) {
+   if ((LRL_StringTools::strToupper(s.substr(0, 3)) == std::string("END"))) {
+      m_lattice = "EOF";
+   }
+   else {
       std::istringstream iss(s);
       iss >> m_inputDataType;
       m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
@@ -57,14 +64,14 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          m_strCell = LRL_ToString(LRL_Cell(m_cell));
          valid = true;
       }
-      else if ( std::find(vG6_names.begin(),vG6_names.end(), m_inputDataType) != vG6_names.end()) {
+      else if ( IsLatticeName(m_inputDataType, vG6_names) ) {
          G6 v6;
          for (unsigned long i = 0; i < 6; ++i)
             iss >> v6[i];
          m_cell = v6;
          valid = m_cell.GetValid();
       }
-      else if (std::find(vD7_names.begin(), vD7_names.end(), m_inputDataType) != vD7_names.end()) {
+      else if (IsLatticeName(m_inputDataType, vD7_names)) {
          D7 v7;
          double d;
          for (unsigned long i = 0; i < 7; ++i) {
@@ -76,14 +83,14 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          m_cell = v6;
          valid = true;
       }
-      else if (std::find(vS6_names.begin(), vS6_names.end(), m_inputDataType) != vS6_names.end()) {
+      else if (IsLatticeName(m_inputDataType, vS6_names)) {
          S6 e;
          for (unsigned long i = 0; i < 6; ++i)
             iss >> e[i];
          valid = true;
          m_cell = e;
       }
-      else if (std::find(vC3_names.begin(), vC3_names.end(), m_inputDataType) != vC3_names.end()) {
+      else if (IsLatticeName(m_inputDataType, vC3_names)) {
          C3 e;
          std::vector<double> vd(20);
          double d;
@@ -100,7 +107,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          m_cell = e;
          valid = true;
       }
-      else if (std::find(vlattice_names.begin(), vlattice_names.end(), m_inputDataType) != vlattice_names.end()) {
+      else if (IsLatticeName(m_inputDataType, vlattice_names)) {
          for (unsigned long i = 0; i < 6; ++i)
             iss >> m_cell[i];
          for (unsigned long i = 3; i < 6; ++i)
@@ -124,9 +131,6 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          std::cout << "input line rejected, invalid" << std::endl;
          m_lattice = "";
       }
-   }
-   else {
-      m_lattice = "EOF";
    }
 }
 
