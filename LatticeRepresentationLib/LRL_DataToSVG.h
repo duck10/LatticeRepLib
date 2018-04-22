@@ -104,16 +104,6 @@ static std::string LRL_DataToSVG( const std::vector<T>& t) {
    }
    return LRL_DataStreamToString("", s);
 }
-//
-//template<typename T>
-//std::string LRL_DataToSVG( const std::string& s, const T& t) {
-//   return LRL_DataStreamToString("", s, t));
-//}
-//
-//template<typename T>
-//std::string LRL_DataToSVG( const T& t, const std::string& s) {
-//   return LRL_DataStreamToString("", t, s);
-//}
 
 template<typename T>
 std::string LRL_DataToSVG_ToQuotedString(const T& t) {

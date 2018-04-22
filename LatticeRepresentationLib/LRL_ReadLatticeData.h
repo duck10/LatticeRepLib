@@ -12,6 +12,7 @@ public:
    void CellReader(const std::string& s);
    void CellReader(const std::string& lattice, const std::string& cell);
    GenerateRandomLattice<S6> generator;
+   bool IsLatticeName(const std::string inputName, std::vector<std::string>& nameList);
 };
 
 #endif // LRL_READLATTICEDATA_H
