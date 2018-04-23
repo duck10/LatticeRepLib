@@ -16,6 +16,7 @@ fixrandomseed true
 randomseed 19
 trials 1
 stepsperframe 10
+glitchlevel -7
 end
 end
 

@@ -541,6 +541,12 @@ void ListS6ReductionSteps() {
 
 int main(int argc, char *argv[])
 {
+   C3 c3 = G6("100 100 100 100 100 100");
+   C3 c3a = 1.0*c3;
+   C3 c3aa = c3 * 1.0;
+   C3 c3b(c3);
+   c3b *= 1.0;
+   C3 c3c(1.0*c3);
    std::string svg = LRL_DataToSVG(1.0,2.0,3UL);
    exit(0);
    //ListS6ReductionSteps();
