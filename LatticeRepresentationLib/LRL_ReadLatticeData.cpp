@@ -42,7 +42,11 @@ std::vector<std::string> vC3_names(C3_names, C3_names + sizeof(C3_names) / sizeo
 std::string lattice_names[] = { "A ", "B ", "C ", "P ", "R ", "F ", "I " };
 std::vector<std::string> vlattice_names(lattice_names, lattice_names + sizeof(lattice_names) / sizeof(lattice_names[0]));
 
-bool LRL_ReadLatticeData::IsLatticeName( const std::string inputName,  std::vector<std::string>& nameList) {
+bool LRL_ReadLatticeData::IsLatticeName(const std::string inputName, const std::vector<std::string>& nameList) {
+   return std::find(nameList.begin(), nameList.end(), inputName) != nameList.end();
+}
+
+bool LRL_ReadLatticeData::IsLatticeName(const std::vector<std::string>& nameList, const std::string inputName) {
    return std::find(nameList.begin(), nameList.end(), inputName) != nameList.end();
 }
 

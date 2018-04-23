@@ -17,7 +17,7 @@ class G6;
 class C3 : private BasisBase<C3, std::complex<double> > {
 public:
    friend std::ostream& operator<< (std::ostream&, const C3&);
-   friend B4 operator* (const double d, const B4& dt);
+   friend C3 operator* (const double d, const C3& dt);
 
    C3(void);
    C3(const C3& c3);
