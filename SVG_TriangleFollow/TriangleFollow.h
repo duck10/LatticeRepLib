@@ -81,7 +81,6 @@ public:
       m_inputVector3 = vin3;
 
       m_maxRawDistance = ScalingInitialPoint(1.0, vin1, vin2, vin3);
-
       clear();
       //   SetMinMaxX( 1000, 2000 );
       std::ofstream folOut;
@@ -123,11 +122,8 @@ public:
                const int boxHeight = (boxWidth * 1600) / 1800;
                const int border = (boxWidth * 30) / 1800;;
 
-
-               /*if (m_worstViolationFound >= minimumPercentViolationToReport)*/ {  //  lca -- this should be changed to be on glitch or both
-                  SVG_FollowTriangle<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD> svg_FT(boxWidth, boxHeight, border, svgTriangles, *this);
-                  this->m_OutputFilename = svg_FT.GetOutputFilename();
-               }
+               SVG_FollowTriangle<TVEC, TREDUCEMETHOD, TFOLLOWMETHOD> svg_FT(boxWidth, boxHeight, border, svgTriangles, *this);
+               //this->m_OutputFilename = svg_FT.GetOutputFilename();
             }
          }
       }

@@ -37,7 +37,7 @@ end
 circleplot false
 randomseed 17
 trials 1
-stepsperframe 10
+stepsperframe 1000
 fixrandomseed true
 end
 random

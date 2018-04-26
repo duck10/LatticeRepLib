@@ -8,6 +8,7 @@
 
 #include "B4.h"
 #include "CellInputData.h"
+#include "CS6Dist.h"
 #include "Delone.h"
 //#include "D7Dist.h"
 #include "D7Dist_.hpp"
@@ -89,10 +90,10 @@ public:
          //const double distG6 = NCDist_<double[6], double[6] >(g6NiggliReducedArray_1, g6NiggliReducedArray_2);
          if (b6) {
             const double distS6 = s6dist.DistanceBetween(s6DeloneReduced_1, s6DeloneReduced_2);
-            //const double distS6_2 = s6dist.DistanceBetween2(s6DeloneReduced_1, s6DeloneReduced_2);
+            const double distS6_2 = CS6Dist(s6DeloneReduced_1.data(), s6DeloneReduced_2.data());
 
-            m_rnPath.AddDistance(distS6);
-            //m_rnPath.AddDeloneDistance(distS6_2);
+            m_rnPath.AddDistance(distS6_2);
+            m_rnPath.AddDeloneDistance(distS6);
          }
          else {
             std::cout << "Reduce1 failed in Procession " << vNext << std::endl;
