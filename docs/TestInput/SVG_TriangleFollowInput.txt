@@ -17,6 +17,7 @@ randomseed 19
 trials 1
 stepsperframe 10
 glitchlevel -7
+glitchesonly true
 end
 end
 
@@ -26,6 +27,7 @@ randomseed 19
 trials 1
 stepsperframe 100
 glitchlevel .1
+glitchesonly true
 end
 end
 
@@ -68,6 +70,7 @@ FILEPREFIX  TEST_
 fixrandomseed true
 RANDOMSEED int 18
 stepsperframe 100
+glitchesonly true
 end
 end
 

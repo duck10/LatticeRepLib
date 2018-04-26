@@ -539,8 +539,62 @@ void ListS6ReductionSteps() {
    exit(0);
 }
 
+unsigned long cycles = 100000;
+StoreResults<int, int> store(0);
+
+class TestStaticSpeed {
+public:
+   TestStaticSpeed() {
+      for (unsigned long i = 0; i < 10000000; ++i) { v.push_back(double(i)); }
+   }
+
+   static double mulStatic(const double a, std::vector<double>& v) {
+      double d[4];
+      for (unsigned long j = 0; j < cycles; ++j)
+         for (unsigned long k = 0; k < 10*cycles; ++k) {
+            for (unsigned long i = 0; i < v.size(); ++i) {
+            d[k%4] = a * v[i]; 
+         }
+         if ( k == 0) store.Store(k, 0);
+      }
+      double test = d[0];
+      return test;
+   }
+
+    double mulPlain(const double a, std::vector<double>& v) {
+       double d[4];
+       for (unsigned long j = 0; j < cycles; ++j)
+          for (unsigned long k = 0; k < 10*cycles; ++k) {
+             for (unsigned long i = 0; i < v.size(); ++i) {
+                d[k % 4] = a * v[i];
+             }
+             if (k == 0) store.Store(k, 0);
+          }
+          double test = d[0];
+      return test;
+    }
+
+
+public:
+   std::vector<double> v;
+};
+
+void TestStatic( ) {
+   double test1, test2;
+   std::vector<double> v;
+   TestStaticSpeed tss;
+   test1 = TestStaticSpeed::mulStatic(1.0, v);
+   store.ShowResults();
+   store.clear();
+   test2 = tss.mulPlain(1.0, v);
+   std::cout << test1 << " " << test2 << std::endl;
+   store.ShowResults();
+   exit(0);
+}
+
 int main(int argc, char *argv[])
 {
+   TestStatic();
    C3 c3 = G6("100 100 100 100 100 100");
    C3 c3a = 1.0*c3;
    C3 c3aa = c3 * 1.0;

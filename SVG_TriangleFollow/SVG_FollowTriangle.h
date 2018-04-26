@@ -107,7 +107,13 @@ public:
       const std::vector<std::string> vs(ImageFooter(m_triangleFollow.m_ProblemLog));
       finalsvg.insert(finalsvg.end(), vs.begin(), vs.end());
 
-      OutputSVG(finalsvg);
+      bool drawGlitchesOnlyTrue = false;
+      for ( unsigned long i=0; i<finalsvg.size(); ++i ) {
+         if (GlobalConstants::globalOutputGlitchesOnly && finalsvg[i].find("Draw Glitches") != std::string::npos) drawGlitchesOnlyTrue = true;
+      }
+
+      if (drawGlitchesOnlyTrue)
+         OutputSVG(finalsvg);
    }
 
 

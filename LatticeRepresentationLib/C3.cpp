@@ -578,3 +578,35 @@ void C3::ComplexInvertSwap(std::complex<double>& a1, std::complex<double>& a2) {
    a1 = std::complex<double>(a2.imag(), a2.real());
    a2 = temp;
 }
+
+
+C3 C3::SortC3(const C3& c3in) {
+   C3 c3(c3in);
+   bool again = true;
+   while (again) {
+      again = false;
+      if (abs(c3[0]) > abs(c3[1])) {
+         again = true;
+         std::complex<double> temp = c3[0];
+         c3[0] = c3[1];
+         c3[1] = temp;
+      }
+      if (abs(c3[1]) > abs(c3[2])) {
+         again = true;
+         std::complex<double> temp = c3[1];
+         c3[1] = c3[2];
+         c3[2] = temp;
+      }
+   }
+   return c3;
+}
+
+C3 C3::ConvertToFundamentalUnit(const C3& c3in) {
+   C3 c3(c3in);
+   for (unsigned long i = 0; i < 3; ++i) {
+      c3 = SortC3(c3);
+      if (std::abs(c3[0].real()) > std::abs(c3[0].imag())) C3::ComplexInvertSwap(c3[0], c3[1]);
+      if (std::abs(c3[1].real()) > std::abs(c3[1].imag())) C3::ComplexInvertSwap(c3[1], c3[2]);
+   }
+   return c3;
+}

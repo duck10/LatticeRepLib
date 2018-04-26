@@ -74,7 +74,7 @@ private:
    {
       const int xmax( int( distances.size( ) ) );
 
-      std::string s = LRL_ToString( "   <polyline fill=\"none\" stroke=\"black\" stroke-width=\"", SVG_DistancePlotConstants::globalDeloneDataLineStrokeWidth, "\" points=\" " );
+      std::string s = LRL_ToString( "   <polyline fill=\"none\" stroke=\"rgb(0,0,0)\" stroke-width=\"", SVG_DistancePlotConstants::globalDeloneDataLineStrokeWidth, "\" points=\" " );
 
       std::list<double>::const_iterator it = distances.begin( );
       for (int i = 1; i <= xmax; ++i, ++it)
