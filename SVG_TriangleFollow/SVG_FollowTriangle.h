@@ -442,7 +442,7 @@ public:
 
       };  // end LOCAL class CalculateOneGraphScaling
 
-      const std::set<unsigned long> setOfGlitches(GetGlitchSet(DetermineOutliers<TVEC>(d.GetVector(), std::pair<double, double>())));
+      const std::set<unsigned long> setOfGlitches(GetGlitchSet(DetermineOutliers<TVEC>(d.GetVector())));
 
       std::string allDatapointsAsString = LRL_ToString("   <polyline fill=\"none\" stroke=", ToQuotedString(color), " stroke-width=\"", SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, "\" points=\" ");
 

@@ -54,8 +54,7 @@ bool WalkFromOnePointToAnother( const TVEC& v1, const TVEC& v2, const unsigned l
       const std::list<double> distances(follow.GetDistances());
       //const std::list<double> distances(follow.GetDeloneDistances());
 
-      std::vector<Glitch<TVEC> > glitches;
-      glitches = follow.DetermineIfSomeDeltaIsTooLarge( distances ); // return the index for first glitch
+      std::vector<Glitch<TVEC> > glitches = follow.DetermineIfSomeDeltaIsTooLarge( distances ); // return the index for first glitch
 
       if (FollowerConstants::globalPrintAllDistanceData) {
          if (glitches.empty() && FollowerConstants::globalOutputGlitchesOnly) {
