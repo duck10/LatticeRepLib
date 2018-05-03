@@ -316,9 +316,9 @@ public:
          triangleDiff.push_back(triangleDifference);
       }
 
-      std::vector<Glitch<TVEC> > glitches1(DetermineOutliers<TVEC>(vdist12.GetVector(), std::pair<double,double>()));
-      std::vector<Glitch<TVEC> > glitches2(DetermineOutliers<TVEC>(vdist13.GetVector(), std::pair<double,double>()));
-      std::vector<Glitch<TVEC> > glitches3(DetermineOutliers<TVEC>(vdist23.GetVector(), std::pair<double,double>()));
+      std::vector<Glitch<TVEC> > glitches1(DetermineOutliers<TVEC>(vdist12.GetVector()));
+      std::vector<Glitch<TVEC> > glitches2(DetermineOutliers<TVEC>(vdist13.GetVector()));
+      std::vector<Glitch<TVEC> > glitches3(DetermineOutliers<TVEC>(vdist23.GetVector()));
 
       std::set<unsigned long> glitchIndices;
       for ( unsigned long i=0; i<dataPointCount; ++i ) {

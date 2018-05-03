@@ -9,7 +9,7 @@
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 template<typename TVEC>
-std::vector<Glitch<TVEC> > DetermineOutliers(const std::vector<double> distanceList, const std::pair<double, double>& minMaxDeltaDistance)
+std::vector<Glitch<TVEC> > DetermineOutliers(const std::vector<double> distanceList)
 /*-------------------------------------------------------------------------------------*/
 {
    OutlierFinder of(distanceList);

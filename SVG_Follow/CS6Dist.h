@@ -10,8 +10,9 @@
 #define CS6DIST_H
 
 
-//#define S6DIST_DEBUG  
-#define S6DIST_NO_OUTER_PASS 
+/* #define S6DIST_TESTS */ 
+/* #define S6DIST_DEBUG */   
+/* #define S6DIST_NO_OUTER_PASS */ 
 
 #include <math.h>
 #include <float.h>
@@ -365,8 +366,8 @@ static int S6Refl[24][36]={
     0, 0, 0, 1, 0, 0,
     0, 0, 1, 0, 0, 0},
 
-/*S6Refl_19 { 4 , 1 , 2 , 3 } */
-/*S6_18*/
+/*S6Refl_19 B4: { 4 , 1 , 2 , 3 } S6: { 3, 5, 4, 6, 2, 1 } */
+/*S6_18* preserves no boundaries*/
    {0, 0, 1, 0, 0, 0,
     0, 0, 0, 0, 1, 0,
     0, 0, 0, 1, 0, 0,
@@ -420,6 +421,16 @@ static int S6Refl[24][36]={
     0, 0, 1, 0, 0, 0}
 
 };
+
+static int bdryprsv [6][4] = {
+  {0, 2,22,23},
+  {0, 5,14,16},
+  {0, 1,6,7},
+  {0, 2,21,23},
+  {0, 5,14,16},
+  {0, 1,6,7},
+};
+
 
 
 
@@ -480,8 +491,95 @@ static int S6MS[6][36] = {
      0,0,0,0,0,1}
 };
 
+static int S6MSX[12][36] = {
 
+     /* D6M_1_1 */
 
+     {-1, 0, 0, 0, 0, 0 ,
+       1, 1, 0, 0, 0, 0 ,
+       1, 0, 0, 0, 1, 0 ,
+      -1, 0, 0, 1, 0, 0 ,
+       1, 0, 1, 0, 0, 0 ,
+       1, 0, 0, 0, 0, 1},
+
+     {-1, 0, 0, 0, 0, 0 ,
+       1, 0, 0, 0, 0, 1 ,
+       1, 0, 1, 0, 0, 0 ,
+      -1, 0, 0, 1, 0, 0 ,
+       1, 0, 0, 0, 1, 0 ,
+       1, 1, 0, 0, 0, 0},
+
+     { 1, 1, 0, 0, 0, 0 ,
+       0,-1, 0, 0, 0, 0 ,
+       0, 1, 0, 1, 0, 0 ,
+       0, 1, 1, 0, 0, 0 ,
+       0,-1, 0, 0, 1, 0 ,
+       0, 1, 0, 0, 0, 1},
+
+     { 0, 1, 0, 0, 0, 1 , 
+       0,-1, 0, 0, 0, 0 ,
+       0, 1, 1, 0, 0, 0 ,
+       0, 1, 0, 1, 0, 0 ,
+       0,-1, 0, 0, 1, 0 ,
+       1, 1, 0, 0, 0, 0},
+
+     { 1, 0, 1, 0, 0, 0 , 
+       0, 0, 1, 1, 0, 0 ,
+       0, 0,-1, 0, 0, 0 , 
+       0, 1, 1, 0, 0, 0 ,
+       0, 0, 1, 0, 1, 0 ,
+       0, 0,-1, 0, 0, 1},
+
+     { 0, 0, 1, 0, 1, 0 , 
+       0, 1, 1, 0, 0, 0 ,
+       0, 0,-1, 0, 0, 0 , 
+       0, 0, 1, 1, 0, 0 ,
+       1, 0, 1, 0, 0, 0 ,
+       0, 0,-1, 0, 0, 1 },
+
+     { 1, 0, 0,-1, 0, 0, 
+       0, 0, 1, 1, 0, 0 ,
+       0, 1, 0, 1, 0, 0 ,
+       0, 0, 0,-1, 0, 0 ,
+       0, 0, 0, 1, 1, 0 ,
+       0, 0, 0, 1, 0, 1},
+
+     { 1, 0, 0,-1, 0, 0, 
+       0, 1, 0, 1, 0, 0 ,
+       0, 0, 1, 1, 0, 0 ,
+       0, 0, 0,-1, 0, 0 ,
+       0, 0, 0, 1, 0, 1 , 
+       0, 0, 0, 1, 1, 0},
+
+     { 0, 0, 1, 0, 1, 0 , 
+       0, 1, 0, 0,-1, 0 ,
+       1, 0, 0, 0, 1, 0 , 
+       0, 0, 0, 1, 1, 0 ,
+       0, 0, 0, 0,-1, 0 , 
+       0, 0, 0, 0, 1, 1 },
+
+     { 1, 0, 0, 0, 1, 0 , 
+       0, 1, 0, 0,-1, 0 ,
+       0, 0, 1, 0, 1, 0 ,
+       0, 0, 0, 0, 1, 1 ,
+       0, 0, 0, 0,-1, 0 , 
+       0, 0, 0, 1, 1, 0},
+
+     { 0, 1, 0, 0, 0, 1 , 
+       1, 0, 0, 0, 0, 1 ,
+       0, 0, 1, 0, 0,-1 ,
+       0, 0, 0, 1, 0, 1 ,
+       0, 0, 0, 0, 1, 1 ,
+       0, 0, 0, 0, 0,-1},
+
+     { 1, 0, 0, 0, 0, 1 , 
+       0, 1, 0, 0, 0, 1 ,
+       0, 0, 1, 0, 0,-1 ,
+       0, 0, 0, 0, 1, 1 ,
+       0, 0, 0, 1, 0, 1 , 
+       0, 0, 0, 0, 0,-1 }
+
+};
 
 #define M_1 0
 #define M_2 1
@@ -527,7 +625,7 @@ static double s6eucldistsq(double v1[6], double v2[6]) {
     
     distsq = 0.;
     
-    for (ii = 0; ii < 7; ii++ ) {
+    for (ii = 0; ii < 6; ii++ ) {
         vtemp = v1[ii]-v2[ii];
         distsq += vtemp*vtemp;
     }
@@ -574,8 +672,7 @@ static double s6eucldist(double v1[6], double v2[6]) {
 (v1[2]-v2[2])*(v1[2]-v2[2])+\
 (v1[3]-v2[3])*(v1[3]-v2[3])+\
 (v1[4]-v2[4])*(v1[4]-v2[4])+\
-(v1[5]-v2[5])*(v1[5]-v2[5])+\
-(v1[6]-v2[6])*(v1[6]-v2[6])\
+(v1[5]-v2[5])*(v1[5]-v2[5])\
 )
 
 #define CS6M_s6eucldist(v1,v2) sqrt(CS6M_s6eucldistsq(v1,v2))
@@ -757,8 +854,8 @@ static void s6twoPminusI(double pg[6], double g[6], double gout[6]) {
 #define NREFL_OUTER_MID 6
 #else
 #define NREFL_OUTER_FULL 24
-#define NREFL_OUTER_MID 12
-#define NREFL_OUTER_MIN 6
+#define NREFL_OUTER_MID 24
+#define NREFL_OUTER_MIN 24
 #endif
 
 static double s6bddist(double gvec[6],int bdnum) {
@@ -1077,6 +1174,28 @@ static double S6Dist_pass(double gvec1[6],double gvec2[6],double dist) {
 }
 
 
+#ifdef S6DIST_TESTS
+      void testrefl(void){
+          int ii, jj;
+          double bdvec[6] = {1.,2.,3.,4.,5.,6.};
+          double tout1[6], tout2[6], tout3[6];
+          for (ii=0; ii < 24; ii++) {
+                imv6(bdvec,S6Refl[S6Rord[ii]],tout1);
+                for(jj=0; jj < 24; jj++) {
+                    imv6(bdvec,S6Refl[S6Rord[jj]],tout3);
+                    imv6(tout1,S6Refl[S6Rord[jj]],tout2);
+                    std::cout <<  "jj x ii :" 
+                    << S6Rord[jj] << "(" <<tout3[0] <<","<<tout3[1]<<","<<tout3[2] <<","<<tout3[3]<<","<<tout3[4]<<","<<tout3[5]<<")" 
+                    << "x" 
+                    << S6Rord[ii] << "(" <<tout1[0] <<","<<tout1[1]<<","<<tout1[2] <<","<<tout1[3]<<","<<tout1[4]<<","<<tout1[5]<<")" 
+                    << " result " << "(" <<tout2[0] <<","<<tout2[1]<<","<<tout2[2] <<","<<tout2[3]<<","<<tout2[4]<<","<<tout2[5]<<")"
+                    << std::endl; 
+
+                }
+          }
+      }
+#endif
+
 /*
      Compute the minimal distance between two S6-reduced
      vectors in the S6 Cone following the embedding paths
@@ -1097,6 +1216,9 @@ static double CS6Dist(double gvec1[6],double gvec2[6]) {
     double ndist1[24];
     double ndist2[24];
     double temp[24];
+#ifdef S6DIST_TESTS
+    testrefl();
+#endif
     dist1 = s6minbddist(gvec1);
     dist2 = s6minbddist(gvec2);
     distmin = CS6M_min(dist1,dist2);
