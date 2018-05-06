@@ -5,6 +5,7 @@
 
 //#include "stdafx.h"
 
+#include "CS6Dist.h"
 #include "D7.h"
 #include "G6.h"
 #include "S6.h"
@@ -165,6 +166,7 @@ void PrintDistanceData(const std::vector<LRL_ReadLatticeData>& cellDataList) {
    PrintTable gtbl(cellDataList.size(), cellDataList.size(), 13);
    PrintTable dtbl(cellDataList.size(), cellDataList.size(), 13);
    PrintTable stbl(cellDataList.size(), cellDataList.size(), 13);
+   PrintTable ctbl(cellDataList.size(), cellDataList.size(), 13);
    G6 g6red1;
    S6 s6red1;
    D7 d7red1;
@@ -182,9 +184,11 @@ void PrintDistanceData(const std::vector<LRL_ReadLatticeData>& cellDataList) {
             const double g12 = NCDist(g6red1.GetVector().data(), g6red2.GetVector().data());
             const double d12 = D7Dist(d7red1.GetVector().data(), d7red2.GetVector().data());
             const double s12 = s6dist.DistanceBetween(s6red1, s6red2);
+            const double c12 = CS6Dist(s6red1.data(), s6red2.data());
             gtbl.insert_center(i1, i2, g12);
             dtbl.insert_center(i1, i2, d12);
             stbl.insert_center(i1, i2, s12);
+            ctbl.insert_center(i1, i2, s12);
 
             std::cout << " (" << i1 << "," << i2 << ")   " << g12 << "   " << d12 << "   " << s12 << std::endl;
             /* ++d7dist; */
@@ -197,6 +201,8 @@ void PrintDistanceData(const std::vector<LRL_ReadLatticeData>& cellDataList) {
    PrintModifiedTable(dtbl, true, false, '#', " | ");
    std::cout << S6::GetName();
    PrintModifiedTable(stbl, true, false, '#', " | ");
+   std::cout << "CSDist";
+   PrintModifiedTable(ctbl, true, false, '#', " | ");
 }
 
 void ListReflections(const S6& s) {

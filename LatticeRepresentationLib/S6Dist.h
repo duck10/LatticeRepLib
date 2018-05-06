@@ -78,7 +78,7 @@ public:
 
    static const std::vector<S6> Generate24Reflections(const S6& s6in);
    static const std::vector<S6> Generate24Reflections(const std::vector<S6>& vin);
-   std::string GetName(void) const { return "S6Dist"; }
+   static std::string GetName(void) { return "S6Dist"; }
    static std::string ReportS6Best(const S6Dist& s6dist);
 
 private:
