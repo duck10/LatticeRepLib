@@ -1,5 +1,5 @@
 
-//#include "stdafx.h"
+
 
 #include "LRL_Cell.h"
 #include "MatG6.h"
@@ -329,6 +329,11 @@ const MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1
    std::cout << std::flush;
    Reporter( sptext2, vin, vout, mat );
 }  // end MKnorm
+
+bool Niggli::Reduce( const G6& vi, G6& vout ) {
+   MatG6 m;
+   return Niggli::Reduce(vi, m, vout, 0.0);
+}
 
 //-----------------------------------------------------------------------------
 // Name: Reduce()

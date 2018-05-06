@@ -1,7 +1,7 @@
 /* inverse.c  basic Gaussian elimination version */
 /* http://userpages.umbc.edu/~squire/f14-455/download/inverse.c */
 
-//#include "stdafx.h"
+
 
 #include <stdio.h>
 #include <string.h>

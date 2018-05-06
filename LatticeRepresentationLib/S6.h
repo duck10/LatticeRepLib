@@ -72,6 +72,7 @@ public:
 
    double at(const unsigned long n) const { return m_vec[n]; }
 
+   static void SetSeed(const int n);
    static S6 rand(const double d=1.0);
    static S6 randDeloneReduced(const double d=1.0);
    static S6 randDeloneUnreduced(const double d=1.0);

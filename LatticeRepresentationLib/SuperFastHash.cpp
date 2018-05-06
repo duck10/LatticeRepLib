@@ -3,7 +3,7 @@
 
 #include <cstddef>
 
-//#include "stdafx.h"
+
 #include "stdint.h" /* Replace with <stdint.h> if appropriate */
 #undef get16bits
 #if (defined(__GNUC__) && defined(__i386__)) || defined(__WATCOMC__) \

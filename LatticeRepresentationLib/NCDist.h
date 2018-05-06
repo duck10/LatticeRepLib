@@ -1532,7 +1532,7 @@ static void cpyvn(int n, double src[], double dst[]) {
 }
 
 
-static void imv6(double v1[6], int m[36], double v2[6]) {
+static void imv6_NCDist(double v1[6], int m[36], double v2[6]) {
    int i, j;
    double sum;
    for (i = 0; i < 6; i++) {
@@ -1544,7 +1544,7 @@ static void imv6(double v1[6], int m[36], double v2[6]) {
    }
 }
 
-static void rmv6(double v1[6], double m[36], double v2[6]) {
+static void rmv6_NCDist(double v1[6], double m[36], double v2[6]) {
    int i, j;
    double sum;
    for (i = 0; i < 6; i++) {
@@ -1712,10 +1712,10 @@ static void bdmaps(double gvec[6],
 
    *ngood = NBND;
    for (jj = 0; jj < NBND; jj++) {
-      rmv6(gvec, prj[jj], pgs[jj]);
+      rmv6_NCDist(gvec, prj[jj], pgs[jj]);
       twoPminusI(pgs[jj], gvec, rgs[jj]);
-      imv6(pgs[jj], MS[jj], mpgs[jj]);
-      imv6(gvec, MS[jj], mvecs[jj]);
+      imv6_NCDist(pgs[jj], MS[jj], mpgs[jj]);
+      imv6_NCDist(gvec, MS[jj], mvecs[jj]);
       if (dists[jj] > maxdist) (*ngood)--;
    }
 
@@ -1843,8 +1843,8 @@ static double NCDist_2bds(double gvec1[6], double rgvec1[6],
             bdint1[ii] = rgv1[jj][ii] + alpha1*(rgv2[jj][ii] - rgv1[jj][ii]);
             bdint2[ii] = rgv2[jj][ii] + alpha2*(rgv1[jj][ii] - rgv2[jj][ii]);
          }
-         imv6(bdint1, MS[bd1], mbdint1);
-         imv6(bdint2, MS[bd2], mbdint2);
+         imv6_NCDist(bdint1, MS[bd1], mbdint1);
+         imv6_NCDist(bdint2, MS[bd2], mbdint2);
          s1 = CNCM_min(s1, CNCM_gdist(rgv1[jj], mbdint1));
          s1 = CNCM_min(s1, fabs(d11[jj]) + guncpmdist(mpg1, bdint1));
          s1 = CNCM_min(s1, fabs(d11[jj]) + guncpmdist(mpg1, mbdint1));
@@ -2078,12 +2078,12 @@ double NCDist(double * gvec1, double * gvec2) {
    for (irt = 0; irt < rpasses; irt++) {
       ir = rord[irt];
       if (ir == 0) continue;
-      imv6(gvec1, RS[ir], rgvec1[ir]);
+      imv6_NCDist(gvec1, RS[ir], rgvec1[ir]);
       ndist1[ir] = NCDist_pass(rgvec1[ir], gvec2, dist);
       {
          if (ndist1[ir] < dist) dist = ndist1[ir];
       }
-      imv6(gvec2, RS[ir], rgvec2[ir]);
+      imv6_NCDist(gvec2, RS[ir], rgvec2[ir]);
       ndist2[ir] = NCDist_pass(gvec1, rgvec2[ir], dist);
       {
          if (ndist2[ir] < dist) dist = ndist2[ir];

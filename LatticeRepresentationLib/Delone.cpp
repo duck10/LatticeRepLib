@@ -1,6 +1,6 @@
 #pragma warning( disable : 4189) //   local variable is initialized but not referenced
 
-//#include "stdafx.h"
+
 
 #include "Delone.h"
 
@@ -36,11 +36,21 @@ bool Delone::Reduce(const S6& d, MatS6& m, S6& dd, const double delta) {
    return Reduce(d, m, dd);
 }
 
+bool Delone::Reduce(const S6& d, S6& dd) {
+   MatS6 m;
+   return Reduce(d, m, dd);
+}
+
+bool Delone::Reduce(const D7& d, D7& dd) {
+   MatS6 m;
+   return Reduce(d, m, dd);
+}
+
 bool Delone::Reduce(const S6& d, MatS6& m, S6& dd) {
    const bool b = Selling::Reduce(d, m, dd);
    MatD7 m7;
    dd = sort(D7(dd), m7);
-   m = m7*MatD7(m);
+   m = m7 * MatD7(m);
    return true;
 }
 
