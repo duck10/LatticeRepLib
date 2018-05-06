@@ -1,5 +1,5 @@
 
-//#include "stdafx.h"
+
 
 #include "LRL_Cell.h"
 #include "G6.h"
@@ -140,6 +140,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
 
 LRL_ReadLatticeData::LRL_ReadLatticeData(const int seed )
 : generator(seed) {
+   S6().SetSeed(seed);
 }
 
 LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {

@@ -1,7 +1,7 @@
 static const double randomLatticeNormalizationConstant = 10.0;
 static const double randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
 
-//#include "stdafx.h"
+
 
 #include <cmath>
 #include <iomanip>
@@ -366,6 +366,8 @@ std::string S6::Signature(const S6& s6) {
    }
    return s;
 }
+
+void S6::SetSeed(const int n) { const int seed = n;  rhrand.srandom(seed); }
 
 S6 S6::rand(const double d) {
    S6 s6(randDeloneReduced());

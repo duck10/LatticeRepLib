@@ -1,6 +1,6 @@
 #pragma warning( disable : 4100) //  unreferenced formal parameter
 
-//#include "stdafx.h"
+
 
 
 #include "Selling.h"

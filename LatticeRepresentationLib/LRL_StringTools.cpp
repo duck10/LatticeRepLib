@@ -1,5 +1,5 @@
 
-//#include "stdafx.h"
+
 
 #include "LRL_StringTools.h"
 
