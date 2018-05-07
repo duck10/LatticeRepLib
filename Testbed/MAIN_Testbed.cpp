@@ -4,10 +4,12 @@
 //#include "stdafx.h"
 
 #include "B4.h"
+#include "CS6Dist.h"
 #include "LRL_CreateFileName.h"
 #include "D7.h"
 #include "G6.h"
 #include "D7Dist_.hpp"
+#include "Delone.h"
 #include "GenerateRandomLattice.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
@@ -592,8 +594,57 @@ void TestStatic( ) {
    exit(0);
 }
 
+int seed = 19191;
+void TestCS6Dist1() {
+   GenerateRandomLattice<S6> generator(seed);
+   for (unsigned long i = 0; i<1000; ++i) {
+      const S6 s6 = generator.randSellingReduced();
+      const double d = CS6Dist(s6.data(), s6.data());
+      if (d > 1.0) {
+         std::cout << i << "   d=" << d << "      " << s6 << "      " << C3(s6) << std::endl;
+      }
+   }
+   //exit(0);
+}
+
+void TestCS6Dist2() {
+   double ar[] = { 0,3,5,7,11,13,17,19 };
+   for (unsigned long i = 0; i<1000; ++i) {
+      S6 s6;
+      for ( unsigned long k=0; k<6; ++k) {
+         s6[k] = -ar[rand() % 8];
+      }
+      if (!s6.GetValid()) continue;
+      const double d = CS6Dist(s6.data(), s6.data());
+      if (d > 1.0) {
+         std::cout << i << "   d=" << d*d << "      " << s6 << "      " << C3(s6) << std::endl;
+      }
+   }
+   exit(0);
+}
+
+void TestCS6Dist3() {
+   std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
+   GenerateRandomLattice<S6> generator(seed);
+   for (unsigned long i = 0; i < 1000; ++i) {
+      S6 s6red;
+      Delone::Reduce(generator.randSellingReduced(),s6red);
+      for (unsigned long ir = 0; ir < 24; ++ir) {
+         const S6 s6 = refl[ir](s6red);
+         const double d = CS6Dist(s6.data(), s6.data());
+         if (d > 1.0) {
+            std::cout << i << "  " << ir << "   d=" << d << "      " << s6 << "      " << C3(s6) << std::endl;
+         }
+      }
+   }
+   exit(0);
+}
+
 int main(int argc, char *argv[])
 {
+   //TestCS6Dist1();
+   //TestCS6Dist2();
+   //TestCS6Dist3();
    TestStatic();
    C3 c3 = G6("100 100 100 100 100 100");
    C3 c3a = 1.0*c3;

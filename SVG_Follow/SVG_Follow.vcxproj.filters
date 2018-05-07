@@ -72,9 +72,6 @@
     <ClInclude Include="spline_under_tension.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CS6Dist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Follow.h">

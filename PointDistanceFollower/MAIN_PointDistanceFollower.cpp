@@ -183,7 +183,7 @@ MultiFollower ProcessOneLattice(const unsigned long cellNumber, const unsigned l
    MultiFollower mf(points);
    mf = mf.GenerateAllDistances();
 
-   mf.SetTime2ComputeFrame(std::clock());
+   mf.SetTime2ComputeFrame(mf.GetComputeStartTime() - std::clock());
    SVG_DistancePlot<S6> distanceplot(mf, baseFileName);
    std::cout << baseFileName << std::endl;
 
@@ -221,6 +221,7 @@ int main(int argc, char* argv[]) {
          if (trialNo > 0) {
             cell.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
          }
+         if (plotCounter == 18)
          const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell);
          ++plotCounter;
       }
