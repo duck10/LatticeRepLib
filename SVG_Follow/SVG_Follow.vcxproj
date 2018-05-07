@@ -157,7 +157,6 @@
     <ClCompile Include="Follow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="D7Dist_.hpp" />
     <ClInclude Include="FileOperations.h" />
     <ClInclude Include="FileWriter.h" />

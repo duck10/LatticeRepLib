@@ -275,7 +275,7 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
       std::pair<double,double> ylimits = multiFollow.GetMinMax();
       // compute the limits and increments along the x and y axes
       LinearAxis la;
-      const AxisLimits alX = la.LinearAxisLimits( 1, int( multiFollow.size( ) ) );
+      const AxisLimits alX = la.LinearAxisLimits( 0, int( multiFollow.size( ) )-1 );
       const AxisLimits alY = la.LinearAxisLimits(ylimits.first, ylimits.second);
 
       // Calculate the scale factors that will make all of the distance values fit on the graph space.
