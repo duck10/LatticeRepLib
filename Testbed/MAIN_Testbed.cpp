@@ -609,15 +609,17 @@ void TestCS6Dist1() {
 
 void TestCS6Dist2() {
    double ar[] = { 0,3,5,7,11,13,17,19 };
-   for (unsigned long i = 0; i<1000; ++i) {
-      S6 s6;
+   for (unsigned long i = 0; i<100; ++i) {
+      double s6[6];
       for ( unsigned long k=0; k<6; ++k) {
          s6[k] = -ar[rand() % 8];
       }
-      if (!s6.GetValid()) continue;
-      const double d = CS6Dist(s6.data(), s6.data());
+      printf("\n  i = %d\n", i);
+      printf("before %8f  %8f  %8f  %8f  %8f  %8f \n", s6[0], s6[1], s6[2], s6[3], s6[4], s6[5]);
+      const double d = CS6Dist(s6, s6);
       if (d > 1.0) {
-         std::cout << i << "   d=" << d*d << "      " << s6 << "      " << C3(s6) << std::endl;
+         printf("after  %8f  %8f  %8f  %8f  %8f  %8f        %8f  *****************\n", s6[0], s6[1], s6[2], s6[3], s6[4], s6[5], d);
+         const int i19191 = 19191;;
       }
    }
    exit(0);
@@ -633,6 +635,9 @@ void TestCS6Dist3() {
          const S6 s6 = refl[ir](s6red);
          const double d = CS6Dist(s6.data(), s6.data());
          if (d > 1.0) {
+            double ar[7];
+            std::vector<double> v = s6.GetVector();
+            double* ar0 = &v[0];
             std::cout << i << "  " << ir << "   d=" << d << "      " << s6 << "      " << C3(s6) << std::endl;
          }
       }
@@ -640,10 +645,31 @@ void TestCS6Dist3() {
    exit(0);
 }
 
+void TestCS6Dist4() {
+   const S6 s1("-3 -5 -11  -19 -37 -43");
+   std::cout << "TEST CELL IN DEGREES  " << LRL_Cell_Degrees(s1) << std::endl;;
+   S6Dist s6dist(1);
+   std::vector<S6> voutside;
+   voutside = s6dist.Generate24Reflections(s1); // for outside, generate the 24 reflections for each unreduced cell
+   for (unsigned long i1 = 0; i1 < 24; ++i1) {
+      for (unsigned long i2 = 0; i2 < 24; ++i2) {
+         const double d = CS6Dist(voutside[i1].data(), voutside[i2].data());
+         if (d > 0) {
+            std::cout << "i1, i2  " << i1 << "  " << i2 << "  distance "  << d << "  d^2 " << d*d <<std::endl;
+            std::cout << "  voutside1[i1] " << voutside[i1] << std::endl;
+            std::cout << "  voutside2[i2] " << voutside[i2] << std::endl;
+         }
+      }
+   }
+   exit(0);
+}
+
+
 int main(int argc, char *argv[])
 {
+   TestCS6Dist4();
    //TestCS6Dist1();
-   //TestCS6Dist2();
+   TestCS6Dist2();
    //TestCS6Dist3();
    TestStatic();
    C3 c3 = G6("100 100 100 100 100 100");

@@ -34,6 +34,7 @@ public:
    }
 
    std::set<unsigned long> GetGlitches(void) const { return m_glitches; }
+   void SetGlitches(const std::set<unsigned long>& glitches) { m_glitches = glitches; }
 
 private:
    std::vector<std::pair<T, T> > m_path;

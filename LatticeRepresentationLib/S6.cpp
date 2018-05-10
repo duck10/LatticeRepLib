@@ -1233,7 +1233,6 @@ S6 S6::Relection07(const S6& din) {
    S6 d(din);
    std::swap(d.m_vec[1], d.m_vec[0]);
    std::swap(d.m_vec[3], d.m_vec[4]);
-   std::swap(d.m_vec[3], d.m_vec[4]);
    return d;
 }
 

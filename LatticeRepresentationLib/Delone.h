@@ -3,6 +3,7 @@
 
 #include "S6.h"
 #include "B4.h"
+#include "D7.h"
 #include "MatD7.h"
 #include "Selling.h"
 #include <set>
