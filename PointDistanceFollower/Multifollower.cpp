@@ -94,8 +94,8 @@ MultiFollower MultiFollower::GenerateAllDistances(void) const {
    MultiFollower m(*this);
    m.SetComputeStartTime();
    m = CalculateDistancesS6(m);
-   m = CalculateDistancesG6(m);
-   m = CalculateDistancesD7(m);
+   //m = CalculateDistancesG6(m);
+   //m = CalculateDistancesD7(m);
    m = CalculateDistancesCS(m);
    m.SetTime2ComputeFrame( std::clock() - m.GetComputeStartTime());
 
@@ -122,13 +122,14 @@ std::set<unsigned long> MultiFollower::DetermineOutliers(const std::vector<doubl
 /*-------------------------------------------------------------------------------------*/
 {
    std::set<unsigned long> glitches;
+   if (distanceList.empty()) return glitches;
    OutlierFinder of(distanceList);
    std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(FollowerConstants::globalPercentChangeToDetect);
 
    for (unsigned long i = 0; i < steps.size(); ++i) {
       const unsigned long klow = (unsigned long)(steps[i].first);
       const unsigned long khigh = klow + 1UL;
-      glitches.insert(i);
+      glitches.insert(steps[i].first);
    }
    return glitches;
 }

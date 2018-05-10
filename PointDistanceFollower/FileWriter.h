@@ -101,14 +101,22 @@ public:
       const std::string nameD7Dist = pointsD7.empty() ? "" : "D7Dist ";
       const std::string nameCS6Dist = pointsCS.empty() ? "" : "CS6Dist ";
       const std::string distanceNames = nameS6Dist + nameG6Dist + nameD7Dist + nameCS6Dist;
+
+      const std::vector<double> distancesS6 = pathS6.GetDistances();
+      const std::vector<double> distancesG6 = pathG6.GetDistances();
+      const std::vector<double> distancesD7 = pathD7.GetDistances();
+      const std::vector<double> distancesCS = pathCS.GetDistances();
+
+
+
       if (folOut.is_open() )
       {
          folOut << sFileName << "     Output is S6 probe cell, C3 reduced cell, " << distanceNames << "distance between" << std::endl;
          for (unsigned long counter = 0; counter < ndist; ++counter) {
-            const std::string strS6 = (pointsS6.empty()) ? "" : LRL_ToString(pathS6.GetDistances()[counter], " ");
-            const std::string strG6 = (pointsG6.empty()) ? "" : LRL_ToString(pathG6.GetDistances()[counter], " ");
-            const std::string strD7 = (pointsD7.empty()) ? "" : LRL_ToString(pathD7.GetDistances()[counter], " ");
-            const std::string strCS = (pointsCS.empty()) ? "" : LRL_ToString(pathCS.GetDistances()[counter], " ");
+            const std::string strS6 = (distancesS6.empty()) ? "" : LRL_ToString(distancesS6[counter], " ");
+            const std::string strG6 = (distancesG6.empty()) ? "" : LRL_ToString(distancesG6[counter], " ");
+            const std::string strD7 = (distancesD7.empty()) ? "" : LRL_ToString(distancesD7[counter], " ");
+            const std::string strCS = (distancesCS.empty()) ? "" : LRL_ToString(distancesCS[counter], " ");
             const std::string strDists = strS6 + strG6 + strD7 + strCS;
             std::string glitchLabel;
             if (!glitches.empty()) glitchLabel = glitches.find(counter) != glitches.end() ? "    ***** glitch" : "";
