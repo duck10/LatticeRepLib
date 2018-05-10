@@ -40,7 +40,7 @@ LRL_Path<S6> MultiFollower::GetCS(void) const {
 }
 
 
-MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) {
+MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const {
    MultiFollower m(mf);
    S6 out;
    std::vector<double> vdist;
@@ -53,7 +53,7 @@ MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) {
    return m;
 }
 
-MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) {
+MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const {
    MultiFollower m(mf);
    G6 out;
    std::vector<double> vdist;
@@ -65,7 +65,7 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) {
    return m;
 }
 
-MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) {
+MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const {
    MultiFollower m(mf);
    D7 out;
    std::vector<double> vdist;
@@ -78,7 +78,7 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) {
 }
 
 
-MultiFollower MultiFollower::CalculateDistancesCS(const MultiFollower& mf) {
+MultiFollower MultiFollower::CalculateDistancesCS(const MultiFollower& mf) const {
    MultiFollower m(mf);
    S6 out;
    std::vector<double> vdist;
@@ -90,15 +90,47 @@ MultiFollower MultiFollower::CalculateDistancesCS(const MultiFollower& mf) {
    return m;
 }
 
-MultiFollower MultiFollower::GenerateAllDistances(void) {
+MultiFollower MultiFollower::GenerateAllDistances(void) const {
    MultiFollower m(*this);
    m.SetComputeStartTime();
    m = CalculateDistancesS6(m);
    m = CalculateDistancesG6(m);
    m = CalculateDistancesD7(m);
    m = CalculateDistancesCS(m);
-   m.SetTime2ComputeFrame(m.GetComputeStartTime() - std::clock());
+   m.SetTime2ComputeFrame( std::clock() - m.GetComputeStartTime());
+
+   m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathS6().GetDistances()));
+   m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathG6().GetDistances()));
+   m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathD7().GetDistances()));
+   m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathCS().GetDistances()));
+
    return m;
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+const std::set<unsigned long> MultiFollower::DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const
+/*-------------------------------------------------------------------------------------*/
+{
+   const double maximumDistance = *std::max_element(distances.begin(), distances.end());
+   std::set<unsigned long> glitches(DetermineOutliers(distances));
+
+   return(glitches);
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+std::set<unsigned long> MultiFollower::DetermineOutliers(const std::vector<double> distanceList) const
+/*-------------------------------------------------------------------------------------*/
+{
+   std::set<unsigned long> glitches;
+   OutlierFinder of(distanceList);
+   std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(FollowerConstants::globalPercentChangeToDetect);
+
+   for (unsigned long i = 0; i < steps.size(); ++i) {
+      const unsigned long klow = (unsigned long)(steps[i].first);
+      const unsigned long khigh = klow + 1UL;
+      glitches.insert(i);
+   }
+   return glitches;
 }
 
 template<typename T>

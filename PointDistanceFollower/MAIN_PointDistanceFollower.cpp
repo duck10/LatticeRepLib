@@ -221,7 +221,6 @@ int main(int argc, char* argv[]) {
          if (trialNo > 0) {
             cell.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
          }
-         if (plotCounter == 18)
          const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell);
          ++plotCounter;
       }

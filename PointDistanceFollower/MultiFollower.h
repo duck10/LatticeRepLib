@@ -29,11 +29,11 @@ public:
    LRL_Path<D7> GetD7(void) const;
    LRL_Path<S6> GetCS(void) const;
 
-   MultiFollower CalculateDistancesS6(const MultiFollower& mf);
-   MultiFollower CalculateDistancesG6(const MultiFollower& mf);
-   MultiFollower CalculateDistancesD7(const MultiFollower& mf);
-   MultiFollower CalculateDistancesCS(const MultiFollower& mf);
-   MultiFollower GenerateAllDistances(void);
+   MultiFollower CalculateDistancesS6(const MultiFollower& mf) const;
+   MultiFollower CalculateDistancesG6(const MultiFollower& mf) const;
+   MultiFollower CalculateDistancesD7(const MultiFollower& mf) const;
+   MultiFollower CalculateDistancesCS(const MultiFollower& mf) const;
+   MultiFollower GenerateAllDistances(void) const;
    void SetDistancesS6(const std::vector<double>& v) { m_s6path.SetDistances(v); }
    void SetDistancesG6(const std::vector<double>& v) { m_g6path.SetDistances(v); }
    void SetDistancesD7(const std::vector<double>& v) { m_d7path.SetDistances(v); }
@@ -49,6 +49,10 @@ public:
    DistanceLineDescriptions GetLineDescriptions(void) const { return m_lineDescription; }
    void SetComputeStartTime(void) { m_ComputeStartTime = std::clock(); }
    std::clock_t GetComputeStartTime(void) const {return m_ComputeStartTime; }
+
+   std::set<unsigned long> DetermineOutliers(const std::vector<double> distanceList) const;
+   const std::set<unsigned long> DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const;
+
 private:
    LRL_Path<S6>  m_s6path;
    LRL_Path<G6>  m_g6path;
@@ -56,7 +60,7 @@ private:
    LRL_Path<S6> m_cspath;
    std::clock_t m_ComputeStartTime;
    double m_seconds2ComputerFrame;
-   std::list<unsigned long> m_glitches;
+   std::set<unsigned long> m_glitches;
    DistanceLineDescriptions m_lineDescription;
 
 
@@ -70,32 +74,6 @@ private:
          v.push_back(std::make_pair(T1(s6path[i].first), out));
       }
       return v;
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::set<unsigned long> DetermineOutliers(const std::vector<double> distanceList)
-      /*-------------------------------------------------------------------------------------*/
-   {
-      std::set<unsigned long> glitches;
-      OutlierFinder of(distanceList);
-      std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(FollowerConstants::globalPercentChangeToDetect);
-
-      for (unsigned long i = 0; i < steps.size(); ++i) {
-         const unsigned long klow = (unsigned long)(steps[i].first);
-         const unsigned long khigh = klow + 1UL;
-         glitches.insert(i);
-      }
-      return glitches;
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   const std::set<unsigned long> DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances)
-      /*-------------------------------------------------------------------------------------*/
-   {
-      const double maximumDistance = *std::max_element(distances.begin(), distances.end());
-      std::set<unsigned long> glitches(DetermineOutliers(distances));
-
-      return(glitches);
    }
 
    template<typename TVEC>

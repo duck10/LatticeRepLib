@@ -2,8 +2,8 @@
 <!-- the width and height set the total pixel output of the image in the browser -->
 <!-- whatever is within the viewbox will be remapped to show in this size -->
 <svg width="1000" height="1000" viewBox="1 0 1000 1000"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <desc>ID (and file name) = Fol_2018-05-06.17_29_17.1_18.svg </desc> 
- <text x="700" y="30" font-family="sans-serif" font-size="20">Wall time passed: -34893 msec.</text>
+ <desc>ID (and file name) = Fol_2018-05-07.11_40_05.1_18.svg </desc> 
+ <text x="700" y="30" font-family="sans-serif" font-size="20">Wall time passed: -91930 msec.</text>
 <text x="300" y="60"   font-family="sans-serif" font-size="20" fill="lightblue">S6  lightblue</text>
 <text x="300" y="85"   font-family="sans-serif" font-size="20" fill="slategrey">NCDist  slategrey</text>
 <text x="300" y="110"  font-family="sans-serif" font-size="20" fill="violet">D7  violet</text>
