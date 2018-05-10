@@ -17,7 +17,7 @@
    const time_t       now        = time(NULL);
          char         buft[256];
    const int          len        = sizeof(buft);
-
+   buft[0] = '\0';
    if (includeTimestamp) strftime( buft, sizeof(buft), "%Y-%m-%d.%X", localtime(&now) );
 
    for ( int i=0; i<len; ++i )
