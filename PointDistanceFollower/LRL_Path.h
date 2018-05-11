@@ -33,7 +33,7 @@ public:
       return *std::max_element(m_distances.begin(), m_distances.end());
    }
 
-   std::set<unsigned long> GetGlitches(void) const { return m_glitches; }
+   std::set<unsigned long> GetGlitches(void) { return m_glitches; }
    void SetGlitches(const std::set<unsigned long>& glitches) { m_glitches = glitches; }
 
 private:
