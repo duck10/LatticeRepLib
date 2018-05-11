@@ -157,7 +157,7 @@ private:
          std::string( "\n<!--Draw the X and Y axes -->\n" )
          + std::string( "<polyline fill=\"none\" stroke=\"black\"" )
          + LRL_DataToSVG( " stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\" " )
-         + LRL_DataToSVG( " points=\" 600,0 0,0 0,", (alY.m_upperLimit - minimumDistance)*yscale, "\" />" )
+         + LRL_DataToSVG( " points=\" ", LRL_ToString(SVG_WriterConstants::globalPlotSpace), ",0 0,0 0,", (alY.m_upperLimit - minimumDistance)*yscale, "\" />" )
          + "\n<!-- -->\n");
    }
    //std::string> svgG6 = DrawOneDistanceGlitches(multiFollow.GetG6().GetDistances(), multiFollow.GetS6().GetGlitches(), minimumDistance, xscale, yscale, lines.GetColor("G6"));
