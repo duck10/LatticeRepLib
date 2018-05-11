@@ -39,7 +39,7 @@ namespace {
 
 
    double SVG_WriterConstants::globalGraphSpace  = 800; // px
-   double SVG_WriterConstants::globalGraphBorder = 140; // px
+   double SVG_WriterConstants::globalGraphBorder = 100; // px
    double SVG_WriterConstants::globalPlotSpace   = SVG_WriterConstants::globalGraphSpace - 2*SVG_WriterConstants::globalGraphBorder;
 
 
