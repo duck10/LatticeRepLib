@@ -84,16 +84,16 @@ public:
       std::ofstream folOut;
       FileOperations::OpenOutputFile(folOut, sFileName.c_str());
 
-      const LRL_Path<S6> pathS6 = m_multiFollow.GetS6();
-      const LRL_Path<G6> pathG6 = m_multiFollow.GetG6();
-      const LRL_Path<D7> pathD7 = m_multiFollow.GetD7();
-      const LRL_Path<S6> pathCS = m_multiFollow.GetCS();
-      const std::vector<std::pair<S6, S6> > pointsS6 = pathS6.GetPath();
-      const std::vector<std::pair<G6, G6> > pointsG6 = pathG6.GetPath();
-      const std::vector<std::pair<D7, D7> > pointsD7 = pathD7.GetPath();
-      const std::vector<std::pair<S6, S6> > pointsCS = pathCS.GetPath();
+      LRL_Path<S6> pathS6 = m_multiFollow.GetS6();
+      LRL_Path<G6> pathG6 = m_multiFollow.GetG6();
+      LRL_Path<D7> pathD7 = m_multiFollow.GetD7();
+      LRL_Path<S6> pathCS = m_multiFollow.GetCS();
+      std::vector<std::pair<S6, S6> > pointsS6 = pathS6.GetPath();
+      std::vector<std::pair<G6, G6> > pointsG6 = pathG6.GetPath();
+      std::vector<std::pair<D7, D7> > pointsD7 = pathD7.GetPath();
+      std::vector<std::pair<S6, S6> > pointsCS = pathCS.GetPath();
 
-      const std::set<unsigned long> glitches = pathS6.GetGlitches();
+       std::set<unsigned long> glitches = pathS6.GetGlitches();
       const std::vector<double> distances = pathS6.GetDistances();
       const unsigned long ndist = (unsigned long)(maxNC(pointsS6.size(), pointsG6.size(), pointsD7.size(), pointsCS.size()));
       const std::string nameS6Dist = pointsS6.empty() ? "" : "S6Dist ";

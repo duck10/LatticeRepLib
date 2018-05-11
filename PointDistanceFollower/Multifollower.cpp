@@ -100,9 +100,9 @@ MultiFollower MultiFollower::GenerateAllDistances(void) const {
    m.SetTime2ComputeFrame( std::clock() - m.GetComputeStartTime());
 
    m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathS6().GetDistances()));
-   m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathG6().GetDistances()));
-   m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathD7().GetDistances()));
-   m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathCS().GetDistances()));
+   m.GetPathG6().SetGlitches(m.DetermineOutliers(m.GetPathG6().GetDistances()));
+   m.GetPathD7().SetGlitches(m.DetermineOutliers(m.GetPathD7().GetDistances()));
+   m.GetPathCS().SetGlitches(m.DetermineOutliers(m.GetPathCS().GetDistances()));
 
    return m;
 }
@@ -127,9 +127,7 @@ std::set<unsigned long> MultiFollower::DetermineOutliers(const std::vector<doubl
    std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(FollowerConstants::globalPercentChangeToDetect);
 
    for (unsigned long i = 0; i < steps.size(); ++i) {
-      const unsigned long klow = (unsigned long)(steps[i].first);
-      const unsigned long khigh = klow + 1UL;
-      glitches.insert(steps[i].first);
+      glitches.insert(steps[i].first + 1UL);
    }
    return glitches;
 }

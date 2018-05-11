@@ -38,10 +38,10 @@ public:
    void SetDistancesG6(const std::vector<double>& v) { m_g6path.SetDistances(v); }
    void SetDistancesD7(const std::vector<double>& v) { m_d7path.SetDistances(v); }
    void SetDistancesCS(const std::vector<double>& v) { m_cspath.SetDistances(v); }
-   LRL_Path<S6> GetPathS6(void) const { return m_s6path; }
-   LRL_Path<G6> GetPathG6(void) const { return m_g6path; }
-   LRL_Path<D7> GetPathD7(void) const { return m_d7path; }
-   LRL_Path<S6> GetPathCS(void) const { return m_cspath; }
+   LRL_Path<S6>& GetPathS6(void) { return m_s6path; }
+   LRL_Path<G6>& GetPathG6(void) { return m_g6path; }
+   LRL_Path<D7>& GetPathD7(void) { return m_d7path; }
+   LRL_Path<S6>& GetPathCS(void) { return m_cspath; }
    std::pair<double, double> GetMinMax(void) const;
    unsigned long size(void)const { return m_s6path.size(); }
    const double GetTime2ComputerFrame(void) const;
