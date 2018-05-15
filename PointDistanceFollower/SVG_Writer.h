@@ -148,7 +148,7 @@ private:
       m_svg.push_back( "<!-- whatever is within the viewbox will be remapped to show in this size -->" );
       m_svg.push_back( "<svg width=\"900\" height=\"800\" viewBox=\"1 0 900 800\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
       m_svg.push_back( " <desc>ID (and file name) = " + sFileName + " </desc> " );
-      m_svg.push_back("<text x = \"-550\" y=\"50\" transform=\"rotate(-90)\"  font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower </text>");
+      m_svg.push_back("<text x = \"-550\" y=\"50\" transform=\"rotate(-90)\"  font-family=\"sans-serif\" font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower </text>");
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
