@@ -13,6 +13,7 @@
 #include "FollowerConstants.h"
 #include "G6.h"
 #include "LRL_Path.h"
+#include "LRL_MinMaxTools.h"
 #include "S6.h"
 #include "D7.h"
 #include "OutlierFinder.h"
@@ -43,7 +44,7 @@ public:
    LRL_Path<D7>& GetPathD7(void) { return m_d7path; }
    LRL_Path<S6>& GetPathCS(void) { return m_cspath; }
    std::pair<double, double> GetMinMax(void) const;
-   unsigned long size(void)const { return m_s6path.size(); }
+   unsigned long size(void)const { return maxNC(m_s6path.size(), m_g6path.size(), m_d7path.size(), m_cspath.size()); }
    const double GetTime2ComputerFrame(void) const;
    void SetTime2ComputeFrame(const double computeTime);
    DistanceLineDescriptions GetLineDescriptions(void) const { return m_lineDescription; }

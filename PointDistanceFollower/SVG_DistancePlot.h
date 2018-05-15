@@ -403,11 +403,8 @@ private: // don't implement
       svg.push_back( "\n\n <!--DISTANCE PLOT BEGINS-->\n\n" );
       svg.push_back( "<!-- the following will scale and place the distance plot -->" );
 
-      svg.push_back( (FollowerConstants::globalDrawDistancePlot && FollowerConstants::globalDrawCirclePlot)
-         ? "<g  transform=\"translate(0,0) scale(.3, .3) \">"
-         : "<g  transform=\"translate(0,50) \">" );
-
-      svg.push_back( "<g transform=\"translate(150,700) scale(1 -1)\">" );
+      svg.push_back("<g  transform=\"translate(0, 50) \">");
+      svg.push_back("<g transform=\"translate(150,700) scale(1 -1)\">");
 
       return(svg);
    }
