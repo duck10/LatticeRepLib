@@ -280,7 +280,7 @@ public:
    std::pair<TKEY,TDATA> GetFirstItem( const TKEY& key) const {
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
       it = m_tree.find(key);
-      if (it == m_tree.find(TKEY()))
+      if (it == m_tree.end())
          return std::make_pair(TKEY(), TDATA());
       return std::make_pair( (*it).first, (*it).second.m_sampleData[0]);
    }

@@ -1,7 +1,7 @@
 #ifndef CLASSIFYSUBBOUNDARIES_H
 #define CLASSIFYSUBBOUNDARIES_H
 
-#include "D7_boundary.h"
+#include "D7_Boundary.h"
 #include "D7_BoundaryList.h"
 
 #include <string>

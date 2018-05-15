@@ -57,6 +57,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "S6Classifier", "S6Classifie
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PointDistanceFollower", "PointDistanceFollower\PointDistanceFollower.vcxproj", "{D1FBB88D-3BCA-4DE7-9ED0-AC6DCB182F28}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVD", "SVD\SVD.vcxproj", "{AABD4381-036F-40A3-9C60-48D1817099D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -201,6 +203,14 @@ Global
 		{D1FBB88D-3BCA-4DE7-9ED0-AC6DCB182F28}.Release|x64.Build.0 = Release|x64
 		{D1FBB88D-3BCA-4DE7-9ED0-AC6DCB182F28}.Release|x86.ActiveCfg = Release|Win32
 		{D1FBB88D-3BCA-4DE7-9ED0-AC6DCB182F28}.Release|x86.Build.0 = Release|Win32
+		{AABD4381-036F-40A3-9C60-48D1817099D3}.Debug|x64.ActiveCfg = Debug|x64
+		{AABD4381-036F-40A3-9C60-48D1817099D3}.Debug|x64.Build.0 = Debug|x64
+		{AABD4381-036F-40A3-9C60-48D1817099D3}.Debug|x86.ActiveCfg = Debug|Win32
+		{AABD4381-036F-40A3-9C60-48D1817099D3}.Debug|x86.Build.0 = Debug|Win32
+		{AABD4381-036F-40A3-9C60-48D1817099D3}.Release|x64.ActiveCfg = Release|x64
+		{AABD4381-036F-40A3-9C60-48D1817099D3}.Release|x64.Build.0 = Release|x64
+		{AABD4381-036F-40A3-9C60-48D1817099D3}.Release|x86.ActiveCfg = Release|Win32
+		{AABD4381-036F-40A3-9C60-48D1817099D3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

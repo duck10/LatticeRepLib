@@ -13,8 +13,7 @@
 
 namespace FollowerConstants {
 
-   enum enumMovieMode{ globalStar, globalTrail };
-   enum enumFollowerMode{ globalFollow, globalMovie, globalWeb };
+   enum enumFollowerMode{ globalSinglePoint, globalLine };
    //These are which G6 components to put into the SVG file !!!!!!!!!!!!!!!!
    extern std::pair<int,int> globalWhichComponentsToPlot;  // Here they are ZERO-BASED !!!!!!!
 
@@ -38,20 +37,12 @@ namespace FollowerConstants {
    extern std::vector<std::string> globalColorsForBoundaries;
 
    extern std::string globalFileNamePrefix;
-   
-   extern enumMovieMode globalMovieMode;
 };
 
 namespace SVG_WriterConstants {
    extern double globalGraphSpace;  // px
    extern double globalGraphBorder; // px
    extern double globalPlotSpace;
-};
-
-namespace SVG_CirclePlotConstants {
-   extern int globalCirclePlotSize    ; // px
-   extern int globalCircleRadius      ; // px
-   extern int globalCircleStrokeWidth ; // px
 };
 
 namespace SVG_DistancePlotConstants {

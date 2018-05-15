@@ -122,21 +122,26 @@ void SetGlobalValue( const std::string& dataType,
          GLOBAL_RunInputVector::globalData.push_back( v6 );
    } else if ( dataType == "fixRandomSeed" ) {
       *(bool*)pData = GetBoolData( value[1] );
-   } else if ( dataType == "MovieMode" ) {
-      FollowerConstants::globalMovieMode = LRL_StringTools::strToupper(value[1]) == "STAR" ? FollowerConstants::globalStar : FollowerConstants::globalTrail;
    } else if ( dataType == "FollowerMode" ) {
-      if (LRL_StringTools::strToupper(value[1]) == "WEB") {
-         FollowerConstants::globalFollowerMode = FollowerConstants::globalWeb;
-      }
-      else if (LRL_StringTools::strToupper(value[1]) == "FOLLOW") {
-         FollowerConstants::globalFollowerMode = FollowerConstants::globalFollow;
+      if (LRL_StringTools::strToupper(value[1]) == "LINE") {
+         FollowerConstants::globalFollowerMode = FollowerConstants::globalLine;
       }
       else {
-         FollowerConstants::globalFollowerMode = FollowerConstants::globalMovie;
+         FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
       }
    }
    else {
    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+// add some small random perturbation
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+G6 ReadGlobalData::GeneratePerturbation(const G6& v, const double perturbationFraction) {
+   const G6 random = G6::rand();
+   const G6 perturbation = perturbationFraction * random;
+   const G6 perturbedVector = v + perturbation;
+   return(perturbedVector);
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -166,15 +171,12 @@ std::string TranslateGlobalValue( const std::string& dataType, void* pData ) {
    else if ( dataType == "fixRandomSeed" ) {
       s = *(bool*)pData ? "true" : "false";
 	  SetSeed(std::abs(GLOBAL_RunInputVector::globalConstantRandomSeed ? GLOBAL_RunInputVector::globalInputRandomSeed : (int)(time(0)%32767)) );
-   } else if ( dataType == "MovieMode" )
-      s = ((*(FollowerConstants::enumMovieMode*)pData == FollowerConstants::globalStar)  ? "STAR" : "TRAIL");
+   }
    else if ( dataType == "FollowerMode" ) { //globalFollow, globalMovie, globalWeb
-      if ( (*(FollowerConstants::enumFollowerMode*)pData) == FollowerConstants::globalMovie )
-         s = "Movie";
-      else if ( (*(FollowerConstants::enumFollowerMode*)pData) == FollowerConstants::globalWeb )
-         s = "Web";
+      if ( (*(FollowerConstants::enumFollowerMode*)pData) == FollowerConstants::globalSinglePoint)
+         s = "point";
       else
-         s = "Follow";
+         s = "line";
    } else {
    }
 
@@ -254,18 +256,12 @@ const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure
    v.push_back( ParseData( LRL_StringTools::strToupper( "Border" ),       "int", (void*)&SVG_WriterConstants::globalGraphBorder ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "PlotSize" ),     "int", (void*)&SVG_WriterConstants::globalPlotSpace ) );
 
-   v.push_back( ParseData( LRL_StringTools::strToupper( "CirclePlotSize" ),        "int", (void*)&SVG_CirclePlotConstants::globalCirclePlotSize    ) );
-   v.push_back( ParseData( LRL_StringTools::strToupper( "CircleRadius" ),          "int", (void*)&SVG_CirclePlotConstants::globalCircleRadius      ) );
-   v.push_back( ParseData( LRL_StringTools::strToupper( "CircleStrokeWidth" ),     "int", (void*)&SVG_CirclePlotConstants::globalCircleStrokeWidth ) );
-
    v.push_back(ParseData(LRL_StringTools::strToupper("G6LineWidth"    ), "int", (void*)&SVG_DistancePlotConstants::globalG6DataLineStrokeWidth));
    v.push_back(ParseData(LRL_StringTools::strToupper("DeloneLineWidth"), "int", (void*)&SVG_DistancePlotConstants::globalDeloneDataLineStrokeWidth));
    v.push_back( ParseData(LRL_StringTools::strToupper( "AxisWidth" ),             "int", (void*)&SVG_DistancePlotConstants::globalDataAxisWidth       ) );
    v.push_back( ParseData(LRL_StringTools::strToupper( "TicLength" ),             "int", (void*)&SVG_DistancePlotConstants::globalY_AxisTicMarkLength ) );
 
    v.push_back( ParseData(LRL_StringTools::strToupper( "Vector" ),                "g6", (void*)0 ) );
-
-   v.push_back( ParseData( LRL_StringTools::strToupper( "MovieMode" ),   "MovieMode", (void*)&FollowerConstants::globalMovieMode ) );
 
    v.push_back( ParseData( LRL_StringTools::strToupper( "FollowerMode" ),      "FollowerMode", (void*)&FollowerConstants::globalFollowerMode ) );
 

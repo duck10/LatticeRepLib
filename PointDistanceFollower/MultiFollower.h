@@ -22,7 +22,7 @@ class CS6 {};
 class MultiFollower {
 public:
    MultiFollower(){}
-   MultiFollower(const std::vector<std::pair<S6, S6> >& inputPath);
+   MultiFollower(const std::vector<std::pair<S6, S6> >& inputPath, const std::vector<std::pair<S6, S6> >& secondPath);
 
    LRL_Path<S6> GetS6(void) const;
    LRL_Path<G6> GetG6(void) const;
@@ -52,6 +52,7 @@ public:
 
    std::set<unsigned long> DetermineOutliers(const std::vector<double> distanceList) const;
    const std::set<unsigned long> DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const;
+   bool HasGlitches(void) const;
 
 private:
    LRL_Path<S6>  m_s6path;
