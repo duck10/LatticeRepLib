@@ -68,34 +68,54 @@ public:
       return nameS6Dist + nameG6Dist + nameD7Dist + nameCS6Dist;
    }
 
+   void GetDistancesToVectorsAndPoints(
+      std::vector<std::pair<S6, S6> >& pointsS6,
+      std::vector<std::pair<G6, G6> >& pointsG6,
+      std::vector<std::pair<D7, D7> >& pointsD7,
+      std::vector<std::pair<S6, S6> >& pointsCS,
+      std::vector<double>& distancesS6,
+      std::vector<double>& distancesG6,
+      std::vector<double>& distancesD7,
+      std::vector<double>& distancesCS)
+   {
+      LRL_Path<S6> pathS6 = m_multiFollow.GetS6();
+      LRL_Path<G6> pathG6 = m_multiFollow.GetG6();
+      LRL_Path<D7> pathD7 = m_multiFollow.GetD7();
+      LRL_Path<S6> pathCS = m_multiFollow.GetCS();
+
+      pointsS6 = pathS6.GetPath();
+      pointsG6 = pathG6.GetPath();
+      pointsD7 = pathD7.GetPath();
+      pointsCS = pathCS.GetPath();
+
+      distancesS6 = pathS6.GetDistances();
+      distancesG6 = pathG6.GetDistances();
+      distancesD7 = pathD7.GetDistances();
+      distancesCS = pathCS.GetDistances();
+   }
+   
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    void Write(void)
       /*-------------------------------------------------------------------------------------*/
    {
       std::ofstream folOut;
       FileOperations::OpenOutputFile(folOut, sFileName.c_str());
-
-      LRL_Path<S6> pathS6 = m_multiFollow.GetS6();
-      LRL_Path<G6> pathG6 = m_multiFollow.GetG6();
-      LRL_Path<D7> pathD7 = m_multiFollow.GetD7();
-      LRL_Path<S6> pathCS = m_multiFollow.GetCS();
-
-      std::vector<std::pair<S6, S6> > pointsS6 = pathS6.GetPath();
-      std::vector<std::pair<G6, G6> > pointsG6 = pathG6.GetPath();
-      std::vector<std::pair<D7, D7> > pointsD7 = pathD7.GetPath();
-      std::vector<std::pair<S6, S6> > pointsCS = pathCS.GetPath();
-
-      const std::vector<double> distancesS6 = pathS6.GetDistances();
-      const std::vector<double> distancesG6 = pathG6.GetDistances();
-      const std::vector<double> distancesD7 = pathD7.GetDistances();
-      const std::vector<double> distancesCS = pathCS.GetDistances();
-
-      if (folOut.is_open() )
+      if (folOut.is_open())
       {
+         std::vector<double> distancesS6;
+         std::vector<double> distancesG6;
+         std::vector<double> distancesD7;
+         std::vector<double> distancesCS;
+         std::vector<std::pair<S6, S6> > pointsS6;
+         std::vector<std::pair<G6, G6> > pointsG6;
+         std::vector<std::pair<D7, D7> > pointsD7;
+         std::vector<std::pair<S6, S6> > pointsCS;
+         GetDistancesToVectorsAndPoints(pointsS6, pointsG6, pointsD7, pointsCS, distancesS6, distancesG6, distancesD7, distancesCS);
+
          std::vector<std::string> glitches = PopulateGlitchStrings();
 
          folOut << "PointDistanceFollower" << std::endl;
-         folOut << sFileName << "     Output is S6 probe cell, C3 reduced cell, " << 
+         folOut << sFileName << "     Output is S6 probe cell, C3 reduced cell, " <<
             ConstructListOfNamesOfOutputDistances() << "distance between" << std::endl;
 
          for (unsigned long counter = 0; counter < m_multiFollow.size(); ++counter) {
