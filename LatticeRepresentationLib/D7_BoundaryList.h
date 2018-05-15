@@ -2,7 +2,7 @@
 #ifndef D7_BOUNDARYLIST_H
 #define D7_BOUNDARYLIST_H
 
-#include "D7_boundary.h"
+#include "D7_Boundary.h"
 #include "ConstSingleton_T.h"
 
 #include <vector>

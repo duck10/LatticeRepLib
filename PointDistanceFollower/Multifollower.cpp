@@ -13,15 +13,13 @@
 #include "S6.h"
 #include "S6Dist.h"
 
-MultiFollower::MultiFollower(const std::vector<std::pair<S6, S6> > & inputPath)
-   : m_s6path(inputPath)
-   , m_g6path (Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(inputPath))
-   , m_d7path (Converter<D7, std::vector<std::pair<D7, D7> >, Delone>(inputPath))
-   , m_cspath (inputPath)
-
+MultiFollower::MultiFollower(const std::vector<std::pair<S6, S6> > & inputPath, const std::vector<std::pair<S6, S6> >& secondPath)
+   : m_s6path(inputPath, secondPath)
+   , m_g6path(Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(inputPath), Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(secondPath))
+   , m_d7path(Converter<D7, std::vector<std::pair<D7, D7> >, Delone>(inputPath), Converter<D7, std::vector<std::pair<D7, D7> >, Delone>(secondPath))
+   , m_cspath(inputPath, secondPath)
 {
 }
-
 
 LRL_Path<S6> MultiFollower::GetS6(void) const {
    return m_s6path;
@@ -39,16 +37,29 @@ LRL_Path<S6> MultiFollower::GetCS(void) const {
    return m_cspath;
 }
 
-
 MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const {
    MultiFollower m(mf);
    S6 out;
    std::vector<double> vdist;
    const std::vector<std::pair<S6, S6> > path(mf.GetS6().GetPath());
+   const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
    S6Dist s6dist(1);
-   for ( unsigned long i=0; i<path.size(); ++i ){
-     vdist.push_back( s6dist.DistanceBetween(path[0].second, path[i].second));
+   if (mf.GetS6().HasSecondPath()) {
+      for (unsigned long i = 0; i < path.size(); ++i) {
+         vdist.push_back(s6dist.DistanceBetween(path[0].second, secondPath[i].second));
+         const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
+         //std::cout << p_report.first << "        " << p_report.second.first << "        " << p_report.second.second << std::endl;
+      }
    }
+   else
+   {
+      for (unsigned long i = 0; i < path.size(); ++i) {
+         vdist.push_back(s6dist.DistanceBetween(path[0].second, path[i].second));
+         const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
+         //std::cout << p_report.first << "        " << p_report.second.first << "        " << p_report.second.second << std::endl;
+      }
+   }
+   const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
    m.SetDistancesS6(vdist);
    return m;
 }
@@ -58,8 +69,15 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
    G6 out;
    std::vector<double> vdist;
    const std::vector<std::pair<G6, G6> > path(mf.GetG6().GetPath());
-   for (unsigned long i = 0; i<path.size(); ++i) {
-      vdist.push_back(NCDist(path[0].second.data(), path[i].second.data()));
+   const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
+   if (mf.GetS6().HasSecondPath()) {
+      for (unsigned long i = 0; i < path.size(); ++i)
+         vdist.push_back(NCDist(path[0].second.data(), secondPath[i].second.data()));
+   }
+   else
+   {
+      for (unsigned long i = 0; i < path.size(); ++i)
+         vdist.push_back(NCDist(path[0].second.data(), path[i].second.data()));
    }
    m.SetDistancesG6(vdist);
    return m;
@@ -70,8 +88,15 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
    D7 out;
    std::vector<double> vdist;
    const std::vector<std::pair<D7, D7> > path(mf.GetD7().GetPath());
-   for (unsigned long i = 0; i<path.size(); ++i) {
-      vdist.push_back(D7Dist(path[0].second.data(), path[i].second.data()));
+   const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
+   if (mf.GetS6().HasSecondPath()) {
+      for (unsigned long i = 0; i < path.size(); ++i)
+         vdist.push_back(CS6Dist(path[0].second.data(), secondPath[i].second.data()));
+   }
+   else
+   {
+      for (unsigned long i = 0; i < path.size(); ++i)
+         vdist.push_back(CS6Dist(path[0].second.data(), path[i].second.data()));
    }
    m.SetDistancesD7(vdist);
    return m;
@@ -83,8 +108,15 @@ MultiFollower MultiFollower::CalculateDistancesCS(const MultiFollower& mf) const
    S6 out;
    std::vector<double> vdist;
    const std::vector<std::pair<S6, S6> > path(mf.GetCS().GetPath());
-   for (unsigned long i = 0; i<path.size(); ++i) {
-      vdist.push_back(CS6Dist(path[0].second.data(), path[i].second.data()));
+   const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
+   if (mf.GetS6().HasSecondPath()) {
+      for (unsigned long i = 0; i < path.size(); ++i)
+         vdist.push_back(CS6Dist(path[0].second.data(), secondPath[i].second.data()));
+   }
+   else
+   {
+      for (unsigned long i = 0; i < path.size(); ++i)
+         vdist.push_back(CS6Dist(path[0].second.data(), path[i].second.data()));
    }
    m.SetDistancesCS(vdist);
    return m;
@@ -161,4 +193,8 @@ const double MultiFollower::GetTime2ComputerFrame(void) const {
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 void MultiFollower::SetTime2ComputeFrame(const double computeTime) {
    m_seconds2ComputerFrame = computeTime;
+}
+
+bool MultiFollower::HasGlitches(void) const {
+   return m_cspath.HasGlitches() || m_d7path.HasGlitches() || m_s6path.HasGlitches() || m_g6path.HasGlitches();
 }

@@ -14,7 +14,8 @@ public:
 
    ReadGlobalData( void );
    ~ReadGlobalData( void ) {};
-   static G6 GeneratePerturbation( const G6& v );
+   static G6 GeneratePerturbation(const G6& v, const double perturbationFraction);
+   static G6 GeneratePerturbation(const G6& v);
    //static std::string strToupper(const std::string& s);
 
    class ParseData {

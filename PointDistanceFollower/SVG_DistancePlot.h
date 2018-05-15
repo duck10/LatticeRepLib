@@ -22,7 +22,6 @@
 
 
 
-//#include "MapBoundaryStrings2Colors.h"
 #include "LinearAxis.h"
 
 template<typename TVEC>
@@ -38,7 +37,6 @@ public:
       const std::list<std::string> svg = DrawDistancePlot(multiFollow);
       FileWriter<TVEC>(fileName + ".txt", multiFollow).Write();
       SVG_Writer<TVEC> writer(fileName + ".svg", svg, multiFollow.GetLineDescriptions(), multiFollow.GetTime2ComputerFrame());
-      //SVG_Writer<TVEC, TMAT, TREDUCE>(s_SVG_FileName +".svg", multiFollow);
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -51,19 +49,6 @@ public:
    }
 
 private:
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-//   std::vector<std::string> FindTransformRuns( ) {
- //     std::set<std::string> boundaries;
-//
- //     const unsigned long n = m_follow.size( );
- //     for( unsigned long i = 0; i < n; ++i) {
- //        const std::string s = m_follow.GetBoundaryString( i );
- //        boundaries.insert( s );
- //     }
-//
- //     return std::vector<std::string>( boundaries.begin( ), boundaries.end( ) );
-//   }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::list<std::string> FormatAllPointsAsPolyline( const std::vector<double>& distances,
@@ -153,17 +138,20 @@ private:
    static std::string Draw_XY_Axes( const AxisLimits& alY, const double minimumDistance, const double yscale )
       /*-------------------------------------------------------------------------------------*/
    {
-      return(
-         std::string( "\n<!--Draw the X and Y axes -->\n" )
-         + std::string( "<polyline fill=\"none\" stroke=\"black\"" )
-         + LRL_DataToSVG( " stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\" " )
-         + LRL_DataToSVG( " points=\" ", LRL_ToString(SVG_WriterConstants::globalPlotSpace), ",0 0,0 0,", (alY.m_upperLimit - minimumDistance)*yscale, "\" />" )
-         + "\n<!-- -->\n");
+      return
+         std::string("\n<!--Draw the X and Y axes -->\n")
+         + std::string("<polyline fill=\"none\" stroke=\"black\"")
+         + LRL_DataToSVG(" stroke-width=\"", SVG_DistancePlotConstants::globalDataAxisWidth, "\" ")
+         + LRL_DataToSVG(" points=\" ", LRL_ToString(SVG_WriterConstants::globalPlotSpace), ",0 0,0 0,", (alY.m_upperLimit - minimumDistance)*yscale, "\" />\n")
+         + std::string("<polyline fill=\"none\" stroke=\"black\"")
+         + LRL_DataToSVG(" stroke-width=\"", 1, "\" ")
+         + LRL_DataToSVG(" points=\" ""0 ", (alY.m_upperLimit - minimumDistance)*yscale, " ", SVG_WriterConstants::globalPlotSpace, " ",(alY.m_upperLimit - minimumDistance)*yscale, " ", SVG_WriterConstants::globalPlotSpace, " 0" "\" />")
+         + "\n<!-- -->\n";
    }
-   //std::string> svgG6 = DrawOneDistanceGlitches(multiFollow.GetG6().GetDistances(), multiFollow.GetS6().GetGlitches(), minimumDistance, xscale, yscale, lines.GetColor("G6"));
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::list<std::string> DrawOneDistanceGlitches(const std::vector<double>& distances, const std::set<unsigned long>& glitches, const double minimumDistance, const double xscale, const double yscale) const
+   std::list<std::string> DrawOneDistanceGlitches(const std::vector<double>& distances, const std::set<unsigned long>& glitches, 
+      const double minimumDistance, const double xscale, const double yscale, const std::string& color) const
       /*-------------------------------------------------------------------------------------*/
    {
       std::list<std::string> svg;
@@ -175,8 +163,8 @@ private:
             const double xGlitchOrdinal = double( *it );
             const double x = double( (1UL+xGlitchOrdinal) * xscale );
             const double y = (distances[*it] - minimumDistance) * yscale;
-            svg.push_back( DrawGlitchLocation( x, y ) );
-            svg.push_back( DrawGlitchLabel( x, y, int( xGlitchOrdinal ) ) );
+            svg.push_back( DrawGlitchLocation( x, y, "black" ) );
+            svg.push_back( DrawGlitchLabel( x, y, int( xGlitchOrdinal ), color ) );
          }
 
          svg.push_back( "\n<!-- -->\n" );
@@ -185,13 +173,14 @@ private:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   static std::string DrawGlitchLocation( const double x, const double y ) {
-      return(
-         "<line fill=\"none\" stroke=\"black\" stroke-width=\"2\""
+   static std::string DrawGlitchLocation( const double x, const double y, const std::string& color ) {
+      return
+         "<line fill=\"none\" stroke=\"" + color +"\" stroke-width=\"4\""
          + LRL_DataToSVG( " x1=\"", x, "\"" )
          + LRL_DataToSVG( " y1=\"", y - 10, "\"" )
          + LRL_DataToSVG( " x2=\"", x, "\"" )
-         + LRL_DataToSVG( " y2=\"", y - 60, "\" />" ));
+         + LRL_DataToSVG( " y2=\"", y - 60, "\" ")
+         + " stroke-dasharray = \"10,5\" />";
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -273,15 +262,25 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
       const double minimumDistance,
       const double xscale,
       const double yscale)
+
    {
-      const std::set<unsigned long> glitchesS6 = multiFollow.GetS6().GetGlitches();
-      const std::set<unsigned long> glitchesG6 = multiFollow.GetG6().GetGlitches();
-      const std::set<unsigned long> glitchesD7 = multiFollow.GetD7().GetGlitches();
-      const std::set<unsigned long> glitchesCS = multiFollow.GetCS().GetGlitches();
-      std::list<std::string> svgS6 = DrawOneDistanceGlitches(multiFollow.GetS6().GetDistances(), glitchesS6, minimumDistance, xscale, yscale);
-      std::list<std::string> svgG6 = DrawOneDistanceGlitches(multiFollow.GetG6().GetDistances(), glitchesG6, minimumDistance, xscale, yscale);
-      std::list<std::string> svgD7 = DrawOneDistanceGlitches(multiFollow.GetD7().GetDistances(), glitchesD7, minimumDistance, xscale, yscale);
-      std::list<std::string> svgCS = DrawOneDistanceGlitches(multiFollow.GetCS().GetDistances(), glitchesCS, minimumDistance, xscale, yscale);
+      DistanceLineDescriptions lines(multiFollow.GetLineDescriptions());
+
+      const LRL_Path<S6> pathS6 = multiFollow.GetS6();
+      const LRL_Path<G6> pathG6 = multiFollow.GetG6();
+      const LRL_Path<D7> pathD7 = multiFollow.GetD7();
+      const LRL_Path<S6> pathCS = multiFollow.GetCS();
+
+      const std::set<unsigned long> glitchesS6 = pathS6.GetGlitches();
+      const std::set<unsigned long> glitchesG6 = pathG6.GetGlitches();
+      const std::set<unsigned long> glitchesD7 = pathD7.GetGlitches();
+      const std::set<unsigned long> glitchesCS = pathCS.GetGlitches();
+
+      std::list<std::string> svgS6 = DrawOneDistanceGlitches(multiFollow.GetS6().GetDistances(), glitchesS6, minimumDistance, xscale, yscale, lines.GetColor("S6"));
+      std::list<std::string> svgG6 = DrawOneDistanceGlitches(multiFollow.GetG6().GetDistances(), glitchesG6, minimumDistance, xscale, yscale, lines.GetColor("G6"));
+      std::list<std::string> svgD7 = DrawOneDistanceGlitches(multiFollow.GetD7().GetDistances(), glitchesD7, minimumDistance, xscale, yscale, lines.GetColor("D7"));
+      std::list<std::string> svgCS = DrawOneDistanceGlitches(multiFollow.GetCS().GetDistances(), glitchesCS, minimumDistance, xscale, yscale, lines.GetColor("CS"));
+
       std::list<std::string> svg;
       svg.splice(svg.end(), svgS6);
       svg.splice(svg.end(), svgG6);
@@ -308,7 +307,7 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
       std::list<std::string> svgLines = DrawAllLines(multiFollow, alY.m_lowerLimit, xscale, yscale);
       svg.splice(svg.end(), svgLines);
 
-      std::list<std::string> svgGlitches = DrawAllGlitches(multiFollow, alX.m_lowerLimit, xscale, yscale);
+      std::list<std::string> svgGlitches = DrawAllGlitches(multiFollow, alY.m_lowerLimit, xscale, yscale);
       svg.splice(svg.end(), svgGlitches);
 
       svg.push_back( Draw_XY_Axes( alY, alY.m_lowerLimit, yscale ) );
@@ -317,9 +316,6 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
 
       std::list<std::string> labelsAndTicsFor_Y_Axis( LabelsAndTicsFor_Y_Axis( alY, alY.m_lowerLimit, yscale ) );
       svg.splice( svg.end( ), labelsAndTicsFor_Y_Axis ); // keep g++ happy
-
-      //std::list<std::string> drawGlitches( DrawGlitches( glitches, alY.m_lowerLimit, xscale, yscale ) );  // lca need to implement PER LINE
-      //svg.splice( m_svg.end( ), drawGlitches ); // keep g++ happy
 
       //InsertVectorAndDifferenceData( distances, Delonedistances);
 
@@ -393,9 +389,9 @@ private: // don't implement
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   static std::string DrawGlitchLabel( const double x, const double y, const int ordinal ) {
+   static std::string DrawGlitchLabel( const double x, const double y, const int ordinal, const std::string& color ) {
       return(
-         "<text transform=\"scale(1,-1)\" font-family=\"sans-serif\" font-size=\"30\""
+         "<text transform=\"scale(1,-1)\" font-family=\"sans-serif\" font-size=\"30\" stroke = \"rgb(0,0,0)\" line = \"rgb(0,0,0)\"  fill = \"" + color + "\""
          + LRL_DataToSVG( " x=\"", x + 5, "\"" )
          + LRL_DataToSVG( " y=\"", -y + 60, "\" >" )
          + LRL_DataToSVG( ordinal, "</text>" ));

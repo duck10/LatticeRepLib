@@ -374,7 +374,7 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const S6& d1, const std:
    std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
    for (unsigned long i = 0; i < v.size(); ++i) {
       double dtemp = (d1 - v[i]).norm();
-      if (dtemp < dmin) {
+      if (dtemp <= dmin) {
          p = std::make_pair(dtemp, i);
          dmin = p.first;
          g_bestVectors.Store(dmin, std::make_pair(d1, v[i]));

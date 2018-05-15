@@ -140,7 +140,7 @@ private:
       SVG_HeaderBoilerplate( sFileName );
       SVG_HeaderFrameDescription( startingVectorCounter );
       m_svg.push_back(WriteLineDescriptions());
-      //m_svg.push_back( DrawStartingEndingCells( ) );
+      m_svg.push_back(" <text x=\"140\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" >" + sFileName +"  </text> ");
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -181,7 +181,7 @@ private:
    void SVG_HeaderFrameDescription( const int startingVectorCounter ) {
       if (startingVectorCounter >= 0) {
          //m_svg.push_back( " <text x=\"280\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" > Trial vector = " + LRL_ToString( startingVectorCounter ) + "  </text> " );
-         m_svg.push_back( " <text x=\"700\" y=\"30\" font-family=\"sans-serif\" font-size=\"20\">Wall time passed: "
+         m_svg.push_back( " <text x=\"560\" y=\"30\" font-family=\"sans-serif\" font-size=\"20\">Wall time passed: "
             + LRL_ToString(m_computeTime)
             + " msec.</text>" );
       }

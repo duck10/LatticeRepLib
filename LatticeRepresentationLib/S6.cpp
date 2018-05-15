@@ -16,7 +16,7 @@ static const double randomLatticeNormalizationConstantSquared = randomLatticeNor
 #include "D7.h"
 #include "G6.h"
 #include "LRL_RandTools.h"
-#include "Rhrand.h"
+#include "rhrand.h"
 #include "S6.h"
 #include "Selling.h"
 #include "LRL_StringTools.h"

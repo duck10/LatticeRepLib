@@ -13,8 +13,7 @@ namespace {
                      "deeppink", "mediumvioletred", "tomato", "greenyellow", "olive" };
 };
 
-   FollowerConstants::enumMovieMode FollowerConstants::globalMovieMode = FollowerConstants::globalStar;
-   FollowerConstants::enumFollowerMode FollowerConstants::globalFollowerMode = FollowerConstants::globalFollow;
+   FollowerConstants::enumFollowerMode FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
 
    //These are which G6 components to put into the SVG file !!!!!!!!!!!!!!!!
    std::pair<int,int> FollowerConstants::globalWhichComponentsToPlot = std::make_pair( 3,4 );  // Here they are ZERO-BASED !!!!!!!
@@ -41,11 +40,6 @@ namespace {
    double SVG_WriterConstants::globalGraphSpace  = 800; // px
    double SVG_WriterConstants::globalGraphBorder = 100; // px
    double SVG_WriterConstants::globalPlotSpace   = SVG_WriterConstants::globalGraphSpace - 2*SVG_WriterConstants::globalGraphBorder;
-
-
-   int SVG_CirclePlotConstants::globalCirclePlotSize    = 2000; // px
-   int SVG_CirclePlotConstants::globalCircleRadius      = 300; // px
-   int SVG_CirclePlotConstants::globalCircleStrokeWidth = 30; // px
 
 
    int SVG_DistancePlotConstants::globalG6DataLineStrokeWidth = 3; // px

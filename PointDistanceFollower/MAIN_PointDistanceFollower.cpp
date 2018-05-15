@@ -176,14 +176,19 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
    return points;
 }
 
-MultiFollower ProcessOneLattice(const unsigned long cellNumber, const unsigned long plotCounter, const CellInputData& cell) {
+MultiFollower ProcessOneLattice(const unsigned long cellNumber, const unsigned long plotCounter, const CellInputData& cell, const CellInputData& cell2) {
    const std::string baseFileName = NameOneFileForOneLattice(cellNumber) + LRL_ToString(plotCounter);
-   const std::vector<std::pair<S6, S6> > points = GenerateS6LineFromStartToFinish(cell);
+   const std::vector<std::pair<S6, S6> > points1 = GenerateS6LineFromStartToFinish(cell);
+   std::vector<std::pair<S6, S6> > points2;
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
+      points2 = GenerateS6LineFromStartToFinish(cell2);
+   }
 
-   MultiFollower mf(points);
+   MultiFollower mf(points1, points2);
    mf = mf.GenerateAllDistances();
 
    mf.SetTime2ComputeFrame(std::clock() - mf.GetComputeStartTime());
+   if (!mf.HasGlitches() && FollowerConstants::globalOutputGlitchesOnly) return mf;
    SVG_DistancePlot<S6> distanceplot(mf, baseFileName);
    std::cout << baseFileName << std::endl;
 
@@ -218,10 +223,16 @@ int main(int argc, char* argv[]) {
       ++cellcount;
       for (unsigned long trialNo = 0; trialNo < std::max(1UL, FollowerConstants::globalNumberOfTrialsToAttempt); ++trialNo) {
          CellInputData cell(*it);
-         if (trialNo > 0) {
+         CellInputData cell2(cell);
+         if (trialNo > 0 || FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
             cell.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
+            std::vector<CellInputData>::const_iterator it2 = it +1;
+            if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine  && (it2 != celldata.end()) ) {
+               ++it;
+               cell2.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
+            }
          }
-         const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell);
+         const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell, cell2);
          ++plotCounter;
       }
    }

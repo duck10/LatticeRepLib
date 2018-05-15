@@ -82,10 +82,10 @@ public:
       const std::set<unsigned long> glSetCS = m_multiFollow.DetermineOutliers(m_multiFollow.GetCS().GetDistances());
 
 
-      const unsigned long nS6 = m_multiFollow.GetS6().GetDistances().size();
-      const unsigned long nG6 = m_multiFollow.GetG6().GetDistances().size();
-      const unsigned long nD7 = m_multiFollow.GetD7().GetDistances().size();
-      const unsigned long nCS = m_multiFollow.GetCS().GetDistances().size();
+      const unsigned long nS6 = (unsigned long)(m_multiFollow.GetS6().GetDistances().size());
+      const unsigned long nG6 = (unsigned long)(m_multiFollow.GetG6().GetDistances().size());
+      const unsigned long nD7 = (unsigned long)(m_multiFollow.GetD7().GetDistances().size());
+      const unsigned long nCS = (unsigned long)(m_multiFollow.GetCS().GetDistances().size());
       const unsigned long nmaxDist = maxNC( nS6, nG6, nD7,nCS );
 
       glitches.resize(nmaxDist, "");
@@ -101,9 +101,6 @@ public:
    void Write(void)
       /*-------------------------------------------------------------------------------------*/
    {
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalWeb)
-         return;
-
       std::ofstream folOut;
       FileOperations::OpenOutputFile(folOut, sFileName.c_str());
 
