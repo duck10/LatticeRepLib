@@ -10,7 +10,7 @@
 <text x="300" y="135"  font-family="sans-serif" font-size="20" fill="olive">CS6Dist  olive</text>
 
  <text x="140"  y="30"  font-family="sans-serif" font-size="20" >Fol_2018-05-14.17_25_32.1_99.svg  </text> 
-
+<text x="-550" y="50" transform="rotate(-90)"  font-size="40" stroke ="lightgray" fill="none"> PointDistanceFollower </text>
 
  <!--DISTANCE PLOT BEGINS-->
 
