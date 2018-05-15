@@ -18,8 +18,6 @@ namespace {
    //These are which G6 components to put into the SVG file !!!!!!!!!!!!!!!!
    std::pair<int,int> FollowerConstants::globalWhichComponentsToPlot = std::make_pair( 3,4 );  // Here they are ZERO-BASED !!!!!!!
 
-   bool FollowerConstants::globalDrawCirclePlot       = false;
-   bool FollowerConstants::globalDrawDistancePlot     = true;
    bool FollowerConstants::globalPrintAllDistanceData = true;
    bool FollowerConstants::globalOutputGlitchesOnly   = false;
 

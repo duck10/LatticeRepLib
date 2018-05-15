@@ -18,8 +18,6 @@ namespace FollowerConstants {
    extern std::pair<int,int> globalWhichComponentsToPlot;  // Here they are ZERO-BASED !!!!!!!
 
    extern enumFollowerMode   globalFollowerMode;
-   extern bool   globalDrawCirclePlot;
-   extern bool   globalDrawDistancePlot;
    extern bool   globalPrintAllDistanceData;
    extern bool   globalOutputGlitchesOnly;
           

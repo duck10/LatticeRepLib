@@ -234,8 +234,6 @@ bool ReadGlobalData::GetDataFromCIN( const std::vector<ReadGlobalData::ParseData
 const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure( void ) {
    std::vector<ParseData> v;
 
-   v.push_back( ParseData( LRL_StringTools::strToupper( "CirclePlot" ),        "bool", (void*)&FollowerConstants::globalDrawCirclePlot ) );
-   v.push_back( ParseData( LRL_StringTools::strToupper( "DistancePlot" ),      "bool", (void*)&FollowerConstants::globalDrawDistancePlot ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "PrintDistanceData" ), "bool", (void*)&FollowerConstants::globalPrintAllDistanceData ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "GlitchesOnly" ),      "bool", (void*)&FollowerConstants::globalOutputGlitchesOnly ) );
 

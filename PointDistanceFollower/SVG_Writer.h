@@ -101,21 +101,6 @@ private:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   // Output which two variables will be plotted in the circle plot
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::string GetWhichToPlot( const std::pair<int, int>& which2plot ) {
-      return(LRL_ToString( "Plotting g" ) + LRL_ToString( which2plot.second + 1 ) + LRL_ToString( " vs. g" ) + LRL_ToString( which2plot.first + 1 ));
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::string DrawTitleOfWhichG6ElementsToPlot( ) {
-      return
-         "<text x=\"450\" y=\"30\" font-family=\"sans-serif\" font-size=\"20\" fill=\"black\" > " +
-         GetWhichToPlot( m_which2plot ) +
-         "</text>";
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    void SVG_Footer( void ) {
       m_svg.push_back("-->\n</g>\n</g>");
       m_svg.push_back( "<!-- Run Constants" );
@@ -126,7 +111,6 @@ private:
 
    std::string WriteLineDescriptions() {
       std::string svg;
-      //svg += "<text x=\"300\" y=\"60\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"gray\" >" + m_lineDescriptions.GetName("S6") + "  " + m_lineDescriptions.GetColor("S6") + "</text>\n";
       svg += "<text x=\"300\" y=\"60\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" + m_lineDescriptions.GetColor("S6") + "\">" + m_lineDescriptions.GetName("S6") + "  " + m_lineDescriptions.GetColor("S6") + "</text>\n";
       svg += "<text x=\"300\" y=\"85\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" + m_lineDescriptions.GetColor("G6") + "\">" + m_lineDescriptions.GetName("G6") + "  " + m_lineDescriptions.GetColor("G6") + "</text>\n";
       svg += "<text x=\"300\" y=\"110\"  font-family=\"sans-serif\" font-size=\"20\" fill=\"" + m_lineDescriptions.GetColor("D7") + "\">" + m_lineDescriptions.GetName("D7") + "  " + m_lineDescriptions.GetColor("D7") + "</text>\n";
@@ -142,17 +126,6 @@ private:
       m_svg.push_back(WriteLineDescriptions());
       m_svg.push_back(" <text x=\"140\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" >" + sFileName +"  </text> ");
    }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-//   std::string DrawStartingEndingCells( void ) const {
-//      TVEC vec = m_follow.GetProbe( );
-//      std::string s = "<text x=\"300\" y=\"60\"  font-family=\"sans-serif\" font-size=\"20\" > Beginning vector  " + LRL_ToString( vec ) + "</text>\n";
-//                 s += "<text x=\"300\" y=\"85\"  font-family=\"sans-serif\" font-size=\"20\" > Beginning cell  " + LRL_ToString( LRL_Cell(vec) ) + "</text>\n";
-//      vec = m_follow.GetSecondProbe( );
-//      s += "<text x=\"300\" y=\"110\"  font-family=\"sans-serif\" font-size=\"20\" > Ending vector  " + LRL_ToString(vec) + "</text>\n";
-//      s += "<text x=\"300\" y=\"135\"  font-family=\"sans-serif\" font-size=\"20\" > Ending cell  " + LRL_ToString(LRL_Cell_Degrees(vec)  ) + "</text>\n";
-//     return(s);
-//   }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::string ScaleToGraph( const unsigned long n, const unsigned long totalItemCount ) const {
@@ -173,7 +146,7 @@ private:
       */
       m_svg.push_back( "<!-- the width and height set the total pixel output of the image in the browser -->" );
       m_svg.push_back( "<!-- whatever is within the viewbox will be remapped to show in this size -->" );
-      m_svg.push_back( "<svg width=\"1000\" height=\"1000\" viewBox=\"1 0 1000 1000\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
+      m_svg.push_back( "<svg width=\"900\" height=\"800\" viewBox=\"1 0 900 800\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
       m_svg.push_back( " <desc>ID (and file name) = " + sFileName + " </desc> " );
    }
 
