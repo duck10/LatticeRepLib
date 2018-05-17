@@ -170,9 +170,12 @@ private:
          std::set<unsigned long>::iterator it;
          for( it=glitches.begin(); it != glitches.end( ); ++it)
          {
+            const double currentDistance = distances[*it];
             const double xGlitchOrdinal = double( *it );
             const double x = double( (1UL+xGlitchOrdinal) * xscale );
-            const double y = (distances[*it] - minimumDistance) * yscale;
+            double y;
+            if ( currentDistance >= 0.0 )
+                y = (currentDistance - minimumDistance) * yscale;
             svg.push_back( DrawGlitchLocation( x, y, "black" ) );
             svg.push_back( DrawGlitchLabel( x, y, int( xGlitchOrdinal ), color ) );
          }

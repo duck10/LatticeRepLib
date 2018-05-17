@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <!-- the width and height set the total pixel output of the image in the browser -->
 <!-- whatever is within the viewbox will be remapped to show in this size -->
-<svg width="900" height="800" viewBox="1 0 900 800"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="900" height="900" viewBox="1 0 900 900"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
  <desc>ID (and file name) = Fol_2018-05-16.16_29_39.11_10.svg </desc> 
 <text x = "-750" y="50" transform="rotate(-90)"  font-family="sans-serif" font-size="40" stroke ="lightgray" fill="none"> PointDistanceFollower   May 16 2018</text>
  <text x="560" y="30" font-family="sans-serif" font-size="20">Wall time passed: 1122 msec.</text>
