@@ -71,24 +71,34 @@ private:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::list<std::string> FormatEachDatumAsSeparateLineSegment( const std::vector<double>& distances, const double minimumDistance, const double xscale, const double yscale )
-      /*-------------------------------------------------------------------------------------*/
+   std::list<std::string> FormatEachDatumAsSeparateLineSegment( const std::vector<double>& distances,
+      const int lineWidth, const double minimumDistance, const double xscale, const double yscale, const std::string& color)
+   /*-------------------------------------------------------------------------------------*/
    {
-      const int xmax( int( distances.size( ) ) );
       std::list<std::string> svg;
-      std::vector<double>::const_iterator it = distances.begin( );
-      double yprev = ((*it) - minimumDistance)*yscale;
-      for (int i = 1; i <= xmax; ++i, ++it)
-      {
-         const std::string bound/* = m_follow.GetBoundaryString( i - 1 )*/;
-         const double yNext = ((*it) - minimumDistance)*yscale;
-         svg.push_back( DrawSingleLineSegment( bound, double( i - 1 )*xscale, yprev, double( i )*xscale, yNext ) );
-         yprev = yNext;
+      if (!distances.empty()) {
+         const std::pair<std::vector<double>::const_iterator, std::vector<double>::const_iterator> distminmax = std::minmax_element(distances.begin(), distances.end());
+         LinearAxis la;
+         const AxisLimits alY = la.LinearAxisLimits(*distminmax.first, *distminmax.second);
+         const double distmid = (alY.m_lowerLimit + alY.m_upperLimit) / 2.0;
+
+         const int xmax(int(distances.size()));
+         std::vector<double>::const_iterator it = distances.begin();
+         double yprev = ((*it) - minimumDistance)*yscale;
+         for (int i = 1; i <= xmax; ++i, ++it)
+         {
+            const std::string bound/* = m_follow.GetBoundaryString( i - 1 )*/;
+            const double yNext = ((*it) - minimumDistance)*yscale;
+            if ((*it) >= 0.0)
+               svg.push_back(DrawSingleLineSegment(color, lineWidth, double(i - 1)*xscale, yprev, double(i)*xscale, yNext));
+            else
+               svg.push_back(DrawInvalidLineSegment("orange", 6, double(i - 1)*xscale, SVG_WriterConstants::globalPlotSpace/2.0, double(i)*xscale));
+            yprev = yNext;
+         }
       }
 
       return(svg);
    }
-
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::list<std::string> LabelsAndTicsFor_Y_Axis( const AxisLimits& alY, const double minimumDistance, const double yscale ) const
@@ -195,9 +205,9 @@ private:
       /*-------------------------------------------------------------------------------------*/
    {
       return
-         (drawLineAsBlack)
-         ? FormatAllPointsAsPolyline( distances, lineWidth, minimumDistance, xscale, yscale, color )
-         : FormatEachDatumAsSeparateLineSegment( distances, minimumDistance, xscale, yscale );
+         //(drawLineAsBlack)
+         /*? */FormatEachDatumAsSeparateLineSegment(distances, lineWidth, minimumDistance, xscale, yscale, color);
+         //: FormatEachDatumAsSeparateLineSegment( distances, minimumDistance, xscale, yscale );
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -301,7 +311,7 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
       const AxisLimits alY = la.LinearAxisLimits(ylimits.first, ylimits.second);
 
       // Calculate the scale factors that will make all of the distance values fit on the graph space.
-      const double xscale = SVG_WriterConstants::globalPlotSpace / (alX.m_upperLimit - alX.m_lowerLimit);
+      const double xscale = SVG_WriterConstants::globalPlotSpace / (alX.m_upperLimit - alX.m_lowerLimit+1);
       const double yscale = SVG_WriterConstants::globalPlotSpace / (alY.m_upperLimit - alY.m_lowerLimit);
 
       std::list<std::string> svgLines = DrawAllLines(multiFollow, alY.m_lowerLimit, xscale, yscale);
@@ -325,17 +335,34 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
 
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::string DrawSingleLineSegment( const std::string& bound, const double x1, const double y1, const double x2, const double y2 )
+   std::string DrawSingleLineSegment(const std::string& color, const int lineWidth, const double x1, const double y1, const double x2, const double y2)
       /*-------------------------------------------------------------------------------------*/
    {
       const std::string svg =
-         LRL_DataToSVG("<line fill=\"none\" stroke-width=\"", SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, "\"")
-         + LRL_DataToSVG(" boundary-string=\"", bound, "\" ")
-         //+ LRL_DataToSVG(" stroke=\"", m_colorMap(bound), "\"")
+         LRL_DataToSVG("<line fill=\"none\"")
+         + LRL_DataToSVG(" stroke=\"", color, "\"")
+         + LRL_DataToSVG(" stroke-width=\"", lineWidth, "\"")
          + LRL_DataToSVG(" x1=\"", x1, "\"")
          + LRL_DataToSVG(" y1=\"", y1, "\"")
          + LRL_DataToSVG(" x2=\"", x2, "\"")
          + LRL_DataToSVG(" y2=\"", y2, "\" />");
+
+      return svg;
+   }
+
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   std::string DrawInvalidLineSegment(const std::string& color, const int lineWidth, const double x1, const double y, const double x2)
+      /*-------------------------------------------------------------------------------------*/
+   {
+      const std::string svg =
+         LRL_DataToSVG("<line fill=\"none\"")
+         + LRL_DataToSVG(" stroke-dasharray = \"10, 10\" ")
+         + LRL_DataToSVG(" stroke=\"", color, "\"")
+         + LRL_DataToSVG(" stroke-width=\"", lineWidth, "\"")
+         + LRL_DataToSVG(" x1=\"", x1, "\"")
+         + LRL_DataToSVG(" y1=\"", y, "\"")
+         + LRL_DataToSVG(" x2=\"", x2, "\"")
+         + LRL_DataToSVG(" y2=\"", y, "\" />");
 
       return svg;
    }

@@ -13,7 +13,7 @@
 
 namespace FollowerConstants {
 
-   enum enumFollowerMode{ globalSinglePoint, globalLine };
+   enum enumFollowerMode{ globalSinglePoint, globalLine, globalLine3 };
    //These are which G6 components to put into the SVG file !!!!!!!!!!!!!!!!
    extern std::pair<int,int> globalWhichComponentsToPlot;  // Here they are ZERO-BASED !!!!!!!
 

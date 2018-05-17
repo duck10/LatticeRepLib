@@ -35,110 +35,6 @@
 
 typedef Selling TREDUCE;
 
-//template<typename TVEC, typename TMAT, typename TREDUCE>
-///*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-//bool WalkFromOnePointToAnother( const TVEC& v1, const TVEC& v2, const unsigned long nSteps, const std::string& s_BaseSVG_FileName, MapBoundaryStrings2Colors& colorMap, const unsigned long goodCellCount )
-//   /*-------------------------------------------------------------------------------------*/
-//{
-//   Follow<TVEC,TMAT,TREDUCE>  follow( v1, v2 );
-//   const std::clock_t start = std::clock();
-//   follow.SetStepCount( nSteps )
-//      .SetWhichComponentsToPlot(FollowerConstants::globalWhichComponentsToPlot.first, FollowerConstants::globalWhichComponentsToPlot.second )
-//      .Procession( );
-//   follow.SetTime2ComputeFrame(  std::clock() - start );
-//
-//
-//   // a tiny diagonal means that the probe is essentially reduced before we start
-//   // just dump those
-//   if (FollowerConstants::globalDrawCirclePlot && follow.GetCirclePlotDiagonal( ) < 1.0E-3 )
-//   {
-//      std::cout << "rejected because of tiny diagonal " << follow.GetCirclePlotDiagonal( ) << std::endl;
-//      return( false );
-//   }
-//   else
-//   {
-//      const std::list<double> distances(follow.GetDistances());
-//      //const std::list<double> distances(follow.GetDeloneDistances());
-//
-//      std::vector<Glitch<TVEC> > glitches;
-//      glitches = follow.DetermineIfSomeDeltaIsTooLarge( distances ); // return the index for first glitch
-//
-//      if (FollowerConstants::globalPrintAllDistanceData) {
-//         if (glitches.empty() && FollowerConstants::globalOutputGlitchesOnly) {
-//         }
-//         else
-//         {
-//            FileWriter<TVEC, TMAT, TREDUCE>(s_BaseSVG_FileName + ".txt", follow, glitches).Write();
-//
-//            //#define DisableForHJB
-//#ifndef DisableForHJB
-//   //Create a file name for each different SVG file
-//            const std::string s_SVG_FileName = LRL_ToString(s_BaseSVG_FileName, goodCellCount, ".svg");
-//            const std::vector<triple<double, double, double> > angles(follow.GetLinesFromAngles());
-//            const std::vector<int> rejectedFrames;
-//            SVG_Writer<TVEC, TMAT, TREDUCE>(s_SVG_FileName, follow, 0, colorMap, glitches, rejectedFrames, 0);
-//            if (FollowerConstants::globalFollowerMode == FollowerConstants::globalWeb)
-//               exit(19191);
-//#endif
-//         }
-//      }
-//   }
-//
-//   return( true );
-//}
-//
-//template<typename TVEC, typename TMAT>
-///*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-//unsigned long ProbeOneRegion(const CellInputData& probe, const unsigned long nSteps, const std::string& sBaseFileName)
-///*-------------------------------------------------------------------------------------*/
-//{
-//   S6 vR;
-//   MapBoundaryStrings2Colors colorMap;
-//   MatS6 m;
-//   unsigned long goodCellCount = 0;
-//
-//   for (unsigned long iloop = 0; iloop<FollowerConstants::globalNumberOfTrialsToAttempt; ++iloop)
-//   {
-//      const G6 v1(ReadGlobalData::GeneratePerturbation(G6(probe.GetCell())));
-//      m.Eye();
-//      //const bool bTestReduce(Delone::Delone(v1, m, vR, 0.0));  lca Delone code
-//      const bool bTestReduce(TREDUCE::Reduce(S6(v1), m, vR, 0.0));
-//
-//      const bool beye = (m == MatG6().Eye());
-//      if (bTestReduce && !(m == MatG6().Eye()))
-//      {
-//         const bool bTestWalk = WalkFromOnePointToAnother<TVEC, TMAT, TREDUCE>(TVEC(v1), TVEC(vR), nSteps, sBaseFileName, colorMap, goodCellCount);
-//         if (bTestWalk) ++goodCellCount;
-//      }
-//      else if (!bTestReduce) {
-//         //std::cout << "Delone failed " << v1 << std::endl;
-//         std::cout << "Reduce failed " << v1 << std::endl;
-//      }
-//   }
-//
-//   return(goodCellCount);
-//}
-//
-//template<typename TVEC, typename TMAT>
-///*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-//unsigned long ProbeOneRegion(const TVEC& probe1, const TVEC& probe2,
-//   const unsigned long nSteps, const std::string& sBaseFileName)
-///*-------------------------------------------------------------------------------------*/
-//{
-//   S6 vR;
-//   MapBoundaryStrings2Colors colorMap;
-//   MatS6 m;
-//   unsigned long goodCellCount = 0;
-//
-//   for (unsigned long iloop = 0; iloop<FollowerConstants::globalNumberOfTrialsToAttempt; ++iloop)
-//   {
-//         const bool bTestWalk = WalkFromOnePointToAnother<TVEC, TMAT, TREDUCE>(probe1, probe2, nSteps, sBaseFileName, colorMap, goodCellCount);
-//         if (bTestWalk) ++goodCellCount;
-//   }
-//
-//   return(goodCellCount);
-//}
-
 std::vector<CellInputData> ReadAllLatticeData() {
    std::vector<CellInputData> celldata;
    std::string lattice("");
@@ -161,6 +57,36 @@ std::string NameOneFileForOneLattice(const unsigned long cellNumber) {
          GLOBAL_Files::globalShouldTimeStamp));
 }
 
+std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > GenerateS6LineFromStartToCell3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+   const S6 probe1 = cell1.GetCell();
+   const S6 probe2 = cell2.GetCell();
+   const S6 focus3 = cell3.GetCell();
+   const S6 midpoint = (probe1 + probe2) / 2.0;
+   const S6 delta1 = probe1 - midpoint;
+   const S6 delta2 = probe2 - midpoint;
+   std::vector<std::pair<S6, S6> > points1;
+   std::vector<std::pair<S6, S6> > points2;
+   S6 reduced1;
+   S6 reduced2;
+
+   for (unsigned long step = 0; step<FollowerConstants::globalStepsPerFrame; ++step) {
+      const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
+      const S6 nextMid = (1.0 - t)*midpoint + t * focus3;
+      const S6 next1 = nextMid + delta1;
+      const S6 next2 = nextMid + delta2;
+
+      const bool b1 = Selling::Reduce(next1, reduced1);
+      if (!reduced1.IsAllMinus()) reduced1 *= 0;
+      points1.push_back(std::make_pair(next1, reduced1));
+
+      const bool b2 = Selling::Reduce(next2, reduced2);
+      if ( !reduced2.IsAllMinus()) reduced2 *= 0;
+      points2.push_back(std::make_pair(next2, reduced2));
+
+   }
+   return std::make_pair(points1, points2);
+}
+
 std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputData& cell) {
    std::vector<std::pair<S6, S6> > points;
    const S6 probe = cell.GetCell();
@@ -176,12 +102,23 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
    return points;
 }
 
-MultiFollower ProcessOneLattice(const unsigned long cellNumber, const unsigned long plotCounter, const CellInputData& cell, const CellInputData& cell2) {
+MultiFollower ProcessOneLattice(const unsigned long cellNumber, const unsigned long plotCounter, const CellInputData& cell,
+   const CellInputData& cell2, const CellInputData& cell3) {
    const std::string baseFileName = NameOneFileForOneLattice(cellNumber) + LRL_ToString(plotCounter);
-   const std::vector<std::pair<S6, S6> > points1 = GenerateS6LineFromStartToFinish(cell);
+
+   std::vector<std::pair<S6, S6> > points1;
    std::vector<std::pair<S6, S6> > points2;
-   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
-      points2 = GenerateS6LineFromStartToFinish(cell2);
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
+      const std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> >> p = GenerateS6LineFromStartToCell3(cell, cell2, cell3);
+      points1 = p.first;
+      points2 = p.second;
+   }
+   else
+   {
+      points1 = GenerateS6LineFromStartToFinish(cell);
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
+         points2 = GenerateS6LineFromStartToFinish(cell2);
+      }
    }
 
    MultiFollower mf(points1, points2);
@@ -224,15 +161,24 @@ int main(int argc, char* argv[]) {
       for (unsigned long trialNo = 0; trialNo < std::max(1UL, FollowerConstants::globalNumberOfTrialsToAttempt); ++trialNo) {
          CellInputData cell(*it);
          CellInputData cell2(cell);
-         if (trialNo > 0 || FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
+         CellInputData cell3;
+         std::vector<CellInputData>::const_iterator it2;
+         std::vector<CellInputData>::const_iterator it3;
+         if (trialNo > 0 || FollowerConstants::globalFollowerMode != FollowerConstants::globalSinglePoint) {
             cell.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
-            std::vector<CellInputData>::const_iterator it2 = it +1;
-            if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine  && (it2 != celldata.end()) ) {
+            it2 = it + 1;
+            if ((FollowerConstants::globalFollowerMode == FollowerConstants::globalLine ||
+               FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) && (it2 != celldata.end())) {
                ++it;
                cell2.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
+               it3 = it2 + 1;
+               if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 && (it3 != celldata.end())) {
+                  ++it;
+                  cell3.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
+               }
             }
          }
-         const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell, cell2);
+         const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell, cell2, cell3);
          ++plotCounter;
       }
    }

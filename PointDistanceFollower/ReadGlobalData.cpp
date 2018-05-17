@@ -126,9 +126,12 @@ void SetGlobalValue( const std::string& dataType,
       if (LRL_StringTools::strToupper(value[1]) == "LINE") {
          FollowerConstants::globalFollowerMode = FollowerConstants::globalLine;
       }
-      else {
-         FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
+      else if(LRL_StringTools::strToupper(value[1]) == "LINE3") {
+         FollowerConstants::globalFollowerMode = FollowerConstants::globalLine3;
       }
+   else {
+      FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
+   }
    }
    else {
    }

@@ -71,7 +71,8 @@ bool Selling::Reduce(const S6& in, S6& out) {
       ++m_ReductionCycleCount;
       if (S6::CountPositive(out) == 0) return true;
 
-      if (m_ReductionCycleCount > 1000 || S6::NegativeSumOfScalars(out) < 0.0 ) return false;
+      const double negativeSumOfScalars = S6::NegativeSumOfScalars(out);
+      if (m_ReductionCycleCount > 1000 || negativeSumOfScalars < 0.0 ) return false;
    }
 }
 
