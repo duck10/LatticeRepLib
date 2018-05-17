@@ -44,19 +44,27 @@ MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const
    const std::vector<std::pair<S6, S6> > path(mf.GetS6().GetPath());
    const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
    S6Dist s6dist(1);
-   if (mf.GetS6().HasSecondPath()) {
-      for (unsigned long i = 0; i < path.size(); ++i) {
-         vdist.push_back(s6dist.DistanceBetween(path[0].second, secondPath[i].second));
-         const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
-         //std::cout << p_report.first << "        " << p_report.second.first << "        " << p_report.second.second << std::endl;
+   if (path[0].first.IsValid()) {
+      if (mf.GetS6().HasSecondPath()) {
+         for (unsigned long i = 0; i < path.size(); ++i) {
+            double distance = s6dist.DistanceBetween(path[0].second, secondPath[i].second);
+            if (!secondPath[i].second.IsValid()) distance = -1.0;
+            vdist.push_back(distance);
+            const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
+            //std::cout << p_report.first << "        " << p_report.second.first << "        " << p_report.second.second << std::endl;
+         }
       }
-   }
-   else
-   {
-      for (unsigned long i = 0; i < path.size(); ++i) {
-         vdist.push_back(s6dist.DistanceBetween(path[0].second, path[i].second));
-         const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
-         //std::cout << p_report.first << "        " << p_report.second.first << "        " << p_report.second.second << std::endl;
+      else
+      {
+         if (path[0].second.IsValid()) {
+            for (unsigned long i = 0; i < path.size(); ++i) {
+               double distance = s6dist.DistanceBetween(path[0].second, path[i].second);
+               if (!path[i].second.IsValid()) distance = -1.0;
+               vdist.push_back(distance);
+               const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
+               //std::cout << p_report.first << "        " << p_report.second.first << "        " << p_report.second.second << std::endl;
+            }
+         }
       }
    }
    const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
@@ -69,15 +77,19 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
    G6 out;
    std::vector<double> vdist;
    const std::vector<std::pair<G6, G6> > path(mf.GetG6().GetPath());
-   const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
+   const std::vector<std::pair<G6, G6> > secondPath(mf.GetG6().GetSecondPath());
    if (mf.GetS6().HasSecondPath()) {
-      for (unsigned long i = 0; i < path.size(); ++i)
-         vdist.push_back(NCDist(path[0].second.data(), secondPath[i].second.data()));
+      for (unsigned long i = 0; i < path.size(); ++i) {
+         const double distance = (secondPath[i].second.GetValid()) ? NCDist(path[0].second.data(), secondPath[i].second.data()) : -1.0;
+         vdist.push_back(distance);
+      }
    }
    else
    {
-      for (unsigned long i = 0; i < path.size(); ++i)
+      for (unsigned long i = 0; i < path.size(); ++i) {
+         const double distance = (path[i].second.GetValid()) ? NCDist(path[0].second.data(), path[i].second.data()) : -1.0;
          vdist.push_back(NCDist(path[0].second.data(), path[i].second.data()));
+      }
    }
    m.SetDistancesG6(vdist);
    return m;
@@ -107,16 +119,31 @@ MultiFollower MultiFollower::CalculateDistancesCS(const MultiFollower& mf) const
    MultiFollower m(mf);
    S6 out;
    std::vector<double> vdist;
+   S6Dist s6dist(1);
    const std::vector<std::pair<S6, S6> > path(mf.GetCS().GetPath());
    const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
-   if (mf.GetS6().HasSecondPath()) {
-      for (unsigned long i = 0; i < path.size(); ++i)
-         vdist.push_back(CS6Dist(path[0].second.data(), secondPath[i].second.data()));
-   }
-   else
-   {
-      for (unsigned long i = 0; i < path.size(); ++i)
-         vdist.push_back(CS6Dist(path[0].second.data(), path[i].second.data()));
+   if (path[0].first.IsValid()) {
+      if (mf.GetS6().HasSecondPath()) {
+         for (unsigned long i = 0; i < path.size(); ++i) {
+            double distance = CS6Dist(path[0].second.data(), secondPath[i].second.data());
+            if (!secondPath[i].second.IsValid()) distance = -1.0;
+            vdist.push_back(distance);
+            const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
+            //std::cout << p_report.first << "        " << p_report.second.first << "        " << p_report.second.second << std::endl;
+         }
+      }
+      else
+      {
+         if (path[0].second.IsValid()) {
+            for (unsigned long i = 0; i < path.size(); ++i) {
+               double distance = CS6Dist(path[0].second.data(), path[i].second.data());
+               if (!path[i].second.IsValid()) distance = -1.0;
+               vdist.push_back(distance);
+               const std::pair<double, std::pair<S6, S6> > p_report(s6dist.GetBestPosition());
+               //std::cout << p_report.first << "        " << p_report.second.first << "        " << p_report.second.second << std::endl;
+            }
+         }
+      }
    }
    m.SetDistancesCS(vdist);
    return m;
@@ -167,8 +194,17 @@ std::set<unsigned long> MultiFollower::DetermineOutliers(const std::vector<doubl
 template<typename T>
 std::pair<double,double> GetPathMinMax( const LRL_Path<T>& path ) {
    std::pair<double, double> p(std::make_pair(DBL_MAX, 0));
-   if ( !path.GetDistances().empty()) {
+   if (!path.GetDistances().empty()) {
       p = std::make_pair(path.GetMin(), path.GetMax());
+      if (p.first < 0.0) {
+         const std::vector<double> distances = path.GetDistances();
+         double distmin = DBL_MAX;
+         for (unsigned long i = 0; i < distances.size(); ++i) {
+            if (distances[i] > 0.0)
+               distmin = std::min(distmin, distances[i]);
+         }
+         p.first = distmin;
+      }
    }
    return p;
 }

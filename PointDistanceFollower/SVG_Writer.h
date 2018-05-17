@@ -62,45 +62,6 @@ private:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   static double Progress( const unsigned long position, const unsigned long totalCount ) {
-      return 800.0 * (double)( position + 1 ) / (double)(std::max( 1UL, totalCount ));
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::vector<int> DetermineWhichFramesToReject( const std::vector<int>& rejectedFrames ) const {
-      std::vector<int> rejects( rejectedFrames );
-
-      for( unsigned long i = 1; i != rejectedFrames.size( ) - 1; ++i)
-      if ((rejectedFrames[i - 1] == rejectedFrames[i] - 1) &&
-         (rejectedFrames[i + 1] == rejectedFrames[i] + 1))
-         rejects[i] = INT_MAX;
-
-      return(rejects);
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   static std::vector<int> BuildListOfRejectedRegions( const std::vector<int>& rejects ) {
-      std::vector<int>::const_iterator it = rejects.begin( );
-      std::vector<int>::const_iterator it2 = rejects.end( );
-      const std::vector<int>::const_iterator rejectEnd = rejects.end( );
-      std::vector<int> rejectsOutput;
-
-      while (it != rejectEnd && it + 1 != rejectEnd) {
-         it2 = std::find_if( it + 1, rejectEnd, Not_INT_MAX );
-         rejectsOutput.push_back( *it );
-         rejectsOutput.push_back( (it2 - it == 1) ? *it : *it2 );
-         it = (it2 == rejectEnd) ? it : it2;
-      }
-
-      return(rejectsOutput);
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::vector<int> FilterRejectedFrameList( const std::vector<int>& rejectedFrames ) const {
-      return(BuildListOfRejectedRegions( DetermineWhichFramesToReject( rejectedFrames ) ));
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    void SVG_Footer( void ) {
       m_svg.push_back("-->\n</g>\n</g>");
       m_svg.push_back( "<!-- Run Constants" );
@@ -148,7 +109,7 @@ private:
       m_svg.push_back( "<!-- whatever is within the viewbox will be remapped to show in this size -->" );
       m_svg.push_back( "<svg width=\"900\" height=\"800\" viewBox=\"1 0 900 800\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
       m_svg.push_back( " <desc>ID (and file name) = " + sFileName + " </desc> " );
-      m_svg.push_back("<text x = \"-550\" y=\"50\" transform=\"rotate(-90)\"  font-family=\"sans-serif\" font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower </text>");
+      m_svg.push_back("<text x = \"-750\" y=\"50\" transform=\"rotate(-90)\"  font-family=\"sans-serif\" font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower   " __DATE__ "</text>");
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
