@@ -131,7 +131,7 @@ public:
 
          std::vector<std::string> glitches = PopulateGlitchStrings();
 
-         folOut << "PointDistanceFollower  " << __DATE__ << std::endl;
+         folOut << "PointDistanceFollower  " << __DATE__ << "  mode = " << ReadGlobalData::GetFollowerMode() << std::endl;
          folOut << sFileName << "     Output is S6 probe cell, C3 reduced cell, " <<
             ConstructListOfNamesOfOutputDistances() << "distance between" << std::endl;
 
