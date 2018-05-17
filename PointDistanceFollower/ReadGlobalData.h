@@ -3,11 +3,11 @@
 
 #include "G6.h"
 
+#include <algorithm>
+#include <cctype>
 #include <string>
 #include <utility>
 #include <vector>
-#include <cctype>
-#include <algorithm>
 
 class ReadGlobalData {
 public:
@@ -16,6 +16,7 @@ public:
    ~ReadGlobalData( void ) {};
    static G6 GeneratePerturbation(const G6& v, const double perturbationFraction);
    static G6 GeneratePerturbation(const G6& v);
+   static std::string GetFollowerMode(void);
    //static std::string strToupper(const std::string& s);
 
    class ParseData {
@@ -35,6 +36,8 @@ private:
    static bool GetDataFromCIN( const std::vector<ReadGlobalData::ParseData>& );
    static const std::vector<ReadGlobalData::ParseData> BuildParseStructure( void );
    static std::string FormatGlobalDataAsString( const std::vector<ParseData>& parseData );
+
+   static std::string m_followerMode;
 };
 
 #endif

@@ -158,29 +158,32 @@ int main(int argc, char* argv[]) {
    std::vector<CellInputData>::const_iterator it = celldata.begin();
    for (; it != celldata.end(); ++it) {
       ++cellcount;
+      std::vector<CellInputData>::const_iterator ittemp = it;
       for (unsigned long trialNo = 0; trialNo < std::max(1UL, FollowerConstants::globalNumberOfTrialsToAttempt); ++trialNo) {
-         CellInputData cell(*it);
+         CellInputData cell(*ittemp);
          CellInputData cell2(cell);
          CellInputData cell3;
          std::vector<CellInputData>::const_iterator it2;
          std::vector<CellInputData>::const_iterator it3;
          if (trialNo > 0 || FollowerConstants::globalFollowerMode != FollowerConstants::globalSinglePoint) {
-            cell.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
-            it2 = it + 1;
+            cell.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*ittemp).GetCell()))));
+            it2 = ittemp + 1;
             if ((FollowerConstants::globalFollowerMode == FollowerConstants::globalLine ||
                FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) && (it2 != celldata.end())) {
-               ++it;
-               cell2.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
+               ++ittemp;
+               cell2.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*ittemp).GetCell()))));
                it3 = it2 + 1;
                if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 && (it3 != celldata.end())) {
-                  ++it;
-                  cell3.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*it).GetCell()))));
+                  ++ittemp;
+                  cell3.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*ittemp).GetCell()))));
                }
             }
          }
          const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell, cell2, cell3);
          ++plotCounter;
       }
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) ++it;
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) ++it; ++it;
    }
 
    return 0;

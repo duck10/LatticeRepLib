@@ -137,6 +137,14 @@ void SetGlobalValue( const std::string& dataType,
    }
 }
 
+//    enum enumFollowerMode{ globalSinglePoint, globalLine, globalLine3 };
+
+std::string ReadGlobalData::GetFollowerMode(void) {
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) return "Single Point";
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) return "Line";
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) return "LINE3";
+}
+
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 // add some small random perturbation
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
