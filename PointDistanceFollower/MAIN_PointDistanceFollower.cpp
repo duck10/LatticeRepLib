@@ -182,10 +182,20 @@ int main(int argc, char* argv[]) {
          const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell, cell2, cell3);
          ++plotCounter;
       }
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) ++it;
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) ++it; ++it;
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine)
+      {
+         ++it;
+         if (it == celldata.end()) break;
+      }
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
+         ++it;
+         if (it == celldata.end()) break;
+         ++it;
+         if (it == celldata.end()) break;
+      }
    }
 
    return 0;
+
 }
 
