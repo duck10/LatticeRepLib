@@ -148,6 +148,50 @@ void PrintPoints(const std::vector<T>& v) {
    std::cout << std::endl;
 }
 
+void GetCellsForChosenMode(const std::vector<CellInputData>& inputCellList, const unsigned long nextCell,
+   const FollowerConstants::enumFollowerMode& mode,
+   CellInputData& cell1, CellInputData& cell2, CellInputData& cell3) {
+
+   unsigned long returnedNextCell = nextCell;
+
+   const unsigned long secondCell = nextCell + 1;
+   const unsigned long thirdCell = secondCell + 1;
+
+   cell1.SetCell(LRL_Cell(0, 0, 0, 0, 0, 0));
+   cell2.SetCell(LRL_Cell(0, 0, 0, 0, 0, 0));
+   cell3.SetCell(LRL_Cell(0, 0, 0, 0, 0, 0));
+   if (nextCell < inputCellList.size()) {
+      cell1 = inputCellList[nextCell];
+      ++returnedNextCell;
+   }
+   if (secondCell < inputCellList.size()) {
+      cell2 = inputCellList[secondCell];
+      ++returnedNextCell;
+   }
+   if (thirdCell < inputCellList.size()) {
+      cell3 = inputCellList[thirdCell];
+      ++returnedNextCell;
+   }
+}
+
+void ProcessTrialsForOneLattice(const std::vector<CellInputData>& inputCellList, const unsigned long nextCell, const unsigned long cellcount,
+   const FollowerConstants::enumFollowerMode& mode,
+   CellInputData& cell1, CellInputData& cell2, CellInputData& cell3) {
+
+   GetCellsForChosenMode(inputCellList, nextCell, mode, cell1, cell2, cell3);
+
+   CellInputData cell1Perturbed;
+   CellInputData cell2Perturbed;
+   CellInputData cell3Perturbed;
+
+   for (unsigned long trialNo = 0; trialNo < std::max(1UL, FollowerConstants::globalNumberOfTrialsToAttempt); ++trialNo) {
+      cell1Perturbed.SetCell(ReadGlobalData::GeneratePerturbation(G6(cell1.GetCell())));
+      cell2Perturbed.SetCell(ReadGlobalData::GeneratePerturbation(G6(cell2.GetCell())));
+      cell3Perturbed.SetCell(ReadGlobalData::GeneratePerturbation(G6(cell3.GetCell())));
+      const MultiFollower mf = ProcessOneLattice(cellcount, trialNo, cell1Perturbed, cell2Perturbed, cell3Perturbed);
+   }
+}
+
 int main(int argc, char* argv[]) {
    ReadGlobalData();
 
@@ -156,42 +200,35 @@ int main(int argc, char* argv[]) {
    unsigned long cellcount = 0;
    unsigned long plotCounter = 0;
    std::vector<CellInputData>::const_iterator it = celldata.begin();
-   for (; it != celldata.end(); ++it) {
+   CellInputData cell1;
+   CellInputData cell2;
+   CellInputData cell3;
+   for (unsigned long i = 0; i < celldata.size(); ++i) {
+
+      // are we done with input?
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine &&
+         i + 1 >= celldata.size())
+         break;
+
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 &&
+         i + 2 >= celldata.size())
+         break;
+
+
+
+      unsigned long nextCell = i;
+      ProcessTrialsForOneLattice(celldata, i, cellcount,
+         FollowerConstants::globalFollowerMode,
+         cell1, cell2, cell3);
       ++cellcount;
-      std::vector<CellInputData>::const_iterator ittemp = it;
-      for (unsigned long trialNo = 0; trialNo < std::max(1UL, FollowerConstants::globalNumberOfTrialsToAttempt); ++trialNo) {
-         CellInputData cell(*ittemp);
-         CellInputData cell2(cell);
-         CellInputData cell3;
-         std::vector<CellInputData>::const_iterator it2;
-         std::vector<CellInputData>::const_iterator it3;
-         if (trialNo > 0 || FollowerConstants::globalFollowerMode != FollowerConstants::globalSinglePoint) {
-            cell.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*ittemp).GetCell()))));
-            it2 = ittemp + 1;
-            if ((FollowerConstants::globalFollowerMode == FollowerConstants::globalLine ||
-               FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) && (it2 != celldata.end())) {
-               ++ittemp;
-               cell2.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*ittemp).GetCell()))));
-               it3 = it2 + 1;
-               if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 && (it3 != celldata.end())) {
-                  ++ittemp;
-                  cell3.SetCell(LRL_Cell(ReadGlobalData::GeneratePerturbation(G6((*ittemp).GetCell()))));
-               }
-            }
-         }
-         const MultiFollower mf = ProcessOneLattice(cellcount, plotCounter, cell, cell2, cell3);
-         ++plotCounter;
-      }
+
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine)
       {
-         ++it;
-         if (it == celldata.end()) break;
+         ++i;
       }
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
-         ++it;
-         if (it == celldata.end()) break;
-         ++it;
-         if (it == celldata.end()) break;
+         ++i;
+         ++i;
       }
    }
 
