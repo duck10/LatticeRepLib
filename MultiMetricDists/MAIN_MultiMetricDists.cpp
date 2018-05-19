@@ -188,7 +188,7 @@ void PrintDistanceData(const std::vector<LRL_ReadLatticeData>& cellDataList) {
             gtbl.insert_center(i1, i2, g12);
             dtbl.insert_center(i1, i2, d12);
             stbl.insert_center(i1, i2, s12);
-            ctbl.insert_center(i1, i2, s12);
+            ctbl.insert_center(i1, i2, c12);
 
             std::cout << " (" << i1 << "," << i2 << ")   " << g12 << "   " << d12 << "   " << s12 << std::endl;
             /* ++d7dist; */
