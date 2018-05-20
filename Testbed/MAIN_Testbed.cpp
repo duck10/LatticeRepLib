@@ -646,21 +646,30 @@ void TestCS6Dist3() {
 }
 
 void TestCS6Dist4() {
-   const S6 s1("-3 -5 -11  -19 -37 -43");
-   std::cout << "TEST CELL IN DEGREES  " << LRL_Cell_Degrees(s1) << std::endl;;
+   GenerateRandomLattice<S6> generator(seed);
+   StoreResults<double, std::string> store(1);
    S6Dist s6dist(1);
    std::vector<S6> voutside;
-   voutside = s6dist.Generate24Reflections(s1); // for outside, generate the 24 reflections for each unreduced cell
-   for (unsigned long i1 = 0; i1 < 24; ++i1) {
-      for (unsigned long i2 = 0; i2 < 24; ++i2) {
-         const double d = CS6Dist(voutside[i1].data(), voutside[i2].data());
-         if (d > 0) {
-            std::cout << "i1, i2  " << i1 << "  " << i2 << "  distance "  << d << "  d^2 " << d*d <<std::endl;
-            std::cout << "  voutside1[i1] " << voutside[i1] << std::endl;
-            std::cout << "  voutside2[i2] " << voutside[i2] << std::endl;
+   S6 red1, red2;
+   for (unsigned long i2 = 0; i2 < 200; ++i2) {
+      const S6 s1(generator.randSellingUnreduced());
+      Selling::Reduce(s1, red1);
+      voutside = s6dist.Generate24Reflections(s1); // for outside, generate the 24 reflections for each unreduced cell
+      for (unsigned long i1 = 0; i1 < 24; ++i1) {
+         Selling::Reduce(voutside[1], red2);
+         const double d1 = CS6Dist(red2.data(), red1.data());
+         const double d2 = s6dist.DistanceBetween(red2.data(), red1.data());
+         if (d1 > 0.001) {
+            const std::string s = LRL_ToString(" ", " ", red2, "\n", red1, "\n", LRL_Cell_Degrees(red2), "\n");
+            store.Store(d1, s);
+            //std::cout << "TEST CELL IN DEGREES  " << LRL_Cell_Degrees(s1) << std::endl;;
+            //std::cout << "i1, i2  " << i1 << "  " << 0 << "  CS6Dist distance d1 = " << d1 << "  s6dist distance d2 = " << d2<< std::endl;
+            //std::cout << "  voutside1[" << i1 << "] " << voutside[i1] << std::endl;
+            //std::cout << "  voutside2[" << i2 << "] " << voutside[0] << std::endl;
          }
       }
    }
+   store.ShowResults();
    exit(0);
 }
 
