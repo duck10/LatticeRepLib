@@ -8,6 +8,7 @@
 #include "MatS6.h"
 #include "svd.h"
 #include "S6.h"
+#include "S6Dist.h"
 
 S6 Creator( const S6&s ) {
    S6 sout;
@@ -34,23 +35,26 @@ void TestCreator() {
 
 int main()
 {
+   // std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > S6Dist::SetUnreduceFunctionPairs() {
+   const std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > red = S6Dist::SetUnreduceFunctionPairs();
    //TestCreator();
    GenerateRandomLattice<S6> generator(seed);
 
    std::vector<std::vector<double> > a;
    std::vector<std::vector<double> > v;
    std::vector<double> w;
-   for (unsigned long n = 0; n < 11136; ++n) {
+   for (unsigned long n = 0; n < 36; ++n) {
       const S6 ss = generator.randSellingReduced();
       S6 s(ss);
       //Delone::Reduce(ss, s);
 
-      for (unsigned long i = 1; i < 24; ++i) {
+      for (unsigned long i = 1; i < 6; ++i) {
          std::vector<double> vs;
-         const S6 smod = MatS6::GetReflection(i) * s;
-         for (unsigned long k = 0; k < 6; ++k) {
-            vs.push_back(s[k]);
-         }
+         //const S6 smod = MatS6::GetReflection(i) * s;
+         const S6 smod = red[0].first(s);
+         //for (unsigned long k = 0; k < 6; ++k) {
+         //   vs.push_back(s[k]);
+         //}
          for (unsigned long k = 0; k < 6; ++k) {
             vs.push_back(smod[k]);
          }
