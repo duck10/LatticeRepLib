@@ -65,7 +65,7 @@ public:
    std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2);
    std::pair<double, unsigned long> MinForListOfS6(const S6& d1, const std::vector<S6>& v);
    std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree);
-   void SetDebug(const bool b) { m_debug = b; }
+   void SetDebug(const bool b) { m_s6Debug = b; }
 
    void UnreduceAndAddToList(const S6& d, const unsigned long n, std::vector<S6>& v) const;
    std::vector<S6> UnreduceAndAddToList(const std::vector<S6>& v6, const unsigned long n) const;
@@ -88,7 +88,7 @@ private:
 
    double m_nearzero;
    double m_dmin;
-   bool m_debug;
+   bool m_s6Debug;
 
    static std::vector< S6(*)(const S6&)> m_reductionFunctions;
    static std::vector< S6(*)(const S6&)> m_UnReduceFunctions;
