@@ -143,6 +143,7 @@ std::string ReadGlobalData::GetFollowerMode(void) {
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) return "Single Point";
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) return "Line";
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) return "LINE3";
+   return "UNKNOWN FOLLOWER MODE";
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

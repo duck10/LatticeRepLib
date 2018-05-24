@@ -207,12 +207,16 @@ int main(int argc, char* argv[]) {
 
       // are we done with input?
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine &&
-         i + 1 >= celldata.size())
+         i + 1 >= celldata.size()) {
+         std::cout << "FOLLOWERMODE LINE requires at least two cells input" << std::endl;
          break;
+      }
 
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 &&
-         i + 2 >= celldata.size())
+         i + 2 >= celldata.size()) {
+         std::cout << "FOLLOWERMODE LINE3 requires at least three cells input" << std::endl;
          break;
+      }
 
 
 

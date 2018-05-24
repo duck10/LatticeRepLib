@@ -5,6 +5,7 @@
 #ifndef SVG_DISTANCEPLOT
 #define SVG_DISTANCEPLOT
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -23,6 +24,12 @@
 
 
 #include "LinearAxis.h"
+bool IsPositiveOrZero(const double d) { return d >= 0.0; }
+bool IsNegative(const double d) { return d < 0.0; }
+
+bool IsGreater(const double d1, const double d2) {
+   return d2>d1;
+}
 
 template<typename TVEC>
 class SVG_DistancePlot
@@ -197,6 +204,44 @@ private:
          + " stroke-dasharray = \"10,5\" />";
    }
 
+   enum eLineCondition { eOnlyData, eOneDataLineAndOneInvalid, eMixed, eOnlyInvalid } eCondition;
+
+   eLineCondition TestLine(const std::vector<double>& distances) {
+      if (distances.empty()) return eOnlyData;
+      const double minDistance = *std::min_element(distances.begin(), distances.end());
+      const double maxDistance = *std::max_element(distances.begin(), distances.end());
+      if (minDistance >= 0.0) {
+         return eOnlyData;
+      }
+      else if ( maxDistance < 0.0) {
+         return eOnlyInvalid;
+      }
+      else
+      {
+         std::vector<double>::const_iterator itDataSubrangeBegin;
+         std::vector<double>::const_iterator itDataSubrangeEnd;
+         std::vector<double>::const_iterator itDataSubrangeSecondBegin;
+         std::vector<double>::const_iterator itDataSubrangeSecondEnd;
+
+         itDataSubrangeBegin = std::find_if(distances.begin(), distances.end(), IsPositiveOrZero);
+         itDataSubrangeEnd = std::find_if(distances.begin(), distances.end(), IsNegative);
+
+         unsigned long firstPositiveSubrange = (unsigned long)(itDataSubrangeEnd - itDataSubrangeBegin);
+
+         itDataSubrangeSecondBegin = std::find_if(itDataSubrangeEnd, distances.end(), IsNegative);
+         itDataSubrangeSecondEnd = std::find_if(itDataSubrangeEnd, distances.end(), IsPositiveOrZero);
+
+         if ((firstPositiveSubrange + (itDataSubrangeSecondEnd - itDataSubrangeSecondBegin)) == distances.size())//  the branch where there is ONLY one (starting) + range followed by a single - range
+         {
+            return eOneDataLineAndOneInvalid;
+         }
+         else
+         {
+            return eMixed;
+         }
+      }
+   }
+
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::list<std::string> DrawTheDistanceLine(
       const bool drawLineAsBlack,
@@ -208,10 +253,11 @@ private:
       const std::string& color)
       /*-------------------------------------------------------------------------------------*/
    {
+      const enum eLineCondition eCondition = TestLine(distances);
       return
-         //(drawLineAsBlack)
-         /*? */FormatEachDatumAsSeparateLineSegment(distances, lineWidth, minimumDistance, xscale, yscale, color);
-         //: FormatEachDatumAsSeparateLineSegment( distances, minimumDistance, xscale, yscale );
+         (eCondition==eOnlyData)
+         ? FormatAllPointsAsPolyline(distances, lineWidth, minimumDistance, xscale, yscale, color)
+         : FormatEachDatumAsSeparateLineSegment( distances, lineWidth, minimumDistance, xscale, yscale, color );
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -431,7 +477,7 @@ private: // don't implement
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::list<std::string> DistancePlotHeader( ) {
       std::list<std::string> svg;
-      svg.push_back( "\n\n <!--DISTANCE PLOT BEGINS-->\n\n" );
+      svg.push_back( "\n\n <!--DISTANCE PLOT BEGINS   mode = " + ReadGlobalData::GetFollowerMode()  + "-->\n\n" );
       svg.push_back( "<!-- the following will scale and place the distance plot -->" );
 
       svg.push_back("<g  transform=\"translate(0, 50) \">");
