@@ -41,6 +41,7 @@ public:
       m_lineColorMap.insert(std::make_pair("G6", Line("NCDist", "slategrey", 9)));
       m_lineColorMap.insert(std::make_pair("D7", Line("D7", "violet", 6)));
       m_lineColorMap.insert(std::make_pair("CS", Line("CS6Dist", "olive", 3)));
+      m_lineColorMap.insert(std::make_pair("INVALID", Line("INVALID", "orange", 3)));
    }
 
    DistanceLineDescriptions( const DistanceLineDescriptions& dld) {
