@@ -25,6 +25,7 @@
 #include "S6Dist.h"
 #include "Selling.h"
 #include "StoreResults.h"
+#include "TNear.h"
 #include "LRL_Vector3.h"
 
 #include <functional>
@@ -651,31 +652,44 @@ void TestCS6Dist4() {
    S6Dist s6dist(1);
    std::vector<S6> voutside;
    S6 red1, red2;
-   for (unsigned long i2 = 0; i2 < 200; ++i2) {
+   for (unsigned long i2 = 0; i2 < 1000; ++i2) {
       const S6 s1(generator.randSellingUnreduced());
       Selling::Reduce(s1, red1);
       voutside = s6dist.Generate24Reflections(s1); // for outside, generate the 24 reflections for each unreduced cell
       for (unsigned long i1 = 0; i1 < 24; ++i1) {
-         Selling::Reduce(voutside[1], red2);
+         Selling::Reduce(voutside[i1], red2);
          const double d1 = CS6Dist(red2.data(), red1.data());
          const double d2 = s6dist.DistanceBetween(red2.data(), red1.data());
-         if (d1 > 0.001) {
-            const std::string s = LRL_ToString(" ", " ", red2, "\n", red1, "\n", LRL_Cell_Degrees(red2), "\n");
-            store.Store(d1, s);
-            //std::cout << "TEST CELL IN DEGREES  " << LRL_Cell_Degrees(s1) << std::endl;;
-            //std::cout << "i1, i2  " << i1 << "  " << 0 << "  CS6Dist distance d1 = " << d1 << "  s6dist distance d2 = " << d2<< std::endl;
-            //std::cout << "  voutside1[" << i1 << "] " << voutside[i1] << std::endl;
-            //std::cout << "  voutside2[" << i2 << "] " << voutside[0] << std::endl;
-         }
+         const double dfinal = (d1 < 1.0E-4) ? 0.0 : d1;
+         const std::string s = LRL_ToString(" ", " ", red2, "\n", red1, "\n", LRL_Cell_Degrees(red2), "\n");
+         store.Store(dfinal, s);
       }
    }
    store.ShowResults();
    exit(0);
 }
 
+void TestCS_Reflections() {
+   CNearTree<MatS6> tree;
+   std::vector<MatS6> vm(24);
+   MatS6 closest;
+   const double radius = 0.1;
+   for (unsigned long im = 0; im < 24; ++im) {
+      for (unsigned long i = 0; i < 36; ++i) {
+         vm[im][i] = **(S6Refl + i);
+      }
+      tree.insert(vm[im]);
+      bool b = tree.NearestNeighbor(radius, closest, vm[im]);
+      std::cout << std::endl << im << std::endl;
+      std::cout << vm[im] << std::endl;
+   }
+   const double d = S6Refl[0][0];
+   exit(0);
+}
 
 int main(int argc, char *argv[])
 {
+   //TestCS_Reflections();
    TestCS6Dist4();
    //TestCS6Dist1();
    TestCS6Dist2();
