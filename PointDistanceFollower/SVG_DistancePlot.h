@@ -62,18 +62,26 @@ private:
       const int lineWidth, const double minimumDistance, const double xscale, const double yscale,      const std::string& color)
       /*-------------------------------------------------------------------------------------*/
    {
-      const int xmax( int( distances.size( ) ) );
+      std::list<std::string> svg;
+      if (!distances.empty()) {
+         const int xmax(int(distances.size()));
+         const std::vector<double>::const_iterator firstNegative = std::find_if(distances.begin(), distances.end(), IsNegative);
+         const unsigned long lastPositiveIndex = (unsigned long)((firstNegative == distances.end()) ? xmax : firstNegative - distances.begin());
 
-      std::string s = LRL_ToString( "   <polyline fill=\"none\" stroke=\"", color, "\" stroke-width=\"", lineWidth, "\" points=\" " );
+         std::string s = LRL_ToString("   <polyline fill=\"none\" stroke=\"", color, "\" stroke-width=\"", lineWidth, "\" points=\" ");
 
-      std::vector<double>::const_iterator it = distances.begin( );
-      for (int i = 1; i <= xmax; ++i, ++it)
-         s += LRL_DataToSVG( double( i )*xscale, "," ) +
-         LRL_DataToSVG( ((*it)-minimumDistance) *yscale, " " );
+         std::vector<double>::const_iterator it = distances.begin();
+         for (unsigned long i = 1; i <= lastPositiveIndex; ++i, ++it)
+            s += LRL_DataToSVG(double(i)*xscale, ",") +
+            LRL_DataToSVG(((*it) - minimumDistance) *yscale, " ");
 
-      s += "\" />";
-      std::list<std::string> svg( 1, s );
-
+         s += "\" />\n";
+         svg.push_back(s);
+         if (lastPositiveIndex != xmax) {
+            DistanceLineDescriptions colorList;
+            svg.push_back(DrawInvalidLineSegment(colorList.GetColor("INVALID"), 6, double(lastPositiveIndex + 1)*xscale, SVG_WriterConstants::globalPlotSpace / 2.0, double(xmax)*xscale));
+         }
+      }
       return(svg);
    }
 
@@ -98,8 +106,10 @@ private:
             const double yNext = ((*it) - minimumDistance)*yscale;
             if ((*it) >= 0.0)
                svg.push_back(DrawSingleLineSegment(color, lineWidth, double(i - 1)*xscale, yprev, double(i)*xscale, yNext));
-            else
-               svg.push_back(DrawInvalidLineSegment("orange", 6, double(i - 1)*xscale, SVG_WriterConstants::globalPlotSpace/2.0, double(i)*xscale));
+            else {
+               DistanceLineDescriptions colorList;
+               svg.push_back(DrawInvalidLineSegment(colorList.GetColor("INVALID"), 6, double(i - 1)*xscale, SVG_WriterConstants::globalPlotSpace/2.0, double(i)*xscale));
+            }
             yprev = yNext;
          }
       }
@@ -255,7 +265,7 @@ private:
    {
       const enum eLineCondition eCondition = TestLine(distances);
       return
-         (eCondition==eOnlyData)
+         (eCondition==eOnlyData || eCondition==eOneDataLineAndOneInvalid)
          ? FormatAllPointsAsPolyline(distances, lineWidth, minimumDistance, xscale, yscale, color)
          : FormatEachDatumAsSeparateLineSegment( distances, lineWidth, minimumDistance, xscale, yscale, color );
    }
