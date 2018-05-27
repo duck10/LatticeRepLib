@@ -78,7 +78,7 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
    std::vector<double> vdist;
    const std::vector<std::pair<G6, G6> > path(mf.GetG6().GetPath());
    const std::vector<std::pair<G6, G6> > secondPath(mf.GetG6().GetSecondPath());
-   if (mf.GetS6().HasSecondPath()) {
+   if (mf.GetG6().HasSecondPath()) {
       for (unsigned long i = 0; i < path.size(); ++i) {
          const double distance = (secondPath[i].second.GetValid()) ? NCDist(path[0].second.data(), secondPath[i].second.data()) : -1.0;
          vdist.push_back(distance);
@@ -100,15 +100,17 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
    D7 out;
    std::vector<double> vdist;
    const std::vector<std::pair<D7, D7> > path(mf.GetD7().GetPath());
-   const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
-   if (mf.GetS6().HasSecondPath()) {
-      for (unsigned long i = 0; i < path.size(); ++i)
-         vdist.push_back(CS6Dist(path[0].second.data(), secondPath[i].second.data()));
+   const std::vector<std::pair<D7, D7> > secondPath(mf.GetD7().GetSecondPath());
+   if (mf.GetD7().HasSecondPath()) {
+      for (unsigned long i = 0; i < path.size(); ++i) {
+         const double dist = D7Dist(path[0].second.data(), secondPath[i].second.data());
+         vdist.push_back((dist > -DBL_MAX && dist < DBL_MAX) ? dist : -1.0);
+      }
    }
    else
    {
       for (unsigned long i = 0; i < path.size(); ++i)
-         vdist.push_back(CS6Dist(path[0].second.data(), path[i].second.data()));
+         vdist.push_back(D7Dist(path[0].second.data(), path[i].second.data()));
    }
    m.SetDistancesD7(vdist);
    return m;
@@ -153,8 +155,8 @@ MultiFollower MultiFollower::GenerateAllDistances(void) const {
    MultiFollower m(*this);
    m.SetComputeStartTime();
    m = CalculateDistancesS6(m);
-   //m = CalculateDistancesG6(m);
-   //m = CalculateDistancesD7(m);
+   m = CalculateDistancesG6(m);
+   m = CalculateDistancesD7(m);
    m = CalculateDistancesCS(m);
    m.SetTime2ComputeFrame( std::clock() - m.GetComputeStartTime());
 
