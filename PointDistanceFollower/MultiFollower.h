@@ -72,7 +72,7 @@ private:
       for (unsigned long i = 0; i < s6path.size(); ++i) {
          const std::pair<S6, S6> p(s6path[i]);
          T1 out;
-         const bool b = TREDUCE::Reduce(p.first, out);
+         const bool b = TREDUCE::Reduce(p.second, out);
          v.push_back(std::make_pair(T1(s6path[i].first), out));
       }
       return v;
