@@ -76,11 +76,11 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
       const S6 next2 = nextMid + delta2;
 
       const bool b1 = Selling::Reduce(next1, reduced1);
-      if (!reduced1.IsAllMinus()) reduced1 *= 0;
+      if (! b1 || !reduced1.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced1 *= 0;
       points1.push_back(std::make_pair(next1, reduced1));
 
       const bool b2 = Selling::Reduce(next2, reduced2);
-      if ( !reduced2.IsAllMinus()) reduced2 *= 0;
+      if ( !b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 *= 0;
       points2.push_back(std::make_pair(next2, reduced2));
 
    }

@@ -70,6 +70,7 @@ public:
    double* data() const { return const_cast<double*>(m_vec.data()); }
    void SetVector(const std::vector<double>& v) { m_vec = v; }
    bool GetValid(void) const { return m_valid; }
+   bool IsValid(void) const { return m_valid; }
    void SetValid(const bool b) {m_valid = b; }
 
    double at(const unsigned long n) const { return m_vec[n]; }
