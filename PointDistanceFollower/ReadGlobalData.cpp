@@ -21,6 +21,8 @@
 #include <string>
 #include <utility>
 
+std::string       FollowerConstants::globalDistanceDisable;
+
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 bool not_space( const char c ) {
    return( c != ' ' );
@@ -120,18 +122,26 @@ void SetGlobalValue( const std::string& dataType,
       const std::string v6 = GetG6Data( value );
       if ( v6[0] != DBL_MAX )
          GLOBAL_RunInputVector::globalData.push_back( v6 );
-   } else if ( dataType == "fixRandomSeed" ) {
-      *(bool*)pData = GetBoolData( value[1] );
-   } else if ( dataType == "FollowerMode" ) {
+   } else if (dataType == "fixRandomSeed") {
+      *(bool*)pData = GetBoolData(value[1]);
+   } else if (dataType == "FollowerMode") {
       if (LRL_StringTools::strToupper(value[1]) == "LINE") {
          FollowerConstants::globalFollowerMode = FollowerConstants::globalLine;
       }
-      else if(LRL_StringTools::strToupper(value[1]) == "LINE3") {
+      else if (LRL_StringTools::strToupper(value[1]) == "LINE3") {
          FollowerConstants::globalFollowerMode = FollowerConstants::globalLine3;
       }
-   else {
-      FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
+      else {
+         FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
+      }
    }
+   else if (dataType == "DistanceEnableString") {
+      FollowerConstants::globalDistanceEnableList.push_back( value[1]);
+   }
+   else if (dataType == "DistanceDisableString") {
+      std::vector<std::string>& thelist(FollowerConstants::globalDistanceEnableList);
+      const std::vector<std::string>::iterator it = std::find(thelist.begin(), thelist.end(),  value[1]) ;
+      if (thelist.end() != it) thelist.erase(it);
    }
    else {
    }
@@ -262,12 +272,19 @@ const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure
 
    v.push_back( ParseData( LRL_StringTools::strToupper( "FilePrefix" ),   "string", (void*)&FollowerConstants::globalFileNamePrefix ) );
 
+
+
+   v.push_back(ParseData(LRL_StringTools::strToupper("Enable"), "DistanceEnableString", (void*)&FollowerConstants::globalDistanceEnableList));
+   v.push_back(ParseData(LRL_StringTools::strToupper("Disable"), "DistanceDisableString", (void*)&FollowerConstants::globalDistanceDisable));
+
+
+
    v.push_back( ParseData( LRL_StringTools::strToupper( "GraphSize" ),    "int", (void*)&SVG_WriterConstants::globalGraphSpace ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "Border" ),       "int", (void*)&SVG_WriterConstants::globalGraphBorder ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "PlotSize" ),     "int", (void*)&SVG_WriterConstants::globalPlotSpace ) );
 
-   v.push_back(ParseData(LRL_StringTools::strToupper("G6LineWidth"    ), "int", (void*)&SVG_DistancePlotConstants::globalG6DataLineStrokeWidth));
-   v.push_back(ParseData(LRL_StringTools::strToupper("DeloneLineWidth"), "int", (void*)&SVG_DistancePlotConstants::globalDeloneDataLineStrokeWidth));
+   v.push_back( ParseData(LRL_StringTools::strToupper("G6LineWidth"    ), "int", (void*)&SVG_DistancePlotConstants::globalG6DataLineStrokeWidth));
+   v.push_back( ParseData(LRL_StringTools::strToupper("DeloneLineWidth"), "int", (void*)&SVG_DistancePlotConstants::globalDeloneDataLineStrokeWidth));
    v.push_back( ParseData(LRL_StringTools::strToupper( "AxisWidth" ),             "int", (void*)&SVG_DistancePlotConstants::globalDataAxisWidth       ) );
    v.push_back( ParseData(LRL_StringTools::strToupper( "TicLength" ),             "int", (void*)&SVG_DistancePlotConstants::globalY_AxisTicMarkLength ) );
 
@@ -277,7 +294,7 @@ const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure
 
    v.push_back( ParseData(LRL_StringTools::strToupper( "FixRandomSeed" ),      "fixRandomSeed", (void*)&GLOBAL_RunInputVector::globalConstantRandomSeed ) );
 
-   v.push_back(ParseData(LRL_StringTools::strToupper("RandomSeed"), "int", (void*)&GLOBAL_RunInputVector::globalInputRandomSeed));
+   v.push_back( ParseData(LRL_StringTools::strToupper("RandomSeed"), "int", (void*)&GLOBAL_RunInputVector::globalInputRandomSeed));
 
    //bool GLOBAL_FileNames::globalShouldTimeStamp = true; // NOT IMPLEMENTED AS INPUT VARIABLE !!!!!!!!!!!!
 

@@ -12,7 +12,7 @@
 
 /* #define S6DIST_TESTS */ 
 /* #define S6DIST_DEBUG */   
-/* #define S6DIST_NO_OUTER_PASS */ 
+ #define S6DIST_NO_OUTER_PASS  
 
 #include <math.h>
 #include <float.h>
@@ -434,7 +434,7 @@ static int S6Refl[24][36]={
 #define CS6M_S6Perm_10(v) /* B4:{ 2 , 3 , 4 , 1 }*/  v[5],v[4],v[0],v[2],v[1],v[3]
 #define CS6M_S6Perm_11(v) /* B4:{ 2 , 4 , 1 , 3 }*/  v[3],v[2],v[4],v[0],v[5],v[1]
 #define CS6M_S6Perm_12(v) /* B4:{ 2 , 4 , 3 , 1 }*/  v[5],v[0],v[4],v[2],v[3],v[1]
-#define CS6M_S6Perm_13(v) /* B4:{ 3 , 1 , 2 , 3 }*/  v[2],v[0],v[1],v[5],v[3],v[5]
+#define CS6M_S6Perm_13(v) /* B4:{ 3 , 1 , 2 , 4 }*/  v[2],v[0],v[1],v[5],v[3],v[4]
 #define CS6M_S6Perm_14(v) /* B4:{ 3 , 1 , 4 , 2 }*/  v[3],v[5],v[1],v[0],v[2],v[4]
 #define CS6M_S6Perm_15(v) /* B4:{ 3 , 2 , 1 , 4 }*/  v[2],v[1],v[0],v[5],v[4],v[3]
 #define CS6M_S6Perm_16(v) /* B4:{ 3 , 2 , 4 , 1 }*/  v[4],v[5],v[0],v[1],v[2],v[3]
@@ -448,9 +448,8 @@ static int S6Refl[24][36]={
 #define CS6M_S6Perm_24(v) /* B4:{ 4 , 3 , 2 , 1 }*/  v[0],v[4],v[5],v[3],v[1],v[2]
 
 
-
 static int bdryprsv [6][4] = {
-  {0, 2,22,23},
+  {0, 2,21,23},
   {0, 5,14,16},
   {0, 1,6,7},
   {0, 2,21,23},
@@ -799,6 +798,7 @@ static double s61234distsq(double v1[6], double v2[6]) {
     
     dwnby = dtrial[0];
     for (i = 1; i < 24; i++) if (dtrial[i] > dwnby) dwnby = dtrial[i];
+    if (dwnby > distsq) dwnby = distsq;
     return (fabs(distsq - dwnby));
 }
 
@@ -876,43 +876,19 @@ static void s6twoPminusI(double pg[6], double g[6], double gout[6]) {
        applying the 24-way unfolding */
 
 #ifdef S6DIST_NO_OUTER_PASS
-#define NREFL_OUTER_FULL 12
+#define NREFL_OUTER_FULL 1
 #define NREFL_OUTER_MIN 1
-#define NREFL_OUTER_MID 6
+#define NREFL_OUTER_MID 1
 #else
 #define NREFL_OUTER_FULL 24
-#define NREFL_OUTER_MID 24
-#define NREFL_OUTER_MIN 24
+#define NREFL_OUTER_MID 12
+#define NREFL_OUTER_MIN 6
 #endif
 
 static double s6bddist(double gvec[6],int bdnum) {
-    
-    /* inward normals in S6 */
-    double S6N_1x[6]={-1.,0. ,0. ,0. ,0. ,0. };
-    double S6N_2x[6]={0. ,-1.,0. ,0. ,0. ,0. };
-    double S6N_3x[6]={0. ,0. ,-1.,0. ,0. ,0. };
-    double S6N_4x[6]={0. ,0. ,0. ,-1.,0. ,0. };
-    double S6N_5x[6]={0. ,0. ,0. ,0. ,-1.,0. };
-    double S6N_6x[6]={0. ,0. ,0. ,0. ,0. ,-1.};
-    
-    if (bdnum < NS6BND) {
-        
-        switch(bdnum) {
-            case(S6P_1): return -s6dotprod(S6N_1x,gvec); break;
-            case(S6P_2): return -s6dotprod(S6N_2x,gvec); break;
-            case(S6P_3): return -s6dotprod(S6N_3x,gvec); break;
-            case(S6P_4): return -s6dotprod(S6N_4x,gvec); break;
-            case(S6P_5): return -s6dotprod(S6N_5x,gvec); break;
-            case(S6P_6): return -s6dotprod(S6N_6x,gvec); break;
-                
-            default: return DBL_MAX; break;
-        }
-        
+    if (bdnum < 0 || bdnum  > 5) return DBL_MAX;
+    return gvec[bdnum];
     }
-    
-    return DBL_MAX;
-}
-
 
 
 
@@ -948,7 +924,7 @@ static void s6bdmaps(double gvec[6],
             double maxdist,
             int * ngood) {
     
-    int jj, itemp, igap, idone;
+    int jj, kk, itemp, igap, idone;
     
     dists[S6P_1] = fabs(gvec[S6P_1]);
     dists[S6P_2] = fabs(gvec[S6P_2]);
@@ -982,13 +958,18 @@ static void s6bdmaps(double gvec[6],
 
     *ngood = NS6BND;
     for (jj = 0; jj < NS6BND; jj++ ) {
-        CS6M_rmv6(gvec, s6prj[jj], pgs[jj]);
-        s6twoPminusI(pgs[jj],gvec,rgs[jj]);
+        for (kk=0; kk < 6; kk++) {
+          pgs[jj][kk] = gvec[kk];
+          rgs[jj][kk] = gvec[kk];
+        }
+        pgs[jj][jj] =  0.;
+        rgs[jj][jj] = -rgs[jj][jj];
+        /*CS6M_rmv6(gvec, s6prj[jj], pgs[jj]);*/
+        /*s6twoPminusI(pgs[jj],gvec,rgs[jj]);*/
         CS6M_imv6(pgs[jj], S6MS[jj], mpgs[jj]);
         CS6M_imv6(gvec, S6MS[jj],mvecs[jj]);
         if (dists[jj] > maxdist) (*ngood)--;
     }
-    
 }
 
 /* revised S6Dist_2bds
@@ -1118,11 +1099,6 @@ static double S6Dist_2bds_rev(double g_lft[6], double g_rgt[6],
 }
 
 
-
-
-
-
-
 #define DCUT 0.999995
 #define fudge(d) DCUT*d
 
@@ -1191,7 +1167,6 @@ static double S6Dist_pass(double gvec1[6],double gvec2[6],double dist) {
                 if (d2 < maxdist) {
                     dist = S6Dist_2bds_rev(gvec1, gvec2, pgs1[j1], mpgs1[j1], pgs2[j1], mpgs2[j1],j1,
                                         pgs2[j2], mpgs2[j2], pgs1[j2], mpgs1[j2], j2, dist);
-                    
                 }
             }
         }
@@ -1233,7 +1208,7 @@ static double S6Dist_pass(double gvec1[6],double gvec2[6],double dist) {
 
 
 static double CS6Dist(double gvec1[6],double gvec2[6]) {
-    int rpasses, ir, irt;
+    int rpasses1, rpasses2, ir, irt;
     int jr;
     double dist,dist1, dist2, distmin;
     double rgvec1[24][6], rgvec2[24][6];
@@ -1248,30 +1223,34 @@ static double CS6Dist(double gvec1[6],double gvec2[6]) {
     dist1 = s6minbddist(gvec1);
     dist2 = s6minbddist(gvec2);
     distmin = CS6M_min(dist1,dist2);
-    rpasses = NREFL_OUTER_MIN;
+    rpasses1 = 1;
+    rpasses2 = NREFL_OUTER_MIN;
     dist = s61234dist(gvec1,gvec2);
     report_double("\n  Entered CS6Dist gdist = ",dist,", ");
     report_double_vector("gvec1 = ", gvec1,", ")
     report_double_vector("gvec2 = ", gvec2,"\n")
     if (dist1+dist2 <  dist*.999 ) {
-        rpasses = NREFL_OUTER_MID;
+        rpasses2 = NREFL_OUTER_MID;
     }
     if (dist1+dist2 <  dist*.5 ) {
-        rpasses = NREFL_OUTER_FULL;
+        rpasses2 = NREFL_OUTER_FULL;
     }
     ndists[0][0] = dist = S6Dist_pass(gvec1,gvec2,dist);
 /* Collect rpasses-1 transformed vectors */
 #pragma omp parallel for schedule(dynamic)
-    for (ir = 1; ir < rpasses; ir++) {
+    for (ir = 1; ir < rpasses1; ir++) {
         CS6M_imv6(gvec1,S6Refl[S6Rord[ir]],rgvec1[ir]);
-        CS6M_imv6(gvec2,S6Refl[S6Rord[ir]],rgvec2[ir]);
         ndists[ir][0] = S6Dist_pass(rgvec1[ir],gvec2,dist);
+    }
+#pragma omp parallel for schedule(dynamic)
+    for (ir = 1; ir < rpasses2; ir++) {
+        CS6M_imv6(gvec2,S6Refl[S6Rord[ir]],rgvec2[ir]);
         ndists[0][ir] = S6Dist_pass(gvec1,rgvec2[ir],dist);
     }
     
 #pragma omp parallel for collapse(2) schedule(dynamic)
-    for (ir = 1; ir < rpasses; ir++) {
-        for (jr = 1; jr < rpasses; jr++) {
+    for (ir = 1; ir < rpasses1; ir++) {
+        for (jr = 1; jr < rpasses2; jr++) {
             ndists[ir][jr] = S6Dist_pass(rgvec1[ir],rgvec2[jr],dist);
             if (ndists[ir][jr] < 00.01) {
             report_double("\n  ***ZERO*** gdist = ",dist,", ");
@@ -1279,15 +1258,14 @@ static double CS6Dist(double gvec1[6],double gvec2[6]) {
             report_integer("jr = ",jr,", ")
             report_double_vector("rgvec1 = ", gvec1,", ")
             report_double_vector("rgvec2 = ", gvec2,"\n")
-               
             }
         }
     }
     
 #pragma omp flush(dist,ndists)
 #pragma omp critical(distminimize)
-    for (ir = 0; ir < rpasses; ir++) {
-        for (jr = 0; jr < rpasses; jr++) {
+    for (ir = 0; ir < rpasses1; ir++) {
+        for (jr = 0; jr < rpasses2; jr++) {
             if (ndists[ir][jr] < dist) dist = ndists[ir][jr];
         }
     }

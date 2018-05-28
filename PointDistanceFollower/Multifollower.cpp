@@ -91,9 +91,9 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
             }
          }
       }
-      m.SetDistancesG6(vdist);
-      return m;
    }
+   m.SetDistancesG6(vdist);
+   return m;
 }
 
 MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const {
@@ -157,10 +157,10 @@ MultiFollower MultiFollower::CalculateDistancesCS(const MultiFollower& mf) const
 MultiFollower MultiFollower::GenerateAllDistances(void) const {
    MultiFollower m(*this);
    m.SetComputeStartTime();
-   m = CalculateDistancesS6(m);
-   m = CalculateDistancesG6(m);
-   m = CalculateDistancesD7(m);
-   m = CalculateDistancesCS(m);
+   if (FollowerConstants::IsEnabled("S6")) m = CalculateDistancesS6(m);
+   if (FollowerConstants::IsEnabled("G6")) m = CalculateDistancesG6(m);
+   if (FollowerConstants::IsEnabled("D7")) m = CalculateDistancesD7(m);
+   if (FollowerConstants::IsEnabled("CS")) m = CalculateDistancesCS(m);
    m.SetTime2ComputeFrame(std::clock() - m.GetComputeStartTime());
 
    m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathS6().GetDistances()));

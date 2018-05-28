@@ -1,0 +1,143 @@
+<?xml version="1.0" standalone="no"?>
+<!-- the width and height set the total pixel output of the image in the browser -->
+<!-- whatever is within the viewbox will be remapped to show in this size -->
+<svg width="900" height="900" viewBox="1 0 900 900"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <desc>ID (and file name) = Fol_2018-05-27.16_56_46.5_1.svg  mode = LINE3 </desc> 
+<text x = "-750" y="50" transform="rotate(-90)"  font-family="sans-serif" font-size="40" stroke ="lightgray" fill="none"> PointDistanceFollower   May 27 2018</text>
+ <text x="560" y="30" font-family="sans-serif" font-size="20">Wall time passed: 28377 msec.</text>
+<text x="300" y="60"   font-family="sans-serif" font-size="20" fill="lightblue">S6  lightblue</text>
+<text x="300" y="85"   font-family="sans-serif" font-size="20" fill="slategrey">NCDist  slategrey</text>
+<text x="300" y="110"  font-family="sans-serif" font-size="20" fill="violet">D7  violet</text>
+<text x="300" y="135"  font-family="sans-serif" font-size="20" fill="olive">CS6Dist  olive</text>
+
+ <text x="140"  y="30"  font-family="sans-serif" font-size="20" >Fol_2018-05-27.16_56_46.5_1.svg  </text> 
+
+
+ <!--DISTANCE PLOT BEGINS   mode = LINE3-->
+
+
+<!-- the following will scale and place the distance plot -->
+<g  transform="translate(0, 50) ">
+<g transform="translate(150,700) scale(1 -1)">
+   <polyline fill="none" stroke=" lightblue " stroke-width=" 12 " points=" 5.94059,87.7957 11.8812,88.4658 17.8218,87.226 23.7624,85.921 29.703,88.7739 35.6436,83.6678 41.5842,79.8749 47.5248,77.1826 53.4653,76.2639 59.4059,75.959 65.3465,70.9721 71.2871,67.5287 77.2277,65.7556 83.1683,65.7237 89.1089,67.4342 95.0495,70.8187 100.99,75.7521 106.931,82.0731 112.871,89.6061 118.812,98.1778 124.752,107.629 130.693,117.82 136.634,128.63 142.574,138.418 148.515,144.114 154.455,149.889 160.396,155.736 166.337,158.094 172.277,156.434 178.218,154.99 184.158,153.765 190.099,152.763 196.04,149.492 201.98,144.926 207.921,140.946 213.861,137.588 219.802,134.884 225.743,132.862 231.683,131.544 237.624,130.943 243.564,131.068 249.505,131.916 255.446,133.477 261.386,135.736 267.327,138.667 273.267,142.242 279.208,146.427 285.149,151.187 291.089,154.586 297.03,156.834 302.97,159.691 308.911,160.754 314.851,150.322 320.792,136.55 326.733,123.012 332.673,110.413 338.614,98.9765 344.554,88.9693 350.495,80.6973 356.436,74.481 362.376,70.6142 368.317,69.308 374.257,70.639 380.198,60.1969 386.139,52.6065 392.079,51.9793 398.02,61.0255 403.96,79.6698 409.901,101.104 415.842,103.133 421.782,115.823 " />
+
+<line fill="none" stroke-dasharray = "10, 10"  stroke="orange" stroke-width="6" x1="427.723" y1="300" x2="594.059" y2="300" />
+   <polyline fill="none" stroke=" slategrey " stroke-width=" 9 " points=" 5.94059,247.416 11.8812,241.154 17.8218,245.006 23.7624,250.077 29.703,252.923 35.6436,250.436 41.5842,241.409 47.5248,227.224 53.4653,217.29 59.4059,208.511 65.3465,200.682 71.2871,193.891 77.2277,188.224 83.1683,183.759 89.1089,180.562 95.0495,178.685 100.99,178.159 106.931,178.992 112.871,181.172 118.812,184.661 124.752,187.525 130.693,186.986 136.634,185.964 142.574,187.381 148.515,183.176 154.455,184.028 160.396,188.245 166.337,193.055 172.277,198.425 178.218,206.922 184.158,215.543 190.099,208.555 196.04,202.295 201.98,196.803 207.921,192.047 213.861,188.068 219.802,184.905 225.743,182.589 231.683,181.145 237.624,180.588 243.564,180.924 249.505,182.151 255.446,184.253 261.386,187.21 267.327,190.991 273.267,195.559 279.208,200.873 285.149,206.888 291.089,213.559 297.03,220.838 302.97,228.68 308.911,236.096 314.851,225.976 320.792,216.997 326.733,208.519 332.673,200.591 338.614,193.064 344.554,188.032 350.495,198.458 356.436,209.074 362.376,206.966 368.317,203.976 374.257,205.118 380.198,210.821 386.139,204.472 392.079,219.548 398.02,241.094 403.96,260.628 409.901,309.454 415.842,354.874 421.782,406.436 " />
+
+<line fill="none" stroke-dasharray = "10, 10"  stroke="orange" stroke-width="6" x1="427.723" y1="300" x2="594.059" y2="300" />
+   <polyline fill="none" stroke=" violet " stroke-width=" 6 " points=" 5.94059,314.257 11.8812,287.031 17.8218,262.109 23.7624,238.179 29.703,220.096 35.6436,202.935 41.5842,187.587 47.5248,174.032 53.4653,167.636 59.4059,160.409 65.3465,148.817 71.2871,139.42 77.2277,132.537 83.1683,128.445 89.1089,127.326 95.0495,129.234 100.99,134.08 106.931,141.65 112.871,151.654 118.812,163.766 124.752,177.662 130.693,193.05 136.634,209.673 142.574,225.319 148.515,235.739 154.455,246.219 160.396,256.751 166.337,261.28 172.277,258.718 178.218,256.533 184.158,254.727 190.099,253.306 196.04,248.743 201.98,242.338 207.921,236.733 213.861,231.972 219.802,228.098 225.743,225.147 231.683,223.147 237.624,222.119 243.564,222.074 249.505,223.011 255.446,224.922 261.386,227.787 267.327,231.577 273.267,236.257 279.208,241.787 285.149,248.119 291.089,254.171 297.03,256.628 302.97,259.685 308.911,259.862 314.851,241.794 320.792,218.899 326.733,198.821 332.673,182.301 338.614,170.108 344.554,162.951 350.495,161.321 356.436,165.337 362.376,174.709 368.317,188.833 374.257,206.957 380.198,225.312 386.139,254.733 392.079,291.491 398.02,335.114 403.96,384.716 409.901,436.708 415.842,502.58 421.782,575.593 " />
+
+<line fill="none" stroke-dasharray = "10, 10"  stroke="orange" stroke-width="6" x1="427.723" y1="300" x2="594.059" y2="300" />
+   <polyline fill="none" stroke=" olive " stroke-width=" 3 " points=" 5.94059,88.0161 11.8812,88.4658 17.8218,87.226 23.7624,85.921 29.703,88.7739 35.6436,83.6678 41.5842,79.8749 47.5248,77.1826 53.4653,77.7823 59.4059,75.959 65.3465,70.9721 71.2871,67.5287 77.2277,65.7556 83.1683,65.7237 89.1089,67.4342 95.0495,70.8187 100.99,75.7521 106.931,82.0731 112.871,89.6061 118.812,98.1778 124.752,107.629 130.693,117.82 136.634,128.63 142.574,138.852 148.515,146.205 154.455,153.654 160.396,161.196 166.337,160.638 172.277,158.356 178.218,156.315 184.158,154.52 190.099,152.979 196.04,149.492 201.98,144.926 207.921,140.946 213.861,137.588 219.802,134.884 225.743,132.862 231.683,131.544 237.624,130.943 243.564,131.068 249.505,131.916 255.446,133.477 261.386,135.736 267.327,138.667 273.267,142.242 279.208,146.427 285.149,151.187 291.089,154.781 297.03,156.946 302.97,159.73 308.911,160.754 314.851,150.845 320.792,136.55 326.733,123.012 332.673,110.413 338.614,98.9765 344.554,88.9693 350.495,80.6973 356.436,74.481 362.376,70.6142 368.317,69.308 374.257,70.639 380.198,60.1969 386.139,52.6065 392.079,51.9793 398.02,61.0255 403.96,79.6698 409.901,101.154 415.842,103.133 421.782,115.823 " />
+
+<line fill="none" stroke-dasharray = "10, 10"  stroke="orange" stroke-width="6" x1="427.723" y1="300" x2="594.059" y2="300" />
+
+<!--Draw Glitches -->
+
+
+<!-- -->
+
+
+<!--Draw Glitches -->
+
+<line fill="none" stroke="black" stroke-width="4" x1="409.901" y1="299.454" x2="409.901" y2="249.454"  stroke-dasharray = "10,5" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" stroke = "rgb(0,0,0)" line = "rgb(0,0,0)"  fill = "slategrey" x="414.901" y="-249.454" >68</text>
+
+<!-- -->
+
+
+<!--Draw Glitches -->
+
+<line fill="none" stroke="black" stroke-width="4" x1="415.842" y1="492.58" x2="415.842" y2="442.58"  stroke-dasharray = "10,5" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" stroke = "rgb(0,0,0)" line = "rgb(0,0,0)"  fill = "violet" x="420.842" y="-442.58" >69</text>
+
+<!-- -->
+
+
+<!--Draw Glitches -->
+
+
+<!-- -->
+
+
+<!--Draw the X and Y axes -->
+<polyline fill="none" stroke="black" stroke-width="6"  points=" 600,0 0,0 0, 600" />
+<polyline fill="none" stroke="black" stroke-width="1"  points=" 0 600  600 600  600 0" />
+<!-- -->
+
+
+<!--Draw labels and tics for X axis -->
+
+<line fill="none" stroke="black"  stroke-width="6"  x1="0.5" y1="0" x2="0.5" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="-24.5" y="45" >0</text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="119.312" y1="0" x2="119.312" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="94.3119" y="45" >20</text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="238.124" y1="0" x2="238.124" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="213.124" y="45" >40</text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="356.936" y1="0" x2="356.936" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="331.936" y="45" >60</text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="475.748" y1="0" x2="475.748" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="450.748" y="45" >80</text>
+<line fill="none" stroke="black"  stroke-width="6"  x1="594.559" y1="0" x2="594.559" y2="-20" />
+<text transform="scale(1,-1)" font-family="sans-serif" font-size="30" x="569.559" y="45" >100</text>
+
+
+<!--Draw labels and tics for Y axis -->
+
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="0" x2="-20" y2="0" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="10" >5</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="60" x2="-20" y2="60" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-50" >10</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="120" x2="-20" y2="120" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-110" >15</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="180" x2="-20" y2="180" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-170" >20</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="240" x2="-20" y2="240" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-230" >25</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="300" x2="-20" y2="300" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-290" >30</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="360" x2="-20" y2="360" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-350" >35</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="420" x2="-20" y2="420" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-410" >40</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="480" x2="-20" y2="480" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-470" >45</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="540" x2="-20" y2="540" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-530" >50</text>
+<line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="600" x2="-20" y2="600" />
+<text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-590" >55</text>
+
+-->
+</g>
+</g>
+<!-- Run Constants
+PRINTDISTANCEDATA bool true
+GLITCHESONLY bool false
+PLOT 2doubles 3 4
+PERTURBBY double 0.05
+GLITCHLEVEL double 3
+BOUNDARYWINDOW double 0.065
+FRAMESPERPATH int 200
+STEPSPERFRAME int 100
+TRIALS int 3
+ALLBLACK bool true
+FILEPREFIX string Fol
+GRAPHSIZE int 0
+BORDER int 0
+PLOTSIZE int 0
+G6LINEWIDTH int 3
+DELONELINEWIDTH int 10
+AXISWIDTH int 6
+TICLENGTH int 20
+VECTOR g6 
+FOLLOWERMODE FollowerMode line
+FIXRANDOMSEED fixRandomSeed false
+RANDOMSEED int 19191
+TIMESTAMP bool true
+END end 
+
+
+
+
+-->
+</svg>

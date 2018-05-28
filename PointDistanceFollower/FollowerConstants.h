@@ -26,6 +26,8 @@ namespace FollowerConstants {
    extern double globalFractionToDetermineCloseToBoundary;
    extern double globalMovieMaxDistRejectionTest;
 
+   extern std::vector<std::string> globalDistanceEnableList;
+   extern std::string globalDistanceDisable;
 
    extern unsigned long    globalFramesPerSegment;
    extern unsigned long    globalStepsPerFrame;
@@ -35,6 +37,8 @@ namespace FollowerConstants {
    extern std::vector<std::string> globalColorsForBoundaries;
 
    extern std::string globalFileNamePrefix;
+
+   static bool IsEnabled(const std::string& s) {return std::find(globalDistanceEnableList.begin(), globalDistanceEnableList.end(), s) != globalDistanceEnableList.end(); }
 };
 
 namespace SVG_WriterConstants {

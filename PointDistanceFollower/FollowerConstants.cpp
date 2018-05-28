@@ -34,6 +34,8 @@ namespace {
    std::vector<std::string> FollowerConstants::globalColorsForBoundaries = std::vector<std::string>( BASIC_COLORS, BASIC_COLORS + sizeof(BASIC_COLORS)/sizeof(BASIC_COLORS[0]) );
    std::string FollowerConstants::globalFileNamePrefix   = "Fol";
 
+   std::vector<std::string> FollowerConstants::globalDistanceEnableList{ "S6", "CS" };
+   std::string globalDistanceDisable = "";
 
    double SVG_WriterConstants::globalGraphSpace  = 800; // px
    double SVG_WriterConstants::globalGraphBorder = 100; // px
