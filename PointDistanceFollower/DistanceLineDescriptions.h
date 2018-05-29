@@ -11,10 +11,11 @@ public:
    class Line {
    public:
       Line(){}
-      Line(const std::string& name, const std::string& color, const int lineWidth)
-      : m_name(name)
-      , m_color(color)
-      , m_lineWidth(lineWidth)
+      Line(const std::string& name, const std::string& color, const int lineWidth, const double time)
+         : m_name(name)
+         , m_color(color)
+         , m_lineWidth(lineWidth)
+         , m_time2Compute(time)
       {
          //svgS6 lineWidth - 3,  FollowerConstants::globalColorsForBoundaries[1]);
          //svgG6 lineWidth - 6,  FollowerConstants::globalColorsForBoundaries[3]);
@@ -23,9 +24,14 @@ public:
 
       }
 
+      void SetTime( const double time ) {
+         m_time2Compute = time;
+      }
+
       std::string m_name;
       std::string m_color;
       int m_lineWidth;
+      double m_time2Compute;
    };
 
 
@@ -37,12 +43,18 @@ public:
    "deeppink", "mediumvioletred", "tomato", "greenyellow", "olive" };
    };
    */
-      m_lineColorMap.insert(std::make_pair("S6", Line("S6", "lightblue", 12)));
-      m_lineColorMap.insert(std::make_pair("G6", Line("NCDist", "slategrey", 9)));
-      m_lineColorMap.insert(std::make_pair("D7", Line("D7", "violet", 6)));
-      m_lineColorMap.insert(std::make_pair("CS", Line("CS6Dist", "olive", 3)));
-      m_lineColorMap.insert(std::make_pair("INVALID", Line("INVALID", "orange", 3)));
+      m_lineColorMap.insert(std::make_pair("S6", Line("S6", "lightblue", 12, -1.0 )));
+      m_lineColorMap.insert(std::make_pair("G6", Line("NCDist", "slategrey", 9, -1.0 )));
+      m_lineColorMap.insert(std::make_pair("D7", Line("D7", "violet", 6, -1.0 )));
+      m_lineColorMap.insert(std::make_pair("CS", Line("CS6Dist", "olive", 3, -1.0 )));
+      m_lineColorMap.insert(std::make_pair("INVALID", Line("INVALID", "orange", 3, -1.0 )));
    }
+
+   void SetComputeTime( const std::string name, const double time ) {
+      m_lineColorMap[name].SetTime(time);
+   }
+
+   void clear(void) { m_lineColorMap.clear(); }
 
    DistanceLineDescriptions( const DistanceLineDescriptions& dld) {
       m_lineColorMap = dld.m_lineColorMap;
@@ -56,7 +68,7 @@ public:
    std::string GetColor(const std::string& name) { return m_lineColorMap[name].m_color; }
    std::string GetName(const std::string& name) { return m_lineColorMap[name].m_name; }
    int GetLineWidth(const std::string& name) { return m_lineColorMap[name].m_lineWidth; }
-
+   double GetComputeTime(const std::string& name) { return m_lineColorMap[name].m_time2Compute; }
 private:
    std::map<std::string, Line> m_lineColorMap;
 };

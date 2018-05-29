@@ -125,7 +125,7 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
    return m;
 }
 
-MultiFollower MultiFollower::CalculateDistancesCS(const MultiFollower& mf) const {
+MultiFollower MultiFollower::CalculateDistancesCS( MultiFollower& mf)  {
    MultiFollower m(mf);
    S6 out;
    std::vector<double> vdist;
@@ -154,13 +154,37 @@ MultiFollower MultiFollower::CalculateDistancesCS(const MultiFollower& mf) const
    return m;
 }
 
-MultiFollower MultiFollower::GenerateAllDistances(void) const {
+MultiFollower MultiFollower::GenerateAllDistances(void) {
    MultiFollower m(*this);
    m.SetComputeStartTime();
-   if (FollowerConstants::IsEnabled("S6")) m = CalculateDistancesS6(m);
-   if (FollowerConstants::IsEnabled("G6")) m = CalculateDistancesG6(m);
-   if (FollowerConstants::IsEnabled("D7")) m = CalculateDistancesD7(m);
-   if (FollowerConstants::IsEnabled("CS")) m = CalculateDistancesCS(m);
+   {
+      m.m_cspath.SetComputeStartTime();
+      if (FollowerConstants::IsEnabled("CS")) m = CalculateDistancesCS(m);
+      const double computetimecs = std::clock() - m.m_cspath.GetComputeStartTime();
+      m.m_cspath.SetTime2ComputeFrame(computetimecs);
+      m.SetComputeTime("CS", computetimecs);
+   }
+   {
+      m.m_s6path.SetComputeStartTime();
+      if (FollowerConstants::IsEnabled("S6")) m = CalculateDistancesS6(m);
+      const double computetimes6 = std::clock() - m.m_s6path.GetComputeStartTime();
+      m.m_s6path.SetTime2ComputeFrame(computetimes6);
+      m.SetComputeTime("S6", computetimes6);
+   }
+   {
+      m.m_g6path.SetComputeStartTime();
+      if (FollowerConstants::IsEnabled("G6")) m = CalculateDistancesG6(m);
+      const double computetimeg6 = std::clock() - m.m_g6path.GetComputeStartTime();
+      m.m_g6path.SetTime2ComputeFrame(computetimeg6);
+      m.SetComputeTime("G6", computetimeg6);
+   }
+   {
+      m.m_d7path.SetComputeStartTime();
+      if (FollowerConstants::IsEnabled("D7")) m = CalculateDistancesD7(m);
+      const double computetimed7 = std::clock() - m.m_d7path.GetComputeStartTime();
+      m.m_d7path.SetTime2ComputeFrame(computetimed7);
+      m.SetComputeTime("D7", computetimed7);
+   }
    m.SetTime2ComputeFrame(std::clock() - m.GetComputeStartTime());
 
    m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathS6().GetDistances()));
@@ -238,4 +262,8 @@ void MultiFollower::SetTime2ComputeFrame(const double computeTime) {
 
 bool MultiFollower::HasGlitches(void) const {
    return m_cspath.HasGlitches() || m_d7path.HasGlitches() || m_s6path.HasGlitches() || m_g6path.HasGlitches();
+}
+
+void MultiFollower::SetComputeTime(const std::string& name, const double time) {
+   m_lineDescription.SetComputeTime(name, time);
 }

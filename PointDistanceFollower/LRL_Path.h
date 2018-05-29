@@ -42,9 +42,18 @@ public:
 
    bool HasGlitches(void) const { return !m_glitches.empty(); }
 
+   void SetComputeStartTime(void) { m_ComputeStartTime = std::clock(); }
+   std::clock_t GetComputeStartTime(void) const { return m_ComputeStartTime; }
+   void SetTime2ComputeFrame(const double computeTime) {
+      m_seconds2ComputerFrame = computeTime;
+   }
+   double GetTime2ComputeFrame() const { return m_seconds2ComputerFrame;  }
+
 private:
    std::vector<std::pair<T, T> > m_path;
    std::vector<std::pair<T, T> > m_secondPath;
+   std::clock_t m_ComputeStartTime;
+   double m_seconds2ComputerFrame;
    std::vector<double> m_distances;
    std::set<unsigned long> m_glitches;
 };

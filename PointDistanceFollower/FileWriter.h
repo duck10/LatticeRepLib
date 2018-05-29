@@ -106,6 +106,27 @@ public:
       secondPointsCS = m_multiFollow.GetCS().GetSecondPath();
    }
 
+   std::string Header( ) {
+      std::string txt;
+      txt += LRL_ToString( "PointDistanceFollower  ", __DATE__, "  mode = ", ReadGlobalData::GetFollowerMode(), "\n");
+      txt += LRL_ToString(sFileName, "     Output is S6 probe cell, C3 reduced cell, ",
+         ConstructListOfNamesOfOutputDistances(), "distance between", "\n");
+      txt += LRL_ToString("Compute times (msec)  ");
+
+      const LRL_Path<S6> pathS6 = m_multiFollow.GetS6();
+      const LRL_Path<G6> pathG6 = m_multiFollow.GetG6();
+      const LRL_Path<D7> pathD7 = m_multiFollow.GetD7();
+      const LRL_Path<S6> pathCS = m_multiFollow.GetCS();
+
+      txt += pathS6.GetDistances().empty() ? "" : LRL_ToString("   S6Dist  ", pathS6.GetTime2ComputeFrame());
+      txt += pathG6.GetDistances().empty() ? "" : LRL_ToString("   NCDist  ", pathG6.GetTime2ComputeFrame());
+      txt += pathD7.GetDistances().empty() ? "" : LRL_ToString("   D7Dist  ", pathD7.GetTime2ComputeFrame());
+      txt += pathCS.GetDistances().empty() ? "" : LRL_ToString("   CS6Dist ", pathCS.GetTime2ComputeFrame()) ;
+
+
+      return txt;
+   }
+
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    void Write(void)
       /*-------------------------------------------------------------------------------------*/
@@ -130,6 +151,8 @@ public:
          GetSecondPoints(secondPointsS6, secondPointsG6, secondPointsD7, secondPointsCS);
 
          std::vector<std::string> glitches = PopulateGlitchStrings();
+
+         folOut << Header() << std::endl;
 
          folOut << "PointDistanceFollower  " << __DATE__ << "  mode = " << ReadGlobalData::GetFollowerMode() << std::endl;
          folOut << sFileName << "     Output is S6 probe cell, C3 reduced cell, " <<
