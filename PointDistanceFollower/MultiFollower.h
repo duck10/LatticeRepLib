@@ -18,8 +18,6 @@
 #include "D7.h"
 #include "OutlierFinder.h"
 
-class CS6 {};
-
 class MultiFollower {
 public:
    MultiFollower(){}
@@ -33,8 +31,8 @@ public:
    MultiFollower CalculateDistancesS6(const MultiFollower& mf) const;
    MultiFollower CalculateDistancesG6(const MultiFollower& mf) const;
    MultiFollower CalculateDistancesD7(const MultiFollower& mf) const;
-   MultiFollower CalculateDistancesCS(const MultiFollower& mf) const;
-   MultiFollower GenerateAllDistances(void) const;
+   MultiFollower CalculateDistancesCS(MultiFollower& mf) ;
+   MultiFollower GenerateAllDistances(void);
    void SetDistancesS6(const std::vector<double>& v) { m_s6path.SetDistances(v); }
    void SetDistancesG6(const std::vector<double>& v) { m_g6path.SetDistances(v); }
    void SetDistancesD7(const std::vector<double>& v) { m_d7path.SetDistances(v); }
@@ -49,11 +47,13 @@ public:
    void SetTime2ComputeFrame(const double computeTime);
    DistanceLineDescriptions GetLineDescriptions(void) const { return m_lineDescription; }
    void SetComputeStartTime(void) { m_ComputeStartTime = std::clock(); }
+   double GetTime2ComputeFrame(void) const { return m_seconds2ComputerFrame; }
    std::clock_t GetComputeStartTime(void) const {return m_ComputeStartTime; }
 
    std::set<unsigned long> DetermineOutliers(const std::vector<double> distanceList) const;
    const std::set<unsigned long> DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const;
    bool HasGlitches(void) const;
+   void SetComputeTime(const std::string& name, const double time);
 
 private:
    LRL_Path<S6>  m_s6path;

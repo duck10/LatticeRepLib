@@ -70,13 +70,27 @@ private:
       m_svg.push_back( "</svg>" );
    };
 
+   std::string WriteOneLineDescription( const std::string& name, const int height ) {
+      std::string svg;
+      if (FollowerConstants::IsEnabled(name))
+         svg += "<text x=\"300\" y=\"" +
+         LRL_ToString(height) + 
+         "\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" +
+         m_lineDescriptions.GetColor(name) + "\">" +
+         m_lineDescriptions.GetName(name) + "  " +
+         m_lineDescriptions.GetColor(name) + "     msec  " +
+         LRL_ToString( m_lineDescriptions.GetComputeTime(name)) +
+         "</text>\n";
+      return svg;
+   }
+
    std::string WriteLineDescriptions() {
       std::string svg;
-      if (FollowerConstants::IsEnabled("S6")) svg += "<text x=\"300\" y=\"60\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" + m_lineDescriptions.GetColor("S6") + "\">" + m_lineDescriptions.GetName("S6") + "  " + m_lineDescriptions.GetColor("S6") + "</text>\n";
-      if (FollowerConstants::IsEnabled("G6")) svg += "<text x=\"300\" y=\"85\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" + m_lineDescriptions.GetColor("G6") + "\">" + m_lineDescriptions.GetName("G6") + "  " + m_lineDescriptions.GetColor("G6") + "</text>\n";
-      if (FollowerConstants::IsEnabled("D7")) svg += "<text x=\"300\" y=\"110\"  font-family=\"sans-serif\" font-size=\"20\" fill=\"" + m_lineDescriptions.GetColor("D7") + "\">" + m_lineDescriptions.GetName("D7") + "  " + m_lineDescriptions.GetColor("D7") + "</text>\n";
-      if (FollowerConstants::IsEnabled("CS")) svg += "<text x=\"300\" y=\"135\"  font-family=\"sans-serif\" font-size=\"20\" fill=\"" + m_lineDescriptions.GetColor("CS") + "\">" + m_lineDescriptions.GetName("CS") + "  " + m_lineDescriptions.GetColor("CS") + "</text>\n" ;
-      return svg;
+      svg += WriteOneLineDescription("S6", 60 );
+      svg += WriteOneLineDescription("G6", 85 );
+      svg += WriteOneLineDescription("D7", 110);
+      svg += WriteOneLineDescription("CS", 135);
+      return svg; 
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
