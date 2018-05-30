@@ -5,6 +5,7 @@
 #ifndef FOLLOWERCONSTANTS_H
 #define FOLLOWERCONSTANTS_H
 
+#include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
