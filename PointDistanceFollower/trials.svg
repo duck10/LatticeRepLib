@@ -3,14 +3,17 @@
 <!-- whatever is within the viewbox will be remapped to show in this size -->
 <svg width="900" height="900" viewBox="1 0 900 900"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
  <desc>ID (and file name) = Fol_2018-05-27.16_48_44.0_0.svg  mode = LINE3 </desc> 
-<text x = "-750" y="50" transform="rotate(-90)"  font-family="sans-serif" font-size="40" stroke ="lightgray" fill="none"> PointDistanceFollower   May 27 2018</text>
- <text x="560" y="30" font-family="sans-serif" font-size="20">Wall time passed: 30586 msec.</text>
-<text x="300" y="60"   font-family="sans-serif" font-size="20" fill="lightblue">S6  lightblue</text>
-<text x="300" y="85"   font-family="sans-serif" font-size="20" fill="slategrey">NCDist  slategrey</text>
-<text x="300" y="110"  font-family="sans-serif" font-size="20" fill="violet">D7  violet</text>
-<text x="300" y="135"  font-family="sans-serif" font-size="20" fill="olive">CS6Dist  olive</text>
+<g transform="scale(0.33, 0.33)">
+<text x = "-650" y="50" transform="rotate(-90)"  font-family="sans-serif" font-size="13" stroke ="lightgray" fill="none"> PointDistanceFollower   May 27 2018</text>
 
- <text x="140"  y="30"  font-family="sans-serif" font-size="20" >Fol_2018-05-27.16_48_44.0_0.svg  </text> 
+<text x="140"  y="30"  font-family="sans-serif" font-size="7" >Fol_2018-05-27.16_48_44.0_0.svg  </text> 
+<text x="560" y="30" font-family="sans-serif" font-size="7">Wall time passed: 30586 msec.</text>
+ 
+<text x="300" y="60"   font-family="sans-serif" font-size="7" fill="lightblue">S6  lightblue</text>
+<text x="300" y="85"   font-family="sans-serif" font-size="7" fill="slategrey">NCDist  slategrey</text>
+<text x="300" y="110"  font-family="sans-serif" font-size="7" fill="violet">D7  violet</text>
+<text x="300" y="135"  font-family="sans-serif" font-size="7" fill="olive">CS6Dist  olive</text>
+
 
 
  <!--DISTANCE PLOT BEGINS   mode = LINE3-->
@@ -18,7 +21,7 @@
 
 <!-- the following will scale and place the distance plot -->
 <g  transform="translate(0, 50) ">
-<g transform="translate(150,700) scale(1 -1)">
+<g transform="translate(150,500) scale(0.33, -0.33)">
    <polyline fill="none" stroke=" lightblue " stroke-width=" 12 " points=" 5.94059,72.2263 11.8812,71.7192 17.8218,71.2724 23.7624,69.5187 29.703,67.3825 35.6436,65.2867 41.5842,63.2354 47.5248,61.2332 53.4653,59.2849 59.4059,57.396 65.3465,55.5727 71.2871,53.8215 77.2277,52.1498 83.1683,50.5655 89.1089,49.0769 95.0495,47.6931 100.99,46.4234 106.931,45.2774 112.871,44.2648 118.812,43.3949 124.752,43.0158 130.693,43.0069 136.634,43.2174 142.574,43.6442 148.515,45.5434 154.455,48.5499 160.396,52.3192 166.337,56.6433 172.277,61.4052 178.218,66.5108 184.158,71.3968 190.099,76.0155 196.04,80.933 201.98,86.0984 207.921,91.4695 213.861,97.0122 219.802,102.699 225.743,108.506 231.683,114.417 237.624,120.415 243.564,126.488 249.505,132.626 255.446,138.821 261.386,142.003 267.327,142.263 273.267,142.107 279.208,141.962 285.149,142.137 291.089,142.632 297.03,142.994 302.97,143.929 308.911,146.054 314.851,156.511 320.792,172.849 326.733,189.525 332.673,205.112 338.614,212.929 344.554,219.154 350.495,222.654 " />
 
 <line fill="none" stroke-dasharray = "10, 10"  stroke="orange" stroke-width="6" x1="356.436" y1="300" x2="594.059" y2="300" />
@@ -96,7 +99,7 @@
 <text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-504.286" >120</text>
 <line fill="none" stroke="black" stroke-width="6" x1="0.0" y1="600" x2="-20" y2="600" />
 <text transform="scale(1,-1)" text-anchor="end" font-family="sans-serif" font-size="30" x="-25" y="-590" >140</text>
-
+</g>
 -->
 </g>
 </g>
