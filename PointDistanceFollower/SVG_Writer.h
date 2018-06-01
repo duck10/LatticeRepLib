@@ -86,20 +86,29 @@ private:
 
    std::string WriteLineDescriptions() {
       std::string svg;
-      svg += WriteOneLineDescription("S6", 60 );
-      svg += WriteOneLineDescription("G6", 85 );
-      svg += WriteOneLineDescription("D7", 110);
-      svg += WriteOneLineDescription("CS", 135);
-      return svg; 
+      int y_pos = 60;
+      const int y_delta = 25;
+      const std::string svgs6 = WriteOneLineDescription("S6", y_pos );
+      if (!svgs6.empty()) y_pos += y_delta;
+      const std::string svgg6 = WriteOneLineDescription("G6", y_pos );
+      if (!svgg6.empty()) y_pos += y_delta;
+      const std::string svgd7 = WriteOneLineDescription("D7", y_pos);
+      if (!svgd7.empty()) y_pos += y_delta;
+      const std::string svgcs = WriteOneLineDescription("CS", y_pos);
+      return svgs6 + svgg6 + svgd7 + svgcs; 
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    void SVG_Header( const std::string& sFileName, const int startingVectorCounter ) {
       m_svg.push_back( "<?xml version=\"1.0\" standalone=\"no\"?>" );
       SVG_HeaderBoilerplate( sFileName );
-      SVG_HeaderFrameDescription( startingVectorCounter );
-      m_svg.push_back(WriteLineDescriptions());
-      m_svg.push_back(" <text x=\"140\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" >" + sFileName +"  </text> ");
+
+       m_svg.push_back(" <text x=\"140\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" >" + sFileName +
+       "  &#160;&#160;&#160;&#160;&#160; Wall time passed: "
+          + LRL_ToString(m_computeTime)
+          + " msec.</text>");
+
+     m_svg.push_back(WriteLineDescriptions());
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -119,21 +128,21 @@ private:
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:ev="http://www.w3.org/2001/xml-events">
       */
+
+      // CHANGE THE SCALE FACTOR YOU'D LIKE TO GET SMALL (OR LARGER IMAGES). WATCH OUT FOR 
+      // THE WIDTH, HEIGHT, AND VIEWBOX SIZES ABOVE IF YOU MAKE IT LARGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      const double scaleFactor = 1.0;
+       //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       m_svg.push_back( "<!-- the width and height set the total pixel output of the image in the browser -->" );
       m_svg.push_back( "<!-- whatever is within the viewbox will be remapped to show in this size -->" );
-      m_svg.push_back( "<svg width=\"900\" height=\"900\" viewBox=\"1 0 900 900\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
+      m_svg.push_back( "<svg width=\"" + LRL_ToString(scaleFactor *900.0) + "\" height=\"" + LRL_ToString(scaleFactor * 900.0) +
+         "\" viewBox=\"1 0" + LRL_ToString(scaleFactor*900, scaleFactor*900) +
+         "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
       m_svg.push_back( " <desc>ID (and file name) = " + sFileName + "  mode = " + ReadGlobalData::GetFollowerMode() + " </desc> " );
-      m_svg.push_back("<text x = \"-750\" y=\"50\" transform=\"rotate(-90)\"  font-family=\"sans-serif\" font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower   " __DATE__ "</text>");
-   }
 
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   void SVG_HeaderFrameDescription( const int startingVectorCounter ) {
-      if (startingVectorCounter >= 0) {
-         //m_svg.push_back( " <text x=\"280\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" > Trial vector = " + LRL_ToString( startingVectorCounter ) + "  </text> " );
-         m_svg.push_back( " <text x=\"560\" y=\"30\" font-family=\"sans-serif\" font-size=\"20\">Wall time passed: "
-            + LRL_ToString(m_computeTime)
-            + " msec.</text>" );
-      }
+      m_svg.push_back("<g transform = \"scale(" + LRL_ToString(scaleFactor, scaleFactor) + ")\">\n");
+
+      m_svg.push_back("<text x = \"-750\" y=\"50\" transform=\"rotate(-90)\"  font-family=\"sans-serif\" font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower   " __DATE__ "</text>");
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
