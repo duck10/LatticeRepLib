@@ -17,11 +17,6 @@ public:
          , m_lineWidth(lineWidth)
          , m_time2Compute(time)
       {
-         //svgS6 lineWidth - 3,  FollowerConstants::globalColorsForBoundaries[1]);
-         //svgG6 lineWidth - 6,  FollowerConstants::globalColorsForBoundaries[3]);
-         //svgD7 lineWidth - 9,  FollowerConstants::globalColorsForBoundaries[10]);
-         //svgCS lineWidth - 12,  FollowerConstants::globalColorsForBoundaries[15]);
-
       }
 
       void SetTime( const double time ) {
@@ -37,12 +32,6 @@ public:
 
 public:
    DistanceLineDescriptions(void) {
-   /*
-   std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
-   "orange", "blueviolet", "coral", "saddlebrown", "blue", "pink", "violet",
-   "deeppink", "mediumvioletred", "tomato", "greenyellow", "olive" };
-   };
-   */
       m_lineColorMap.insert(std::make_pair("S6", Line("S6", "lightblue", 12, -1.0 )));
       m_lineColorMap.insert(std::make_pair("G6", Line("NCDist", "slategrey", 9, -1.0 )));
       m_lineColorMap.insert(std::make_pair("D7", Line("D7", "violet", 6, -1.0 )));

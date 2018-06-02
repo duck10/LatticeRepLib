@@ -87,27 +87,20 @@ const std::pair<int,int> Get2IntData( const std::vector<std::string>& s ) {
    return( std::make_pair( atoi(sData1.c_str()), atoi(sData2.c_str()) ) );
 }
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-std::string GetG6Data( const std::vector<std::string>& v ) {
-   std::string s = """";
-   for( unsigned long i=1; i<7; ++i )
-      s += v[i] + " ";
-   return( s + """" );
-}
+///*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+//std::string GetG6Data( const std::vector<std::string>& v ) {
+//   std::string s = """";
+//   for( unsigned long i=1; i<7; ++i )
+//      s += v[i] + " ";
+//   return( s + """" );
+//}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 void SetGlobalValue( const std::string& dataType, 
                      const std::vector<std::string>& value, 
                      void* pData ) {
-   if ( dataType == "g6" &&  value.size() < 7) {
-      std::cout << "REJECTED " << value[0] << std::endl << std::flush;
-      return;
-   } else if ( dataType != "g6" && value.size() < 2 ) {
-      std::cout << "REJECTED " << value[0] << std::endl << std::flush;
-      return;
-   }
-
-   if ( dataType == "bool" ) {
+   if (value.size() > 2) {}
+   else if ( dataType == "bool" ) {
       *(bool*)pData = GetBoolData( value[1] );
    } else if ( dataType == "int" ) {
       *(int*)pData = GetIntData( value[1] );
@@ -118,10 +111,6 @@ void SetGlobalValue( const std::string& dataType,
       *(std::pair<int,int>*)pData = plotSpec;
    } else if ( dataType == "string" ) {
       *(std::string*)pData = value[1];
-   } else if ( dataType == "g6" ) {
-      const std::string v6 = GetG6Data( value );
-      if ( v6[0] != DBL_MAX )
-         GLOBAL_RunInputVector::globalData.push_back( v6 );
    } else if (dataType == "fixRandomSeed") {
       *(bool*)pData = GetBoolData(value[1]);
    } else if (dataType == "FollowerMode") {
@@ -130,6 +119,9 @@ void SetGlobalValue( const std::string& dataType,
       }
       else if (LRL_StringTools::strToupper(value[1]) == "LINE3") {
          FollowerConstants::globalFollowerMode = FollowerConstants::globalLine3;
+      }
+      else if (LRL_StringTools::strToupper(value[1]) == "TRIANGLE") {
+         FollowerConstants::globalFollowerMode = FollowerConstants::globaltriangle;
       }
       else {
          FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
@@ -147,12 +139,11 @@ void SetGlobalValue( const std::string& dataType,
    }
 }
 
-//    enum enumFollowerMode{ globalSinglePoint, globalLine, globalLine3 };
-
 std::string ReadGlobalData::GetFollowerMode(void) {
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) return "Single Point";
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) return "Line";
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) return "LINE3";
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) return "TRIANGLE";
    return "UNKNOWN FOLLOWER MODE";
 }
 
@@ -259,13 +250,10 @@ const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure
    v.push_back( ParseData( LRL_StringTools::strToupper( "PrintDistanceData" ), "bool", (void*)&FollowerConstants::globalPrintAllDistanceData ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "GlitchesOnly" ),      "bool", (void*)&FollowerConstants::globalOutputGlitchesOnly ) );
 
-   v.push_back( ParseData( LRL_StringTools::strToupper( "Plot" ),             "2doubles", (void*)&FollowerConstants::globalWhichComponentsToPlot ) );
-
    v.push_back( ParseData( LRL_StringTools::strToupper( "PerturbBy" ),      "double", (void*)&FollowerConstants::globalFractionalAmountToPerturb ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "GlitchLevel" ),    "double", (void*)&FollowerConstants::globalPercentChangeToDetect ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "BoundaryWindow" ), "double", (void*)&FollowerConstants::globalFractionToDetermineCloseToBoundary ) );
 
-   v.push_back( ParseData( LRL_StringTools::strToupper( "FramesPerPath" ), "int",  (void*)&FollowerConstants::globalFramesPerSegment ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "StepsPerFrame" ),"int",  (void*)&FollowerConstants::globalStepsPerFrame ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "Trials" ),       "int",  (void*)&FollowerConstants::globalNumberOfTrialsToAttempt ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "AllBlack" ),     "bool", (void*)&FollowerConstants::globalPlotAllSegmentsAsBlack ) );
@@ -283,8 +271,6 @@ const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure
    v.push_back( ParseData( LRL_StringTools::strToupper( "Border" ),       "int", (void*)&SVG_WriterConstants::globalGraphBorder ) );
    v.push_back( ParseData( LRL_StringTools::strToupper( "PlotSize" ),     "int", (void*)&SVG_WriterConstants::globalPlotSpace ) );
 
-   v.push_back( ParseData(LRL_StringTools::strToupper("G6LineWidth"    ), "int", (void*)&SVG_DistancePlotConstants::globalG6DataLineStrokeWidth));
-   v.push_back( ParseData(LRL_StringTools::strToupper("DeloneLineWidth"), "int", (void*)&SVG_DistancePlotConstants::globalDeloneDataLineStrokeWidth));
    v.push_back( ParseData(LRL_StringTools::strToupper( "AxisWidth" ),             "int", (void*)&SVG_DistancePlotConstants::globalDataAxisWidth       ) );
    v.push_back( ParseData(LRL_StringTools::strToupper( "TicLength" ),             "int", (void*)&SVG_DistancePlotConstants::globalY_AxisTicMarkLength ) );
 
@@ -316,14 +302,6 @@ std::string ReadGlobalData::FormatGlobalDataAsString( const std::vector<ParseDat
 
    s += "\n";
 
-   s += ((GLOBAL_RunInputVector::globalData.empty( ) ) ? "\n" : "User Input Vectors ****************************\n");
-
-   std::vector<G6>::const_iterator it = GLOBAL_RunInputVector::globalData.begin();
-   for ( ;it !=GLOBAL_RunInputVector::globalData.end(); ++ it )
-      s += LRL_ToString( *it ) + "\n";
-
-   s += ((GLOBAL_RunInputVector::globalData.empty( ) ) ? "\n" : "END User Input Vectors ****************************\n\n");
-
    return( s );
 }
 
@@ -335,5 +313,4 @@ ReadGlobalData::ReadGlobalData( ) {
    while( std::cin && GetDataFromCIN( inputLabels ) ) { }
 
    GLOBAL_Report::globalDataReport = FormatGlobalDataAsString( inputLabels );
-   //FollowerIO::OutputInfo( GLOBAL_Report::globalDataReport );
 }

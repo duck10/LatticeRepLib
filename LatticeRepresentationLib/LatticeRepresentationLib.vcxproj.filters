@@ -74,16 +74,7 @@
     <ClCompile Include="LRL_Cell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LRL_inverse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LRL_MaximaTools.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LatticeConverter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LRL_RandTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LRL_CreateFileName.cpp">
@@ -95,19 +86,10 @@
     <ClCompile Include="Selling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LRL_StringTools.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LRL_Vector3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="C3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LRL_Cell_Degrees.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SuperFastHash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,9 +98,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CellInputData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstSingleton_T.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CoordinateConversionMatrices.h">
@@ -160,15 +139,6 @@
     <ClInclude Include="MatN.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rhrand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StoreResults.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Theta.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VecN.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -193,16 +163,7 @@
     <ClInclude Include="LRL_Cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LRL_inverse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_MaximaTools.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LatticeConverter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_RandTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LRL_CreateFileName.h">
@@ -217,21 +178,6 @@
     <ClInclude Include="Selling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LRL_MinMaxTools.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_StringTools.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_ToString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_Vector3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TNear.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LRL_CoordinateConversionMatrices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -241,9 +187,6 @@
     <ClInclude Include="C3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PairReporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LRL_Cell_Degrees.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -251,15 +194,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GenerateRandomLattice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SuperFastHash.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_DataStreamToString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_DataToSVG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CS6Dist.h">

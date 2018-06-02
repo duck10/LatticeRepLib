@@ -7,7 +7,7 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -15,90 +15,81 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D7Dist_.hpp">
+    <ClInclude Include="ConstSingleton_T.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileOperations.h">
+    <ClInclude Include="LRL_DataStreamToString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileWriter.h">
+    <ClInclude Include="LRL_DataToSVG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Follower.h">
+    <ClInclude Include="LRL_inverse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FollowerConstants.h">
+    <ClInclude Include="LRL_MaximaTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FollowerIO.h">
+    <ClInclude Include="LRL_RandTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Glitch.h">
+    <ClInclude Include="LRL_StringTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GlitchElement.h">
+    <ClInclude Include="LRL_ToString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LinearAxis.h">
+    <ClInclude Include="LRL_Vector3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapBoundaryStrings2Colors.h">
+    <ClInclude Include="PairReporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NCDist_.hpp">
+    <ClInclude Include="rhrand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ReadGlobalData.h">
+    <ClInclude Include="spline_under_tension.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rn_Path.h">
+    <ClInclude Include="StoreResults.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVG_CirclePlot.h">
+    <ClInclude Include="SuperFastHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVG_DistancePlot.h">
+    <ClInclude Include="Theta.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVG_Writer.h">
+    <ClInclude Include="TNear.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="triple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OutlierFinder.h">
+    <ClInclude Include="LRL_MinMaxTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Follow.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NCDist.c">
+    <ClCompile Include="LRL_inverse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileOperations.cpp">
+    <ClCompile Include="LRL_MaximaTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FollowerConstants.cpp">
+    <ClCompile Include="LRL_RandTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FollowerIO.cpp">
+    <ClCompile Include="LRL_StringTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LinearAxis.cpp">
+    <ClCompile Include="LRL_Vector3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapBoundaryStrings2Colors.cpp">
+    <ClCompile Include="spline_under_tension.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReadGlobalData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OutlierFinder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MAIN_SVG_Follow.cpp">
+    <ClCompile Include="SuperFastHash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

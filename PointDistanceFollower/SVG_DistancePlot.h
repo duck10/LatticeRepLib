@@ -490,7 +490,7 @@ private: // don't implement
       svg.push_back( "\n\n <!--DISTANCE PLOT BEGINS   mode = " + ReadGlobalData::GetFollowerMode()  + "-->\n\n" );
       svg.push_back( "<!-- the following will scale and place the distance plot -->" );
 
-      svg.push_back("<g transform=\"translate(150,750) scale(1 -1)\">");
+      svg.push_back("<g transform=\"translate(150,850) scale(1 -1)\">");
 
       return(svg);
    }

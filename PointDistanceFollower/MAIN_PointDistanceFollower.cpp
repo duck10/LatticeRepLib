@@ -57,7 +57,7 @@ std::string NameOneFileForOneLattice(const unsigned long cellNumber) {
          GLOBAL_Files::globalShouldTimeStamp));
 }
 
-std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > GenerateS6LineFromStartToCell3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > GenerateS6LineFromStartToCell3ForModeLine3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
    const S6 probe1 = cell1.GetCell();
    const S6 probe2 = cell2.GetCell();
    const S6 focus3 = cell3.GetCell();
@@ -76,11 +76,45 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
       const S6 next2 = nextMid + delta2;
 
       const bool b1 = Selling::Reduce(next1, reduced1);
-      if (! b1 || !reduced1.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced1 *= 0;
+      if (!b1 || !reduced1.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced1 *= 0;
       points1.push_back(std::make_pair(next1, reduced1));
 
       const bool b2 = Selling::Reduce(next2, reduced2);
-      if ( !b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 *= 0;
+      if (!b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 *= 0;
+      points2.push_back(std::make_pair(next2, reduced2));
+
+   }
+   return std::make_pair(points1, points2);
+}
+
+std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > GenerateS6LineFromStartToCell3ForModeTriangle(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+   const S6 probe1 = cell1.GetCell();
+   const S6 probe2 = cell2.GetCell();
+   const S6 focus3 = cell3.GetCell();
+
+   const S6 delta1 = (probe1 - focus3)/FollowerConstants::globalStepsPerFrame;
+   const S6 delta2 = (probe2 - focus3)/FollowerConstants::globalStepsPerFrame;
+   std::vector<std::pair<S6, S6> > points1;
+   std::vector<std::pair<S6, S6> > points2;
+   S6 reduced1;
+   S6 reduced2;
+   S6 reducedFocus;
+
+   const bool bfocus = Selling::Reduce(focus3, reducedFocus);
+
+   for (unsigned long step = 1; step<FollowerConstants::globalStepsPerFrame+1; ++step) {
+      const double nonZeroStep = std::max(1.0E-3, double(step));
+      const double t(nonZeroStep / (FollowerConstants::globalStepsPerFrame - 1));
+
+      const S6 next1 = (1.0 - t) * probe1 + t * focus3;
+      const S6 next2 = (1.0 - t) * probe2 + t * focus3;
+
+      const bool b1 = Selling::Reduce(next1, reduced1);
+      if (!b1 || !reduced1.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced1 *= 0;
+      points1.push_back(std::make_pair(next1, reduced1));
+
+      const bool b2 = Selling::Reduce(next2, reduced2);
+      if (!b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 *= 0;
       points2.push_back(std::make_pair(next2, reduced2));
 
    }
@@ -102,14 +136,21 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
    return points;
 }
 
-MultiFollower ProcessOneLattice(const unsigned long cellNumber, const unsigned long plotCounter, const CellInputData& cell,
+MultiFollower ProcessOneLattice(const unsigned long inputCellOrdinal, const unsigned long plotCounter, const CellInputData& cell,
    const CellInputData& cell2, const CellInputData& cell3) {
-   const std::string baseFileName = NameOneFileForOneLattice(cellNumber) + LRL_ToString(plotCounter);
+   const std::string baseFileName = NameOneFileForOneLattice(inputCellOrdinal) + LRL_ToString(plotCounter);
 
    std::vector<std::pair<S6, S6> > points1;
-   std::vector<std::pair<S6, S6> > points2;
-   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
-      const std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> >> p = GenerateS6LineFromStartToCell3(cell, cell2, cell3);
+   std::vector<std::pair<S6, S6> > points2;   
+
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) {
+         const std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> >> p = GenerateS6LineFromStartToCell3ForModeTriangle(cell, cell2, cell3);
+         points1 = p.first;
+         points2 = p.second;
+      }
+
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
+      const std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> >> p = GenerateS6LineFromStartToCell3ForModeLine3(cell, cell2, cell3);
       points1 = p.first;
       points2 = p.second;
    }
@@ -212,9 +253,9 @@ int main(int argc, char* argv[]) {
          break;
       }
 
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 &&
+      if ((FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 || FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) &&
          i + 2 >= celldata.size()) {
-         std::cout << "FOLLOWERMODE LINE3 requires at least three cells input" << std::endl;
+         std::cout << "FOLLOWERMODE TRIANGLE requires at least three cells input" << std::endl;
          break;
       }
 
@@ -231,6 +272,10 @@ int main(int argc, char* argv[]) {
          ++i;
       }
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
+         ++i;
+         ++i;
+      }
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) {
          ++i;
          ++i;
       }
