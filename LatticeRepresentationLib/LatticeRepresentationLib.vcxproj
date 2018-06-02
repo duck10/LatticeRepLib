@@ -107,6 +107,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\LRL_Tools</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
+      <AdditionalIncludeDirectories>..\LRL_Tools</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -169,22 +171,16 @@
     <ClCompile Include="Delone.cpp" />
     <ClCompile Include="B4.cpp" />
     <ClCompile Include="G6.cpp" />
-    <ClCompile Include="LRL_inverse.cpp" />
     <ClCompile Include="MatB4.cpp" />
     <ClCompile Include="MatS6.cpp" />
     <ClCompile Include="MatD7.cpp" />
     <ClCompile Include="MatG6.cpp" />
     <ClCompile Include="MatMN.cpp" />
     <ClCompile Include="MatN.cpp" />
-    <ClCompile Include="LRL_MaximaTools.cpp" />
-    <ClCompile Include="LRL_RandTools.cpp" />
     <ClCompile Include="LRL_ReadLatticeData.cpp" />
     <ClCompile Include="Niggli.cpp" />
     <ClCompile Include="Selling.cpp" />
-    <ClCompile Include="LRL_StringTools.cpp" />
-    <ClCompile Include="SuperFastHash.cpp" />
     <ClCompile Include="VecN.cpp" />
-    <ClCompile Include="LRL_Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -194,15 +190,11 @@
     <ClInclude Include="LatticeConverter.h" />
     <ClInclude Include="LRL_Cell.h" />
     <ClInclude Include="CellInputData.h" />
-    <ClInclude Include="ConstSingleton_T.h" />
     <ClInclude Include="CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_Cell_Degrees.h" />
     <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
-    <ClInclude Include="LRL_DataStreamToString.h" />
-    <ClInclude Include="LRL_DataToSVG.h" />
     <ClInclude Include="NCDist.h" />
-    <ClInclude Include="PairReporter.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6Dist.h" />
     <ClInclude Include="D7.h" />
@@ -215,7 +207,6 @@
     <ClInclude Include="Delone.h" />
     <ClInclude Include="B4.h" />
     <ClInclude Include="G6.h" />
-    <ClInclude Include="LRL_inverse.h" />
     <ClInclude Include="MatB4.h" />
     <ClInclude Include="MatS6.h" />
     <ClInclude Include="MatD7.h" />
@@ -223,24 +214,18 @@
     <ClInclude Include="MatMN.h" />
     <ClInclude Include="MatN.h" />
     <ClInclude Include="LRL_MatrixBase.h" />
-    <ClInclude Include="LRL_MaximaTools.h" />
-    <ClInclude Include="LRL_MinMaxTools.h" />
-    <ClInclude Include="LRL_RandTools.h" />
     <ClInclude Include="LRL_ReadLatticeData.h" />
     <ClInclude Include="Niggli.h" />
-    <ClInclude Include="rhrand.h" />
     <ClInclude Include="Selling.h" />
-    <ClInclude Include="StoreResults.h" />
-    <ClInclude Include="LRL_StringTools.h" />
-    <ClInclude Include="SuperFastHash.h" />
-    <ClInclude Include="Theta.h" />
-    <ClInclude Include="LRL_ToString.h" />
-    <ClInclude Include="TNear.h" />
     <ClInclude Include="VecN.h" />
-    <ClInclude Include="LRL_Vector3.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
+      <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

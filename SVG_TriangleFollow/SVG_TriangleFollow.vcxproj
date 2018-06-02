@@ -22,6 +22,9 @@
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
       <Project>{bf25d7aa-648c-48d2-b857-d383faf1e215}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
+      <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DetermineOutliers.h" />
@@ -40,7 +43,6 @@
     <ClInclude Include="ProgressData.h" />
     <ClInclude Include="ReadGlobalData.h" />
     <ClInclude Include="Rn_Path.h" />
-    <ClInclude Include="spline_under_tension.hpp" />
     <ClInclude Include="SVG_FollowTriangle.h" />
     <ClInclude Include="SVG_Tools.h" />
     <ClInclude Include="TriangleFollow.h" />
@@ -58,7 +60,6 @@
     <ClCompile Include="OutlierFinder.cpp" />
     <ClCompile Include="ProgressData.cpp" />
     <ClCompile Include="ReadGlobalData.cpp" />
-    <ClCompile Include="spline_under_tension.cpp" />
     <ClCompile Include="SVG_Tools.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -132,7 +133,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\LatticeRepresentationLib;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,7 +186,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

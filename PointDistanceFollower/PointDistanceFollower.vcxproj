@@ -27,11 +27,13 @@
     <ClCompile Include="Multifollower.cpp" />
     <ClCompile Include="OutlierFinder.cpp" />
     <ClCompile Include="ReadGlobalData.cpp" />
-    <ClCompile Include="spline_under_tension.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
       <Project>{bf25d7aa-648c-48d2-b857-d383faf1e215}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
+      <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -45,7 +47,6 @@
     <ClInclude Include="MultiFollower.h" />
     <ClInclude Include="OutlierFinder.h" />
     <ClInclude Include="ReadGlobalData.h" />
-    <ClInclude Include="spline_under_tension.hpp" />
     <ClInclude Include="SVG_DistancePlot.h" />
     <ClInclude Include="SVG_Writer.h" />
   </ItemGroup>
@@ -137,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\LatticeRepresentationLib;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,7 +175,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\LatticeRepresentationLib;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

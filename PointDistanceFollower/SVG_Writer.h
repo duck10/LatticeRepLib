@@ -135,14 +135,16 @@ private:
        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       m_svg.push_back( "<!-- the width and height set the total pixel output of the image in the browser -->" );
       m_svg.push_back( "<!-- whatever is within the viewbox will be remapped to show in this size -->" );
-      m_svg.push_back( "<svg width=\"" + LRL_ToString(scaleFactor *900.0) + "\" height=\"" + LRL_ToString(scaleFactor * 900.0) +
-         "\" viewBox=\"1 0" + LRL_ToString(scaleFactor*900, scaleFactor*900) +
+
+      const double& width = SVG_WriterConstants::globalGraphSpace;
+      m_svg.push_back( "<svg width=\"" + LRL_ToString(scaleFactor *width) + "\" height=\"" + LRL_ToString(scaleFactor * width) +
+         "\" viewBox=\"1 0" + LRL_ToString(scaleFactor*width, scaleFactor*width) +
          "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
       m_svg.push_back( " <desc>ID (and file name) = " + sFileName + "  mode = " + ReadGlobalData::GetFollowerMode() + " </desc> " );
 
       m_svg.push_back("<g transform = \"scale(" + LRL_ToString(scaleFactor, scaleFactor) + ")\">\n");
 
-      m_svg.push_back("<text x = \"-750\" y=\"50\" transform=\"rotate(-90)\"  font-family=\"sans-serif\" font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower   " __DATE__ "</text>");
+      m_svg.push_back("<text x = \"-850\" y=\"50\" transform=\"rotate(-90)\"  font-family=\"sans-serif\" font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower   " __DATE__ "</text>");
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

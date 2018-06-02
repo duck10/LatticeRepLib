@@ -27,7 +27,7 @@
 /*
 changes by larry andrews Oct 2017
 Even the test program did not run correctly. The included binary search function 
-did not alway work at the end (ran of the end of a vector). I removed
+did not alway work at the end (ran off the end of a vector). I removed
 it and getInterval was changed to use the standard library function
 lower_bound. Probably should also check at the bottom using
 upper_bound. 
@@ -51,11 +51,7 @@ the return is done by extrapolation.
 
 */
 
-//#include "stdafx.h"
-
 #include "spline_under_tension.hpp"
-
-#include "OutlierFinder.h"
 
 #include <iostream>
 #include <math.h>

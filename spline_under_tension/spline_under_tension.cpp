@@ -51,7 +51,6 @@ the return is done by extrapolation.
 
 */
 
-
 #include "spline_under_tension.hpp"
 
 #include "OutlierFinder.h"
