@@ -687,8 +687,47 @@ void TestCS_Reflections() {
    exit(0);
 }
 
+void TestReflVCP() {
+   StoreResults<unsigned long, std::string> store(5);
+   store.SetKeyLabel("Reflection#");
+   const static std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > unredfun = S6Dist::SetUnreduceFunctionPairs();
+   const static std::vector< S6(*)(const S6&)> reflfun = S6::SetRelectionFunctions();
+   int seed = 19;
+   GenerateRandomLattice<S6> grl(seed);
+   for ( unsigned long i=0; i<2; ++i ) grl.randSellingReduced();
+   const S6 start = grl.randSellingReduced();
+   std::cout << "the initial inside point is: " << start << std::endl << std::endl;
+   S6 in = unredfun[0].first(start);
+   in[0] = 0.0001;
+
+   std::cout << "the initial outside point is: " << in << std::endl << std::endl;
+
+   for (unsigned long i = 0; i < 100000; ++i) {
+      S6 svar = grl.randSellingReduced();
+      svar[0] = -0.0001;
+      if (svar.IsValid()) {
+         double dmin = DBL_MAX;
+         unsigned long kmin = ULONG_MAX;
+         S6 ref;
+         for (unsigned long k = 0; k < 24; ++k) {
+            ref = reflfun[k](svar);
+            if ((ref - in).norm() < dmin) {
+               dmin = (ref - in).norm();
+               kmin = k;
+            }
+         }
+         store.Store(kmin, LRL_ToString(ref));
+      }
+   }
+
+   store.ShowResults();
+   exit(0);
+}
+
+
 int main(int argc, char *argv[])
 {
+   TestReflVCP();
    //TestCS_Reflections();
    TestCS6Dist4();
    //TestCS6Dist1();
