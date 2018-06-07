@@ -69,6 +69,7 @@ public:
    bool GetValid(void) const { return m_valid; }
    void SetValid(const bool b) {m_valid = b; }
    bool IsValid(void) const;
+   bool IsValid(const S6& s6) const;
 
    double at(const unsigned long n) const { return m_vec[n]; }
 
