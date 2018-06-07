@@ -198,13 +198,34 @@ S6::S6(const double d1, const double d2, const double d3, const double d4, const
    m_valid = IsValid();
 }
 
+bool S6::IsValid(const S6& s6)const {
+   return s6.IsValid();
+
+}
+
 bool S6::IsValid(void) const {
+   return true;
    const unsigned long nPositive = CountPositive(*this);
    if (nPositive > 4) return false;
    if (CountZeros() > 3) return false;
-   const bool btest = LRL_Cell(*this).GetValid();
-   //std::cout << "in IsValid  " << btest << "   " << *this << "   " << LRL_Cell(*this) << std::endl;
-   return btest;
+   const double& p = (*this)[0];
+   const double& q = (*this)[1];
+   const double& r = (*this)[2];
+   const double& s = (*this)[3];
+   const double& t = (*this)[4];
+   const double& u = (*this)[5];
+
+   double g1 = -s - r - q;
+   double g2 = -t - r - p;
+   double g3 = -u - q - p;
+   double g4 = 2.0*p;
+   double g5 = 2.0*q;
+   double g6 = 2.0*r;
+
+   return g1 > 0.001 && g2 > 0.001 && g3 > 0.001 &&
+      std::abs(g4*g4 / g2 / g3) <= 4.0 &&
+      std::abs(g5*g5 / g1 / g3) <= 4.0 &&
+      std::abs(g6*g6 / g1 / g2) <= 4.0;
 }
 
 unsigned long S6::CountZeros(void) const {

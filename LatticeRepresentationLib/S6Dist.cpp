@@ -480,9 +480,9 @@ std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
 
 void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    std::vector<S6> vinside(1, s1);
-   std::vector<S6> voutside((Generate24Reflections(Create_VCP_s(s2))));
+   std::vector<S6> voutside(((Create_VCP_s(s2))));
    voutside.push_back(s2);
-   std::pair<double, unsigned long> p = MinForListOfS6(s1, voutside);
+   std::pair<double, unsigned long> p = MinForListOfS6((s1), voutside);
    m_dmin = std::min(m_dmin, p.first);
 }
 
