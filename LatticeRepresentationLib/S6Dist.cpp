@@ -458,7 +458,7 @@ std::vector<S6> S6Dist::Create_VCP_s(const std::vector<S6>& vs) {
 // VCP == Virtual Cartesian Point(s)
 //
 std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
-   std::vector<S6> voutside(Generate24Reflections(s));
+   std::vector<S6> voutside;
 
    for (unsigned long i = 0; i < 6; ++i) {
       if (s[i] < m_dmin) {
@@ -478,9 +478,24 @@ std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
    */
 }
 
+std::vector<S6> Insert(const std::vector<S6>& tar, const std::vector<S6>& from) {
+   std::vector<S6> target(tar);
+   target.insert(target.end(), from.begin(), from.end());
+   return target;
+}
+
+std::vector<S6> Insert(const std::vector<S6>& tar, const S6& from) {
+   std::vector<S6> target(tar);
+   target.push_back(from);
+   return target;
+}
+
 void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
-   std::vector<S6> vinside(1, s1);
-   std::vector<S6> voutside(((Create_VCP_s(s2))));
+   std::vector<S6> vinside;
+   vinside = Insert(vinside, s1);
+
+   std::vector<S6> voutside(Generate24Reflections(s2));
+   voutside = Insert(voutside, ((Generate24Reflections(Create_VCP_s(s2)))));
    voutside.push_back(s2);
    std::pair<double, unsigned long> p = MinForListOfS6((s1), voutside);
    m_dmin = std::min(m_dmin, p.first);

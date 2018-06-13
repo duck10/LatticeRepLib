@@ -10,7 +10,7 @@
 #include "D7.h"
 #include "G6.h"
 #include "S6.h"
-#include "S6dist.h"
+#include "S6Dist.h"
 #include "Selling.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"

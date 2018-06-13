@@ -57,6 +57,12 @@ std::string NameOneFileForOneLattice(const unsigned long cellNumber) {
          GLOBAL_Files::globalShouldTimeStamp));
 }
 
+S6 InvalidPoint( void ) {
+   S6 s6(" 0 0 0   0 0 0");
+   s6.SetValid(false);
+   return s6;
+}
+
 std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > GenerateS6LineFromStartToCell3ForModeLine3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
    const S6 probe1 = cell1.GetCell();
    const S6 probe2 = cell2.GetCell();
@@ -76,11 +82,18 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
       const S6 next2 = nextMid + delta2;
 
       const bool b1 = Selling::Reduce(next1, reduced1);
-      if (!b1 || !reduced1.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced1 *= 0;
+      if (!b1 || !reduced1.IsAllMinus() || !reduced1.IsValid()) reduced1 = InvalidPoint();
       points1.push_back(std::make_pair(next1, reduced1));
 
       const bool b2 = Selling::Reduce(next2, reduced2);
-      if (!b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 *= 0;
+      const bool b1s = next1.IsValid();
+      const bool b1r = reduced1.IsValid();
+      const bool b2s = next2.IsValid();
+      const bool b2r = reduced2.IsValid();
+
+
+
+      if (!b2 || !reduced2.IsAllMinus() || !reduced2.IsValid()) reduced2 = InvalidPoint();
       points2.push_back(std::make_pair(next2, reduced2));
 
    }
@@ -110,11 +123,11 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
       const S6 next2 = (1.0 - t) * probe2 + t * focus3;
 
       const bool b1 = Selling::Reduce(next1, reduced1);
-      if (!b1 || !reduced1.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced1 *= 0;
+      if (!b1 || !reduced1.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced1 = InvalidPoint();
       points1.push_back(std::make_pair(next1, reduced1));
 
       const bool b2 = Selling::Reduce(next2, reduced2);
-      if (!b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 *= 0;
+      if (!b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 = InvalidPoint();
       points2.push_back(std::make_pair(next2, reduced2));
 
    }

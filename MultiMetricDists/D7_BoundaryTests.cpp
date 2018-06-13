@@ -3,7 +3,7 @@
 #include "D7_BoundaryTests.h"
 
 #include "ConstSingleton_T.h"
-#include "D7_boundary.h"
+#include "D7_Boundary.h"
 #include "D7_ClassifySubboundaries.h"
 #include "Delone.h"
 #include "D7.h"

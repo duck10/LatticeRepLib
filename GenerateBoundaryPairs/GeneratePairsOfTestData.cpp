@@ -157,7 +157,7 @@ std::pair<S6, S6> GeneratePairsOfTestData::GenerateLatticeTypeExamplesNearDelone
    /*
    
    */
-   StoreResults<int, std::string > store(20);
+   StoreResults<int, std::string > store(5);
    store.SetTitle("Generation of perturbed Delone lattice types");
    store.SetKeyLabel("Delone type");
    static int seed = 1;
@@ -286,10 +286,10 @@ S6 AddOneToSingleScalar( const S6& s) {
 }
 
 void GeneratePairsOfTestData::StoreOnePointIfValid(StoreResults<unsigned long, std::string >& store, const S6& s6in) {
-   if (s6in.GetValid()) {
+   if (s6in.IsValid()) {
       S6 out;
       const bool b = Selling::Reduce(s6in, out);
-      if (b && out.GetValid()) {
+      if (b && out.IsValid()) {
          const unsigned long ncycles = Selling::GetCycles();
          const std::string label = LRL_ToString(ncycles) + " Ex";
          store.Store(Selling::GetCycles(), GeneratePairsOfTestData::FormatPairOfTestS6Vectors(AddOneToSingleScalar(s6in), out, label));
