@@ -204,7 +204,6 @@ bool S6::IsValid(const S6& s6)const {
 }
 
 bool S6::IsValid(void) const {
-   return true;
    const unsigned long nPositive = CountPositive(*this);
    if (nPositive > 4) return false;
    if (CountZeros() > 3) return false;

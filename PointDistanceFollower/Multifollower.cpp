@@ -37,6 +37,10 @@ LRL_Path<S6> MultiFollower::GetCS(void) const {
    return m_cspath;
 }
 
+bool IsInvalidPair( const std::pair<S6, S6>& p ) {
+   return !(p.first.IsValid() && p.second.IsValid());
+}
+
 MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const {
    MultiFollower m(mf);
    S6 out;
@@ -44,20 +48,24 @@ MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const
    const std::vector<std::pair<S6, S6> > path(mf.GetS6().GetPath());
    const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
    S6Dist s6dist(1);
-   if (path[0].first.IsValid()) {
+   if (! IsInvalidPair(path[0])) {
       if (mf.GetS6().HasSecondPath()) {
+         double distance;
          for (unsigned long i = 0; i < path.size(); ++i) {
-            double distance = s6dist.DistanceBetween(path[0].second, secondPath[i].second);
-            if (!secondPath[i].second.IsValid()) distance = -1.0;
+            distance = s6dist.DistanceBetween(path[0].second, secondPath[i].second);
+            if (IsInvalidPair(path[i]) || IsInvalidPair(secondPath[i]))
+               distance = -1.0;
+            else
+               distance = s6dist.DistanceBetween(path[0].second, secondPath[i].second);
             vdist.push_back(distance);
          }
       }
       else
       {
-         if (path[0].second.IsValid()) {
+         if (!IsInvalidPair(path[0])) {
             for (unsigned long i = 0; i < path.size(); ++i) {
                double distance = s6dist.DistanceBetween(path[0].second, path[i].second);
-               if (!path[i].second.IsValid()) distance = -1.0;
+               if (IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
             }
          }
@@ -73,11 +81,14 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
    std::vector<double> vdist;
    const std::vector<std::pair<G6, G6> > path(mf.GetG6().GetPath());
    const std::vector<std::pair<G6, G6> > secondPath(mf.GetG6().GetSecondPath());
-   if (path[0].first.IsValid()) {
+   if (!IsInvalidPair(path[0])) {
       if (mf.GetG6().HasSecondPath()) {
+         double distance;
          for (unsigned long i = 0; i < path.size(); ++i) {
-            double distance = NCDist(path[0].second.data(), secondPath[i].second.data());
-            if (!secondPath[i].second.IsValid()) distance = -1.0;
+            if (IsInvalidPair(path[i]) || IsInvalidPair(secondPath[i]))
+               distance = -1.0;
+            else
+               distance = NCDist(path[0].second.data(), secondPath[i].second.data());
             vdist.push_back(distance);
          }
       }
@@ -86,7 +97,7 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
          if (path[0].second.IsValid()) {
             for (unsigned long i = 0; i < path.size(); ++i) {
                double distance = NCDist(path[0].second.data(), path[i].second.data());
-               if (!path[i].second.IsValid()) distance = -1.0;
+               if (IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
             }
          }
@@ -102,11 +113,14 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
    std::vector<double> vdist;
    const std::vector<std::pair<D7, D7> > path(mf.GetD7().GetPath());
    const std::vector<std::pair<D7, D7> > secondPath(mf.GetD7().GetSecondPath());
-   if (path[0].first.IsValid()) {
+   if (!IsInvalidPair(path[0])) {
       if (mf.GetD7().HasSecondPath()) {
+         double distance;
          for (unsigned long i = 0; i < path.size(); ++i) {
-            double distance = D7Dist(path[0].second.data(), secondPath[i].second.data());
-            if (!secondPath[i].second.IsValid()) distance = -1.0;
+            if (IsInvalidPair(path[i]) || IsInvalidPair(secondPath[i]))
+               distance = -1.0;
+            else
+               distance = D7Dist(path[0].second.data(), secondPath[i].second.data());
             vdist.push_back(distance);
          }
       }
@@ -115,7 +129,7 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
          if (path[0].second.IsValid()) {
             for (unsigned long i = 0; i < path.size(); ++i) {
                double distance = D7Dist(path[0].second.data(), path[i].second.data());
-               if (!path[i].second.IsValid()) distance = -1.0;
+               if (IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
             }
          }
@@ -131,11 +145,14 @@ MultiFollower MultiFollower::CalculateDistancesCS( MultiFollower& mf)  {
    std::vector<double> vdist;
    const std::vector<std::pair<S6, S6> > path(mf.GetCS().GetPath());
    const std::vector<std::pair<S6, S6> > secondPath(mf.GetCS().GetSecondPath());
-   if (path[0].first.IsValid()) {
+   if (!IsInvalidPair(path[0])) {
       if (mf.GetS6().HasSecondPath()) {
+         double distance;
          for (unsigned long i = 0; i < path.size(); ++i) {
-            double distance = CS6Dist(path[0].second.data(), secondPath[i].second.data());
-            if (!secondPath[i].second.IsValid()) distance = -1.0;
+            if (IsInvalidPair(path[i]) || IsInvalidPair(secondPath[i])) 
+               distance = -1.0;
+            else
+               distance = CS6Dist(path[0].second.data(), secondPath[i].second.data());
             vdist.push_back(distance);
          }
       }
@@ -144,7 +161,7 @@ MultiFollower MultiFollower::CalculateDistancesCS( MultiFollower& mf)  {
          if (path[0].second.IsValid()) {
             for (unsigned long i = 0; i < path.size(); ++i) {
                double distance = CS6Dist(path[0].second.data(), path[i].second.data());
-               if (!path[i].second.IsValid()) distance = -1.0;
+               if (IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
             }
          }
