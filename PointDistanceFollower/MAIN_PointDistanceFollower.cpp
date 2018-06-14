@@ -140,12 +140,16 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
    S6 reducedProbe;
    S6 reduced;
    const bool b = Selling::Reduce(probe, reducedProbe);
-   for ( unsigned long step=0; step<FollowerConstants::globalStepsPerFrame; ++step) {
-      const double t(double(step) / (FollowerConstants::globalStepsPerFrame-1));
-      const S6 next = (1.0 - t)*probe + t * reducedProbe;
-      const bool b = Selling::Reduce(next, reduced);
+   if (b) {
+      for (unsigned long step = 0; step < FollowerConstants::globalStepsPerFrame; ++step) {
+         const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
+         S6 next = (1.0 - t)*probe + t * reducedProbe;
+         const bool b = Selling::Reduce(next, reduced);
+         if (!next.IsValid()) next = InvalidPoint();
+         if (!reduced.IsValid()) reduced = InvalidPoint();
          points.push_back(std::make_pair(next, reduced));
       }
+   }
    return points;
 }
 
