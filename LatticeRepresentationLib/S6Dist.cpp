@@ -345,18 +345,20 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
    {
       dmin = DBL_MAX;
       for (long iouter = 0; iouter < v1.size(); ++iouter) {
-         ptemp = MinForListOfS6(v1[iouter], v2);
-         if (ptemp.first < dmin) {
-            dmin = ptemp.first;
+         if (v1[iouter].IsValid()) {
+            ptemp = MinForListOfS6(v1[iouter], v2);
+            if (ptemp.first < dmin) {
+               dmin = ptemp.first;
+            }
+            g_bestVectors.Store(dmin, std::make_pair(v1[iouter], v2[ptemp.second]));
+            if (m_s6Debug) {
+               const std::string item = LRL_ToString(v1[iouter]) + std::string("\n ") + LRL_ToString(v2[ptemp.second]);
+               const int nzero = v2[ptemp.second].CountZeros();
+               g_debug.Store(dmin, item);
+            }
+            p.second = iouter;
+            p.first = ptemp.first;
          }
-         g_bestVectors.Store(dmin, std::make_pair(v1[iouter], v2[ptemp.second]));
-         if (m_s6Debug) {
-            const std::string item = LRL_ToString(v1[iouter]) + std::string("\n ") + LRL_ToString(v2[ptemp.second]);
-            const int nzero = v2[ptemp.second].CountZeros();
-            g_debug.Store(dmin, item);
-         }
-         p.second = iouter;
-         p.first = ptemp.first;
       }
    }
    //if (m_s6Debug) g_debug.ShowResultsByKeyDescending(); //  LCA  LCA
@@ -373,15 +375,17 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const S6& d1, const std:
    double dmin = m_dmin;
    std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
    for (unsigned long i = 0; i < v.size(); ++i) {
-      double dtemp = (d1 - v[i]).norm();
-      if (dtemp < dmin) {
-         p = std::make_pair(dtemp, i);
-         dmin = p.first;
-         g_bestVectors.Store(dmin, std::make_pair(d1, v[i]));
-         if (m_s6Debug) {
-            const std::string item = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[i]);
-            const int nzero = v[i].CountZeros();
-            g_debug.Store(dmin, item);
+      if (v[i].IsValid()) {
+         double dtemp = (d1 - v[i]).norm();
+         if (dtemp < dmin) {
+            p = std::make_pair(dtemp, i);
+            dmin = p.first;
+            g_bestVectors.Store(dmin, std::make_pair(d1, v[i]));
+            if (m_s6Debug) {
+               const std::string item = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[i]);
+               const int nzero = v[i].CountZeros();
+               g_debug.Store(dmin, item);
+            }
          }
       }
    }
@@ -485,10 +489,10 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    std::vector<S6> vinside;
 
    std::vector<S6> voutside(Generate24Reflections(s2));
-   vinside = Insert(vinside, (s1));
-   voutside = Insert(voutside, (Create_VCP_s(Generate24Reflections((Create_VCP_s(s2))))));
+   vinside = Insert(vinside, Create_VCP_s(s1));
+   voutside = Insert(voutside, ((Generate24Reflections((Create_VCP_s(s2))))));
    voutside.push_back(s2);
-   std::pair<double, unsigned long> p = MinForListOfS6((vinside), voutside);
+   const std::pair<double, unsigned long> p = MinForListOfS6((vinside), voutside);
    m_dmin = std::min(m_dmin, p.first);
 }
 
@@ -523,7 +527,7 @@ std::vector<S6> S6Dist::ReduceIfLessThanDmin(const double dmin, const S6 s) cons
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
    g_debug.clear();
    g_bestVectors.clear();
-   m_dmin = (s1 - s2).norm();
+   if ( s1.IsValid() && s2.IsValid() ) m_dmin = (s1 - s2).norm();
    g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
    if (m_s6Debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
@@ -536,7 +540,7 @@ double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
 }
 
 double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
-   m_dmin = (s1 - s2).norm();
+   if (s1.IsValid() && s2.IsValid()) m_dmin = (s1 - s2).norm();
    g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
    if (m_s6Debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
@@ -549,7 +553,7 @@ double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
 }
 
 double S6Dist::DistanceBetween2(const S6& s1, const S6& s2) {
-   m_dmin = (s1 - s2).norm();
+   if (s1.IsValid() && s2.IsValid()) m_dmin = (s1 - s2).norm();
    g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
    if (m_s6Debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);

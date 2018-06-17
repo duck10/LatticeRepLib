@@ -70,6 +70,8 @@ public:
    void SetValid(const bool b) {m_valid = b; }
    bool IsValid(void) const;
    bool IsValid(const S6& s6) const;
+   static bool IsValid(const std::pair<S6, S6>& p);
+   static bool IsInvalidPair(const std::pair<S6, S6>& p);
 
    double at(const unsigned long n) const { return m_vec[n]; }
 
