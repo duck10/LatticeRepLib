@@ -200,7 +200,6 @@ S6::S6(const double d1, const double d2, const double d3, const double d4, const
 
 bool S6::IsValid(const S6& s6)const {
    return s6.IsValid();
-
 }
 
 bool S6::IsValid(void) const {
@@ -1134,6 +1133,14 @@ S6 S6::Unreduce62(const S6& din) {
    ss5 = s6 + s4;
    ss6 = -s6;
    return d;
+}
+
+bool S6::IsValid(const std::pair<S6, S6>& p) {
+   return p.first.IsValid() && p.second.IsValid();
+}
+
+bool S6::IsInvalidPair(const std::pair<S6, S6>& p) {
+   return !(S6::IsValid(p));
 }
 
 std::vector< S6(*)(const S6&)> S6::SetRelectionFunctions() {
