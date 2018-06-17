@@ -374,7 +374,7 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const S6& d1, const std:
    std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
    for (unsigned long i = 0; i < v.size(); ++i) {
       double dtemp = (d1 - v[i]).norm();
-      if (dtemp <= dmin) {
+      if (dtemp < dmin) {
          p = std::make_pair(dtemp, i);
          dmin = p.first;
          g_bestVectors.Store(dmin, std::make_pair(d1, v[i]));
@@ -462,20 +462,11 @@ std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
 
    for (unsigned long i = 0; i < 6; ++i) {
       if (s[i] < m_dmin) {
-         const std::vector<S6> v(Generate24Reflections(Create_VCP_ForOneScalar(i, s)));
-         voutside.insert(voutside.end(), v.begin(), v.end());
+         const S6 v(Create_VCP_ForOneScalar(i, s));
+         voutside.push_back(v);
       }
    }
    return voutside;
-   /*
-   
-   for (unsigned long i24 = 0; i24 < 24; ++i24) {
-      for (unsigned long i = 0; i < 6; ++i) {
-         const std::vector<S6> v(Generate24Reflections(Create_VCP_ForOneScalar(i, voutside[i24])));
-         voutside.insert(voutside.end(), v.begin(), v.end());
-      }
-   }
-   */
 }
 
 std::vector<S6> Insert(const std::vector<S6>& tar, const std::vector<S6>& from) {
@@ -492,12 +483,12 @@ std::vector<S6> Insert(const std::vector<S6>& tar, const S6& from) {
 
 void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    std::vector<S6> vinside;
-   vinside = Insert(vinside, s1);
 
    std::vector<S6> voutside(Generate24Reflections(s2));
-   voutside = Insert(voutside, ((Generate24Reflections(Create_VCP_s(s2)))));
+   vinside = Insert(vinside, (s1));
+   voutside = Insert(voutside, (Create_VCP_s(Generate24Reflections((Create_VCP_s(s2))))));
    voutside.push_back(s2);
-   std::pair<double, unsigned long> p = MinForListOfS6((s1), voutside);
+   std::pair<double, unsigned long> p = MinForListOfS6((vinside), voutside);
    m_dmin = std::min(m_dmin, p.first);
 }
 
