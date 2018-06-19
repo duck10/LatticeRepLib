@@ -33,17 +33,16 @@ D7::D7( void ) {
 }
 
 D7::D7( const D7& v )
-//: m_vec(7)
+   : D7()
 {
    m_vec = v.GetVector();
-   m_dim = 7;
    m_vec = v.m_vec;
    m_valid = v.m_valid;
 }
 
-D7::D7( const double v[7] ) {
-    m_vec.resize(7);
-    m_dim = 7;
+D7::D7( const double v[7] )
+   : D7()
+{
     m_vec[0] = v[0];
     m_vec[1] = v[1];
     m_vec[2] = v[2];
@@ -54,10 +53,10 @@ D7::D7( const double v[7] ) {
     m_valid = true;
 }
 
-D7::D7(const LRL_Cell& c) {
-   m_vec.resize(7);
+D7::D7(const LRL_Cell& c) 
+   : D7()
+{
    (*this) = G6(c);
-   m_dim = 7;
    m_valid = c.GetValid();
 }
 

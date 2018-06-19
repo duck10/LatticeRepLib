@@ -51,14 +51,14 @@ B4::B4(const D7& v7) {
    (*this) = B4(LRL_Cell(v7));
 }
 
-B4::B4(const std::string& v7) {
-   m_vec.resize(4);
-   m_valid = false;
+B4::B4(const std::string& v7) 
+   :B4() {
    throw;
 }
 
-B4::B4(const Vector_3& v0, const Vector_3& v1, const Vector_3& v2, const Vector_3& v3) {
-   m_vec.resize(4);
+B4::B4(const Vector_3& v0, const Vector_3& v1, const Vector_3& v2, const Vector_3& v3)
+: B4()
+{
    m_vec[0] = v0;
    m_vec[1] = v1;
    m_vec[2] = v2;

@@ -15,14 +15,7 @@ public:
    S6Dist(const double dnearzero = 1.0);
 
    double DistanceBetween(const S6& d1, const S6& d2);
-   double DistanceBetween1(const S6& d1, const S6& d2);
-   double DistanceBetween2(const S6& d1, const S6& d2);
    void OneBoundaryDistance(const S6& s1, const S6& s2);
-   void ProcessIfLessThanDmin(const S6& s1, const S6& s2);
-   void TwoBoundaryDistance(const S6& s1, const S6& s2);
-   std::vector<S6> ReduceIfLessThanDmin(const double dmin, const S6 s) const;
-   static std::vector<S6> Create_VCP_ForTwoScalars(const S6& s);
-   static std::vector<S6> Create_VCP_ForTwoScalars(const std::vector<S6>& v);
    static S6 Create_VCP_ForOneScalar(const unsigned long n, const S6& s);
    std::vector<S6> Create_VCP_s(const S6& s);
    std::vector<S6> Create_VCP_s(const std::vector<S6>& s);

@@ -35,24 +35,21 @@ G6::G6(void) {
 }
 
 G6::G6(const G6& v)
-: m_vec(v.m_vec)
+: G6()
 {
-   //m_vec = v.GetVector();
-   m_dim = 6;
-   //m_vec = v.m_vec;
+   m_vec = v.m_vec;
    m_valid = v.m_valid;
 }
 
-G6::G6(const double v[6]) {
-   m_vec.resize(6);
-   m_dim = 6;
+G6::G6(const double v[6])
+   : G6()
+{
    m_vec[0] = v[0];
    m_vec[1] = v[1];
    m_vec[2] = v[2];
    m_vec[3] = v[3];
    m_vec[4] = v[4];
    m_vec[5] = v[5];
-   m_valid = true;
 }
 
 G6::G6(const LRL_Cell& c) {
@@ -74,9 +71,9 @@ G6::G6(const LRL_Cell& c) {
    m_valid = b1 && b2 && b3 && b4 && b5;
 }
 
-G6::G6(const S6& ds) {
-   m_dim = 6;
-   m_vec.resize(6);
+G6::G6(const S6& ds)
+   : G6()
+{
    const double& p = ds[0];
    const double& q = ds[1];
    const double& r = ds[2];

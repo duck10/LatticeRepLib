@@ -55,7 +55,6 @@ bool Selling::Reduce(const S6& in, S6& out) {
 
    while (true) {
       double maxScalar = -DBL_MAX;
-      double minPositiveScalar = DBL_MAX;
 
       for (unsigned long i = 0; i < 6; ++i) {
          if (out[i] > maxScalar) {

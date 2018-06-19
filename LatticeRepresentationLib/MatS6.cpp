@@ -31,14 +31,14 @@ MatS6::MatS6(const MatS6& m)
 {}
 
 MatS6::MatS6(const MatD7& m)
-   : m_mat(36)
+   : MatS6()
 {
    MatMN mn = S6_FROM_D7 * m * D7_FROM_S6;
    m_mat.SetVector(mn.GetVector());
 }
 
 MatS6::MatS6(const MatG6& m)
-   : m_mat(36)
+   : MatS6()
 {
    MatMN mn = S6_FROM_G6 * m * G6_FROM_S6;
    m_mat.SetVector(mn.GetVector());
@@ -60,14 +60,14 @@ MatS6::MatS6(const MatMN& m)
 }
 
 MatS6::MatS6(const std::string& s)
-   : m_mat(36)
+   : MatS6()
 {
    MatN mn(m_mat.FromString(s));
    (*this) = MatS6(mn);
 }
 
 MatS6::MatS6(const std::vector<double>& v)
-   : m_mat(36)
+   : MatS6()
 {
    for (unsigned long i = 0; i < 36; ++i) {
       m_mat[i] = v[i];

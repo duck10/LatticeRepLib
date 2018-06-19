@@ -28,7 +28,7 @@ MatG6::MatG6(void)
 //{throw;}
 
 MatG6::MatG6(const MatS6& m)
-   : m_mat(36)
+   : MatG6()
 {
    MatMN mnS6(6,6);
    for (unsigned long i = 0; i < m.size(); ++i) mnS6[i] = m[i];
@@ -37,7 +37,7 @@ MatG6::MatG6(const MatS6& m)
 }
 
 MatG6::MatG6(const MatD7& m)
-   : m_mat(36)
+   : MatG6()
 {
    MatMN mnD7(7, 7);
    for (unsigned long i = 0; i < m.size(); ++i) mnD7[i] = m[i];
@@ -66,14 +66,14 @@ MatG6::MatG6(const MatMN& m)
 }
 
 MatG6::MatG6(const std::string& s)
-   : m_mat(36)
+   : MatG6()
 {
    MatN mn(m_mat.FromString(s));
    (*this).m_mat = mn;
 }
 
 MatG6::MatG6(const std::vector<double>& v)
-   : m_mat(36)
+   : MatG6()
 {
    for (unsigned long i = 0; i < 36; ++i) {
       m_mat[i] = v[i];
