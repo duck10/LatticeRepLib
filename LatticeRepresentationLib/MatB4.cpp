@@ -24,13 +24,13 @@ MatB4::MatB4(void)
 //{throw;}
 
 MatB4::MatB4(const MatS6& m)
-   : m_mat(16)
+   : MatB4()
 {
    throw("we don't know how to do this");
 }
 
 MatB4::MatB4(const MatD7& m)
-   : m_mat(16)
+   : MatB4()
 {
    throw("we don't know how to do this");
 }
@@ -40,7 +40,7 @@ MatB4::MatB4(const MatB4& m)
 {}
 
 MatB4::MatB4(const MatG6& m)
-   : m_mat(16)
+   : MatB4()
 {
    throw("we don't know how to do this");
 }
@@ -50,13 +50,13 @@ MatB4::MatB4(const MatN& m)
 {}
 
 MatB4::MatB4(const std::string& s)
-   : m_mat(16)
+   : MatB4()
 {
    m_mat = m_mat.FromString(s);
 }
 
 MatB4::MatB4(const std::vector<double>& v)
-   : m_mat(16)
+   : MatB4()
 {
    for (unsigned long i = 0; i < 16; ++i) {
       m_mat[i] = v[i];

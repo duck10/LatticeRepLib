@@ -349,6 +349,8 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
             ptemp = MinForListOfS6(v1[iouter], v2);
             if (ptemp.first < dmin) {
                dmin = ptemp.first;
+               p.first = ptemp.first;
+               p.second = iouter;
             }
             g_bestVectors.Store(dmin, std::make_pair(v1[iouter], v2[ptemp.second]));
             if (m_s6Debug) {
@@ -356,8 +358,6 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
                const int nzero = v2[ptemp.second].CountZeros();
                g_debug.Store(dmin, item);
             }
-            p.second = iouter;
-            p.first = ptemp.first;
          }
       }
    }
@@ -418,34 +418,12 @@ S6 ZeroOneScalar(const unsigned long n, const S6& s) {
    return s6;
 }
 
-std::vector<S6> S6Dist::Create_VCP_ForTwoScalars(const S6& s) {
-   std::vector<S6> v;
-   for (unsigned long j = 0; j < 5; ++j) {
-      const S6 s1 = Create_VCP_ForOneScalar(j, s);
-      for (unsigned long k = j + 1; k < 6; ++k) {
-         v.push_back(Create_VCP_ForOneScalar(k, s1));
-      }
-   }
-   return Generate24Reflections(v);
-}
-
-std::vector<S6> S6Dist::Create_VCP_ForTwoScalars(const std::vector<S6>& v) {
-   std::vector<S6> voutside;
-   for (unsigned long j = 0; j < v.size(); ++j) {
-      const S6 s1 = Create_VCP_ForOneScalar(j, v[j]);
-      for (unsigned long k = j + 1; k < 6; ++k) {
-         voutside.push_back(Create_VCP_ForOneScalar(k, s1));
-      }
-   }
-   return Generate24Reflections(voutside);
-}
 
 S6 S6Dist::Create_VCP_ForOneScalar(const unsigned long n, const S6& s) {
    static const std::vector< S6(*)(const S6&)> unreducers(S6::SetUnreduceFunctions());
 
    S6 szu(unreducers[n](ZeroOneScalar(n, s)));
    szu[n] = -s[n];
-   const double nzero = szu.CountZeros();
    return szu;
 }
 
@@ -465,10 +443,8 @@ std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
    std::vector<S6> voutside;
 
    for (unsigned long i = 0; i < 6; ++i) {
-      if (s[i] < m_dmin) {
-         const S6 v(Create_VCP_ForOneScalar(i, s));
-         voutside.push_back(v);
-      }
+      const S6 v(Create_VCP_ForOneScalar(i, s));
+      voutside.push_back(v);
    }
    return voutside;
 }
@@ -490,80 +466,29 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
 
    std::vector<S6> voutside(Generate24Reflections(s2));
    vinside = Insert(vinside, (Create_VCP_s(s1)));
+   //for (unsigned long i = 0; i < vinside.size(); ++i) std::cout << vinside[i] << std::endl;
+   //std::cout << std::endl;
    if (vinside.size() > 1) vinside.push_back(s1);
    voutside = Insert(voutside, ((Generate24Reflections((Create_VCP_s(s2))))));
    voutside.push_back(s2);
-   const std::pair<double, unsigned long> p = MinForListOfS6((vinside), voutside);
+   //for (unsigned long i = 0; i < voutside.size(); ++i) std::cout << voutside[i] << std::endl;
+   //std::cout << std::endl;
+   const std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
    m_dmin = std::min(m_dmin, p.first);
-}
-
-void S6Dist::TwoBoundaryDistance(const S6& s1, const S6& s2) {
-   std::vector<S6> vinside(1, s1);
-   std::vector<S6> voutside(Create_VCP_ForTwoScalars(s2));
-   voutside.push_back(s2);
-   std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
-   m_dmin = std::min(m_dmin, p.first);
-}
-
-std::vector<S6> S6Dist::ReduceIfLessThanDmin(const double dmin, const S6 s) const {
-   std::vector<S6> v;
-   const static std::vector<S6(*)(const S6&)> redFun = S6::SetReduceFunctions();
-
-   const std::vector<S6> vref = Generate24Reflections(s);
-   for (unsigned long kr = 0; kr < vref.size(); ++kr) {
-      S6 s6temp(vref[kr]);
-      for (unsigned long i = 0; i < 6; ++i) {
-         if (s6temp[i] <= 0.0 && std::abs(s6temp[i]) <= dmin) {
-            const double temp = s6temp[i];
-            s6temp[i] = 0.0;
-            s6temp = redFun[i](s6temp);
-            s6temp[i] = temp;
-            v.push_back(s6temp);
-         }
-      }
-   }
-   return Generate24Reflections(v);
 }
 
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
    g_debug.clear();
    g_bestVectors.clear();
-   if ( s1.IsValid() && s2.IsValid() ) m_dmin = (s1 - s2).norm();
+
+   m_dmin = ( s1.IsValid() && s2.IsValid() ) ? (s1 - s2).norm() : DBL_MAX;
    g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
    if (m_s6Debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
       g_debug.Store(m_dmin, item);
    }
    OneBoundaryDistance(s1, s2);
-   //TwoBoundaryDistance(s1, s2);
    if (m_s6Debug) g_debug.ShowResultsByKeyDescending();
-   return m_dmin;
-}
-
-double S6Dist::DistanceBetween1(const S6& s1, const S6& s2) {
-   if (s1.IsValid() && s2.IsValid()) m_dmin = (s1 - s2).norm();
-   g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
-   if (m_s6Debug) {
-      const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
-      g_debug.Store(m_dmin, item);
-   }
-   OneBoundaryDistance(s1, s2);
-   g_debug.clear();
-   g_bestVectors.clear();
-   return m_dmin;
-}
-
-double S6Dist::DistanceBetween2(const S6& s1, const S6& s2) {
-   if (s1.IsValid() && s2.IsValid()) m_dmin = (s1 - s2).norm();
-   g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
-   if (m_s6Debug) {
-      const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);
-      g_debug.Store(m_dmin, item);
-   }
-   OneBoundaryDistance(s1, s2);
-   TwoBoundaryDistance(s1, s2);
-   g_debug.clear();
-   g_bestVectors.clear();
    return m_dmin;
 }
 

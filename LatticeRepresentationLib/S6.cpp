@@ -33,22 +33,19 @@ static RHrand rhrand(s6RandomSeed);
 S6::S6( void )
    : m_dim(6)
    , m_valid(true)
+   , m_vec(VecN(6))
 {
-   m_vec.resize(6);
 }
 
 S6::S6(const S6& v)
    : m_dim(6)
    , m_valid(v.m_valid)
-   , m_vec(VecN(6))
+   , m_vec(v.m_vec)
 {
-   m_vec = v.m_vec;
 }
 
 S6::S6(const C3& c3)
-   : m_dim(6)
-   , m_valid(c3.GetValid())
-   , m_vec(VecN(6))
+   : S6()
 {
    m_vec[0] = c3[0].real();
    m_vec[3] = c3[0].imag();
@@ -60,10 +57,8 @@ S6::S6(const C3& c3)
 }
 
 S6::S6(const double v[6])
-   : m_valid(true)
-   , m_dim(6)
+   : S6()
 {
-   m_vec.resize(6);
    double& p = (*this)[0];
    double& q = (*this)[1];
    double& r = (*this)[2];
@@ -87,10 +82,8 @@ S6::S6(const double v[6])
 }
 
 S6::S6(const LRL_Cell& c)
-   : m_valid(true)
-   , m_dim(6)
+   : S6()
 {
-   m_vec.resize(6);
    (*this) = G6(c);
    m_valid = c.GetValid() && c[3] < pi && c[4] < pi && c[5] < pi && (c[3] + c[4] + c[5])< twopi;
 }
@@ -103,10 +96,8 @@ S6::S6(const D7& v7)
 }
 
 S6::S6( const B4& del )
-   : m_valid(true)
-   , m_dim(6)
+   : S6()
 {
-   m_vec.resize(6);
    const Vector_3 a = del[0UL];
    const Vector_3 b = del[1UL];
    const Vector_3 c = del[2UL];
@@ -138,10 +129,8 @@ S6::S6(const VecN& v)
 }
 
 S6::S6(const G6& v6)
-   : m_valid(true)
-   , m_dim(6)
+   : S6()
 {
-   m_vec.resize(6);
    const double& g1 = v6[0];
    const double& g2 = v6[1];
    const double& g3 = v6[2];
@@ -165,9 +154,8 @@ S6::S6(const G6& v6)
 }
 
 S6::S6(const std::string& s)
-   : m_valid(true)
+   : S6()
 {
-   m_vec.resize(6);
    m_vec = LRL_StringTools::FromString(s);
    m_dim = m_vec.size();
    if (m_dim != 6)
@@ -177,9 +165,8 @@ S6::S6(const std::string& s)
 }
 
 S6::S6(const std::vector<double>& v)
-   : m_valid(true)
+   : S6()
 {
-   m_vec.resize(6);
    m_dim = (unsigned long)(v.size());
    if (m_dim != 6) throw "bad dimension in D7 from a string";
    m_vec = v;

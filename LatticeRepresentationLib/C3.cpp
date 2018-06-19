@@ -75,7 +75,7 @@ C3::C3( const B4& del )
 }
 
 C3::C3(const VecN& v)
-   : m_valid(false)
+   : C3()
 {
    if (v.size() == 6) {
       C3::m_reductionFunctions = C3::SetReduceFunctions();      m_c.resize(3);
@@ -86,7 +86,7 @@ C3::C3(const VecN& v)
 }
 
 C3::C3(const std::string& s)
-   : m_valid(false)
+   : C3()
 {
    VecN v = LRL_StringTools::FromString(s);
    if (v.size() == 6) {
@@ -117,7 +117,7 @@ C3::C3(const S6& s6)
 }
 
 C3::C3(const std::vector<double>& v)
-   : m_valid(false)
+   : C3()
 {
    if (v.size() == 6) {
       C3::m_reductionFunctions = C3::SetReduceFunctions();

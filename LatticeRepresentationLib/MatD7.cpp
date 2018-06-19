@@ -26,7 +26,7 @@ MatD7::MatD7(void)
 //{throw;}
 
 MatD7::MatD7(const MatS6& m)
-   : m_mat(49)
+   : MatD7()
 {
    const MatMN mnS6 = m;
    const MatMN mn = D7_FROM_S6 * mnS6 * S6_FROM_D7;
@@ -40,7 +40,7 @@ MatD7::MatD7(const MatD7& m)
 {}
 
 MatD7::MatD7(const MatG6& m)
-   : m_mat(49)
+   : MatD7()
 {
    const MatMN mn = D7_FROM_G6 * m * G6_FROM_D7;
    m_mat.SetVector(mn.GetVector());
@@ -62,14 +62,14 @@ MatD7::MatD7(const MatMN& m)
 }
 
 MatD7::MatD7(const std::string& s)
-   : m_mat(49)
+   : MatD7()
 {
    MatN mn ( m_mat.FromString(s));
    (*this).m_mat = mn;
 }
 
 MatD7::MatD7(const std::vector<double>& v)
-   : m_mat(49)
+   : MatD7()
 {
    for (unsigned long i = 0; i < 49; ++i) {
       m_mat[i] = v[i];
