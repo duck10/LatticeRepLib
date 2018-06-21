@@ -27,7 +27,6 @@
 #include "LRL_ReadLatticeData.h"
 #include "MultiFollower.h"
 #include "Niggli.h"
-#include "OutlierFinder.h"
 #include "ReadGlobalData.h"
 #include "Selling.h"
 #include "SVG_DistancePlot.h"
@@ -181,7 +180,7 @@ MultiFollower ProcessOneLattice(const unsigned long inputCellOrdinal, const unsi
 
    MultiFollower mf(points1, points2);
    mf = mf.GenerateAllDistances();
-   mf.SetTime2ComputeFrame(std::clock() - mf.GetComputeStartTime());
+   mf.SetTime2ComputeFrame(double(std::clock() - mf.GetComputeStartTime()));
 
    if (!mf.HasGlitches() && FollowerConstants::globalOutputGlitchesOnly) return mf;
    SVG_DistancePlot<S6> distanceplot(mf, baseFileName);
@@ -265,13 +264,13 @@ int main(int argc, char* argv[]) {
 
       // are we done with input?
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine &&
-         i + 1 >= celldata.size()) {
+         i + 1UL >= celldata.size()) {
          std::cout << "FOLLOWERMODE LINE requires at least two cells input" << std::endl;
          break;
       }
 
       if ((FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 || FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) &&
-         i + 2 >= celldata.size()) {
+         i + 2UL >= celldata.size()) {
          std::cout << "FOLLOWERMODE TRIANGLE requires at least three cells input" << std::endl;
          break;
       }

@@ -17,7 +17,7 @@ public:
    friend std::ostream& operator<< ( std::ostream&, const VecN& );
    friend double dot( const VecN& v1, const VecN& v2 ) { return v1.dot( v2 ); }
 
-   VecN(  ){}
+   VecN(  ) : m_dim(1) , m_valid(false) {}
    VecN( const unsigned long dim );
    VecN( const std::string& s );
    VecN( const Matrix_3x3& m );

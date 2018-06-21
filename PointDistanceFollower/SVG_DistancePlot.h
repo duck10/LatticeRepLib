@@ -79,7 +79,7 @@ private:
          svg.push_back(s);
          if (lastPositiveIndex != xmax) {
             DistanceLineDescriptions colorList;
-            svg.push_back(DrawInvalidLineSegment(colorList.GetColor("INVALID"), 6, double(lastPositiveIndex + 1)*xscale, SVG_WriterConstants::globalPlotSpace / 2.0, double(xmax)*xscale));
+            svg.push_back(DrawInvalidLineSegment(colorList.GetColor("INVALID"), 6, double(lastPositiveIndex + 1UL)*xscale, SVG_WriterConstants::globalPlotSpace / 2.0, double(xmax)*xscale));
          }
       }
       return(svg);
@@ -152,7 +152,7 @@ private:
          const double& y = -SVG_DistancePlotConstants::globalX_AxisTicMarkLength;
          const double xDelta = (xMaxAxis - xMinAxis) / double( xsteps );
          svg.push_back( DrawOneX_AxisTicMark( xPosition, y ) );
-         svg.push_back( DrawOneX_AxisLabel( xPosition, y, double(i*int( xDelta ) + int( xMinAxis )), xMinAxis ) );
+         svg.push_back( DrawOneX_AxisLabel( xPosition, y, double(i)* xDelta + xMinAxis, xMinAxis ) );
          xPosition += xDelta*xscale;
       }
 

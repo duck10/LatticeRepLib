@@ -17,19 +17,32 @@ OutlierFinder::OutlierFinder( const std::vector<double>& data )
    }
 }
 
+bool IsNonNegative( const double d ) {
+   return d >= 0.0;
+}
+
+unsigned long FindLastNonzeroDistance( const std::vector<double>& v ) {
+   const std::vector<double>::const_reverse_iterator it = find_if(v.rbegin(), v.rend(), IsNonNegative);
+   return (unsigned long)(v.size()) - (unsigned long)(it - v.rbegin());
+}
+
 std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransitionPoints(const double cutoff) {
    std::vector<std::pair<double, double> > biggiesL;
    double prevDataDiff = 0.0;
    double prevData = m_data[0];
    const unsigned long endMask = std::max(3UL, (unsigned long)(0.03*(double)(m_data.size())));
-   for (unsigned long i = endMask; i < m_data.size() - 1 - endMask; ++i) {
+   const unsigned long endpt = FindLastNonzeroDistance(m_data);
+   for (unsigned long i = endMask; i < endpt - 1 - endMask; ++i) {
       const double& mdatai = m_data[i];
+      if (mdatai < 0.0) continue;
       const double& mdataim1 = m_data[i - 1];
-      const double& mdataip1 = m_data[i + 1];
+      if (mdataim1 < 0.0) continue;
+      const double& mdataip1 = m_data[std::min(i,(unsigned long)(m_data.size())-1UL) + 1];
+      if (mdataip1 < 0.0) continue;
       const double percentDelta2Diff = 50.0 * std::abs(mdataim1 - mdataip1) / (mdataim1 + mdataip1);
       const double absDataDiff = std::abs(100.0*std::abs(mdatai - mdataip1) / std::max(mdatai, mdataip1));
 
-      if (absDataDiff > cutoff && percentDelta2Diff > cutoff/*&& std::abs(mdatai - mdataip1) > 0.1*/) {
+      if (absDataDiff > cutoff && percentDelta2Diff > cutoff && (mdatai + mdataip1) > 0.01) {
          const double avg = (mdatai + mdataip1) / 2.0;
           const double interpolatedMiddle = std::abs(GetValue(double(i) + 0.5));
         const double difpair = std::abs(avg - interpolatedMiddle);

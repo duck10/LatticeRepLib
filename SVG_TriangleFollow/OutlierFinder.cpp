@@ -29,15 +29,15 @@ std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransition
       const double percentDelta2Diff = 50.0 * std::abs(mdataim1 - mdataip1) / (mdataim1 + mdataip1);
       const double absDataDiff = std::abs(100.0*std::abs(mdatai - mdataip1) / std::max(mdatai, mdataip1));
 
-      if (absDataDiff > cutoff && percentDelta2Diff > cutoff/*&& std::abs(mdatai - mdataip1) > 0.1*/) {
+      if (absDataDiff > cutoff && percentDelta2Diff > cutoff && std::abs(mdatai + mdataip1) > 0.01) {
          const double avg = (mdatai + mdataip1) / 2.0;
-          const double interpolatedMiddle = std::abs(GetValue(double(i) + 0.5));
-        const double difpair = std::abs(avg - interpolatedMiddle);
+         const double interpolatedMiddle = std::abs(GetValue(double(i) + 0.5));
+         const double difpair = std::abs(avg - interpolatedMiddle);
 
          const double normalizedPercent = 100.0*difpair / interpolatedMiddle;
 
          if ((normalizedPercent > 1.0)
-             && (absDataDiff > prevDataDiff) )
+            && (absDataDiff > prevDataDiff))
             biggiesL.push_back(std::make_pair(double(i), normalizedPercent));
       }
 
