@@ -95,8 +95,6 @@ void S6Dist::UnreduceAndAddToList(const S6& d, const unsigned long n, std::vecto
    for (unsigned long i = 0; i < vsize; ++i) {
       // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LCA
       S6 dtemp = ApplyUnreduceFunction(n, d);
-      //S6 dtemp(v[i]);
-      //dtemp[n] = 0.001 * dtemp.norm();
       v.push_back(dtemp);
    }
 }
@@ -124,164 +122,6 @@ std::vector<S6> S6Dist::UnreduceAndAddToList(const S6& s6, const unsigned long n
    std::vector<S6> vToReflect;
    vToReflect.push_back(s6);
    return UnreduceAndAddToList(vToReflect, n);
-}
-
-std::vector<unsigned long> GetListOfNearZero(const S6& vs6) {
-   const double d = vs6.norm();
-   std::vector<unsigned long> v;
-   for (unsigned long i = 0; i < 6; ++i) {
-      if (vs6[i] > -d * g_fractionToAssessNearZero && vs6[i] <= 0.0) {
-         v.push_back(i);
-      }
-   }
-   return v;
-}
-
-bool HasNearZero(const S6& v6) {
-   const double d = v6.norm();
-   for (unsigned long i = 0; i < 6; ++i) {
-      if (v6[i] > -d * g_fractionToAssessNearZero && v6[i] <= 0.0) return true;
-   }
-   return false;
-}
-
-S6 MakeOneNearZeroPositive(const S6& vv6) {
-   S6 v6(vv6);
-   const double d = v6.norm();
-   const double cutoff = d * g_fractionToAssessNearZero;
-   for (unsigned long i = 0; i < 6; ++i) {
-      if (v6[i] > -cutoff && v6[i] <= 0.0) {
-         v6[i] = 0.001 * d;
-         break;
-      }
-   }
-   return v6;
-}
-
-std::vector<S6> ResetNearZeroAndAddToList3(const std::vector<S6>& vs6, const unsigned long n) /*const*/ {
-   std::vector<S6>v6(vs6);
-   if (n < 3) return v6;
-
-   for (unsigned long k = 0; k < v6.size(); ++k) {
-      if (S6::CountPositive(v6[k]) < 3 && HasNearZero(v6[k])) {
-         v6.push_back(MakeOneNearZeroPositive(v6[k]));
-      }
-   }
-   return v6;
-}
-
-std::vector<S6> ResetNearZeroAndAddToList2(const std::vector<S6>& vs6, const unsigned long n) /*const*/ {
-   std::vector<S6>v6(vs6);
-   if (n < 2) return v6;
-
-   for (unsigned long k = 0; k < v6.size(); ++k) {
-      if (S6::CountPositive(v6[k]) < 2 && HasNearZero(v6[k])) {
-         v6.push_back(MakeOneNearZeroPositive(v6[k]));
-      }
-   }
-   ResetNearZeroAndAddToList3(v6, n);
-   return v6;
-}
-
-std::vector<S6> ResetNearZeroAndAddToList1(const std::vector<S6>& vs6, const unsigned long n) /*const*/ {
-   std::vector<S6>v6(vs6);
-   if (n < 1) return v6;
-
-   for (unsigned long k = 0; k < v6.size(); ++k) {
-      if (S6::CountPositive(v6[k]) < 1 && HasNearZero(v6[k])) {
-         v6.push_back(MakeOneNearZeroPositive(v6[k]));
-      }
-   }
-   ResetNearZeroAndAddToList2(v6, n);
-   return v6;
-}
-
-std::vector<S6> S6Dist::ResetNearZeroAndAddToList(const std::vector<S6>& v6, const unsigned long n) const {
-   std::vector<S6> vToReduce = ResetNearZeroAndAddToList1(v6, n);
-   vToReduce = ResetNearZeroAndAddToList1(v6, n);
-   return vToReduce;
-}
-
-std::vector<S6> ResetNearZeros1(const S6& s6, const std::vector<unsigned long>& vul) {
-   std::vector<S6> v;
-   v.push_back(s6);
-   S6 s6out;
-   for (unsigned long i = 0; i < vul.size(); ++i) {
-      S6 temp(s6);
-      temp[vul[i]] = 0.1;
-      v.push_back(temp);
-      Selling::Reduce(temp, s6out);
-      v.push_back(s6out);
-   }
-   return v;
-}
-
-std::vector<S6> ResetNearZeros2(const S6& s6, const std::vector<unsigned long>& vul) {
-   std::vector<S6> v;
-   if (vul.size() >= 2) {
-      S6 s6out;
-      for (unsigned long k = 0; k < vul.size() - 1; ++k) {
-         S6 temp(s6);
-         temp[vul[k]] = 0.1;
-         for (unsigned long i = 0; i < vul.size(); ++i) {
-            temp[vul[i]] = 0.1;
-         }
-         v.push_back(temp);
-         Selling::Reduce(temp, s6out);
-         v.push_back(s6out);
-      }
-   }
-   return v;
-}
-
-std::vector<S6> ResetNearZeros3(const S6& s6, const std::vector<unsigned long>& vul) {
-   std::vector<S6> v;
-   if (vul.size() >= 3) {
-      for (unsigned long j = 0; j < vul.size() - 2; ++j) {
-         S6 temp(s6);
-         temp[vul[j]] = 0.1;
-         for (unsigned long k = j + 1; k < vul.size() - 1; ++k) {
-            temp[vul[k]] = 0.1;
-            for (unsigned long i = k + 1; i < vul.size(); ++i) {
-               temp[vul[i]] = 0.1;
-            }
-            v.push_back(temp);
-         }
-      }
-   }
-   return v;
-}
-
-std::vector<S6> S6Dist::ResetNearZeroAndAddToList(const S6& s6) const {
-   std::vector<S6> vs6;
-   std::vector<unsigned long> v = GetListOfNearZero(s6);
-   vs6 = ResetNearZeros1(s6, v);
-   std::vector<S6> temp2 = ResetNearZeros2(s6, v);
-   vs6.insert(vs6.end(), temp2.begin(), temp2.end());
-   std::vector<S6> temp3 = ResetNearZeros3(s6, v);
-   vs6.insert(vs6.end(), temp3.begin(), temp3.end());
-   return vs6;
-}
-
-std::vector<S6> S6Dist::GenerateReflectionsAtZero(const S6& s6) const {
-   std::vector<S6> vToReflect;
-   vToReflect.push_back(s6);
-
-   const double d = s6.norm();
-   for (unsigned long i = 0; i < 6; ++i) {
-      if (s6[i] > -d * g_fractionToAssessNearZero && s6[i] <= 0.0) {
-         UnreduceAndAddToList(s6, i, vToReflect);
-      }
-   }
-
-   const unsigned long vsize = (unsigned long)vToReflect.size();
-   for (unsigned long i = 0; i < vsize; ++i) {
-      for (unsigned long k = 0; k < 24; ++k) {
-         vToReflect.push_back(MatS6::GetReflection(k) * vToReflect[i]);
-      }
-   }
-
-   return vToReflect;
 }
 
 StoreResults<double, std::string> g_debug(1);
@@ -325,9 +165,9 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
             }
          }
          if (m_s6Debug) {
-            //std::cout << std::endl;
-            //std::cout << v1[p.second] << std::endl;
-            //std::cout << s6min << "    dmin A " << dmin  << std::endl;
+            std::cout << std::endl;
+            std::cout << v1[p.second] << std::endl;
+            std::cout << s6min << "    dmin A " << dmin  << std::endl;
          }
       }
    }
@@ -347,31 +187,30 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
       for (long iouter = 0; iouter < v1.size(); ++iouter) {
          if (v1[iouter].IsValid()) {
             ptemp = MinForListOfS6(v1[iouter], v2);
-            if (ptemp.first < dmin) {
-               dmin = ptemp.first;
-               p.first = ptemp.first;
-               p.second = iouter;
-            }
             g_bestVectors.Store(dmin, std::make_pair(v1[iouter], v2[ptemp.second]));
             if (m_s6Debug) {
                const std::string item = LRL_ToString(v1[iouter]) + std::string("\n ") + LRL_ToString(v2[ptemp.second]);
                const int nzero = v2[ptemp.second].CountZeros();
                g_debug.Store(dmin, item);
             }
+            if (ptemp.first < dmin) {
+               dmin = ptemp.first;
+               p.first = ptemp.first;
+               p.second = iouter;
+            }
          }
       }
    }
-   //if (m_s6Debug) g_debug.ShowResultsByKeyDescending(); //  LCA  LCA
-   //g_debug.clear();
-   //g_bestVectors.clear();
+   if (m_s6Debug) g_debug.ShowResultsByKeyDescending(); //  LCA  LCA
+   g_debug.clear();
+   g_bestVectors.clear();
    return p;
 }
 
 std::pair<double, unsigned long> S6Dist::MinForListOfS6(const S6& d1, const std::vector<S6>& v) {
-   ////double dmin = std::min(dminSoFar,(d1 - v[0]).norm());
-   //const double diff = std::abs(m_dmin - 37.183);
-   //const std::string itemA = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[0]);
-   //g_debug.Store(m_dmin, itemA);
+   const double diff = std::abs(m_dmin - 37.183);
+   const std::string itemA = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[0]);
+   g_debug.Store(m_dmin, itemA);
    double dmin = m_dmin;
    std::pair<double, unsigned long> p = std::make_pair(m_dmin, 0);
    for (unsigned long i = 0; i < v.size(); ++i) {
@@ -466,13 +305,9 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
 
    std::vector<S6> voutside(Generate24Reflections(s2));
    vinside = Insert(vinside, (Create_VCP_s(s1)));
-   //for (unsigned long i = 0; i < vinside.size(); ++i) std::cout << vinside[i] << std::endl;
-   //std::cout << std::endl;
    if (vinside.size() > 1) vinside.push_back(s1);
    voutside = Insert(voutside, ((Generate24Reflections((Create_VCP_s(s2))))));
    voutside.push_back(s2);
-   //for (unsigned long i = 0; i < voutside.size(); ++i) std::cout << voutside[i] << std::endl;
-   //std::cout << std::endl;
    const std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
    m_dmin = std::min(m_dmin, p.first);
 }

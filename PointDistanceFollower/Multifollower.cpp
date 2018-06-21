@@ -10,6 +10,7 @@
 #include "Niggli.h"
 #include "D7.h"
 #include "G6.h"
+#include "OutlierFinder.h"
 #include "S6.h"
 #include "S6Dist.h"
 

@@ -64,10 +64,6 @@ public:
    std::vector<S6> UnreduceAndAddToList(const std::vector<S6>& v6, const unsigned long n) const;
 
    std::vector<S6> UnreduceAndAddToList(const S6& s6, const unsigned long n) const;
-   std::vector<S6> GenerateReflectionsAtZero(const S6& s6) const;
-
-   std::vector<S6> ResetNearZeroAndAddToList(const std::vector<S6>& v6, const unsigned long n) const;
-   std::vector<S6> ResetNearZeroAndAddToList(const S6& s6) const;
 
    static const std::vector<S6> Generate24Reflections(const S6& s6in);
    static const std::vector<S6> Generate24Reflections(const std::vector<S6>& vin);
@@ -86,6 +82,24 @@ private:
    static std::vector< S6(*)(const S6&)> m_reductionFunctions;
    static std::vector< S6(*)(const S6&)> m_UnReduceFunctions;
    static std::vector< S6(*)(const S6&)> m_reflectionFunctions;
+
+public:
+   class Tracker {
+   public:
+      Tracker() {}
+      Tracker(const Tracker& t ) {}
+      Tracker& operator= (const Tracker& t) {};
+
+   private:
+  
+   };
+
+   class TrackerHistory {
+      void Add(const Tracker& t) { m_vtrak.push_back(t); }
+   
+   private:
+      std::vector<Tracker> m_vtrak;
+   };
 
 };
 #endif // S6DIST_H
