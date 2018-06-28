@@ -90,40 +90,6 @@ void PrintVector(const S6 v1, const std::vector<S6>& v2) {
    }
 }
 
-void S6Dist::UnreduceAndAddToList(const S6& d, const unsigned long n, std::vector<S6>& v) const {
-   const unsigned long vsize = (unsigned long)v.size();
-   for (unsigned long i = 0; i < vsize; ++i) {
-      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LCA
-      S6 dtemp = ApplyUnreduceFunction(n, d);
-      v.push_back(dtemp);
-   }
-}
-
-const double g_fractionToAssessNearZero = 0.10;
-
-std::vector<S6> S6Dist::UnreduceAndAddToList(const std::vector<S6>& v6, const unsigned long n) const {
-   std::vector<S6> vToReduce(v6);
-   if (n > 0) {
-      for (unsigned long k = 0; k < v6.size(); ++k) {
-         const double d = v6[k].norm();
-         for (unsigned long i = 0; i < 6; ++i) {
-            if (v6[k][i] > -d * g_fractionToAssessNearZero && v6[k][i] <= 0.0) {
-               S6 stemp = ApplyUnreduceFunction(i, v6[k]);
-               vToReduce.push_back(stemp);
-            }
-         }
-      }
-      vToReduce = UnreduceAndAddToList(vToReduce, n - 1);
-   }
-   return vToReduce;
-}
-
-std::vector<S6> S6Dist::UnreduceAndAddToList(const S6& s6, const unsigned long n) const {
-   std::vector<S6> vToReflect;
-   vToReflect.push_back(s6);
-   return UnreduceAndAddToList(vToReflect, n);
-}
-
 StoreResults<double, std::string> g_debug(1);
 StoreResults<double, std::pair<S6, S6> >g_bestVectors(1);
 
@@ -208,7 +174,6 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const std::vector<S6>& v
 }
 
 std::pair<double, unsigned long> S6Dist::MinForListOfS6(const S6& d1, const std::vector<S6>& v) {
-   const double diff = std::abs(m_dmin - 37.183);
    const std::string itemA = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[0]);
    g_debug.Store(m_dmin, itemA);
    double dmin = m_dmin;
@@ -233,14 +198,16 @@ std::pair<double, unsigned long> S6Dist::MinForListOfS6(const S6& d1, const std:
 
 const std::vector<S6> S6Dist::Generate24Reflections(const S6& s6in) {
    std::vector<S6> v;
+   v.resize(24);
    for (unsigned long i = 0; i < 24; ++i) {
-      v.push_back(m_reflectionFunctions[i](s6in));
+      v[i] = m_reflectionFunctions[i](s6in);
    }
    return v;
 }
 
 const std::vector<S6> S6Dist::Generate24Reflections(const std::vector<S6>& vin) {
    std::vector<S6> vout;
+   vout.reserve(24*vin.size());
    for (unsigned long i = 0; i < vin.size(); ++i) {
       const std::vector<S6> vtemp = Generate24Reflections(vin[i]);
       vout.insert(vout.end(), vtemp.begin(), vtemp.end());
@@ -268,6 +235,7 @@ S6 S6Dist::Create_VCP_ForOneScalar(const unsigned long n, const S6& s) {
 
 std::vector<S6> S6Dist::Create_VCP_s(const std::vector<S6>& vs) {
    std::vector<S6> voutside;
+   voutside.reserve(vs.size() * 6);
    for ( unsigned long i=0; i<vs.size(); ++i ) {
       const std::vector<S6> v(Create_VCP_s(vs[i]));
       voutside.insert(voutside.end(), v.begin(), v.end());
@@ -279,17 +247,34 @@ std::vector<S6> S6Dist::Create_VCP_s(const std::vector<S6>& vs) {
 // VCP == Virtual Cartesian Point(s)
 //
 std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
-   std::vector<S6> voutside;
+   std::vector<S6> voutside(6);
 
    for (unsigned long i = 0; i < 6; ++i) {
-      const S6 v(Create_VCP_ForOneScalar(i, s));
-      voutside.push_back(v);
+      voutside[i] = Create_VCP_ForOneScalar(i, s);
    }
+   return voutside;
+}
+
+std::vector<S6> S6Dist::CreateSecondBoundary_VCP_s(const S6& s) {
+   std::vector<S6> voutside(36);
+
+   unsigned long pos = 0;
+   for (unsigned long i = 0; i < 6; ++i) {
+      const S6 si = m_UnReduceFunctions[i](s);
+      for (unsigned long k = 0; k < 6; ++k) {
+         if (si[k] <= 0.0) {
+            voutside[pos] = Create_VCP_ForOneScalar(k, si);
+            ++pos;
+         }
+      }
+   }
+
    return voutside;
 }
 
 std::vector<S6> Insert(const std::vector<S6>& tar, const std::vector<S6>& from) {
    std::vector<S6> target(tar);
+   target.reserve(tar.size() + from.size());
    target.insert(target.end(), from.begin(), from.end());
    return target;
 }
@@ -300,19 +285,153 @@ std::vector<S6> Insert(const std::vector<S6>& tar, const S6& from) {
    return target;
 }
 
-void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
-   std::vector<S6> vinside;
+double TrackedDistanceBetween(const S6& s1, const S6& s2) {
+   S6Dist::TrackerHistory track1;
+   S6Dist::TrackerHistory track2
+      ;
+   static const std::vector< S6(*)(const S6&)> unreducers(S6::SetUnreduceFunctions());
 
-   std::vector<S6> voutside(Generate24Reflections(s2));
-   vinside = Insert(vinside, (Create_VCP_s(s1)));
-   if (vinside.size() > 1) vinside.push_back(s1);
-   voutside = Insert(voutside, ((Generate24Reflections((Create_VCP_s(s2))))));
-   voutside.push_back(s2);
-   const std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
-   m_dmin = std::min(m_dmin, p.first);
+   // track s1
+   for (unsigned long ivcp = 0; ivcp < unreducers.size(); ++ivcp) {
+      S6 szu(unreducers[ivcp](ZeroOneScalar(ivcp, s1)));
+      szu[ivcp] = -s1[ivcp];
+      const std::string label = "V" + LRL_ToString(ivcp);
+      track1.Add(S6Dist::Tracker(label, szu));
+   }
+   track1.Add(S6Dist::Tracker("1", s1));
+   std::cout << "INSIDE" << std::endl;
+   std::cout << track1 << std::endl;
+
+   // track s2
+   static const std::vector< S6(*)(const S6&)> reflectionFunctions = S6::SetRelectionFunctions();
+   track2.Add(S6Dist::Tracker("1", s2));
+
+   for (unsigned long iref = 0; iref < reflectionFunctions.size(); ++iref) {
+      S6 sref = reflectionFunctions[iref](s2);
+      const std::string label = "R" + LRL_ToString(iref);
+      track2.Add(S6Dist::Tracker(label, sref));
+   }
+
+   for (unsigned long ivcp = 0; ivcp < unreducers.size(); ++ivcp) {
+      S6 szu = unreducers[ivcp](ZeroOneScalar(ivcp, s2));
+      szu[ivcp] = -s2[ivcp];
+      std::string label_vcp = "V" + LRL_ToString(ivcp);
+      for (unsigned long iref = 0; iref < 24; ++iref) {
+         S6 sref = reflectionFunctions[iref](szu);
+         const std::string label = "R" + LRL_ToString(iref) + label_vcp;
+         track2.Add(S6Dist::Tracker(label, sref));
+      }
+   }
+
+   std::cout << "OUTSIDE" << std::endl;
+   std::cout << track2 << std::endl;
+
+   std::vector<std::pair<double, std::string> > results;
+   S6Dist s6dist;
+   for (unsigned long i1=0; i1<track1.size(); ++i1 ) {
+      const S6& st1 = track1[i1].GetVector();
+      for ( unsigned long i2=0; i2<track2.size(); ++i2 ) {
+         const S6& st2 = track2[i2].GetVector();
+
+         const double dist = (st2 - st1).norm();
+         results.push_back(std::make_pair(dist, LRL_ToString(track1[i1]) + "     " + LRL_ToString(track2[i2])));
+      }
+   }
+
+   std::sort(results.begin(), results.end());
+
+   std::vector<PairReporter<double,std::string> > resultsPR;
+   for (unsigned long i = 0; i<results.size(); ++i) {
+      resultsPR.push_back(results[i]);
+   }
+
+   std::cout << "DISTANCE RESULTS" << std::endl;
+   for ( unsigned long i=0; i<resultsPR.size(); ++i ) {
+      std::cout << LRL_ToString(resultsPR[i].GetFirst()) << "   " << LRL_ToString(resultsPR[i].GetSecond()) << std::endl;
+   }
+   return results[0].first;
 }
 
+void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
+   std::vector<S6> vinside(1, s1);
+
+   std::vector<S6> voutside(Generate24Reflections(s2));
+   voutside.push_back(s2);
+   vinside = Insert(vinside, (Create_VCP_s(s1)));
+   voutside = Insert(voutside, ((Generate24Reflections((Create_VCP_s(s2))))));
+   voutside = Insert(voutside, ((Generate24Reflections((CreateSecondBoundary_VCP_s(s2))))));
+   const std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
+   m_dmin = std::min(m_dmin, p.first);
+
+   //TrackedDistanceBetween(s1, s2);
+}
+
+
+double S6Dist::new_DistanceBetween(const S6& s1, const S6& s2) {
+   S6Dist::TrackerHistory track1;
+   S6Dist::TrackerHistory track2;
+
+   static const std::vector< S6(*)(const S6&)> unreducers(S6::SetUnreduceFunctions());
+
+   // track s1
+   for (unsigned long ivcp = 0; ivcp < unreducers.size(); ++ivcp) {
+      S6 szu(unreducers[ivcp](ZeroOneScalar(ivcp, s1)));
+      szu[ivcp] = -s1[ivcp];
+      const std::string label = "V" + LRL_ToString(ivcp);
+      track1.Add(S6Dist::Tracker(label, szu));
+   }
+   track1.Add(S6Dist::Tracker("1", s1));
+
+   // track s2
+   static const std::vector< S6(*)(const S6&)> reflectionFunctions = S6::SetRelectionFunctions();
+   //track2.Add(S6Dist::Tracker("1", s2));
+
+   for (unsigned long iref = 0; iref < reflectionFunctions.size(); ++iref) {
+      S6 sref = reflectionFunctions[iref](s2);
+      const std::string label = "R" + LRL_ToString(iref);
+      track2.Add(S6Dist::Tracker(label, sref));
+   }
+
+   for (unsigned long ivcp = 0; ivcp < unreducers.size(); ++ivcp) {
+      S6 szu = unreducers[ivcp](ZeroOneScalar(ivcp, s2));
+      szu[ivcp] = -s2[ivcp];
+      std::string label_vcp = "V" + LRL_ToString(ivcp);
+      for (unsigned long iref = 0; iref < 24; ++iref) {
+         S6 sref = reflectionFunctions[iref](szu);
+         const std::string label = "R" + LRL_ToString(iref) + label_vcp;
+         track2.Add(S6Dist::Tracker(label, sref));
+      }
+   }
+
+
+   std::vector<std::pair<double, std::string> > results;
+   S6Dist s6dist;
+   for (unsigned long i1 = 0; i1<track1.size(); ++i1) {
+      const S6& st1 = track1[i1].GetVector();
+      for (unsigned long i2 = 0; i2<track2.size(); ++i2) {
+         const S6& st2 = track2[i2].GetVector();
+
+         const double dist = (st2 - st1).norm();
+         results.push_back(std::make_pair(dist, LRL_ToString(track1[i1]) + "     " + LRL_ToString(track2[i2])));
+      }
+   }
+
+   std::sort(results.begin(), results.end());
+
+   //std::vector<PairReporter<double, std::string> > resultsPR;
+   //for (unsigned long i = 0; i<results.size(); ++i) {
+   //   resultsPR.push_back(results[i]);
+   //}
+
+   //std::cout << "DISTANCE RESULTS" << std::endl;
+   //for (unsigned long i = 0; i<resultsPR.size(); ++i) {
+   //   std::cout << LRL_ToString(resultsPR[i].GetFirst()) << "   " << LRL_ToString(resultsPR[i].GetSecond()) << std::endl;
+   //}
+   return results[0].first;
+}
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
+
+   //TrackedDistanceBetween(s1, s2);
    g_debug.clear();
    g_bestVectors.clear();
 
