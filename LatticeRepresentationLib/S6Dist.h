@@ -1,6 +1,7 @@
 #ifndef S6DIST_H
 #define S6DIST_H
 
+#include <ostream>
 #include <vector>
 
 #include "MatB4.h"
@@ -15,11 +16,12 @@ public:
    S6Dist(const double dnearzero = 1.0);
 
    double DistanceBetween(const S6& d1, const S6& d2);
+   static double new_DistanceBetween(const S6& d1, const S6& d2);
    void OneBoundaryDistance(const S6& s1, const S6& s2);
    static S6 Create_VCP_ForOneScalar(const unsigned long n, const S6& s);
-   std::vector<S6> Create_VCP_s(const S6& s);
-   std::vector<S6> Create_VCP_s(const std::vector<S6>& s);
-
+   static std::vector<S6> Create_VCP_s(const S6& s);
+   static std::vector<S6> Create_VCP_s(const std::vector<S6>& s);
+   static std::vector<S6> CreateSecondBoundary_VCP_s(const S6& s);
    static std::vector<std::pair<MatS6, MatS6> > SetunreductionReductionMatricesFromReductionMatrices();
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();
    static std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > SetUnreduceFunctionPairs();
@@ -60,11 +62,6 @@ public:
    std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree);
    void SetDebug(const bool b) { m_s6Debug = b; }
 
-   void UnreduceAndAddToList(const S6& d, const unsigned long n, std::vector<S6>& v) const;
-   std::vector<S6> UnreduceAndAddToList(const std::vector<S6>& v6, const unsigned long n) const;
-
-   std::vector<S6> UnreduceAndAddToList(const S6& s6, const unsigned long n) const;
-
    static const std::vector<S6> Generate24Reflections(const S6& s6in);
    static const std::vector<S6> Generate24Reflections(const std::vector<S6>& vin);
    static std::string GetName(void) { return "S6Dist"; }
@@ -87,15 +84,41 @@ public:
    class Tracker {
    public:
       Tracker() {}
-      Tracker(const Tracker& t ) {}
-      Tracker& operator= (const Tracker& t) {};
+      Tracker( const std::string& label, const S6& s6) : m_label(label), m_s6(s6) {}
+      Tracker(const Tracker& t) : m_label(t.m_label), m_s6(t.m_s6) {}
+      Tracker& operator= (const Tracker& t) { m_label = t.m_label; m_s6 = t.m_s6; }
+      S6 GetVector(void) const { return m_s6; }
+      std::string GetLabel(void)const { return m_label; }
+
+      friend std::ostream& operator<< (std::ostream& o, const Tracker& tr) {
+         o << tr.m_label << "   " << tr.m_s6;
+         return o;
+      }
 
    private:
-  
+      std::string m_label;
+      S6 m_s6;
    };
 
    class TrackerHistory {
-      void Add(const Tracker& t) { m_vtrak.push_back(t); }
+   public:
+      TrackerHistory(void) { m_vtrak.reserve(200); }
+      void Add(const Tracker& t) {
+         m_vtrak.push_back(t);
+      }
+      Tracker GetItem(const unsigned long n) { return m_vtrak[n]; }
+
+      Tracker operator[] (const unsigned long n) { return m_vtrak[n]; }
+
+      size_t size() const { return m_vtrak.size(); }
+
+
+      friend std::ostream& operator<< (std::ostream& o, const TrackerHistory& th) {
+         for (unsigned long i = 0; i < th.m_vtrak.size(); ++i)
+            o << th.m_vtrak[i] << std::endl;
+         return o;
+      }
+
    
    private:
       std::vector<Tracker> m_vtrak;

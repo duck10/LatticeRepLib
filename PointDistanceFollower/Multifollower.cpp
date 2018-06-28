@@ -49,7 +49,6 @@ MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const
       if (mf.GetS6().HasSecondPath()) {
          double distance;
          for (unsigned long i = 0; i < path.size(); ++i) {
-            distance = s6dist.DistanceBetween(path[0].second, secondPath[i].second);
             if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
                distance = -1.0;
             else
