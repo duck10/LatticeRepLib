@@ -59,7 +59,8 @@ private:
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::list<std::string> FormatAllPointsAsPolyline( const std::vector<double>& distances,
-      const int lineWidth, const double minimumDistance, const double xscale, const double yscale,      const std::string& color)
+      const int lineWidth, const double minimumDistance, const double xscale, const double yscale,
+      const std::string& color, const std::string& dashMode)
       /*-------------------------------------------------------------------------------------*/
    {
       std::list<std::string> svg;
@@ -68,7 +69,7 @@ private:
          const std::vector<double>::const_iterator firstNegative = std::find_if(distances.begin(), distances.end(), IsNegative);
          const unsigned long lastPositiveIndex = (unsigned long)((firstNegative == distances.end()) ? xmax : firstNegative - distances.begin());
 
-         std::string s = LRL_ToString("   <polyline fill=\"none\" stroke=\"", color, "\" stroke-width=\"", lineWidth, "\" points=\" ");
+         std::string s = LRL_ToString("   <polyline fill=\"none\" stroke=\"", color, "\" stroke-width=\"", lineWidth, "\" stroke-dasharray = \"", dashMode, "\" points=\" ");
 
          std::vector<double>::const_iterator it = distances.begin();
          for (unsigned long i = 1; i <= lastPositiveIndex; ++i, ++it)
@@ -260,13 +261,14 @@ private:
       const double minimumDistance,
       const double xscale,
       const double yscale,
-      const std::string& color)
+      const std::string& color,
+      const std::string& dashMode)
       /*-------------------------------------------------------------------------------------*/
    {
       const enum eLineCondition eCondition = TestLine(distances);
       return
          (eCondition==eOnlyData || eCondition==eOneDataLineAndOneInvalid)
-         ? FormatAllPointsAsPolyline(distances, lineWidth, minimumDistance, xscale, yscale, color)
+         ? FormatAllPointsAsPolyline(distances, lineWidth, minimumDistance, xscale, yscale, color, dashMode)
          : FormatEachDatumAsSeparateLineSegment( distances, lineWidth, minimumDistance, xscale, yscale, color );
    }
 
@@ -296,10 +298,11 @@ private:
       const double minimumDistance,
       const double xscale,
       const double yscale,
-      const std::string& color)
+      const std::string& color,
+      const std::string& dashMode)
    {
       return DrawTheDistanceLine(FollowerConstants::globalPlotAllSegmentsAsBlack,
-         distances, lineWidth, minimumDistance, xscale, yscale, color); // keep g++ happy
+         distances, lineWidth, minimumDistance, xscale, yscale, color, dashMode); // keep g++ happy
    }
 
    std::list<std::string> DrawAllLines(const MultiFollower& multiFollow,
@@ -317,10 +320,10 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
       DistanceLineDescriptions lines(multiFollow.GetLineDescriptions());
       int lineWidth = 15;
       std::list<std::string> svg;
-      std::list<std::string> svgS6 = DrawOneDistanceLine(multiFollow.GetS6().GetDistances(), lines.GetLineWidth("S6"), minimumDistance, xscale, yscale, lines.GetColor("S6"));
-      std::list<std::string> svgG6 = DrawOneDistanceLine(multiFollow.GetG6().GetDistances(), lines.GetLineWidth("G6"), minimumDistance, xscale, yscale, lines.GetColor("G6"));
-      std::list<std::string> svgD7 = DrawOneDistanceLine(multiFollow.GetD7().GetDistances(), lines.GetLineWidth("D7"), minimumDistance, xscale, yscale, lines.GetColor("D7"));
-      std::list<std::string> svgCS = DrawOneDistanceLine(multiFollow.GetCS().GetDistances(), lines.GetLineWidth("CS"), minimumDistance, xscale, yscale, lines.GetColor("CS"));
+      std::list<std::string> svgS6 = DrawOneDistanceLine(multiFollow.GetS6().GetDistances(), lines.GetLineWidth("S6"), minimumDistance, xscale, yscale, lines.GetColor("S6"), lines.GetDashMode("S6"));
+      std::list<std::string> svgG6 = DrawOneDistanceLine(multiFollow.GetG6().GetDistances(), lines.GetLineWidth("G6"), minimumDistance, xscale, yscale, lines.GetColor("G6"), lines.GetDashMode("G6"));
+      std::list<std::string> svgD7 = DrawOneDistanceLine(multiFollow.GetD7().GetDistances(), lines.GetLineWidth("D7"), minimumDistance, xscale, yscale, lines.GetColor("D7"), lines.GetDashMode("D7"));
+      std::list<std::string> svgCS = DrawOneDistanceLine(multiFollow.GetCS().GetDistances(), lines.GetLineWidth("CS"), minimumDistance, xscale, yscale, lines.GetColor("CS"), lines.GetDashMode("CS"));
       svg.splice(svg.end(), svgS6);
       svg.splice(svg.end(), svgG6);
       svg.splice(svg.end(), svgD7);
