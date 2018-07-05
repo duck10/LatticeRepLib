@@ -199,6 +199,9 @@
     <ClInclude Include="CS6Dist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="V7Dist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

@@ -13,12 +13,15 @@
 #include "OutlierFinder.h"
 #include "S6.h"
 #include "S6Dist.h"
+#include "V7Dist.h"
 
 MultiFollower::MultiFollower(const std::vector<std::pair<S6, S6> > & inputPath, const std::vector<std::pair<S6, S6> >& secondPath)
    : m_s6path(inputPath, secondPath)
    , m_g6path(Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(inputPath), Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(secondPath))
    , m_d7path(Converter<D7, std::vector<std::pair<D7, D7> >, Delone>(inputPath), Converter<D7, std::vector<std::pair<D7, D7> >, Delone>(secondPath))
    , m_cspath(inputPath, secondPath)
+   , m_v7path(Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(inputPath), Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(secondPath))
+
 {
 }
 
@@ -36,6 +39,10 @@ LRL_Path<D7> MultiFollower::GetD7(void) const {
 
 LRL_Path<S6> MultiFollower::GetCS(void) const {
    return m_cspath;
+}
+
+LRL_Path<G6> MultiFollower::GetV7(void) const {
+   return m_v7path;
 }
 
 MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const {
@@ -103,6 +110,38 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
    return m;
 }
 
+MultiFollower MultiFollower::CalculateDistancesV7(const MultiFollower& mf) const {
+   MultiFollower m(mf);
+   G6 out;
+   std::vector<double> vdist;
+   const std::vector<std::pair<G6, G6> > path(mf.GetG6().GetPath());
+   const std::vector<std::pair<G6, G6> > secondPath(mf.GetG6().GetSecondPath());
+   if (!S6::IsInvalidPair(path[0])) {
+      if (mf.GetG6().HasSecondPath()) {
+         double distance;
+         for (unsigned long i = 0; i < path.size(); ++i) {
+            if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
+               distance = -1.0;
+            else
+               distance = V7Dist(path[0].second, secondPath[i].second);
+            vdist.push_back(distance);
+         }
+      }
+      else
+      {
+         if (path[0].second.IsValid()) {
+            for (unsigned long i = 0; i < path.size(); ++i) {
+               double distance = V7Dist(path[0].second, path[i].second);
+               if (S6::IsInvalidPair(path[i])) distance = -1.0;
+               vdist.push_back(distance);
+            }
+         }
+      }
+   }
+   m.SetDistancesV7(vdist);
+   return m;
+}
+
 MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const {
    MultiFollower m(mf);
    D7 out;
@@ -135,7 +174,7 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
    return m;
 }
 
-MultiFollower MultiFollower::CalculateDistancesCS( MultiFollower& mf)  {
+MultiFollower MultiFollower::CalculateDistancesCS( const MultiFollower& mf) const  {
    MultiFollower m(mf);
    S6 out;
    std::vector<double> vdist;
@@ -171,6 +210,14 @@ MultiFollower MultiFollower::GenerateAllDistances(void) {
    MultiFollower m(*this);
    m.SetComputeStartTime();
    {
+      m.m_v7path.SetComputeStartTime();
+      if (FollowerConstants::IsEnabled("V7")) m = CalculateDistancesV7(m);
+      const double computetimev7 = std::clock() - m.m_v7path.GetComputeStartTime();
+      m.m_v7path.SetTime2ComputeFrame(computetimev7);
+      m.SetComputeTime("V7", computetimev7);
+   }
+   {
+      //m.ComputeAndTimeOnePath(m.m_cspath, "CS", &MultiFollower::CalculateDistancesCS);
       m.m_cspath.SetComputeStartTime();
       if (FollowerConstants::IsEnabled("CS")) m = CalculateDistancesCS(m);
       const double computetimecs = std::clock() - m.m_cspath.GetComputeStartTime();
@@ -198,12 +245,20 @@ MultiFollower MultiFollower::GenerateAllDistances(void) {
       m.m_d7path.SetTime2ComputeFrame(computetimed7);
       m.SetComputeTime("D7", computetimed7);
    }
+   {
+      m.m_v7path.SetComputeStartTime();
+      if (FollowerConstants::IsEnabled("V7")) m = CalculateDistancesV7(m);
+      const double computetimev7 = std::clock() - m.m_v7path.GetComputeStartTime();
+      m.m_v7path.SetTime2ComputeFrame(computetimev7);
+      m.SetComputeTime("V7", computetimev7);
+   }
    m.SetTime2ComputeFrame(std::clock() - m.GetComputeStartTime());
 
    m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathS6().GetDistances()));
    m.GetPathG6().SetGlitches(m.DetermineOutliers(m.GetPathG6().GetDistances()));
    m.GetPathD7().SetGlitches(m.DetermineOutliers(m.GetPathD7().GetDistances()));
    m.GetPathCS().SetGlitches(m.DetermineOutliers(m.GetPathCS().GetDistances()));
+   m.GetPathV7().SetGlitches(m.DetermineOutliers(m.GetPathV7().GetDistances()));
 
    return m;
 }
@@ -257,9 +312,10 @@ std::pair<double, double> MultiFollower::GetMinMax(void) const {
    const std::pair<double, double> pG6 = GetPathMinMax(m_g6path);
    const std::pair<double, double> pD7 = GetPathMinMax(m_d7path);
    const std::pair<double, double> pCS = GetPathMinMax(m_cspath);
+   const std::pair<double, double> pV7 = GetPathMinMax(m_v7path);
 
-   const double minp = minNC(pS6.first, pG6.first, pD7.first, pCS.first);
-   const double maxp = maxNC(pS6.second, pG6.second, pD7.second, pCS.second);
+   const double minp = minNC(pS6.first, pG6.first, pD7.first, pCS.first, pV7.first);
+   const double maxp = maxNC(pS6.second, pG6.second, pD7.second, pCS.second, pV7.second);
    return std::make_pair(minp, maxp);
 }
 
