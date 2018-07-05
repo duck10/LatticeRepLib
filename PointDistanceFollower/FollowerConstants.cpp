@@ -31,7 +31,7 @@ namespace {
    std::vector<std::string> FollowerConstants::globalDistanceEnableList{ "S6", "CS" };
    std::string globalDistanceDisable = "";
 
-   double SVG_WriterConstants::globalGraphSpace  = 900; // px
+   double SVG_WriterConstants::globalGraphSpace  = 975; // px
    double SVG_WriterConstants::globalGraphBorder = 100; // px
    double SVG_WriterConstants::globalPlotSpace   = SVG_WriterConstants::globalGraphSpace - 2*SVG_WriterConstants::globalGraphBorder;
 

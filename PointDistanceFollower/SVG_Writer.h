@@ -95,7 +95,9 @@ private:
       const std::string svgd7 = WriteOneLineDescription("D7", y_pos);
       if (!svgd7.empty()) y_pos += y_delta;
       const std::string svgcs = WriteOneLineDescription("CS", y_pos);
-      return svgs6 + svgg6 + svgd7 + svgcs; 
+      if (!svgcs.empty()) y_pos += y_delta;
+      const std::string svgv7 = WriteOneLineDescription("V7", y_pos);
+      return svgs6 + svgg6 + svgd7 + svgcs + svgv7;
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
