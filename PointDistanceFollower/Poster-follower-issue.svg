@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- the width and height set the total pixel output of the image in the browser -->
+
+<!-- whatever is within the viewbox will be remapped to show in this size -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="900"
+   height="900"
+   viewBox="1 0 900 900"
+   version="1.1"
+   id="svg5048"
+   sodipodi:docname="Poster-follower-issue.svg"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
+  <metadata
+     id="metadata5054">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs5052">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5392">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5388" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop5390" />
+    </linearGradient>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5374"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5372"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker5370"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5368"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path5071"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path5068"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5392"
+       id="radialGradient5396"
+       cx="432.47461"
+       cy="368.47266"
+       fx="432.47461"
+       fy="368.47266"
+       r="171.48438"
+       gradientTransform="matrix(1,0,0,0.11287016,0,326.88309)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview5050"
+     showgrid="false"
+     inkscape:zoom="0.94444444"
+     inkscape:cx="400.23529"
+     inkscape:cy="450"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5048" />
+  <!--DISTANCE PLOT BEGINS   mode = Single Point-->
+  <!-- the following will scale and place the distance plot -->
+  <g
+     transform="translate(0, 50) "
+     id="g5046">
+    <g
+       transform="translate(150,700) scale(1 -1)"
+       id="g5044"><polyline
+   fill="none"
+   stroke=" black "
+   stroke-width="8"
+   points=" 5.94059,0 11.8812,23.6083 17.8218,47.2167 23.7624,70.825 29.703,85.5828 35.6436,95.9811 41.5842,107.417 47.5248,119.595 53.4653,132.308 59.4059,145.417 65.3465,158.824 71.2871,172.459 77.2277,176.391 83.1683,175.031 89.1089,174.918 95.0495,176.053 100.99,178.414 106.931,181.951 112.871,186.6 118.812,184.345 124.752,182.61 130.693,182.067 136.634,182.725 142.574,181.619 148.515,179.105 154.455,177.791 160.396,177.705 166.337,178.849 172.277,181.198 178.218,184.707 184.158,189.312 190.099,194.934 196.04,201.49 201.98,208.89 207.921,209.051 213.861,211.135 219.802,214.427 225.743,218.297 231.683,222.716 237.624,225.232 243.564,226.067 249.505,225.353 255.446,222.589 261.386,220.172 267.327,217.489 273.267,212.426 279.208,207.644 285.149,203.165 291.089,199.008 297.03,195.194 302.97,191.743 308.911,188.676 314.851,186.012 320.792,183.767 326.733,181.958 332.673,180.597 338.614,179.695 344.554,179.258 350.495,179.291 356.436,179.792 362.376,180.758 368.317,182.182 374.257,184.053 380.198,186.221 386.139,188.56 392.079,191.311 398.02,194.455 403.96,197.976 409.901,199.539 415.842,194.067 421.782,188.882 427.723,184.008 433.663,179.472 439.604,175.298 445.545,171.515 451.485,168.147 457.426,165.221 463.366,162.76 469.307,160.075 475.248,153.32 481.188,146.827 487.129,140.634 493.069,134.78 499.01,129.313 504.95,124.284 510.891,119.748 516.832,115.762 522.772,110.097 528.713,100.922 534.653,91.7476 540.594,82.5728 546.535,73.3981 552.475,64.2233 558.416,55.0485 564.356,45.8738 570.297,36.699 576.238,27.5243 582.178,18.3495 588.119,9.17476 594.059,0 "
+   id="polyline4984" />
+<polyline
+   fill="none"
+   stroke=" black "
+   stroke-width="8"
+   points=" 5.94059,0 11.8812,50.0922 17.8218,100.184 23.7624,150.276 29.703,200.369 35.6436,245.633 41.5842,268.89 47.5248,292.464 53.4653,316.617 59.4059,339.98 65.3465,364.17 71.2871,389.437 77.2277,415.584 83.1683,410.397 89.1089,423.614 95.0495,437.224 100.99,446.639 106.931,456.366 112.871,463.325 118.812,471.687 124.752,466.601 130.693,462.055 136.634,458.249 142.574,455.202 148.515,452.928 154.455,451.439 160.396,450.744 166.337,450.846 172.277,452.099 178.218,454.292 184.158,457.261 190.099,460.991 196.04,465.464 201.98,470.66 207.921,474.443 213.861,479.457 219.802,486.252 225.743,489.691 231.683,489.477 237.624,484.186 243.564,477.131 249.505,475.433 255.446,477.212 261.386,472.52 267.327,465.597 273.267,456.136 279.208,447.02 285.149,438.268 291.089,429.904 297.03,421.951 302.97,414.433 308.911,407.373 314.851,400.795 320.792,394.725 326.733,389.185 332.673,384.199 338.614,379.788 344.554,375.972 350.495,372.771 356.436,370.199 362.376,368.27 368.317,410.145 374.257,409.372 380.198,409.309 386.139,409.956 392.079,411.309 398.02,370.599 403.96,373.383 409.901,376.78 415.842,379.574 421.782,382.024 427.723,385.09 433.663,388.758 439.604,393.011 445.545,397.831 451.485,403.196 457.426,409.086 463.366,415.478 469.307,422.349 475.248,412.577 481.188,404.097 487.129,394.27 493.069,379.373 499.01,357.54 504.95,335.851 510.891,314.336 516.832,293.033 522.772,271.993 528.713,251.28 534.653,229.141 540.594,206.227 546.535,183.313 552.475,160.399 558.416,137.485 564.356,114.57 570.297,91.6564 576.238,68.7423 582.178,45.8282 588.119,22.9141 594.059,0 "
+   id="polyline4986" />
+<!--Draw the X and Y axes -->
+<polyline
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   points=" 600,0 0,0 0, 600"
+   id="polyline4988" />
+<polyline
+   fill="none"
+   stroke="black"
+   stroke-width="1"
+   points=" 0 600  600 600  600 0"
+   id="polyline4990" />
+<!-- -->
+<!--Draw labels and tics for X axis -->
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="0.5"
+   y1="0"
+   x2="0.5"
+   y2="-20"
+   id="line4992" />
+<text
+   transform="scale(1,-1)"
+   font-family="sans-serif"
+   font-size="30"
+   x="-24.5"
+   y="45"
+   id="text4994">0</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="119.312"
+   y1="0"
+   x2="119.312"
+   y2="-20"
+   id="line4996" />
+<text
+   transform="scale(1,-1)"
+   font-family="sans-serif"
+   font-size="30"
+   x="94.3119"
+   y="45"
+   id="text4998">20</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="238.124"
+   y1="0"
+   x2="238.124"
+   y2="-20"
+   id="line5000" />
+<text
+   transform="scale(1,-1)"
+   font-family="sans-serif"
+   font-size="30"
+   x="213.124"
+   y="45"
+   id="text5002">40</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="356.936"
+   y1="0"
+   x2="356.936"
+   y2="-20"
+   id="line5004" />
+<text
+   transform="scale(1,-1)"
+   font-family="sans-serif"
+   font-size="30"
+   x="331.936"
+   y="45"
+   id="text5006">60</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="475.748"
+   y1="0"
+   x2="475.748"
+   y2="-20"
+   id="line5008" />
+<text
+   transform="scale(1,-1)"
+   font-family="sans-serif"
+   font-size="30"
+   x="450.748"
+   y="45"
+   id="text5010">80</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="594.559"
+   y1="0"
+   x2="594.559"
+   y2="-20"
+   id="line5012" />
+<text
+   transform="scale(1,-1)"
+   font-family="sans-serif"
+   font-size="30"
+   x="569.559"
+   y="45"
+   id="text5014">100</text>
+<!--Draw labels and tics for Y axis -->
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="0.0"
+   y1="0"
+   x2="-20"
+   y2="0"
+   id="line5016" />
+<text
+   transform="scale(1,-1)"
+   text-anchor="end"
+   font-family="sans-serif"
+   font-size="30"
+   x="-25"
+   y="10"
+   id="text5018">0</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="0.0"
+   y1="100"
+   x2="-20"
+   y2="100"
+   id="line5020" />
+<text
+   transform="scale(1,-1)"
+   text-anchor="end"
+   font-family="sans-serif"
+   font-size="30"
+   x="-25"
+   y="-90"
+   id="text5022">5</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="0.0"
+   y1="200"
+   x2="-20"
+   y2="200"
+   id="line5024" />
+<text
+   transform="scale(1,-1)"
+   text-anchor="end"
+   font-family="sans-serif"
+   font-size="30"
+   x="-25"
+   y="-190"
+   id="text5026">10</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="0.0"
+   y1="300"
+   x2="-20"
+   y2="300"
+   id="line5028" />
+<text
+   transform="scale(1,-1)"
+   text-anchor="end"
+   font-family="sans-serif"
+   font-size="30"
+   x="-25"
+   y="-290"
+   id="text5030">15</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="0.0"
+   y1="400"
+   x2="-20"
+   y2="400"
+   id="line5032" />
+<text
+   transform="scale(1,-1)"
+   text-anchor="end"
+   font-family="sans-serif"
+   font-size="30"
+   x="-25"
+   y="-390"
+   id="text5034">20</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="0.0"
+   y1="500"
+   x2="-20"
+   y2="500"
+   id="line5036" />
+<text
+   transform="scale(1,-1)"
+   text-anchor="end"
+   font-family="sans-serif"
+   font-size="30"
+   x="-25"
+   y="-490"
+   id="text5038">25</text>
+<line
+   fill="none"
+   stroke="black"
+   stroke-width="6"
+   x1="0.0"
+   y1="600"
+   x2="-20"
+   y2="600"
+   id="line5040" />
+<text
+   transform="scale(1,-1)"
+   text-anchor="end"
+   font-family="sans-serif"
+   font-size="30"
+   x="-25"
+   y="-590"
+   id="text5042">30</text>
+
+
+--&gt;
+</g>
+  </g>
+  <!-- Run Constants
+PRINTDISTANCEDATA bool true
+GLITCHESONLY bool false
+PLOT 2doubles 3 4
+PERTURBBY double 0.05
+GLITCHLEVEL double 3
+BOUNDARYWINDOW double 0.065
+FRAMESPERPATH int 200
+STEPSPERFRAME int 100
+TRIALS int 30
+ALLBLACK bool true
+FILEPREFIX string POINT
+GRAPHSIZE int 0
+BORDER int 0
+PLOTSIZE int 0
+G6LINEWIDTH int 3
+DELONELINEWIDTH int 10
+AXISWIDTH int 6
+TICLENGTH int 20
+VECTOR g6 
+FOLLOWERMODE FollowerMode point
+FIXRANDOMSEED fixRandomSeed false
+RANDOMSEED int 19191
+TIMESTAMP bool true
+END end 
+
+
+
+
+-->
+  <path
+     style="fill:none;stroke:#000000;stroke-width:2.67398858;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker5374)"
+     d="M 601.02181,218.40978 547.99375,326.88697"
+     id="path5366"
+     inkscape:connector-curvature="0" />
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot5376"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     transform="translate(1)"><flowRegion
+       id="flowRegion5378"><rect
+         id="rect5380"
+         width="243.52942"
+         height="42.35294"
+         x="265.76471"
+         y="586.58826" /></flowRegion><flowPara
+       id="flowPara5382">Good </flowPara></flowRoot>  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     x="318.64703"
+     y="614.11768"
+     id="text5386"><tspan
+       sodipodi:role="line"
+       id="tspan5384"
+       x="318.64703"
+       y="614.11768">Good curve</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     x="383.47128"
+     y="208.6768"
+     id="text5386-6"><tspan
+       sodipodi:role="line"
+       id="tspan5384-1"
+       x="383.47128"
+       y="208.6768">Suspicious points</tspan></text>
+</svg>
