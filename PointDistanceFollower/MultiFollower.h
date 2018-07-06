@@ -27,20 +27,24 @@ public:
    LRL_Path<G6> GetG6(void) const;
    LRL_Path<D7> GetD7(void) const;
    LRL_Path<S6> GetCS(void) const;
+   LRL_Path<G6> GetV7(void) const;
 
    MultiFollower CalculateDistancesS6(const MultiFollower& mf) const;
    MultiFollower CalculateDistancesG6(const MultiFollower& mf) const;
    MultiFollower CalculateDistancesD7(const MultiFollower& mf) const;
-   MultiFollower CalculateDistancesCS(MultiFollower& mf) ;
+   MultiFollower CalculateDistancesCS(const MultiFollower& mf) const;
+   MultiFollower CalculateDistancesV7(const MultiFollower& mf) const;
    MultiFollower GenerateAllDistances(void);
    void SetDistancesS6(const std::vector<double>& v) { m_s6path.SetDistances(v); }
    void SetDistancesG6(const std::vector<double>& v) { m_g6path.SetDistances(v); }
    void SetDistancesD7(const std::vector<double>& v) { m_d7path.SetDistances(v); }
    void SetDistancesCS(const std::vector<double>& v) { m_cspath.SetDistances(v); }
+   void SetDistancesV7(const std::vector<double>& v) { m_v7path.SetDistances(v); }
    LRL_Path<S6>& GetPathS6(void) { return m_s6path; }
    LRL_Path<G6>& GetPathG6(void) { return m_g6path; }
    LRL_Path<D7>& GetPathD7(void) { return m_d7path; }
    LRL_Path<S6>& GetPathCS(void) { return m_cspath; }
+   LRL_Path<G6>& GetPathV7(void) { return m_v7path; }
    std::pair<double, double> GetMinMax(void) const;
    unsigned long size(void)const { return maxNC(m_s6path.size(), m_g6path.size(), m_d7path.size(), m_cspath.size()); }
    const double GetTime2ComputerFrame(void) const;
@@ -60,6 +64,7 @@ private:
    LRL_Path<G6>  m_g6path;
    LRL_Path<D7>  m_d7path;
    LRL_Path<S6> m_cspath;
+   LRL_Path<G6> m_v7path;
    std::clock_t m_ComputeStartTime;
    double m_seconds2ComputerFrame;
    std::set<unsigned long> m_glitches;
@@ -83,6 +88,17 @@ private:
    const std::vector<unsigned long> DetermineIfSomeDeltaIsTooLarge(const LRL_Path<TVEC>& path) {
       return(DetermineIfSomeDeltaIsTooLarge(path.GetDistances()));
    }
+
+
+   //template<typename T>
+   //void ComputeAndTimeOnePath(T& path, const std::string& name, MultiFollower (*)(MultiFollower&)const calc){}
+   //   //MultiFollower m(*this);
+   //   //path.SetComputeStartTime();
+   //   //if (FollowerConstants::IsEnabled(name)) m = calc(m);
+   //   //const double computetime = std::clock() - path.GetComputeStartTime();
+   //   //path.SetTime2ComputeFrame(computetime);
+   //   //(*this).SetComputeTime(name, computetime);
+   ////}
 
 };
 

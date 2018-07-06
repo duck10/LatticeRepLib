@@ -359,7 +359,7 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    voutside.push_back(s2);
    vinside = Insert(vinside, (Create_VCP_s(s1)));
    voutside = Insert(voutside, ((Generate24Reflections((Create_VCP_s(s2))))));
-   voutside = Insert(voutside, ((Generate24Reflections((CreateSecondBoundary_VCP_s(s2))))));
+   //voutside = Insert(voutside, ((Generate24Reflections((CreateSecondBoundary_VCP_s(s2))))));
    const std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
    m_dmin = std::min(m_dmin, p.first);
 
