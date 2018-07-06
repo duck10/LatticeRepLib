@@ -217,6 +217,7 @@
     <ClInclude Include="LRL_ReadLatticeData.h" />
     <ClInclude Include="Niggli.h" />
     <ClInclude Include="Selling.h" />
+    <ClInclude Include="V7Dist.h" />
     <ClInclude Include="VecN.h" />
   </ItemGroup>
   <ItemGroup>
