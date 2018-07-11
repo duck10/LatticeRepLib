@@ -2,9 +2,11 @@
 
 
 #include "LRL_Cell.h"
+#include "LRL_ToString.h"
 #include "MatG6.h"
 #include "Niggli.h"
-#include "LRL_ToString.h"
+#include "S6.h"
+#include "Selling.h"
 
 #include <cfloat>
 #include <cmath>
@@ -330,9 +332,16 @@ const MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1
    Reporter( sptext2, vin, vout, mat );
 }  // end MKnorm
 
-bool Niggli::Reduce( const G6& vi, G6& vout ) {
-   MatG6 m;
-   return Niggli::Reduce(vi, m, vout, 0.0);
+bool Niggli::Reduce(const G6& vi, G6& vout) {
+   S6 s6out;
+   const bool b = Selling::Reduce(S6(vi), s6out);
+   if (!b) {
+      return false;
+   }
+   else {
+      MatG6 m;
+      return Niggli::Reduce(G6(s6out), m, vout, 0.0);
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -350,35 +359,35 @@ bool Niggli::Reduce( const G6& vi, MatG6& m, G6& vout, const double delta )
 // These are the matrices that can be used to convert a vector to standard
 // presentation. They are used in MKnorm. There are NO OTHER POSSIBILITIES.
 // The numbering is from Andrews and Bernstein, 1988
-   const static MatG6 spnull( "1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1" );
+   const static MatG6 spnull("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1");
 
-   const static MatG6 sp1( "0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1" );
-   const static MatG6 sp2( "1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0" );
-
-
-   const static MatG6 sp34a( "1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1 0 0 0 0 0 0  1" );
-   const static MatG6 sp34b( "1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0  1 0 0 0 0 0 0 -1" );
-   const static MatG6 sp34c( "1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0  1 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1" );
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   const static MatG6 sp1("0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1");
+   const static MatG6 sp2("1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0");
 
 
-const MatG6 R5_Plus  (" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 -1 0 0   0 -2 0 1 0 0   0 0 0 0 1 -1   0 0 0 0 0 1");
-const MatG6 R5_Minus (" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 +1 0 0   0 +2 0 1 0 0   0 0 0 0 1 +1   0 0 0 0 0 1");
-const MatG6 R6_Plus  (" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 -1 0   0 0 0 1 0 -1   -2 0 0 0 1 0   0 0 0 0 0 1");
-const MatG6 R6_Minus (" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 +1 0   0 0 0 1 0 +1   +2 0 0 0 1 0   0 0 0 0 0 1"); 
-const MatG6 R7_Plus  (" 1 0 0 0 0 0   1 1 0 0 0 -1   0 0 1 0 0 0   0 0 0 1 -1 0   0 0 0 0 1 0   -2 0 0 0 0 1");
-const MatG6 R7_Minus (" 1 0 0 0 0 0   1 1 0 0 0 +1   0 0 1 0 0 0   0 0 0 1 +1 0   0 0 0 0 1 0   +2 0 0 0 0 1");
-const MatG6 R8       (" 1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 2 0 1 0 1   2 0 0 0 1 1    0 0 0 0 0 1");
-const MatG6 R9_Plus(R5_Plus);
-const MatG6 R9_Minus(R5_Minus);
-const MatG6 R10_Plus(R6_Plus);
-const MatG6 R10_Minus(R6_Minus);
-const MatG6 R11_Plus(R7_Plus);
-const MatG6 R11_Minus(R7_Minus);
-//const MatG6 R12(R8);
-const MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
+   const static MatG6 sp34a("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1 0 0 0 0 0 0  1");
+   const static MatG6 sp34b("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0  1 0 0 0 0 0 0 -1");
+   const static MatG6 sp34c("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0  1 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1");
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+
+   const MatG6 R5_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 -1 0 0   0 -2 0 1 0 0   0 0 0 0 1 -1   0 0 0 0 0 1");
+   const MatG6 R5_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 +1 0 0   0 +2 0 1 0 0   0 0 0 0 1 +1   0 0 0 0 0 1");
+   const MatG6 R6_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 -1 0   0 0 0 1 0 -1   -2 0 0 0 1 0   0 0 0 0 0 1");
+   const MatG6 R6_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 +1 0   0 0 0 1 0 +1   +2 0 0 0 1 0   0 0 0 0 0 1");
+   const MatG6 R7_Plus(" 1 0 0 0 0 0   1 1 0 0 0 -1   0 0 1 0 0 0   0 0 0 1 -1 0   0 0 0 0 1 0   -2 0 0 0 0 1");
+   const MatG6 R7_Minus(" 1 0 0 0 0 0   1 1 0 0 0 +1   0 0 1 0 0 0   0 0 0 1 +1 0   0 0 0 0 1 0   +2 0 0 0 0 1");
+   const MatG6 R8(" 1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 2 0 1 0 1   2 0 0 0 1 1    0 0 0 0 0 1");
+   const MatG6 R9_Plus(R5_Plus);
+   const MatG6 R9_Minus(R5_Minus);
+   const MatG6 R10_Plus(R6_Plus);
+   const MatG6 R10_Minus(R6_Minus);
+   const MatG6 R11_Plus(R7_Plus);
+   const MatG6 R11_Minus(R7_Minus);
+   //const MatG6 R12(R8);
+   const MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
    G6 vin;
    MatG6 m1;
    int ncycle = 0;
