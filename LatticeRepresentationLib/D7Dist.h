@@ -11,7 +11,7 @@
 
 
 /* #define D7DIST_DEBUG */
-/* #define D7DIST_NO_OUTER_PASS */
+ #define D7DIST_NO_OUTER_PASS 
 
 #pragma warning( disable : 4100) //  unreferenced formal parameter
 #pragma warning( disable : 4505) // unreferenced local function has been removed

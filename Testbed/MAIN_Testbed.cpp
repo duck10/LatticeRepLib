@@ -3,6 +3,7 @@
 
 //#include "stdafx.h"
 
+#include "Allman.h"
 #include "B4.h"
 #include "CS6Dist.h"
 #include "LRL_CreateFileName.h"
@@ -28,6 +29,7 @@
 #include "TNear.h"
 #include "LRL_Vector3.h"
 
+#include <ctime>
 #include <functional>
 
 
@@ -724,9 +726,114 @@ void TestReflVCP() {
    exit(0);
 }
 
+void TestSellingTiming(const std::vector<S6>& testData) {
+
+   for ( unsigned long i=0; i<testData.size(); ++i ) {
+      S6 s6out;
+      Selling::Reduce(testData[i], s6out);
+   }
+   std::cout << "Selling timing ";
+}
+
+void TestNiggliTiming(const std::vector<G6>& testData) {
+   for (unsigned long i = 0; i<testData.size(); ++i) {
+      G6 g6out;
+      Niggli::Reduce(testData[i], g6out);
+   }
+   std::cout << "Niggli timing ";
+}
+
+template<typename T>
+void Timer(void test(const std::vector<T>& )) {
+   auto start = std::clock();
+   std::cout << "Reduced Input ";
+   test(v);
+   std::cout << std::clock() - start << " msec" << std::endl;
+}
+
+void CheckReduceAndDistanceTiming() {
+   const unsigned long nReduceSamples = 1000;
+   std::cout << "number of test samples " << nReduceSamples << std::endl;
+   int seed(19191);
+   GenerateRandomLattice<G6> grl(seed);
+   {
+      std::vector<S6> testDataS6;
+      for (unsigned long i = 0; i < nReduceSamples; ++i) {
+         testDataS6.push_back(grl.randSellingReduced());
+      }
+
+      auto start = std::clock();
+      std::cout << "Reduced Input ";
+      TestSellingTiming(testDataS6);
+      std::cout << std::clock() - start << " msec" << std::endl;
+
+      std::vector<G6> g6testData;
+      for (unsigned long i = 0; i < nReduceSamples; ++i) {
+         G6 g6out;
+         Niggli::Reduce(testDataS6[i], g6out);
+         g6testData.push_back(G6(g6out));
+      }
+      start = std::clock();
+      std::cout << "Reduced Input ";
+      TestNiggliTiming(g6testData);
+      std::cout << std::clock() - start << " msec" << std::endl;
+   }
+
+   //----------------------------------
+   {
+      std::vector<S6>testDataS6;
+      for (unsigned long i = 0; i < nReduceSamples; ++i) {
+         testDataS6.push_back(grl.GenerateExtreme());
+      }
+
+      auto start = std::clock();
+      std::cout << "NOT Reduced Input ";
+      TestSellingTiming(testDataS6);
+      std::cout << std::clock() - start << " msec" << std::endl;
+
+      std::vector<G6> g6testData;
+      for (unsigned long i = 0; i < nReduceSamples; ++i) {
+         G6 g6out;
+         g6testData.push_back(G6(testDataS6[i]));
+      }
+
+      start = std::clock();
+      std::cout << "NOT Reduced Input ";
+      TestNiggliTiming(g6testData);
+      std::cout << std::clock() - start << " msec" << std::endl;
+   }
+   exit(0);
+}
+
+void LookAtReductions() {
+   int seed(19191);
+   GenerateRandomLattice<G6> grl(seed);
+   S6 test;
+   S6 s6out;
+   G6 g6out;
+   S6 deout;
+   const unsigned long nReduceSamples = 10;
+   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+      test = grl.GenerateExtreme();
+      Selling::Reduce(test, s6out);
+      Delone::Reduce(test, deout);
+      Niggli::Reduce(G6(test), g6out);
+
+      std::cout << "input (extreme) " << LRL_Cell_Degrees(test) << std::endl;
+      std::cout << "Niggli reduced " << LRL_Cell_Degrees(g6out) << std::endl;
+      std::cout << "Selling reduced " << LRL_Cell_Degrees(s6out) << std::endl;
+      std::cout << "Delone reduced " << LRL_Cell_Degrees(deout) << std::endl;
+      std::cout << "Allman " << LRL_Cell_Degrees(Allman::Reduce(g6out)) << std::endl << std::endl;
+   }
+   exit(0);
+}
 
 int main(int argc, char *argv[])
 {
+   S6 out;
+   Allman::ReduceS6ToNiggli(S6::rand(), out);
+   LookAtReductions();
+   CheckReduceAndDistanceTiming();
    TestReflVCP();
    //TestCS_Reflections();
    TestCS6Dist4();

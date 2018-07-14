@@ -125,7 +125,7 @@ VecN MatMN::operator*( const VecN& v ) const {
 MatMN MatMN::inverse( void ) const {
    MatMN I( ( *this ).GetRowDim( ), ( *this ).GetColDim( ) );
    if ( ( *this ).GetRowDim( ) != ( *this ).GetColDim( ) ) throw "inverse requires square matrix";
-
+   throw;
    return I;
 }
 
