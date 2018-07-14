@@ -333,14 +333,14 @@ const MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1
 }  // end MKnorm
 
 bool Niggli::Reduce(const G6& vi, G6& vout) {
-   S6 s6out;
-   const bool b = Selling::Reduce(S6(vi), s6out);
+ /*   S6 s6out;
+  const bool b = Selling::Reduce(S6(vi), s6out);
    if (!b) {
       return false;
    }
-   else {
+   else*/ {
       MatG6 m;
-      return Niggli::Reduce(G6(s6out), m, vout, 0.0);
+      return Niggli::Reduce(vi, m, vout, 0.0);
    }
 }
 

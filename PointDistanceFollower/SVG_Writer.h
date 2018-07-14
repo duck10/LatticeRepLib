@@ -105,7 +105,7 @@ private:
       m_svg.push_back( "<?xml version=\"1.0\" standalone=\"no\"?>" );
       SVG_HeaderBoilerplate( sFileName );
 
-       m_svg.push_back(" <text x=\"140\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" >" + sFileName +
+       m_svg.push_back(" <text x=\"200\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" >" + sFileName +
        "  &#160;&#160;&#160;&#160;&#160; Wall time passed: "
           + LRL_ToString(m_computeTime)
           + " msec.</text>");
@@ -140,7 +140,7 @@ private:
 
       const double& width = SVG_WriterConstants::globalGraphSpace;
       m_svg.push_back( "<svg width=\"" + LRL_ToString(scaleFactor *width) + "\" height=\"" + LRL_ToString(scaleFactor * width) +
-         "\" viewBox=\"1 0" + LRL_ToString(scaleFactor*width, scaleFactor*width) +
+         "\" viewBox=\"1 0  " + LRL_ToString(scaleFactor*width*1.2, scaleFactor*width*1.2) +
          "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
       m_svg.push_back( " <desc>ID (and file name) = " + sFileName + "  mode = " + ReadGlobalData::GetFollowerMode() + " </desc> " );
 

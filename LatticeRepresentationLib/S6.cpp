@@ -115,6 +115,8 @@ S6::S6( const B4& del )
    s = a.Dot(d);
    t = b.Dot(d);
    u = c.Dot(d);
+
+   m_valid = IsValid();
 }
 
 S6::S6(const VecN& v)
