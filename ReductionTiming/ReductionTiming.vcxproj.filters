@@ -11,15 +11,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Pattlv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Pattlv.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MAIN_PatLv_Reduction.cpp">
+    <ClCompile Include="MAIN_ReductionTiming.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

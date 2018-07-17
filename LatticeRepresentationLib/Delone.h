@@ -38,7 +38,9 @@ public:
    }
 
    static bool Reduce(const S6& d, MatS6& m, S6& dd, const double delta);
+   static bool Reduce(const S6& d, S6& dd, const bool sellingFirst);
    static bool Reduce(const S6& d, S6& dd);
+   static bool Reduce(const D7& d, D7& dd, const bool sellingFirst);
    static bool Reduce(const D7& d, D7& dd);
    static bool Reduce(const S6& d, MatS6& m, S6& dd);
    static D7 sort(const D7& d, MatD7& m);

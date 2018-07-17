@@ -34,6 +34,8 @@ namespace FollowerConstants {
 
    extern std::string globalFileNamePrefix;
 
+   extern bool NiggliSellingFirst;
+
    static bool IsEnabled(const std::string& s){
       return std::find(globalDistanceEnableList.begin(), globalDistanceEnableList.end(), s) != globalDistanceEnableList.end(); 
    }

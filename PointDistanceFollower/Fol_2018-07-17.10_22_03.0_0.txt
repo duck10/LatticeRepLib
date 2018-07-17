@@ -1,8 +1,8 @@
-PointDistanceFollower   Jul 14 2018   mode =  Single Point 
-Fol_2018-07-14.14_53_06.0_0.txt      Output is S6 probe cell, C3 reduced cell,  S6Dist NCDist D7Dist CS6Dist  distance between 
-Compute times (msec)     S6Dist   232   NCDist   1516   D7Dist   789   CS6Dist  14
-PointDistanceFollower  Jul 14 2018  mode = Single Point
-Fol_2018-07-14.14_53_06.0_0.txt     Output is S6 probe cell, C3 reduced cell, S6Dist NCDist D7Dist CS6Dist distance between
+PointDistanceFollower   Jul 16 2018   mode =  Single Point 
+Fol_2018-07-17.10_22_03.0_0.txt      Output is S6 probe cell, C3 reduced cell,  S6Dist NCDist D7Dist CS6Dist  distance between 
+Compute times (msec)     S6Dist   310   NCDist   1488   D7Dist   699   CS6Dist  9
+PointDistanceFollower  Jul 16 2018  mode = Single Point
+Fol_2018-07-17.10_22_03.0_0.txt     Output is S6 probe cell, C3 reduced cell, S6Dist NCDist D7Dist CS6Dist distance between
 0      2.16690 -48.48302 -41.18252  -1.70611  -8.53307  -0.42177     (-44.571,-2.128) (-0.422,-37.270) (-8.111,-1.745)      0  0  2.6974e-06  0  
 1      1.69480 -47.99755 -40.84847  -1.71037  -8.82335  -0.43514     (-45.043,-2.146) (-0.435,-37.894) (-8.388,-1.260)      0.961507  1.03136  1.88006  0.961507  
 2      1.22270 -47.51209 -40.51441  -1.71463  -9.11362  -0.44850     (-45.515,-2.163) (-0.449,-38.518) (-8.665,-0.774)      1.92301  2.06273  3.76012  1.92301  
