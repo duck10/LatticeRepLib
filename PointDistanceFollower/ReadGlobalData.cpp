@@ -259,7 +259,7 @@ const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure
    v.push_back( ParseData( LRL_StringTools::strToupper( "AllBlack" ),     "bool", (void*)&FollowerConstants::globalPlotAllSegmentsAsBlack ) );
 
    v.push_back( ParseData( LRL_StringTools::strToupper( "FilePrefix" ),   "string", (void*)&FollowerConstants::globalFileNamePrefix ) );
-
+   v.push_back(ParseData(LRL_StringTools::strToupper("NiggliSellingFirst"), "bool", (void*)&FollowerConstants::NiggliSellingFirst ) );
 
 
    v.push_back(ParseData(LRL_StringTools::strToupper("Enable"), "DistanceEnableString", (void*)&FollowerConstants::globalDistanceEnableList));

@@ -81,10 +81,11 @@ MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const
 MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const {
    MultiFollower m(mf);
    G6 out;
+
    std::vector<double> vdist;
    const std::vector<std::pair<G6, G6> > path(mf.GetG6().GetPath());
    const std::vector<std::pair<G6, G6> > secondPath(mf.GetG6().GetSecondPath());
-   if (!S6::IsInvalidPair(path[0])) {
+   /*if (!S6::IsInvalidPair(path[0]))*/ {
       if (mf.GetG6().HasSecondPath()) {
          double distance;
          for (unsigned long i = 0; i < path.size(); ++i) {
@@ -97,7 +98,8 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
       }
       else
       {
-         if (path[0].second.IsValid()) {
+
+         /*if (path[0].second.IsValid())*/ {
             for (unsigned long i = 0; i < path.size(); ++i) {
                double distance = NCDist(path[0].second.data(), path[i].second.data());
                if (S6::IsInvalidPair(path[i])) distance = -1.0;

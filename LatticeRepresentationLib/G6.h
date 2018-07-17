@@ -100,3 +100,34 @@ private:
 
 #endif
 
+/*
+Niggli reduction consists of converting the original cell to a primitive one and then
+alternately applying two operations: conversion to standard presentation and reduction [?]
+[?, Table 1]. The convention for meeting the combined Buerger and Niggli conditions is
+based on increasingly restrictive layers of constraints:
+If g1 < g2 < g3, |g4| < g2, |g5| < g1, |g6| < g1 and either g{4,5,6} > 0 or g{4,5,6}<=0 then
+we have a Niggli-reduced cell, and we are done.
+The remaining conditions are imposed when any of the above inequalities becomes
+an equality or the elements of gf4;5;6g are not consistently all strictly positive or are not
+consistently all less than or equal to zero.
+The full set of combined Buerger and Niggli conditions in addition to those for the cell
+edge lengths being minimal is:
+
+require 0<=g1<=g2<=g3
+if g2 = g3; then require |g5|<=|g6|
+require g4 > 0 and g5 > 0 and g6 > 0
+or require g4<=0 and g5<=0 and g6<=0
+require |g4|<=g2
+require |g5|<=g1
+require |g6|<=g1
+require |g3|<=g1 + g2 + g3 + g4 + g5 + g6
+if g4 = g2; then require g6<=2g5
+if g5 = g1; then require g6<=2g4
+if g6 = g1; then require g5<=2g4
+if g4 = g2; then require g6 = 0
+if g5 = g1; then require g6 = 0
+if g6 = g1; then require g5 = 0
+if g3 = g1 + g2 + g3 + g4 + g5 + g6; then require 2g1 + 2g5 + g6<=0
+The G6 transformations associated with each of these steps are enumerated in [?]. Appli-
+cation of these operations must be repeated until all are satisfed.
+*/

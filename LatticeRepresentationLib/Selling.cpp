@@ -43,6 +43,10 @@ void Selling::ListSteps( const S6& in ) {
    }
 }
 
+bool Selling::Reduce(const S6& in, S6& out, const bool sellingFirst) {
+   return Reduce(in, out);
+}
+
 bool Selling::Reduce(const S6& in, S6& out) {
    static const std::vector< S6(*)(const S6&)> vf = FillReduceMatrixVector();
    unsigned long maxIndex = INT_MAX;

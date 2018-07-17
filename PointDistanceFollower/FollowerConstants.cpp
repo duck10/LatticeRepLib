@@ -27,6 +27,7 @@ namespace {
    bool FollowerConstants::globalPlotAllSegmentsAsBlack  = true;
 
    std::string FollowerConstants::globalFileNamePrefix   = "Fol";
+   bool FollowerConstants::NiggliSellingFirst = false;
 
    std::vector<std::string> FollowerConstants::globalDistanceEnableList{ "S6", "CS" };
    std::string globalDistanceDisable = "";

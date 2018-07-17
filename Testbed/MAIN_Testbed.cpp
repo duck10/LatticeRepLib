@@ -19,9 +19,11 @@
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "LRL_MaximaTools.h"
+#include "NCDist.h"
 #include "Niggli.h"
 #include "PairReporter.h"
 #include "S6.h"
+#include "V7Dist.h"
 
 #include "S6Dist.h"
 #include "Selling.h"
@@ -556,35 +558,35 @@ public:
    static double mulStatic(const double a, std::vector<double>& v) {
       double d[4];
       for (unsigned long j = 0; j < cycles; ++j)
-         for (unsigned long k = 0; k < 10*cycles; ++k) {
+         for (unsigned long k = 0; k < 10 * cycles; ++k) {
             for (unsigned long i = 0; i < v.size(); ++i) {
-            d[k%4] = a * v[i]; 
+               d[k % 4] = a * v[i];
+            }
+            if (k == 0) store.Store(k, 0);
          }
-         if ( k == 0) store.Store(k, 0);
-      }
       double test = d[0];
       return test;
    }
 
-    double mulPlain(const double a, std::vector<double>& v) {
-       double d[4];
-       for (unsigned long j = 0; j < cycles; ++j)
-          for (unsigned long k = 0; k < 10*cycles; ++k) {
-             for (unsigned long i = 0; i < v.size(); ++i) {
-                d[k % 4] = a * v[i];
-             }
-             if (k == 0) store.Store(k, 0);
-          }
-          double test = d[0];
+   double mulPlain(const double a, std::vector<double>& v) {
+      double d[4];
+      for (unsigned long j = 0; j < cycles; ++j)
+         for (unsigned long k = 0; k < 10 * cycles; ++k) {
+            for (unsigned long i = 0; i < v.size(); ++i) {
+               d[k % 4] = a * v[i];
+            }
+            if (k == 0) store.Store(k, 0);
+         }
+      double test = d[0];
       return test;
-    }
+   }
 
 
 public:
    std::vector<double> v;
 };
 
-void TestStatic( ) {
+void TestStatic() {
    double test1, test2;
    std::vector<double> v;
    TestStaticSpeed tss;
@@ -600,7 +602,7 @@ void TestStatic( ) {
 int seed = 19191;
 void TestCS6Dist1() {
    GenerateRandomLattice<S6> generator(seed);
-   for (unsigned long i = 0; i<1000; ++i) {
+   for (unsigned long i = 0; i < 1000; ++i) {
       const S6 s6 = generator.randSellingReduced();
       const double d = CS6Dist(s6.data(), s6.data());
       if (d > 1.0) {
@@ -612,9 +614,9 @@ void TestCS6Dist1() {
 
 void TestCS6Dist2() {
    double ar[] = { 0,3,5,7,11,13,17,19 };
-   for (unsigned long i = 0; i<100; ++i) {
+   for (unsigned long i = 0; i < 100; ++i) {
       double s6[6];
-      for ( unsigned long k=0; k<6; ++k) {
+      for (unsigned long k = 0; k < 6; ++k) {
          s6[k] = -ar[rand() % 8];
       }
       printf("\n  i = %d\n", i);
@@ -633,7 +635,7 @@ void TestCS6Dist3() {
    GenerateRandomLattice<S6> generator(seed);
    for (unsigned long i = 0; i < 1000; ++i) {
       S6 s6red;
-      Delone::Reduce(generator.randSellingReduced(),s6red);
+      Delone::Reduce(generator.randSellingReduced(), s6red);
       for (unsigned long ir = 0; ir < 24; ++ir) {
          const S6 s6 = refl[ir](s6red);
          const double d = CS6Dist(s6.data(), s6.data());
@@ -696,7 +698,7 @@ void TestReflVCP() {
    const static std::vector< S6(*)(const S6&)> reflfun = S6::SetRelectionFunctions();
    int seed = 19;
    GenerateRandomLattice<S6> grl(seed);
-   for ( unsigned long i=0; i<2; ++i ) grl.randSellingReduced();
+   for (unsigned long i = 0; i < 2; ++i) grl.randSellingReduced();
    const S6 start = grl.randSellingReduced();
    std::cout << "the initial inside point is: " << start << std::endl << std::endl;
    S6 in = unredfun[0].first(start);
@@ -728,80 +730,170 @@ void TestReflVCP() {
 
 void TestSellingTiming(const std::vector<S6>& testData) {
 
-   for ( unsigned long i=0; i<testData.size(); ++i ) {
+   for (unsigned long i = 0; i < testData.size(); ++i) {
       S6 s6out;
       Selling::Reduce(testData[i], s6out);
    }
-   std::cout << "Selling timing ";
 }
 
-void TestNiggliTiming(const std::vector<G6>& testData) {
-   for (unsigned long i = 0; i<testData.size(); ++i) {
+void TestNiggliTiming(const std::vector<G6>& testData, const bool doSelling) {
+   for (unsigned long i = 0; i < testData.size(); ++i) {
       G6 g6out;
-      Niggli::Reduce(testData[i], g6out);
+      Niggli::Reduce(testData[i], g6out, doSelling);
    }
-   std::cout << "Niggli timing ";
 }
 
-template<typename T>
-void Timer(void test(const std::vector<T>& )) {
-   auto start = std::clock();
-   std::cout << "Reduced Input ";
-   test(v);
-   std::cout << std::clock() - start << " msec" << std::endl;
+void TestCS6DistancesTiming(const std::vector<S6>& testData) {
+   const unsigned long ntests = testData.size();
+   int count = 0;
+   const double distA = CS6Dist(testData[0].data(), testData[ntests - 1].data());
+   for (unsigned long i = 0; i < ntests - 1; ++i) {
+      const double dist = CS6Dist(testData[i].data(), testData[i + 1].data());
+   }
+}
+
+void TestD7DistancesTiming(const std::vector<S6>& testData) {
+   const unsigned long ntests = testData.size();
+   int count = 0;
+   const double distA = D7Dist(testData[0].data(), testData[ntests - 1].data());
+   for (unsigned long i = 0; i < ntests - 1; ++i) {
+      const double dist = D7Dist(testData[i].data(), testData[i + 1].data());
+   }
+}
+
+void TestS6DistancesTiming(const std::vector<S6>& testData) {
+   const unsigned long ntests = testData.size();
+   int count = 0;
+   S6Dist s6dist(1);
+   const double distA = s6dist.DistanceBetween(testData[0], testData[ntests - 1]);
+   for (unsigned long i = 0; i < ntests - 1; ++i) {
+      const double dist = s6dist.DistanceBetween(testData[i], testData[i + 1]);
+   }
+}
+
+void TestG6DistancesTiming(const std::vector<G6>& testData) {
+   const unsigned long ntests = testData.size();
+   int count = 0;
+   const double distA = NCDist(testData[0].data(), testData[ntests - 1].data());
+   for (unsigned long i = 0; i < ntests - 1; ++i) {
+      NCDist(testData[i].data(), testData[i + 1].data());
+   }
+}
+
+void TestV7DistancesTiming(const std::vector<G6>& testData) {
+   const unsigned long ntests = testData.size();
+   int count = 0;
+   const double distA = V7Dist(testData[0].data(), testData[ntests - 1].data());
+   for (unsigned long i = 0; i < ntests - 1; ++i) {
+      V7Dist(testData[i].data(), testData[i + 1].data());
+   }
 }
 
 void CheckReduceAndDistanceTiming() {
+   StoreResults < std::string, double> store(100);
    const unsigned long nReduceSamples = 1000;
    std::cout << "number of test samples " << nReduceSamples << std::endl;
    int seed(19191);
    GenerateRandomLattice<G6> grl(seed);
-   {
-      std::vector<S6> testDataS6;
-      for (unsigned long i = 0; i < nReduceSamples; ++i) {
-         testDataS6.push_back(grl.randSellingReduced());
-      }
 
-      auto start = std::clock();
-      std::cout << "Reduced Input ";
-      TestSellingTiming(testDataS6);
-      std::cout << std::clock() - start << " msec" << std::endl;
-
-      std::vector<G6> g6testData;
-      for (unsigned long i = 0; i < nReduceSamples; ++i) {
-         G6 g6out;
-         Niggli::Reduce(testDataS6[i], g6out);
-         g6testData.push_back(G6(g6out));
-      }
-      start = std::clock();
-      std::cout << "Reduced Input ";
-      TestNiggliTiming(g6testData);
-      std::cout << std::clock() - start << " msec" << std::endl;
+   std::vector<S6> testDataS6REDUCED;
+   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+      testDataS6REDUCED.push_back(grl.randSellingReduced());
    }
 
-   //----------------------------------
-   {
-      std::vector<S6>testDataS6;
-      for (unsigned long i = 0; i < nReduceSamples; ++i) {
-         testDataS6.push_back(grl.GenerateExtreme());
-      }
-
-      auto start = std::clock();
-      std::cout << "NOT Reduced Input ";
-      TestSellingTiming(testDataS6);
-      std::cout << std::clock() - start << " msec" << std::endl;
-
-      std::vector<G6> g6testData;
-      for (unsigned long i = 0; i < nReduceSamples; ++i) {
-         G6 g6out;
-         g6testData.push_back(G6(testDataS6[i]));
-      }
-
-      start = std::clock();
-      std::cout << "NOT Reduced Input ";
-      TestNiggliTiming(g6testData);
-      std::cout << std::clock() - start << " msec" << std::endl;
+   std::vector<G6> testDataG6REDUCED;
+   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+      G6 g6out;
+      testDataG6REDUCED.push_back(G6(testDataS6REDUCED[i]));
    }
+
+   std::vector<S6> unreducedTestDataS6;
+   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+      unreducedTestDataS6.push_back(grl.GenerateExtreme());
+   }
+
+   std::vector<G6> unreducedTestDataG6;
+   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+      G6 g6out;
+      unreducedTestDataG6.push_back(G6(unreducedTestDataS6[i]));
+   }
+
+   auto start = std::clock();
+   double endTime;
+
+   for (unsigned long cycle = 0; cycle < 10; ++cycle) {
+      std::cout << " cycle " << cycle << std::endl;
+      //---------------------------------- test reduced reductions
+      {
+         start = std::clock();
+         TestSellingTiming(testDataS6REDUCED);
+         endTime = std::clock() - start;
+         store.Store("Reduced Input Selling", endTime);
+
+         start = std::clock();
+         TestNiggliTiming(testDataG6REDUCED, true);
+         endTime = std::clock() - start;
+         store.Store("Reduced Input Niggli preSelling",  endTime );
+
+         start = std::clock();
+         TestNiggliTiming(testDataG6REDUCED, false);
+         endTime = std::clock() - start;
+         store.Store("Reduced Input Niggli only Niggli",  endTime );
+      }
+
+      //---------------------------------- test unreduced reductions
+      {
+
+         start = std::clock();
+         TestSellingTiming(unreducedTestDataS6);
+         endTime = std::clock() - start;
+         store.Store("NOT Reduced Input Selling",  endTime );
+
+         start = std::clock();
+         TestNiggliTiming(unreducedTestDataG6, true);
+         endTime = std::clock() - start;
+         store.Store("NOT Reduced Input Niggli, preSelling",  endTime );
+
+         start = std::clock();
+         TestNiggliTiming(unreducedTestDataG6, false);
+         endTime = std::clock() - start;
+         store.Store("NOT Reduced Input Niggli, NOT preSelling", endTime);
+      }
+
+      {
+         //---------------------------------- test S6 distances
+         start = std::clock();
+         TestS6DistancesTiming(testDataS6REDUCED);
+         endTime = std::clock() - start;
+         store.Store("Reduced S6Dist ",  endTime );
+
+         //---------------------------------- test CS6 distances
+         start = std::clock();
+         TestCS6DistancesTiming(testDataS6REDUCED);
+         endTime = std::clock() - start;
+         store.Store("Reduced CS6Dist ",  endTime );
+
+         //---------------------------------- test G6 distances
+         start = std::clock();
+         TestG6DistancesTiming(testDataG6REDUCED);
+         endTime = std::clock() - start;
+         store.Store("Reduced NCDist ",  endTime );
+
+         //---------------------------------- test D7 distances
+         start = std::clock();
+         TestD7DistancesTiming(testDataS6REDUCED);
+         endTime = std::clock() - start;
+         store.Store("Reduced D7Dist ",  endTime );
+
+         //---------------------------------- test V7 distances
+         start = std::clock();
+         TestV7DistancesTiming(testDataG6REDUCED);
+         endTime = std::clock() - start;
+         store.Store("Reduced V7Dist ",  endTime );
+      }
+   }
+
+   store.ShowResults();
    exit(0);
 }
 
@@ -831,8 +923,7 @@ void LookAtReductions() {
 int main(int argc, char *argv[])
 {
    S6 out;
-   Allman::ReduceS6ToNiggli(S6::rand(), out);
-   LookAtReductions();
+   //LookAtReductions();
    CheckReduceAndDistanceTiming();
    TestReflVCP();
    //TestCS_Reflections();
@@ -847,7 +938,7 @@ int main(int argc, char *argv[])
    C3 c3b(c3);
    c3b *= 1.0;
    C3 c3c(1.0*c3);
-   std::string svg = LRL_DataToSVG(1.0,2.0,3UL);
+   std::string svg = LRL_DataToSVG(1.0, 2.0, 3UL);
    exit(0);
    //ListS6ReductionSteps();
    TestDataForHJB();

@@ -104,7 +104,6 @@ unsigned long ProbeOneRegion(const CellInputData& probe, const unsigned long nSt
          if (bTestWalk) ++goodCellCount;
       }
       else if (!bTestReduce) {
-         //std::cout << "Delone failed " << v1 << std::endl;
          std::cout << "Reduce failed " << v1 << std::endl;
       }
    }

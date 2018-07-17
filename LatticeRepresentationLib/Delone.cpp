@@ -36,6 +36,16 @@ bool Delone::Reduce(const S6& d, MatS6& m, S6& dd, const double delta) {
    return Reduce(d, m, dd);
 }
 
+bool Delone::Reduce(const S6& d, S6& dd, const bool sellingFirst) {
+   MatS6 m;
+   return Reduce(d, m, dd);
+}
+
+bool Delone::Reduce(const D7& d, D7& dd, const bool sellingFirst) {
+   MatS6 m;
+   return Reduce(d, m, dd);
+}
+
 bool Delone::Reduce(const S6& d, S6& dd) {
    MatS6 m;
    return Reduce(d, m, dd);

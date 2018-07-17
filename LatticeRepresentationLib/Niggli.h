@@ -30,10 +30,13 @@ to implement that change is returned
 
 class Niggli {
 public:
-   static bool Reduce(const G6& vi, G6& vout);
+   static bool Reduce(const G6& vi, G6& vout, const bool sellingFirst);
    static bool Reduce(const G6& vi, MatG6& m, G6& vout, const double delta);
    static bool NearRed(const G6& gvec, const double delta = 0.0);
    static void MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta);
+   static bool IsNiggli(const S6& s);
+   static bool IsNiggli(const G6& s);
+   static bool IsNiggli(const D7& s);
 
 
    template<typename TVEC>

@@ -121,7 +121,6 @@ public:
       else {
          ostr << m_title << std::endl;
       }
-      ostr << StoreResults_GetTime() << "  elapsed time(sec) " << time(NULL) - m_creationTime << std::endl;
       ostr << "Total Keys = " << GetKeys().size()
          << "  Total Samples = " << GetTotalSampleCount()
          << "  Total Seen = " << GetTotalSeen() << std::endl;
@@ -327,16 +326,6 @@ private:
       }
       ShowTableOfKeysVersusCount();
       std::cout << m_footer << std::endl;
-   }
-
-private:
-   static std::string StoreResults_GetTime(void) {
-      const time_t now = time(NULL);
-      char buft[256];
-      struct tm tm_time;
-      localtime_s(&tm_time, &now);
-      strftime(buft, sizeof(buft), "%Y/%m/%d %X", &tm_time);
-      return std::string(buft);
    }
 
 private:

@@ -25,6 +25,7 @@ public:
    }
 
    static bool Reduce(const S6& in, S6& out);
+   static bool Reduce(const S6& in, S6& out, const bool sellingFirst);
    static bool Reduce(const S6& in, MatS6& mReduce, S6& out, const double delta = 0.0);
 
    static double MaxScalar(const S6& s6);

@@ -1,6 +1,6 @@
 
 
-
+#include "D7.h"
 #include "LRL_Cell.h"
 #include "LRL_ToString.h"
 #include "MatG6.h"
@@ -332,15 +332,28 @@ const MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1
    Reporter( sptext2, vin, vout, mat );
 }  // end MKnorm
 
-bool Niggli::Reduce(const G6& vi, G6& vout) {
- /*   S6 s6out;
-  const bool b = Selling::Reduce(S6(vi), s6out);
-   if (!b) {
-      return false;
+bool Niggli::Reduce(const G6& vi, G6& vout, const bool sellingFirst) {
+   S6 s6out;
+   bool b = true;
+   if (sellingFirst) {
+      b = Selling::Reduce(S6(vi), s6out);
+      vout = D7(s6out);
    }
-   else*/ {
+   else {
+      vout = vi;
+   }
+
+   if (!b) {
       MatG6 m;
-      return Niggli::Reduce(vi, m, vout, 0.0);
+      const bool bniggli = Niggli::Reduce(vi, m, vout, 0.0);
+      return bniggli;
+   }
+   else if (IsNiggli(vout)) {
+      return true;
+   }
+   else {
+      MatG6 m;
+      return Niggli::Reduce(vout, m, vout, 0.0);
    }
 }
 
@@ -650,3 +663,60 @@ bool Niggli::NearRed( const G6& gvec, const double delta )
    return( true );
 } // end NearRed
 
+
+bool Niggli::IsNiggli(const S6& s) {
+
+   G6 g{ D7{ s } };
+   return IsNiggli(g);
+}
+
+bool Niggli::IsNiggli(const D7& d) {
+
+   G6 g{ d };
+   return IsNiggli(g);
+}
+
+bool Niggli::IsNiggli(const G6& v) {
+   const double& g1 = v[0];
+   const double& g2 = v[1];
+   const double& g3 = v[2];
+   const double& g4 = v[3];
+   const double& g5 = v[4];
+   const double& g6 = v[5];
+
+
+   const double delta = 10E-6;
+   bool foundChange = false;
+
+   if (g1 <= 0.0) return false;
+   if (g2 <= 0.0) return false;
+   if (g3 <= 0.0) return false;
+
+   if (g1 > g2) return false;
+   if (g2 > g3) return false;
+   if (g4 > 0.0) return false;
+   if (g5 > 0.0) return false;
+   if (g6 > 0.0) return false;
+   if (abs(g4) > g2) return false;
+   if (abs(g5) > g1) return false;
+   if (abs(g6) > g1) return false;
+   int nneg = 0;
+   for (unsigned long i = 3; i < 6; ++i) if (v[i] <= 0.0) ++nneg;
+   if (nneg != 0 && nneg != 3) return false;
+
+   if (g4 == g2 && g6 > 2.0*g5) return false;
+   if (g5 == g1 && g6 > 2.0*g4) return false;
+   if (g6 == g1 && g5 > 2.0*g4) return false;
+
+
+   if (abs(g2 - g3) < delta && abs(g5) > abs(g6)) return false;
+   if (abs(g3) > g1 + g2 + g3 + g4 + g5 + g6) return false;
+
+   if (g4 == g2 && g6 != 0) return false;
+   if (g5 == g1 && g6 != 0) return false;
+   if (g6 == g1 && g5 != 0) return false;
+
+   if (g3 == (g1 + g2 + g3 + g4 + g5 + g6) && 2.0*(g1 + g5) > 0.0) return false;
+
+   return true;
+}
