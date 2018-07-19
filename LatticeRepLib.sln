@@ -65,6 +65,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LRL_Tools", "LRL_Tools\LRL_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReductionTiming", "ReductionTiming\ReductionTiming.vcxproj", "{76193352-A898-4E03-976C-D8C6F7549409}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testHJBCells", "testHJBCells\testHJBCells.vcxproj", "{6FA86D06-BADF-4E6B-946E-C110FE460A23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -233,6 +235,14 @@ Global
 		{76193352-A898-4E03-976C-D8C6F7549409}.Release|x64.Build.0 = Release|x64
 		{76193352-A898-4E03-976C-D8C6F7549409}.Release|x86.ActiveCfg = Release|Win32
 		{76193352-A898-4E03-976C-D8C6F7549409}.Release|x86.Build.0 = Release|Win32
+		{6FA86D06-BADF-4E6B-946E-C110FE460A23}.Debug|x64.ActiveCfg = Debug|x64
+		{6FA86D06-BADF-4E6B-946E-C110FE460A23}.Debug|x64.Build.0 = Debug|x64
+		{6FA86D06-BADF-4E6B-946E-C110FE460A23}.Debug|x86.ActiveCfg = Debug|Win32
+		{6FA86D06-BADF-4E6B-946E-C110FE460A23}.Debug|x86.Build.0 = Debug|Win32
+		{6FA86D06-BADF-4E6B-946E-C110FE460A23}.Release|x64.ActiveCfg = Release|x64
+		{6FA86D06-BADF-4E6B-946E-C110FE460A23}.Release|x64.Build.0 = Release|x64
+		{6FA86D06-BADF-4E6B-946E-C110FE460A23}.Release|x86.ActiveCfg = Release|Win32
+		{6FA86D06-BADF-4E6B-946E-C110FE460A23}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

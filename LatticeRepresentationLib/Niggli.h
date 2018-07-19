@@ -37,6 +37,8 @@ public:
    static bool IsNiggli(const S6& s);
    static bool IsNiggli(const G6& s);
    static bool IsNiggli(const D7& s);
+   static void MKnormWithoutMatrices(const G6& vi, G6& vout, const double delta);
+   static bool ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta);
 
 
    template<typename TVEC>
