@@ -920,8 +920,72 @@ void LookAtReductions() {
    exit(0);
 }
 
+void VerifyIsNiggli() {
+   StoreResults<bool, std::string> store(10);
+   int seed = 9;
+   GenerateRandomLattice<G6> grl(seed);
+   G6 vout;
+   const unsigned long ntest = 10000;
+   for (unsigned long i = 0; i<ntest; ++i) {
+      const G6 g6 = grl.GenerateExtreme();
+      bool b = Niggli::Reduce(g6, vout);
+      store.Store(Niggli::IsNiggli(vout), LRL_ToString(LRL_Cell_Degrees(g6), "  ", LRL_Cell_Degrees(vout)));
+   }
+   store.ShowResults();
+   exit(0);
+}
+
+void TimingForNewNiggliReduce() {
+   std::vector<G6> v;
+   const unsigned long nv = 100000;
+   std::cout << "number of distances = " << nv << std::endl;
+   int seed = 10;
+   GenerateRandomLattice<G6> grl(seed);
+   for (unsigned long i = 0; i <= nv; ++i)
+      v.push_back(grl.GenerateExtreme());
+
+   auto start = std::clock();
+   double elapsedTime;
+
+   G6 vout;
+   start = std::clock();
+   for (unsigned long i = 0; i <= nv; ++i)
+      bool b = Niggli::Reduce(v[i], vout);
+   elapsedTime = std::clock() - start;
+   std::cout << elapsedTime << std::endl;
+
+   start = std::clock();
+   for (unsigned long i = 0; i <= nv; ++i)
+      bool b = Niggli::ReduceWithoutMatrices(v[i], vout, 0.0);
+   elapsedTime = std::clock() - start;
+   std::cout << elapsedTime << std::endl;
+   exit(0);
+}
+
+void VerifyNiggli() {
+   StoreResults<double, std::string> store(10);
+   int seed = 9;
+   GenerateRandomLattice<G6> grl(seed);
+   const unsigned long ntest = 100;
+   for (unsigned long i = 0; i < ntest; ++i) {
+      const G6 g6 = grl.GenerateExtreme();
+   G6 vout1;
+      bool b1 = Niggli::Reduce(g6, vout1);
+   G6 vout2;
+   bool b2 = Niggli::ReduceWithoutMatrices(g6, vout2, 0.0);
+   if ( vout1==vout2) store.Store(0, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
+   if ( (vout1-vout2).norm() < 1.0E-9) store.Store(1, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
+   else store.Store(2, LRL_ToString((vout1 - vout2).norm(), "  ", LRL_Cell_Degrees(vout2)));
+   }
+   store.ShowResults();
+   exit(0);
+}
+
 int main(int argc, char *argv[])
 {
+   TimingForNewNiggliReduce();
+   VerifyNiggli();
+   VerifyIsNiggli();
    S6 out;
    //LookAtReductions();
    CheckReduceAndDistanceTiming();

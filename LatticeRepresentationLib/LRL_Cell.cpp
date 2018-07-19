@@ -127,7 +127,7 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    m_cell[5] = gamma / 57.2957795130823;
    const double lowerlimit = 0.001;
    m_valid = m_valid && a > lowerlimit && b > lowerlimit && c > lowerlimit && alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit
-      && alpha < 179.99 && beta < 179.99 && gamma < 179.99 && (alpha + beta + gamma) < twopi &&
+      && alpha < 179.99 && beta < 179.99 && gamma < 179.99 && (alpha + beta + gamma) < 360.0 &&
       (alpha + beta + gamma - 2.0*maxNC(alpha, beta, gamma) >= 0.0);
 }
 

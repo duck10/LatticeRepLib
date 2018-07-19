@@ -134,6 +134,185 @@ Niggli::~Niggli(void)
 {
 }
 
+void Niggli::MKnormWithoutMatrices(const G6& vi, G6& vout, const double delta) {
+
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   // These are the matrices that can be used to convert a vector to standard
+   // presentation. They are used in MKnorm. There are NO OTHER POSSIBILITIES.
+   // The numbering is from Andrews and Bernstein, 1988
+   const static MatG6 spnull("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1");
+
+   const static MatG6 sp1("0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1");
+   const static MatG6 sp2("1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0");
+
+
+   const static MatG6 sp34a("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1 0 0 0 0 0 0  1");
+   const static MatG6 sp34b("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0  1 0 0 0 0 0 0 -1");
+   const static MatG6 sp34c("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0  1 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1");
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+
+   const static MatG6 R5_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 -1 0 0   0 -2 0 1 0 0   0 0 0 0 1 -1   0 0 0 0 0 1");
+   const static MatG6 R5_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 +1 0 0   0 +2 0 1 0 0   0 0 0 0 1 +1   0 0 0 0 0 1");
+   const static MatG6 R6_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 -1 0   0 0 0 1 0 -1   -2 0 0 0 1 0   0 0 0 0 0 1");
+   const static MatG6 R6_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 +1 0   0 0 0 1 0 +1   +2 0 0 0 1 0   0 0 0 0 0 1");
+   const static MatG6 R7_Plus(" 1 0 0 0 0 0   1 1 0 0 0 -1   0 0 1 0 0 0   0 0 0 1 -1 0   0 0 0 0 1 0   -2 0 0 0 0 1");
+   const static MatG6 R7_Minus(" 1 0 0 0 0 0   1 1 0 0 0 +1   0 0 1 0 0 0   0 0 0 1 +1 0   0 0 0 0 1 0   +2 0 0 0 0 1");
+   const static MatG6 R8(" 1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 2 0 1 0 1   2 0 0 0 1 1    0 0 0 0 0 1");
+   const static MatG6 R9_Plus(R5_Plus);
+   const static MatG6 R9_Minus(R5_Minus);
+   const static MatG6 R10_Plus(R6_Plus);
+   const static MatG6 R10_Minus(R6_Minus);
+   const static MatG6 R11_Plus(R7_Plus);
+   const static MatG6 R11_Minus(R7_Minus);
+   //const MatG6 R12(R8);
+   const static MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
+   bool again = true;
+   int ncycle = 0;
+   MatG6 mat = MatG6::Eye();
+   G6 vin;
+
+   vin = vi;
+
+   // assure that g1<=g2<=g3
+   while (again && (ncycle < 5))
+   {
+      ++ncycle;
+      again = false;
+
+      std::string sptext;
+      if ((fabs(vin[0]) > fabs(vin[1]) + delta + 1.e-12*(vin[0] + vin[1])) ||
+         (fabs(vin[0] - vin[1])<1.e-38 + 1.e-12*fabs(vin[0] + vin[1])
+            && delta<1.0E-12 && fabs(vin[3])>fabs(vin[4]) +
+            delta + 1.e-12*(fabs(vin[3]) + fabs(vin[4]))))
+      { // SP1
+         mat = sp1;
+         again = true;
+         sptext = "SP1";
+      }
+      else if ((fabs(vin[1]) > fabs(vin[2]) + delta + 1.e-12*(vin[1] + vin[2])) ||
+         (fabs(vin[1] - vin[2])<1.e-38 + 1.e-12*fabs(vin[1] + vin[2])
+            && delta<1.0E-12 && fabs(vin[4])>fabs(vin[5]) +
+            delta + 1.e-12*(fabs(vin[4]) + fabs(vin[5]))))
+      { // SP2
+         mat = sp2;
+         again = true;
+         sptext = "SP2";
+      }
+
+      if (again)
+      {
+         vout = mat * vin;
+         vin = vout;
+      }
+      //      DEBUG_REPORT_STRING(LRL_ToString( "   MKNORM input  "+sptext+"  ", vi));;
+      //      DEBUG_REPORT_STRING(LRL_ToString( "   MKNORM output "+sptext+"  ", vout));;
+   }
+
+   // now we assure (within delta) that the vector is +++ or ---
+
+   int bMinusPattern = 0;
+   int bZeroPattern = 0;
+   if (vin[3] < delta + 1.0E-13*(vin[1] + vin[2])) bMinusPattern |= 4;
+   if (vin[4] < delta + 1.0E-13*(vin[0] + vin[2])) bMinusPattern |= 2;
+   if (vin[5] < delta + 1.0E-13*(vin[0] + vin[1])) bMinusPattern |= 1;
+   if (fabs(vin[3]) < delta + 1.0E-13*(vin[1] + vin[2])) bZeroPattern |= 4;
+   if (fabs(vin[4]) < delta + 1.0E-13*(vin[0] + vin[2])) bZeroPattern |= 2;
+   if (fabs(vin[5]) < delta + 1.0E-13*(vin[0] + vin[1])) bZeroPattern |= 1;
+   std::string sptext2("ERROR");;
+
+   switch (bMinusPattern)
+   {
+   case 0:  /*  +++  */
+   {
+      mat = spnull;
+      sptext2 = "no mknorm action sp1,sp2-0";
+      break;
+   }
+   case 1:  /* ++- -> --- */
+   {
+      mat = sp34a;
+      sptext2 = "SP34a-1";
+      break;
+   }
+   case 2:  /* +-+ -> --- */
+   {
+      mat = sp34b;
+      sptext2 = "SP34b-2";
+      break;
+   }
+   case 3:  /* +-- -> +++, but +0- -> -0- and +-0 -> --0 and +00 -> -00 */
+   {
+      mat = sp34c;
+      sptext2 = "SP34c-3";
+      if ((bZeroPattern & 2) == 2) {
+         mat = sp34a;
+         sptext2 = "SP34a-3";
+         break;
+      }
+      if ((bZeroPattern & 1) == 1) {
+         mat = sp34b;
+         sptext2 = "SP34b-3";
+         break;
+      }
+      break;
+   }
+   case 4:  /* -++ -> --- */
+   {
+      mat = sp34c;
+      sptext2 = "SP34c-4";
+      break;
+   }
+   case 5:  /* -+- -> +++, but 0+- -> 0-- and -+0 -> --0 and 0+0 -> 0-0 */
+   {
+      mat = sp34b;
+      sptext2 = "SP34b-5";
+      if ((bZeroPattern & 4) == 4) {
+         mat = sp34a;
+         sptext2 = "SP34a-5";
+         break;
+      }
+      if ((bZeroPattern & 1) == 1) {
+         mat = sp34c;
+         sptext2 = "SP34c-5";
+         break;
+      }
+      break;
+   }
+   case 6:  /* --+ - > +++, but 0-+ -> 0-- and -0+ - > -0- and 00+ -> 00- */
+   {
+      mat = sp34a;
+      sptext2 = "SP34a-6";
+      if ((bZeroPattern & 4) == 4) {
+         mat = sp34b;
+         sptext2 = "SP34b-5";
+         break;
+      }
+      if ((bZeroPattern & 2) == 2) {
+         mat = sp34c;
+         sptext2 = "SP34c-5";
+         break;
+      }
+      break;
+   }
+   case 7:
+   {
+      mat = spnull;
+      sptext2 = "no mknorm action sp1,sp2-7";
+      break;
+   }
+   }
+
+   vout = mat * vin;
+   //   DEBUG_REPORT_STRING(LRL_ToString( "      MKNORM input  "+sptext2+"  ", vi));;
+   //   DEBUG_REPORT_STRING(LRL_ToString( "      MKNORM output "+sptext2+"  ", vout));;
+   std::cout << std::flush;
+}
+
 //-----------------------------------------------------------------------------
 // Name: MKnorm()
 // Description: changes a G6 vector to standard presentation (often called
@@ -141,8 +320,7 @@ Niggli::~Niggli(void)
 //              vector and the matrix that changes the input vector to the
 //              standard one
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-void Niggli::MKnorm( const G6& vi, MatG6& m, G6& vout, const double delta  )
-{
+void Niggli::MKnorm( const G6& vi, MatG6& m, G6& vout, const double delta  ) {
  
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -164,21 +342,21 @@ void Niggli::MKnorm( const G6& vi, MatG6& m, G6& vout, const double delta  )
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 
-const MatG6 R5_Plus  (" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 -1 0 0   0 -2 0 1 0 0   0 0 0 0 1 -1   0 0 0 0 0 1");
-const MatG6 R5_Minus (" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 +1 0 0   0 +2 0 1 0 0   0 0 0 0 1 +1   0 0 0 0 0 1");
-const MatG6 R6_Plus  (" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 -1 0   0 0 0 1 0 -1   -2 0 0 0 1 0   0 0 0 0 0 1");
-const MatG6 R6_Minus (" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 +1 0   0 0 0 1 0 +1   +2 0 0 0 1 0   0 0 0 0 0 1"); 
-const MatG6 R7_Plus  (" 1 0 0 0 0 0   1 1 0 0 0 -1   0 0 1 0 0 0   0 0 0 1 -1 0   0 0 0 0 1 0   -2 0 0 0 0 1");
-const MatG6 R7_Minus (" 1 0 0 0 0 0   1 1 0 0 0 +1   0 0 1 0 0 0   0 0 0 1 +1 0   0 0 0 0 1 0   +2 0 0 0 0 1");
-const MatG6 R8       (" 1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 2 0 1 0 1   2 0 0 0 1 1    0 0 0 0 0 1");
-const MatG6 R9_Plus(R5_Plus);
-const MatG6 R9_Minus(R5_Minus);
-const MatG6 R10_Plus(R6_Plus);
-const MatG6 R10_Minus(R6_Minus);
-const MatG6 R11_Plus(R7_Plus);
-const MatG6 R11_Minus(R7_Minus);
+const static MatG6 R5_Plus  (" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 -1 0 0   0 -2 0 1 0 0   0 0 0 0 1 -1   0 0 0 0 0 1");
+const static MatG6 R5_Minus (" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 +1 0 0   0 +2 0 1 0 0   0 0 0 0 1 +1   0 0 0 0 0 1");
+const static MatG6 R6_Plus  (" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 -1 0   0 0 0 1 0 -1   -2 0 0 0 1 0   0 0 0 0 0 1");
+const static MatG6 R6_Minus (" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 +1 0   0 0 0 1 0 +1   +2 0 0 0 1 0   0 0 0 0 0 1"); 
+const static MatG6 R7_Plus  (" 1 0 0 0 0 0   1 1 0 0 0 -1   0 0 1 0 0 0   0 0 0 1 -1 0   0 0 0 0 1 0   -2 0 0 0 0 1");
+const static MatG6 R7_Minus (" 1 0 0 0 0 0   1 1 0 0 0 +1   0 0 1 0 0 0   0 0 0 1 +1 0   0 0 0 0 1 0   +2 0 0 0 0 1");
+const static MatG6 R8       (" 1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 2 0 1 0 1   2 0 0 0 1 1    0 0 0 0 0 1");
+const static MatG6 R9_Plus(R5_Plus);
+const static MatG6 R9_Minus(R5_Minus);
+const static MatG6 R10_Plus(R6_Plus);
+const static MatG6 R10_Minus(R6_Minus);
+const static MatG6 R11_Plus(R7_Plus);
+const static MatG6 R11_Minus(R7_Minus);
 //const MatG6 R12(R8);
-const MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
+const static MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
    bool again = true;
    int ncycle = 0;
    MatG6 mat = MatG6::Eye();
@@ -333,6 +511,10 @@ const MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1
 }  // end MKnorm
 
 bool Niggli::Reduce(const G6& vi, G6& vout, const bool sellingFirst) {
+   if ( IsNiggli(vi) ) {
+      vout = vi;
+      return true;
+   }
    S6 s6out;
    bool b = true;
    if (sellingFirst) {
@@ -357,6 +539,204 @@ bool Niggli::Reduce(const G6& vi, G6& vout, const bool sellingFirst) {
    }
 }
 
+bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
+{
+
+   if (Niggli::IsNiggli(vi)) {
+      vout = vi;
+      return true;
+   }
+
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   // These are the matrices that can be used to convert a vector to standard
+   // presentation. They are used in MKnorm. There are NO OTHER POSSIBILITIES.
+   // The numbering is from Andrews and Bernstein, 1988
+   const static MatG6 spnull("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 1");
+
+   const static MatG6 sp1("0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1");
+   const static MatG6 sp2("1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0");
+
+
+   const static MatG6 sp34a("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1 0 0 0 0 0 0  1");
+   const static MatG6 sp34b("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0  1 0 0 0 0 0 0 -1");
+   const static MatG6 sp34c("1 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0  1 0 0 0 0 0 0 -1 0 0 0 0 0 0 -1");
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+
+   const static MatG6 R5_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 -1 0 0   0 -2 0 1 0 0   0 0 0 0 1 -1   0 0 0 0 0 1");
+   const static MatG6 R5_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 +1 0 0   0 +2 0 1 0 0   0 0 0 0 1 +1   0 0 0 0 0 1");
+   const static MatG6 R6_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 -1 0   0 0 0 1 0 -1   -2 0 0 0 1 0   0 0 0 0 0 1");
+   const static MatG6 R6_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 +1 0   0 0 0 1 0 +1   +2 0 0 0 1 0   0 0 0 0 0 1");
+   const static MatG6 R7_Plus(" 1 0 0 0 0 0   1 1 0 0 0 -1   0 0 1 0 0 0   0 0 0 1 -1 0   0 0 0 0 1 0   -2 0 0 0 0 1");
+   const static MatG6 R7_Minus(" 1 0 0 0 0 0   1 1 0 0 0 +1   0 0 1 0 0 0   0 0 0 1 +1 0   0 0 0 0 1 0   +2 0 0 0 0 1");
+   const static MatG6 R8(" 1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 2 0 1 0 1   2 0 0 0 1 1    0 0 0 0 0 1");
+   const static MatG6 R9_Plus(R5_Plus);
+   const static MatG6 R9_Minus(R5_Minus);
+   const static MatG6 R10_Plus(R6_Plus);
+   const static MatG6 R10_Minus(R6_Minus);
+   const static MatG6 R11_Plus(R7_Plus);
+   const static MatG6 R11_Minus(R7_Minus);
+   //const MatG6 R12(R8);
+   const static MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
+   G6 vin;
+   int ncycle = 0;
+   bool again = true;
+   const bool debug = true;
+
+   const int maxCycle = 260;
+
+   vin = vi;
+   G6 voutPrev(vin);
+
+   /* Mapping from Fortran indices:
+
+   1  2  3  4  5  6
+   0  6 12 18 24 30
+
+   7  8  9 10 11 12
+   1  7 13 19 25 31
+
+   13 14 15 16 17 18
+   2  8 14 20 26 32
+
+   19 20 21 22 23 24
+   3  9 15 21 27 33
+
+   25 26 27 28 29 30
+   4 10 16 22 28 34
+
+   31 32 33 34 35 36
+   5 11 17 23 29 35
+
+   */
+
+   // Try some number of times to reduce the input vector and accumulate
+   // the changing vector and total transformation matrix
+   // The limit on the number of cycles is because (whether because of
+   // floating point rounding or algorithm issues) there might be a
+   // case of an infinite loop. The designations R5-R12 are from
+   // Andrews and Bernstein, 1988
+   while (again && ncycle < maxCycle)
+   {
+      //      DEBUG_REPORT_STRING(LRL_ToString( "REDUCE start cycle  ", ncycle, "  ", vin));;
+      MKnormWithoutMatrices(vin, vout, delta);
+      vin = vout;
+
+      if (fabs(vin[3]) > fabs(vin[1]) + delta)
+      { // R5
+         const MatG6 m1 =(vin[3] <= 0.0) ? R5_Minus : R5_Plus;
+         again = true;
+         ////         DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R5-m1\n", m1,"\n"));;
+         vout = m1 * vin;
+      }
+      else if (fabs(vin[4]) > fabs(vin[0]) + delta)
+      { // R6
+         const MatG6 m1 =(vin[4] <= 0.0) ? R6_Minus : R6_Plus;
+         again = true;
+         //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R6-m1\n", m1,"\n"));;
+         vout = m1 * vin;
+      }
+      else if (fabs(vin[5]) > fabs(vin[0]) + delta)
+      { // R7
+         const MatG6 m1 =(vin[5] <= 0.0) ? R7_Minus : R7_Plus;
+         again = true;
+         //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R7-m1\n", m1,"\n"));;
+         vout = m1 * vin;
+      }
+      else if (vin[3] + vin[4] + vin[5] + fabs(vin[0]) + fabs(vin[1]) + delta < 0.0)
+      { //R8
+         const MatG6 m1 =R8;
+         again = true;
+         //         DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R8-m1\n", m1,"\n"));;
+         vout = m1 * vin;
+      }
+      else if ((fabs(vin[3] - vin[1]) <= delta && 2.0*vin[4] - delta<vin[5]) ||
+         (fabs(vin[3] + vin[1]) <= delta &&
+            vin[5]<0.0))
+      { // R9  There is an error in the paper says "2g5<g5" should be "2g5<g6"
+         const MatG6 m1 =(vin[3] <= 0.0) ? R9_Minus : R9_Plus;
+         again = true;
+         //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R9-m1\n", m1,"\n"));;
+         vout = m1 * vin;
+      }
+      else if ((fabs(vin[4] - vin[0]) <= delta && 2.0*vin[3] - delta<vin[5]) ||
+         (fabs(vin[4] + vin[0]) <= delta &&
+            vin[5]<0.0))
+      { //R10 (LAST=15 in ITERATE)
+         const MatG6 m1 =(vin[4] <= 0.0) ? R10_Minus : R10_Plus;
+         again = true;
+         //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-m\n", m,"\n"));
+         //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-m1\n", m1,"\n"));
+         //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-m2=m1*m\n", m2,"\n"));
+         vout = m1 * vin;
+         //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-in  ", vin));
+         //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-out  ", vout))
+      }
+      else if ((fabs(vin[5] - vin[0]) <= delta && 2.0*vin[3] - delta<vin[4]) ||
+         (fabs(vin[5] + vin[0]) <= delta &&
+            vin[4]<0.0)) // paper says g6<0, but it seems wrong
+      { // R11
+         const MatG6 m1 =(vin[5] <= 0.0) ? R11_Minus : R11_Plus;
+         again = true;
+         //         DEBUG_REPORT_STRING(LRL_ToString( "REDUCE 1-m1\n", m1,"\n"));;
+         vout = m1 * vin;
+      }
+      else if (fabs(vin[3] + vin[4] + vin[5] + fabs(vin[0]) + fabs(vin[1])) <= delta && (2.0*(fabs(vin[0]) + vin[4]) + vin[5]>delta))
+      { //R12 (same as R8)
+         const MatG6 m1 =R12;
+         again = true;
+         //         DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R12-m1\n", m1,"\n"));;
+         vout = m1 * vin;
+      }
+      else
+      {
+         again = false;
+         vout = vin;
+      }
+
+      // probably don't need to do this group of code when again==false !!!!!!!!!!!!!!
+      ReduceWithoutMatrices(vout, vin, delta);
+      for (unsigned long i = 3; i<6; ++i)
+         if (std::fabs(vin[i]) < 1.0E-10) vin[i] = 0.0;
+
+      if (vin[0]<0.0 || vin[1]<0.0 || vin[2]<0.0) {
+         // ERROR ERROR ERROR
+         if (DEBUG_REDUCER) {
+            fprintf(stderr, " Negative sq, axis %d \n", ncycle);
+            fprintf(stderr, " vin: [%g,%g,%g,%g,%g,%g]\n",
+               vin[0], vin[1], vin[2], vin[3], vin[4], vin[5]);
+            fprintf(stderr, " vi: [%g,%g,%g,%g,%g,%g]\n",
+               vi[0], vi[1], vi[2], vi[3], vi[4], vi[5]);
+         }
+         return(false);
+      }
+
+      if (ncycle == 0) voutPrev = vin;
+
+      if (DEBUG_REDUCER)
+      {
+         //printf( "%d    %f %f %f %f %f %f\n", ncycle, vout[0], vout[1], vout[2], vout[3], vout[4], vout[5] );
+      }
+      //      DEBUG_REPORT_STRING(LRL_ToString( "REDUCE output  ", vi));;
+
+      ++ncycle;
+   }
+
+   bool isNearReduced = Niggli::NearRed(vout, delta);
+   if (ncycle >= maxCycle) {
+      if (isNearReduced) {
+         std::cout << "THERE IS A REDUCE PROBLEM, cycle " << ncycle << std::endl;
+      }
+   }
+
+   return (ncycle < maxCycle) || isNearReduced;
+
+}
+
 //-----------------------------------------------------------------------------
 // Name: Reduce()
 // Description: performs Niggli reduction and returns the standard reduced
@@ -365,6 +745,11 @@ bool Niggli::Reduce(const G6& vi, G6& vout, const bool sellingFirst) {
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 bool Niggli::Reduce( const G6& vi, MatG6& m, G6& vout, const double delta )
 {
+
+   if ( IsNiggli(vi) ) {
+      vout = vi;
+      return true;
+   }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -386,21 +771,21 @@ bool Niggli::Reduce( const G6& vi, MatG6& m, G6& vout, const double delta )
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 
-   const MatG6 R5_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 -1 0 0   0 -2 0 1 0 0   0 0 0 0 1 -1   0 0 0 0 0 1");
-   const MatG6 R5_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 +1 0 0   0 +2 0 1 0 0   0 0 0 0 1 +1   0 0 0 0 0 1");
-   const MatG6 R6_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 -1 0   0 0 0 1 0 -1   -2 0 0 0 1 0   0 0 0 0 0 1");
-   const MatG6 R6_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 +1 0   0 0 0 1 0 +1   +2 0 0 0 1 0   0 0 0 0 0 1");
-   const MatG6 R7_Plus(" 1 0 0 0 0 0   1 1 0 0 0 -1   0 0 1 0 0 0   0 0 0 1 -1 0   0 0 0 0 1 0   -2 0 0 0 0 1");
-   const MatG6 R7_Minus(" 1 0 0 0 0 0   1 1 0 0 0 +1   0 0 1 0 0 0   0 0 0 1 +1 0   0 0 0 0 1 0   +2 0 0 0 0 1");
-   const MatG6 R8(" 1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 2 0 1 0 1   2 0 0 0 1 1    0 0 0 0 0 1");
-   const MatG6 R9_Plus(R5_Plus);
-   const MatG6 R9_Minus(R5_Minus);
-   const MatG6 R10_Plus(R6_Plus);
-   const MatG6 R10_Minus(R6_Minus);
-   const MatG6 R11_Plus(R7_Plus);
-   const MatG6 R11_Minus(R7_Minus);
+   const static MatG6 R5_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 -1 0 0   0 -2 0 1 0 0   0 0 0 0 1 -1   0 0 0 0 0 1");
+   const static MatG6 R5_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0  0 1 1 +1 0 0   0 +2 0 1 0 0   0 0 0 0 1 +1   0 0 0 0 0 1");
+   const static MatG6 R6_Plus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 -1 0   0 0 0 1 0 -1   -2 0 0 0 1 0   0 0 0 0 0 1");
+   const static MatG6 R6_Minus(" 1 0 0 0 0 0   0 1 0 0 0 0   1 0 1 0 +1 0   0 0 0 1 0 +1   +2 0 0 0 1 0   0 0 0 0 0 1");
+   const static MatG6 R7_Plus(" 1 0 0 0 0 0   1 1 0 0 0 -1   0 0 1 0 0 0   0 0 0 1 -1 0   0 0 0 0 1 0   -2 0 0 0 0 1");
+   const static MatG6 R7_Minus(" 1 0 0 0 0 0   1 1 0 0 0 +1   0 0 1 0 0 0   0 0 0 1 +1 0   0 0 0 0 1 0   +2 0 0 0 0 1");
+   const static MatG6 R8(" 1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 2 0 1 0 1   2 0 0 0 1 1    0 0 0 0 0 1");
+   const static MatG6 R9_Plus(R5_Plus);
+   const static MatG6 R9_Minus(R5_Minus);
+   const static MatG6 R10_Plus(R6_Plus);
+   const static MatG6 R10_Minus(R6_Minus);
+   const static MatG6 R11_Plus(R7_Plus);
+   const static MatG6 R11_Minus(R7_Minus);
    //const MatG6 R12(R8);
-   const MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
+   const static MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
    G6 vin;
    MatG6 m1;
    int ncycle = 0;
@@ -663,15 +1048,12 @@ bool Niggli::NearRed( const G6& gvec, const double delta )
    return( true );
 } // end NearRed
 
-
 bool Niggli::IsNiggli(const S6& s) {
-
    G6 g{ D7{ s } };
    return IsNiggli(g);
 }
 
 bool Niggli::IsNiggli(const D7& d) {
-
    G6 g{ d };
    return IsNiggli(g);
 }
@@ -686,7 +1068,6 @@ bool Niggli::IsNiggli(const G6& v) {
 
 
    const double delta = 10E-6;
-   bool foundChange = false;
 
    if (g1 <= 0.0) return false;
    if (g2 <= 0.0) return false;
@@ -694,9 +1075,7 @@ bool Niggli::IsNiggli(const G6& v) {
 
    if (g1 > g2) return false;
    if (g2 > g3) return false;
-   if (g4 > 0.0) return false;
-   if (g5 > 0.0) return false;
-   if (g6 > 0.0) return false;
+
    if (abs(g4) > g2) return false;
    if (abs(g5) > g1) return false;
    if (abs(g6) > g1) return false;
