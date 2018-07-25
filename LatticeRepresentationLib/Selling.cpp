@@ -44,6 +44,7 @@ void Selling::ListSteps( const S6& in ) {
 }
 
 bool Selling::Reduce(const S6& in, S6& out, const bool sellingFirst) {
+   // dummy function to have the same signature as one in Niggli
    return Reduce(in, out);
 }
 

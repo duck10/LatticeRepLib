@@ -31,6 +31,7 @@ to implement that change is returned
 class Niggli {
 public:
    static bool Reduce(const G6& vi, G6& vout, const bool sellingFirst);
+   static bool Reduce(const G6& vi, G6& vout);
    static bool Reduce(const G6& vi, MatG6& m, G6& vout, const double delta);
    static bool NearRed(const G6& gvec, const double delta = 0.0);
    static void MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta);
@@ -39,7 +40,7 @@ public:
    static bool IsNiggli(const D7& s);
    static void MKnormWithoutMatrices(const G6& vi, G6& vout, const double delta);
    static bool ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta);
-
+   static void ShowStoreResults();
 
    template<typename TVEC>
    static bool Reduce(const TVEC& vi, TVEC& vout) {
