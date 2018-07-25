@@ -5,19 +5,24 @@
 
 #include "Allman.h"
 #include "B4.h"
+#include "CellInputData.h"
 #include "CS6Dist.h"
-#include "LRL_CreateFileName.h"
 #include "D7.h"
 #include "G6.h"
 #include "D7Dist_.hpp"
 #include "Delone.h"
 #include "GenerateRandomLattice.h"
+#include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
+#include "LRL_CreateFileName.h"
 #include "LRL_DataToSVG.h"
 #include "LRL_MinMaxTools.h"
+#include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
+#include "LRL_MaximaTools.h"
+#include "MatS6.h"
 #include "LRL_MaximaTools.h"
 #include "NCDist.h"
 #include "Niggli.h"
@@ -962,20 +967,46 @@ void TimingForNewNiggliReduce() {
    exit(0);
 }
 
+std::vector<CellInputData> ReadAllLatticeData() {
+   std::vector<CellInputData> celldata;
+   std::string lattice("");
+   LRL_ReadLatticeData rcd(seed);
+   while (lattice != "EOF") {
+      rcd.read();
+      lattice = "EOF";
+      lattice = rcd.GetLattice();
+      if (lattice != "EOF" && !lattice.empty()) {
+         rcd.SetVarietyRange(std::make_pair(0, 23));
+         celldata.push_back(rcd);
+      }
+   }
+   return celldata;
+}
+
+
 void VerifyNiggli() {
    StoreResults<double, std::string> store(10);
-   int seed = 9;
-   GenerateRandomLattice<G6> grl(seed);
-   const unsigned long ntest = 100;
-   for (unsigned long i = 0; i < ntest; ++i) {
-      const G6 g6 = grl.GenerateExtreme();
+   //int seed = 9;
+   //GenerateRandomLattice<G6> grl(seed);
+   //const unsigned long ntest = 100000;
+   //for (unsigned long i = 0; i < ntest; ++i) {
+   //   const G6 g6 = grl.GenerateExtreme();
+   const std::vector<CellInputData> cellData = ReadAllLatticeData();  // read the data
+
+   const unsigned long n = cellData.size();
+   std::cout << "number of cells read   " << n << std::endl;
    G6 vout1;
-      bool b1 = Niggli::Reduce(g6, vout1);
    G6 vout2;
-   bool b2 = Niggli::ReduceWithoutMatrices(g6, vout2, 0.0);
-   if ( vout1==vout2) store.Store(0, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
-   if ( (vout1-vout2).norm() < 1.0E-9) store.Store(1, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
-   else store.Store(2, LRL_ToString((vout1 - vout2).norm(), "  ", LRL_Cell_Degrees(vout2)));
+
+   for (unsigned long i = 0; i < n; ++i) {
+      LRL_Cell cell = LatticeConverter::MakePrimitiveCell(cellData[i].GetLattice(), cellData[i].GetCell());
+
+      bool b1 = Niggli::Reduce(G6(cell), vout1);
+      bool b2 = Niggli::ReduceWithoutMatrices(G6(cell), vout2, 0.0);
+
+      if (vout1 == vout2) store.Store(0, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
+      else if ((vout1 - vout2).norm() < 1.0E-9) store.Store(1, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
+      else store.Store(2, LRL_ToString((vout1 - vout2).norm(), "  ", LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2))));
    }
    store.ShowResults();
    exit(0);
@@ -983,7 +1014,10 @@ void VerifyNiggli() {
 
 int main(int argc, char *argv[])
 {
-   TimingForNewNiggliReduce();
+   const std::vector<MatS6> vmats6 = MatS6::GetReflections();
+   for (unsigned long i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(vmats6[i]) << std::endl;
+   exit(0);
+   //TimingForNewNiggliReduce();
    VerifyNiggli();
    VerifyIsNiggli();
    S6 out;

@@ -22,5 +22,6 @@ public:
    static LRL_Cell DeloneReduceCell(const std::string& lattice, const LRL_Cell& cell);
    static LRL_Cell SellingReduceCell(const std::string& lattice, const LRL_Cell& cell);
    void DeloneReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell);
+   static LRL_Cell MakePrimitiveCell(const std::string& lattice, const LRL_Cell& cell);
 };
 #endif //LATTICECONVERTER_H
