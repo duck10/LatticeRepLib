@@ -1014,6 +1014,10 @@ void VerifyNiggli() {
 
 int main(int argc, char *argv[])
 {
+   const std::vector<std::pair<MatS6, MatS6> > unred = S6::SetUnreductionMatrices();
+   for (unsigned long i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(unred[i].first) << "   " <<
+      LRL_MaximaTools::MaximaFromMat(unred[i].second) << std::endl;
+
    const std::vector<MatS6> vmats6 = MatS6::GetReflections();
    for (unsigned long i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(vmats6[i]) << std::endl;
    exit(0);
