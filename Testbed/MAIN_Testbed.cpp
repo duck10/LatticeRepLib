@@ -967,31 +967,14 @@ void TimingForNewNiggliReduce() {
    exit(0);
 }
 
-std::vector<CellInputData> ReadAllLatticeData() {
-   std::vector<CellInputData> celldata;
-   std::string lattice("");
-   LRL_ReadLatticeData rcd(seed);
-   while (lattice != "EOF") {
-      rcd.read();
-      lattice = "EOF";
-      lattice = rcd.GetLattice();
-      if (lattice != "EOF" && !lattice.empty()) {
-         rcd.SetVarietyRange(std::make_pair(0, 23));
-         celldata.push_back(rcd);
-      }
-   }
-   return celldata;
-}
-
-
 void VerifyNiggli() {
    StoreResults<double, std::string> store(10);
-   //int seed = 9;
+   int seed = 9;
    //GenerateRandomLattice<G6> grl(seed);
    //const unsigned long ntest = 100000;
    //for (unsigned long i = 0; i < ntest; ++i) {
    //   const G6 g6 = grl.GenerateExtreme();
-   const std::vector<CellInputData> cellData = ReadAllLatticeData();  // read the data
+   const std::vector<CellInputData> cellData = LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(seed);  // read the data
 
    const unsigned long n = cellData.size();
    std::cout << "number of cells read   " << n << std::endl;
@@ -999,7 +982,7 @@ void VerifyNiggli() {
    G6 vout2;
 
    for (unsigned long i = 0; i < n; ++i) {
-      LRL_Cell cell = LatticeConverter::MakePrimitiveCell(cellData[i].GetLattice(), cellData[i].GetCell());
+      LRL_Cell& cell = cellData[i].GetCell();
 
       bool b1 = Niggli::Reduce(G6(cell), vout1);
       bool b2 = Niggli::ReduceWithoutMatrices(G6(cell), vout2, 0.0);

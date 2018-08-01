@@ -2,9 +2,11 @@
 //
 #include <vector>
 
+#include "CellInputData.h"
 #include "Delone.h"
 #include "GenerateRandomLattice.h"
 #include "LRL_ToString.h"
+#include "LRL_ReadLatticeData.h"
 #include "MatS6.h"
 #include "svd.h"
 #include "S6.h"
@@ -35,32 +37,17 @@ void TestCreator() {
 
 int main()
 {
-   // std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > S6Dist::SetUnreduceFunctionPairs() {
-   const std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > red = S6Dist::SetUnreduceFunctionPairs();
-   //TestCreator();
-   GenerateRandomLattice<S6> generator(seed);
+   const std::vector<CellInputData> cellData = LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(seed);  // read the data
 
    std::vector<std::vector<double> > a;
    std::vector<std::vector<double> > v;
    std::vector<double> w;
-   for (unsigned long n = 0; n < 36; ++n) {
-      const S6 ss = generator.randSellingReduced();
-      S6 s(ss);
-      //Delone::Reduce(ss, s);
-
-      for (unsigned long i = 1; i < 6; ++i) {
-         std::vector<double> vs;
-         //const S6 smod = MatS6::GetReflection(i) * s;
-         const S6 smod = red[0].first(s);
-         //for (unsigned long k = 0; k < 6; ++k) {
-         //   vs.push_back(s[k]);
-         //}
-         for (unsigned long k = 0; k < 6; ++k) {
-            vs.push_back(smod[k]);
-         }
-         a.push_back(vs);
-      }
+   for (unsigned long n = 0; n < cellData.size(); ++n) {
+      const S6& s = cellData[n].GetCell();
+      std::cout << s << std::endl;
+      a.push_back(s.GetVector());
    }
+   std::cout << std::endl;
 
    w.resize(a[0].size());
    v.resize(a.size());
