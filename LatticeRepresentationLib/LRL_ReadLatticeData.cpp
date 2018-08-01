@@ -6,6 +6,7 @@
 #include "S6.h"
 #include "B4.h"
 #include "D7.h"
+#include "LatticeConverter.h"
 #include "LRL_RandTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
@@ -137,6 +138,35 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
       }
    }
 }
+
+std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeData(const int seed) {
+   std::vector<CellInputData> celldata;
+   std::string lattice("");
+   LRL_ReadLatticeData rcd(seed);
+   while (lattice != "EOF") {
+      rcd.read();
+      lattice = "EOF";
+      lattice = rcd.GetLattice();
+      if (lattice != "EOF" && !lattice.empty()) {
+         rcd.SetVarietyRange(std::make_pair(0, 23));
+         celldata.push_back(rcd);
+      }
+   }
+   return celldata;
+}
+
+std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(const int seed){
+   std::vector<CellInputData> cellData = ReadAllLatticeData(seed);
+   for ( unsigned long i=0; i<cellData.size(); ++i ) {
+      if ( cellData[i].GetLattice() != "P") {
+         LRL_Cell cell = LatticeConverter::MakePrimitiveCell(cellData[i].GetLattice(), cellData[i].GetCell());
+         cellData[i].SetCell(cell);
+         cellData[i].SetLattice("P");
+      }
+   }
+   return cellData;
+}
+
 
 LRL_ReadLatticeData::LRL_ReadLatticeData(const int seed )
 : generator(seed) {

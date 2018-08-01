@@ -14,6 +14,9 @@ public:
    GenerateRandomLattice<S6> generator;
    bool IsLatticeName(const std::string inputName, const std::vector<std::string>& nameList);
    bool IsLatticeName(const std::vector<std::string>& nameList, const std::string inputName);
+
+   static std::vector<CellInputData> ReadAllLatticeData(const int seed);
+   static std::vector<CellInputData> ReadAllLatticeDataAndMakePrimitive(const int seed);
 };
 
 #endif // LRL_READLATTICEDATA_H
