@@ -15,7 +15,7 @@
 bool Selling::m_debugInstrument = false;
 unsigned long Selling::m_ReductionCycleCount = 0;
 
-std::vector< S6(*)(const S6&)> FillReduceMatrixVector() {
+std::vector< S6(*)(const S6&)> FillReduceFunctionArray() {
    static std::vector< S6(*)(const S6&)> vf;
    if (vf.empty()) {
       // THESE ARE TRANSFORMATIONS IN S6 (I THINK), NOT NOT NOT IN G6 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -49,16 +49,14 @@ bool Selling::Reduce(const S6& in, S6& out, const bool sellingFirst) {
 }
 
 bool Selling::Reduce(const S6& in, S6& out) {
-   static const std::vector< S6(*)(const S6&)> vf = FillReduceMatrixVector();
+   static const std::vector< S6(*)(const S6&)> reductionFunctions = FillReduceFunctionArray();
    unsigned long maxIndex = INT_MAX;
    m_ReductionCycleCount = 0;
    out = in;
 
    ListSteps(out);
 
-   if (S6::CountPositive(in) == 0) return true;
-
-   while (true) {
+   while (S6::CountPositive(out) != 0) {
       double maxScalar = -DBL_MAX;
 
       for (unsigned long i = 0; i < 6; ++i) {
@@ -68,16 +66,14 @@ bool Selling::Reduce(const S6& in, S6& out) {
          }
       }
       
-      out = vf[maxIndex](out);
+      out = reductionFunctions[maxIndex](out);
 
       ListSteps(out);
 
       ++m_ReductionCycleCount;
-      if (S6::CountPositive(out) == 0) return true;
-
-      const double negativeSumOfScalars = S6::NegativeSumOfScalars(out);
-      if (m_ReductionCycleCount > 1000 || negativeSumOfScalars < 0.0 ) return false;
+      if (m_ReductionCycleCount > 1000 || S6::NegativeSumOfScalars(out) < 0.0 ) return false;
    }
+   return true;
 }
 
    bool Selling::Reduce(const S6& in, MatS6& mReduce, S6& out, const double delta/*=0.0*/) {

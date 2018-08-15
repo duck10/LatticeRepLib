@@ -153,6 +153,7 @@ S6::S6(const G6& v6)
    s = (-2.0*g1 - g6 - g5) / 2.0;
    t = (-g6 - 2.0*g2 - g4) / 2.0;
    u = (-g5 - g4 - 2.0*g3) / 2.0;
+   m_valid = v6.GetValid();
 }
 
 S6::S6(const std::string& s)
