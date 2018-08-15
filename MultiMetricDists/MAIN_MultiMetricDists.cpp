@@ -144,9 +144,9 @@ void ComputeFaceAreasOfBravaisTetrahedron (const T& tin, double& a1, double& a2,
 
 void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatticeData>& cellDataList) {
    const std::string letters = Letters();
-   std::string lattice;
    for (size_t i1 = 0; i1 < cellDataList.size(); ++i1) {
       const LRL_ReadLatticeData& rcd = cellDataList[i1];
+      const std::string lattice = rcd.GetLattice();
       size_t place = letters.find(lattice);
       if (letters.find(LRL_StringTools::strToupper(lattice)) == std::string::npos) continue;
       std::cout << std::endl;

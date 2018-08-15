@@ -69,6 +69,7 @@ G6::G6(const LRL_Cell& c) {
    bool b4 = c[5] < pi;
    bool b5 = (c[3] + c[4] + c[5])< twopi;
    m_valid = b1 && b2 && b3 && b4 && b5;
+   m_vec.SetValid(m_valid);
 }
 
 G6::G6(const S6& ds)
