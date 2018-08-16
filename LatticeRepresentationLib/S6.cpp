@@ -490,21 +490,7 @@ std::vector<std::pair<MatS6, MatS6> > S6::SetUnreductionMatrices() {
 
 
 std::vector< S6(*)(const S6&)> S6::SetReduceFunctions() {
-   std::vector<S6(*)(const S6&)> v;
-   // The order is to agree with the reflection in D7Dist.h
-   v.push_back(Reduce11);
-   v.push_back(Reduce12);
-   v.push_back(Reduce21);
-   v.push_back(Reduce22);
-   v.push_back(Reduce31);
-   v.push_back(Reduce32);
-   v.push_back(Reduce41);
-   v.push_back(Reduce42);
-   v.push_back(Reduce51);
-   v.push_back(Reduce52);
-   v.push_back(Reduce61);
-   v.push_back(Reduce62);
-   return v;
+   return SetUnreduceFunctions();
 }
 
 std::vector< S6(*)(const S6&)> S6::SetUnreduceFunctions() {
@@ -520,8 +506,8 @@ std::vector< S6(*)(const S6&)> S6::SetUnreduceFunctions() {
    //v.push_back(Unreduce42);
    v.push_back(Unreduce51);
    //v.push_back(Unreduce52);
-   v.push_back(Unreduce61);
-   //v.push_back(Unreduce62);
+   //v.push_back(Unreduce61);
+   v.push_back(Unreduce62);
    return v;
 }
 
