@@ -174,7 +174,8 @@ MatS6 operator/(const double d, const MatS6& m) {
 }
 
 S6 MatS6::operator* (const S6& v) const {
-   return m_mat * v.GetVector();
+   const S6 s6 = m_mat * v.GetVector();
+   return s6;
 }
 
 

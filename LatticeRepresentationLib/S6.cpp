@@ -127,6 +127,7 @@ S6::S6(const VecN& v)
       m_dim = 6;
       m_valid = true;
       m_vec = v;
+      m_vec.SetValid(true);
    }
 }
 
