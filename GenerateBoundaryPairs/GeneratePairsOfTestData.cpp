@@ -64,6 +64,7 @@ std::pair<S6, S6> GeneratePairsOfTestData::GeneratePair_Reduced_Other_ReducesFar
       const int random = rand() & 23;
       return std::make_pair(output.first, DoRandomReflection(out));
    }
+   return std::make_pair(S6(),S6());
 }
 
 std::string GeneratePairsOfTestData::FormatPairOfTestS6Vectors(const S6& s1, const S6& s2, const std::string& id) {

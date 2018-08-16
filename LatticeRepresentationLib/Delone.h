@@ -49,10 +49,12 @@ public:
    static bool IsDelone( const D7& v, const double delta = 1.0E-6 );
    static std::vector<MatD7> GetD7Reflections();
    static std::vector<MatS6> LoadLatticeTypeProjectors();
+   static std::vector<std::pair<std::string, MatS6> > LoadLabeledLatticeTypeProjectors();
 
 private:
    static int GenMaxMinKey(const D7& d);
    static unsigned long FindRefl(const unsigned long key, const D7& random, std::set<unsigned long>& sr);
+   static std::vector<std::pair<std::string, MatS6> > PrivateLoadLabeledLatticeTypeProjectors();
 };
 
 #endif   //  DELAUNAY_H
