@@ -99,7 +99,7 @@ public:
       unsigned long totalSampleCount = 0UL;
 
       for (unsigned long i = 0; i < keys.size(); ++i) {
-         totalSampleCount += (unsigned long)(FindResult(keys[i]).size());
+         totalSampleCount += (unsigned long)(GetResult(keys[i]).size());
       }
       return totalSampleCount;
    }
@@ -129,7 +129,7 @@ public:
 
    unsigned long GetNmax(void) const { return m_nmax; }
 
-   std::vector<std::pair<TKEY, TDATA> > FindResult(const TKEY& key) const {
+   std::vector<std::pair<TKEY, TDATA> > GetResult(const TKEY& key) const {
       const typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it = m_tree.find(key);
       if (it == m_tree.end()) {
          return std::vector<std::pair<TKEY, TDATA> >();

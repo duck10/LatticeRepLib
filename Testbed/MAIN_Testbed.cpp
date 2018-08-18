@@ -168,7 +168,7 @@ void Reflects() {
    std::vector < std::string > keys = g_storeStr.GetKeys();
 
    for (int i = 0; i < keys.size(); ++i) {
-      const std::vector<std::pair<std::string, LRL_Cell> > v = g_storeStr.FindResult(keys[i]);
+      const std::vector<std::pair<std::string, LRL_Cell> > v = g_storeStr.GetResult(keys[i]);
       /*if (v.size() > 0) */std::cout << "key " << keys[i] << "    samples = " << v.size() << "   count  " << g_storeStr.GetItemCount(keys[i]) << std::endl;
       for (int k = 0; k < v.size(); ++k) {
          std::cout << LRL_Cell_Degrees(v[k].second) << "    " << S6(v[k].second) << std::endl;
