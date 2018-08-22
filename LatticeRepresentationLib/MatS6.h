@@ -28,6 +28,7 @@ public:
    friend class D7;
 
    MatS6(void);
+   MatS6(const double s1, const double s2, const double s3, const double s4, const double s5, const double s6, const double s7, const double s8, const double s9, const double s10, const double s11, const double s12, const double s13, const double s14, const double s15, const double s16, const double s17, const double s18, const double s19, const double s20, const double s21, const double s22, const double s23, const double s24, const double s25, const double s26, const double s27, const double s28, const double s29, const double s30, const double s31, const double s32, const double s33, const double s34, const double s35, const double s36);
    MatS6(const MatG6& m);
    MatS6(const MatS6& m);
    MatS6(const MatD7& m);

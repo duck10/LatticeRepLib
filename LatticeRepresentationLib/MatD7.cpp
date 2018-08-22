@@ -197,8 +197,8 @@ unsigned long MatD7::size(void) const {
 
 double MatD7::norm() const {
    double sum = 0.0;
-   for (unsigned long i = 0; i < 49; ++i) sum += m_mat[i];
-   return sum;
+   for (unsigned long i = 0; i < 49; ++i) sum += m_mat[i]* m_mat[i];
+   return sqrt(sum);
 }
 
 double MatD7::norm(const MatD7& t) const {
