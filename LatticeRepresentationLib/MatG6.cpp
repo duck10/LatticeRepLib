@@ -201,8 +201,8 @@ unsigned long MatG6::size(void) const {
 
 double MatG6::norm() const {
    double sum = 0.0;
-   for (unsigned long i = 0; i < 36; ++i) sum += m_mat[i];
-   return sum;
+   for (unsigned long i = 0; i < 49; ++i) sum += m_mat[i] * m_mat[i];
+   return sqrt(sum);
 }
 
 double MatG6::norm(const MatG6& t) const {

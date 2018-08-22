@@ -22,6 +22,50 @@ MatS6::MatS6(void)
    : m_mat(36)
 {}
 
+MatS6::MatS6(const double s1, const double s2, const double s3, const double s4, const double s5, const double s6, const double s7, const double s8, const double s9, const double s10, const double s11, const double s12, const double s13, const double s14, const double s15, const double s16, const double s17, const double s18, const double s19, const double s20, const double s21, const double s22, const double s23, const double s24, const double s25, const double s26, const double s27, const double s28, const double s29, const double s30, const double s31, const double s32, const double s33, const double s34, const double s35, const double s36)
+   : m_mat(36)
+{
+   m_mat[0] = s1;
+   m_mat[1] = s2;
+   m_mat[2] = s3;
+   m_mat[3] = s4;
+   m_mat[4] = s5;
+   m_mat[5] = s6;
+   m_mat[6] = s7;
+   m_mat[7] = s8;
+   m_mat[8] = s9;
+   m_mat[9] = s10;
+
+   m_mat[10] = s11;
+   m_mat[11] = s12;
+   m_mat[12] = s13;
+   m_mat[13] = s14;
+   m_mat[14] = s15;
+   m_mat[15] = s16;
+   m_mat[16] = s17;
+   m_mat[17] = s18;
+   m_mat[18] = s19;
+   m_mat[19] = s20;
+
+   m_mat[20] = s21;
+   m_mat[21] = s22;
+   m_mat[22] = s23;
+   m_mat[23] = s24;
+   m_mat[24] = s25;
+   m_mat[25] = s26;
+   m_mat[26] = s27;
+   m_mat[27] = s28;
+   m_mat[28] = s29;
+   m_mat[29] = s30;
+
+   m_mat[30] = s31;
+   m_mat[31] = s32;
+   m_mat[32] = s33;
+   m_mat[33] = s34;
+   m_mat[34] = s35;
+   m_mat[35] = s36;
+}
+
 //MatS6::MatS6(const LRL_Cell& m)
 //   : m_mat(36)
 //{throw;}
@@ -198,8 +242,8 @@ unsigned long MatS6::size(void) const {
 
 double MatS6::norm() const {
    double sum = 0.0;
-   for (unsigned long i = 0; i < 36; ++i) sum += m_mat[i];
-   return sum;
+   for (unsigned long i = 0; i < 36; ++i) sum += m_mat[i]* m_mat[i];
+   return sqrt(sum);
 }
 
 double MatS6::norm(const MatS6& t) const {
