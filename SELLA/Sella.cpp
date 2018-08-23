@@ -206,16 +206,11 @@ MatS6 Sella::ProjectorFromVector(const std::string& label, const S6& s6in) {
    MatS6 m;
 
    const S6 s = ReZeroScalars(s6in);
-   if (label == "K5 ") {
-      const int i19191 = 19191;
-   }
    std::pair<std::string, std::vector<MatS6> > oneperp;
    for (unsigned long j = 0; j < 6; ++j) {
       for (unsigned long k = 0; k < 6; ++k) {
-         const unsigned long index1 = Index6(j, k);
-         const unsigned long index2 = Index6(k, j);
          const double thisFrac = Fraction(s[k], s);
-         m[index1] = (abs(s[j] - s[k]) < 1.0E-5 && abs(s[k]) > 1.0E-5) ? thisFrac : 0.0;
+         m[Index6(j, k)] = (abs(s[j] - s[k]) < 1.0E-5 && abs(s[k]) > 1.0E-5) ? thisFrac : 0.0;
          m[Index6(k, k)] = (thisFrac == 0.0 || abs(s[k]) < 1.0E-6) ? 0.0 : thisFrac;
          m[Index6(j, j)] = (thisFrac == 0.0 || abs(s[k]) < 1.0E-6) ? 0.0 : thisFrac;
       }
