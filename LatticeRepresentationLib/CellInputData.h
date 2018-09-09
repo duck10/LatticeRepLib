@@ -24,6 +24,7 @@ public:
    void SetVarietyRange(const std::pair<int, int>& p) { m_varietyRange = p; }
 
 protected:
+   std::string m_input;
    std::string m_lattice;
    std::string m_inputDataType;
    std::string m_strCell;

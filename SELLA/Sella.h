@@ -47,7 +47,6 @@ public:
    static std::vector<LabeledSellaMatrices> CreateAllPerps();
    static std::vector<LabeledSellaMatrices> CreateAllPrjs();
 
-   double GetBestFitForDeloneType(const std::string& type);
    std::pair<std::string, double>  GetBestFitForCrystalSystem(const std::string& type, const S6& s6);
    double GetFitForDeloneType(const std::string& type, const S6& s6);
    std::vector<std::pair<std::string, double> > GetAllFitsForCrystalSystem(const std::string& type);

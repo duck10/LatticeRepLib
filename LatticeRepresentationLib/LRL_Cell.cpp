@@ -320,7 +320,10 @@ bool LRL_Cell::IsRhomobhedralAsHex( void ) const {
 }
 
 /*static*/ bool LRL_Cell::IsRhomobhedralAsHex( const LRL_Cell& c ) {
-   return IsRhomobhedralAsHex( G6(c) );
+   static const double degrees90 = 2.0*atan(1.0);
+   static const double degrees120 = 4.0 / 3.0 * degrees90;;
+   return (std::abs(c[3] - degrees90) < 1.0E-4 && std::abs(c[4] - degrees90) < 1.0E-4) &&
+      (std::abs(c[5] - degrees120) < 1.0E-4);
 }
 
 // Assumes the cell EITHER has alpha=beta=gamma or a=b & alpha=beta=90 and gamma=120 (approximately)

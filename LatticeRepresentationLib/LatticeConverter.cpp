@@ -96,6 +96,7 @@ LRL_Cell LatticeConverter::DeloneReduceCell(const std::string& lattice, const LR
 
 LRL_Cell LatticeConverter::SellingReduceCell(const std::string& lattice, const LRL_Cell& cell) {
    const G6 g6 = G6(cell);
+   const S6 tempS6 = g6;
    const MatG6 mLattice = LRL_Cell::LatSymMatG6(lattice, cell);
    MatS6 m66;
    S6 redVec;
