@@ -53,6 +53,7 @@ bool LRL_ReadLatticeData::IsLatticeName(const std::vector<std::string>& nameList
 
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
    bool valid = false;
+   m_input = s;
    if ((LRL_StringTools::strToupper(s.substr(0, 3)) == std::string("END"))) {
       m_lattice = "EOF";
    }

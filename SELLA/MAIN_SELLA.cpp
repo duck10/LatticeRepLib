@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "C3.h"
 #include "LatticeConverter.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
@@ -11,6 +12,7 @@
 #include "S6.h"
 #include "Sella.h"
 #include "Selling.h"
+#include "StoreResults.h"
 
 
 std::string Letters(void) {
@@ -102,7 +104,7 @@ S6 ReduceLatticeType( const std::string& type, const S6& s6) {
    return converter.SellingReduceCell(type, LRL_Cell(s6));
 }
 
-StoreResults<std::string, S6> store(10);
+StoreResults<std::string, S6> storeProblems(10);
 
 std::vector<S6> GenerateOrthorhombicTestCells(const std::string& type) {
    Sella sella;
@@ -125,13 +127,13 @@ std::vector<S6> GenerateOrthorhombicTestCells(const std::string& type) {
          const S6 red = ReduceLatticeType(type, s6);
          const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("O", red);
          const int i19191 = 19191;
-         store.Store(best.first, red);
+         storeProblems.Store(best.first, red);
 
 
 
       }
    }
-   store.ShowResults();
+   storeProblems.ShowResults();
    exit(0);
 }
 
@@ -192,6 +194,39 @@ void GenerateCubicTest() {
 
 }
 
+std::string Trim(const std::string type) {
+   for ( unsigned long i=0; i<type.size(); ++i ) {
+      if (type[i] == ' ') return type.substr(0, i);
+   }
+   return type;
+}
+
+void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
+   StoreResults<std::string, std::string> storeGood(1);
+   StoreResults<std::string, std::string> storeProblems(100);
+   std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+   const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   Sella sella;
+
+   for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
+      const std::string strCell = input[lat].GetStrCell();
+      if (strCell[0] == 'A' || strCell[0] == 'a') continue;
+      const std::string xtalSystem = std::string(1, strCell[strCell.length() - 1]);
+      std::string deloneType = strCell.substr(0, 3);
+      deloneType = Trim(deloneType);
+      if ( xtalSystem == "a" ) continue;
+
+      const std::pair<std::string, double> fit = sella.GetBestFitForCrystalSystem(xtalSystem, vLat[lat]);
+      const double normlat = vLat[lat].norm();
+      if (fit.second > 1.0E-5) storeProblems.Store(fit.first, LRL_ToString(" ", fit.first, "  ", fit.second, " (", normlat, ")  ",  strCell, "  ", vLat[lat]));
+      if (fit.second < 1.0E-5) storeGood.Store(fit.first, LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat]));
+ //     std::cout << LRL_ToString(fit.first, "  ") << LRL_ToString( LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat])) << std::endl;
+   }
+   storeProblems.ShowResults();
+   storeGood.ShowResults();
+   exit(0);
+}
+
 int main()
 {
    //GenerateCubicTest();
@@ -200,9 +235,11 @@ int main()
    Sella sella;
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
+   //AnalyzePDBCells(input);
    LatticeConverter converter;
 
-   std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   std::cout << S6(input[0].GetCell()) << std::endl;
+   const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
 
    const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("m", vLat[0]);
 
@@ -212,7 +249,7 @@ int main()
       std::cout << input[lat].GetStrCell() << std::endl;
       out = sella.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, 0.0));
       for (unsigned long i = 0; i < out.size(); ++i) {
-         std::cout << out[i].first << "  " << out[i].second << std::endl;
+         std::cout << out[i].first << "  " << out[i].second <<  "   " << S6(C3::ConvertToFundamentalUnit(C3(vLat[lat]))) << "   " << LRL_Cell_Degrees(vLat[lat])<< std::endl;
       }
       std::cout << std::endl;
    }
