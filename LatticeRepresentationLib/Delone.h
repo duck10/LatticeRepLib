@@ -44,6 +44,7 @@ public:
    static bool Reduce(const D7& d, D7& dd);
    static bool Reduce(const S6& d, MatS6& m, S6& dd);
    static D7 sort(const D7& d, MatD7& m);
+   static D7 sort(const D7& d);
    static bool IsReduced(const G6& v);
    static bool IsReduced(const G6& v, const double delta);
    static bool IsDelone( const D7& v, const double delta = 1.0E-6 );
