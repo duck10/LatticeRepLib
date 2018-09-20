@@ -151,7 +151,7 @@ void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatti
       if (letters.find(LRL_StringTools::strToupper(lattice)) == std::string::npos) continue;
       std::cout << std::endl;
       std::cout << "LRL_Cell # " << i1 << "  *******************************" << std::endl;
-      converter.Output("Input Data", lattice, rcd.GetCell());
+      converter.Output("Input Data", lattice, LRL_Cell_Degrees(rcd.GetCell()));
       std::cout << std::endl;
       converter.NiggliReducedOutput("Niggli Reduced", lattice, rcd.GetCell());
       std::cout << std::endl;

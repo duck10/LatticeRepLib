@@ -54,7 +54,7 @@ bool Selling::Reduce(const S6& in, S6& out) {
    m_ReductionCycleCount = 0;
    out = in;
 
-   ListSteps(out);
+   //ListSteps(out);
 
    while (S6::CountPositive(out) != 0) {
       double maxScalar = -DBL_MAX;
@@ -68,7 +68,7 @@ bool Selling::Reduce(const S6& in, S6& out) {
       
       out = reductionFunctions[maxIndex](out);
 
-      ListSteps(out);
+      //ListSteps(out);
 
       ++m_ReductionCycleCount;
       if (m_ReductionCycleCount > 1000 || S6::NegativeSumOfScalars(out) < 0.0 ) return false;

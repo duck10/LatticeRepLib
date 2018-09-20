@@ -47,8 +47,11 @@ bool Delone::Reduce(const D7& d, D7& dd, const bool sellingFirst) {
 }
 
 bool Delone::Reduce(const S6& d, S6& dd) {
-   MatS6 m;
-   return Reduce(d, m, dd);
+   const bool b = Selling::Reduce(d,dd);
+   if ( b) {
+      dd = sort(D7(dd));
+   }
+   return b;
 }
 
 bool Delone::Reduce(const D7& d, D7& dd) {
@@ -130,6 +133,23 @@ D7 Delone::sort(const D7& d, MatD7& m) {
    }
    else {
       m = (m*refl[sm[key]]).Reduce();
+      return refl[sm[key]] * random;
+   }
+}
+
+D7 Delone::sort(const D7& d) {
+   const static std::vector<MatD7> refl = GetD7Reflections();
+   static std::set<unsigned long> sr;
+   static std::map<unsigned long, unsigned long> sm;
+
+   D7 random(d);
+   unsigned long key = GenMaxMinKey(random);
+   if (sr.find(key) == sr.end()) {
+      const unsigned long n = FindRefl(key, random, sr);
+      sm.insert(std::make_pair(key, n));
+      return refl[n] * random;
+   }
+   else {
       return refl[sm[key]] * random;
    }
 }

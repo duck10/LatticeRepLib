@@ -6,6 +6,7 @@
 #include "Allman.h"
 #include "B4.h"
 #include "CellInputData.h"
+#include "LRL_CreateFileName.h"
 #include "CS6Dist.h"
 #include "D7.h"
 #include "G6.h"
@@ -38,6 +39,26 @@
 
 #include <ctime>
 #include <functional>
+
+
+#define CS6M_S6toD7 (s6vec, d7vec) { \
+    d7vec[0] = -s6vec[3] -s6vec[2] -s6vec[1];\
+    d7vec[1] = -s6vec[4] -s6vec[2] -s6vec[0];\
+    d7vec[2] = -s6vec[5] -s6vec[1] -s6vec[0];\
+    d7vec[3] = -s6vec[3] -s6vec[4] -s6vec[5];\
+    d7vec[4] = -s6vec[4] -s6vec[2] -s6vec[5] -s6vec[1];\
+    d7vec[5] = -s6vec[3] -s6vec[2] -s6vec[5] -s6vec[0];\
+    d7vec[6] = -s6vec[3] -s6vec[1] -s6vec[4] -s6vec[0];\
+}
+
+#define CS6M_D7toS6(d7vec, s6vec) { \
+    s6vec[0] = -(-d7vec[4]+d7vec[2]+d7vec[1])/2;\
+    s6vec[1] = -(-d7vec[5]+d7vec[2]+d7vec[0])/2;\
+    s6vec[2] = (-d7vec[5]-d7vec[4]+d7vec[3]+d7vec[2])/2;\
+    s6vec[3] = -(-d7vec[4]+d7vec[3]+d7vec[0])/2;\
+    s6vec[4] = -(-d7vec[5]+d7vec[3]+d7vec[1])/2;\
+    s6vec[5] = (-d7vec[5]-d7vec[4]+d7vec[1]+d7vec[0])/2;\
+}
 
 
 //void TransformAndTestVector( const D7& testvec, const D7_Subboundary& sb ) {
@@ -261,24 +282,53 @@ void TestSellingReduceUnreduceFunctions() {
 }
 
 void TestReductionTiming() {
-   //std::list<S6>::iterator it;
+   std::list<S6>::iterator it;
+   std::list<G6>::iterator itg6;
+   std::list<D7>::iterator itd7;
 
-   //S6 red2;
-   //std::cout << CreateFileName::Create("", "") << std::endl;;
-   //unsigned long trials1 = vs6.size()/100;
-   //std::cout << trials1 << std::endl;
-   //for (it = vs6.begin(); it != vs6.end(); ++it) {
-   //   S6 red1 = Delone::Reduce(*it);
-   //}
-   //std::cout << CreateFileName::Create("", "") << std::endl;;
+   std::list<S6> vs6;
+   std::list<G6> vg6;
+   std::list<D7> vd7;
+   for (unsigned long i = 0; i < 1000000; ++i) {
+      const S6 s6 = S6::randDeloneUnreduced();
+      vs6.push_back(s6);
+      vg6.push_back(s6);
+      vd7.push_back(s6);
+   }
 
-   //unsigned long trials2 = vs6.size();
-   //std::cout << trials2 << std::endl;
-   //for (it = vs6.begin(); it != vs6.end(); ++it) {
-   //   Delone::ReduceUnsortedByFunction(*it, red2);
-   //}
-   //std::cout << CreateFileName::Create("", "") << std::endl;;
-   //exit(0);
+
+   {
+      const std::clock_t start = std::clock();
+      std::cout << LRL_CreateFileName::Create("Selling_", "") << std::endl;;
+      for (it = vs6.begin(); it != vs6.end(); ++it) {
+         S6 red1;
+         const bool b = Selling::Reduce(*it, red1);
+      }
+      std::cout << LRL_CreateFileName::Create("Selling_", "") << "  " << std::clock() - start << std::endl << std::endl;
+   }
+
+   {
+      const std::clock_t start = std::clock();
+      G6 red6;
+      std::cout << LRL_CreateFileName::Create("Niggli_", "") << std::endl;;
+      for (itg6 = vg6.begin(); itg6 != vg6.end(); ++itg6) {
+         const bool b = Niggli::Reduce(*itg6, red6);
+      }
+      std::cout << LRL_CreateFileName::Create("Niggli_", "") << "  " << std::clock() - start << std::endl << std::endl;
+   }
+
+   {
+      const std::clock_t start = std::clock();
+      S6 red2;
+      std::cout << LRL_CreateFileName::Create("Delone_", "") << std::endl;;
+      for (it = vs6.begin(); it != vs6.end(); ++it) {
+         S6 red1;
+         const bool b = Delone::Reduce(*it, red1);
+      }
+      std::cout << LRL_CreateFileName::Create("Delone_", "") << "  " << std::clock() - start << std::endl << std::endl;
+   }
+
+   exit(0);
 
 }
 
@@ -997,6 +1047,9 @@ void VerifyNiggli() {
 
 int main(int argc, char *argv[])
 {
+   TestReductionTiming();
+
+   exit(0);
    const std::vector<std::pair<MatS6, MatS6> > unred = S6::SetUnreductionMatrices();
    for (unsigned long i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(unred[i].first) << "   " <<
       LRL_MaximaTools::MaximaFromMat(unred[i].second) << std::endl;
