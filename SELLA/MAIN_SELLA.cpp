@@ -227,6 +227,36 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    exit(0);
 }
 
+void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
+   const S6& start(s1);
+   const S6& target(s2);
+   const unsigned long nsteps = 100;
+   S6 step = (target - start) / (nsteps);
+   Sella sella;
+   std::vector<std::vector<std::pair<std::string, double> >  > fits;
+
+   for (unsigned long i = 0; i <= nsteps; ++i) {
+      S6 reducedStepper;
+      S6 stepper = start + step * i;
+      const bool b = Selling::Reduce(stepper, reducedStepper);
+      const std::vector<std::pair<std::string, double> > out = sella.GetVectorOfFits(reducedStepper);
+      stepper += step;
+      fits.push_back(out);
+
+      if (i == 0) {
+         for (unsigned long k = 0; k < out.size(); ++k) {
+            std::cout << out[k].first << " ";
+         }
+         std::cout << std::endl;
+      }
+      for (unsigned long k = 0; k < out.size(); ++k) {
+         std::cout << out[k].second << " ";
+      }
+      std::cout << std::endl;
+   }
+   std::cout << fits.size() << std::endl;
+}
+
 int main()
 {
    //GenerateCubicTest();
@@ -235,11 +265,14 @@ int main()
    Sella sella;
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
+   std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   SellaTwoLatticeLineTest(vLat[0], vLat[1]);
+   exit(0);
    //AnalyzePDBCells(input);
    LatticeConverter converter;
 
    std::cout << S6(input[0].GetCell()) << std::endl;
-   const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   //const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
 
    const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("m", vLat[0]);
 

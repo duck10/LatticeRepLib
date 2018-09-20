@@ -91,7 +91,7 @@ void SellaLineTest(const S6& s6) {
    const unsigned long nsteps = 100;
    S6 step = 2.0 * delta / (nsteps - 1);
    step /= step.norm();
-   S6 stepper = s6 + step * nsteps/2;
+   S6 stepper = s6 + step * nsteps / 2;
    Sella sella;
    std::vector<std::vector<std::pair<std::string, double> >  > fits;
 
@@ -116,6 +116,35 @@ void SellaLineTest(const S6& s6) {
    std::cout << fits.size() << std::endl;
 }
 
+void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
+   const S6& start(s1);
+   const S6& target(s2);
+   const unsigned long nsteps = 100;
+   S6 step = (target-start) / (nsteps);
+   Sella sella;
+   std::vector<std::vector<std::pair<std::string, double> >  > fits;
+
+   for (unsigned long i = 0; i <= nsteps; ++i) {
+      S6 reducedStepper;
+      S6 stepper = start + step * i;
+      const bool b = Selling::Reduce(stepper, reducedStepper);
+      const std::vector<std::pair<std::string, double> > out = sella.GetVectorOfFits(reducedStepper);
+      stepper += step;
+      fits.push_back(out);
+
+      if (i == 0) {
+         for (unsigned long k = 0; k < out.size(); ++k) {
+            std::cout << out[k].first << " ";
+         }
+      }
+      for (unsigned long k = 0; k < out.size(); ++k) {
+         std::cout << out[k].second << " ";
+      }
+      std::cout << std::endl;
+   }
+   std::cout << fits.size() << std::endl;
+}
+
 int main()
 {
 
@@ -123,14 +152,15 @@ int main()
 
 
    Sella sella;
-   sella.WriteSellaMatrices("funcName", sella.GetPerps());
-   sella.WriteSellaMatrices("funcName", sella.GetProjectors());
+   //sella.WriteSellaMatrices("funcName", sella.GetPerps());
+   //sella.WriteSellaMatrices("funcName", sella.GetProjectors());
+   //exit(0);
+   std::vector<S6> vLat = GetInputSellingReducedVectors();
+   SellaTwoLatticeLineTest(vLat[0], vLat[1]);
    exit(0);
 
-   std::vector<S6> vLat = GetInputSellingReducedVectors();
-
-   //SellaLineTest(vLat[0]);
-   //exit(0);
+   SellaLineTest(vLat[0]);
+   exit(0);
 
    const unsigned long n = 1000;
 
