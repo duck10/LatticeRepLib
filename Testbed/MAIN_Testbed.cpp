@@ -289,8 +289,11 @@ void TestReductionTiming() {
    std::list<S6> vs6;
    std::list<G6> vg6;
    std::list<D7> vd7;
-   for (unsigned long i = 0; i < 1000000; ++i) {
-      const S6 s6 = S6::randDeloneUnreduced();
+   GenerateRandomLattice<S6> grl(19191);
+   grl.SetLengthLimits(10.0, 90.0);
+   for (unsigned long i = 0; i < 100000; ++i) {
+      //const S6 s6 = S6::randDeloneUnreduced();
+      const S6 s6 = G6::rand();
       vs6.push_back(s6);
       vg6.push_back(s6);
       vd7.push_back(s6);
@@ -1032,7 +1035,7 @@ void VerifyNiggli() {
    G6 vout2;
 
    for (unsigned long i = 0; i < n; ++i) {
-      LRL_Cell& cell = cellData[i].GetCell();
+      LRL_Cell cell = cellData[i].GetCell();
 
       bool b1 = Niggli::Reduce(G6(cell), vout1);
       bool b2 = Niggli::ReduceWithoutMatrices(G6(cell), vout2, 0.0);
@@ -1047,7 +1050,8 @@ void VerifyNiggli() {
 
 int main(int argc, char *argv[])
 {
-   TestReductionTiming();
+   // TimingForNewNiggliReduce();
+  TestReductionTiming();
 
    exit(0);
    const std::vector<std::pair<MatS6, MatS6> > unred = S6::SetUnreductionMatrices();
@@ -1057,7 +1061,6 @@ int main(int argc, char *argv[])
    const std::vector<MatS6> vmats6 = MatS6::GetReflections();
    for (unsigned long i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(vmats6[i]) << std::endl;
    exit(0);
-   //TimingForNewNiggliReduce();
    VerifyNiggli();
    VerifyIsNiggli();
    S6 out;
