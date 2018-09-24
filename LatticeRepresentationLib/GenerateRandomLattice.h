@@ -118,8 +118,6 @@ public:
       return T(d * rand() / LRL_Cell::randomLatticeNormalizationConstantSquared);
    }
 
-   static T Perturb(const T& t) { return T(S6(t)*m_perturb); }
-
    void SetSeed(const int n) { m_seed = n; rhrand.srandom(n); }
    void PerturbBy(const double perturb) { m_perturb = perturb; }
 

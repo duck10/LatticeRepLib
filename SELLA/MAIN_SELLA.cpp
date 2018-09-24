@@ -266,8 +266,8 @@ int main()
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
    std::vector<S6> vLat = GetInputSellingReducedVectors(input);
-   SellaTwoLatticeLineTest(vLat[0], vLat[1]);
-   exit(0);
+   //SellaTwoLatticeLineTest(vLat[0], vLat[1]);
+   //exit(0);
    //AnalyzePDBCells(input);
    LatticeConverter converter;
 
