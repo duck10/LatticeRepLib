@@ -247,13 +247,6 @@ MultiFollower MultiFollower::GenerateAllDistances(void) {
       m.m_d7path.SetTime2ComputeFrame(computetimed7);
       m.SetComputeTime("D7", computetimed7);
    }
-   {
-      m.m_v7path.SetComputeStartTime();
-      if (FollowerConstants::IsEnabled("V7")) m = CalculateDistancesV7(m);
-      const double computetimev7 = std::clock() - m.m_v7path.GetComputeStartTime();
-      m.m_v7path.SetTime2ComputeFrame(computetimev7);
-      m.SetComputeTime("V7", computetimev7);
-   }
    m.SetTime2ComputeFrame(std::clock() - m.GetComputeStartTime());
 
    m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathS6().GetDistances()));
