@@ -1108,7 +1108,7 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    return cellDataList;
 }
 
-void PDB_ReduceTimingTest() {
+LRL_Cell PDB_ReduceTimingTest() {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
    std::vector<LRL_Cell> vcell;
    std::vector<std::string> vlattice;
@@ -1157,6 +1157,7 @@ void PDB_ReduceTimingTest() {
       std::cout << LRL_CreateFileName::Create("PDB_Delone_", "") << "  " << std::clock() - start << " msec" << std::endl;
    }
    dummy *= 2.0;
+   return dummy;
 }
 
 int main(int argc, char *argv[])
