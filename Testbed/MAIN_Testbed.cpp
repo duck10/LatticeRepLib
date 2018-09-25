@@ -282,53 +282,51 @@ void TestSellingReduceUnreduceFunctions() {
 }
 
 void TestReductionTiming() {
-   std::list<S6>::iterator it;
-   std::list<G6>::iterator itg6;
-   std::list<D7>::iterator itd7;
+   std::list<LRL_Cell> vcell;
+   std::list<LRL_Cell>::iterator itcell;
 
-   std::list<S6> vs6;
-   std::list<G6> vg6;
-   std::list<D7> vd7;
    GenerateRandomLattice<S6> grl(19191);
    grl.SetLengthLimits(10.0, 90.0);
    for (unsigned long i = 0; i < 100000; ++i) {
       //const S6 s6 = S6::randDeloneUnreduced();
       const S6 s6 = G6::rand();
-      vs6.push_back(s6);
-      vg6.push_back(s6);
-      vd7.push_back(s6);
+      vcell.push_back(s6);
    }
 
+   LRL_Cell dummy;
+   std::clock_t start;
 
    {
-      const std::clock_t start = std::clock();
-      std::cout << LRL_CreateFileName::Create("Selling_", "") << std::endl;;
-      for (it = vs6.begin(); it != vs6.end(); ++it) {
-         S6 red1;
-         const bool b = Selling::Reduce(*it, red1);
+      start = std::clock();
+      S6 red1;
+      for (itcell = vcell.begin(); itcell != vcell.end(); ++itcell) {
+         const bool b = Selling::Reduce(*itcell, red1);
+         dummy = red1;
       }
-      std::cout << LRL_CreateFileName::Create("Selling_", "") << "  " << std::clock() - start << std::endl << std::endl;
+      dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
+      std::cout << LRL_CreateFileName::Create("Selling_", "") << "  " << std::clock() - start << " msec" << std::endl;
    }
 
    {
-      const std::clock_t start = std::clock();
+      start = std::clock();
       G6 red6;
-      std::cout << LRL_CreateFileName::Create("Niggli_", "") << std::endl;;
-      for (itg6 = vg6.begin(); itg6 != vg6.end(); ++itg6) {
-         const bool b = Niggli::Reduce(*itg6, red6);
+      for (itcell = vcell.begin(); itcell != vcell.end(); ++itcell) {
+         const bool b = Niggli::Reduce(*itcell, red6);
+         dummy = red6;
       }
-      std::cout << LRL_CreateFileName::Create("Niggli_", "") << "  " << std::clock() - start << std::endl << std::endl;
+      dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
+      std::cout << LRL_CreateFileName::Create("Niggli_", "") << "  " << std::clock() - start << std::endl;
    }
 
    {
-      const std::clock_t start = std::clock();
-      S6 red2;
-      std::cout << LRL_CreateFileName::Create("Delone_", "") << std::endl;;
-      for (it = vs6.begin(); it != vs6.end(); ++it) {
-         S6 red1;
-         const bool b = Delone::Reduce(*it, red1);
+      start = std::clock();
+      S6 red1;
+      for (itcell = vcell.begin(); itcell != vcell.end(); ++itcell) {
+         const bool b = Delone::Reduce(*itcell, red1);
+         dummy = red1;
       }
-      std::cout << LRL_CreateFileName::Create("Delone_", "") << "  " << std::clock() - start << std::endl << std::endl;
+      dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
+      std::cout << LRL_CreateFileName::Create("Delone_", "") << "  " << std::clock() - start << std::endl;
    }
 
    exit(0);
