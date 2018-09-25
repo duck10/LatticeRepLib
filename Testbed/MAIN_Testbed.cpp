@@ -315,7 +315,7 @@ void TestReductionTiming() {
          dummy = red6;
       }
       dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
-      std::cout << LRL_CreateFileName::Create("Niggli_", "") << "  " << std::clock() - start << std::endl;
+      std::cout << LRL_CreateFileName::Create("Niggli_", "") << "  " << std::clock() - start << " msec" << std::endl;
    }
 
    {
@@ -326,7 +326,7 @@ void TestReductionTiming() {
          dummy = red1;
       }
       dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
-      std::cout << LRL_CreateFileName::Create("Delone_", "") << "  " << std::clock() - start << std::endl;
+      std::cout << LRL_CreateFileName::Create("Delone_", "") << "  " << std::clock() - start << " msec" << std::endl;
    }
 
    exit(0);
@@ -1046,8 +1046,122 @@ void VerifyNiggli() {
    exit(0);
 }
 
+/*
+}
+
+std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeData>& input) {
+   std::vector<S6> v;
+   LatticeConverter converter;
+
+
+   for ( unsigned long i=0; i<input.size(); ++i ) {
+      const LRL_ReadLatticeData& rcd = input[i];
+      const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell());
+      v.push_back(s6);
+   }
+   return v;
+}
+
+void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
+   StoreResults<std::string, std::string> storeGood(1);
+   StoreResults<std::string, std::string> storeProblems(100);
+   std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+   const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   Sella sella;
+
+   for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
+      const std::string strCell = input[lat].GetStrCell();
+      if (strCell[0] == 'A' || strCell[0] == 'a') continue;
+      const std::string xtalSystem = std::string(1, strCell[strCell.length() - 1]);
+      std::string deloneType = strCell.substr(0, 3);
+      deloneType = Trim(deloneType);
+      if ( xtalSystem == "a" ) continue;
+
+      const std::pair<std::string, double> fit = sella.GetBestFitForCrystalSystem(xtalSystem, vLat[lat]);
+      const double normlat = vLat[lat].norm();
+      if (fit.second > 1.0E-5) storeProblems.Store(fit.first, LRL_ToString(" ", fit.first, "  ", fit.second, " (", normlat, ")  ",  strCell, "  ", vLat[lat]));
+      if (fit.second < 1.0E-5) storeGood.Store(fit.first, LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat]));
+ //     std::cout << LRL_ToString(fit.first, "  ") << LRL_ToString( LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat])) << std::endl;
+   }
+   storeProblems.ShowResults();
+   storeGood.ShowResults();
+   exit(0);
+}
+*/
+
+std::string Letters(void) {
+   return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7";
+}
+
+std::vector<LRL_ReadLatticeData> GetInputCells(void) {
+   const std::string letters = Letters();
+   std::string lattice;
+   std::vector<LRL_ReadLatticeData> cellDataList;
+   LRL_ReadLatticeData rcd;
+   while (lattice != "EOF") {
+      rcd.read();
+      lattice = rcd.GetLattice();
+      if ((!lattice.empty()) && (letters.find(toupper(lattice[0])) != std::string::npos))
+         cellDataList.push_back(rcd);
+   }
+
+   return cellDataList;
+}
+
+void PDB_ReduceTimingTest() {
+   const std::vector<LRL_ReadLatticeData> input = GetInputCells();
+   std::vector<LRL_Cell> vcell;
+   std::vector<std::string> vlattice;
+   for ( unsigned long i=0; i<input.size(); ++i ) {
+      vcell.push_back(input[i].GetCell());
+      vlattice.push_back(input[i].GetLattice());
+   }
+
+   LatticeConverter converter;
+   LRL_Cell dummy;
+   std::clock_t start;
+
+   {
+      start = std::clock();
+      S6 red1;
+      for (unsigned long i = 0; i < vcell.size(); ++i) {
+         const LRL_Cell cell = converter.MakePrimitiveCell(vlattice[i], vcell[i]);
+         const bool b = Selling::Reduce(cell, red1);
+         dummy = red1;
+      }
+      dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
+      std::cout << LRL_CreateFileName::Create("PDB_Selling_", "") << "  " << std::clock() - start << " msec" << std::endl;
+   }
+
+   {
+      start = std::clock();
+      G6 red6;
+      for (unsigned long i = 0; i < vcell.size(); ++i) {
+         const LRL_Cell cell = converter.MakePrimitiveCell(vlattice[i], vcell[i]);
+         const bool b = Niggli::Reduce(cell, red6);
+         dummy = red6;
+      }
+      dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
+      std::cout << LRL_CreateFileName::Create("PDB_Niggli_", "") << "  " << std::clock() - start << " msec" << std::endl;
+   }
+
+   {
+      start = std::clock();
+      S6 red1;
+      for (unsigned long i = 0; i < vcell.size(); ++i) {
+         const LRL_Cell cell = converter.MakePrimitiveCell(vlattice[i], vcell[i]);
+         const bool b = Delone::Reduce(cell, red1);
+         dummy = red1;
+      }
+      dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
+      std::cout << LRL_CreateFileName::Create("PDB_Delone_", "") << "  " << std::clock() - start << " msec" << std::endl;
+   }
+   dummy *= 2.0;
+}
+
 int main(int argc, char *argv[])
 {
+   PDB_ReduceTimingTest();
    // TimingForNewNiggliReduce();
   TestReductionTiming();
 
