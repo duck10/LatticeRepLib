@@ -13,7 +13,7 @@
 
 
 std::string Letters(void) {
-   return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7";
+   return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
 }
 
 void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatticeData>& cellDataList) {

@@ -301,9 +301,10 @@ MatG6 LRL_Cell::LatSymMatG6( const std::string& latsym ) const
    else if ( toupper( latsym[0] ) == 'B' ) return MatG6( "1 0 0 0 0 0   0 1 0 0 0 0   .25 0 .25 0 .25 0   0 0 0 .5 0 .5   1 0 0 0 .5 0   0 0 0 0 0 1" ); // for monoclinic, assumes c unique
    else if ( toupper( latsym[0] ) == 'C' ) return MatG6( "1 0 0 0 0 0   .25 .25 0 0 0 .25   0 0 1 0 0 0    0 0 0 .5 .5 0   0 0 0 0 1 0   1 0 0 0 0 .5" ); // for monoclinic, assumes b unique
    else if ( toupper( latsym[0] ) == 'F' ) return MatG6( ".25 .25 0 0 0 .25     .25 0 .25 0 .25 0     0 .25 .25 .25  0 0    0 0 .5 .25 .25 .25     0 .5 0 .25 .25 .25     .5 0 0 .25 .25 .25" );
-   else if ( toupper( latsym[0] ) == 'R' && LRL_Cell::IsRhomobhedralAsHex( *this ) )
+   else if ( (toupper( latsym[0] ) == 'R' || toupper(latsym[0]) == 'H')
+      && LRL_Cell::IsRhomobhedralAsHex( *this ) )
       return (1.0 / 9.0)* MatG6( "1 1 1 1 -1 -1    4 1 1  1  2  2     1  4  1  -2  -1  2     -4  -4  2  -1  1  -5     2  -4  2  -1  -2  1     -4  2  2  2  1  1" );
-   else if ( toupper( latsym[0] ) == 'R' ) return  MatG6::Eye();
+   else if ( toupper( latsym[0] ) == 'R' || toupper(latsym[0]) == 'H') return  MatG6::Eye();
    else if ( latsym == "CCDC" ) return (1.0 / 9.0)* MatG6( "4  1  1  1  2  2    1  1  1  1 -1 -1     1  4  1 -2 -1  2    2 -4  2 -1 -2  1    -4 -4  2 -1  1 -5    -4  2  2  2  1  1" ); // CCDC matrix for R
    else return MatG6::Eye( );
 }

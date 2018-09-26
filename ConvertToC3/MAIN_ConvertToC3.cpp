@@ -19,7 +19,7 @@
 
 
 std::string Letters(void) {
-   return "V,D,S,P,A,B,C,I,F,R,C3";
+   return "V,D,S,P,A,B,C,I,F,R,C3,H";
 }
 
 std::vector<LRL_ReadLatticeData> GetInputCells(void) {

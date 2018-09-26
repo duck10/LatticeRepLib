@@ -16,7 +16,7 @@
 
 
 std::string Letters(void) {
-   return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7";
+   return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
 }
 
 std::vector<LRL_ReadLatticeData> GetInputCells(void) {
