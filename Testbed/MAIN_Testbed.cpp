@@ -142,6 +142,7 @@ StoreResults<std::string, S6> g_storeRand(10);
 StoreResults<int, LRL_Cell> g_store(10);
 StoreResults<std::string, LRL_Cell> g_storeStr(10);
 StoreResults<std::string, std::string> g_storeStrStr(10);
+StoreResults<unsigned long, unsigned long> g_storeReduceCount(0);
 
 void Reflects() {
    std::vector<MatD7> refl;
@@ -297,13 +298,17 @@ void TestReductionTiming() {
    std::clock_t start;
 
    {
+      g_storeReduceCount.clear();
       start = std::clock();
       S6 red1;
       for (itcell = vcell.begin(); itcell != vcell.end(); ++itcell) {
          const bool b = Selling::Reduce(*itcell, red1);
          dummy = red1;
+         g_storeReduceCount.Store(Selling::GetCycles(), 0);
       }
       dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
+      g_storeReduceCount.SetKeyLabel("Random Selling Reduction Cycles");
+      g_storeReduceCount.ShowResultsByKeyAscending();
       std::cout << LRL_CreateFileName::Create("Selling_", "") << "  " << std::clock() - start << " msec" << std::endl;
    }
 
@@ -1090,7 +1095,7 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
 */
 
 std::string Letters(void) {
-   return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7";
+   return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
 }
 
 std::vector<LRL_ReadLatticeData> GetInputCells(void) {
@@ -1128,8 +1133,11 @@ LRL_Cell PDB_ReduceTimingTest() {
          const LRL_Cell cell = converter.MakePrimitiveCell(vlattice[i], vcell[i]);
          const bool b = Selling::Reduce(cell, red1);
          dummy = red1;
+         g_storeReduceCount.Store(Selling::GetCycles(), 0);
       }
       dummy *= 2.0; // to try to get the optimizer to keep calculating dummy as unit cell parmeters
+      g_storeReduceCount.SetKeyLabel("PDB Selling Reduction Cycles");
+      g_storeReduceCount.ShowResultsByKeyAscending();
       std::cout << LRL_CreateFileName::Create("PDB_Selling_", "") << "  " << std::clock() - start << " msec" << std::endl;
    }
 

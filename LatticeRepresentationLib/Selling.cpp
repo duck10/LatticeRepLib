@@ -53,6 +53,7 @@ bool Selling::Reduce(const S6& in, S6& out) {
    unsigned long maxIndex = INT_MAX;
    m_ReductionCycleCount = 0;
    out = in;
+   if (out[0] <= 0.0 && out[1] <= 0.0 && out[2] <= 0.0 && out[3] <= 0.0 && out[4] <= 0.0 && out[5] <= 0.0) return true;
 
    //ListSteps(out);
 
