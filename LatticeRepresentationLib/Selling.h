@@ -41,6 +41,8 @@ public:
 
    static void SetListSteps(const bool b) { listSteps = b; }
 
+   static std::string GetName() { return "Selling"; }
+
 private:
    static void ListSteps(const S6& s6);
 
