@@ -51,6 +51,7 @@ public:
    static std::vector<MatD7> GetD7Reflections();
    static std::vector<MatS6> LoadLatticeTypeProjectors();
    static std::vector<std::pair<std::string, MatS6> > LoadLabeledLatticeTypeProjectors();
+   static std::string GetName() { return "Delone"; }
 
 private:
    static int GenMaxMinKey(const D7& d);

@@ -30,6 +30,7 @@ to implement that change is returned
 
 class Niggli {
 public:
+   ~Niggli(void);
    static bool Reduce(const G6& vi, G6& vout, const bool sellingFirst);
    static bool Reduce(const G6& vi, G6& vout);
    static bool Reduce(const G6& vi, MatG6& m, G6& vout, const double delta);
@@ -62,6 +63,7 @@ public:
       return b;
    }
 
+   static std::string GetName() { return "Niggli"; }
 
 private:
    static void Reporter(const std::string& text, const G6& vin, const G6& vout, const MatG6& m);
@@ -69,7 +71,6 @@ private:
    // at least for now, all functions are static, and there is no member data
    // forbid constructor and destructor
    Niggli(void);
-   ~Niggli(void);
 
 public:
 
