@@ -15,6 +15,7 @@
 #include "MatB4.h"
 #include "MatS6.h"
 #include "MatD7.h"
+#include "S6.h"
 #include "Selling.h"
 
 #include <algorithm>
@@ -22,6 +23,8 @@
 #include <map>
 #include <utility>
 #include <vector>
+
+unsigned long Delone::m_ReductionCycleCount;
 
 bool Delone::IsReduced(const G6& v) {
    return IsReduced(v, 0.0);
@@ -47,16 +50,52 @@ bool Delone::Reduce(const D7& d, D7& dd, const bool sellingFirst) {
 }
 
 bool Delone::Reduce(const S6& d, S6& dd) {
-   const bool b = Selling::Reduce(d,dd);
-   if ( b) {
-      dd = sort(D7(dd));
-   }
+   D7 in(d);
+   D7 out;
+   const bool b = Delone::Reduce(in, out);
+   dd = S6(out);
    return b;
 }
 
 bool Delone::Reduce(const D7& d, D7& dd) {
-   MatS6 m;
-   return Reduce(d, m, dd);
+   double temp;
+   S6 out;
+   const bool b = Selling::Reduce(S6(d), out);
+   dd = D7(out);
+   if (b) {
+      while (dd[0] > dd[1] || dd[1] > dd[2] || dd[2] > dd[3]) {
+         if (dd[2] > dd[3]) {
+            temp = dd[2];
+            dd[2] = dd[3];
+            dd[3] = temp;
+            temp = dd[4];
+            dd[4] = dd[5];
+            dd[5] = temp;
+            continue;
+         }
+         if (dd[1] > dd[2]) {
+
+            temp = dd[1];
+            dd[1] = dd[2];
+            dd[2] = temp;
+            temp = dd[5];
+            dd[5] = dd[6];
+            dd[6] = temp;
+            continue;
+         }
+         if (dd[0] > dd[1]) {
+
+            temp = dd[0];
+            dd[0] = dd[1];
+            dd[1] = temp;
+            temp = dd[4];
+            dd[4] = dd[5];
+            dd[5] = temp;
+            continue;
+         }
+      }
+   }
+   return b;
 }
 
 bool Delone::Reduce(const S6& d, MatS6& m, S6& dd) {

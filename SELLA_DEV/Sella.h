@@ -24,6 +24,7 @@ public:
    std::string GetLabel() const { return m_label; }
 
    std::vector<MatS6>  GetMatrices() const { return m_vector; }
+   size_t size() const { return m_vector.size(); }
 private:
    std::string m_label;
    std::vector<MatS6> m_vector;
@@ -31,8 +32,6 @@ private:
 
 class Sella {
 public:
-
-   //static const std::vector< std::pair<std::string, MatS6> > vDeloneTypes/* = Delone::LoadLabeledLatticeTypeProjectors();*/;
 
    Sella();
    double TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm);
@@ -103,6 +102,16 @@ private:
    StoreResults<std::string, S6> store;
    static std::vector< std::pair<std::string, MatS6> > vDeloneTypes;
    StoreResults<std::string, std::string> indexstore;
+
+   static S6 SellaBoundaryReduce11(const S6& din);
+   static S6 SellaBoundaryReduce21(const S6& din);
+   static S6 SellaBoundaryReduce31(const S6& din);
+   static S6 SellaBoundaryReduce41(const S6& din);
+   static S6 SellaBoundaryReduce51(const S6& din);
+   static S6 SellaBoundaryReduce61(const S6& din);
+
+   static std::vector< S6(*)(const S6&)> SetReduceFunctions();
+
 
 private:
    void ProcessItemStoreToVectorMap();

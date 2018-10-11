@@ -284,6 +284,15 @@ public:
       return std::make_pair( (*it).first, (*it).second.m_sampleData[0]);
    }
 
+   void ShowTableOfKeysVersusCount() const {
+      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > v(PrepareListOfItemsSortedByCount());
+      if (!v.empty()) std::cout << "item   count   " << m_keyName << std::endl;
+      for (unsigned long i = 0; i<v.size(); ++i) {
+         std::cout << i << "      " << v[i].first << "       " << v[i].second.m_key << std::endl;
+      }
+
+   }
+
 private:
 
    std::vector<std::pair<int, SampleData<TKEY, TDATA> > > PrepareListOfItemsSortedByCount(void) const {
@@ -296,15 +305,6 @@ private:
 
       std::sort(indexToSort.begin(), indexToSort.end(), std::greater<std::pair<int, SampleData<TKEY, TDATA> > >());
       return indexToSort;
-   }
-
-   void ShowTableOfKeysVersusCount() const {
-      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > v(PrepareListOfItemsSortedByCount());
-      if (!v.empty()) std::cout << "item   count   " << m_keyName << std::endl;
-      for (unsigned long i = 0; i<v.size(); ++i) {
-         std::cout << i << "      " << v[i].first << "       " << v[i].second.m_key << std::endl;
-      }
-
    }
 
    void ShowResultsBySortedKey(const std::vector<TKEY>& keylist) const {

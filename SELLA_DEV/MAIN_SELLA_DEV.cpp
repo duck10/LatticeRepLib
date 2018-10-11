@@ -155,12 +155,13 @@ int main()
    //sella.WriteSellaMatrices("funcName", sella.GetPerps());
    //sella.WriteSellaMatrices("funcName", sella.GetProjectors());
    //exit(0);
-   std::vector<S6> vLat = GetInputSellingReducedVectors();
-   SellaTwoLatticeLineTest(vLat[0], vLat[1]);
-   exit(0);
 
-   SellaLineTest(vLat[0]);
-   exit(0);
+   std::vector<S6> vLat = GetInputSellingReducedVectors();
+   //SellaTwoLatticeLineTest(vLat[0], vLat[1]);
+   //exit(0);
+
+   //SellaLineTest(vLat[0]);
+   //exit(0);
 
    const unsigned long n = 1000;
 
@@ -172,7 +173,7 @@ int main()
 
       double sign = 1.0;
       for (unsigned long k = 0; k < n; ++k) {
-         out = sella.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, sign * 1.0));
+         out = sella.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, sign * 0.0));
          if ( out.size() < sum.size()) {
             sum.resize(out.size());
             sumsq.resize(out.size());
