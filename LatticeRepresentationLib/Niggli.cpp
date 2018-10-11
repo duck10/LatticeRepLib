@@ -54,6 +54,7 @@ private:
 */
 
 const bool DEBUG_REDUCER(false);
+unsigned long Niggli::m_ReductionCycleCount;
 
 //-----------------------------------------------------------------------------
 // Name: g6sign()
@@ -174,7 +175,7 @@ void Niggli::MKnormWithoutMatrices(const G6& vi, G6& vout, const double delta) {
    const static MatG6 R11_Minus(R7_Minus);
    const static MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
    bool again = true;
-   int ncycle = 0;
+   m_ReductionCycleCount = 0;
    G6 vin;
 
    vin = vi;
@@ -189,9 +190,9 @@ void Niggli::MKnormWithoutMatrices(const G6& vi, G6& vout, const double delta) {
 
 
    // assure that g1<=g2<=g3
-   while (again && (ncycle < 5))
+   while (again && (m_ReductionCycleCount < 5))
    {
-      ++ncycle;
+      ++m_ReductionCycleCount;
       again = false;
 
       //std::string sptext;
@@ -416,7 +417,7 @@ const static MatG6 R11_Minus(R7_Minus);
 //const MatG6 R12(R8);
 const static MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
    bool again = true;
-   int ncycle = 0;
+   m_ReductionCycleCount = 0;
    MatG6 mat = MatG6::Eye();
    G6 vin;
    m = MatG6::Eye();
@@ -424,9 +425,9 @@ const static MatG6 R12      ( "1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 
    vin = vi;
 
    // assure that g1<=g2<=g3
-   while ( again && (ncycle < 5) )
+   while ( again && (m_ReductionCycleCount < 5) )
    {
-      ++ncycle;
+      ++m_ReductionCycleCount;
       again = false;
 
       std::string sptext;
@@ -645,7 +646,7 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
    //const MatG6 R12(R8);
    const static MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
    G6 vin;
-   int ncycle = 0;
+   m_ReductionCycleCount = 0;
    bool again = true;
    const bool debug = true;
 
@@ -690,7 +691,7 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
    double& g6 = vout[5];
 
    // Andrews and Bernstein, 1988
-   while (again && ncycle < maxCycle)
+   while (again && m_ReductionCycleCount < maxCycle)
    {
       //      DEBUG_REPORT_STRING(LRL_ToString( "REDUCE start cycle  ", ncycle, "  ", vin));;
       MKnormWithoutMatrices(vin, vout, delta);
@@ -853,7 +854,7 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
       if (vin[0]<0.0 || vin[1]<0.0 || vin[2]<0.0) {
          // ERROR ERROR ERROR
          if (DEBUG_REDUCER) {
-            fprintf(stderr, " Negative sq, axis %d \n", ncycle);
+            fprintf(stderr, " Negative sq, axis %d \n", m_ReductionCycleCount);
             fprintf(stderr, " vin: [%g,%g,%g,%g,%g,%g]\n",
                vin[0], vin[1], vin[2], vin[3], vin[4], vin[5]);
             fprintf(stderr, " vi: [%g,%g,%g,%g,%g,%g]\n",
@@ -862,25 +863,25 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
          return(false);
       }
 
-      if (ncycle == 0) voutPrev = vin;
+      if (m_ReductionCycleCount == 0) voutPrev = vin;
 
       if (DEBUG_REDUCER)
       {
-         //printf( "%d    %f %f %f %f %f %f\n", ncycle, vout[0], vout[1], vout[2], vout[3], vout[4], vout[5] );
+         //printf( "%d    %f %f %f %f %f %f\n", m_ReductionCycleCount, vout[0], vout[1], vout[2], vout[3], vout[4], vout[5] );
       }
       //      DEBUG_REPORT_STRING(LRL_ToString( "REDUCE output  ", vi));;
 
-      ++ncycle;
+      ++m_ReductionCycleCount;
    }
 
    bool isNearReduced = Niggli::NearRed(vout, delta);
-   if (ncycle >= maxCycle) {
+   if (m_ReductionCycleCount >= maxCycle) {
       if (isNearReduced) {
-         std::cout << "THERE IS A REDUCE PROBLEM, cycle " << ncycle << std::endl;
+         std::cout << "THERE IS A REDUCE PROBLEM, m_ReductionCycleCount " << m_ReductionCycleCount << std::endl;
       }
    }
 
-   return (ncycle < maxCycle) || isNearReduced;
+   return (m_ReductionCycleCount < maxCycle) || isNearReduced;
 
 }
 
@@ -935,7 +936,7 @@ bool Niggli::Reduce( const G6& vi, MatG6& m, G6& vout, const double delta )
    const static MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 1 1 1   0 -2 0 -1 0 -1   -2 0 0 0 -1 -1   0 0 0 0 0 1");
    G6 vin;
    MatG6 m1;
-   int ncycle = 0;
+   m_ReductionCycleCount = 0;
    bool again = true;
    const bool debug = true;
 
@@ -973,9 +974,9 @@ bool Niggli::Reduce( const G6& vi, MatG6& m, G6& vout, const double delta )
    // floating point rounding or algorithm issues) there might be a
    // case of an infinite loop. The designations R5-R12 are from
    // Andrews and Bernstein, 1988
-   while ( again && ncycle < maxCycle )
+   while ( again && m_ReductionCycleCount < maxCycle )
    {
-//      DEBUG_REPORT_STRING(LRL_ToString( "REDUCE start cycle  ", ncycle, "  ", vin));;
+//      DEBUG_REPORT_STRING(LRL_ToString( "REDUCE start m_ReductionCycleCount  ", m_ReductionCycleCount, "  ", vin));;
 
       m1 = m;
       MKnorm( vin, m1, vout, delta );
@@ -1084,14 +1085,14 @@ bool Niggli::Reduce( const G6& vi, MatG6& m, G6& vout, const double delta )
       MKnorm( vout, m1, vin, delta );
       const MatG6 mtemp = m1*m;
       m = mtemp;
-      Reporter( "vout after MKnorm at end of reduced cycle", vout, vin, m1 );
+      Reporter( "vout after MKnorm at end of reduced m_ReductionCycleCount", vout, vin, m1 );
       for( unsigned long i=3; i<6; ++i )
          if ( std::fabs(vin[i]) < 1.0E-10 ) vin[i] = 0.0;
 
       if ( vin[0]<0.0 || vin[1]<0.0 || vin[2]<0.0 ) {
          // ERROR ERROR ERROR
          if ( DEBUG_REDUCER ) {
-            fprintf( stderr, " Negative sq, axis %d \n", ncycle );
+            fprintf( stderr, " Negative sq, axis %d \n", m_ReductionCycleCount);
             fprintf( stderr, " vin: [%g,%g,%g,%g,%g,%g]\n",
                vin[0], vin[1], vin[2], vin[3], vin[4], vin[5] );
             fprintf( stderr, " vi: [%g,%g,%g,%g,%g,%g]\n",
@@ -1100,25 +1101,25 @@ bool Niggli::Reduce( const G6& vi, MatG6& m, G6& vout, const double delta )
          return( false );
       }
 
-      if ( ncycle == 0 ) voutPrev = vin;
+      if (m_ReductionCycleCount == 0 ) voutPrev = vin;
 
       if ( DEBUG_REDUCER )
       {
-         //printf( "%d    %f %f %f %f %f %f\n", ncycle, vout[0], vout[1], vout[2], vout[3], vout[4], vout[5] );
+         //printf( "%d    %f %f %f %f %f %f\n", m_ReductionCycleCount, vout[0], vout[1], vout[2], vout[3], vout[4], vout[5] );
       }
 //      DEBUG_REPORT_STRING(LRL_ToString( "REDUCE output  ", vi));;
 
-      ++ncycle;
+      ++m_ReductionCycleCount;
    }
 
    bool isNearReduced = NearRed(vout, delta);
-   if (ncycle >= maxCycle) {
+   if (m_ReductionCycleCount >= maxCycle) {
       if (isNearReduced){
-         std::cout << "THERE IS A REDUCE PROBLEM, cycle " << ncycle << std::endl;
+         std::cout << "THERE IS A REDUCE PROBLEM, m_ReductionCycleCount " << m_ReductionCycleCount << std::endl;
       }
    }
 
-   return (ncycle < maxCycle) || isNearReduced;
+   return (m_ReductionCycleCount < maxCycle) || isNearReduced;
 
 } // end of Reduce
 

@@ -17,9 +17,14 @@ Sella::Sella() {
       //for (unsigned long i = 2; i < 3; ++i) {  // to show only C5
       Expand(vDeloneTypes[i].first, vDeloneTypes[i].second);
    }
+   store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
+   std::cout << std::endl << std::endl << "after ProcessItemStoreToVectorMap, the map " << themap.size() << std::endl;
+   std::map<std::string, std::vector<S6> >::iterator it;
+   for (auto ita = themap.begin(); ita != themap.end(); ++ita) std::cout << (*ita).first << "  " << (*ita).second.size() << std::endl;
    ProcessVectorMapToPerpsAndProjectors();
-
+   std::cout << std::endl << std::endl << "after ProcessVectorMapToPerpsAndProjectors, the vperps " << perps.size() << std::endl;
+   for (auto ita = perps.begin(); ita != perps.end(); ++ita) std::cout << (*ita).GetLabel() << "  " << (*ita).size() << std::endl;
    //store.ShowResults();
 }
 
@@ -130,10 +135,7 @@ void Sella::ProcessVectorMapToPerpsAndProjectors() {
 }
 
 void Sella::Expand(const std::string& label, const MatS6& m) {
-   if (label[0] == 'T') return; // Don't process triclinic
    const S6 s6 = MakeSampleType(m);
-
-   bool b = s6.IsValid();
 
    if (s6.IsValid()) {
       switch (s6.CountZeros()) {
@@ -144,8 +146,6 @@ void Sella::Expand(const std::string& label, const MatS6& m) {
          OneBound(label, s6);
          break;
       case 2:
-         ProcessZeros(label, s6);
-         break;
       case 3:
          ProcessZeros(label, s6);
          break;
@@ -154,6 +154,7 @@ void Sella::Expand(const std::string& label, const MatS6& m) {
          break;
       }
    }
+   //store.ShowResults();
 }
 
 bool Sella::FindDuplicate(const std::vector<S6>& out, const S6 s6) {
@@ -237,7 +238,7 @@ void Sella::StoreAllReflections(const std::string& label, const S6& s1) {
 }
 
 void Sella::OneBound(const std::string& label, const S6& s1) {
-   static const std::vector< S6(*)(const S6&)> fnRedn = S6::SetReduceFunctions();
+   static const std::vector< S6(*)(const S6&)> fnRedn = Sella::SetReduceFunctions();
 
    unsigned long nzero = 0;
    for (unsigned long i = 0; i < 6; ++i) if (s1[i] == 0) nzero = i;
@@ -248,15 +249,18 @@ void Sella::OneBound(const std::string& label, const S6& s1) {
 
 void Sella::ProcessZeros(const std::string& label, const S6& s6) {
    const std::vector<unsigned long> v = FindS6Zeros(s6);
-   const unsigned long n = v.size();
+   const unsigned long nzeros = v.size();
 
-   if (n == 0) {
+   if (nzeros == 0) {
       return;
    }
-   else if (n == 1) {
+   else if (nzeros == 1) {
       OneBound(label, s6);
    }
    else {
+      S6 s6a(s6);
+      S6 s6b(s6);
+      S6 s6c(s6);
       for (unsigned long i = 0; i < v.size(); ++i) {
          S6 temp(s6);
          temp[v[i]] = DBL_MIN;
@@ -1011,7 +1015,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
    }
 
 
-   /*  A1   */
+   /*  Q1   */
    LabeledSellaMatrices Sella::CreatePrjs_Q1() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0.5, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0.5));
@@ -1167,4 +1171,165 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
       vlsm.push_back(Sella::CreatePrjs_R3());
 
       return vlsm;
+   }
+
+   S6 Sella::SellaBoundaryReduce11(const S6& din) {
+      // For unreducing scalar 11
+      // MatS6(“-1 0 0 0 0 0    1 1 0 0 0 0    1 0 0 0 1 0    -1 0 0 1 0 0    1 0 1 0 0 0    1 0 0 0 0 1”);
+      S6 d;
+      const double& s1 = din[0];
+      const double& s2 = din[1];
+      const double& s3 = din[2];
+      const double& s4 = din[3];
+      const double& s5 = din[4];
+      const double& s6 = din[5];
+      double& ss1 = d[0];
+      double& ss2 = d[1];
+      double& ss3 = d[2];
+      double& ss4 = d[3];
+      double& ss5 = d[4];
+      double& ss6 = d[5];
+      ss1 = -s1;
+      ss2 = s2;
+      ss3 = s5;
+      ss4 = s4;
+      ss5 = s3;
+      ss6 = s6;
+      return d;
+   }
+
+   S6 Sella::SellaBoundaryReduce21(const S6& din) {
+      // For unreducing scalar 21
+      // MatS6(“1 1 0 0 0 0    0 -1 0 0 0 0    0 1 0 1 0 0    0 1 1 0 0 0    0 -1 0 0 1 0    0 1 0 0 0 1”);
+      S6 d;
+      const double& s1 = din[0];
+      const double& s2 = din[1];
+      const double& s3 = din[2];
+      const double& s4 = din[3];
+      const double& s5 = din[4];
+      const double& s6 = din[5];
+      double& ss1 = d[0];
+      double& ss2 = d[1];
+      double& ss3 = d[2];
+      double& ss4 = d[3];
+      double& ss5 = d[4];
+      double& ss6 = d[5];
+      ss2 = -s2;
+      ss1 = s1;
+      ss3 = s4;
+      ss4 = s3;
+      ss5 = s5;
+      ss6 = s6;
+      return d;
+   }
+
+   S6 Sella::SellaBoundaryReduce31(const S6& din) {
+      // For unreducing scalar 31
+      // MatS6(“1 0 1 0 0 0    0 0 1 1 0 0    0 0 -1 0 0 0    0 1 1 0 0 0    0 0 1 0 1 0    0 0 -1 0 0 1”);
+      S6 d;
+      const double& s1 = din[0];
+      const double& s2 = din[1];
+      const double& s3 = din[2];
+      const double& s4 = din[3];
+      const double& s5 = din[4];
+      const double& s6 = din[5];
+      double& ss1 = d[0];
+      double& ss2 = d[1];
+      double& ss3 = d[2];
+      double& ss4 = d[3];
+      double& ss5 = d[4];
+      double& ss6 = d[5];
+      ss3 = -s3;
+      ss1 = s1;
+      ss2 = s4;
+      ss4 = s2;
+      ss5 = s5;
+      ss6 = s6;
+      return d;
+   }
+
+   S6 Sella::SellaBoundaryReduce41(const S6& din) {
+      // For unreducing scalar 41
+      // MatS6(“1 0 0 -1 0 0    0 0 1 1 0 0    0 1 0 1 0 0    0 0 0 -1 0 0    0 0 0 1 1 0    0 0 0 1 0 1”);
+      S6 d;
+      const double& s1 = din[0];
+      const double& s2 = din[1];
+      const double& s3 = din[2];
+      const double& s4 = din[3];
+      const double& s5 = din[4];
+      const double& s6 = din[5];
+      double& ss1 = d[0];
+      double& ss2 = d[1];
+      double& ss3 = d[2];
+      double& ss4 = d[3];
+      double& ss5 = d[4];
+      double& ss6 = d[5];
+      ss4 = -s4;
+      ss1 = s1;
+      ss2 = s3;
+      ss3 = s2;
+      ss5 = s5;
+      ss6 = s6;
+      return d;
+   }
+
+   S6 Sella::SellaBoundaryReduce51(const S6& din) {
+      // For unreducing scalar 51
+      // MatS6(“0 0 1 0 1 0    0 1 0 0 -1 0    1 0 0 0 1 0    0 0 0 1 1 0    0 0 0 0 -1 0    0 0 0 0 1 1”);
+      S6 d;
+      const double& s1 = din[0];
+      const double& s2 = din[1];
+      const double& s3 = din[2];
+      const double& s4 = din[3];
+      const double& s5 = din[4];
+      const double& s6 = din[5];
+      double& ss1 = d[0];
+      double& ss2 = d[1];
+      double& ss3 = d[2];
+      double& ss4 = d[3];
+      double& ss5 = d[4];
+      double& ss6 = d[5];
+      ss5 = -s5;
+      ss1 = s3;
+      ss2 = s2;
+      ss3 = s1;
+      ss4 = s4;
+      ss6 = s6;
+      return d;
+   }
+
+   S6 Sella::SellaBoundaryReduce61(const S6& din) {
+      // For unreducing scalar 61
+      // MatS6(“0 1 0 0 0 1    1 0 0 0 0 1    0 0 1 0 0 -1    0 0 0 1 0 1    0 0 0 0 1 1    0 0 0 0 0 -1”);
+      S6 d;
+      const double& s1 = din[0];
+      const double& s2 = din[1];
+      const double& s3 = din[2];
+      const double& s4 = din[3];
+      const double& s5 = din[4];
+      const double& s6 = din[5];
+      double& ss1 = d[0];
+      double& ss2 = d[1];
+      double& ss3 = d[2];
+      double& ss4 = d[3];
+      double& ss5 = d[4];
+      double& ss6 = d[5];
+      ss6 = -s6;
+      ss1 = s2;
+      ss2 = s1;
+      ss3 = s3;
+      ss4 = s4;
+      ss5 = s5;
+      return d;
+   }
+
+   std::vector< S6(*)(const S6&)> Sella::SetReduceFunctions() {
+      std::vector< S6(*)(const S6&)> fn;
+      fn.push_back(SellaBoundaryReduce11);
+      fn.push_back(SellaBoundaryReduce21);
+      fn.push_back(SellaBoundaryReduce31);
+      fn.push_back(SellaBoundaryReduce41);
+      fn.push_back(SellaBoundaryReduce51);
+      fn.push_back(SellaBoundaryReduce61);
+      return fn;
    }
