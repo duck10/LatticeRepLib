@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="Allman.cpp" />
     <ClCompile Include="C3.cpp" />
+    <ClCompile Include="ColorTables.cpp" />
     <ClCompile Include="LatticeConverter.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
     <ClCompile Include="CellInputData.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Allman.h" />
     <ClInclude Include="BasisBase.h" />
     <ClInclude Include="C3.h" />
+    <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
     <ClInclude Include="LatticeConverter.h" />

@@ -3,6 +3,8 @@
 
 //#include "stdafx.h"
 
+#include "ColorTables.h"
+
 #include "Allman.h"
 #include "B4.h"
 #include "CellInputData.h"
@@ -1170,6 +1172,8 @@ LRL_Cell PDB_ReduceTimingTest() {
 
 int main(int argc, char *argv[])
 {
+   int r, g, b;
+   std::string s = OrdinalToCividisHexString(255);
    PDB_ReduceTimingTest();
    // TimingForNewNiggliReduce();
   TestReductionTiming();
