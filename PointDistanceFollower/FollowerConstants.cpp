@@ -1,16 +1,17 @@
 
+#include <cfloat>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "ColorTables.h"
 #include "FollowerConstants.h"
-#include <cfloat>
 
 namespace {
    // cannot access outside this file
-   std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey", 
-                     "orange", "blueviolet", "coral", "saddlebrown", "blue", "pink", "violet", 
-                     "deeppink", "mediumvioletred", "tomato", "greenyellow", "olive" };
+   //std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey", 
+   //                  "orange", "blueviolet", "coral", "saddlebrown", "blue", "pink", "violet", 
+   //                  "deeppink", "mediumvioletred", "tomato", "greenyellow", "olive" };
 };
 
    FollowerConstants::enumFollowerMode FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;

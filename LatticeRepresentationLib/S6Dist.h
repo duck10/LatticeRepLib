@@ -18,6 +18,7 @@ public:
    double DistanceBetween(const S6& d1, const S6& d2);
    static double new_DistanceBetween(const S6& d1, const S6& d2);
    void OneBoundaryDistance(const S6& s1, const S6& s2);
+   void TwoBoundaryDistance(const S6& s1, const S6& s2);
    static S6 Create_VCP_ForOneScalar(const unsigned long n, const S6& s);
    static std::vector<S6> Create_VCP_s(const S6& s);
    static std::vector<S6> Create_VCP_s(const std::vector<S6>& s);
@@ -66,6 +67,8 @@ public:
    static const std::vector<S6> Generate24Reflections(const std::vector<S6>& vin);
    static std::string GetName(void) { return "S6Dist"; }
    static std::string ReportS6Best(const S6Dist& s6dist);
+
+   double GetMin(void)const { return m_dmin; }
 
 private:
    static std::vector<MatB4> vB4_Refl;
