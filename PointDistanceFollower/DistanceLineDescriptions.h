@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 
+#include "ColorTables.h"
 #include "FollowerConstants.h"
 
 class DistanceLineDescriptions {
@@ -34,12 +35,22 @@ public:
 
 public:
    DistanceLineDescriptions(void) {
-      m_lineColorMap.insert(std::make_pair("S6", Line("S6", "lightblue", 12, -1.0, "10,5" )));
-      m_lineColorMap.insert(std::make_pair("G6", Line("NCDist", "slategrey", 9, -1.0, "" )));
-      m_lineColorMap.insert(std::make_pair("D7", Line("D7", "violet", 6, -1.0, "" )));
-      m_lineColorMap.insert(std::make_pair("CS", Line("CS6Dist", "olive", 3, -1.0,"5,10")));
-      m_lineColorMap.insert(std::make_pair("V7", Line("V7", "orange", 3, -1.0, "")));
-      m_lineColorMap.insert(std::make_pair("INVALID", Line("INVALID", "orange", 3, -1.0, "10,10" )));
+      //m_lineColorMap.insert(std::make_pair("S6", Line("S6", "lightblue", 12, -1.0, "10,5" )));
+      //m_lineColorMap.insert(std::make_pair("G6", Line("NCDist", "slategrey", 9, -1.0, "" )));
+      //m_lineColorMap.insert(std::make_pair("D7", Line("D7", "violet", 6, -1.0, "" )));
+      //m_lineColorMap.insert(std::make_pair("CS", Line("CS6Dist", "olive", 3, -1.0,"5,10")));
+      //m_lineColorMap.insert(std::make_pair("V7", Line("V7", "orange", 3, -1.0, "")));
+      //m_lineColorMap.insert(std::make_pair("INVALID", Line("INVALID", "orange", 3, -1.0, "10,10" )));
+
+
+      unsigned long startcolor = 0;
+      unsigned long delcolor = 255 / 5;
+      m_lineColorMap.insert(std::make_pair("S6", Line("S6", OrdinalToCividisHexString(startcolor), 12, -1.0, "10,5")));
+      m_lineColorMap.insert(std::make_pair("G6", Line("NCDist", OrdinalToCividisHexString(startcolor + 1 * delcolor), 9, -1.0, "")));
+      m_lineColorMap.insert(std::make_pair("D7", Line("D7", OrdinalToCividisHexString(startcolor + 2 * delcolor), 6, -1.0, "")));
+      m_lineColorMap.insert(std::make_pair("CS", Line("CS6Dist", OrdinalToCividisHexString(startcolor + 3 * delcolor), 3, -1.0, "5,10")));
+      m_lineColorMap.insert(std::make_pair("V7", Line("V7", OrdinalToCividisHexString(startcolor + 4 * delcolor), 3, -1.0, "")));
+      m_lineColorMap.insert(std::make_pair("INVALID", Line("INVALID", "orange", 3, -1.0, "10,10")));
    }
 
    void SetComputeTime( const std::string name, const double time ) {
