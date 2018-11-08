@@ -88,6 +88,7 @@ public:
    LRL_Cell Inverse(void) const;
    MatG6 LatSymMatG6(const std::string& latsym) const;
    static MatG6 LatSymMatG6(const std::string& latsym, const LRL_Cell& c);
+   static MatG6 G6MakePrimitiveMatrix(const std::string& latsym);
 
    static LRL_Cell GetPrimitiveCell(const std::string& latsym, const LRL_Cell& c);
    static G6 GetPrimitiveV6Vector(const std::string& latsym, const LRL_Cell& c);

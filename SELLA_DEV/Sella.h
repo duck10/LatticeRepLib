@@ -66,17 +66,17 @@ public:
    static LabeledSellaMatrices CreatePerps_O3();
    static LabeledSellaMatrices CreatePerps_O4();
    static LabeledSellaMatrices CreatePerps_O5();
-   static LabeledSellaMatrices CreatePerps_Q1();
-   static LabeledSellaMatrices CreatePerps_Q2();
-   static LabeledSellaMatrices CreatePerps_Q5();
+   static LabeledSellaMatrices CreatePerps_T1();
+   static LabeledSellaMatrices CreatePerps_T2();
+   static LabeledSellaMatrices CreatePerps_T5();
    static LabeledSellaMatrices CreatePerps_R1();
    static LabeledSellaMatrices CreatePerps_R3();
 
    static std::vector<LabeledSellaMatrices> CreateAllPrjs();
    static LabeledSellaMatrices CreatePrjs_H4();
-   static LabeledSellaMatrices CreatePrjs_K1();
-   static LabeledSellaMatrices CreatePrjs_K3();
-   static LabeledSellaMatrices CreatePrjs_K5();
+   static LabeledSellaMatrices CreatePrjs_C1();
+   static LabeledSellaMatrices CreatePrjs_C3();
+   static LabeledSellaMatrices CreatePrjs_C5();
    static LabeledSellaMatrices CreatePrjs_M1A();
    static LabeledSellaMatrices CreatePrjs_M1B();
    static LabeledSellaMatrices CreatePrjs_M2A();
@@ -89,9 +89,9 @@ public:
    static LabeledSellaMatrices CreatePrjs_O3();
    static LabeledSellaMatrices CreatePrjs_O4();
    static LabeledSellaMatrices CreatePrjs_O5();
-   static LabeledSellaMatrices CreatePrjs_Q1();
-   static LabeledSellaMatrices CreatePrjs_Q2();
-   static LabeledSellaMatrices CreatePrjs_Q5();
+   static LabeledSellaMatrices CreatePrjs_T1();
+   static LabeledSellaMatrices CreatePrjs_T2();
+   static LabeledSellaMatrices CreatePrjs_T5();
    static LabeledSellaMatrices CreatePrjs_R1();
    static LabeledSellaMatrices CreatePrjs_R3();
 
@@ -102,16 +102,6 @@ private:
    StoreResults<std::string, S6> store;
    static std::vector< std::pair<std::string, MatS6> > vDeloneTypes;
    StoreResults<std::string, std::string> indexstore;
-
-   static S6 SellaBoundaryReduce11(const S6& din);
-   static S6 SellaBoundaryReduce21(const S6& din);
-   static S6 SellaBoundaryReduce31(const S6& din);
-   static S6 SellaBoundaryReduce41(const S6& din);
-   static S6 SellaBoundaryReduce51(const S6& din);
-   static S6 SellaBoundaryReduce61(const S6& din);
-
-   static std::vector< S6(*)(const S6&)> SetReduceFunctions();
-
 
 private:
    void ProcessItemStoreToVectorMap();

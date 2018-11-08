@@ -152,9 +152,9 @@ int main()
 
 
    Sella sella;
-   //sella.WriteSellaMatrices("funcName", sella.GetPerps());
-   //sella.WriteSellaMatrices("funcName", sella.GetProjectors());
-   //exit(0);
+   sella.WriteSellaMatrices("Prj", sella.GetPerps());
+   sella.WriteSellaMatrices("Perp", sella.GetProjectors());
+   exit(0);
 
    std::vector<S6> vLat = GetInputSellingReducedVectors();
    //SellaTwoLatticeLineTest(vLat[0], vLat[1]);

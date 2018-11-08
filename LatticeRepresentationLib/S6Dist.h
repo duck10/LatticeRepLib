@@ -19,7 +19,6 @@ public:
    static double new_DistanceBetween(const S6& d1, const S6& d2);
    void OneBoundaryDistance(const S6& s1, const S6& s2);
    void TwoBoundaryDistance(const S6& s1, const S6& s2);
-   static S6 Create_VCP_ForOneScalar(const unsigned long n, const S6& s);
    static std::vector<S6> Create_VCP_s(const S6& s);
    static std::vector<S6> Create_VCP_s(const std::vector<S6>& s);
    static std::vector<S6> CreateSecondBoundary_VCP_s(const S6& s);
@@ -52,6 +51,16 @@ public:
    static S6 Unreduce52(const S6& din);
    static S6 Unreduce61(const S6& din);
    static S6 Unreduce62(const S6& din);
+
+   static std::vector< S6(*)(const S6&)> SetVCPFunctions();
+
+   static S6 VCP1(const S6& din);
+   static S6 VCP2(const S6& din);
+   static S6 VCP3(const S6& din);
+   static S6 VCP4(const S6& din);
+   static S6 VCP5(const S6& din);
+   static S6 VCP6(const S6& din);
+
 
    std::pair< double, std::pair<S6, S6> > GetBestPosition() const;
 
