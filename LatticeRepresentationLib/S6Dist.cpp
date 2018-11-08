@@ -224,15 +224,6 @@ S6 ZeroOneScalar(const unsigned long n, const S6& s) {
    return s6;
 }
 
-
-S6 S6Dist::Create_VCP_ForOneScalar(const unsigned long n, const S6& s) {
-   static const std::vector< S6(*)(const S6&)> unreducers(S6::SetUnreduceFunctions());
-
-   S6 szu(unreducers[n](ZeroOneScalar(n, s)));
-   szu[n] = -s[n];
-   return szu;
-}
-
 std::vector<S6> S6Dist::Create_VCP_s(const std::vector<S6>& vs) {
    std::vector<S6> voutside;
    voutside.reserve(vs.size() * 6);
@@ -248,22 +239,24 @@ std::vector<S6> S6Dist::Create_VCP_s(const std::vector<S6>& vs) {
 //
 std::vector<S6> S6Dist::Create_VCP_s(const S6& s) {
    std::vector<S6> voutside(6);
+   static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
 
    for (unsigned long i = 0; i < 6; ++i) {
-      voutside[i] = Create_VCP_ForOneScalar(i, s);
+      voutside[i] = fnRedn[i]( s);
    }
    return voutside;
 }
 
 std::vector<S6> S6Dist::CreateSecondBoundary_VCP_s(const S6& s) {
    std::vector<S6> voutside(36);
+   static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
 
    unsigned long pos = 0;
    for (unsigned long i = 0; i < 6; ++i) {
       const S6 si = m_UnReduceFunctions[i](s);
       for (unsigned long k = 0; k < 6; ++k) {
          if (si[k] <= 0.0) {
-            voutside[pos] = Create_VCP_ForOneScalar(k, si);
+            voutside[pos] = fnRedn[k]( si);
             ++pos;
          }
       }
@@ -632,4 +625,165 @@ std::string S6Dist::ReportS6Best(const S6Dist& s6dist) {
       p_report.second.first, "   ",
       p_report.second.second);
    }
+}
+
+
+S6 S6Dist::VCP1(const S6& din) {
+   // For unreducing scalar 11
+   // MatS6(“-1 0 0 0 0 0    1 1 0 0 0 0    1 0 0 0 1 0    -1 0 0 1 0 0    1 0 1 0 0 0    1 0 0 0 0 1”);
+   S6 d;
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss1 = -s1;
+   ss2 = s2;
+   ss3 = s5;
+   ss4 = s4;
+   ss5 = s3;
+   ss6 = s6;
+   return d;
+}
+S6 S6Dist::VCP2(const S6& din) {
+   // For unreducing scalar 21
+   // MatS6(“1 1 0 0 0 0    0 -1 0 0 0 0    0 1 0 1 0 0    0 1 1 0 0 0    0 -1 0 0 1 0    0 1 0 0 0 1”);
+   S6 d;
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss2 = -s2;
+   ss1 = s1;
+   ss3 = s4;
+   ss4 = s3;
+   ss5 = s5;
+   ss6 = s6;
+   return d;
+}
+
+S6 S6Dist::VCP3(const S6& din) {
+   // For unreducing scalar 31
+   // MatS6(“1 0 1 0 0 0    0 0 1 1 0 0    0 0 -1 0 0 0    0 1 1 0 0 0    0 0 1 0 1 0    0 0 -1 0 0 1”);
+   S6 d;
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss3 = -s3;
+   ss1 = s1;
+   ss2 = s4;
+   ss4 = s2;
+   ss5 = s5;
+   ss6 = s6;
+   return d;
+}
+
+S6 S6Dist::VCP4(const S6& din) {
+   // For unreducing scalar 41
+   // MatS6(“1 0 0 -1 0 0    0 0 1 1 0 0    0 1 0 1 0 0    0 0 0 -1 0 0    0 0 0 1 1 0    0 0 0 1 0 1”);
+   S6 d;
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss4 = -s4;
+   ss1 = s1;
+   ss2 = s3;
+   ss3 = s2;
+   ss5 = s5;
+   ss6 = s6;
+   return d;
+}
+
+S6 S6Dist::VCP5(const S6& din) {
+   // For unreducing scalar 51
+   // MatS6(“0 0 1 0 1 0    0 1 0 0 -1 0    1 0 0 0 1 0    0 0 0 1 1 0    0 0 0 0 -1 0    0 0 0 0 1 1”);
+   S6 d;
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss5 = -s5;
+   ss1 = s3;
+   ss2 = s2;
+   ss3 = s1;
+   ss4 = s4;
+   ss6 = s6;
+   return d;
+}
+
+S6 S6Dist::VCP6(const S6& din) {
+   // For unreducing scalar 61
+   // MatS6(“0 1 0 0 0 1    1 0 0 0 0 1    0 0 1 0 0 -1    0 0 0 1 0 1    0 0 0 0 1 1    0 0 0 0 0 -1”);
+   S6 d;
+   const double& s1 = din[0];
+   const double& s2 = din[1];
+   const double& s3 = din[2];
+   const double& s4 = din[3];
+   const double& s5 = din[4];
+   const double& s6 = din[5];
+   double& ss1 = d[0];
+   double& ss2 = d[1];
+   double& ss3 = d[2];
+   double& ss4 = d[3];
+   double& ss5 = d[4];
+   double& ss6 = d[5];
+   ss6 = -s6;
+   ss1 = s2;
+   ss2 = s1;
+   ss3 = s3;
+   ss4 = s4;
+   ss5 = s5;
+   return d;
+}
+
+std::vector< S6(*)(const S6&)> S6Dist::SetVCPFunctions() {
+   std::vector< S6(*)(const S6&)> fn;
+   fn.push_back(VCP1);
+   fn.push_back(VCP2);
+   fn.push_back(VCP3);
+   fn.push_back(VCP4);
+   fn.push_back(VCP5);
+   fn.push_back(VCP6);
+   return fn;
 }

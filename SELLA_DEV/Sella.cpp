@@ -4,6 +4,7 @@
 #include "GenerateRandomLattice.h"
 #include "LRL_ToString.h"
 #include "LRL_MaximaTools.h"
+#include "S6Dist.h"
 #include "Selling.h"
 #include "StoreResults.h"
 
@@ -53,8 +54,9 @@ double Sella::TestOneType(const std::string& label, const S6 &s6, const std::vec
    unsigned long bestIndex;
    S6 bestS6;
    const double s6norm = s6.norm();
+   S6 prp;
    for (unsigned long i = 0; i < vm.size(); ++i) {
-      S6 prp = vm[i] * s6;
+      prp = vm[i] * s6;
       if (best > prp.norm()) {
          best = prp.norm();
          bestIndex = i;
@@ -188,12 +190,17 @@ unsigned long Sella::Index6(const unsigned long i, const unsigned long j) {
    return 6 * i + j % 6;
 }
 
-double Sella::Fraction(const double d, const S6& s) {
-   double dout = 0.0;
+unsigned long CountEqualButNonZero(const double d, const S6& s) {
+   unsigned long count = 0;
    for (unsigned long i = 0; i < 6; ++i) {
-      if (abs(s[i] - d) < 1.0E-6 && abs(d) > 1.0E-6) dout += 1.0;
+      if (abs(s[i] - d) < 1.0E-6 && abs(d) > 1.0E-6) ++count;
    }
-   return (dout == 0.0) ? 0.0 : 1.0 / dout;
+   return count;
+}
+
+double Sella::Fraction(const double d, const S6& s) {
+   const double count = CountEqualButNonZero(d, s);
+   return (count == 0.0) ? 0.0 : 1.0 / (double)(count);
 }
 
 S6 ReZeroScalars(const S6& s) {
@@ -205,19 +212,20 @@ S6 ReZeroScalars(const S6& s) {
 
 MatS6 Sella::ProjectorFromVector(const std::string& label, const S6& s6in) {
    MatS6 m;
-
    const S6 s = ReZeroScalars(s6in);
-   std::pair<std::string, std::vector<MatS6> > oneperp;
+
    for (unsigned long j = 0; j < 6; ++j) {
-      for (unsigned long k = 0; k < 6; ++k) {
+      for (unsigned long k = j+1; k < 6; ++k) {
          const double thisFrac = Fraction(s[k], s);
          m[Index6(j, k)] = (abs(s[j] - s[k]) < 1.0E-5 && abs(s[k]) > 1.0E-5) ? thisFrac : 0.0;
-         m[Index6(k, k)] = (thisFrac == 0.0 || abs(s[k]) < 1.0E-6) ? 0.0 : thisFrac;
-         m[Index6(j, j)] = (thisFrac == 0.0 || abs(s[k]) < 1.0E-6) ? 0.0 : thisFrac;
+         m[Index6(k, j)] = m[Index6(j, k)];
       }
    }
 
-   const MatS6 unit = MatS6().unit();
+   for (unsigned long k = 0; k < 6; ++k) {
+      const double thisFrac = Fraction(s[k], s);
+      m[Index6(k, k)] = (thisFrac == 0.0 || abs(s[k]) < 1.0E-6) ? 0.0 : thisFrac;
+   }
 
    return m;
 }
@@ -238,7 +246,7 @@ void Sella::StoreAllReflections(const std::string& label, const S6& s1) {
 }
 
 void Sella::OneBound(const std::string& label, const S6& s1) {
-   static const std::vector< S6(*)(const S6&)> fnRedn = Sella::SetReduceFunctions();
+   static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
 
    unsigned long nzero = 0;
    for (unsigned long i = 0; i < 6; ++i) if (s1[i] == 0) nzero = i;
@@ -297,12 +305,12 @@ void Sella::WriteSellaMatrices(const std::string& functionName, const std::vecto
       std::vector<MatS6> vm = v.GetMatrices();
 
       for (unsigned long k = 0; k < vm.size(); ++k) {
-         std::cout << "{";
+         std::cout << "   vm.push_back(MatS6(";
 
          for (unsigned long ll = 0; ll < vm[k].size(); ++ll) {
             std::cout << vm[k][ll];
             const unsigned long ssss = vm[k].size() - 1;
-            std::cout << ((ll < ssss) ? "," : "}");
+            std::cout << ((ll < ssss) ? "," : "));");
          }
          std::cout << ((j < mat.size() - 1 || k < vm.size() - 1) ? "," : "") << std::endl;
       }
@@ -588,7 +596,7 @@ LabeledSellaMatrices Sella::CreatePerps_O5() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_Q1() {
+LabeledSellaMatrices Sella::CreatePerps_T1() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 0.5, 0, 0, -0.5, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, 0, 0, -0.5, 0, 0, 0.5));
    vm.push_back(MatS6(0.75, 0, -0.25, -0.25, 0, -0.25, 0, 0.5, 0, 0, -0.5, 0, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, 0, -0.5, 0, 0, 0.5, 0, -0.25, 0, -0.25, -0.25, 0, 0.75));
@@ -598,7 +606,7 @@ LabeledSellaMatrices Sella::CreatePerps_Q1() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_Q2() {
+LabeledSellaMatrices Sella::CreatePerps_T2() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 1, 0, 0, 0, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.75, 0, -0.25, -0.25, 0, -0.25, 0, 1, 0, 0, 0, 0, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, 0, 0, 0, 0, 0, 0, -0.25, 0, -0.25, -0.25, 0, 0.75));
@@ -606,12 +614,12 @@ LabeledSellaMatrices Sella::CreatePerps_Q2() {
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 0, 0, 0, 0, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75));
    vm.push_back(MatS6(0.75, 0, -0.25, -0.25, 0, -0.25, 0, 0, 0, 0, 0, 0, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, 0, 0, 0, 0, 1, 0, -0.25, 0, -0.25, -0.25, 0, 0.75));
    vm.push_back(MatS6(0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 0, 0, 0, 0, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, 0, 0, 0, 0, 0, 1));
-   return LabeledSellaMatrices("Q2", vm);
+   return LabeledSellaMatrices("T2", vm);
 }
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_Q5() {
+LabeledSellaMatrices Sella::CreatePerps_T5() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
@@ -661,7 +669,7 @@ LabeledSellaMatrices Sella::CreatePerps_Q5() {
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.5, 0, 0.5));
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, -0.5, 0, 0, 0, 0.5));
-   return LabeledSellaMatrices("Q5", vm);
+   return LabeledSellaMatrices("T5", vm);
 }
 
 
@@ -736,9 +744,9 @@ std::vector<LabeledSellaMatrices> Sella::CreateAllPerps(){
    vlsm.push_back(Sella::CreatePerps_O3());
    vlsm.push_back(Sella::CreatePerps_O4());
    vlsm.push_back(Sella::CreatePerps_O5());
-   vlsm.push_back(Sella::CreatePerps_Q1());
-   vlsm.push_back(Sella::CreatePerps_Q2());
-   vlsm.push_back(Sella::CreatePerps_Q5());
+   vlsm.push_back(Sella::CreatePerps_T1());
+   vlsm.push_back(Sella::CreatePerps_T2());
+   vlsm.push_back(Sella::CreatePerps_T5());
    vlsm.push_back(Sella::CreatePerps_R1());
    vlsm.push_back(Sella::CreatePerps_R3());
 
@@ -763,22 +771,22 @@ LabeledSellaMatrices Sella::CreatePrjs_H4() {
    return LabeledSellaMatrices("H4", vm);
 }
 
-LabeledSellaMatrices Sella::CreatePrjs_K1() {
+LabeledSellaMatrices Sella::CreatePrjs_C1() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667));
-   return LabeledSellaMatrices("K1", vm);
+   return LabeledSellaMatrices("C1", vm);
 }
 
-LabeledSellaMatrices Sella::CreatePrjs_K3() {
+LabeledSellaMatrices Sella::CreatePrjs_C3() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25));
-   return LabeledSellaMatrices("K3", vm);
+   return LabeledSellaMatrices("C3", vm);
 }
 
 
-LabeledSellaMatrices Sella::CreatePrjs_K5() {
+LabeledSellaMatrices Sella::CreatePrjs_C5() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333));
    vm.push_back(MatS6(0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0, 0, 0, 0.333333));
@@ -796,7 +804,7 @@ LabeledSellaMatrices Sella::CreatePrjs_K5() {
    vm.push_back(MatS6(0.333333, 0.333333, 0, 0.333333, 0, 0, 0.333333, 0.333333, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0, 0.333333, 0, 0, 0.333333, 0.333333, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.333333, 0, 0.333333, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0, 0.333333, 0.333333, 0, 0, 0.333333, 0, 0.333333, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-   return LabeledSellaMatrices("K5", vm);
+   return LabeledSellaMatrices("C5", vm);
 }
 
 
@@ -1016,17 +1024,17 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
 
 
    /*  Q1   */
-   LabeledSellaMatrices Sella::CreatePrjs_Q1() {
+   LabeledSellaMatrices Sella::CreatePrjs_T1() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0.5, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0.5));
       vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0.5, 0, 0, 0.5, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0.5, 0, 0, 0.5, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
       vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0.5, 0, 0, 0.5, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25));
-      return LabeledSellaMatrices("Q1", vm);
+      return LabeledSellaMatrices("T1", vm);
    }
 
 
    /*  Q2   */
-   LabeledSellaMatrices Sella::CreatePrjs_Q2() {
+   LabeledSellaMatrices Sella::CreatePrjs_T2() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 1, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
@@ -1034,12 +1042,12 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 1, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25));
       vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 1, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
       vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 1, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 0));
-      return LabeledSellaMatrices("Q2", vm);
+      return LabeledSellaMatrices("T2", vm);
    }
 
 
    /*  Q5   */
-   LabeledSellaMatrices Sella::CreatePrjs_Q5() {
+   LabeledSellaMatrices Sella::CreatePrjs_T5() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1));
@@ -1089,7 +1097,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0));
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5));
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0.5));
-      return LabeledSellaMatrices("Q5", vm);
+      return LabeledSellaMatrices("T5", vm);
    }
 
 
@@ -1149,9 +1157,9 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
    std::vector<LabeledSellaMatrices> Sella::CreateAllPrjs() {
       std::vector< LabeledSellaMatrices> vlsm;
       vlsm.push_back(Sella::CreatePrjs_H4());
-      vlsm.push_back(Sella::CreatePrjs_K1());
-      vlsm.push_back(Sella::CreatePrjs_K3());
-      vlsm.push_back(Sella::CreatePrjs_K5());
+      vlsm.push_back(Sella::CreatePrjs_C1());
+      vlsm.push_back(Sella::CreatePrjs_C3());
+      vlsm.push_back(Sella::CreatePrjs_C5());
       vlsm.push_back(Sella::CreatePrjs_M1A());
       vlsm.push_back(Sella::CreatePrjs_M1B());
       vlsm.push_back(Sella::CreatePrjs_M2A());
@@ -1164,172 +1172,12 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
       vlsm.push_back(Sella::CreatePrjs_O3());
       vlsm.push_back(Sella::CreatePrjs_O4());
       vlsm.push_back(Sella::CreatePrjs_O5());
-      vlsm.push_back(Sella::CreatePrjs_Q1());
-      vlsm.push_back(Sella::CreatePrjs_Q2());
-      vlsm.push_back(Sella::CreatePrjs_Q5());
+      vlsm.push_back(Sella::CreatePrjs_T1());
+      vlsm.push_back(Sella::CreatePrjs_T2());
+      vlsm.push_back(Sella::CreatePrjs_T5());
       vlsm.push_back(Sella::CreatePrjs_R1());
       vlsm.push_back(Sella::CreatePrjs_R3());
 
       return vlsm;
    }
 
-   S6 Sella::SellaBoundaryReduce11(const S6& din) {
-      // For unreducing scalar 11
-      // MatS6(“-1 0 0 0 0 0    1 1 0 0 0 0    1 0 0 0 1 0    -1 0 0 1 0 0    1 0 1 0 0 0    1 0 0 0 0 1”);
-      S6 d;
-      const double& s1 = din[0];
-      const double& s2 = din[1];
-      const double& s3 = din[2];
-      const double& s4 = din[3];
-      const double& s5 = din[4];
-      const double& s6 = din[5];
-      double& ss1 = d[0];
-      double& ss2 = d[1];
-      double& ss3 = d[2];
-      double& ss4 = d[3];
-      double& ss5 = d[4];
-      double& ss6 = d[5];
-      ss1 = -s1;
-      ss2 = s2;
-      ss3 = s5;
-      ss4 = s4;
-      ss5 = s3;
-      ss6 = s6;
-      return d;
-   }
-
-   S6 Sella::SellaBoundaryReduce21(const S6& din) {
-      // For unreducing scalar 21
-      // MatS6(“1 1 0 0 0 0    0 -1 0 0 0 0    0 1 0 1 0 0    0 1 1 0 0 0    0 -1 0 0 1 0    0 1 0 0 0 1”);
-      S6 d;
-      const double& s1 = din[0];
-      const double& s2 = din[1];
-      const double& s3 = din[2];
-      const double& s4 = din[3];
-      const double& s5 = din[4];
-      const double& s6 = din[5];
-      double& ss1 = d[0];
-      double& ss2 = d[1];
-      double& ss3 = d[2];
-      double& ss4 = d[3];
-      double& ss5 = d[4];
-      double& ss6 = d[5];
-      ss2 = -s2;
-      ss1 = s1;
-      ss3 = s4;
-      ss4 = s3;
-      ss5 = s5;
-      ss6 = s6;
-      return d;
-   }
-
-   S6 Sella::SellaBoundaryReduce31(const S6& din) {
-      // For unreducing scalar 31
-      // MatS6(“1 0 1 0 0 0    0 0 1 1 0 0    0 0 -1 0 0 0    0 1 1 0 0 0    0 0 1 0 1 0    0 0 -1 0 0 1”);
-      S6 d;
-      const double& s1 = din[0];
-      const double& s2 = din[1];
-      const double& s3 = din[2];
-      const double& s4 = din[3];
-      const double& s5 = din[4];
-      const double& s6 = din[5];
-      double& ss1 = d[0];
-      double& ss2 = d[1];
-      double& ss3 = d[2];
-      double& ss4 = d[3];
-      double& ss5 = d[4];
-      double& ss6 = d[5];
-      ss3 = -s3;
-      ss1 = s1;
-      ss2 = s4;
-      ss4 = s2;
-      ss5 = s5;
-      ss6 = s6;
-      return d;
-   }
-
-   S6 Sella::SellaBoundaryReduce41(const S6& din) {
-      // For unreducing scalar 41
-      // MatS6(“1 0 0 -1 0 0    0 0 1 1 0 0    0 1 0 1 0 0    0 0 0 -1 0 0    0 0 0 1 1 0    0 0 0 1 0 1”);
-      S6 d;
-      const double& s1 = din[0];
-      const double& s2 = din[1];
-      const double& s3 = din[2];
-      const double& s4 = din[3];
-      const double& s5 = din[4];
-      const double& s6 = din[5];
-      double& ss1 = d[0];
-      double& ss2 = d[1];
-      double& ss3 = d[2];
-      double& ss4 = d[3];
-      double& ss5 = d[4];
-      double& ss6 = d[5];
-      ss4 = -s4;
-      ss1 = s1;
-      ss2 = s3;
-      ss3 = s2;
-      ss5 = s5;
-      ss6 = s6;
-      return d;
-   }
-
-   S6 Sella::SellaBoundaryReduce51(const S6& din) {
-      // For unreducing scalar 51
-      // MatS6(“0 0 1 0 1 0    0 1 0 0 -1 0    1 0 0 0 1 0    0 0 0 1 1 0    0 0 0 0 -1 0    0 0 0 0 1 1”);
-      S6 d;
-      const double& s1 = din[0];
-      const double& s2 = din[1];
-      const double& s3 = din[2];
-      const double& s4 = din[3];
-      const double& s5 = din[4];
-      const double& s6 = din[5];
-      double& ss1 = d[0];
-      double& ss2 = d[1];
-      double& ss3 = d[2];
-      double& ss4 = d[3];
-      double& ss5 = d[4];
-      double& ss6 = d[5];
-      ss5 = -s5;
-      ss1 = s3;
-      ss2 = s2;
-      ss3 = s1;
-      ss4 = s4;
-      ss6 = s6;
-      return d;
-   }
-
-   S6 Sella::SellaBoundaryReduce61(const S6& din) {
-      // For unreducing scalar 61
-      // MatS6(“0 1 0 0 0 1    1 0 0 0 0 1    0 0 1 0 0 -1    0 0 0 1 0 1    0 0 0 0 1 1    0 0 0 0 0 -1”);
-      S6 d;
-      const double& s1 = din[0];
-      const double& s2 = din[1];
-      const double& s3 = din[2];
-      const double& s4 = din[3];
-      const double& s5 = din[4];
-      const double& s6 = din[5];
-      double& ss1 = d[0];
-      double& ss2 = d[1];
-      double& ss3 = d[2];
-      double& ss4 = d[3];
-      double& ss5 = d[4];
-      double& ss6 = d[5];
-      ss6 = -s6;
-      ss1 = s2;
-      ss2 = s1;
-      ss3 = s3;
-      ss4 = s4;
-      ss5 = s5;
-      return d;
-   }
-
-   std::vector< S6(*)(const S6&)> Sella::SetReduceFunctions() {
-      std::vector< S6(*)(const S6&)> fn;
-      fn.push_back(SellaBoundaryReduce11);
-      fn.push_back(SellaBoundaryReduce21);
-      fn.push_back(SellaBoundaryReduce31);
-      fn.push_back(SellaBoundaryReduce41);
-      fn.push_back(SellaBoundaryReduce51);
-      fn.push_back(SellaBoundaryReduce61);
-      return fn;
-   }

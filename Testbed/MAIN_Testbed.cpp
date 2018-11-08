@@ -1170,8 +1170,34 @@ LRL_Cell PDB_ReduceTimingTest() {
    return dummy;
 }
 
+void makeS6UnPrimitiveMatrices() {
+   const MatG6 fmat = LRL_Cell::G6MakePrimitiveMatrix("F");
+   const MatS6 s6Tog6(" 2 0 0 0 0 0   0 2 0 0 0 0   0 0 2 0 0 0 0 -1 -1 -1 0 0   -1 0 -1 0 -1 0   -1 -1 0 0 0 -1"  );
+   MatS6 finv("0 0 0 .5 0 0   0 0 0 0 .5 0   0 0 0 0 0 .5   -1 0 0 0 -.5 -.5   0 -1 0 -.5 0 -.5   0 0 -1 -.5 -.5 0");
+   const LRL_Cell fcell("10 10 10  90 90 90");
+
+   std::cout << "G6 input  " << G6(fcell) << std::endl;
+   const S6 fs6(fcell);
+   std::cout << "S6 input  " << fs6 << std::endl;
+
+
+   const G6 fg6(fs6);
+   std::cout << "G6  " << fg6 << std::endl;
+
+
+   std::cout << "S6  " << S6(fg6) << std::endl;
+
+   const MatS6 primconverter = finv * s6Tog6 * fmat;
+   const S6 primcell = primconverter *fg6;
+   std::cout << "prim " << primcell << std::endl;
+   std::cout << "prim " << LRL_Cell_Degrees( primcell) << std::endl;
+}
+
 int main(int argc, char *argv[])
 {
+   makeS6UnPrimitiveMatrices();
+   exit(0);
+
    int r, g, b;
    std::string s = OrdinalToCividisHexString(255);
    PDB_ReduceTimingTest();
