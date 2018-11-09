@@ -896,12 +896,12 @@ void CheckReduceAndDistanceTiming() {
          start = std::clock();
          TestNiggliTiming(testDataG6REDUCED, true);
          endTime = std::clock() - start;
-         store.Store("Reduced Input Niggli preSelling",  endTime );
+         store.Store("Reduced Input Niggli preSelling", endTime);
 
          start = std::clock();
          TestNiggliTiming(testDataG6REDUCED, false);
          endTime = std::clock() - start;
-         store.Store("Reduced Input Niggli only Niggli",  endTime );
+         store.Store("Reduced Input Niggli only Niggli", endTime);
       }
 
       //---------------------------------- test unreduced reductions
@@ -910,12 +910,12 @@ void CheckReduceAndDistanceTiming() {
          start = std::clock();
          TestSellingTiming(unreducedTestDataS6);
          endTime = std::clock() - start;
-         store.Store("NOT Reduced Input Selling",  endTime );
+         store.Store("NOT Reduced Input Selling", endTime);
 
          start = std::clock();
          TestNiggliTiming(unreducedTestDataG6, true);
          endTime = std::clock() - start;
-         store.Store("NOT Reduced Input Niggli, preSelling",  endTime );
+         store.Store("NOT Reduced Input Niggli, preSelling", endTime);
 
          start = std::clock();
          TestNiggliTiming(unreducedTestDataG6, false);
@@ -928,31 +928,31 @@ void CheckReduceAndDistanceTiming() {
          start = std::clock();
          TestS6DistancesTiming(testDataS6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced S6Dist ",  endTime );
+         store.Store("Reduced S6Dist ", endTime);
 
          //---------------------------------- test CS6 distances
          start = std::clock();
          TestCS6DistancesTiming(testDataS6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced CS6Dist ",  endTime );
+         store.Store("Reduced CS6Dist ", endTime);
 
          //---------------------------------- test G6 distances
          start = std::clock();
          TestG6DistancesTiming(testDataG6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced NCDist ",  endTime );
+         store.Store("Reduced NCDist ", endTime);
 
          //---------------------------------- test D7 distances
          start = std::clock();
          TestD7DistancesTiming(testDataS6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced D7Dist ",  endTime );
+         store.Store("Reduced D7Dist ", endTime);
 
          //---------------------------------- test V7 distances
          start = std::clock();
          TestV7DistancesTiming(testDataG6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced V7Dist ",  endTime );
+         store.Store("Reduced V7Dist ", endTime);
       }
    }
 
@@ -989,7 +989,7 @@ void VerifyIsNiggli() {
    GenerateRandomLattice<G6> grl(seed);
    G6 vout;
    const unsigned long ntest = 10000;
-   for (unsigned long i = 0; i<ntest; ++i) {
+   for (unsigned long i = 0; i < ntest; ++i) {
       const G6 g6 = grl.GenerateExtreme();
       bool b = Niggli::Reduce(g6, vout);
       store.Store(Niggli::IsNiggli(vout), LRL_ToString(LRL_Cell_Degrees(g6), "  ", LRL_Cell_Degrees(vout)));
@@ -1119,7 +1119,7 @@ LRL_Cell PDB_ReduceTimingTest() {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
    std::vector<LRL_Cell> vcell;
    std::vector<std::string> vlattice;
-   for ( unsigned long i=0; i<input.size(); ++i ) {
+   for (unsigned long i = 0; i < input.size(); ++i) {
       vcell.push_back(input[i].GetCell());
       vlattice.push_back(input[i].GetLattice());
    }
@@ -1170,39 +1170,45 @@ LRL_Cell PDB_ReduceTimingTest() {
    return dummy;
 }
 
-void makeS6UnPrimitiveMatrices() {
+void F_makeS6UnPrimitiveMatrices() {
    const MatG6 fmat = LRL_Cell::G6MakePrimitiveMatrix("F");
-   const MatS6 s6Tog6(" 2 0 0 0 0 0   0 2 0 0 0 0   0 0 2 0 0 0 0 -1 -1 -1 0 0   -1 0 -1 0 -1 0   -1 -1 0 0 0 -1"  );
-   MatS6 finv("0 0 0 .5 0 0   0 0 0 0 .5 0   0 0 0 0 0 .5   -1 0 0 0 -.5 -.5   0 -1 0 -.5 0 -.5   0 0 -1 -.5 -.5 0");
-   const LRL_Cell fcell("10 10 10  90 90 90");
+   const MatN fmatinv = fmat.GetMatrix().inverse();
 
-   std::cout << "G6 input  " << G6(fcell) << std::endl;
-   const S6 fs6(fcell);
-   std::cout << "S6 input  " << fs6 << std::endl;
+   const MatG6 s6Tog6(" 2 0 0 0 0 0   0 2 0 0 0 0   0 0 2 0 0 0 0 -1 -1 -1 0 0   -1 0 -1 0 -1 0   -1 -1 0 0 0 -1");
+   const MatS6 g6Tos6 = s6Tog6.GetMatrix().inverse();
+   //const MatS6 g6Tos6("0 0 0 .5 0 0   0 0 0 0 .5 0   0 0 0 0 0 .5   -1 0 0 0 -.5 -.5   0 -1 0 -.5 0 -.5   0 0 -1 -.5 -.5 0");
+   std::cout << "should be unit matrix " << std::endl << s6Tog6 * g6Tos6 << std::endl << std::endl;
+   std::cout << 1.0 - (s6Tog6 * g6Tos6).norm() << std::endl;
+   const LRL_Cell f_G6_centered_cell("10 10 10  90 90 90");
+   std::cout << "G6 input centered vector " << G6(f_G6_centered_cell) << std::endl;
+   const S6 f_S6_centered_cell(f_G6_centered_cell);
+   std::cout << "S6 input centered vector " << f_S6_centered_cell << std::endl << std::endl;
+
+   std::cout << "G6  centered vector  " << f_G6_centered_cell << std::endl;
 
 
-   const G6 fg6(fs6);
-   std::cout << "G6  " << fg6 << std::endl;
+   std::cout << "S6  centered vector  " << S6(f_G6_centered_cell) << std::endl << std::endl;
 
-
-   std::cout << "S6  " << S6(fg6) << std::endl;
-
-   const MatS6 primconverter = finv * s6Tog6 * fmat;
-   const S6 primcell = primconverter *fg6;
-   std::cout << "prim " << primcell << std::endl;
-   std::cout << "prim " << LRL_Cell_Degrees( primcell) << std::endl;
+   const MatS6 s6primconverter = s6Tog6 * fmat* g6Tos6;
+   const S6 primcell = fmat * f_G6_centered_cell;
+   std::cout << "primitive S6 using original matrix" << primcell << std::endl;
+   std::cout << "prim cell from original " << LRL_Cell_Degrees(primcell) << std::endl << std::endl;
+   std::cout << "primitive S6 with new matrix" << s6primconverter * f_S6_centered_cell << std::endl;
+   std::cout << "prim cell from new matrix " << LRL_Cell_Degrees(s6primconverter * f_S6_centered_cell) << std::endl;
 }
 
 int main(int argc, char *argv[])
 {
-   makeS6UnPrimitiveMatrices();
+
+
+   F_makeS6UnPrimitiveMatrices();
    exit(0);
 
    int r, g, b;
    std::string s = OrdinalToCividisHexString(255);
    PDB_ReduceTimingTest();
    // TimingForNewNiggliReduce();
-  TestReductionTiming();
+   TestReductionTiming();
 
    exit(0);
    const std::vector<std::pair<MatS6, MatS6> > unred = S6::SetUnreductionMatrices();

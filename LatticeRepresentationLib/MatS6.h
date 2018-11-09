@@ -87,6 +87,8 @@ public:
    MatS6 Reduce(void) const;
    void ReplaceTwosInRows7x7(MatS6& m);
 
+   MatN GetMatrix(void) const { return m_mat; }
+
    static std::vector<MatS6> GetReflections();
    static MatS6 GetReflection(const unsigned long n);
 
