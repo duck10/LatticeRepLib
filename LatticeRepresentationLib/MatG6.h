@@ -85,6 +85,8 @@ public:
 
    void ReplaceTwosInRows7x7(MatG6& m);
 
+   MatN GetMatrix(void) const { return m_mat; }
+
    static std::vector<MatG6> GetReflections();
    static MatG6 GetReflection(const unsigned long n);
 
