@@ -69,6 +69,7 @@ public:
    double Norm(const MatG6& t) const;
 
    unsigned long GetRowDim(void) const { return 6; }
+   unsigned long GetColDim(void) const { return 6; }
    virtual bool IsUnit() const;
    static MatG6 Eye(void);
    static MatG6 Zero(void);
@@ -89,6 +90,7 @@ public:
 
    static std::vector<MatG6> GetReflections();
    static MatG6 GetReflection(const unsigned long n);
+   static std::string GetName() { return "MatG6"; }
 
 private:
    MatN m_mat;

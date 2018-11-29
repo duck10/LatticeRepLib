@@ -13,15 +13,6 @@
 #include "S6.h"
 #include "StoreResults.h"
 
-class SellaResult {
-public:
-
-
-   const std::string m_label;
-   const double m_distance;
-   const S6 m_projected;
-   const S6 m_perped;
-};
 
 class LabeledSellaMatrices {
 public:

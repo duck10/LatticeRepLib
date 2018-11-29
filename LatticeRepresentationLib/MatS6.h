@@ -92,6 +92,8 @@ public:
    static std::vector<MatS6> GetReflections();
    static MatS6 GetReflection(const unsigned long n);
 
+   static std::string GetName() { return "MatS6"; }
+
 private:
    MatN m_mat;
    static std::vector<MatS6> vS6_Refl;
