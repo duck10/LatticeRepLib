@@ -39,6 +39,8 @@
 #include "TNear.h"
 #include "LRL_Vector3.h"
 
+#include "SanMatrix.h"
+
 #include <ctime>
 #include <functional>
 
@@ -1199,10 +1201,6 @@ void F_makeS6UnPrimitiveMatrices() {
 
 int main(int argc, char *argv[])
 {
-
-
-   F_makeS6UnPrimitiveMatrices();
-   exit(0);
 
    int r, g, b;
    std::string s = OrdinalToCividisHexString(255);

@@ -265,16 +265,17 @@ int main()
    Sella sella;
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
-   std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   //std::vector<S6> vLat = GetInputSellingReducedVectors(input);
    //SellaTwoLatticeLineTest(vLat[0], vLat[1]);
    //exit(0);
    //AnalyzePDBCells(input);
    LatticeConverter converter;
 
    std::cout << S6(input[0].GetCell()) << std::endl;
-   //const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
 
-   const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("m", vLat[0]);
+   //const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("m", vLat[0]);
+   const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("T5", vLat[0]);
 
    for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
       std::vector<std::pair<std::string, double> > out;
