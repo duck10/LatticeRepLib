@@ -319,38 +319,43 @@ std::vector<unsigned long> FindEqualPairs(const S6& s6) {
    return v;
 }
 
-void Nullspace2(const std::string& strcell, const std::string& label, const double radius ) {
+void Nullspace2(const std::string& strcell, const std::string& latticetype, const std::string& label, const double radius ) {
    LRL_ReadLatticeData rld;
    rld.CellReader(strcell);
-   const std::string lattice = rld.GetLattice();
    const LRL_Cell cell = rld.GetCell();
+
    const S6 centeredS6(cell);
    std::cout << centeredS6 << std::endl;
+
    S6 circle("0 0 0 0 0 0 ");
 
    LatticeConverter converter;
    Sella sella;
    const long steps = 101;
-   const double radius = 0.1;
    for (long i = 0; i <= steps; ++i) {
       const double angle = double(i) / steps * 2.0*4.0*atan(1.0);
       circle[0] = radius * cos(angle);
       circle[2] = radius * sin(angle);
       const S6 next = centeredS6 + circle;
-      const S6 s6 = converter.SellingReduceCell("C", next);
-      //const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("M2A", s6);
-      const double best = sella.GetFitForDeloneType("M1A", s6);
+      const S6 s6 = converter.SellingReduceCell(latticetype, next);
+      //const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem(label, s6);
       //std::cout << best.second << std::endl;
-      std::cout << best * cos(angle) << "  " << best * sin(angle) << "   " << best << std::endl;
+      const double best = sella.GetFitForDeloneType(label, s6);
+      //std::cout << best * cos(angle) << "  " << best * sin(angle) << "   " << best << std::endl;
+      std::cout << " " << best * cos(angle) << " " << best * sin(angle) << std::endl;
    }
 
    //exit(0);
 }
 
 void Nullspace2Tests() {
-   M1B_CircleTest();
-   M2B_CircleTest();
-   M1A_CircleTest();
+   //Nullspace2("P 10 20 15 90 110 90", "P", "M4", 0.1);
+   //Nullspace2("C 10 20 15 90 110 90", "C", "M1A",0.1);
+   //Nullspace2("C 89.6 75.6 69.7 90 141.9 90", "C", "M1B",0.1);
+   Nullspace2("C 20 10 15 90 110 90",         "C", "M2A",0.1);
+   //M1B_CircleTest();
+   //M2B_CircleTest();
+   //M1A_CircleTest();
 }
 
 int main()
