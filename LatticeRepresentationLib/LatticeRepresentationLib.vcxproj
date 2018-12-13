@@ -182,6 +182,7 @@
     <ClCompile Include="MatN.cpp" />
     <ClCompile Include="LRL_ReadLatticeData.cpp" />
     <ClCompile Include="Niggli.cpp" />
+    <ClCompile Include="Sella.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="VecN.cpp" />
   </ItemGroup>
@@ -223,6 +224,7 @@
     <ClInclude Include="LRL_ReadLatticeData.h" />
     <ClInclude Include="Niggli.h" />
     <ClInclude Include="SanMatrix.h" />
+    <ClInclude Include="Sella.h" />
     <ClInclude Include="Selling.h" />
     <ClInclude Include="V7Dist.h" />
     <ClInclude Include="VecN.h" />

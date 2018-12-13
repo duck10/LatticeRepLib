@@ -66,7 +66,8 @@ S6 ScaleAndThenPerturbByPercent( const S6& s6, const double scale, const double 
    const double n1 = master.norm();
    const double n2 = scaledRandom.norm();
    const double n3 = (master + scaledRandom).norm();
-   return master + scaledRandom;
+   const S6 result = master + scaledRandom;
+   return result;
 }
 
 void SellaLineTest(const S6& s6) {
@@ -226,41 +227,12 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    storeGood.ShowResults();
    exit(0);
 }
-
-void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
-   const S6& start(s1);
-   const S6& target(s2);
-   const unsigned long nsteps = 100;
-   S6 step = (target - start) / (nsteps);
-   Sella sella;
-   std::vector<std::vector<std::pair<std::string, double> >  > fits;
-
-   for (unsigned long i = 0; i <= nsteps; ++i) {
-      S6 reducedStepper;
-      S6 stepper = start + step * i;
-      const bool b = Selling::Reduce(stepper, reducedStepper);
-      const std::vector<std::pair<std::string, double> > out = sella.GetVectorOfFits(reducedStepper);
-      stepper += step;
-      fits.push_back(out);
-
-      if (i == 0) {
-         for (unsigned long k = 0; k < out.size(); ++k) {
-            std::cout << out[k].first << " ";
-         }
-         std::cout << std::endl;
-      }
-      for (unsigned long k = 0; k < out.size(); ++k) {
-         std::cout << out[k].second << " ";
-      }
-      std::cout << std::endl;
-   }
-   std::cout << fits.size() << std::endl;
-}
-
 int main()
 {
-   //GenerateCubicTest();
-   //GenerateOrthorhombicTestCells("I");
+   //const std::vector<LabeledSellaMatrices> prjs = Sella::CreateAllPrjs();
+   //for ( unsigned long i=0; i<prjs.size(); ++i ) {
+   //   std::cout << prjs[i].GetLabel() << "  " << prjs[i].size() << std::endl;
+   //}
 
    Sella sella;
 
@@ -275,13 +247,13 @@ int main()
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
 
    //const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("m", vLat[0]);
-   const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("T5", vLat[0]);
+   //const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("T5", vLat[0]);
 
    for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
       std::vector<std::pair<std::string, double> > out;
 
       std::cout << input[lat].GetStrCell() << std::endl;
-      out = sella.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, 0.0));
+      out = sella.GetVectorOfFits(/*ScaleAndThenPerturbByPercent(*/vLat[lat]/*, 1000.0, 0.0)*/);
       for (unsigned long i = 0; i < out.size(); ++i) {
          std::cout << out[i].first << "  " << out[i].second <<  "   " << S6(C3::ConvertToFundamentalUnit(C3(vLat[lat]))) << "   " << LRL_Cell_Degrees(vLat[lat])<< std::endl;
       }

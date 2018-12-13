@@ -400,7 +400,7 @@ LabeledSellaMatrices Sella::CreatePerps_M1B() {
 }
 
 
-LabeledSellaMatrices Sella::CreatePerps_M2A() {
+LabeledSellaMatrices Sella::CreatePerps_M2B() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 0.5, 0, 0, -0.5, 0, 0, 0, 1, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, -0.5, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0, 0.5));
@@ -414,12 +414,12 @@ LabeledSellaMatrices Sella::CreatePerps_M2A() {
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5));
    vm.push_back(MatS6(0.5, 0, 0, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, -0.5, 0, 0, 0, 0, 0.5));
    vm.push_back(MatS6(0.5, 0, 0, 0, -0.5, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0.5, 0, 0, -0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1));
-   return LabeledSellaMatrices("M2A", vm);
+   return LabeledSellaMatrices("M2B", vm);
 }
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_M2B() {
+LabeledSellaMatrices Sella::CreatePerps_M2A() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
@@ -433,7 +433,7 @@ LabeledSellaMatrices Sella::CreatePerps_M2B() {
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.5, 0, 0.5));
    vm.push_back(MatS6(0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 1));
-   return LabeledSellaMatrices("M2B", vm);
+   return LabeledSellaMatrices("M2A", vm);
 }
 
 
@@ -828,7 +828,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M1B() {
    return LabeledSellaMatrices("M1B", vm);
 }
 
-LabeledSellaMatrices Sella::CreatePrjs_M2A() {
+LabeledSellaMatrices Sella::CreatePrjs_M2B() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 0.5));
@@ -842,12 +842,12 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5));
    vm.push_back(MatS6(0.5, 0, 0, 0, 0, 0.5, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5));
    vm.push_back(MatS6(0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0));
-   return LabeledSellaMatrices("M2A", vm);
+   return LabeledSellaMatrices("M2B", vm);
 }
 
 
-   /*  M2B  */
-   LabeledSellaMatrices Sella::CreatePrjs_M2B() {
+   /*  M2A  */
+   LabeledSellaMatrices Sella::CreatePrjs_M2A() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1));
@@ -861,7 +861,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2A() {
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5));
       vm.push_back(MatS6(0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0));
-      return LabeledSellaMatrices("M2B", vm);
+      return LabeledSellaMatrices("M2A", vm);
    }
 
 
