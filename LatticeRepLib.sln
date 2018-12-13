@@ -63,6 +63,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "S6FixedMatrixDistance", "S6
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sella_C3", "Sella_C3\Sella_C3.vcxproj", "{F8AF4CD9-0196-42EF-98A6-369EC016E3D5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SELLA_VERIFY", "SELLA_VERIFY\SELLA_VERIFY.vcxproj", "{0344240D-EDD3-463E-83E4-20631DB02501}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -223,6 +225,14 @@ Global
 		{F8AF4CD9-0196-42EF-98A6-369EC016E3D5}.Release|x64.Build.0 = Release|x64
 		{F8AF4CD9-0196-42EF-98A6-369EC016E3D5}.Release|x86.ActiveCfg = Release|Win32
 		{F8AF4CD9-0196-42EF-98A6-369EC016E3D5}.Release|x86.Build.0 = Release|Win32
+		{0344240D-EDD3-463E-83E4-20631DB02501}.Debug|x64.ActiveCfg = Debug|x64
+		{0344240D-EDD3-463E-83E4-20631DB02501}.Debug|x64.Build.0 = Debug|x64
+		{0344240D-EDD3-463E-83E4-20631DB02501}.Debug|x86.ActiveCfg = Debug|Win32
+		{0344240D-EDD3-463E-83E4-20631DB02501}.Debug|x86.Build.0 = Debug|Win32
+		{0344240D-EDD3-463E-83E4-20631DB02501}.Release|x64.ActiveCfg = Release|x64
+		{0344240D-EDD3-463E-83E4-20631DB02501}.Release|x64.Build.0 = Release|x64
+		{0344240D-EDD3-463E-83E4-20631DB02501}.Release|x86.ActiveCfg = Release|Win32
+		{0344240D-EDD3-463E-83E4-20631DB02501}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

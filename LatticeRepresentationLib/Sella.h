@@ -33,6 +33,8 @@ public:
    std::string GetLabel() const { return m_label; }
 
    std::vector<MatS6>  GetMatrices() const { return m_vector; }
+
+   size_t size() const { return m_vector.size(); }
 private:
    std::string m_label;
    std::vector<MatS6> m_vector;
@@ -68,6 +70,9 @@ private:
    static const std::vector<LabeledSellaMatrices> perps;
 
 private:
+   static LabeledSellaMatrices CreatePerps_A1();
+   static LabeledSellaMatrices CreatePerps_A2();
+   static LabeledSellaMatrices CreatePerps_A3();
    static LabeledSellaMatrices CreatePerps_H4();
    static LabeledSellaMatrices CreatePerps_C1();
    static LabeledSellaMatrices CreatePerps_C3();
@@ -90,6 +95,9 @@ private:
    static LabeledSellaMatrices CreatePerps_R1();
    static LabeledSellaMatrices CreatePerps_R3();
 
+   static LabeledSellaMatrices CreatePrjs_A1();
+   static LabeledSellaMatrices CreatePrjs_A2();
+   static LabeledSellaMatrices CreatePrjs_A3();
    static LabeledSellaMatrices CreatePrjs_H4();
    static LabeledSellaMatrices CreatePrjs_C1();
    static LabeledSellaMatrices CreatePrjs_C3();
