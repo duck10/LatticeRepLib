@@ -14,14 +14,13 @@ std::vector< std::pair<std::string, MatS6> > Sella::vDeloneTypes = Delone::LoadL
 Sella::Sella() {
    store.SetMaxItemStore(350);
 
-   for (unsigned long i = 0; i < vDeloneTypes.size(); ++i) {
+   for (unsigned long i = 17; i < 18/*vDeloneTypes.size()*/; ++i) {
       //for (unsigned long i = 2; i < 3; ++i) {  // to show only C5
       Expand(vDeloneTypes[i].first, vDeloneTypes[i].second);
    }
    store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
    std::cout << std::endl << std::endl << "after ProcessItemStoreToVectorMap, the map " << themap.size() << std::endl;
-   std::map<std::string, std::vector<S6> >::iterator it;
    for (auto ita = themap.begin(); ita != themap.end(); ++ita) std::cout << (*ita).first << "  " << (*ita).second.size() << std::endl;
    ProcessVectorMapToPerpsAndProjectors();
    std::cout << std::endl << std::endl << "after ProcessVectorMapToPerpsAndProjectors, the vperps " << perps.size() << std::endl;
@@ -115,8 +114,7 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
 
 void Sella::ProcessVectorMapToPerpsAndProjectors() {
    const MatS6 unit = MatS6().unit();
-   std::map<std::string, std::vector<S6> >::iterator it;
-   for (it = themap.begin(); it != themap.end(); ++it) {
+   for ( auto it = themap.begin(); it != themap.end(); ++it) {
       const std::pair<std::string, std::vector<S6> > p = *it;
       std::vector<MatS6> vmprj;
       std::vector<MatS6> vmprp;
