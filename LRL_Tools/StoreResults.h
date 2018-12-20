@@ -58,7 +58,6 @@ public:
       : m_nmax(nMax)
       , m_keyName("Key")
       , m_creationTime(time(NULL))
-
    {}
 
    void Store(const TKEY& key, const TDATA& data) {

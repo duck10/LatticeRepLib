@@ -148,13 +148,13 @@ void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
 int main()
 {
 
-   //std::vector<LabeledSellaMatrices> allPerps = Sella::CreateAllPerps();
+   std::vector<LabeledSellaMatrices> allPerps = Sella::CreateAllPerps();
 
 
    Sella sella;
-   sella.WriteSellaMatrices("Prj", sella.GetPerps());
-   sella.WriteSellaMatrices("Perp", sella.GetProjectors());
-   exit(0);
+   //sella.WriteSellaMatrices("Prj", sella.GetPerps());
+   //sella.WriteSellaMatrices("Perp", sella.GetProjectors());
+   //exit(0);
 
    std::vector<S6> vLat = GetInputSellingReducedVectors();
    //SellaTwoLatticeLineTest(vLat[0], vLat[1]);

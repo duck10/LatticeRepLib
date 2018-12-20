@@ -11,7 +11,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SELLA_VERIFY.cpp">
+    <ClCompile Include="MAIN_SELLA_VERIFY.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
