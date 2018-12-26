@@ -203,33 +203,43 @@ std::string Trim(const std::string type) {
 }
 
 std::vector<unsigned long> FindQuartets(const S6& s6) {
-   int count = 0;
    unsigned long i, k;
    double vi;
+   bool foundQuartet = false;
    for (i = 0; i < 3; ++i) {
+      int count = 0;
+      vi = s6[i];
       for (k = i + 1; k < 6; ++k) {
-         vi = s6[i];
-         if (s6[k] == s6[i]) ++count;
-         if (count == 4) break;
+         if (s6[k] == vi) ++count;
+         if (count == 4) {
+            foundQuartet = true;
+            break;
+         }
       }
+      if (foundQuartet) break;
    }
 
    std::vector<unsigned long> vout;
-   for (i = 0; i < 6; ++i) {
-      if (vi == s6[i]) vout.push_back(i);
+   if (foundQuartet) {
+      for (i = 0; i < 6; ++i) {
+         if (vi == s6[i]) vout.push_back(i);
+      }
    }
+   if (vout.size() != 4) vout.clear();
 
    return vout;
 }
 
-std::vector< std::vector<std::pair<unsigned long, unsigned long> > >FindTripets(const S6& s6) {
+void FindTripets(const S6& s6, std::vector<std::vector<unsigned long> >& triplets) {
    int count = 0;
    unsigned long i, k;
-   double vi;
+   double vi= -DBL_MAX;
    for (i = 0; i < 3; ++i) {
       for (k = i + 1; k < 6; ++k) {
-         vi = s6[i];
-         if (s6[k] == s6[i]) ++count;
+         if (s6[k] == s6[i]) {
+            ++count;
+            vi = s6[i];
+         }
          if (count == 3) break;
       }
    }
@@ -239,12 +249,14 @@ std::vector< std::vector<std::pair<unsigned long, unsigned long> > >FindTripets(
       if (vi == s6[i]) vout.push_back(i);
    }
 
-   return vout;
+   if (vout.size() == 3) {
+      triplets.push_back(vout);
+      S6 temp(s6);
+      for (unsigned long i = 0; i < vout.size(); ++i) temp[vout[i]] = 19191 + i + temp.norm();
+      FindTripets(temp, triplets);
+   }
 }
-//
-//std::vector<std::vector<std::pair<unsigned long, unsigned long> > > FindTriplets(const S6& s6) {
-//
-//}
+
 
 std::vector<unsigned long> FindZeros(const S6& s6) {
    std::vector<unsigned long> v;
@@ -253,7 +265,7 @@ std::vector<unsigned long> FindZeros(const S6& s6) {
    return v;
 }
 
-std::vector<std::pair<unsigned long,unsigned long> >FindEqualNonZeroPairs(const S6& s6) {
+std::vector<std::pair<unsigned long,unsigned long> > FindEqualNonZeroPairs(const S6& s6) {
    std::vector<std::pair<unsigned long, unsigned long> > v;
    for (unsigned long i = 0; i < 5; ++i)
       for (unsigned long k = i + 1; k < 6; ++k)
@@ -368,21 +380,39 @@ void FillZeros(const S6& s6in, const double cirilepart, const std::vector<unsign
    S6 s6(s6in);
 }
 
-S6 MakeCircle(const std::vector<unsigned long>& vzeros, const Vector_3& v,
-   const std::vector<std::pair<unsigned long, unsigned long> >& vpairs ) {
+S6 MakeCircle( const S6& s6, const Vector_3& v) {
+   std::vector<unsigned long>  quartets;
+   std::vector<std::vector<unsigned long> > triplets;
+   std::vector<std::pair<unsigned long, unsigned long> >  pairs;
+   std::vector<unsigned long>  zeros;
+   FindNullspace(s6, quartets, triplets, pairs, zeros);
 
    unsigned long vpos = 0;
    S6 circle("0 0 0  0 0 0");
-   for (unsigned long i = 0; i < vzeros.size(); ++i) {
-      circle[vzeros[i]] = v[vpos];
+   for (unsigned long i = 0; i < zeros.size(); ++i) {
+      circle[zeros[i]] = v[vpos];
       ++vpos;
    }
 
-   for (unsigned long i = 0; i < vpairs.size(); ++i) {
-      circle[vpairs[i].first] = v[vpos]/2.0;
-      circle[vpairs[i].second] = -v[vpos]/2.0;
+   for (unsigned long i = 0; i < pairs.size(); ++i) {
+      circle[pairs[i].first] = v[vpos]/2.0;
+      circle[pairs[i].second] = -v[vpos]/2.0;
       ++vpos;
    }
+
+   // NOTE: triplets only occur for R lattices, and there can be one triplet or one plus zeros or for H and then one plus two zeros
+   // rquires 4-D input if there are twog
+   vpos = 0;
+   for (unsigned long i = 0; i < triplets.size(); ++i) {
+      for (unsigned long k = 0; k < 3; ++k) {
+         circle[triplets[i][0]] = v[0+vpos] / 3.0;
+         circle[triplets[i][1]] = v[1+vpos] / 3.0;
+         circle[triplets[i][2]] = -(v[0+vpos] + v[1+vpos]) / 3.0;
+         vpos += 2;
+      }
+   }
+
+   // quartets only occur for O1A and T2, and then only one is possible
 
    return circle;
 }
@@ -395,8 +425,6 @@ void Test_CenteredNullspace2And3(
    Sella sella;
    //expect a vector_3 file from DataGen Circle, z=0
    const S6 s6 = s6cell;
-   const std::vector<unsigned long> vzeros = FindZeros(s6);
-   const std::vector<std::pair<unsigned long, unsigned long> > vpairs = FindEqualNonZeroPairs(s6);
    const double radius = v[0].Norm();
    std::cout << std::endl << deloneVariety << "  " << latticeCentering << std::endl << std::endl;
 
@@ -404,7 +432,7 @@ void Test_CenteredNullspace2And3(
 
    for (unsigned int i = 0; i < v.size(); ++i)
    {
-      const S6 circle = MakeCircle(vzeros, v[i], vpairs);
+      const S6 circle = MakeCircle(s6, v[i]);
       //const bool b = Selling::Reduce(s6 + circle, red);
       const S6 primitive = ReduceLatticeType(latticeCentering, s6 + circle);
       const double best = sella.GetFitForDeloneType(deloneVariety, primitive);
@@ -457,11 +485,46 @@ void Test_PrimitiveNullspace2(const std::string& label, const std::string& strce
    Test_PrimitiveNullspace2(label, LRL_Cell(strcell));
 }
 
+void FindNullspace(const S6& s6, std::vector<unsigned long>&  quartets,
+   std::vector<std::vector<unsigned long> >& triplets,
+   std::vector<std::pair<unsigned long, unsigned long> >&  pairs,
+   std::vector<unsigned long>&  zeros) {
+   quartets = FindQuartets(s6);
+   if (quartets.empty()) {
+      FindTripets(s6, triplets);
+      if (triplets.empty())
+         pairs = FindEqualNonZeroPairs(s6);
+   }
+   zeros = FindZeros(s6);
+}
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 int main(int argc, char* argv[])
 //---------------------------------------------------------------------
 {
-   FindQuartets(S6("0 1 1 3 1 5"));
+   std::vector<S6> s6;
+   s6.push_back(S6("3 3 1 3 1 1"));
+   s6.push_back(S6("0 0 0 0 0 0"));
+   s6.push_back(S6("0 0 1 3 1 1"));
+   s6.push_back(S6("1 1 2 2 3 3"));
+   s6.push_back(S6("3 3 3 1 1 0"));
+   for (unsigned long i = 0; i < s6.size(); ++i) {
+      std::vector<std::pair<unsigned long, unsigned long> >  pairs;
+      std::vector<std::vector<unsigned long> > triplets;
+      std::vector<unsigned long>  quartets;
+      std::vector<unsigned long>  zeros;
+
+
+      FindNullspace(s6[i], quartets, triplets, pairs, zeros);
+
+
+
+      std::cout << std::endl << s6[i] << std::endl;
+      std::cout << "quartets " << quartets.size() << std::endl;
+      std::cout << "triplets " << triplets.size() << std::endl;
+      std::cout << "pairs " << pairs.size() << std::endl;
+      std::cout << "zeros " << zeros.size() << std::endl;
+   }
    theMap.insert(std::make_pair("M4", 1));
 
    std::string cmd; 
