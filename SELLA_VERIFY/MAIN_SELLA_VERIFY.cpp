@@ -209,7 +209,7 @@ std::vector<unsigned long> FindQuartets(const S6& s6) {
    for (i = 0; i < 3; ++i) {
       int count = 0;
       vi = s6[i];
-      for (k = i + 1; k < 6; ++k) {
+      for (k = i; k < 6; ++k) {
          if (s6[k] == vi) ++count;
          if (count == 4) {
             foundQuartet = true;
@@ -380,6 +380,19 @@ void FillZeros(const S6& s6in, const double cirilepart, const std::vector<unsign
    S6 s6(s6in);
 }
 
+void FindNullspace(const S6& s6, std::vector<unsigned long>&  quartets,
+   std::vector<std::vector<unsigned long> >& triplets,
+   std::vector<std::pair<unsigned long, unsigned long> >&  pairs,
+   std::vector<unsigned long>&  zeros) {
+   quartets = FindQuartets(s6);
+   if (quartets.empty()) {
+      FindTripets(s6, triplets);
+      if (triplets.empty())
+         pairs = FindEqualNonZeroPairs(s6);
+   }
+   zeros = FindZeros(s6);
+}
+
 S6 MakeCircle( const S6& s6, const Vector_3& v) {
    std::vector<unsigned long>  quartets;
    std::vector<std::vector<unsigned long> > triplets;
@@ -404,15 +417,19 @@ S6 MakeCircle( const S6& s6, const Vector_3& v) {
    // rquires 4-D input if there are twog
    vpos = 0;
    for (unsigned long i = 0; i < triplets.size(); ++i) {
-      for (unsigned long k = 0; k < 3; ++k) {
-         circle[triplets[i][0]] = v[0+vpos] / 3.0;
-         circle[triplets[i][1]] = v[1+vpos] / 3.0;
-         circle[triplets[i][2]] = -(v[0+vpos] + v[1+vpos]) / 3.0;
-         vpos += 2;
-      }
+      circle[triplets[i][0]] = v[0 + vpos] / 3.0;
+      circle[triplets[i][1]] = v[1 + vpos] / 3.0;
+      circle[triplets[i][2]] = -(v[0 + vpos] + v[1 + vpos]) / 3.0;
+      vpos += 2;
    }
 
-   // quartets only occur for O1A and T2, and then only one is possible
+   // quartets only occur for O1A (primitive cell) and T2, and then only one is possible
+   for (unsigned long i = 0; i < quartets.size(); ++i) {
+      circle[quartets[0]] = v[0] / 4.0;
+      circle[quartets[1]] = v[1] / 4.0;
+      circle[quartets[2]] = v[2] / 4.0;
+      circle[quartets[3]] = -(v[0] + v[1] + v[2]) / 4.0;
+   }
 
    return circle;
 }
@@ -437,7 +454,7 @@ void Test_CenteredNullspace2And3(
       const S6 primitive = ReduceLatticeType(latticeCentering, s6 + circle);
       const double best = sella.GetFitForDeloneType(deloneVariety, primitive);
       const Vector_3 vplot = best / radius * v[i];
-      std::cout << best / radius * v[i][0] << ",  " << best / radius * v[i][1] << ", 0" << std::endl;
+      std::cout << best / radius * v[i][0] << ",  " << best / radius * v[i][1] << ",  " << best / radius * v[i][2] << std::endl;
    }
 }
 
@@ -456,47 +473,34 @@ void GeneralTests() {
    exit(0);
 }
 
-void Test_PrimitiveNullspace2(const std::string& label, const S6& s6cell) {
-   Sella sella;
-   //expect a vector_3 file from DataGen Circle, z=0
-   const std::vector<Vector_3> v = ReadVector_3File(std::cin);
-   const S6 s6 = s6cell;
-   const std::vector<unsigned long> vzeros = FindZeros(s6);
-   const std::vector<std::pair<unsigned long, unsigned long> > vpairs = FindEqualNonZeroPairs(s6);
-   if (vzeros.size() + vpairs.size() != 2) {
-      std::cout << "function Test_PrimitiveNullspace2 requires that the nullspace be dimension 2" << std::endl;
-      throw;
-   }
-   S6 red;
+//void Test_PrimitiveNullspace2(const std::string& label, const S6& s6cell) {
+//   Sella sella;
+//   //expect a vector_3 file from DataGen Circle, z=0
+//   const std::vector<Vector_3> v = ReadVector_3File(std::cin);
+//   const S6 s6 = s6cell;
+//   const std::vector<unsigned long> vzeros = FindZeros(s6);
+//   const std::vector<std::pair<unsigned long, unsigned long> > vpairs = FindEqualNonZeroPairs(s6);
+//   if (vzeros.size() + vpairs.size() != 2) {
+//      std::cout << "function Test_PrimitiveNullspace2 requires that the nullspace be dimension 2" << std::endl;
+//      throw;
+//   }
+//   S6 red;
+//
+//   for (unsigned int i = 0; i < v.size(); ++i)
+//   {
+//      const S6 circle = MakeCircle(vzeros, v[i], vpairs);
+//      const bool b = Selling::Reduce(circle + s6, red);
+//      const double best = sella.GetFitForDeloneType(label, red);
+//      const double radius = v[i].Norm();
+//      const Vector_3 vplot = best / radius * v[i];
+//      std::cout << best / radius * v[i][0] << ",  " << best / radius * v[i][1] << ", 0" << std::endl;
+//   }
+//   std::cout << std::endl;
+//}
 
-   for (unsigned int i = 0; i < v.size(); ++i)
-   {
-      const S6 circle = MakeCircle(vzeros, v[i], vpairs);
-      const bool b = Selling::Reduce(circle + s6, red);
-      const double best = sella.GetFitForDeloneType(label, red);
-      const double radius = v[i].Norm();
-      const Vector_3 vplot = best / radius * v[i];
-      std::cout << best / radius * v[i][0] << ",  " << best / radius * v[i][1] << ", 0" << std::endl;
-   }
-   std::cout << std::endl;
-}
-
-void Test_PrimitiveNullspace2(const std::string& label, const std::string& strcell) {
-   Test_PrimitiveNullspace2(label, LRL_Cell(strcell));
-}
-
-void FindNullspace(const S6& s6, std::vector<unsigned long>&  quartets,
-   std::vector<std::vector<unsigned long> >& triplets,
-   std::vector<std::pair<unsigned long, unsigned long> >&  pairs,
-   std::vector<unsigned long>&  zeros) {
-   quartets = FindQuartets(s6);
-   if (quartets.empty()) {
-      FindTripets(s6, triplets);
-      if (triplets.empty())
-         pairs = FindEqualNonZeroPairs(s6);
-   }
-   zeros = FindZeros(s6);
-}
+//void Test_PrimitiveNullspace2(const std::string& label, const std::string& strcell) {
+//   Test_PrimitiveNullspace2(label, LRL_Cell(strcell));
+//}
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 int main(int argc, char* argv[])
@@ -552,7 +556,7 @@ int main(int argc, char* argv[])
       Test_CenteredNullspace2And3("O5", "P", S6(LRL_Cell("10 20 15 90 90 90")), v);  // 
       Test_CenteredNullspace2And3("O4", "C", S6(LRL_Cell("22.742 58.341 23.669 90 90 90")), v);  // 3T86
       Test_CenteredNullspace2And3("O2", "F", S6(LRL_Cell("185.8 185.8 186.5 90 90 90")), v);  // 1KK5
-      //Test_CenteredNullspace2And3("O1A", "F", S6(LRL_Cell("59.94 81.33 26.86 90 90 90")), v);  // 200D // needs circle from quartet
+      Test_CenteredNullspace2And3("O1A", "F", S6(LRL_Cell("59.94 81.33 26.86 90 90 90")), v);  // 200D // needs circle from quartet
       Test_CenteredNullspace2And3("O1B", "I", S6(LRL_Cell("42.546 53.084 64.357 90 90 90")), v);  // 3CP0
 
       //O5   0    P 27.546 31.017 4.804 90 90 90 P21212 3NVF    o      0 0 0 -758.78212 -962.05429 -23.07842
@@ -560,6 +564,7 @@ int main(int argc, char* argv[])
       //O4   0    C 22.532 58.469 24.148 90 90 90 C222 1QYL     o -253.84551  -253.84551 -727.73323 0 0 -583.12590
       //O2   0    F 185.8 185.8 186.5 90 90 90 F222 1KK5        o -8630.41000 -8630.41000 -65.15250 -8630.41000 -8630.41000   0
       //O1A   0    F 59.94 81.33 26.86 90 90 90 F222 200D       o -1473.27732 -180.36490 -180.36490 -717.83600 -180.36490 -180.36490
+      Test_CenteredNullspace2And3("O1A", "P", S6("-1473.27732 -180.36490 -180.36490 -717.83600 -180.36490 -180.36490"), v);  // 200D // needs circle from quartet
       //O1B   0    I 42.546 53.084 64.357 90 90 90 I212121 3CP0 o -783.51863  -121.56243 -1287.39310 -783.51863 -121.56243 -1287.39310
    }
    exit(0);
