@@ -531,7 +531,8 @@ int main(int argc, char* argv[])
    }
    theMap.insert(std::make_pair("M4", 1));
 
-   std::string cmd; 
+   std::string cmd;
+   std::string cmd2;
    std::vector<double> vArgs;
    ParseArgs(argc, argv, cmd, vArgs);
 
@@ -541,31 +542,37 @@ int main(int argc, char* argv[])
    else if ( cmd == "2D") {
       const std::vector<Vector_3> v = ReadVector_3File(std::cin);
 
-      Test_CenteredNullspace2And3("M4" , "P", S6(LRL_Cell("10 20 15 90 110 90")),v);
-      Test_CenteredNullspace2And3("M1A", "C", S6(LRL_Cell("10 20 15 90 110 90")),v);
-      Test_CenteredNullspace2And3("M1B", "C", S6(LRL_Cell("89.6 75.6 69.7 90 141.9 90")),v);
-      Test_CenteredNullspace2And3("M2A", "C", S6(LRL_Cell("20 10 15 90 110 90")), v);
+      if ( cmd=="" || cmd2=="M4" ) Test_CenteredNullspace2And3("M4" , "P", S6(LRL_Cell("10 20 15 90 110 90")),v);
+      if ( cmd=="" || cmd2=="M1A") Test_CenteredNullspace2And3("M1A", "C", S6(LRL_Cell("10 20 15 90 110 90")),v);
+      if ( cmd=="" || cmd2=="M1B") Test_CenteredNullspace2And3("M1B", "C", S6(LRL_Cell("89.6 75.6 69.7 90 141.9 90")),v);
+      if ( cmd=="" || cmd2=="M2A") Test_CenteredNullspace2And3("M2A", "C", S6(LRL_Cell("20 10 15 90 110 90")), v);
 
-      Test_CenteredNullspace2And3("M1A", "P", S6("-24.35 -24.35 -75 -25.65 -25.65 -173.68687"), v); 
-      Test_CenteredNullspace2And3("M1B", "P", S6("-978.63 -1879.05 -578.2 -978.63-1879.05 -521.790"), v); //  C121 1SPG 
-      Test_CenteredNullspace2And3("M2A", "P", S6("-173.696979 -23.696979 -51.30302 -50 0  -50"), v);
+      if ( cmd=="" || cmd2=="M1AP") Test_CenteredNullspace2And3("M1A", "P", S6("-24.35 -24.35 -75 -25.65 -25.65 -173.68687"), v); 
+      if ( cmd=="" || cmd2=="M1BP") Test_CenteredNullspace2And3("M1B", "P", S6("-978.63 -1879.05 -578.2 -978.63-1879.05 -521.790"), v); //  C121 1SPG 
+      if ( cmd=="" || cmd2=="M2AP") Test_CenteredNullspace2And3("M2A", "P", S6("-173.696979 -23.696979 -51.30302 -50 0  -50"), v);
    }
    else if (cmd == "3D") {
       const std::vector<Vector_3> v = ReadVector_3File(std::cin);
 
-      Test_CenteredNullspace2And3("O5", "P", S6(LRL_Cell("10 20 15 90 90 90")), v);  // 
-      Test_CenteredNullspace2And3("O4", "C", S6(LRL_Cell("22.742 58.341 23.669 90 90 90")), v);  // 3T86
-      Test_CenteredNullspace2And3("O2", "F", S6(LRL_Cell("185.8 185.8 186.5 90 90 90")), v);  // 1KK5
-      Test_CenteredNullspace2And3("O1A", "F", S6(LRL_Cell("59.94 81.33 26.86 90 90 90")), v);  // 200D // needs circle from quartet
-      Test_CenteredNullspace2And3("O1B", "I", S6(LRL_Cell("42.546 53.084 64.357 90 90 90")), v);  // 3CP0
+      if ( cmd=="" || cmd2=="O5" ) Test_CenteredNullspace2And3("O5", "P", S6(LRL_Cell("10 20 15 90 90 90")), v);  // 
+      if ( cmd=="" || cmd2=="O4" ) Test_CenteredNullspace2And3("O4", "C", S6(LRL_Cell("22.742 58.341 23.669 90 90 90")), v);  // 3T86
+      if ( cmd=="" || cmd2=="O2" ) Test_CenteredNullspace2And3("O2", "F", S6(LRL_Cell("185.8 185.8 186.5 90 90 90")), v);  // 1KK5
+      if ( cmd=="" || cmd2=="O1A") Test_CenteredNullspace2And3("O1A", "F", S6(LRL_Cell("59.94 81.33 26.86 90 90 90")), v);  // 200D // needs circle from quartet
+      if ( cmd=="" || cmd2=="O1B") Test_CenteredNullspace2And3("O1B", "I", S6(LRL_Cell("42.546 53.084 64.357 90 90 90")), v);  // 3CP0
 
       //O5   0    P 27.546 31.017 4.804 90 90 90 P21212 3NVF    o      0 0 0 -758.78212 -962.05429 -23.07842
       //O4   0    C 22.742 58.341 23.669 90 90 90 C222 3T86     o -258.59928  -258.59928 -721.61843 0 0 -560.22156
+      if (cmd == "" || cmd2=="O4P" ) Test_CenteredNullspace2And3("O4", "P", S6("-258.59928  -258.59928 -721.61843 0 0 -560.22156"), v);  // 3T86
       //O4   0    C 22.532 58.469 24.148 90 90 90 C222 1QYL     o -253.84551  -253.84551 -727.73323 0 0 -583.12590
       //O2   0    F 185.8 185.8 186.5 90 90 90 F222 1KK5        o -8630.41000 -8630.41000 -65.15250 -8630.41000 -8630.41000   0
       //O1A   0    F 59.94 81.33 26.86 90 90 90 F222 200D       o -1473.27732 -180.36490 -180.36490 -717.83600 -180.36490 -180.36490
-      Test_CenteredNullspace2And3("O1A", "P", S6("-1473.27732 -180.36490 -180.36490 -717.83600 -180.36490 -180.36490"), v);  // 200D // needs circle from quartet
+      if (cmd == "" || cmd2== "O1AP") Test_CenteredNullspace2And3("O1A", "P", S6("-1473.27732 -180.36490 -180.36490 -717.83600 -180.36490 -180.36490"), v);  // 200D // needs circle from quartet
       //O1B   0    I 42.546 53.084 64.357 90 90 90 I212121 3CP0 o -783.51863  -121.56243 -1287.39310 -783.51863 -121.56243 -1287.39310
    }
+
+   else if (cmd == "4D" ) {
+   
+   }
+
    exit(0);
 }
