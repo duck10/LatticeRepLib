@@ -3,11 +3,38 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstdio>
-#include <iostream>
+#include <iostream>     // std::cout, std::endl
+#include <iomanip>      // std::setfill, std::setw
 #include <sstream>
 #include <vector>
 
-void GetCividisRGB(const unsigned long n, int& r, int& g, int& b) {
+const std::string ColorTables::BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
+                  "orange", "blueviolet", "coral", "saddlebrown", "blue", "pink", "violet",
+                  "deeppink", "mediumvioletred", "tomato", "greenyellow", "olive" };
+
+ColorRange::ColorRange(const double minv, const double maxv)
+   : m_min(std::min(minv, maxv)), 
+   m_max(std::max(minv, maxv)) 
+{}
+
+double ColorRange::ColorFraction(const double color){
+   const double index = (color - m_min) / (m_max - m_min);
+   return index;
+}
+
+int ColorRange::ColorIndex( const double color ) {
+   return int(255 * ColorFraction(color) + 0.499999);
+}
+
+std::string ColorTables::GetCividisHEX(const unsigned long n) {
+   int r, g, b;
+   GetCividisRGB(n, r, g, b);
+   std::ostringstream ostr;
+   ostr << std::setw(2) << std::setfill('0') << std::hex << r << g << b;
+   return (ostr.str());
+}
+
+void ColorTables::GetCividisRGB(const unsigned long n, int& r, int& g, int& b) {
 
    int nn = n;
    if (nn < 0) nn = 0;
@@ -279,7 +306,7 @@ std::string OrdinalToCividisHexString(const unsigned long n) {
    nn = std::min(255, nn);
 
    int r, g, b;
-   GetCividisRGB(nn, r, g, b);
+   ColorTables::GetCividisRGB(nn, r, g, b);
    std::ostringstream ostr;
    ostr.setf(std::ios::hex, std::ios::basefield);
    ostr << r << g << b;

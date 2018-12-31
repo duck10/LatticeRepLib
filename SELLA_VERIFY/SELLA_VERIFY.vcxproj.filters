@@ -14,5 +14,13 @@
     <ClCompile Include="MAIN_SELLA_VERIFY.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Nullspace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Nullspace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
