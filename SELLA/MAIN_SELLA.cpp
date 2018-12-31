@@ -203,7 +203,7 @@ std::string Trim(const std::string type) {
 }
 
 void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
-   StoreResults<std::string, std::string> storeGood(1);
+   StoreResults<std::string, std::string> storeGood(5);
    StoreResults<std::string, std::string> storeProblems(100);
    std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
@@ -240,7 +240,7 @@ int main()
    //std::vector<S6> vLat = GetInputSellingReducedVectors(input);
    //SellaTwoLatticeLineTest(vLat[0], vLat[1]);
    //exit(0);
-   //AnalyzePDBCells(input);
+   AnalyzePDBCells(input);
    LatticeConverter converter;
 
    std::cout << S6(input[0].GetCell()) << std::endl;
