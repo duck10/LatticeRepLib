@@ -1202,8 +1202,6 @@ void F_makeS6UnPrimitiveMatrices() {
 int main(int argc, char *argv[])
 {
 
-   int r, g, b;
-   std::string s = OrdinalToCividisHexString(255);
    PDB_ReduceTimingTest();
    // TimingForNewNiggliReduce();
    TestReductionTiming();
