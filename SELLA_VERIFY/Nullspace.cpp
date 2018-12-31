@@ -97,7 +97,7 @@ int Nullspace::FindNullspace(const S6& s6, std::vector<unsigned long>&  quartets
          pairs = FindEqualNonZeroPairs(s6);
    }
    zeros = FindZeros(s6);
-   const int dimension = (quartets.empty() ? 0 : 3) + triplets.size() * 2 + pairs.size() + zeros.size();
+   const int dimension = (quartets.empty() ? 0 : 3) + int(triplets.size() * 2 + pairs.size() + zeros.size());
    return dimension;
 }
 
