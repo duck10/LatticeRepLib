@@ -171,25 +171,23 @@ void Nullspace::Test_CenteredNullspace2And3(
       const S6 primitive = LatticeConverter::SellingReduceCell(latticeCentering, s6 + circle);
       const double best = sella.GetFitForDeloneType(deloneVariety, primitive);
       vbest.push_back(best);
-      std::cout << i << "  " << best << "  " << vbest[i] << std::endl;
    }
    auto p = std::minmax_element(vbest.begin(), vbest.end());
    const double minbest = *p.first;
    const double maxbest = *p.second;
    const double limit = std::max(1.0, maxbest);
    ColorRange cr(minbest, maxbest);
-   //std::cout << "A " << *p.first << "  " << *p.second << std::endl;
-   //std::cout << "B " << *p.first << "  " << *p.second << std::endl;
+
+   std::cout << "# Title Delone variety and input centering " << deloneVariety << "  "  << latticeCentering << std::endl;
+   std::cout << "# Radius of confusion " << radius << std::endl;
+   std::cout << "# min best Sella values " << minbest << std::endl;
+   std::cout << "# max best Sella values " << maxbest << std::endl;
 
    for (unsigned int i = 0; i < v.size(); ++i)
    {
-      if (v[i][2] < 0.0) continue;
       const double best = vbest[i];
-      const Vector_3 vplot = best / radius * v[i];
       const int ci = cr.ColorIndex(best);
-      const std::string scividis = ColorTables::GetCividisHEX(cr.ColorIndex(best));
-      std::cout << v[i][0] << "," << v[i][1] << ","
-         << ColorTables::GetCividisHEX(cr.ColorIndex(best)) << std::endl;
-      //std::cout << v[i][0] << "," << v[i][1] << "," << best << "  " << cr.ColorIndex(best) << "   " << ColorTables::GetCividisHEX(cr.ColorIndex(best)) << std::endl;
+      std::cout << v[i][0] << "," << v[i][1] << "," << v[i][2] << "," << best << "," << std::endl;
+      //std::cout << v[i][0] << "," << v[i][1] << "," << v[i][2] << std::endl;
    }
 }

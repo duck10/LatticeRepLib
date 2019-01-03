@@ -248,8 +248,6 @@ std::vector<Vector_3> ReadVector_3File(std::istream& str)
 int main(int argc, char* argv[])
 //---------------------------------------------------------------------
 {
-   ColorRange cr(0, 100);
-   const std::string scividis = ColorTables::GetCividisHEX(cr.ColorIndex(0));
    //std::vector<S6> s6;
    //s6.push_back(S6("3 3 1 3 1 1"));
    //s6.push_back(S6("0 0 0 0 0 0"));
