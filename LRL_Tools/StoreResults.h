@@ -285,7 +285,7 @@ public:
 
    void ShowTableOfKeysVersusCount() const {
       std::vector<std::pair<int, SampleData<TKEY, TDATA> > > v(PrepareListOfItemsSortedByCount());
-      if (!v.empty()) std::cout << "item   count   " << m_keyName << std::endl;
+      if (!v.empty()) std::cout << m_title << "\n" << "item   count   " << m_keyName << std::endl;
       for (unsigned long i = 0; i<v.size(); ++i) {
          std::cout << i << "      " << v[i].first << "       " << v[i].second.m_key << std::endl;
       }
