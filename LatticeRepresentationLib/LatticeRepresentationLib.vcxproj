@@ -158,6 +158,7 @@
     <ClCompile Include="Allman.cpp" />
     <ClCompile Include="C3.cpp" />
     <ClCompile Include="ColorTables.cpp" />
+    <ClCompile Include="LatticeCentering.cpp" />
     <ClCompile Include="LatticeConverter.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
     <ClCompile Include="CellInputData.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
+    <ClInclude Include="LatticeCentering.h" />
     <ClInclude Include="LatticeConverter.h" />
     <ClInclude Include="LRL_Cell.h" />
     <ClInclude Include="CellInputData.h" />
