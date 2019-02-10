@@ -14,12 +14,12 @@
     <ClCompile Include="MAIN_SELLA_DEV.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sella.cpp">
+    <ClCompile Include="SellaBuild.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sella.h">
+    <ClInclude Include="SellaBuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

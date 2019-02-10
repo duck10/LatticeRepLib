@@ -104,6 +104,9 @@
     <ClCompile Include="LatticeCentering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LRL_CoordinateConversionMatrices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">

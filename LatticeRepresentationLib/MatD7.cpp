@@ -29,7 +29,7 @@ MatD7::MatD7(const MatS6& m)
    : MatD7()
 {
    const MatMN mnS6 = m;
-   const MatMN mn = D7_FROM_S6 * mnS6 * S6_FROM_D7;
+   const MatMN mn = LRL_CoordinateConversionMatrices::D7_FROM_S6 * mnS6 * LRL_CoordinateConversionMatrices::S6_FROM_D7;
    m_mat.SetVector( mn.GetVector());
    m_mat.SetDim(49);
    m_mat.SetRowDim(7);
@@ -42,7 +42,7 @@ MatD7::MatD7(const MatD7& m)
 MatD7::MatD7(const MatG6& m)
    : MatD7()
 {
-   const MatMN mn = D7_FROM_G6 * m * G6_FROM_D7;
+   const MatMN mn = LRL_CoordinateConversionMatrices::D7_FROM_G6 * m * LRL_CoordinateConversionMatrices::G6_FROM_D7;
    m_mat.SetVector(mn.GetVector());
 }
 
@@ -84,7 +84,7 @@ MatD7& MatD7::operator= (const MatB4& m) {
 
 MatD7& MatD7::operator= (const MatS6& m) {
    m_mat.resize(49);
-   m_mat.SetVector((D7_FROM_S6 * m * S6_FROM_D7).GetVector());;
+   m_mat.SetVector((LRL_CoordinateConversionMatrices::D7_FROM_S6 * m * LRL_CoordinateConversionMatrices::S6_FROM_D7).GetVector());;
    return *this;
 }
 
@@ -96,7 +96,7 @@ MatD7& MatD7::operator= (const MatD7& v) {
 
 MatD7& MatD7::operator= (const MatG6& m) {
    m_mat.resize(49);
-   m_mat.SetVector((D7_FROM_G6 * m * G6_FROM_D7).GetVector());;
+   m_mat.SetVector((LRL_CoordinateConversionMatrices::D7_FROM_G6 * m * LRL_CoordinateConversionMatrices::G6_FROM_D7).GetVector());;
    return *this;
 }
 

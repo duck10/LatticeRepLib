@@ -30,10 +30,10 @@ private:
    std::vector<MatS6> m_vector;
 };
 
-class Sella {
+class SellaBuild {
 public:
 
-   Sella();
+   SellaBuild();
    double TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm);
    void TestAllTypes(const S6& s6);
    void TestPerps();

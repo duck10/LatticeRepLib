@@ -20,10 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MAIN_SELLA_DEV.cpp" />
-    <ClCompile Include="Sella.cpp" />
+    <ClCompile Include="SellaBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sella.h" />
+    <ClInclude Include="SellaBuild.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">

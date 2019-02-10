@@ -26,11 +26,18 @@ G7to6:matrix(
 [-1,-1,0,0,0,0,1]);
 */
 
-const MatMN S6_FROM_G6(6, 6, "0 0 0 0.5 0 0   0 0 0 0 0.5 0   0 0 0 0 0 0.5   -1 0 0 0 -0.5 -0.5   0 -1 0 -0.5 0 -0.5   0 0 -1 -0.5 -0.5 0");
-const MatMN G6_FROM_S6(6, 6, "0 -1 -1 -1 -0 -0 -1 0 -1 -0 -1 -0 -1 -1 0 0 0 -1 2 0 -0 0 0 0 -0 2 -0 0 0 0 0 -0 2 0 0 0");
-const MatMN G6_FROM_D7(6, 7, "1 0 0 0 0 0 0   0 1 0 0 0 0 0   0 0 1 0 0 0 0   0 -1 -1 0 1 0 0   -1 0 -1 0 0 1 0   -1 -1 0 0 0 0 1");
-const MatMN D7_FROM_G6(7, 6, "1 0 0 0 0 0   0 1 0 0 0 0   0 0 1 0 0 0   1 1 1 1 1 1   0 1 1 1 0 0   1 0 1 0 1 0   1 1 0 0 0 1"    );
-const MatMN S6_FROM_D7(6, 7, "0 -0.5 -0.5 0 0.5 0 0 -0.5 0 -0.5 0 0 0.5 0 -0.5 -0.5 0 0 0 0 0.5 0 0.5 0.5 0 0 -0.5 -0.5 0.5 0 0.5 0 -0.5 0 -0.5 0.5 0.5 0 0 -0.5 -0.5 0");
-const MatMN D7_FROM_S6(7, 6, "0 -1 -1 -1 0 0    -1 0 -1 0 -1 0    -1 -1 0 0 0 -1    0 0 0 -1 -1 -1    0 -1 -1 0 -1 -1    -1 0 -1 -1 0 -1    -1 -1 0 -1 -1 0");
+class LRL_CoordinateConversionMatrices {
 
+public:
+   LRL_CoordinateConversionMatrices();
+
+   public:
+   static MatMN S6_FROM_G6;
+   static MatMN G6_FROM_S6;
+   static MatMN G6_FROM_D7;
+   static MatMN D7_FROM_G6;
+   static MatMN S6_FROM_D7;
+   static MatMN D7_FROM_S6;
+
+};
 #endif  //  COORDINATECONVERSIONMATRICES_H

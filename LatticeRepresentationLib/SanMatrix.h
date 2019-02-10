@@ -107,7 +107,7 @@ public:
       }
    }
 
-   std::vector<double> GetVector() {
+   std::vector<double> GetVector() const {
       std::vector<double> v;
       for (int i = 0; i < m_rows; ++i) {
          for (int j = 0; j < m_cols; ++j) {
@@ -161,13 +161,12 @@ public:
 
    double Determinant() const
    {
-      double det = 0;
       double **pd = m_pData;
       switch (m_rows)
       {
       case 2:
       {
-         det = pd[0][0] * pd[1][1] - pd[0][1] * pd[1][0];
+         const double det = pd[0][0] * pd[1][1] - pd[0][1] * pd[1][0];
          return det;
       }
       break;
@@ -432,14 +431,14 @@ public:
 
    CMatrix Inverse() const
    {
-      std::cout << "entering Inverse " << std::endl << (*this) << std::endl << std::endl;
+      //std::cout << "entering Inverse " << std::endl << (*this) << std::endl << std::endl;
       CMatrix cofactor("COF", m_rows, m_cols);
       CMatrix inv("INV", m_rows, m_cols);
       if (m_rows != m_cols)
          return inv;
       // to find out Determinant
       const double det = Determinant();
-      std::cout << "determinant " << det << std::endl;
+      //std::cout << "determinant " << det << std::endl;
       cofactor = this->CoFactor();
       // inv = transpose of cofactor / Determinant
       for (int i = 0; i < m_rows; i++)
@@ -537,7 +536,7 @@ public:
    }
 };
 
-static std::istream& operator >>(std::istream &is, const CMatrix &m)
+std::istream& operator >>(std::istream &is, const CMatrix &m)
 {
    std::cout << "\n\nEnter Input For Matrix : " << m.m_name << " Rows: "
       << m.m_rows << " Cols: " << m.m_cols << "\n";
@@ -555,7 +554,7 @@ static std::istream& operator >>(std::istream &is, const CMatrix &m)
    return is;
 }
 
-static std::ostream& operator<< (std::ostream &os, const CMatrix &m)
+std::ostream& operator<< (std::ostream &os, const CMatrix &m)
 {
    os << "\n\nMatrix : " << m.m_name << " Rows: " << m.m_rows << " Cols: "
       << m.m_cols << "\n\n";

@@ -14,5 +14,13 @@
     <ClCompile Include="MAIN_SELLA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

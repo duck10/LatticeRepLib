@@ -153,6 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.cpp" />
     <ClCompile Include="MAIN_SELLA.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,9 @@
     <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
       <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
