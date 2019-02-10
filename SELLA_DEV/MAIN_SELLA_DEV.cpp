@@ -4,12 +4,19 @@
 #include <iostream>
 #include <string>
 
+#include "LatticeCentering.h"
 #include "LatticeConverter.h"
+#include "LRL_CoordinateConversionMatrices.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
+#include "LRL_ToString.h"
+#include "LRL_Vector3.h"
+#include "MatG6.h"
 #include "S6.h"
-#include "Sella.h"
+#include "SellaBuild.h"
 #include "Selling.h"
+
+static LRL_CoordinateConversionMatrices lccm;
 
 
 std::string Letters(void) {
@@ -50,13 +57,108 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    return cellDataList;
 }
 
+std::vector<MatS6> vS6_Refl = MatS6::GetReflections();
+
+std::vector<S6> MakeReflections(const S6& s6) {
+   std::vector<S6> v;
+   for (unsigned long i = 0; i < vS6_Refl.size(); ++i) {
+      v.push_back(vS6_Refl[i] * s6);
+   }
+   return v;
+}
+
+//B4 FromPrimitiveToCentered(const std::vector<double>& v, const LRL_Cell& cell) {
+//   const B4 b4(cell);
+//   const Vector_3 v1 = v[0] * b4[0] + v[3] * b4[1] + v[6] * b4[2];
+//   const Vector_3 v2 = v[1] * b4[0] + v[4] * b4[1] + v[7] * b4[2];
+//   const Vector_3 v3 = v[2] * b4[0] + v[5] * b4[1] + v[8] * b4[2];
+//   const Vector_3 v4 = -v1 - v2 - v3;
+//   return B4(v1, v2, v3, v4);
+//}
+
+B4 FromPrimitiveToCentered(const std::vector<double>& v, const LRL_Cell& cell) {
+   // Transpose of matrices from International Tables !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   const B4 b4(cell);
+   const Vector_3 v1 = v[0] * b4[0] + v[1] * b4[1] + v[2] * b4[2];
+   const Vector_3 v2 = v[3] * b4[0] + v[4] * b4[1] + v[5] * b4[2];
+   const Vector_3 v3 = v[6] * b4[0] + v[7] * b4[1] + v[8] * b4[2];
+   const Vector_3 v4 = -v1 - v2 - v3;
+   return B4(v1, v2, v3, v4);
+}
+
+B4 FromPrimitiveToCentered(const LRL_Cell& cell, const std::vector<double>& v) {
+   return FromPrimitiveToCentered(v, cell);
+}
+
+B4 FromPrimitiveTo_R1_A( const LRL_Cell& cell) {
+   const B4 b4(cell);
+   const Vector_3 v1 = b4[0] + b4[2];
+   const Vector_3 v2 = -b4[0] + b4[1] + b4[2];
+   const Vector_3 v3 = -b4[1] + b4[2];
+   const Vector_3 v4 = -v1 - v2 - v3;
+   return B4(v1, v2, v3, v4);
+}
+
+B4 FromPrimitiveTo_R1_TRANSPOSE(const LRL_Cell& cell) {
+   const B4 b4(cell);
+   const Vector_3 v1 = b4[0] - b4[1];
+   const Vector_3 v2 = b4[1] - b4[2];
+   const Vector_3 v3 = b4[0] + b4[1] + b4[2];
+   const Vector_3 v4 = -v1 - v2 - v3;
+   return B4(v1, v2, v3, v4);
+}
+
+void TestLatticeCentering() {
+   LatticeConverter converter;
+   LatticeCentering latcenter;
+   std::vector<LRL_ReadLatticeData> input = GetInputCells();
+
+   for (unsigned long i = 0; i < input.size(); ++i) {
+      const LRL_ReadLatticeData& rcd = input[i];
+      const LRL_Cell centeredCell = input[i].GetCell();
+      const MatS6 toCentered  = latcenter.findToCentered( input[i].GetLattice());
+      const MatS6 toPrimitive = latcenter.findToPrimitive(input[i].GetLattice());
+
+      const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), centeredCell);
+      std::cout << "_____________________" << std::endl;
+      std::cout << "input " << rcd.GetStrCell() << std::endl;
+      std::cout << "Reduced  " << s6 << std::endl;
+      std::cout << "Reduced  " << LRL_Cell_Degrees(s6) << "               " << LRL_Cell(s6).Volume() << std::endl;
+      const std::vector<S6> vREFLS = MakeReflections(s6);
+      /* first test of centering
+      //for (unsigned long i = 0; i < vREFLS.size(); ++i)
+      //   std::cout << LRL_Cell_Degrees(FromPrimitiveTo_R1_A(vREFLS[i])) << "               " << LRL_Cell(s6).Volume() << std::endl;
+      //   std::cout << std::endl;
+      */
+
+      /* second test of centering -- trial for R1 and R2
+      for (unsigned long i = 0; i < vREFLS.size(); ++i)
+         std::cout << LRL_Cell_Degrees(FromPrimitiveTo_R1_TRANSPOSE(vREFLS[i])) << "               " << LRL_Cell(FromPrimitiveTo_R1_TRANSPOSE(vREFLS[i])).Volume() << std::endl;
+      for (unsigned long i = 0; i < vREFLS.size(); ++i)
+         std::cout << S6(FromPrimitiveTo_R1_TRANSPOSE(vREFLS[i])) << "               " << LRL_Cell(FromPrimitiveTo_R1_TRANSPOSE(vREFLS[i])).Volume() << std::endl;
+      for (unsigned long i = 0; i < vREFLS.size(); ++i)
+         std::cout << S6((vREFLS[i])) << "               " << LRL_Cell(vREFLS[i]).Volume() << std::endl;
+         */
+
+      // third test of centering
+      static const std::vector<MatS6> refls = MatS6::GetReflections();
+      for (unsigned long i = 0; i < latcenter.size(); ++i) {
+         for ( unsigned long k=0; k<refls.size(); ++k ) {
+         std::cout << latcenter[i].first << " "
+            << LRL_Cell_Degrees(FromPrimitiveToCentered(latcenter[i].second, LRL_Cell(refls[k]*s6))) << std::endl;
+         }
+      }
+   }
+   exit(0);
+}
+
 std::vector<S6> GetInputSellingReducedVectors() {
    std::vector<S6> v;
    std::vector<LRL_ReadLatticeData> input = GetInputCells();
    LatticeConverter converter;
 
 
-   for ( unsigned long i=0; i<input.size(); ++i ) {
+   for (unsigned long i = 0; i < input.size(); ++i) {
       const LRL_ReadLatticeData& rcd = input[i];
       const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell());
       v.push_back(s6);
@@ -92,14 +194,14 @@ void SellaLineTest(const S6& s6) {
    S6 step = 2.0 * delta / (nsteps - 1);
    step /= step.norm();
    S6 stepper = s6 + step * nsteps / 2;
-   Sella sella;
+   SellaBuild sellaBuild;
    std::vector<std::vector<std::pair<std::string, double> >  > fits;
 
    for (unsigned long i = 0; i < nsteps; ++i) {
       S6 reducedStepper;
       const bool b = Selling::Reduce(stepper, reducedStepper);
       reducedStepper = s6.norm() * reducedStepper / reducedStepper.norm();
-      const std::vector<std::pair<std::string, double> > out = sella.GetVectorOfFits(reducedStepper);
+      const std::vector<std::pair<std::string, double> > out = sellaBuild.GetVectorOfFits(reducedStepper);
       stepper -= step;
       fits.push_back(out);
 
@@ -121,14 +223,14 @@ void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
    const S6& target(s2);
    const unsigned long nsteps = 100;
    S6 step = (target-start) / (nsteps);
-   Sella sella;
+   SellaBuild sellaBuild;
    std::vector<std::vector<std::pair<std::string, double> >  > fits;
 
    for (unsigned long i = 0; i <= nsteps; ++i) {
       S6 reducedStepper;
       S6 stepper = start + step * i;
       const bool b = Selling::Reduce(stepper, reducedStepper);
-      const std::vector<std::pair<std::string, double> > out = sella.GetVectorOfFits(reducedStepper);
+      const std::vector<std::pair<std::string, double> > out = sellaBuild.GetVectorOfFits(reducedStepper);
       stepper += step;
       fits.push_back(out);
 
@@ -148,20 +250,17 @@ void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
 int main()
 {
 
-   std::vector<LabeledSellaMatrices> allPerps = Sella::CreateAllPerps();
+   std::vector<LabeledSellaMatrices> allPerps = SellaBuild::CreateAllPerps();
 
 
-   Sella sella;
-   //sella.WriteSellaMatrices("Prj", sella.GetPerps());
-   //sella.WriteSellaMatrices("Perp", sella.GetProjectors());
+   SellaBuild sellaBuild;
+   //sellaBuild.WriteSellaMatrices("Prj", sellaBuild.GetPerps());
+   //sellaBuild.WriteSellaMatrices("Perp", sellaBuild.GetProjectors());
    //exit(0);
+
+   TestLatticeCentering();
 
    std::vector<S6> vLat = GetInputSellingReducedVectors();
-   //SellaTwoLatticeLineTest(vLat[0], vLat[1]);
-   //exit(0);
-
-   //SellaLineTest(vLat[0]);
-   //exit(0);
 
    const unsigned long n = 1000;
 
@@ -173,7 +272,7 @@ int main()
 
       double sign = 1.0;
       for (unsigned long k = 0; k < n; ++k) {
-         out = sella.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, sign * 0.0));
+         out = sellaBuild.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, sign * 0.0));
          if ( out.size() < sum.size()) {
             sum.resize(out.size());
             sumsq.resize(out.size());
@@ -199,8 +298,8 @@ int main()
       std::cout << std::endl;
    }
 
-   sella.ShowIndexResults();
+   sellaBuild.ShowIndexResults();
 
-   //sella.TestPerps();
+   //sellaBuild.TestPerps();
    const int  i19191 = 19191;
 }

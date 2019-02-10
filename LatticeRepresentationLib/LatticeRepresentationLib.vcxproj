@@ -163,6 +163,7 @@
     <ClCompile Include="LRL_Cell.cpp" />
     <ClCompile Include="CellInputData.cpp" />
     <ClCompile Include="LRL_Cell_Degrees.cpp" />
+    <ClCompile Include="LRL_CoordinateConversionMatrices.cpp" />
     <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="S6.cpp" />
     <ClCompile Include="S6Dist.cpp" />

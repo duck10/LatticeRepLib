@@ -1,4 +1,4 @@
-#include "Sella.h"
+#include "SellaBuild.h"
 
 
 #include "GenerateRandomLattice.h"
@@ -8,10 +8,10 @@
 #include "Selling.h"
 #include "StoreResults.h"
 
-std::vector< std::pair<std::string, MatS6> > Sella::vDeloneTypes = Delone::LoadLabeledLatticeTypeProjectors();
+std::vector< std::pair<std::string, MatS6> > SellaBuild::vDeloneTypes = Delone::LoadLabeledLatticeTypeProjectors();
 
 
-Sella::Sella() {
+SellaBuild::SellaBuild() {
    store.SetMaxItemStore(350);
 
    for (unsigned long i = 17; i < 18/*vDeloneTypes.size()*/; ++i) {
@@ -30,7 +30,7 @@ Sella::Sella() {
 
 static int seed = 19191;
 
-S6 Sella::MakeSampleType(const MatS6& m) {
+S6 SellaBuild::MakeSampleType(const MatS6& m) {
    GenerateRandomLattice<S6> generate(seed);
    bool valid = false;
    S6 s6;
@@ -48,7 +48,7 @@ S6 Sella::MakeSampleType(const MatS6& m) {
 }
 
 
-double Sella::TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm) {
+double SellaBuild::TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm) {
    double best = DBL_MAX;
    unsigned long bestIndex;
    S6 bestS6;
@@ -67,14 +67,14 @@ double Sella::TestOneType(const std::string& label, const S6 &s6, const std::vec
    return best;
 }
 
-void Sella::TestAllTypes(const S6& s6) { // assumes that s6 is aleady reduced
+void SellaBuild::TestAllTypes(const S6& s6) { // assumes that s6 is aleady reduced
    for (unsigned long i = 0; i < perps.size(); ++i) {
       const std::string label = perps[i].GetLabel();
       const double best = TestOneType(label, s6, perps[i].GetMatrices());
    }
 }
 
-std::vector<std::pair<std::string, double> > Sella::GetVectorOfFits(const S6& s6) {
+std::vector<std::pair<std::string, double> > SellaBuild::GetVectorOfFits(const S6& s6) {
    S6 out;
    std::vector<std::pair<std::string, double> > v;
    const double s6norm = s6.norm();
@@ -112,7 +112,7 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
    return v;
 }
 
-void Sella::ProcessVectorMapToPerpsAndProjectors() {
+void SellaBuild::ProcessVectorMapToPerpsAndProjectors() {
    const MatS6 unit = MatS6().unit();
    for ( auto it = themap.begin(); it != themap.end(); ++it) {
       const std::pair<std::string, std::vector<S6> > p = *it;
@@ -134,7 +134,7 @@ void Sella::ProcessVectorMapToPerpsAndProjectors() {
    }
 }
 
-void Sella::Expand(const std::string& label, const MatS6& m) {
+void SellaBuild::Expand(const std::string& label, const MatS6& m) {
    const S6 s6 = MakeSampleType(m);
 
    if (s6.IsValid()) {
@@ -157,7 +157,7 @@ void Sella::Expand(const std::string& label, const MatS6& m) {
    //store.ShowResults();
 }
 
-bool Sella::FindDuplicate(const std::vector<S6>& out, const S6 s6) {
+bool SellaBuild::FindDuplicate(const std::vector<S6>& out, const S6 s6) {
    bool fail = false;
    if (!out.empty()) {
       for (unsigned long o = 0; o < out.size(); ++o) {
@@ -168,7 +168,7 @@ bool Sella::FindDuplicate(const std::vector<S6>& out, const S6 s6) {
    return fail;
 }
 
-void Sella::ProcessItemStoreToVectorMap() {
+void SellaBuild::ProcessItemStoreToVectorMap() {
    std::vector<std::string> labels = store.GetKeys();
    for (unsigned long i = 0; i < labels.size(); ++i) {
       std::vector<S6> out;
@@ -184,7 +184,7 @@ void Sella::ProcessItemStoreToVectorMap() {
 
 
 
-unsigned long Sella::Index6(const unsigned long i, const unsigned long j) {
+unsigned long SellaBuild::Index6(const unsigned long i, const unsigned long j) {
    return 6 * i + j % 6;
 }
 
@@ -196,7 +196,7 @@ unsigned long CountEqualButNonZero(const double d, const S6& s) {
    return count;
 }
 
-double Sella::Fraction(const double d, const S6& s) {
+double SellaBuild::Fraction(const double d, const S6& s) {
    const double count = CountEqualButNonZero(d, s);
    return (count == 0.0) ? 0.0 : 1.0 / (double)(count);
 }
@@ -208,7 +208,7 @@ S6 ReZeroScalars(const S6& s) {
    return s6;
 }
 
-MatS6 Sella::ProjectorFromVector(const std::string& label, const S6& s6in) {
+MatS6 SellaBuild::ProjectorFromVector(const std::string& label, const S6& s6in) {
    MatS6 m;
    const S6 s = ReZeroScalars(s6in);
 
@@ -228,13 +228,13 @@ MatS6 Sella::ProjectorFromVector(const std::string& label, const S6& s6in) {
    return m;
 }
 
-std::vector<unsigned long> Sella::FindS6Zeros(const S6& s) {
+std::vector<unsigned long> SellaBuild::FindS6Zeros(const S6& s) {
    std::vector<unsigned long> v;
    for (unsigned long i = 0; i < 6; ++i) if (s[i] == 0.0) v.push_back(i);
    return v;
 }
 
-void Sella::StoreAllReflections(const std::string& label, const S6& s1) {
+void SellaBuild::StoreAllReflections(const std::string& label, const S6& s1) {
    std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
 
    for (unsigned long i = 0; i < refl.size(); ++i) {
@@ -243,7 +243,7 @@ void Sella::StoreAllReflections(const std::string& label, const S6& s1) {
    //store.ShowResults();
 }
 
-void Sella::OneBound(const std::string& label, const S6& s1) {
+void SellaBuild::OneBound(const std::string& label, const S6& s1) {
    static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
 
    unsigned long nzero = 0;
@@ -253,7 +253,7 @@ void Sella::OneBound(const std::string& label, const S6& s1) {
    StoreAllReflections(label, s6temp);
 }
 
-void Sella::ProcessZeros(const std::string& label, const S6& s6) {
+void SellaBuild::ProcessZeros(const std::string& label, const S6& s6) {
    const std::vector<unsigned long> v = FindS6Zeros(s6);
    const unsigned long nzeros = v.size();
 
@@ -276,18 +276,18 @@ void Sella::ProcessZeros(const std::string& label, const S6& s6) {
 
 }
 
-void Sella::TestPerps() {
+void SellaBuild::TestPerps() {
    const G6 g6(" 100 100 100 100 100 100");
    const LRL_Cell cell(" 10 10 10 89 89 89");
    const S6 s6(cell);
    TestAllTypes(s6);
 }
 
-void Sella::ShowIndexResults() const {
+void SellaBuild::ShowIndexResults() const {
    indexstore.ShowResults();
 }
 
-void Sella::WriteSellaMatrices(const std::string& functionName, const std::vector<LabeledSellaMatrices>& mat) const {
+void SellaBuild::WriteSellaMatrices(const std::string& functionName, const std::vector<LabeledSellaMatrices>& mat) const {
 
    std::cout << "std::vector<LabeledSellaMatrices> " << functionName << "() {" << std::endl;
 
@@ -319,7 +319,7 @@ void Sella::WriteSellaMatrices(const std::string& functionName, const std::vecto
    std::cout << "}   // end of " << functionName << std::endl << std::endl;
 }
 
-LabeledSellaMatrices Sella::CreatePerps_H4() {
+LabeledSellaMatrices SellaBuild::CreatePerps_H4() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.666667, -0.333333, -0.333333, 0, 0, 0, -0.333333, 0.666667, -0.333333, 0, 0, 0, -0.333333, -0.333333, 0.666667, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.666667, -0.333333, -0.333333, 0, 0, 0, -0.333333, 0.666667, -0.333333, 0, 0, 0, -0.333333, -0.333333, 0.666667, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
@@ -336,14 +336,14 @@ LabeledSellaMatrices Sella::CreatePerps_H4() {
    return LabeledSellaMatrices("H4", vm);
 }
 
-LabeledSellaMatrices Sella::CreatePerps_K1() {
+LabeledSellaMatrices SellaBuild::CreatePerps_K1() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.833333, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, 0.833333, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, 0.833333, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, 0.833333, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, 0.833333, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, -0.166667, 0.833333));
    return LabeledSellaMatrices("C1", vm);
 }
 
 
-LabeledSellaMatrices Sella::CreatePerps_K3() {
+LabeledSellaMatrices SellaBuild::CreatePerps_K3() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 1, 0, 0, 0, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0.75, 0, -0.25, -0.25, 0, -0.25, 0, 1, 0, 0, 0, 0, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, 0, 0, 0, 0, 1, 0, -0.25, 0, -0.25, -0.25, 0, 0.75));
@@ -353,7 +353,7 @@ LabeledSellaMatrices Sella::CreatePerps_K3() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_K5() {
+LabeledSellaMatrices SellaBuild::CreatePerps_K5() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.666667, -0.333333, -0.333333, 0, 0, 0, -0.333333, 0.666667, -0.333333, 0, 0, 0, -0.333333, -0.333333, 0.666667));
    vm.push_back(MatS6(0.666667, -0.333333, 0, 0, 0, -0.333333, -0.333333, 0.666667, 0, 0, 0, -0.333333, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, -0.333333, -0.333333, 0, 0, 0, 0.666667));
@@ -376,7 +376,7 @@ LabeledSellaMatrices Sella::CreatePerps_K5() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_M1A() {
+LabeledSellaMatrices SellaBuild::CreatePerps_M1A() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.5, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0.5));
@@ -389,7 +389,7 @@ LabeledSellaMatrices Sella::CreatePerps_M1A() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_M1B() {
+LabeledSellaMatrices SellaBuild::CreatePerps_M1B() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 0.5, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, -0.5, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0, 0.5));
@@ -398,7 +398,7 @@ LabeledSellaMatrices Sella::CreatePerps_M1B() {
 }
 
 
-LabeledSellaMatrices Sella::CreatePerps_M2B() {
+LabeledSellaMatrices SellaBuild::CreatePerps_M2B() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 0.5, 0, 0, -0.5, 0, 0, 0, 1, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, -0.5, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0, 0.5));
@@ -417,7 +417,7 @@ LabeledSellaMatrices Sella::CreatePerps_M2B() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_M2A() {
+LabeledSellaMatrices SellaBuild::CreatePerps_M2A() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
@@ -436,7 +436,7 @@ LabeledSellaMatrices Sella::CreatePerps_M2A() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_M3() {
+LabeledSellaMatrices SellaBuild::CreatePerps_M3() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, -0.5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1));
@@ -461,7 +461,7 @@ LabeledSellaMatrices Sella::CreatePerps_M3() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_M4() {
+LabeledSellaMatrices SellaBuild::CreatePerps_M4() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
@@ -479,7 +479,7 @@ LabeledSellaMatrices Sella::CreatePerps_M4() {
 }
 
 
-LabeledSellaMatrices Sella::CreatePerps_O1A() {
+LabeledSellaMatrices SellaBuild::CreatePerps_O1A() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 0, 0, 0, 0, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.75, 0, -0.25, -0.25, 0, -0.25, 0, 0, 0, 0, 0, 0, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, 0, 0, 0, 0, 0, 0, -0.25, 0, -0.25, -0.25, 0, 0.75));
@@ -489,7 +489,7 @@ LabeledSellaMatrices Sella::CreatePerps_O1A() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_O1B() {
+LabeledSellaMatrices SellaBuild::CreatePerps_O1B() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 0.5, 0, 0, -0.5, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, 0, 0, -0.5, 0, 0, 0.5));
    vm.push_back(MatS6(0.75, 0, -0.25, -0.25, 0, -0.25, 0, 0.5, 0, 0, -0.5, 0, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, 0, -0.5, 0, 0, 0.5, 0, -0.25, 0, -0.25, -0.25, 0, 0.75));
@@ -499,7 +499,7 @@ LabeledSellaMatrices Sella::CreatePerps_O1B() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_O2() {
+LabeledSellaMatrices SellaBuild::CreatePerps_O2() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0, 0, 0, -0.5, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.5, 0, 0.5, 0, 0, -0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.5, 0, 0, 0, 0, -0.5, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, -0.5, 0, 0, 0, 0, 0.5));
@@ -512,7 +512,7 @@ LabeledSellaMatrices Sella::CreatePerps_O2() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_O3() {
+LabeledSellaMatrices SellaBuild::CreatePerps_O3() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 0.5, 0, 0, -0.5, 0, 0, 0, 1, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0.5, 0, 0, -0.5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, -0.5, -0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, -0.5, 0, 0, 0.5));
@@ -528,7 +528,7 @@ LabeledSellaMatrices Sella::CreatePerps_O3() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_O4() {
+LabeledSellaMatrices SellaBuild::CreatePerps_O4() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
@@ -571,7 +571,7 @@ LabeledSellaMatrices Sella::CreatePerps_O4() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_O5() {
+LabeledSellaMatrices SellaBuild::CreatePerps_O5() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
@@ -594,7 +594,7 @@ LabeledSellaMatrices Sella::CreatePerps_O5() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_T1() {
+LabeledSellaMatrices SellaBuild::CreatePerps_T1() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 0.5, 0, 0, -0.5, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, 0, 0, -0.5, 0, 0, 0.5));
    vm.push_back(MatS6(0.75, 0, -0.25, -0.25, 0, -0.25, 0, 0.5, 0, 0, -0.5, 0, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, 0, -0.5, 0, 0, 0.5, 0, -0.25, 0, -0.25, -0.25, 0, 0.75));
@@ -604,7 +604,7 @@ LabeledSellaMatrices Sella::CreatePerps_T1() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_T2() {
+LabeledSellaMatrices SellaBuild::CreatePerps_T2() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, -0.25, 0, 0, 0, 1, 0, 0, 0, -0.25, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.75, 0, -0.25, -0.25, 0, -0.25, 0, 1, 0, 0, 0, 0, -0.25, 0, 0.75, -0.25, 0, -0.25, -0.25, 0, -0.25, 0.75, 0, -0.25, 0, 0, 0, 0, 0, 0, -0.25, 0, -0.25, -0.25, 0, 0.75));
@@ -617,7 +617,7 @@ LabeledSellaMatrices Sella::CreatePerps_T2() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_T5() {
+LabeledSellaMatrices SellaBuild::CreatePerps_T5() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.5, -0.5, 0, 0, 0, 0, -0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
@@ -672,7 +672,7 @@ LabeledSellaMatrices Sella::CreatePerps_T5() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_R1() {
+LabeledSellaMatrices SellaBuild::CreatePerps_R1() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.666667, -0.333333, -0.333333, 0, 0, 0, -0.333333, 0.666667, -0.333333, 0, 0, 0, -0.333333, -0.333333, 0.666667, 0, 0, 0, 0, 0, 0, 0.666667, -0.333333, -0.333333, 0, 0, 0, -0.333333, 0.666667, -0.333333, 0, 0, 0, -0.333333, -0.333333, 0.666667));
    vm.push_back(MatS6(0.666667, -0.333333, 0, 0, 0, -0.333333, -0.333333, 0.666667, 0, 0, 0, -0.333333, 0, 0, 0.666667, -0.333333, -0.333333, 0, 0, 0, -0.333333, 0.666667, -0.333333, 0, 0, 0, -0.333333, -0.333333, 0.666667, 0, -0.333333, -0.333333, 0, 0, 0, 0.666667));
@@ -683,7 +683,7 @@ LabeledSellaMatrices Sella::CreatePerps_R1() {
 
 
 
-LabeledSellaMatrices Sella::CreatePerps_R3() {
+LabeledSellaMatrices SellaBuild::CreatePerps_R3() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.666667, 0, -0.333333, 0, -0.333333, 0, 0, 1, 0, 0, 0, 0, -0.333333, 0, 0.666667, 0, -0.333333, 0, 0, 0, 0, 0, 0, 0, -0.333333, 0, -0.333333, 0, 0.666667, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0.666667, 0, -0.333333, 0, -0.333333, 0, 0, 0, 0, 0, 0, 0, -0.333333, 0, 0.666667, 0, -0.333333, 0, 0, 0, 0, 1, 0, 0, -0.333333, 0, -0.333333, 0, 0.666667, 0, 0, 0, 0, 0, 0, 1));
@@ -724,34 +724,34 @@ LabeledSellaMatrices Sella::CreatePerps_R3() {
    return LabeledSellaMatrices("R3", vm);
 }
 
-std::vector<LabeledSellaMatrices> Sella::CreateAllPerps(){
+std::vector<LabeledSellaMatrices> SellaBuild::CreateAllPerps(){
    std::vector< LabeledSellaMatrices> vlsm;
-   vlsm.push_back(Sella::CreatePerps_H4());
-   vlsm.push_back(Sella::CreatePerps_K1());
-   vlsm.push_back(Sella::CreatePerps_K3());
-   vlsm.push_back(Sella::CreatePerps_K5());
-   vlsm.push_back(Sella::CreatePerps_M1A());
-   vlsm.push_back(Sella::CreatePerps_M1B());
-   vlsm.push_back(Sella::CreatePerps_M2A());
-   vlsm.push_back(Sella::CreatePerps_M2B());
-   vlsm.push_back(Sella::CreatePerps_M3());
-   vlsm.push_back(Sella::CreatePerps_M4());
-   vlsm.push_back(Sella::CreatePerps_O1A());
-   vlsm.push_back(Sella::CreatePerps_O1B());
-   vlsm.push_back(Sella::CreatePerps_O2());
-   vlsm.push_back(Sella::CreatePerps_O3());
-   vlsm.push_back(Sella::CreatePerps_O4());
-   vlsm.push_back(Sella::CreatePerps_O5());
-   vlsm.push_back(Sella::CreatePerps_T1());
-   vlsm.push_back(Sella::CreatePerps_T2());
-   vlsm.push_back(Sella::CreatePerps_T5());
-   vlsm.push_back(Sella::CreatePerps_R1());
-   vlsm.push_back(Sella::CreatePerps_R3());
+   vlsm.push_back(SellaBuild::CreatePerps_H4());
+   vlsm.push_back(SellaBuild::CreatePerps_K1());
+   vlsm.push_back(SellaBuild::CreatePerps_K3());
+   vlsm.push_back(SellaBuild::CreatePerps_K5());
+   vlsm.push_back(SellaBuild::CreatePerps_M1A());
+   vlsm.push_back(SellaBuild::CreatePerps_M1B());
+   vlsm.push_back(SellaBuild::CreatePerps_M2A());
+   vlsm.push_back(SellaBuild::CreatePerps_M2B());
+   vlsm.push_back(SellaBuild::CreatePerps_M3());
+   vlsm.push_back(SellaBuild::CreatePerps_M4());
+   vlsm.push_back(SellaBuild::CreatePerps_O1A());
+   vlsm.push_back(SellaBuild::CreatePerps_O1B());
+   vlsm.push_back(SellaBuild::CreatePerps_O2());
+   vlsm.push_back(SellaBuild::CreatePerps_O3());
+   vlsm.push_back(SellaBuild::CreatePerps_O4());
+   vlsm.push_back(SellaBuild::CreatePerps_O5());
+   vlsm.push_back(SellaBuild::CreatePerps_T1());
+   vlsm.push_back(SellaBuild::CreatePerps_T2());
+   vlsm.push_back(SellaBuild::CreatePerps_T5());
+   vlsm.push_back(SellaBuild::CreatePerps_R1());
+   vlsm.push_back(SellaBuild::CreatePerps_R3());
 
    return vlsm;
 }
 
-LabeledSellaMatrices Sella::CreatePrjs_H4() {
+LabeledSellaMatrices SellaBuild::CreatePrjs_H4() {
    std::vector<MatS6> vm;
    /*  H4   */
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0, 0, 0, 1));
@@ -769,13 +769,13 @@ LabeledSellaMatrices Sella::CreatePrjs_H4() {
    return LabeledSellaMatrices("H4", vm);
 }
 
-LabeledSellaMatrices Sella::CreatePrjs_C1() {
+LabeledSellaMatrices SellaBuild::CreatePrjs_C1() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667, 0.166667));
    return LabeledSellaMatrices("C1", vm);
 }
 
-LabeledSellaMatrices Sella::CreatePrjs_C3() {
+LabeledSellaMatrices SellaBuild::CreatePrjs_C3() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 0));
    vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
@@ -784,7 +784,7 @@ LabeledSellaMatrices Sella::CreatePrjs_C3() {
 }
 
 
-LabeledSellaMatrices Sella::CreatePrjs_C5() {
+LabeledSellaMatrices SellaBuild::CreatePrjs_C5() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333));
    vm.push_back(MatS6(0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0, 0, 0, 0.333333));
@@ -806,7 +806,7 @@ LabeledSellaMatrices Sella::CreatePrjs_C5() {
 }
 
 
-LabeledSellaMatrices Sella::CreatePrjs_M1A() {
+LabeledSellaMatrices SellaBuild::CreatePrjs_M1A() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0.5, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.5, 0, 0.5));
@@ -818,7 +818,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M1A() {
 }
 
 
-LabeledSellaMatrices Sella::CreatePrjs_M1B() {
+LabeledSellaMatrices SellaBuild::CreatePrjs_M1B() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 0.5));
@@ -826,7 +826,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M1B() {
    return LabeledSellaMatrices("M1B", vm);
 }
 
-LabeledSellaMatrices Sella::CreatePrjs_M2B() {
+LabeledSellaMatrices SellaBuild::CreatePrjs_M2B() {
    std::vector<MatS6> vm;
    vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1));
    vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 0.5));
@@ -845,7 +845,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  M2A  */
-   LabeledSellaMatrices Sella::CreatePrjs_M2A() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_M2A() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1));
@@ -864,7 +864,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  M3   */
-   LabeledSellaMatrices Sella::CreatePrjs_M3() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_M3() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0));
       vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0));
@@ -889,7 +889,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  M4   */
-   LabeledSellaMatrices Sella::CreatePrjs_M4() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_M4() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1));
@@ -907,7 +907,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
    }
 
    /*  O1A  */
-   LabeledSellaMatrices Sella::CreatePrjs_O1A() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_O1A() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 1, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 1, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 1, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
@@ -917,7 +917,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  O1B  */
-   LabeledSellaMatrices Sella::CreatePrjs_O1B() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_O1B() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0.5, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0.5));
       vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0.5, 0, 0, 0.5, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0.5, 0, 0, 0.5, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
@@ -927,7 +927,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  O2   */
-   LabeledSellaMatrices Sella::CreatePrjs_O2() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_O2() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0.5));
@@ -940,7 +940,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  O3   */
-   LabeledSellaMatrices Sella::CreatePrjs_O3() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_O3() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0));
       vm.push_back(MatS6(0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0.5));
@@ -956,7 +956,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  O4   */
-   LabeledSellaMatrices Sella::CreatePrjs_O4() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_O4() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1));
@@ -999,7 +999,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  O5   */
-   LabeledSellaMatrices Sella::CreatePrjs_O5() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_O5() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1));
@@ -1022,7 +1022,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  Q1   */
-   LabeledSellaMatrices Sella::CreatePrjs_T1() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_T1() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0.5, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0.5, 0, 0, 0.5));
       vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0.5, 0, 0, 0.5, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0.5, 0, 0, 0.5, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
@@ -1032,7 +1032,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  Q2   */
-   LabeledSellaMatrices Sella::CreatePrjs_T2() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_T2() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 0, 0, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0.25, 0, 0.25, 0, 0, 0, 0, 1, 0, 0.25, 0, 0.25, 0.25, 0, 0.25));
@@ -1045,7 +1045,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  Q5   */
-   LabeledSellaMatrices Sella::CreatePrjs_T5() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_T5() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 1));
       vm.push_back(MatS6(0.5, 0.5, 0, 0, 0, 0, 0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1));
@@ -1100,7 +1100,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  R1   */
-   LabeledSellaMatrices Sella::CreatePrjs_R1() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_R1() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333));
       vm.push_back(MatS6(0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0, 0, 0.333333, 0.333333, 0.333333, 0, 0.333333, 0.333333, 0, 0, 0, 0.333333));
@@ -1111,7 +1111,7 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
 
 
    /*  R3   */
-   LabeledSellaMatrices Sella::CreatePrjs_R3() {
+   LabeledSellaMatrices SellaBuild::CreatePrjs_R3() {
       std::vector<MatS6> vm;
       vm.push_back(MatS6(0.333333, 0, 0.333333, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0, 0.333333, 0, 0.333333, 0, 0, 0, 0, 1, 0, 0, 0.333333, 0, 0.333333, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0));
       vm.push_back(MatS6(0.333333, 0, 0.333333, 0, 0.333333, 0, 0, 1, 0, 0, 0, 0, 0.333333, 0, 0.333333, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0, 0.333333, 0, 0.333333, 0, 0.333333, 0, 0, 0, 0, 0, 0, 0));
@@ -1152,29 +1152,29 @@ LabeledSellaMatrices Sella::CreatePrjs_M2B() {
       return LabeledSellaMatrices("R1", vm);
    }
 
-   std::vector<LabeledSellaMatrices> Sella::CreateAllPrjs() {
+   std::vector<LabeledSellaMatrices> SellaBuild::CreateAllPrjs() {
       std::vector< LabeledSellaMatrices> vlsm;
-      vlsm.push_back(Sella::CreatePrjs_H4());
-      vlsm.push_back(Sella::CreatePrjs_C1());
-      vlsm.push_back(Sella::CreatePrjs_C3());
-      vlsm.push_back(Sella::CreatePrjs_C5());
-      vlsm.push_back(Sella::CreatePrjs_M1A());
-      vlsm.push_back(Sella::CreatePrjs_M1B());
-      vlsm.push_back(Sella::CreatePrjs_M2A());
-      vlsm.push_back(Sella::CreatePrjs_M2B());
-      vlsm.push_back(Sella::CreatePrjs_M3());
-      vlsm.push_back(Sella::CreatePrjs_M4());
-      vlsm.push_back(Sella::CreatePrjs_O1A());
-      vlsm.push_back(Sella::CreatePrjs_O1B());
-      vlsm.push_back(Sella::CreatePrjs_O2());
-      vlsm.push_back(Sella::CreatePrjs_O3());
-      vlsm.push_back(Sella::CreatePrjs_O4());
-      vlsm.push_back(Sella::CreatePrjs_O5());
-      vlsm.push_back(Sella::CreatePrjs_T1());
-      vlsm.push_back(Sella::CreatePrjs_T2());
-      vlsm.push_back(Sella::CreatePrjs_T5());
-      vlsm.push_back(Sella::CreatePrjs_R1());
-      vlsm.push_back(Sella::CreatePrjs_R3());
+      vlsm.push_back(SellaBuild::CreatePrjs_H4());
+      vlsm.push_back(SellaBuild::CreatePrjs_C1());
+      vlsm.push_back(SellaBuild::CreatePrjs_C3());
+      vlsm.push_back(SellaBuild::CreatePrjs_C5());
+      vlsm.push_back(SellaBuild::CreatePrjs_M1A());
+      vlsm.push_back(SellaBuild::CreatePrjs_M1B());
+      vlsm.push_back(SellaBuild::CreatePrjs_M2A());
+      vlsm.push_back(SellaBuild::CreatePrjs_M2B());
+      vlsm.push_back(SellaBuild::CreatePrjs_M3());
+      vlsm.push_back(SellaBuild::CreatePrjs_M4());
+      vlsm.push_back(SellaBuild::CreatePrjs_O1A());
+      vlsm.push_back(SellaBuild::CreatePrjs_O1B());
+      vlsm.push_back(SellaBuild::CreatePrjs_O2());
+      vlsm.push_back(SellaBuild::CreatePrjs_O3());
+      vlsm.push_back(SellaBuild::CreatePrjs_O4());
+      vlsm.push_back(SellaBuild::CreatePrjs_O5());
+      vlsm.push_back(SellaBuild::CreatePrjs_T1());
+      vlsm.push_back(SellaBuild::CreatePrjs_T2());
+      vlsm.push_back(SellaBuild::CreatePrjs_T5());
+      vlsm.push_back(SellaBuild::CreatePrjs_R1());
+      vlsm.push_back(SellaBuild::CreatePrjs_R3());
 
       return vlsm;
    }

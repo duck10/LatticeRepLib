@@ -5,6 +5,8 @@
 #include <string>
 
 #include "C3.h"
+#include "LatticeCentering.h"
+#include "LRL_CoordinateConversionMatrices.h"
 #include "LatticeConverter.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
@@ -209,7 +211,7 @@ double FitRange(const double f) {
 }
 
 void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
-   StoreResults<std::string, std::string> storeGood(5);
+   StoreResults<std::string, std::string> storeGood(20);
    StoreResults<std::string, std::string> storeProblems(100);
    StoreResults<double, std::string> storeO3(100);
    StoreResults<double, std::string> storeM3(100);
@@ -235,12 +237,12 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
       if (fit.second < 1.0E-5) storeGood.Store(fit.first, LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat]));
  //     std::cout << LRL_ToString(fit.first, "  ") << LRL_ToString( LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat])) << std::endl;
 
-      const double fitO3  = FitRange(sella.GetFitForDeloneType("O3", vLat[lat]));
-      const double fitM3  = FitRange(sella.GetFitForDeloneType("M3", vLat[lat]));
-      const double fitM2B = FitRange(sella.GetFitForDeloneType("M2B", vLat[lat]));
-      storeO3 .Store(fitO3 , LRL_ToString("(", fitO3, "  ", strCell, "   ",vLat[lat]));
-      storeM3 .Store(fitM3 , LRL_ToString("(", fitM3, "  ", strCell, "   ",vLat[lat]));
-      storeM2B.Store(fitM2B, LRL_ToString("(", fitM2B, "  ", strCell, "   ",vLat[lat]));
+      //const double fitO3  = FitRange(sella.GetFitForDeloneType("O3", vLat[lat]));
+      //const double fitM3  = FitRange(sella.GetFitForDeloneType("M3", vLat[lat]));
+      //const double fitM2B = FitRange(sella.GetFitForDeloneType("M2B", vLat[lat]));
+      //storeO3 .Store(fitO3 , LRL_ToString("(", fitO3, "  ", strCell, "   ",vLat[lat]));
+      //storeM3 .Store(fitM3 , LRL_ToString("(", fitM3, "  ", strCell, "   ",vLat[lat]));
+      //storeM2B.Store(fitM2B, LRL_ToString("(", fitM2B, "  ", strCell, "   ",vLat[lat]));
    }
    storeProblems.ShowResults();
    storeGood.ShowResults();
@@ -252,6 +254,11 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
 }
 int main()
 {
+   LRL_CoordinateConversionMatrices ccm;
+
+   MatMN gd = LRL_CoordinateConversionMatrices::D7_FROM_S6;
+
+   LatticeCentering lc;
    //const std::vector<LabeledSellaMatrices> prjs = Sella::CreateAllPrjs();
    //for ( unsigned long i=0; i<prjs.size(); ++i ) {
    //   std::cout << prjs[i].GetLabel() << "  " << prjs[i].size() << std::endl;
