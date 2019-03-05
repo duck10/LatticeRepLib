@@ -13,8 +13,11 @@ std::vector< std::pair<std::string, MatS6> > SellaBuild::vDeloneTypes = Delone::
 
 SellaBuild::SellaBuild() {
    store.SetMaxItemStore(350);
+}
 
-   for (unsigned long i = 17; i < 18/*vDeloneTypes.size()*/; ++i) {
+
+void SellaBuild::Build() {
+   for (unsigned long i = 0; i < vDeloneTypes.size(); ++i) {
       //for (unsigned long i = 2; i < 3; ++i) {  // to show only C5
       Expand(vDeloneTypes[i].first, vDeloneTypes[i].second);
    }
@@ -287,6 +290,16 @@ void SellaBuild::ShowIndexResults() const {
    indexstore.ShowResults();
 }
 
+std::string WriteOneNumber( const double d) {
+   std::ostringstream ostr;
+      if (abs(d - 1.0 / 3.0) < 1.0E-8) ostr << "1.0/3.0";
+      else if (abs(d + 1.0 / 3.0) < 1.0E-8) ostr << "-1.0/3.0";
+      else if (abs(d - 2.0 / 3.0) < 1.0E-8) ostr << "2.0/3.0";
+      else if (abs(d + 2.0 / 3.0) < 1.0E-8) ostr << "-2.0/3.0";
+      else ostr << d;
+      return ostr.str();
+}
+
 void SellaBuild::WriteSellaMatrices(const std::string& functionName, const std::vector<LabeledSellaMatrices>& mat) const {
 
    std::cout << "std::vector<LabeledSellaMatrices> " << functionName << "() {" << std::endl;
@@ -306,11 +319,10 @@ void SellaBuild::WriteSellaMatrices(const std::string& functionName, const std::
          std::cout << "   vm.push_back(MatS6(";
 
          for (unsigned long ll = 0; ll < vm[k].size(); ++ll) {
-            std::cout << vm[k][ll];
+            std::cout << WriteOneNumber(vm[k][ll]);
             const unsigned long ssss = vm[k].size() - 1;
-            std::cout << ((ll < ssss) ? "," : "));");
+            std::cout << ((ll < ssss) ? "," : "));\n");
          }
-         std::cout << ((j < mat.size() - 1 || k < vm.size() - 1) ? "," : "") << std::endl;
       }
       std::cout << std::endl << std::endl;
    }

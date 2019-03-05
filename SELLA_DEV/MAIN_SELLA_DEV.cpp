@@ -254,9 +254,10 @@ int main()
 
 
    SellaBuild sellaBuild;
-   //sellaBuild.WriteSellaMatrices("Prj", sellaBuild.GetPerps());
-   //sellaBuild.WriteSellaMatrices("Perp", sellaBuild.GetProjectors());
-   //exit(0);
+   sellaBuild.Build();
+   sellaBuild.WriteSellaMatrices("Prj", sellaBuild.GetPerps());
+   sellaBuild.WriteSellaMatrices("Perp", sellaBuild.GetProjectors());
+   exit(0);
 
    TestLatticeCentering();
 
