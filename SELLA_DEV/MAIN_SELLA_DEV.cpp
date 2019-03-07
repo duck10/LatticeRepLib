@@ -249,7 +249,6 @@ void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
 
 int main()
 {
-
    std::vector<LabeledSellaMatrices> allPerps = SellaBuild::CreateAllPerps();
 
 
