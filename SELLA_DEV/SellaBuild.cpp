@@ -4,6 +4,7 @@
 #include "GenerateRandomLattice.h"
 #include "LRL_ToString.h"
 #include "LRL_MaximaTools.h"
+#include "S6_Ordinals.h"
 #include "S6Dist.h"
 #include "Selling.h"
 #include "StoreResults.h"
@@ -118,7 +119,7 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
 void SellaBuild::ProcessVectorMapToPerpsAndProjectors() {
    const MatS6 unit = MatS6().unit();
    for ( auto it = themap.begin(); it != themap.end(); ++it) {
-      const std::pair<std::string, std::vector<S6> > p = *it;
+      const std::pair<std::string, std::vector<S6_Ordinals> > p = *it;
       std::vector<MatS6> vmprj;
       std::vector<MatS6> vmprp;
       const std::string label(p.first);
@@ -138,7 +139,7 @@ void SellaBuild::ProcessVectorMapToPerpsAndProjectors() {
 }
 
 void SellaBuild::Expand(const std::string& label, const MatS6& m) {
-   const S6 s6 = MakeSampleType(m);
+   const S6_Ordinals s6 = MakeSampleType(m);
 
    if (s6.IsValid()) {
       switch (s6.CountZeros()) {
@@ -160,7 +161,7 @@ void SellaBuild::Expand(const std::string& label, const MatS6& m) {
    //store.ShowResults();
 }
 
-bool SellaBuild::FindDuplicate(const std::vector<S6>& out, const S6 s6) {
+bool SellaBuild::FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ordinals s6) {
    bool fail = false;
    if (!out.empty()) {
       for (unsigned long o = 0; o < out.size(); ++o) {
@@ -174,8 +175,8 @@ bool SellaBuild::FindDuplicate(const std::vector<S6>& out, const S6 s6) {
 void SellaBuild::ProcessItemStoreToVectorMap() {
    std::vector<std::string> labels = store.GetKeys();
    for (unsigned long i = 0; i < labels.size(); ++i) {
-      std::vector<S6> out;
-      const std::vector<std::pair<std::string, S6> > v = store.GetResult(labels[i]);
+      std::vector<S6_Ordinals> out;
+      const std::vector<std::pair<std::string, S6_Ordinals> > v = store.GetResult(labels[i]);
       out.push_back(v[0].second);
       for (unsigned long iv = 0; iv < v.size(); ++iv) {
          const bool fail = FindDuplicate(out, v[iv].second);
@@ -237,26 +238,36 @@ std::vector<unsigned long> SellaBuild::FindS6Zeros(const S6& s) {
    return v;
 }
 
-void SellaBuild::StoreAllReflections(const std::string& label, const S6& s1) {
+template<typename T>
+S6_Ordinals MultiplyUsingFunction(T refl, const S6_Ordinals& so )
+{
+   S6_Ordinals s1(so);
+   s1 = refl(s1);
+   s1.m_ordinals = refl(s1.m_ordinals);
+   return s1;
+}
+
+void SellaBuild::StoreAllReflections(const std::string& label, const S6_Ordinals& s1in) {
    std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
+   S6_Ordinals s1(s1in);
 
    for (unsigned long i = 0; i < refl.size(); ++i) {
-      store.Store(label, refl[i](s1));
+      store.Store(label, MultiplyUsingFunction(refl[i], s1));
    }
    //store.ShowResults();
 }
 
-void SellaBuild::OneBound(const std::string& label, const S6& s1) {
+void SellaBuild::OneBound(const std::string& label, const S6_Ordinals& s1) {
    static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
 
    unsigned long nzero = 0;
    for (unsigned long i = 0; i < 6; ++i) if (s1[i] == 0) nzero = i;
    StoreAllReflections(label, s1);
-   const S6 s6temp = fnRedn[nzero](s1);
+   const S6_Ordinals s6temp = MultiplyUsingFunction(fnRedn[nzero], s1);
    StoreAllReflections(label, s6temp);
 }
 
-void SellaBuild::ProcessZeros(const std::string& label, const S6& s6) {
+void SellaBuild::ProcessZeros(const std::string& label, const S6_Ordinals& s6) {
    const std::vector<unsigned long> v = FindS6Zeros(s6);
    const unsigned long nzeros = v.size();
 
@@ -267,11 +278,8 @@ void SellaBuild::ProcessZeros(const std::string& label, const S6& s6) {
       OneBound(label, s6);
    }
    else {
-      S6 s6a(s6);
-      S6 s6b(s6);
-      S6 s6c(s6);
       for (unsigned long i = 0; i < v.size(); ++i) {
-         S6 temp(s6);
+         S6_Ordinals temp(s6);
          temp[v[i]] = DBL_MIN;
          ProcessZeros(label, temp);
       }

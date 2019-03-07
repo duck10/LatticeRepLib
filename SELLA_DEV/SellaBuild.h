@@ -11,6 +11,7 @@
 #include "Delone.h"
 #include "MatS6.h"
 #include "S6.h"
+#include "S6_Ordinals.h"
 #include "StoreResults.h"
 
 
@@ -97,22 +98,22 @@ public:
    static LabeledSellaMatrices CreatePrjs_R3();
 
 private:
-   std::map<std::string, std::vector<S6> > themap;
+   std::map<std::string, std::vector<S6_Ordinals> > themap;
    std::vector<LabeledSellaMatrices> projectors;
    std::vector<LabeledSellaMatrices> perps;
-   StoreResults<std::string, S6> store;
+   StoreResults<std::string, S6_Ordinals> store;
    static std::vector< std::pair<std::string, MatS6> > vDeloneTypes;
    StoreResults<std::string, std::string> indexstore;
 
 private:
    void ProcessItemStoreToVectorMap();
-   void StoreAllReflections(const std::string& label, const S6& s1);
-   void OneBound(const std::string& label, const S6& s1);
-   void ProcessZeros(const std::string& label, const S6& s6);
+   void StoreAllReflections(const std::string& label, const S6_Ordinals& s1);
+   void OneBound(const std::string& label, const S6_Ordinals& s1);
+   void ProcessZeros(const std::string& label, const S6_Ordinals& s6);
    void ProcessVectorMapToPerpsAndProjectors();
    void Expand(const std::string& label, const MatS6& m);
 
-   static bool FindDuplicate(const std::vector<S6>& out, const S6 s6);
+   static bool FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ordinals s6);
    static MatS6 ProjectorFromVector(const std::string& label, const S6& s);
    static S6 MakeSampleType(const MatS6& m);
    static unsigned long Index6(const unsigned long i, const unsigned long j);

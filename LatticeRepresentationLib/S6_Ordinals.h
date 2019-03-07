@@ -10,7 +10,7 @@ public:
    S6_Ordinals();
    S6_Ordinals(const S6& s);
    S6_Ordinals(const S6_Ordinals& so);
-   std::vector<double> SetOrdinals();
+   S6 InitializeOrdinals();
 
    friend S6_Ordinals operator* (const MatS6& m, const S6_Ordinals& so);
 

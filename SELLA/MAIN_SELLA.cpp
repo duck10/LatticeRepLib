@@ -12,6 +12,7 @@
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "S6.h"
+#include "S6_Ordinals.h"
 #include "Sella.h"
 #include "Selling.h"
 #include "StoreResults.h"
