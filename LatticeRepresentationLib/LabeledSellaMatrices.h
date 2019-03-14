@@ -13,6 +13,9 @@ public:
    LabeledSellaMatrices(const std::string& label, const std::vector<MatS6>& vm) : m_label(label), m_vector(vm)
    {}
 
+   static std::vector<LabeledSellaMatrices> CreateAllPerps();
+   static std::vector<LabeledSellaMatrices> CreateAllPrjs();
+
    std::string GetLabel() const { return m_label; }
 
    std::vector<MatS6>  GetMatrices() const { return m_vector; }
@@ -21,9 +24,6 @@ public:
 
    static const std::vector<LabeledSellaMatrices> projectors;
    static const std::vector<LabeledSellaMatrices> perps;
-
-   static std::vector<LabeledSellaMatrices> CreateAllPerps();
-   static std::vector<LabeledSellaMatrices> CreateAllPrjs();
 
 private:
    static LabeledSellaMatrices CreatePerps_A1();

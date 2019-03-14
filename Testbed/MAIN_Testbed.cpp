@@ -633,12 +633,12 @@ public:
       return test;
    }
 
-   double mulPlain(const double a, std::vector<double>& v) {
+   double mulPlain(const double a, std::vector<double>& vin) {
       double d[4];
       for (unsigned long j = 0; j < cycles; ++j)
          for (unsigned long k = 0; k < 10 * cycles; ++k) {
-            for (unsigned long i = 0; i < v.size(); ++i) {
-               d[k % 4] = a * v[i];
+            for (unsigned long i = 0; i < vin.size(); ++i) {
+               d[k % 4] = a * vin[i];
             }
             if (k == 0) store.Store(k, 0);
          }
@@ -707,7 +707,6 @@ void TestCS6Dist3() {
          if (d > 1.0) {
             double ar[7];
             std::vector<double> v = s6.GetVector();
-            double* ar0 = &v[0];
             std::cout << i << "  " << ir << "   d=" << d << "      " << s6 << "      " << C3(s6) << std::endl;
          }
       }
@@ -717,7 +716,7 @@ void TestCS6Dist3() {
 
 void TestCS6Dist4() {
    GenerateRandomLattice<S6> generator(seed);
-   StoreResults<double, std::string> store(1);
+   StoreResults<double, std::string> storeLocal(1);
    S6Dist s6dist(1);
    std::vector<S6> voutside;
    S6 red1, red2;
@@ -731,10 +730,10 @@ void TestCS6Dist4() {
          const double d2 = s6dist.DistanceBetween(red2.data(), red1.data());
          const double dfinal = (d1 < 1.0E-4) ? 0.0 : d1;
          const std::string s = LRL_ToString(" ", " ", red2, "\n", red1, "\n", LRL_Cell_Degrees(red2), "\n");
-         store.Store(dfinal, s);
+         storeLocal.Store(dfinal, s);
       }
    }
-   store.ShowResults();
+   storeLocal.ShowResults();
    exit(0);
 }
 
@@ -748,7 +747,6 @@ void TestCS_Reflections() {
          vm[im][i] = **(S6Refl + i);
       }
       tree.insert(vm[im]);
-      bool b = tree.NearestNeighbor(radius, closest, vm[im]);
       std::cout << std::endl << im << std::endl;
       std::cout << vm[im] << std::endl;
    }
@@ -757,12 +755,12 @@ void TestCS_Reflections() {
 }
 
 void TestReflVCP() {
-   StoreResults<unsigned long, std::string> store(5);
-   store.SetKeyLabel("Reflection#");
+   StoreResults<unsigned long, std::string> storeLocal(5);
+   storeLocal.SetKeyLabel("Reflection#");
    const static std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > unredfun = S6Dist::SetUnreduceFunctionPairs();
    const static std::vector< S6(*)(const S6&)> reflfun = S6::SetRelectionFunctions();
-   int seed = 19;
-   GenerateRandomLattice<S6> grl(seed);
+   int seed1 = 19;
+   GenerateRandomLattice<S6> grl(seed1);
    for (unsigned long i = 0; i < 2; ++i) grl.randSellingReduced();
    const S6 start = grl.randSellingReduced();
    std::cout << "the initial inside point is: " << start << std::endl << std::endl;
@@ -785,11 +783,11 @@ void TestReflVCP() {
                kmin = k;
             }
          }
-         store.Store(kmin, LRL_ToString(ref));
+         storeLocal.Store(kmin, LRL_ToString(ref));
       }
    }
 
-   store.ShowResults();
+   storeLocal.ShowResults();
    exit(0);
 }
 
@@ -809,8 +807,7 @@ void TestNiggliTiming(const std::vector<G6>& testData, const bool doSelling) {
 }
 
 void TestCS6DistancesTiming(const std::vector<S6>& testData) {
-   const unsigned long ntests = testData.size();
-   int count = 0;
+   const unsigned long ntests = (unsigned long)(testData.size());
    const double distA = CS6Dist(testData[0].data(), testData[ntests - 1].data());
    for (unsigned long i = 0; i < ntests - 1; ++i) {
       const double dist = CS6Dist(testData[i].data(), testData[i + 1].data());
@@ -818,8 +815,7 @@ void TestCS6DistancesTiming(const std::vector<S6>& testData) {
 }
 
 void TestD7DistancesTiming(const std::vector<S6>& testData) {
-   const unsigned long ntests = testData.size();
-   int count = 0;
+   const unsigned long ntests = (unsigned long)(testData.size());
    const double distA = D7Dist(testData[0].data(), testData[ntests - 1].data());
    for (unsigned long i = 0; i < ntests - 1; ++i) {
       const double dist = D7Dist(testData[i].data(), testData[i + 1].data());
@@ -827,8 +823,7 @@ void TestD7DistancesTiming(const std::vector<S6>& testData) {
 }
 
 void TestS6DistancesTiming(const std::vector<S6>& testData) {
-   const unsigned long ntests = testData.size();
-   int count = 0;
+   const unsigned long ntests = (unsigned long)(testData.size());
    S6Dist s6dist(1);
    const double distA = s6dist.DistanceBetween(testData[0], testData[ntests - 1]);
    for (unsigned long i = 0; i < ntests - 1; ++i) {
@@ -837,8 +832,7 @@ void TestS6DistancesTiming(const std::vector<S6>& testData) {
 }
 
 void TestG6DistancesTiming(const std::vector<G6>& testData) {
-   const unsigned long ntests = testData.size();
-   int count = 0;
+   const unsigned long ntests = (unsigned long)(testData.size());
    const double distA = NCDist(testData[0].data(), testData[ntests - 1].data());
    for (unsigned long i = 0; i < ntests - 1; ++i) {
       NCDist(testData[i].data(), testData[i + 1].data());
@@ -846,8 +840,7 @@ void TestG6DistancesTiming(const std::vector<G6>& testData) {
 }
 
 void TestV7DistancesTiming(const std::vector<G6>& testData) {
-   const unsigned long ntests = testData.size();
-   int count = 0;
+   const unsigned long ntests = (unsigned long)(testData.size());
    const double distA = V7Dist(testData[0].data(), testData[ntests - 1].data());
    for (unsigned long i = 0; i < ntests - 1; ++i) {
       V7Dist(testData[i].data(), testData[i + 1].data());
@@ -855,11 +848,11 @@ void TestV7DistancesTiming(const std::vector<G6>& testData) {
 }
 
 void CheckReduceAndDistanceTiming() {
-   StoreResults < std::string, double> store(100);
+   StoreResults < std::string, double> storeLocal(100);
    const unsigned long nReduceSamples = 1000;
    std::cout << "number of test samples " << nReduceSamples << std::endl;
-   int seed(19191);
-   GenerateRandomLattice<G6> grl(seed);
+   int seed2(19191);
+   GenerateRandomLattice<G6> grl(seed2);
 
    std::vector<S6> testDataS6REDUCED;
    for (unsigned long i = 0; i < nReduceSamples; ++i) {
@@ -893,17 +886,17 @@ void CheckReduceAndDistanceTiming() {
          start = std::clock();
          TestSellingTiming(testDataS6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced Input Selling", endTime);
+         storeLocal.Store("Reduced Input Selling", endTime);
 
          start = std::clock();
          TestNiggliTiming(testDataG6REDUCED, true);
          endTime = std::clock() - start;
-         store.Store("Reduced Input Niggli preSelling", endTime);
+         storeLocal.Store("Reduced Input Niggli preSelling", endTime);
 
          start = std::clock();
          TestNiggliTiming(testDataG6REDUCED, false);
          endTime = std::clock() - start;
-         store.Store("Reduced Input Niggli only Niggli", endTime);
+         storeLocal.Store("Reduced Input Niggli only Niggli", endTime);
       }
 
       //---------------------------------- test unreduced reductions
@@ -912,17 +905,17 @@ void CheckReduceAndDistanceTiming() {
          start = std::clock();
          TestSellingTiming(unreducedTestDataS6);
          endTime = std::clock() - start;
-         store.Store("NOT Reduced Input Selling", endTime);
+         storeLocal.Store("NOT Reduced Input Selling", endTime);
 
          start = std::clock();
          TestNiggliTiming(unreducedTestDataG6, true);
          endTime = std::clock() - start;
-         store.Store("NOT Reduced Input Niggli, preSelling", endTime);
+         storeLocal.Store("NOT Reduced Input Niggli, preSelling", endTime);
 
          start = std::clock();
          TestNiggliTiming(unreducedTestDataG6, false);
          endTime = std::clock() - start;
-         store.Store("NOT Reduced Input Niggli, NOT preSelling", endTime);
+         storeLocal.Store("NOT Reduced Input Niggli, NOT preSelling", endTime);
       }
 
       {
@@ -930,41 +923,41 @@ void CheckReduceAndDistanceTiming() {
          start = std::clock();
          TestS6DistancesTiming(testDataS6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced S6Dist ", endTime);
+         storeLocal.Store("Reduced S6Dist ", endTime);
 
          //---------------------------------- test CS6 distances
          start = std::clock();
          TestCS6DistancesTiming(testDataS6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced CS6Dist ", endTime);
+         storeLocal.Store("Reduced CS6Dist ", endTime);
 
          //---------------------------------- test G6 distances
          start = std::clock();
          TestG6DistancesTiming(testDataG6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced NCDist ", endTime);
+         storeLocal.Store("Reduced NCDist ", endTime);
 
          //---------------------------------- test D7 distances
          start = std::clock();
          TestD7DistancesTiming(testDataS6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced D7Dist ", endTime);
+         storeLocal.Store("Reduced D7Dist ", endTime);
 
          //---------------------------------- test V7 distances
          start = std::clock();
          TestV7DistancesTiming(testDataG6REDUCED);
          endTime = std::clock() - start;
-         store.Store("Reduced V7Dist ", endTime);
+         storeLocal.Store("Reduced V7Dist ", endTime);
       }
    }
 
-   store.ShowResults();
+   storeLocal.ShowResults();
    exit(0);
 }
 
 void LookAtReductions() {
-   int seed(19191);
-   GenerateRandomLattice<G6> grl(seed);
+   int seed4(19191);
+   GenerateRandomLattice<G6> grl(seed4);
    S6 test;
    S6 s6out;
    G6 g6out;
@@ -986,17 +979,16 @@ void LookAtReductions() {
 }
 
 void VerifyIsNiggli() {
-   StoreResults<bool, std::string> store(10);
-   int seed = 9;
-   GenerateRandomLattice<G6> grl(seed);
+   StoreResults<bool, std::string> storeLocal(10);
+   int seed6 = 9;
+   GenerateRandomLattice<G6> grl(seed6);
    G6 vout;
    const unsigned long ntest = 10000;
    for (unsigned long i = 0; i < ntest; ++i) {
       const G6 g6 = grl.GenerateExtreme();
-      bool b = Niggli::Reduce(g6, vout);
-      store.Store(Niggli::IsNiggli(vout), LRL_ToString(LRL_Cell_Degrees(g6), "  ", LRL_Cell_Degrees(vout)));
+      storeLocal.Store(Niggli::IsNiggli(vout), LRL_ToString(LRL_Cell_Degrees(g6), "  ", LRL_Cell_Degrees(vout)));
    }
-   store.ShowResults();
+   storeLocal.ShowResults();
    exit(0);
 }
 
@@ -1004,8 +996,8 @@ void TimingForNewNiggliReduce() {
    std::vector<G6> v;
    const unsigned long nv = 100000;
    std::cout << "number of distances = " << nv << std::endl;
-   int seed = 10;
-   GenerateRandomLattice<G6> grl(seed);
+   int seed5 = 10;
+   GenerateRandomLattice<G6> grl(seed5);
    for (unsigned long i = 0; i <= nv; ++i)
       v.push_back(grl.GenerateExtreme());
 
@@ -1028,15 +1020,15 @@ void TimingForNewNiggliReduce() {
 }
 
 void VerifyNiggli() {
-   StoreResults<double, std::string> store(10);
-   int seed = 9;
-   //GenerateRandomLattice<G6> grl(seed);
+   StoreResults<double, std::string> storeLocal(10);
+   int seed3 = 9;
+   //GenerateRandomLattice<G6> grl(seed3);
    //const unsigned long ntest = 100000;
    //for (unsigned long i = 0; i < ntest; ++i) {
    //   const G6 g6 = grl.GenerateExtreme();
-   const std::vector<CellInputData> cellData = LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(seed);  // read the data
+   const std::vector<CellInputData> cellData = LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(seed3);  // read the data
 
-   const unsigned long n = cellData.size();
+   const unsigned long n = (unsigned long)(cellData.size());
    std::cout << "number of cells read   " << n << std::endl;
    G6 vout1;
    G6 vout2;
@@ -1044,14 +1036,11 @@ void VerifyNiggli() {
    for (unsigned long i = 0; i < n; ++i) {
       LRL_Cell cell = cellData[i].GetCell();
 
-      bool b1 = Niggli::Reduce(G6(cell), vout1);
-      bool b2 = Niggli::ReduceWithoutMatrices(G6(cell), vout2, 0.0);
-
-      if (vout1 == vout2) store.Store(0, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
-      else if ((vout1 - vout2).norm() < 1.0E-9) store.Store(1, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
-      else store.Store(2, LRL_ToString((vout1 - vout2).norm(), "  ", LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2))));
+      if (vout1 == vout2) storeLocal.Store(0, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
+      else if ((vout1 - vout2).norm() < 1.0E-9) storeLocal.Store(1, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
+      else storeLocal.Store(2, LRL_ToString((vout1 - vout2).norm(), "  ", LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2))));
    }
-   store.ShowResults();
+   storeLocal.ShowResults();
    exit(0);
 }
 
@@ -1110,7 +1099,7 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    while (lattice != "EOF") {
       rcd.read();
       lattice = rcd.GetLattice();
-      if ((!lattice.empty()) && (letters.find(toupper(lattice[0])) != std::string::npos))
+      if ((!lattice.empty()) && (letters.find(static_cast<char>(toupper(lattice[0]))) != std::string::npos))
          cellDataList.push_back(rcd);
    }
 

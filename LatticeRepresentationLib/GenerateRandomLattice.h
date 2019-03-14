@@ -19,14 +19,14 @@ template<typename T = S6>
 class GenerateRandomLattice {
 
 public:
-   GenerateRandomLattice(const int seed)
-      : m_seed(seed)
+   GenerateRandomLattice(const int seed2)
+      : m_seed(seed2)
       , m_perturb(1.0)
       , m_hasAngleLimits(false)
       , m_hasLengthLimits(false)
 
    {
-      rhrand.srandom(seed);
+      rhrand.srandom(seed2);
       m_minA = 5.0;
       m_maxA = 100.0;
       m_minB = 5.0;
@@ -51,7 +51,6 @@ public:
          return T(s6);
       }
       else if (choice < 0.68) {
-         double test = std::abs(39.4918 - s6[0]);
          return T(RandomUnreduceOne(s6));
       }
       else if (choice < 0.995) {

@@ -29,3 +29,15 @@ S6_Ordinals operator* (const MatS6& m, const S6_Ordinals& soin) {
    so.m_ordinals = m * soin.m_ordinals;
    return so;
 }
+
+MatS6 S6_Ordinals::MatrixFromOrdinals(const S6_Ordinals& s) {
+   return MatrixFromOrdinals(s.m_ordinals);
+}
+
+MatS6 S6_Ordinals::MatrixFromOrdinals(const S6& s) {
+   MatS6 m(MatS6().Zero());
+   for ( auto i=0; i<6; ++i ) {
+      m[6 * i + int(s[i])] = 1.0;   
+   }
+   return m;
+}

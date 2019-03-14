@@ -16,7 +16,6 @@ public:
    S6Dist(const double dnearzero = 1.0);
 
    double DistanceBetween(const S6& d1, const S6& d2);
-   static double new_DistanceBetween(const S6& d1, const S6& d2);
    void OneBoundaryDistance(const S6& s1, const S6& s2);
    void TwoBoundaryDistance(const S6& s1, const S6& s2);
    static std::vector<S6> Create_VCP_s(const S6& s);
@@ -93,48 +92,6 @@ private:
    static std::vector< S6(*)(const S6&)> m_reflectionFunctions;
 
 public:
-   class Tracker {
-   public:
-      Tracker() {}
-      Tracker( const std::string& label, const S6& s6) : m_label(label), m_s6(s6) {}
-      Tracker(const Tracker& t) : m_label(t.m_label), m_s6(t.m_s6) {}
-      Tracker& operator= (const Tracker& t) { m_label = t.m_label; m_s6 = t.m_s6; }
-      S6 GetVector(void) const { return m_s6; }
-      std::string GetLabel(void)const { return m_label; }
-
-      friend std::ostream& operator<< (std::ostream& o, const Tracker& tr) {
-         o << tr.m_label << "   " << tr.m_s6;
-         return o;
-      }
-
-   private:
-      std::string m_label;
-      S6 m_s6;
-   };
-
-   class TrackerHistory {
-   public:
-      TrackerHistory(void) { m_vtrak.reserve(200); }
-      void Add(const Tracker& t) {
-         m_vtrak.push_back(t);
-      }
-      Tracker GetItem(const unsigned long n) { return m_vtrak[n]; }
-
-      Tracker operator[] (const unsigned long n) { return m_vtrak[n]; }
-
-      size_t size() const { return m_vtrak.size(); }
-
-
-      friend std::ostream& operator<< (std::ostream& o, const TrackerHistory& th) {
-         for (unsigned long i = 0; i < th.m_vtrak.size(); ++i)
-            o << th.m_vtrak[i] << std::endl;
-         return o;
-      }
-
-   
-   private:
-      std::vector<Tracker> m_vtrak;
-   };
 
 };
 #endif // S6DIST_H

@@ -9,6 +9,9 @@
 #include "Selling.h"
 #include "StoreResults.h"
 
+#include <cfloat>
+
+
 const std::vector<LabeledSellaMatrices> Sella::projectors = LabeledSellaMatrices::CreateAllPrjs();
 const std::vector<LabeledSellaMatrices> Sella::perps = LabeledSellaMatrices::CreateAllPerps();
 

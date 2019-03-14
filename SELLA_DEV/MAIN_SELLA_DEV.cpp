@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "LabeledSellaMatrices.h"
 #include "LatticeCentering.h"
 #include "LatticeConverter.h"
 #include "LRL_CoordinateConversionMatrices.h"
@@ -142,10 +143,10 @@ void TestLatticeCentering() {
 
       // third test of centering
       static const std::vector<MatS6> refls = MatS6::GetReflections();
-      for (unsigned long i = 0; i < latcenter.size(); ++i) {
+      for (unsigned long j = 0; j < latcenter.size(); ++j) {
          for ( unsigned long k=0; k<refls.size(); ++k ) {
-         std::cout << latcenter[i].first << " "
-            << LRL_Cell_Degrees(FromPrimitiveToCentered(latcenter[i].second, LRL_Cell(refls[k]*s6))) << std::endl;
+         std::cout << latcenter[j].first << " "
+            << LRL_Cell_Degrees(FromPrimitiveToCentered(latcenter[j].second, LRL_Cell(refls[k]*s6))) << std::endl;
          }
       }
    }
@@ -249,13 +250,8 @@ void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
 
 int main()
 {
-   std::vector<LabeledSellaMatrices> allPerps = SellaBuild::CreateAllPerps();
-
-
    SellaBuild sellaBuild;
    sellaBuild.Build();
-   sellaBuild.WriteSellaMatrices("Prj", sellaBuild.GetPerps());
-   sellaBuild.WriteSellaMatrices("Perp", sellaBuild.GetProjectors());
    exit(0);
 
    TestLatticeCentering();

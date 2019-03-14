@@ -23,7 +23,7 @@
     <ProjectGuid>{997F26BD-35A5-473C-96D9-8106BC29BC3C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ReductionTimeingTests</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

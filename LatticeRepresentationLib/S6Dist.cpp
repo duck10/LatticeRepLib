@@ -278,73 +278,6 @@ std::vector<S6> Insert(const std::vector<S6>& tar, const S6& from) {
    return target;
 }
 
-double TrackedDistanceBetween(const S6& s1, const S6& s2) {
-   S6Dist::TrackerHistory track1;
-   S6Dist::TrackerHistory track2
-      ;
-   static const std::vector< S6(*)(const S6&)> unreducers(S6::SetUnreduceFunctions());
-
-   // track s1
-   for (unsigned long ivcp = 0; ivcp < unreducers.size(); ++ivcp) {
-      S6 szu(unreducers[ivcp](ZeroOneScalar(ivcp, s1)));
-      szu[ivcp] = -s1[ivcp];
-      const std::string label = "V" + LRL_ToString(ivcp);
-      track1.Add(S6Dist::Tracker(label, szu));
-   }
-   track1.Add(S6Dist::Tracker("1", s1));
-   std::cout << "INSIDE" << std::endl;
-   std::cout << track1 << std::endl;
-
-   // track s2
-   static const std::vector< S6(*)(const S6&)> reflectionFunctions = S6::SetRelectionFunctions();
-   track2.Add(S6Dist::Tracker("1", s2));
-
-   for (unsigned long iref = 0; iref < reflectionFunctions.size(); ++iref) {
-      S6 sref = reflectionFunctions[iref](s2);
-      const std::string label = "R" + LRL_ToString(iref);
-      track2.Add(S6Dist::Tracker(label, sref));
-   }
-
-   for (unsigned long ivcp = 0; ivcp < unreducers.size(); ++ivcp) {
-      S6 szu = unreducers[ivcp](ZeroOneScalar(ivcp, s2));
-      szu[ivcp] = -s2[ivcp];
-      std::string label_vcp = "V" + LRL_ToString(ivcp);
-      for (unsigned long iref = 0; iref < 24; ++iref) {
-         S6 sref = reflectionFunctions[iref](szu);
-         const std::string label = "R" + LRL_ToString(iref) + label_vcp;
-         track2.Add(S6Dist::Tracker(label, sref));
-      }
-   }
-
-   std::cout << "OUTSIDE" << std::endl;
-   std::cout << track2 << std::endl;
-
-   std::vector<std::pair<double, std::string> > results;
-   S6Dist s6dist;
-   for (unsigned long i1=0; i1<track1.size(); ++i1 ) {
-      const S6& st1 = track1[i1].GetVector();
-      for ( unsigned long i2=0; i2<track2.size(); ++i2 ) {
-         const S6& st2 = track2[i2].GetVector();
-
-         const double dist = (st2 - st1).norm();
-         results.push_back(std::make_pair(dist, LRL_ToString(track1[i1]) + "     " + LRL_ToString(track2[i2])));
-      }
-   }
-
-   std::sort(results.begin(), results.end());
-
-   std::vector<PairReporter<double,std::string> > resultsPR;
-   for (unsigned long i = 0; i<results.size(); ++i) {
-      resultsPR.push_back(results[i]);
-   }
-
-   std::cout << "DISTANCE RESULTS" << std::endl;
-   for ( unsigned long i=0; i<resultsPR.size(); ++i ) {
-      std::cout << LRL_ToString(resultsPR[i].GetFirst()) << "   " << LRL_ToString(resultsPR[i].GetSecond()) << std::endl;
-   }
-   return results[0].first;
-}
-
 void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    std::vector<S6> vinside(1, s1);
    m_dmin = DBL_MAX;
@@ -357,7 +290,6 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    const std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
    m_dmin = std::min(m_dmin, p.first);
 
-   //TrackedDistanceBetween(s1, s2);
 }
 
 void S6Dist::TwoBoundaryDistance(const S6& s1, const S6& s2) {
@@ -371,76 +303,10 @@ void S6Dist::TwoBoundaryDistance(const S6& s1, const S6& s2) {
    //voutside = Insert(voutside, ((Generate24Reflections((CreateSecondBoundary_VCP_s(s2))))));
    const std::pair<double, unsigned long> p = MinForListOfS6(vinside, voutside);
    m_dmin = std::min(m_dmin, p.first);
-
-   //TrackedDistanceBetween(s1, s2);
 }
 
-
-double S6Dist::new_DistanceBetween(const S6& s1, const S6& s2) {
-   S6Dist::TrackerHistory track1;
-   S6Dist::TrackerHistory track2;
-
-   static const std::vector< S6(*)(const S6&)> unreducers(S6::SetUnreduceFunctions());
-
-   // track s1
-   for (unsigned long ivcp = 0; ivcp < unreducers.size(); ++ivcp) {
-      S6 szu(unreducers[ivcp](ZeroOneScalar(ivcp, s1)));
-      szu[ivcp] = -s1[ivcp];
-      const std::string label = "V" + LRL_ToString(ivcp);
-      track1.Add(S6Dist::Tracker(label, szu));
-   }
-   track1.Add(S6Dist::Tracker("1", s1));
-
-   // track s2
-   static const std::vector< S6(*)(const S6&)> reflectionFunctions = S6::SetRelectionFunctions();
-   //track2.Add(S6Dist::Tracker("1", s2));
-
-   for (unsigned long iref = 0; iref < reflectionFunctions.size(); ++iref) {
-      S6 sref = reflectionFunctions[iref](s2);
-      const std::string label = "R" + LRL_ToString(iref);
-      track2.Add(S6Dist::Tracker(label, sref));
-   }
-
-   for (unsigned long ivcp = 0; ivcp < unreducers.size(); ++ivcp) {
-      S6 szu = unreducers[ivcp](ZeroOneScalar(ivcp, s2));
-      szu[ivcp] = -s2[ivcp];
-      std::string label_vcp = "V" + LRL_ToString(ivcp);
-      for (unsigned long iref = 0; iref < 24; ++iref) {
-         S6 sref = reflectionFunctions[iref](szu);
-         const std::string label = "R" + LRL_ToString(iref) + label_vcp;
-         track2.Add(S6Dist::Tracker(label, sref));
-      }
-   }
-
-
-   std::vector<std::pair<double, std::string> > results;
-   S6Dist s6dist;
-   for (unsigned long i1 = 0; i1<track1.size(); ++i1) {
-      const S6& st1 = track1[i1].GetVector();
-      for (unsigned long i2 = 0; i2<track2.size(); ++i2) {
-         const S6& st2 = track2[i2].GetVector();
-
-         const double dist = (st2 - st1).norm();
-         results.push_back(std::make_pair(dist, LRL_ToString(track1[i1]) + "     " + LRL_ToString(track2[i2])));
-      }
-   }
-
-   std::sort(results.begin(), results.end());
-
-   //std::vector<PairReporter<double, std::string> > resultsPR;
-   //for (unsigned long i = 0; i<results.size(); ++i) {
-   //   resultsPR.push_back(results[i]);
-   //}
-
-   //std::cout << "DISTANCE RESULTS" << std::endl;
-   //for (unsigned long i = 0; i<resultsPR.size(); ++i) {
-   //   std::cout << LRL_ToString(resultsPR[i].GetFirst()) << "   " << LRL_ToString(resultsPR[i].GetSecond()) << std::endl;
-   //}
-   return results[0].first;
-}
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
 
-   //TrackedDistanceBetween(s1, s2);
    g_debug.clear();
    g_bestVectors.clear();
 
