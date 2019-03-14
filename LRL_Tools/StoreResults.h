@@ -57,7 +57,7 @@ public:
    StoreResults(const unsigned long nMax = 1)
       : m_nmax(nMax)
       , m_keyName("Key")
-      , m_creationTime(time(NULL))
+      , m_creationTime(static_cast<long int>(time(NULL))) 
    {}
 
    void Store(const TKEY& key, const TDATA& data) {

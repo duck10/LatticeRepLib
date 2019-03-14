@@ -28,7 +28,7 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    while (lattice != "EOF") {
       rcd.read();
       lattice = rcd.GetLattice();
-      if ((!lattice.empty()) && (letters.find(toupper(lattice[0])) != std::string::npos))
+      if ((!lattice.empty()) && (letters.find(static_cast<char>(toupper(lattice[0]))) != std::string::npos))
          cellDataList.push_back(rcd);
    }
 
@@ -203,7 +203,8 @@ void ParseArgs(const int argc, char* argv[], std::vector<std::string>& sRet, std
    sRet.clear();
    for (unsigned long i = 1; int(i) < argc; ++i) {
       std::string s(argv[i]);
-      std::transform(s.begin(), s.end(), s.begin(), toupper);
+	  for (auto k = 0; k < s.length(); ++k)
+		  s[k] = static_cast<char>(toupper(s[k]));
       sRet.push_back(s);
    }
 }

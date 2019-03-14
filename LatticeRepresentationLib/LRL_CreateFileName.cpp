@@ -14,7 +14,7 @@
    const std::string& extension, const bool includeTimestamp/*=true*/ )
 //---------------------------------------------------------------------
 {
-   const time_t       now        = time(NULL);
+   const time_t       now        = static_cast<long int>(time(NULL));
          char         buft[256];
    const int          len        = sizeof(buft);
    buft[0] = '\0';

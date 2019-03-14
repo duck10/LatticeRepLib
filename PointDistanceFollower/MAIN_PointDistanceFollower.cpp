@@ -143,7 +143,6 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
       for (unsigned long step = 0; step < FollowerConstants::globalStepsPerFrame; ++step) {
          const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
          S6 next = (1.0 - t)*probe + t * reducedProbe;
-         const bool b = Selling::Reduce(next, reduced);
          if (!next.IsValid()) next = InvalidPoint();
          if (!reduced.IsValid()) reduced = InvalidPoint();
          points.push_back(std::make_pair(next, reduced));
@@ -255,7 +254,6 @@ int main(int argc, char* argv[]) {
    std::vector<CellInputData> celldata = ReadAllLatticeData();;
 
    unsigned long cellcount = 0;
-   unsigned long plotCounter = 0;
    std::vector<CellInputData>::const_iterator it = celldata.begin();
    CellInputData cell1;
    CellInputData cell2;
@@ -275,9 +273,6 @@ int main(int argc, char* argv[]) {
          break;
       }
 
-
-
-      unsigned long nextCell = i;
       ProcessTrialsForOneLattice(celldata, i, cellcount,
          FollowerConstants::globalFollowerMode,
          cell1, cell2, cell3);

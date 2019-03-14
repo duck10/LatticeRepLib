@@ -107,9 +107,6 @@
     <ClCompile Include="LRL_CoordinateConversionMatrices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="S6_Ordinals.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LabeledSellaMatrices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -245,9 +242,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LatticeCentering.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="S6_Ordinals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LabeledSellaMatrices.h">

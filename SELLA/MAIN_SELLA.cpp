@@ -12,7 +12,6 @@
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "S6.h"
-#include "S6_Ordinals.h"
 #include "Sella.h"
 #include "Selling.h"
 #include "StoreResults.h"
@@ -30,7 +29,7 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    while (lattice != "EOF") {
       rcd.read();
       lattice = rcd.GetLattice();
-      if ((!lattice.empty()) && (letters.find(toupper(lattice[0])) != std::string::npos))
+      if ((!lattice.empty()) && (letters.find(static_cast<char>(toupper(lattice[0]))) != std::string::npos))
          cellDataList.push_back(rcd);
    }
 
@@ -43,7 +42,6 @@ std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeD
 
 
    for ( unsigned long i=0; i<input.size(); ++i ) {
-      const LRL_ReadLatticeData& rcd = input[i];
       const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell());
       v.push_back(s6);
    }
@@ -213,7 +211,7 @@ double FitRange(const double f) {
 
 void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    StoreResults<std::string, std::string> storeGood(20);
-   StoreResults<std::string, std::string> storeProblems(100);
+   StoreResults<std::string, std::string> storeLocalProblems(100);
    StoreResults<double, std::string> storeO3(100);
    StoreResults<double, std::string> storeM3(100);
    StoreResults<double, std::string> storeM2B(100);
@@ -234,7 +232,7 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
 
       const std::pair<std::string, double> fit = sella.GetBestFitForCrystalSystem(xtalSystem, vLat[lat]);
       const double normlat = vLat[lat].norm();
-      if (fit.second > 1.0E-5) storeProblems.Store(fit.first, LRL_ToString(" ", fit.first, "  ", fit.second, " (", normlat, ")  ",  strCell, "  ", vLat[lat]));
+      if (fit.second > 1.0E-5) storeLocalProblems.Store(fit.first, LRL_ToString(" ", fit.first, "  ", fit.second, " (", normlat, ")  ",  strCell, "  ", vLat[lat]));
       if (fit.second < 1.0E-5) storeGood.Store(fit.first, LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat]));
  //     std::cout << LRL_ToString(fit.first, "  ") << LRL_ToString( LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat])) << std::endl;
 
@@ -245,7 +243,7 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
       //storeM3 .Store(fitM3 , LRL_ToString("(", fitM3, "  ", strCell, "   ",vLat[lat]));
       //storeM2B.Store(fitM2B, LRL_ToString("(", fitM2B, "  ", strCell, "   ",vLat[lat]));
    }
-   storeProblems.ShowResults();
+   storeLocalProblems.ShowResults();
    storeGood.ShowResults();
 
    storeO3 .ShowResults();

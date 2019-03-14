@@ -186,7 +186,6 @@
     <ClCompile Include="LRL_ReadLatticeData.cpp" />
     <ClCompile Include="Niggli.cpp" />
     <ClCompile Include="S6_Matrices.cpp" />
-    <ClCompile Include="S6_Ordinals.cpp" />
     <ClCompile Include="Sella.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -232,7 +231,6 @@
     <ClInclude Include="LRL_ReadLatticeData.h" />
     <ClInclude Include="Niggli.h" />
     <ClInclude Include="S6_Matrices.h" />
-    <ClInclude Include="S6_Ordinals.h" />
     <ClInclude Include="SanMatrix.h" />
     <ClInclude Include="Sella.h" />
     <ClInclude Include="Selling.h" />

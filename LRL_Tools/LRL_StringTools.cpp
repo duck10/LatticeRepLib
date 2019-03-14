@@ -11,8 +11,9 @@
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 std::string LRL_StringTools::strToupper(const std::string& s) {
-   std::string ss;
-   std::transform(s.begin(), s.end(), std::back_inserter(ss), toupper);
+   std::string ss(s);
+   for (auto i = 0; i < ss.length(); ++i)
+	   ss[i] = static_cast<char>(toupper(ss[i]));
    return(ss);
 }
 
