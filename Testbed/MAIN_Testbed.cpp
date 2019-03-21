@@ -15,6 +15,7 @@
 #include "D7Dist_.hpp"
 #include "Delone.h"
 #include "GenerateRandomLattice.h"
+#include "LatticeCentering.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
@@ -38,8 +39,6 @@
 #include "StoreResults.h"
 #include "TNear.h"
 #include "LRL_Vector3.h"
-
-#include "SanMatrix.h"
 
 #include <ctime>
 #include <functional>
@@ -1190,36 +1189,40 @@ void F_makeS6UnPrimitiveMatrices() {
 #include "S6.cpp"
 int main(int argc, char *argv[])
 {
-	std::vector<double> e3(9);
-	e3[0] = 1;
-	e3[1] = 1;
-	e3[2] = 0;
+	//std::vector<double> e3(9);
+	//e3[0] = 1;
+	//e3[1] = 1;
+	//e3[2] = 0;
 
-	e3[3] = -1;
-	e3[4] = 1;
-	e3[5] = 0;
+	//e3[3] = -1;
+	//e3[4] = 1;
+	//e3[5] = 0;
 
-	e3[6] = 1;
-	e3[7] = 1;
-	e3[8] = 2;
-
-	std::cout << "E3 matrix for P to F for cF  " << std::endl;
-	for (auto i = 0; i < 9; ++i) {
-		if (i % 3 == 0) std::cout << std::endl;
-		std::cout << e3[i];
-	}
+	//e3[6] = 1;
+	//e3[7] = 1;
+	//e3[8] = 2;
+	//std::cout << "E3 matrix for P to F for cF  " << std::endl;
+	//for (auto i = 0; i < 9; ++i) {
+	//	if (i % 3 == 0) std::cout << std::endl;
+	//	std::cout << e3[i];
+	//}
 	
 	std::cout << std::endl << std::endl;
-
-	const MatS6 m6 = MatS6::e3Tos6(e3);
-	std::cout << "MatS6 matrix for P to F for cF  " << std::endl << m6 << std::endl << std::endl;
-	LRL_Cell cell(10, 10, 10,60,60,60);
-	std::cout << "input cell " << LRL_Cell_Degrees(cell) << std::endl << std::endl;
-	S6 s6red;
-	Selling::Reduce(S6(cell), s6red);
-
-	std::cout << " result cell  " << LRL_Cell_Degrees(m6*s6red) << std::endl;
+	std::vector<std::pair<std::string, std::vector<double> > > vcenters = LatticeCentering::Make3dCenteringMatrices();
+	std::cout << "size" << vcenters.size() << std::endl;
+	for ( auto i=0; i<vcenters.size(); ++i ) {
+	   const MatS6 m6 = MatS6::e3Tos6(vcenters[i].second);
+		std::cout << std::endl << "\"" << vcenters[i].first << "\", MatS6(" << std::endl << m6 << std::endl;
+	}
 	exit(0);
+	//   std::cout << "MatS6 matrix for P to F for cF  " << std::endl << m6 << std::endl << std::endl;
+	//   LRL_Cell cell(10, 10, 10,60,60,60);
+	//   std::cout << "input cell " << LRL_Cell_Degrees(cell) << std::endl << std::endl;
+	//S6 s6red;
+	//Selling::Reduce(S6(cell), s6red);
+
+	//std::cout << " result cell  " << LRL_Cell_Degrees(m6*s6red) << std::endl;
+	//exit(0);
 
 
    PDB_ReduceTimingTest();

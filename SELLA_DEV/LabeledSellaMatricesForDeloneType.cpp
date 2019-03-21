@@ -1,11 +1,10 @@
 #include "GenerateRandomLattice.h"
 #include "LabeledSellaMatricesForDeloneType.h"
 #include "S6Dist.h"
-//#include "SanMatrix.h"
 #include "LatticeCentering.h"
 #include <string>
 
-bool LabeledSellaMatricesForDeloneType::AlreadyHasProjector( const MatS6& m, const LabeledSellaMatricesForDeloneType& lsm) const{
+bool LabeledSellaMatricesForDeloneType::AlreadyHasThisProjector( const MatS6& m, const LabeledSellaMatricesForDeloneType& lsm) const{
    for ( auto i=0; i<lsm.m_prjs.size(); ++i ) {
       const double d = (m - lsm.m_prjs[i]).norm();
       if ((m - lsm.m_prjs[i]).norm() < 1.0E-4) return true;
@@ -29,7 +28,7 @@ std::vector<LabeledSellaMatricesForDeloneType>
       lsm.m_label = label;
       for (unsigned long i = 0; i < p.second.size(); ++i) {
          const MatS6 prj = ProjectorFromVector(label, p.second[i]);
-         if (!AlreadyHasProjector(prj, lsm)) {
+         if (!AlreadyHasThisProjector(prj, lsm)) {
             lsm.m_prjs.push_back(ProjectorFromVector(label, p.second[i]));
             lsm.m_perps.push_back(unit - ProjectorFromVector(label, p.second[i]));
             lsm.m_toCanons.push_back(ToCanon(p.second[i]));

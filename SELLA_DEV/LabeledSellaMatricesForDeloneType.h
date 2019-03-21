@@ -26,7 +26,7 @@ private:
    static MatS6 ProjectorFromVector(const std::string& label, const S6& s);
    static MatS6 ToCanon(const S6& s);
    static MatS6 ToCanon(const S6_Ordinals& s);
-   bool AlreadyHasProjector(const MatS6& m, const LabeledSellaMatricesForDeloneType& lsm) const;
+   bool AlreadyHasThisProjector(const MatS6& m, const LabeledSellaMatricesForDeloneType& lsm) const;
    void DoPerps(const std::vector<LabeledSellaMatricesForDeloneType>& matsForAllDeloneTypes) const;
    void DoPrjs(const std::vector<LabeledSellaMatricesForDeloneType>& matsForAllDeloneTypes) const;
    void DoToCanon(const std::vector<LabeledSellaMatricesForDeloneType>& matsForAllDeloneTypes) const;
