@@ -1,7 +1,8 @@
 #include "GenerateRandomLattice.h"
 #include "LabeledSellaMatricesForDeloneType.h"
 #include "S6Dist.h"
-
+//#include "SanMatrix.h"
+#include "LatticeCentering.h"
 #include <string>
 
 bool LabeledSellaMatricesForDeloneType::AlreadyHasProjector( const MatS6& m, const LabeledSellaMatricesForDeloneType& lsm) const{
@@ -88,7 +89,8 @@ MatS6 LabeledSellaMatricesForDeloneType::ProjectorFromVector(const std::string& 
          m[Index6(k, j)] = m[Index6(j, k)];
       }
    }
-   //std::cout << label << "   " << s << std::endl;
+
+	//std::cout << label << "   " << s << std::endl;
    //std::cout << m << std::endl << std::endl;
    return m;
 }

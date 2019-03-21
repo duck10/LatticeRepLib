@@ -25,7 +25,7 @@ std::vector<std::pair<char, MatS6> > LatticeCentering::MakeUncenterMatrices() {
    return m_ToPrimitive;
 }
 
-static MatS6 MakeCentering(const MatS6& m) {
+MatS6 LatticeCentering::MakeCentering(const MatS6& m) {
    const CMatrix cm(m);
    const CMatrix inv = cm.Inverse();
    const MatS6 m6(inv.GetVector());

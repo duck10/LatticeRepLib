@@ -17,9 +17,11 @@ SellaBuild::SellaBuild() {
 }
 
 void SellaBuild::Build() {
+	MatS6 transformations;
    for (unsigned long i = 0; i < vDeloneTypes.size(); ++i) {
+		transformations.unit();
       //for (unsigned long i = 2; i < 3; ++i) {  // to show only C5
-      Expand(vDeloneTypes[i].first, vDeloneTypes[i].second);
+      Expand(vDeloneTypes[i].first, vDeloneTypes[i].second, transformations);
    }
    store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
@@ -37,7 +39,6 @@ static int seed = 19191;
 
 S6 SellaBuild::MakeSampleType(const MatS6& m) {
    GenerateRandomLattice<S6> generate(seed);
-   bool valid = false;
    S6 s6;
    s6.SetValid(false);
    int count = 0;
@@ -115,20 +116,20 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
    return v;
 }
 
-void SellaBuild::Expand(const std::string& label, const MatS6& m) {
+void SellaBuild::Expand(const std::string& label, const MatS6& m, MatS6 transformations) {
    const S6_Ordinals s6 = MakeSampleType(m);
 
    if (s6.IsValid()) {
       switch (s6.CountZeros()) {
       case 0:
-         StoreAllReflections(label, s6);
+         StoreAllReflections(label, s6, transformations);
          break;
       case 1:
-         OneBound(label, s6);
+         OneBound(label, s6, transformations);
          break;
       case 2:
       case 3:
-         ProcessZeros(label, s6);
+         ProcessZeros(label, s6, transformations);
          break;
       default:
          throw "this should never happen";
@@ -179,7 +180,7 @@ S6_Ordinals MultiplyUsingFunction(T refl, const S6_Ordinals& so )
    return s1;
 }
 
-void SellaBuild::StoreAllReflections(const std::string& label, const S6_Ordinals& s1in) {
+void SellaBuild::StoreAllReflections(const std::string& label, const S6_Ordinals& s1in, const MatS6& transformations) {
    std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
    S6_Ordinals s1(s1in);
 
@@ -189,17 +190,18 @@ void SellaBuild::StoreAllReflections(const std::string& label, const S6_Ordinals
    //store.ShowResults();
 }
 
-void SellaBuild::OneBound(const std::string& label, const S6_Ordinals& s1) {
+void SellaBuild::OneBound(const std::string& label, const S6_Ordinals& s1, MatS6 transformations) {
    static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
 
    unsigned long nzero = 0;
    for (unsigned long i = 0; i < 6; ++i) if (s1[i] == 0) nzero = i;
-   StoreAllReflections(label, s1);
+   StoreAllReflections(label, s1, transformations);
    const S6_Ordinals s6temp = MultiplyUsingFunction(fnRedn[nzero], s1);
-   StoreAllReflections(label, s6temp);
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! doesn't accumulate the transformation here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   StoreAllReflections(label, s6temp, transformations);
 }
 
-void SellaBuild::ProcessZeros(const std::string& label, const S6_Ordinals& s6) {
+void SellaBuild::ProcessZeros(const std::string& label, const S6_Ordinals& s6, MatS6 transformations) {
    const std::vector<unsigned long> v = FindS6Zeros(s6);
    const unsigned long nzeros = (unsigned long)(v.size());
 
@@ -207,13 +209,13 @@ void SellaBuild::ProcessZeros(const std::string& label, const S6_Ordinals& s6) {
       return;
    }
    else if (nzeros == 1) {
-      OneBound(label, s6);
+      OneBound(label, s6, transformations);
    }
    else {
       for (unsigned long i = 0; i < v.size(); ++i) {
          S6_Ordinals temp(s6);
          temp[v[i]] = DBL_MIN;
-         ProcessZeros(label, temp);
+         ProcessZeros(label, temp, transformations);
       }
    }
 

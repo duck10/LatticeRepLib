@@ -18,6 +18,7 @@ class S6;
 class D7;
 class G6;
 class B4;
+//class MatE3;
 class MatG6;
 
 MatS6 operator* (const double d, const MatS6& m);
@@ -33,9 +34,12 @@ public:
    MatS6(const MatS6& m);
    MatS6(const MatD7& m);
    MatS6(const MatN& m);
-   MatS6(const MatMN& m);
-   MatS6(const std::string& s);
+	MatS6(const MatMN& m);
+	//MatS6(const MatE3& m);
+	MatS6(const std::string& s);
    MatS6(const std::vector<double>& v);
+
+	static MatS6 e3Tos6(std::vector<double>& m);
 
    MatS6& operator= (const MatB4& v);
    MatS6& operator= (const MatS6& v);

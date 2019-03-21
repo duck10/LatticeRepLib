@@ -5,6 +5,7 @@
 #include "S6.h"
 #include "MatS6.h"
 #include "MatD7.h"
+//#include "MatE3.h"
 #include "MatG6.h"
 #include "MatMN.h"
 #include "MatN.h"
@@ -22,6 +23,89 @@ LRL_CoordinateConversionMatrices lccm;
 MatS6::MatS6(void)
    : m_mat(36)
 {}
+
+MatS6 MatS6::e3Tos6(std::vector<double>& m) {
+	/*
+	*************************************************************************
+	Note that the E3 matrix (m) is applied in the order 
+	shown in Burzlaff and Zimmermann, 1958. This is the
+	transpose of the order shown in the International
+	Tables.
+
+	The algebra shown here was derived by Herbert Bernstein on 2019-03-19
+	(with modest help from Larry Andrews). HJB used the program maxima
+	to do the derivation. Maxima produced the transpose of the matrix
+	where the S6 vector multiplies from the right, and the values
+	produced by maxima are the negatives of the matrix coefficients.
+	*************************************************************************
+	*/
+	const double m11 = m[0];
+	const double m12 = m[1];
+	const double m13 = m[2];
+	const double m21 = m[3];
+	const double m22 = m[4];
+	const double m23 = m[5];
+	const double m31 = m[6];
+	const double m32 = m[7];
+	const double m33 = m[8];
+	//	%i51) yresult([0, 0, 0], [1, 0, 0], [-1, 0, 0]);
+
+	MatS6 m6;
+	m6[0] = m23 * m33 - m22 * m33 - m23 * m32 + m22 * m32;
+	m6[6] = m13 * m33 - m12 * m33 - m13 * m32 + m12 * m32;
+	m6[12] = m13 * m23 - m12 * m23 - m13 * m22 + m12 * m22;
+	m6[18] = (-m13 * m33) + m12 * m33 + m13 * m32 - m12 * m32 - m13 * m23 + m12 * m23 + m13 * m22 - m12 * m22 - m13 * m13 + 2 * m12*m13 - m12 * m12;
+	m6[24] = (-m23 * m33) + m22 * m33 + m23 * m32 - m22 * m32 - m23 * m23 + 2 * m22*m23 - m13 * m23 + m12 * m23 - m22 * m22 + m13 * m22 - m12 * m22;
+	m6[30] = (-m33 * m33) + 2 * m32*m33 - m23 * m33 + m22 * m33 - m13 * m33 + m12 * m33 - m32 * m32 + m23 * m32 - m22 * m32 + m13 * m32 - m12 * m32;
+
+
+	//		(%i52) yresult([1, 0, 0], [0, 0, 0], [-1, 0, 0]);
+
+	m6[1] = m23 * m33 - m21 * m33 - m23 * m31 + m21 * m31;
+	m6[7] = m13 * m33 - m11 * m33 - m13 * m31 + m11 * m31;
+	m6[13] = m13 * m23 - m11 * m23 - m13 * m21 + m11 * m21;
+	m6[19] = (-m13 * m33) + m11 * m33 + m13 * m31 - m11 * m31 - m13 * m23 + m11 * m23 + m13 * m21 - m11 * m21 - m13 * m13 + 2 * m11*m13 - m11 * m11;
+	m6[25] = (-m23 * m33) + m21 * m33 + m23 * m31 - m21 * m31 - m23 * m23 + 2 * m21*m23 - m13 * m23 + m11 * m23 - m21 * m21 + m13 * m21 - m11 * m21;
+	m6[31] = (-m33 * m33) + 2 * m31*m33 - m23 * m33 + m21 * m33 - m13 * m33 + m11 * m33 - m31 * m31 + m23 * m31 - m21 * m31 + m13 * m31 - m11 * m31;
+
+	//		(%i53) yresult([1; 0; 0]; [-1; 0; 0]; [0; 0; 0]);
+
+	m6[2] = m22 * m32 - m21 * m32 - m22 * m31 + m21 * m31;
+	m6[8] = m12 * m32 - m11 * m32 - m12 * m31 + m11 * m31;
+	m6[14] = m12 * m22 - m11 * m22 - m12 * m21 + m11 * m21;
+	m6[20] = (-m12 * m32) + m11 * m32 + m12 * m31 - m11 * m31 - m12 * m22 + m11 * m22 + m12 * m21 - m11 * m21 - m12 * m12 + 2 * m11*m12 - m11 * m11;
+	m6[26] = (-m22 * m32) + m21 * m32 + m22 * m31 - m21 * m31 - m22 * m22 + 2 * m21*m22 - m12 * m22 + m11 * m22 - m21 * m21 + m12 * m21 - m11 * m21;
+	m6[32] = (-m32 * m32) + 2 * m31*m32 - m22 * m32 + m21 * m32 - m12 * m32 + m11 * m32 - m31 * m31 + m22 * m31 - m21 * m31 + m12 * m31 - m11 * m31;
+
+	//		(%i54) yresult([1, 0, 0], [0, 0, 0], [0, 0, 0]);
+
+	m6[3] = m21 * m31;
+	m6[9] = m11 * m31;
+	m6[15] = m11 * m21;
+	m6[21] = (-m11 * m31) - m11 * m21 - m11 * m11;
+	m6[27] = (-m21 * m31) - m21 * m21 - m11 * m21;
+	m6[33] = (-m31 * m31) - m21 * m31 - m11 * m31;
+
+	//		(%i55) yresult([0; 0; 0]; [1; 0; 0]; [0; 0; 0]);
+
+	m6[4] = m22 * m32;
+	m6[10] = m12 * m32;
+	m6[16] = m12 * m22;
+	m6[22] = (-m12 * m32) - m12 * m22 - m12 * m12;
+	m6[28] = (-m22 * m32) - m22 * m22 - m12 * m22;
+	m6[34] = (-m32 * m32) - m22 * m32 - m12 * m32;
+	//		(%i56) yresult([0; 0; 0]; [0; 0; 0]; [1; 0; 0]);
+
+	m6[5] = m23 * m33;
+	m6[11] = m13 * m33;
+	m6[17] = m13 * m23;
+	m6[23] = (-m13 * m33) - m13 * m23 - m13 * m13;
+	m6[29] = (-m23 * m33) - m23 * m23 - m13 * m23;
+	m6[35] = (-m33 * m33) - m23 * m33 - m13 * m33;
+
+	return -m6;
+}
+
 
 MatS6::MatS6(const double s1, const double s2, const double s3, const double s4, const double s5, const double s6, const double s7, const double s8, const double s9, const double s10, const double s11, const double s12, const double s13, const double s14, const double s15, const double s16, const double s17, const double s18, const double s19, const double s20, const double s21, const double s22, const double s23, const double s24, const double s25, const double s26, const double s27, const double s28, const double s29, const double s30, const double s31, const double s32, const double s33, const double s34, const double s35, const double s36)
    : m_mat(36)
@@ -103,6 +187,12 @@ MatS6::MatS6(const MatMN& m)
    m_mat.SetDim(n*n);
    m_mat.SetRowDim(n);
 }
+
+//MatS6::MatS6(const MatE3& m)
+//	: m_mat(36)
+//{
+//	*this = MatE3::E3ToS6(m);
+//}
 
 MatS6::MatS6(const std::string& s)
    : MatS6()

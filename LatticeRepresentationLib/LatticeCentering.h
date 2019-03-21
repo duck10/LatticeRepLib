@@ -21,6 +21,7 @@ public:
    std::pair<std::string, std::vector<double> >operator[] (const std::string& s);
    std::pair<std::string, std::vector<double> >operator[] (const unsigned long n);
    size_t size() { return m_3dMatricesToCentered.size(); }
+	static MatS6 MakeCentering(const MatS6& m);
 
 protected:
    static std::vector<std::pair<char, MatS6> > MakeUncenterMatrices();

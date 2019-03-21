@@ -36,10 +36,10 @@ private:
 
 private:
    void ProcessItemStoreToVectorMap();
-   void StoreAllReflections(const std::string& label, const S6_Ordinals& s1);
-   void OneBound(const std::string& label, const S6_Ordinals& s1);
-   void ProcessZeros(const std::string& label, const S6_Ordinals& s6);
-   void Expand(const std::string& label, const MatS6& m);
+   void StoreAllReflections(const std::string& label, const S6_Ordinals& s1, const MatS6& transformations);
+   void OneBound(const std::string& label, const S6_Ordinals& s1, MatS6 transformations);
+   void ProcessZeros(const std::string& label, const S6_Ordinals& s6, MatS6 transformations);
+   void Expand(const std::string& label, const MatS6& m, MatS6 transformations);
 
    static bool FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ordinals s6);
    static S6 MakeSampleType(const MatS6& m);
