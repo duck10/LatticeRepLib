@@ -1,5 +1,5 @@
 static const double randomLatticeNormalizationConstant = 10.0;
-static const double randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
+static const double randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant*randomLatticeNormalizationConstant;
 
 
 
@@ -22,12 +22,11 @@ static const double randomLatticeNormalizationConstantSquared = randomLatticeNor
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
 
-
 const double pi = 4.0*atan(1.0);
 const double twopi = 2.0*pi;
 
-static int s6RandomSeed = 19195;
-static RHrand rhrand(s6RandomSeed);
+static int s6RandomSeedS6 = 19195;
+static RHrand rhrandS6(s6RandomSeedS6);
 
 
 S6::S6( void )
@@ -348,7 +347,7 @@ std::ostream& operator<< (std::ostream& o, const S6& dc) {
 }
 
 S6 operator* (const double d, const S6& ds) { // friend
-   return ds * d;
+   return ds*d;
 }
 
 bool S6::IsAllMinus() const {
@@ -377,12 +376,12 @@ std::string S6::Signature(const S6& s6) {
    return s;
 }
 
-void S6::SetSeed(const int n) { const int seed = n;  rhrand.srandom(seed); }
+void S6::SetSeed(const int n) { const int seed = n;  rhrandS6.srandom(seed); }
 
 S6 S6::rand(const double d) {
    S6 s6(randDeloneReduced());
 
-   const double choice = rhrand.urand();
+   const double choice = rhrandS6.urand();
    // the constants are chosen from results for 
    // random generation of valid cells !!!!!!!!!!!!!!!!
    // but they are somewhat random and can be adjusted.
@@ -395,7 +394,7 @@ S6 S6::rand(const double d) {
 S6 S6::randDeloneReduced(const double d) {
    S6 s6;
    for (unsigned long i = 0; i < 6; ++i)
-      s6[i] = -rhrand.urand() * randomLatticeNormalizationConstantSquared;
+      s6[i] = -rhrandS6.urand()*randomLatticeNormalizationConstantSquared;
    s6.m_valid = true;
    return s6;
 }
@@ -417,7 +416,7 @@ unsigned long S6::CountPositive(void) const {
 }
 
 S6 S6::RandomUnreduceOne(const S6& s6) {
-   const double choice = 12.0 * rhrand.urand();
+   const double choice = 12.0*rhrandS6.urand();
 
    if (choice < 1) return S6::Unreduce11(s6);
    else if (choice < 2) return S6::Unreduce12(s6);

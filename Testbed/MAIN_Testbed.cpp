@@ -125,7 +125,7 @@ int Negatives(const S6& s) {
    return n;
 }
 
-static const double pi = 4.0*atan(1.0);
+static const double piTestbed = 4.0*atan(1.0);
 
 bool BadTetrahedron(const S6& s6) {
    B4 b4(s6);
@@ -136,9 +136,9 @@ bool BadTetrahedron(const S6& s6) {
    if (angle_ad < 0.01) return true;
    if (angle_bd < 0.01) return true;
    if (angle_cd < 0.01) return true;
-   if (angle_ad > 0.999*pi) return true;
-   if (angle_bd > 0.999*pi) return true;
-   if (angle_cd > 0.999*pi) return true;
+   if (angle_ad > 0.999*piTestbed) return true;
+   if (angle_bd > 0.999*piTestbed) return true;
+   if (angle_cd > 0.999*piTestbed) return true;
    return false;
 }
 
@@ -168,10 +168,10 @@ void Reflects() {
 
       for (int k = 3; k < 6; ++k) {
          if (cell[k] < 0.01) ++invalids; // zero degree angle
-         if (cell[k] > 0.999*pi) ++invalids;  // 180 degree angle
+         if (cell[k] > 0.999*piTestbed) ++invalids;  // 180 degree angle
       }
 
-      if (cell[3] + cell[4] + cell[5] > 2.0*pi) ++invalids; // cell angles sum to more than 360 degrees
+      if (cell[3] + cell[4] + cell[5] > 2.0*piTestbed) ++invalids; // cell angles sum to more than 360 degrees
       if (invalids == 0 && BadTetrahedron(s6)) ++invalids;
       const std::string signature = LRL_ToString(n) + S6::Signature(s6);
       if (invalids == 0) {
@@ -1187,9 +1187,40 @@ void F_makeS6UnPrimitiveMatrices() {
    std::cout << "primitive S6 with new matrix" << s6primconverter * f_S6_centered_cell << std::endl;
    std::cout << "prim cell from new matrix " << LRL_Cell_Degrees(s6primconverter * f_S6_centered_cell) << std::endl;
 }
-
+#include "S6.cpp"
 int main(int argc, char *argv[])
 {
+	std::vector<double> e3(9);
+	e3[0] = 1;
+	e3[1] = 1;
+	e3[2] = 0;
+
+	e3[3] = -1;
+	e3[4] = 1;
+	e3[5] = 0;
+
+	e3[6] = 1;
+	e3[7] = 1;
+	e3[8] = 2;
+
+	std::cout << "E3 matrix for P to F for cF  " << std::endl;
+	for (auto i = 0; i < 9; ++i) {
+		if (i % 3 == 0) std::cout << std::endl;
+		std::cout << e3[i];
+	}
+	
+	std::cout << std::endl << std::endl;
+
+	const MatS6 m6 = MatS6::e3Tos6(e3);
+	std::cout << "MatS6 matrix for P to F for cF  " << std::endl << m6 << std::endl << std::endl;
+	LRL_Cell cell(10, 10, 10,60,60,60);
+	std::cout << "input cell " << LRL_Cell_Degrees(cell) << std::endl << std::endl;
+	S6 s6red;
+	Selling::Reduce(S6(cell), s6red);
+
+	std::cout << " result cell  " << LRL_Cell_Degrees(m6*s6red) << std::endl;
+	exit(0);
+
 
    PDB_ReduceTimingTest();
    // TimingForNewNiggliReduce();
