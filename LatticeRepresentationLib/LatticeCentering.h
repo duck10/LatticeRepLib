@@ -17,7 +17,7 @@ public:
    MatS6 findToCentered(const char c) const;
    MatS6 findToPrimitive(const std::string& c) const;
    MatS6 findToCentered(const std::string& c) const;
-   std::vector<std::pair<std::string, std::vector<double> > > Make3dCenteringMatrices();
+   static std::vector<std::pair<std::string, std::vector<double> > > Make3dCenteringMatrices();
    std::pair<std::string, std::vector<double> >operator[] (const std::string& s);
    std::pair<std::string, std::vector<double> >operator[] (const unsigned long n);
    size_t size() { return m_3dMatricesToCentered.size(); }
