@@ -300,26 +300,3 @@ void GeneratePairsOfTestData::StoreOnePointIfValid(StoreResults<unsigned long, s
    }
 }
 
-void GeneratePairsOfTestData::GeneratePairSamplesByHighReductionCycleCount(const unsigned long n) {
-   /*
-   Generate a random unreduced lattice (GenerateExtreme picks a point nearly invalid). Then
-   the point is reduced, and the slightly modified point, and its unmodified reduced point
-   are stored, using the number of cycles in Selling::Reduce that were required as the key.
-   Finally, the result is trimmed such that only the highest 1/3 of the cycle counts are
-   kept. They are then displayed.
-   */
-   GenerateRandomLattice<S6> grl(19191);
-   StoreResults<unsigned long, std::string > store(8);
-   store.SetKeyLabel("cycles");
-   GeneratePairsOfTestData::GeneratePairSamplesByHighReductionCycleCount(1000000);
-   store.SetTitle("GeneratePairSamplesByHighReductionCycleCount");
-
-   for (unsigned long i = 0; i < n; ++i) {
-      StoreOnePointIfValid(store, grl.GenerateExtreme());
-   }
-
-   // select the portion of the result that you want to display
-   std::vector<unsigned long> v = store.GetKeys();
-   for (unsigned long i = 0; i<(unsigned long)(double(v.size()*0.667)); ++i) store.erase(v[i]);
-   store.ShowResultsByKeyDescending();
-}

@@ -64,7 +64,7 @@ void Nullspace::FindNonZeroTriplets(const S6& s6, std::vector<std::vector<unsign
    if (vout.size() == 3) {
       triplets.push_back(vout);
       S6 temp(s6);
-      for (unsigned long i = 0; i < vout.size(); ++i) temp[vout[i]] = 19191 + i + temp.norm();
+      for (unsigned long k = 0; k < vout.size(); ++k) temp[vout[k]] = 19191 + k + temp.norm();
       FindNonZeroTriplets(temp, triplets);
    }
 }

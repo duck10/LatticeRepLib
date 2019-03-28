@@ -172,6 +172,7 @@
     <ClInclude Include="..\LatticeRepresentationLib\LabeledSellaMatrices.h" />
     <ClInclude Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
+    <ClInclude Include="LatticeCharacters.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
