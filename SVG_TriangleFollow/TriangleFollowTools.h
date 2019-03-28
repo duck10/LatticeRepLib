@@ -53,7 +53,7 @@ static std::string SmallValueFormat( const double value )
    const std::string mantissa = output.substr(0,ePos);
    std::string exponent = output.substr(ePos+1,output.length());
    unsigned int eZeroPos;
-   while (eZeroPos=(unsigned long)exponent.find("0"), eZeroPos!=(unsigned long)std::string::npos)
+   while (eZeroPos=(unsigned long)(exponent.find("0")), eZeroPos!=(unsigned long)(std::string::npos))
    {
       exponent.erase(eZeroPos,1);
    }

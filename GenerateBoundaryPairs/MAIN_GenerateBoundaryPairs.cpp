@@ -33,8 +33,6 @@ void TestLatticeTypes() {
 
 int main()
 {
-   //GeneratePairsOfTestData::GeneratePairSamplesByHighReductionCycleCount(1000000);
-   //exit(0);
    const unsigned long targetReducedUnreducedPairCount = 2000;
    GeneratePairsOfTestData::MultiGeneratePair_Reduced_Other_ReducesFarAway(targetReducedUnreducedPairCount);
  

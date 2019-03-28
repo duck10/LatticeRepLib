@@ -449,13 +449,13 @@ void TestRandCell() {
       const LRL_Cell cell = grl.Generate();
       LRL_Cell_Degrees deg(cell);
       const bool b = deg.GetValid();
-      const int key = (deg[3] + deg[4] + deg[5]);
+      const int key = int(deg[3] + deg[4] + deg[5]);
       sr_rand.Store(key, deg);
       S6 out;
       Selling::Reduce(cell, out);
       LRL_Cell_Degrees celld(out);
       const double celld1 = celld[0];
-      const int keyDelone = (celld[3] + celld[4] + celld[5]);
+      const int keyDelone = int(celld[3] + celld[4] + celld[5]);
       sr_Delone.Store(keyDelone, LRL_Cell_Degrees(out));
       if (celld1 == 0.0) sr_failed.Store(0, cell);
    }

@@ -376,7 +376,7 @@ std::string S6::Signature(const S6& s6) {
    return s;
 }
 
-void S6::SetSeed(const int n) { const int seed = n;  rhrandS6.srandom(seed); }
+void S6::SetSeed(const int n) { const int seedn = n;  rhrandS6.srandom(seedn); }
 
 S6 S6::rand(const double d) {
    S6 s6(randDeloneReduced());

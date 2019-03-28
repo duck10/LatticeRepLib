@@ -19,7 +19,6 @@ public:
    static void MultiGeneratePair_Reduced_Other_ReducesFarAway(const unsigned long targetReducedUnreducedPairCount);
    static double PositiveDistance(const S6& s6);
    static std::string FormatPairOfTestS6Vectors(const S6& s1, const S6& s2, const std::string& id);
-   static void GeneratePairSamplesByHighReductionCycleCount(const unsigned long n);
 private:
    static bool IsGoodLatticeTypeForPerturbation(const unsigned long n);
    static std::pair<S6, S6> OneLatticeType(const MatS6& m);

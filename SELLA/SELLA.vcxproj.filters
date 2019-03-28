@@ -34,5 +34,8 @@
     <ClInclude Include="..\LatticeRepresentationLib\LabeledSellaMatrices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LatticeCharacters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

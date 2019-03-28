@@ -161,7 +161,7 @@ unsigned long StepSizeList::sort( )
 //-----------------------------------------------------------------------------size StepSizeList
 unsigned long StepSizeList::size( ) const
 {
-   const unsigned long n = m_vStepSizes.size();
+   const unsigned long n = (unsigned long)(m_vStepSizes.size());
    return n;
 }
 
