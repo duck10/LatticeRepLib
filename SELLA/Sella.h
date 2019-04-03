@@ -10,6 +10,7 @@
 
 #include "Delone.h"
 #include "LabeledSellaMatrices.h"
+#include "LatticeCharacters.h"
 #include "MatS6.h"
 #include "S6.h"
 #include "StoreResults.h"
@@ -66,6 +67,7 @@ public:
 private:
    static const std::vector<LabeledSellaMatrices> projectors;
    static const std::vector<LabeledSellaMatrices> perps;
+	static std::vector<LatticeCharacters> m_latticeCharacters;
 
 private:
 };

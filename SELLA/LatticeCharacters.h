@@ -4,34 +4,18 @@
 #include <string>
 #include <vector>
 
+#include "MatS6.h"
+#include "LabeledSellaMatrices.h"
+#include "LabeledSellaMatricesForDeloneType.h"
+
 class LatticeCharacters {
 public:
+	LatticeCharacters(){}
+	LatticeCharacters(const std::string& deloneType, const std::string& bravaisType, const std::string& character);
 
-	   "K1”, "cI”, "rrr rrr"
-		"K3”, “cF”,		"rr0 rr0"      
-		"K5”, “cP”,		"000 rrr"      
-		"Q1”, “tI”,		"rrs rrs"      
-		"Q2”, “tI”,		"rr0 rrs"      
-		"Q5”, “tP”,		"000 rrs"      
-		"R1”, "rP”, "rrr sss"
-		"R3”, “rP”,		"r0r sr0"      
-		"O1A", "oF,”		"rrs rrt"      
-		"O1B", "oI,”		"rrs rrs"      
-		"O2”, “oI”,		"rs0 sr0"      
-		"O3”, “oI”,		"rs0 rs0"      
-		"O4”, “oP”,		"00r sst"      
-		"O5”, “oP”,		"000 rst"      
-		"M1A", "mC,”		"rrs ttu"      
-		"M1B", “mC, ”		"rst rsu"
-		"M2A", “mC, ”		"rs0 rst"
-		"M2B", “mC, ”		"rs0 stu"
-		"M3”, “mC”,		"rs0 ts0"      
-		"M4”, "mP”, "00r stu"
-		"T1”, “aP”,		"rst uvw"      
-		"T2”, “aP”,		"rs0 tuv"      
-		"T3”, “aP”,		"rs0 tu0"      
-		"H4”, "hP”, "00r rrs"
-
+   void AddToCenteredE3();
+   void AddToCenteredS6();
+   void AddToLabeledSellaMatricesForDeloneType( const LabeledSellaMatrices& lsm);
 
 
 
