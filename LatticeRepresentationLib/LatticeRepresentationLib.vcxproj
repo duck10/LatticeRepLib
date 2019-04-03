@@ -159,6 +159,7 @@
     <ClCompile Include="C3.cpp" />
     <ClCompile Include="ColorTables.cpp" />
     <ClCompile Include="LabeledSellaMatrices.cpp" />
+    <ClCompile Include="LabeledSellaMatricesForDeloneType.cpp" />
     <ClCompile Include="LatticeCentering.cpp" />
     <ClCompile Include="LatticeConverter.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
@@ -186,7 +187,7 @@
     <ClCompile Include="LRL_ReadLatticeData.cpp" />
     <ClCompile Include="Niggli.cpp" />
     <ClCompile Include="S6_Matrices.cpp" />
-    <ClCompile Include="Sella.cpp" />
+    <ClCompile Include="S6_Ordinals.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="VecN.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
     <ClInclude Include="LabeledSellaMatrices.h" />
+    <ClInclude Include="LabeledSellaMatricesForDeloneType.h" />
     <ClInclude Include="LatticeCentering.h" />
     <ClInclude Include="LatticeConverter.h" />
     <ClInclude Include="LRL_Cell.h" />
@@ -231,8 +233,8 @@
     <ClInclude Include="LRL_ReadLatticeData.h" />
     <ClInclude Include="Niggli.h" />
     <ClInclude Include="S6_Matrices.h" />
+    <ClInclude Include="S6_Ordinals.h" />
     <ClInclude Include="SanMatrix.h" />
-    <ClInclude Include="Sella.h" />
     <ClInclude Include="Selling.h" />
     <ClInclude Include="V7Dist.h" />
     <ClInclude Include="VecN.h" />

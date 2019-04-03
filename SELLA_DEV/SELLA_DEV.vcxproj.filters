@@ -17,10 +17,7 @@
     <ClCompile Include="SellaBuild.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LabeledSellaMatricesForDeloneType.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="S6_Ordinals.cpp">
+    <ClCompile Include="..\LatticeRepresentationLib\S6_Ordinals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -28,10 +25,7 @@
     <ClInclude Include="SellaBuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LabeledSellaMatricesForDeloneType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="S6_Ordinals.h">
+    <ClInclude Include="..\LatticeRepresentationLib\S6_Ordinals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

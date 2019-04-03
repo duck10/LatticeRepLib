@@ -25,7 +25,6 @@ public:
    static const std::vector<LabeledSellaMatrices> projectors;
    static const std::vector<LabeledSellaMatrices> perps;
 
-private:
    static LabeledSellaMatrices CreatePerps_A1();
    static LabeledSellaMatrices CreatePerps_A2();
    static LabeledSellaMatrices CreatePerps_A3();
@@ -76,6 +75,7 @@ private:
    static LabeledSellaMatrices CreatePrjs_R1();
    static LabeledSellaMatrices CreatePrjs_R3();
 
+private:
 
    std::string m_label;
    std::vector<MatS6> m_vector;

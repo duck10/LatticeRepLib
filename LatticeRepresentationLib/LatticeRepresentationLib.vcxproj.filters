@@ -98,9 +98,6 @@
     <ClCompile Include="ColorTables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sella.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LatticeCentering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -114,6 +111,12 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="S6_Matrices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LabeledSellaMatricesForDeloneType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="S6_Ordinals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -238,9 +241,6 @@
     <ClInclude Include="SanMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sella.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LatticeCentering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -248,6 +248,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="S6_Matrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LabeledSellaMatricesForDeloneType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="S6_Ordinals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

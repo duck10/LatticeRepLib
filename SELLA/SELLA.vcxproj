@@ -156,9 +156,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\LatticeRepresentationLib\LabeledSellaMatrices.cpp" />
+    <ClCompile Include="..\LatticeRepresentationLib\LabeledSellaMatricesForDeloneType.cpp" />
+    <ClCompile Include="..\LatticeRepresentationLib\LatticeCentering.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.cpp" />
-    <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
+    <ClCompile Include="LatticeCharacters.cpp" />
     <ClCompile Include="MAIN_SELLA.cpp" />
+    <ClCompile Include="Sella.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
@@ -170,9 +173,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\LabeledSellaMatrices.h" />
+    <ClInclude Include="..\LatticeRepresentationLib\LabeledSellaMatricesForDeloneType.h" />
+    <ClInclude Include="..\LatticeRepresentationLib\LatticeCentering.h" />
     <ClInclude Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.h" />
-    <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
     <ClInclude Include="LatticeCharacters.h" />
+    <ClInclude Include="Sella.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

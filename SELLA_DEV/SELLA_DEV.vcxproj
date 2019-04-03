@@ -19,14 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LabeledSellaMatricesForDeloneType.cpp" />
+    <ClCompile Include="..\LatticeRepresentationLib\S6_Ordinals.cpp" />
     <ClCompile Include="MAIN_SELLA_DEV.cpp" />
-    <ClCompile Include="S6_Ordinals.cpp" />
     <ClCompile Include="SellaBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LabeledSellaMatricesForDeloneType.h" />
-    <ClInclude Include="S6_Ordinals.h" />
+    <ClInclude Include="..\LatticeRepresentationLib\S6_Ordinals.h" />
     <ClInclude Include="SellaBuild.h" />
   </ItemGroup>
   <ItemGroup>
