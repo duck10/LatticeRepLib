@@ -15,7 +15,11 @@ public:
 
    void AddToCenteredE3();
    void AddToCenteredS6();
-   void AddToLabeledSellaMatricesForDeloneType( const LabeledSellaMatrices& lsm);
+   void AddToLabeledSellaMatricesForDeloneType(
+      const std::string& label,
+      const LabeledSellaMatrices& prjs,
+      const LabeledSellaMatrices& perps,
+      const LabeledSellaMatrices& toCanons);
 
 
 

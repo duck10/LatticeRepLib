@@ -1,8 +1,17 @@
 #include "GenerateRandomLattice.h"
+#include "LabeledSellaMatrices.h"
 #include "LabeledSellaMatricesForDeloneType.h"
 #include "S6Dist.h"
 #include "LatticeCentering.h"
 #include <string>
+
+LabeledSellaMatricesForDeloneType::LabeledSellaMatricesForDeloneType(
+   const std::string& label,
+   const LabeledSellaMatrices& prjs,
+   const LabeledSellaMatrices& perps,
+   const LabeledSellaMatrices& toCanons)
+{}
+
 
 bool LabeledSellaMatricesForDeloneType::AlreadyHasThisProjector( const MatS6& m, const LabeledSellaMatricesForDeloneType& lsm) const{
    for ( auto i=0; i<lsm.m_prjs.size(); ++i ) {

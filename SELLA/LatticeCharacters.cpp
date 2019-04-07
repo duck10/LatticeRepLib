@@ -11,6 +11,10 @@ LatticeCharacters::LatticeCharacters(const std::string& deloneType,
 {
 }
 
-void LatticeCharacters::AddToLabeledSellaMatricesForDeloneType(const LabeledSellaMatrices& lsm) {
-   m_matrices.push_back(lsm);
+void LatticeCharacters::AddToLabeledSellaMatricesForDeloneType(
+   const std::string& label,
+   const LabeledSellaMatrices& prjs, 
+   const LabeledSellaMatrices& perps,
+   const LabeledSellaMatrices& toCanons ) {
+   m_matrices = LabeledSellaMatricesForDeloneType(label, prjs, perps, toCanons);
 }
