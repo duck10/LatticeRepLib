@@ -2,7 +2,7 @@
 
 const std::vector<LabeledSellaMatrices> LabeledSellaMatrices::projectors = CreateAllPrjs();
 const std::vector<LabeledSellaMatrices> LabeledSellaMatrices::perps = CreateAllPerps();
-
+const MatS6 unitMatS6 = MatS6().unit();
 
 LabeledSellaMatrices LabeledSellaMatrices::CreatePerps_A1() {
    std::vector<MatS6> vm;
@@ -823,4 +823,312 @@ std::vector<LabeledSellaMatrices> LabeledSellaMatrices::CreateAllPrjs() {
    vlsm.push_back(CreatePrjs_R3());
 
    return vlsm;
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_A1() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   /*  A1   */
+   return LabeledSellaMatrices("A1", vm);
+}
+
+/*  A2   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_A2() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("A2", vm);
+}
+
+/*  A3   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_A3() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("A3", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_C1() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("C1", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_C3() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("C3", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_C5() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("C5", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_H4() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   /*  H4   */
+   return LabeledSellaMatrices("H4", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_M1A() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("M1A", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_M1B() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("M1B", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_M2B() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("M2B", vm);
+}
+
+/*  M2A  */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_M2A() {
+   std::vector<MatS6> vm(1, MatS6("0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1"));
+   return LabeledSellaMatrices("M2A", vm);
+}
+
+/*  M3   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_M3() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("M3", vm);
+}
+
+/*  M4   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_M4() {
+   std::vector<MatS6> vm(1, MatS6("1 0 0 0 0 0  o o 1 0 0 0  0 1 0 0 0 0  0 0 0 1 0 0  0 0 0 0 0 1  0 0 0 0 1 0"));
+   return LabeledSellaMatrices("M4", vm);
+}
+
+/*  O1A  */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_O1A() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O1A", vm);
+}
+
+/*  O1B  */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_O1B() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O1B", vm);
+}
+
+/*  O2   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_O2() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O2", vm);
+}
+
+/*  O3   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_O3() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O3", vm);
+}
+
+/*  O4   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_O4() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O4", vm);
+}
+
+/*  O5   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_O5() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O5", vm);
+}
+
+
+/*  R1   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_R1() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("R1", vm);
+}
+
+/*  R3   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_R3() {
+   /*  R3   */
+   std::vector<MatS6> vm(1, MatS6("0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1"));
+   return LabeledSellaMatrices("R3", vm);
+}
+/*  T1   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_T1() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("T1", vm);
+}
+
+/*  T2   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_T2() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("T2", vm);
+}
+
+/*  T5   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_T5() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("T5", vm);
+}
+
+std::vector<LabeledSellaMatrices> LabeledSellaMatrices::CreateAllToCanon() {
+   std::vector< LabeledSellaMatrices> vlsm;
+   //vlsm.push_back(CreateToCanon_A1());
+   //vlsm.push_back(CreateToCanon_A2());
+   //vlsm.push_back(CreateToCanon_A3());
+   vlsm.push_back(CreateToCanon_H4());
+   vlsm.push_back(CreateToCanon_C1());
+   vlsm.push_back(CreateToCanon_C3());
+   vlsm.push_back(CreateToCanon_C5());
+   vlsm.push_back(CreateToCanon_M1A());
+   vlsm.push_back(CreateToCanon_M1B());
+   vlsm.push_back(CreateToCanon_M2A());
+   vlsm.push_back(CreateToCanon_M2B());
+   vlsm.push_back(CreateToCanon_M3());
+   vlsm.push_back(CreateToCanon_M4());
+   vlsm.push_back(CreateToCanon_O1A());
+   vlsm.push_back(CreateToCanon_O1B());
+   vlsm.push_back(CreateToCanon_O2());
+   vlsm.push_back(CreateToCanon_O3());
+   vlsm.push_back(CreateToCanon_O4());
+   vlsm.push_back(CreateToCanon_O5());
+   vlsm.push_back(CreateToCanon_T1());
+   vlsm.push_back(CreateToCanon_T2());
+   vlsm.push_back(CreateToCanon_T5());
+   vlsm.push_back(CreateToCanon_R1());
+   vlsm.push_back(CreateToCanon_R3());
+
+   return vlsm;
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_A1() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   /*  A1   */
+   return LabeledSellaMatrices("A1", vm);
+}
+
+/*  A2   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_A2() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("A2", vm);
+}
+
+/*  A3   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_A3() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("A3", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_C1() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("C1", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_C3() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("C3", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_C5() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("C5", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_H4() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   /*  H4   */
+   return LabeledSellaMatrices("H4", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_M1A() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("M1A", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_M1B() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("M1B", vm);
+}
+
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_M2B() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("M2B", vm);
+}
+
+/*  M2A  */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_M2A() {
+   std::vector<MatS6> vm(1, MatS6("0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1"));
+   return LabeledSellaMatrices("M2A", vm);
+}
+
+/*  M3   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_M3() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("M3", vm);
+}
+
+/*  M4   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_M4() {
+   std::vector<MatS6> vm(1, MatS6("1 0 0 0 0 0  o o 1 0 0 0  0 1 0 0 0 0  0 0 0 1 0 0  0 0 0 0 0 1  0 0 0 0 1 0"));
+   return LabeledSellaMatrices("M4", vm);
+}
+
+/*  O1A  */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_O1A() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O1A", vm);
+}
+
+/*  O1B  */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_O1B() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O1B", vm);
+}
+
+/*  O2   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_O2() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O2", vm);
+}
+
+/*  O3   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_O3() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O3", vm);
+}
+
+/*  O4   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_O4() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O4", vm);
+}
+
+/*  O5   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_O5() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("O5", vm);
+}
+
+
+/*  R1   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_R1() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("R1", vm);
+}
+
+/*  R3   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_R3() {
+   /*  R3   */
+   std::vector<MatS6> vm(1, MatS6("0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1"));
+   return LabeledSellaMatrices("R3", vm);
+}
+/*  T1   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_T1() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("T1", vm);
+}
+
+/*  T2   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_T2() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("T2", vm);
+}
+
+/*  T5   */
+LabeledSellaMatrices LabeledSellaMatrices::CreateCanonToCentered_T5() {
+   std::vector<MatS6> vm(1, unitMatS6);
+   return LabeledSellaMatrices("T5", vm);
 }

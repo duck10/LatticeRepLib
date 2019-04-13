@@ -41,6 +41,7 @@ private:
    std::vector<MatS6> m_perps;
    std::vector<MatS6> m_prjs;
    std::vector<MatS6> m_toCanons;
+   std::vector<MatS6> m_canonToCentered;
 };
 
 #endif  // LabeledSellaMatricesForDeloneType_H
