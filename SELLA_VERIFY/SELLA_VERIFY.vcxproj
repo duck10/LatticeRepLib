@@ -153,6 +153,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\LatticeRepresentationLib\LatticeCharacters.cpp" />
+    <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
     <ClCompile Include="MAIN_SELLA_VERIFY.cpp" />
     <ClCompile Include="Nullspace.cpp" />
   </ItemGroup>
@@ -165,6 +167,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\LatticeRepresentationLib\LatticeCharacters.h" />
+    <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
     <ClInclude Include="Nullspace.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

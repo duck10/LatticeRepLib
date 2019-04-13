@@ -97,33 +97,33 @@ std::vector<std::pair<std::string,std::vector<double> > > LatticeCentering::Make
    std::vector<std::pair<std::string, std::vector<double> > > v;
    v.push_back(std::make_pair("C1",  Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("C3",  Make3dVector("1 1 0 -1 1 0  1 1 2")));
-   v.push_back(std::make_pair("C5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
+   //v.push_back(std::make_pair("C5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
    v.push_back(std::make_pair("C5",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("H4",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("R1",  Make3dVector("1 -1 0  0 1 -1  1 1 1")));
-   v.push_back(std::make_pair("R3",  Make3dVector("1 0 0  0 0 1  1 3 2")));
+   v.push_back(std::make_pair("R3",  Make3dVector("1 0 0  0 0 1  1 3 2"))); //xxxxxx
    v.push_back(std::make_pair("T1",  Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("T2",  Make3dVector("1 0 0  0 1 0  1 1 2")));
    v.push_back(std::make_pair("T5",  Make3dVector("1 0 0  0 1 0  0 0 1")));
-   v.push_back(std::make_pair("T5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
-   v.push_back(std::make_pair("T5",  Make3dVector("0 1 0  0 1 1  1 0 0")));
+   //v.push_back(std::make_pair("T5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
+   //v.push_back(std::make_pair("T5",  Make3dVector("0 1 0  0 1 1  1 0 0")));
    v.push_back(std::make_pair("O1A", Make3dVector("1 1 0 -1 1 0  1 1 2")));
    v.push_back(std::make_pair("O1B", Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("O2",  Make3dVector("1 0 0  0 1 0  1 1 2")));
    v.push_back(std::make_pair("O3",  Make3dVector("0 1 1  1 0 1  1 1 0")));
-   v.push_back(std::make_pair("O3",  Make3dVector("1 0 0  0 1 0  1 1 2")));
-   v.push_back(std::make_pair("O4",  Make3dVector("2 1 0  0 1 0  0 0 1")));
+   //v.push_back(std::make_pair("O3",  Make3dVector("1 0 0  0 1 0  1 1 2")));
+   //v.push_back(std::make_pair("O4",  Make3dVector("2 1 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("O4",  Make3dVector("1 -1 0  1 1 0  0 0 1")));
-   v.push_back(std::make_pair("O5",  Make3dVector("1 0 0  0 1 0  0 0 1")));
+   //v.push_back(std::make_pair("O5",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("O5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
    v.push_back(std::make_pair("M1A", Make3dVector("-1 -1 -1  1 -1 0  0 0 1")));
    v.push_back(std::make_pair("M1B", Make3dVector("0 1 1  1 1 0 -1 0 -1")));
-   v.push_back(std::make_pair("M2A", Make3dVector("-1 -1 -2 0 1 0  1 0 0")));
+   v.push_back(std::make_pair("M2A", Make3dVector("-1 -1 -2 0 1 0  1 0 0"))); //xxxxxx
    v.push_back(std::make_pair("M2B", Make3dVector("0 1 1  1 1 0 -1 0 -1")));
-   v.push_back(std::make_pair("M2B", Make3dVector("-1 -1 -1  1 -1 0  0 0 1")));
+   //v.push_back(std::make_pair("M2B", Make3dVector("-1 -1 -1  1 -1 0  0 0 1")));
    v.push_back(std::make_pair("M3",  Make3dVector("-1 -1 -2  0 1 0  1 0 0")));
-   v.push_back(std::make_pair("M3",  Make3dVector("1 1 0  0 -1 -1 -1 0 -1")));
-   v.push_back(std::make_pair("M4",  Make3dVector("1 0 0  0 1 0  0 0 1")));
+   //v.push_back(std::make_pair("M3",  Make3dVector("1 1 0  0 -1 -1 -1 0 -1")));
+   v.push_back(std::make_pair("M4",  Make3dVector("1 0 0  0 1 0  0 0 1"))); //xxxxxx
    v.push_back(std::make_pair("A1",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A2",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A3",  Make3dVector("1 0 0  0 1 0  0 0 1")));
