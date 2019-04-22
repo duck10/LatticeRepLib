@@ -25,6 +25,11 @@ public:
    void WriteSellaMatrices( const std::vector<LabeledSellaMatricesForDeloneType>& matsForAllDeloneTypes) const;
    void WriteSellaMatrices(const std::string& functionName, const std::string& label, const std::vector<MatS6>& mat) const;
 
+   void InsertMatrices(const std::string& s);
+   std::vector<MatS6> GetPrj(const std::string& s);
+   std::vector<MatS6> GetPerp(const std::string& s);
+   std::vector<MatS6> GetTocanon(const std::string& s);
+
 private:
 
    static double Fraction(const double d, const S6& s);
@@ -41,7 +46,6 @@ private:
    std::vector<MatS6> m_perps;
    std::vector<MatS6> m_prjs;
    std::vector<MatS6> m_toCanons;
-   std::vector<MatS6> m_canonToCentered;
 };
 
 #endif  // LabeledSellaMatricesForDeloneType_H

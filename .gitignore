@@ -260,4 +260,3 @@ paket-files/
 __pycache__/
 *.pyc
 /LatticeRepresentationLib/B4.o
-/LatticeRepresentationLib

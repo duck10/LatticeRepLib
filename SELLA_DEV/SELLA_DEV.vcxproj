@@ -19,13 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\LatticeRepresentationLib\LatticeCharacters.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\S6_Ordinals.cpp" />
     <ClCompile Include="MAIN_SELLA_DEV.cpp" />
     <ClCompile Include="SellaBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\LatticeRepresentationLib\LatticeCharacters.h" />
     <ClInclude Include="..\LatticeRepresentationLib\S6_Ordinals.h" />
     <ClInclude Include="SellaBuild.h" />
   </ItemGroup>
