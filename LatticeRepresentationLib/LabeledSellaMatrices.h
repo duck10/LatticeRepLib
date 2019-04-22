@@ -13,9 +13,10 @@ public:
    LabeledSellaMatrices(const std::string& label, const std::vector<MatS6>& vm) : m_label(label), m_vector(vm)
    {}
 
+
+
    static std::vector<LabeledSellaMatrices> CreateAllPerps();
    static std::vector<LabeledSellaMatrices> CreateAllPrjs();
-   static std::vector<LabeledSellaMatrices> CreateAllToCanon();
 
    std::string GetLabel() const { return m_label; }
 
@@ -75,56 +76,6 @@ public:
    static LabeledSellaMatrices CreatePrjs_T5();
    static LabeledSellaMatrices CreatePrjs_R1();
    static LabeledSellaMatrices CreatePrjs_R3();
-
-   static LabeledSellaMatrices CreateToCanon_A1();
-   static LabeledSellaMatrices CreateToCanon_A2();
-   static LabeledSellaMatrices CreateToCanon_A3();
-   static LabeledSellaMatrices CreateToCanon_H4();
-   static LabeledSellaMatrices CreateToCanon_C1();
-   static LabeledSellaMatrices CreateToCanon_C3();
-   static LabeledSellaMatrices CreateToCanon_C5();
-   static LabeledSellaMatrices CreateToCanon_M1A();
-   static LabeledSellaMatrices CreateToCanon_M1B();
-   static LabeledSellaMatrices CreateToCanon_M2A();
-   static LabeledSellaMatrices CreateToCanon_M2B();
-   static LabeledSellaMatrices CreateToCanon_M3();
-   static LabeledSellaMatrices CreateToCanon_M4();
-   static LabeledSellaMatrices CreateToCanon_O1A();
-   static LabeledSellaMatrices CreateToCanon_O1B();
-   static LabeledSellaMatrices CreateToCanon_O2();
-   static LabeledSellaMatrices CreateToCanon_O3();
-   static LabeledSellaMatrices CreateToCanon_O4();
-   static LabeledSellaMatrices CreateToCanon_O5();
-   static LabeledSellaMatrices CreateToCanon_T1();
-   static LabeledSellaMatrices CreateToCanon_T2();
-   static LabeledSellaMatrices CreateToCanon_T5();
-   static LabeledSellaMatrices CreateToCanon_R1();
-   static LabeledSellaMatrices CreateToCanon_R3();
-
-   static LabeledSellaMatrices CreateCanonToCentered_A1();
-   static LabeledSellaMatrices CreateCanonToCentered_A2();
-   static LabeledSellaMatrices CreateCanonToCentered_A3();
-   static LabeledSellaMatrices CreateCanonToCentered_H4();
-   static LabeledSellaMatrices CreateCanonToCentered_C1();
-   static LabeledSellaMatrices CreateCanonToCentered_C3();
-   static LabeledSellaMatrices CreateCanonToCentered_C5();
-   static LabeledSellaMatrices CreateCanonToCentered_M1A();
-   static LabeledSellaMatrices CreateCanonToCentered_M1B();
-   static LabeledSellaMatrices CreateCanonToCentered_M2A();
-   static LabeledSellaMatrices CreateCanonToCentered_M2B();
-   static LabeledSellaMatrices CreateCanonToCentered_M3();
-   static LabeledSellaMatrices CreateCanonToCentered_M4();
-   static LabeledSellaMatrices CreateCanonToCentered_O1A();
-   static LabeledSellaMatrices CreateCanonToCentered_O1B();
-   static LabeledSellaMatrices CreateCanonToCentered_O2();
-   static LabeledSellaMatrices CreateCanonToCentered_O3();
-   static LabeledSellaMatrices CreateCanonToCentered_O4();
-   static LabeledSellaMatrices CreateCanonToCentered_O5();
-   static LabeledSellaMatrices CreateCanonToCentered_T1();
-   static LabeledSellaMatrices CreateCanonToCentered_T2();
-   static LabeledSellaMatrices CreateCanonToCentered_T5();
-   static LabeledSellaMatrices CreateCanonToCentered_R1();
-   static LabeledSellaMatrices CreateCanonToCentered_R3();
 
 private:
 

@@ -165,11 +165,11 @@ void GenerateCubicTest() {
    const double range = 40;
    int rowcount = 0;
    int colcount = 0;
-   for (iy = (long)(-ydel); iy < range; iy += ydel) {
+   for (iy = (long)(-ydel); iy < range; iy += (long)(ydel)) {
       y = y0 + (double)(iy) + ydel;
       colcount = 0;
       ++rowcount;
-      for (iz = (long)(-zdel); iz < range; iz += zdel) {
+      for (iz = (long)(-zdel); iz < range; iz += (long)(zdel)) {
          z = z0 + (double)(iz) + zdel;
 
          const S6 redP = ReduceLatticeType("p", s6);

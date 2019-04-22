@@ -61,6 +61,24 @@ MatS6 LabeledSellaMatricesForDeloneType::ToCanon(const S6& s) {
    return m;
 }
 
+void LabeledSellaMatricesForDeloneType::InsertMatrices(const std::string& s) {
+   (*this).m_prjs    = GetPrj(s);
+   (*this).m_perps   = GetPerp(s);
+   (*this).m_toCanon = GetTocanon(s);
+}
+
+std::vector<MatS6> LabeledSellaMatricesForDeloneType::GetPrj(const std::string& s) {
+
+}
+
+std::vector<MatS6> LabeledSellaMatricesForDeloneType::GetPerp(const std::string& s) {
+
+}
+
+std::vector<MatS6> LabeledSellaMatricesForDeloneType::GetTocanon(const std::string& s) {
+
+}
+
 unsigned long LabeledSellaMatricesForDeloneType::Index6(const unsigned long i, const unsigned long j) {
    return 6 * i + j % 6;
 }

@@ -20,18 +20,12 @@
     <ClCompile Include="..\LatticeRepresentationLib\S6_Ordinals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\LatticeRepresentationLib\LatticeCharacters.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SellaBuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\LatticeRepresentationLib\S6_Ordinals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\LatticeRepresentationLib\LatticeCharacters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
