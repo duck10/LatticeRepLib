@@ -25,7 +25,7 @@ Sella::Sella()
    label = "C1";
    lc = LatticeCharacters(label, "cI", "rrr rrr",
       LabeledSellaMatrices::CreateCanonToCentered_C1());
-   lc.InsertMatrices(label);
+   lc.InsertMatricesForDeloneType(label);
    m_latticeCharacters.push_back(lc);
 
 

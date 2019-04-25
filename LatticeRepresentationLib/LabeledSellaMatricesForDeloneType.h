@@ -25,7 +25,7 @@ public:
    void WriteSellaMatrices( const std::vector<LabeledSellaMatricesForDeloneType>& matsForAllDeloneTypes) const;
    void WriteSellaMatrices(const std::string& functionName, const std::string& label, const std::vector<MatS6>& mat) const;
 
-   void InsertMatrices(const std::string& s);
+   void InsertMatricesForDeloneType(const std::string& s);
    std::vector<MatS6> GetPrj(const std::string& s);
    std::vector<MatS6> GetPerp(const std::string& s);
    std::vector<MatS6> GetTocanon(const std::string& s);
