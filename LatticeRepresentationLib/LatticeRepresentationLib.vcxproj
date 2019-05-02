@@ -161,6 +161,7 @@
     <ClCompile Include="LabeledSellaMatrices.cpp" />
     <ClCompile Include="LabeledSellaMatricesForDeloneType.cpp" />
     <ClCompile Include="LatticeCentering.cpp" />
+    <ClCompile Include="DeloneType.cpp" />
     <ClCompile Include="LatticeConverter.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
     <ClCompile Include="CellInputData.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="LabeledSellaMatrices.h" />
     <ClInclude Include="LabeledSellaMatricesForDeloneType.h" />
     <ClInclude Include="LatticeCentering.h" />
+    <ClInclude Include="DeloneType.h" />
     <ClInclude Include="LatticeConverter.h" />
     <ClInclude Include="LRL_Cell.h" />
     <ClInclude Include="CellInputData.h" />
