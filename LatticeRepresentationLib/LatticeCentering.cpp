@@ -93,6 +93,45 @@ std::vector<double> LatticeCentering::Make3dVector( const std::string& s) {
    return v;
 }
 
+
+
+std::pair<std::string, MatS6 > LatticeCentering::CreateCenteringMatrix(const std::string& lattice, const std::string& threespaceMatrix) {
+   return std::make_pair(lattice, MatS6::e3Tos6(Make3dVector(threespaceMatrix)));
+
+auto c = CreateCenteringMatrix("C1", "0 1 1  1 0 1  1 1 0");
+c = CreateCenteringMatrix("C3",  "1 1 0 -1 1 0  1 1 2");
+c = CreateCenteringMatrix("C5",  "1 0 0  0 0 1  0 1 1");
+c = CreateCenteringMatrix("C5",  "1 0 0  0 1 0  0 0 1");
+c = CreateCenteringMatrix("H4",  "1 0 0  0 1 0  0 0 1");
+c = CreateCenteringMatrix("R1",  "1 -1 0  0 1 -1  1 1 1");
+c = CreateCenteringMatrix("R3",  "1 0 0  0 0 1  1 3 2");
+c = CreateCenteringMatrix("T1",  "0 1 1  1 0 1  1 1 0");
+c = CreateCenteringMatrix("T2",  "1 0 0  0 1 0  1 1 2");
+c = CreateCenteringMatrix("T5",  "1 0 0  0 1 0  0 0 1");
+c = CreateCenteringMatrix("T5",  "1 0 0  0 0 1  0 1 1");
+c = CreateCenteringMatrix("T5",  "0 1 0  0 1 1  1 0 0");
+c = CreateCenteringMatrix("O1A",  "1 1 0 -1 1 0  1 1 2");
+c = CreateCenteringMatrix("O1B",  "0 1 1  1 0 1  1 1 0");
+c = CreateCenteringMatrix("O2",  "1 0 0  0 1 0  1 1 2");
+c = CreateCenteringMatrix("O3",  "0 1 1  1 0 1  1 1 0");
+c = CreateCenteringMatrix("O3",  "1 0 0  0 1 0  1 1 2");
+c = CreateCenteringMatrix("O4",  "2 1 0  0 1 0  0 0 1");
+c = CreateCenteringMatrix("O4",  "1 -1 0  1 1 0  0 0 1");
+c = CreateCenteringMatrix("O5",  "1 0 0  0 1 0  0 0 1");
+c = CreateCenteringMatrix("O5",  "1 0 0  0 0 1  0 1 1");
+c = CreateCenteringMatrix("M1A",  "-1 -1 -1  1 -1 0  0 0 1");
+c = CreateCenteringMatrix("M1B",  "0 1 1  1 1 0 -1 0 -1");
+c = CreateCenteringMatrix("M2A",  "-1 -1 -2 0 1 0  1 0 0");
+c = CreateCenteringMatrix("M2B",  "0 1 1  1 1 0 -1 0 -1");
+c = CreateCenteringMatrix("M2B",  "-1 -1 -1  1 -1 0  0 0 1");
+c = CreateCenteringMatrix("M3",  "-1 -1 -2  0 1 0  1 0 0");
+c = CreateCenteringMatrix("M3",  "1 1 0  0 -1 -1 -1 0 -1");
+c = CreateCenteringMatrix("M4",  "1 0 0  0 1 0  0 0 1");
+c = CreateCenteringMatrix("A1",  "1 0 0  0 1 0  0 0 1");
+c = CreateCenteringMatrix("A2",  "1 0 0  0 1 0  0 0 1");
+c = CreateCenteringMatrix("A3",  "1 0 0  0 1 0  0 0 1");
+}
+
 std::vector<std::pair<std::string,std::vector<double> > > LatticeCentering::Make3dCenteringMatrices() {
    std::vector<std::pair<std::string, std::vector<double> > > v;
    v.push_back(std::make_pair("C1",  Make3dVector("0 1 1  1 0 1  1 1 0")));

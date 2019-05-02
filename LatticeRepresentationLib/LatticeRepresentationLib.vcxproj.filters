@@ -119,6 +119,9 @@
     <ClCompile Include="S6_Ordinals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeloneType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -254,6 +257,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="S6_Ordinals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeloneType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

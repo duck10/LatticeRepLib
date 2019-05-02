@@ -23,6 +23,9 @@ public:
    size_t size() { return m_3dMatricesToCentered.size(); }
 	static MatS6 MakeCentering(const MatS6& m);
 
+   static std::pair<std::string, MatS6 > CreateCenteringMatrix(const std::string& lattice, const std::string& threespaceMatrix);
+
+
 protected:
    static std::vector<std::pair<char, MatS6> > MakeUncenterMatrices();
    static std::vector<std::pair<char, MatS6> > MakeCenteringMatrices();
