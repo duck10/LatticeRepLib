@@ -10,7 +10,7 @@
 
 #include "Delone.h"
 #include "LabeledSellaMatrices.h"
-#include "LatticeCharacters.h"
+#include "DeloneType.h"
 #include "MatS6.h"
 #include "S6.h"
 #include "StoreResults.h"

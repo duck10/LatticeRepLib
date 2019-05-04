@@ -1,5 +1,5 @@
-#ifndef LATTICECHARACTERS_H
-#define LATTICECHARACTERS_H
+#ifndef DELONETYPE_H
+#define DELONETYPE_H
 
 #include <string>
 #include <vector>
@@ -8,11 +8,11 @@
 #include "LabeledSellaMatrices.h"
 #include "LabeledSellaMatricesForDeloneType.h"
 
-class LatticeCharacters {
+class DeloneType {
 public:
-	LatticeCharacters(){}
-	LatticeCharacters(const std::string& deloneType, const std::string& bravaisType, const std::string& character, const std::pair<std::string, MatS6 >& );
-
+	DeloneType(){}
+	DeloneType(const std::string& deloneType, const std::string& bravaisType, const std::string& character, const std::pair<std::string, MatS6 >& );
+   void InsertMatricesForDeloneType(const std::string& s);
    void AddToCenteredE3();
    void AddToCenteredS6();
    void AddToLabeledSellaMatricesForDeloneType(
@@ -37,4 +37,4 @@ private:
 };
 
 
-#endif  // LATTICECHARACTERS_H
+#endif  // DELONETYPE_H
