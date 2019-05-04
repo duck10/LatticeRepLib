@@ -1,6 +1,6 @@
-#include "LatticeCharacters.h"
+#include "DeloneType.h"
 
-LatticeCharacters::LatticeCharacters(const std::string& deloneType, 
+DeloneType::DeloneType(const std::string& deloneType, 
 	const std::string& bravaisType, const std::string& character, const std::pair<std::string, MatS6 >& fromCanon)
 	: m_deloneName(deloneType)
 	, m_bravaisType(bravaisType)
@@ -11,7 +11,7 @@ LatticeCharacters::LatticeCharacters(const std::string& deloneType,
 {
 }
 
-void LatticeCharacters::AddToLabeledSellaMatricesForDeloneType(
+void DeloneType::AddToLabeledSellaMatricesForDeloneType(
    const std::string& label,
    const LabeledSellaMatrices& prjs, 
    const LabeledSellaMatrices& perps,
