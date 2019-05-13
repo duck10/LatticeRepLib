@@ -2,7 +2,7 @@
 
 
 #include "GenerateRandomLattice.h"
-#include "LabeledSellaMatricesForDeloneType.h"
+#include "LabeledDeloneTypeMatrices.h"
 #include "LRL_ToString.h"
 #include "LRL_MaximaTools.h"
 #include "S6_Ordinals.h"
@@ -27,8 +27,8 @@ void SellaBuild::Build() {
    ProcessItemStoreToVectorMap();
    std::cout << std::endl << std::endl << "after ProcessItemStoreToVectorMap, the map " << themap.size() << std::endl;
    for (auto ita = themap.begin(); ita != themap.end(); ++ita) std::cout << (*ita).first << "  " << (*ita).second.size() << std::endl;
-   LabeledSellaMatricesForDeloneType lsm2;
-   const std::vector<LabeledSellaMatricesForDeloneType> vtypes = lsm2.ProcessVectorMapToPerpsAndProjectors(themap);
+   LabeledDeloneTypeMatrices lsm2;
+   const std::vector<LabeledDeloneTypeMatrices> vtypes = lsm2.ProcessVectorMapToPerpsAndProjectors(themap);
    lsm2.WriteSellaMatrices(vtypes);
    //std::cout << std::endl << std::endl << "after ProcessVectorMapToPerpsAndProjectors, the vperps " << perps.size() << std::endl;
    //for (auto ita = perps.begin(); ita != perps.end(); ++ita) std::cout << (*ita).GetLabel() << "  " << (*ita).size() << std::endl;

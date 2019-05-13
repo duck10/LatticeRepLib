@@ -15,7 +15,7 @@
 #include "D7Dist_.hpp"
 #include "Delone.h"
 #include "GenerateRandomLattice.h"
-#include "LatticeCentering.h"
+#include "DeloneTypeList.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
@@ -1208,7 +1208,7 @@ int main(int argc, char *argv[])
 	//}
 	
 	std::cout << std::endl << std::endl;
-	std::vector<std::pair<std::string, std::vector<double> > > vcenters = LatticeCentering::Make3dCenteringMatrices();
+	std::vector<std::pair<std::string, std::vector<double> > > vcenters = DeloneTypeList::Make3dCenteringMatrices();
 	std::cout << "size" << vcenters.size() << std::endl;
 	for ( auto i=0; i<vcenters.size(); ++i ) {
 	   const MatS6 m6 = MatS6::e3Tos6(vcenters[i].second);

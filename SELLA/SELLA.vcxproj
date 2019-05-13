@@ -155,10 +155,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\LatticeRepresentationLib\DeloneTypeList.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\LabeledSellaMatrices.cpp" />
-    <ClCompile Include="..\LatticeRepresentationLib\LabeledSellaMatricesForDeloneType.cpp" />
-    <ClCompile Include="..\LatticeRepresentationLib\LatticeCentering.cpp" />
-    <ClCompile Include="..\LatticeRepresentationLib\LatticeCharacters.cpp" />
+    <ClCompile Include="..\LatticeRepresentationLib\LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
     <ClCompile Include="MAIN_SELLA.cpp" />
@@ -172,10 +171,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\LatticeRepresentationLib\DeloneTypeList.h" />
     <ClInclude Include="..\LatticeRepresentationLib\LabeledSellaMatrices.h" />
-    <ClInclude Include="..\LatticeRepresentationLib\LabeledSellaMatricesForDeloneType.h" />
-    <ClInclude Include="..\LatticeRepresentationLib\LatticeCentering.h" />
-    <ClInclude Include="..\LatticeRepresentationLib\LatticeCharacters.h" />
+    <ClInclude Include="..\LatticeRepresentationLib\LabeledDeloneTypeMatrices.h" />
     <ClInclude Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
   </ItemGroup>

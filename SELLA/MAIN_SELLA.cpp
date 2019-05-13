@@ -5,7 +5,7 @@
 #include <string>
 
 #include "C3.h"
-#include "LatticeCentering.h"
+#include "DeloneTypeList.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LatticeConverter.h"
 #include "LRL_ReadLatticeData.h"
@@ -257,7 +257,7 @@ int main()
 
    MatMN gd = LRL_CoordinateConversionMatrices::D7_FROM_S6;
 
-   LatticeCentering lc;
+   DeloneTypeList lc;
    //const std::vector<LabeledSellaMatrices> prjs = Sella::CreateAllPrjs();
    //for ( unsigned long i=0; i<prjs.size(); ++i ) {
    //   std::cout << prjs[i].GetLabel() << "  " << prjs[i].size() << std::endl;

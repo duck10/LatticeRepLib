@@ -2,13 +2,13 @@
 
 
 #include "GenerateRandomLattice.h"
-#include "LatticeCentering.h"
+#include "DeloneTypeList.h"
 #include "DeloneType.h"
 #include "LRL_ToString.h"
 #include "LRL_MaximaTools.h"
 #include "LRL_StringTools.h"
 #include "LabeledSellaMatrices.h"
-#include "LabeledSellaMatricesForDeloneType.h"
+#include "LabeledDeloneTypeMatrices.h"
 #include "Selling.h"
 #include "StoreResults.h"
 
@@ -21,20 +21,20 @@ std::vector <DeloneType> Sella::m_latticeCharacters;
 
 Sella::Sella()
 {
-   LabeledSellaMatricesForDeloneType labeledPerType;
+   LabeledDeloneTypeMatrices labeledPerType;
    DeloneType dt;
    std::string label;
    label = "C1";
-   dt = DeloneType(label, "cI", "rrr rrr", LatticeCentering::CreateCenteringMatrix("C1", "0 1 1  1 0 1  1 1 0"));
+   dt = DeloneType(label, "cI", "rrr rrr", DeloneTypeList::CreateCenteringMatrix("C1", "0 1 1  1 0 1  1 1 0"));
    dt.InsertMatricesForDeloneType(label);
    m_latticeCharacters.push_back(dt);
 
 
-   dt.AddToLabeledSellaMatricesForDeloneType(
-      label,
-      LabeledSellaMatrices::CreatePrjs_C1(),
-      LabeledSellaMatrices::CreatePerps_C1(),
-      LabeledSellaMatrices::CreateToCanon_C1());
+   //dt.AddToLabeledSellaMatricesForDeloneType(
+   //   label,
+   //   LabeledSellaMatrices::CreatePrjs_C1(),
+   //   LabeledSellaMatrices::CreatePerps_C1(),
+   //   LabeledSellaMatrices::CreateToCanon_C1());
 
    //m_latticeCharacters.push_back(DeloneType("C1", "cI", "rrr rrr"));
    //m_latticeCharacters.push_back(DeloneType("C3", "cF", "rr0 rr0"));

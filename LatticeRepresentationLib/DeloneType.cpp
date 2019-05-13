@@ -7,8 +7,13 @@ DeloneType::DeloneType(const std::string& deloneType,
 	, m_character(character)
 	, m_toCentered_E3()
 	, m_toCentered_S6(fromCanon.second)
-	, m_matrices()
 {
+}
+
+void DeloneType::InsertMatricesForDeloneType(const std::string& s) {
+   //(*this).m_prjs = GetPrj(s);
+   //(*this).m_perps = GetPerp(s);
+   //(*this).m_toCanons = GetTocanon(s);
 }
 
 void DeloneType::AddToLabeledSellaMatricesForDeloneType(
@@ -17,5 +22,4 @@ void DeloneType::AddToLabeledSellaMatricesForDeloneType(
    const LabeledSellaMatrices& perps,
    const LabeledSellaMatrices& toCanons,
    const LabeledSellaMatrices& toCentereds) {
-   m_matrices = LabeledSellaMatricesForDeloneType(label, prjs, perps, toCanons);
 }
