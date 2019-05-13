@@ -158,9 +158,9 @@
     <ClCompile Include="Allman.cpp" />
     <ClCompile Include="C3.cpp" />
     <ClCompile Include="ColorTables.cpp" />
+    <ClCompile Include="LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="LabeledSellaMatrices.cpp" />
-    <ClCompile Include="LabeledSellaMatricesForDeloneType.cpp" />
-    <ClCompile Include="LatticeCentering.cpp" />
+    <ClCompile Include="DeloneTypeList.cpp" />
     <ClCompile Include="DeloneType.cpp" />
     <ClCompile Include="LatticeConverter.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
@@ -200,9 +200,9 @@
     <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
+    <ClInclude Include="LabeledDeloneTypeMatrices.h" />
     <ClInclude Include="LabeledSellaMatrices.h" />
-    <ClInclude Include="LabeledSellaMatricesForDeloneType.h" />
-    <ClInclude Include="LatticeCentering.h" />
+    <ClInclude Include="DeloneTypeList.h" />
     <ClInclude Include="DeloneType.h" />
     <ClInclude Include="LatticeConverter.h" />
     <ClInclude Include="LRL_Cell.h" />

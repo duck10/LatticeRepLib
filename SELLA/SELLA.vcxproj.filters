@@ -20,16 +20,13 @@
     <ClCompile Include="..\LatticeRepresentationLib\LabeledSellaMatrices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\LatticeRepresentationLib\LabeledSellaMatricesForDeloneType.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\LatticeRepresentationLib\LatticeCentering.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\LatticeRepresentationLib\LatticeCharacters.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LatticeRepresentationLib\DeloneTypeList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LatticeRepresentationLib\LabeledDeloneTypeMatrices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -40,16 +37,13 @@
     <ClInclude Include="..\LatticeRepresentationLib\LabeledSellaMatrices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\LatticeRepresentationLib\LabeledSellaMatricesForDeloneType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\LatticeRepresentationLib\LatticeCentering.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\LatticeRepresentationLib\LatticeCharacters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LatticeRepresentationLib\DeloneTypeList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LatticeRepresentationLib\LabeledDeloneTypeMatrices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

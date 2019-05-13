@@ -5,7 +5,7 @@
 #include <string>
 
 #include "LabeledSellaMatrices.h"
-#include "LatticeCentering.h"
+#include "DeloneTypeList.h"
 #include "LatticeConverter.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LRL_ReadLatticeData.h"
@@ -111,7 +111,7 @@ B4 FromPrimitiveTo_R1_TRANSPOSE(const LRL_Cell& cell) {
 
 void TestLatticeCentering() {
    LatticeConverter converter;
-   LatticeCentering latcenter;
+   DeloneTypeList latcenter;
    std::vector<LRL_ReadLatticeData> input = GetInputCells();
 
    for (unsigned long i = 0; i < input.size(); ++i) {
@@ -145,8 +145,8 @@ void TestLatticeCentering() {
       static const std::vector<MatS6> refls = MatS6::GetReflections();
       for (unsigned long j = 0; j < latcenter.size(); ++j) {
          for ( unsigned long k=0; k<refls.size(); ++k ) {
-         std::cout << latcenter[j].first << " "
-            << LRL_Cell_Degrees(FromPrimitiveToCentered(latcenter[j].second, LRL_Cell(refls[k]*s6))) << std::endl;
+         //std::cout << latcenter[j].GetName << " "  L
+         //   << LRL_Cell_Degrees(FromPrimitiveToCentered(latcenter[j].second, LRL_Cell(refls[k]*s6))) << std::endl;
          }
       }
    }
@@ -250,52 +250,53 @@ void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
 
 int main()
 {
-   SellaBuild sellaBuild;
-   sellaBuild.Build();
+   DeloneTypeList();
+   //SellaBuild sellaBuild;
+   //sellaBuild.Build();
    exit(0);
 
-   TestLatticeCentering();
+   //TestLatticeCentering();
 
-   std::vector<S6> vLat = GetInputSellingReducedVectors();
+   //std::vector<S6> vLat = GetInputSellingReducedVectors();
 
-   const unsigned long n = 1000;
+   //const unsigned long n = 1000;
 
-   for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
-      std::vector<std::pair<std::string, double> > out;
-      std::vector<double> sum(24, 0.0);
-      std::vector<double> sumsq(24, 0.0);
-      std::vector<double> maxDist(24, -DBL_MAX);
+   //for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
+   //   std::vector<std::pair<std::string, double> > out;
+   //   std::vector<double> sum(24, 0.0);
+   //   std::vector<double> sumsq(24, 0.0);
+   //   std::vector<double> maxDist(24, -DBL_MAX);
 
-      double sign = 1.0;
-      for (unsigned long k = 0; k < n; ++k) {
-         out = sellaBuild.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, sign * 0.0));
-         if ( out.size() < sum.size()) {
-            sum.resize(out.size());
-            sumsq.resize(out.size());
-         }
-         for (unsigned long i = 0; i < out.size(); ++i) {
-            if ( out[i].second > 2.0 && out[i].first == "C5 ") {
-               const int i19191 = 19191;
-            }
-            sum[i] += out[i].second;
-            sumsq[i] += out[i].second*out[i].second;
-            maxDist[i] = std::max(maxDist[i], out[i].second);
-         }
-         sign = -sign;
-      }
+   //   double sign = 1.0;
+   //   for (unsigned long k = 0; k < n; ++k) {
+   //      out = sellaBuild.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, sign * 0.0));
+   //      if ( out.size() < sum.size()) {
+   //         sum.resize(out.size());
+   //         sumsq.resize(out.size());
+   //      }
+   //      for (unsigned long i = 0; i < out.size(); ++i) {
+   //         if ( out[i].second > 2.0 && out[i].first == "C5 ") {
+   //            const int i19191 = 19191;
+   //         }
+   //         sum[i] += out[i].second;
+   //         sumsq[i] += out[i].second*out[i].second;
+   //         maxDist[i] = std::max(maxDist[i], out[i].second);
+   //      }
+   //      sign = -sign;
+   //   }
 
-      for (unsigned long i = 0; i < sum.size(); ++i) {
-         const double avg = sum[i] / n;
-         const double stddev = sqrt(sumsq[i] / n - avg * avg);
-         std::cout << out[i].first << "  " << avg << "   " << stddev << "      max " << maxDist[i];
-         if (maxDist[i] > 0.0) std::cout << "    avg/max " << avg / maxDist[i];
-         std::cout << std::endl;
-      }
-      std::cout << std::endl;
-   }
+   //   for (unsigned long i = 0; i < sum.size(); ++i) {
+   //      const double avg = sum[i] / n;
+   //      const double stddev = sqrt(sumsq[i] / n - avg * avg);
+   //      std::cout << out[i].first << "  " << avg << "   " << stddev << "      max " << maxDist[i];
+   //      if (maxDist[i] > 0.0) std::cout << "    avg/max " << avg / maxDist[i];
+   //      std::cout << std::endl;
+   //   }
+   //   std::cout << std::endl;
+   //}
 
-   sellaBuild.ShowIndexResults();
+   //sellaBuild.ShowIndexResults();
 
-   //sellaBuild.TestPerps();
-   const int  i19191 = 19191;
+   ////sellaBuild.TestPerps();
+   //const int  i19191 = 19191;
 }
