@@ -326,8 +326,8 @@ MatG6 LRL_Cell::LatSymMatG6( const std::string& latsym, const LRL_Cell& c ) {
    return c.LatSymMatG6( latsym );
 }
 
-const MatG6 HexPerp(MatG6::Eye() - MatG6( " 1 1 0 0 0 -1   1 1 0 0 0 -1   0 0 3 0 0 0   0 0 0 0 0 0   0 0 0 0 0 0   -1 -1 0 0 0 1" ) );
-const MatG6 RhmPerp(MatG6::Eye() - MatG6( " 1 1 1 0 0  0   1 1 1 0 0  0   1 1 1 0 0 0   0 0 0 1 1 1   0 0 0 1 1 1    0  0 0 1 1 1" ) );
+const MatG6 HexPerp(MatG6::Eye() - (1./3.)*MatG6( " 1 1 0 0 0 -1   1 1 0 0 0 -1   0 0 3 0 0 0   0 0 0 0 0 0   0 0 0 0 0 0   -1 -1 0 0 0 1" ) );
+const MatG6 RhmPerp(MatG6::Eye() - (1./3.)*MatG6( " 1 1 1 0 0  0   1 1 1 0 0  0   1 1 1 0 0 0   0 0 0 1 1 1   0 0 0 1 1 1    0  0 0 1 1 1" ) );
 
 bool LRL_Cell::IsRhomobhedralAsHex( void ) const {
    return IsRhomobhedralAsHex( G6(*this));
