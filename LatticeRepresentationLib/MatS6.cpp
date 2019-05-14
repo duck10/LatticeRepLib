@@ -18,13 +18,12 @@
 
 std::vector<MatS6> MatS6::vS6_Refl = MatS6::GetReflections();
 
-static LRL_CoordinateConversionMatrices lccm;
 
 MatS6::MatS6(void)
    : m_mat(36)
 {}
 
-MatS6 MatS6::e3Tos6(std::vector<double>& m) {
+MatS6 MatS6::e3Tos6(const std::vector<double>& m) {
 	/*
 	*************************************************************************
 	Note that the E3 matrix (m) is applied in the order 
