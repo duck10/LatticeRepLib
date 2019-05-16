@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "LabeledSellaMatrices.h"
 #include "MatS6.h"
 #include "S6_Ordinals.h"
 #include "StoreResults.h"
@@ -25,6 +26,7 @@ public:
    void WriteSellaMatrices( const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const;
    void WriteSellaMatrices(const std::string& functionName, const std::string& label, const std::vector<MatS6>& mat) const;
 
+   std::string GetLabel(void) { return m_label; }
    std::vector<MatS6> GetPrj(const std::string& s);
    std::vector<MatS6> GetPerp(const std::string& s);
    std::vector<MatS6> GetTocanon(const std::string& s);

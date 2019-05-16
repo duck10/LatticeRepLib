@@ -122,6 +122,9 @@
     <ClCompile Include="LabeledDeloneTypeMatrices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SellaBuild.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -260,6 +263,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LabeledDeloneTypeMatrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SellaBuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
