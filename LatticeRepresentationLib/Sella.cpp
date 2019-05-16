@@ -52,8 +52,8 @@ Sella::Sella()
    //m_latticeCharacters.push_back(DeloneType("O5", "oP", "000 rst"));
    //m_latticeCharacters.push_back(DeloneType("M1A", "mC", "rrs ttu"));
    //m_latticeCharacters.push_back(DeloneType("M1B", "mC", "rst rsu"));
-   //m_latticeCharacters.push_back(DeloneType("M2A", "mC", "rs0 rst"));
-   //m_latticeCharacters.push_back(DeloneType("M2B", "mC", "rs0 stu"));
+   //m_latticeCharacters.push_back(DeloneType("M2A", "mC", "rs0 stu"));
+   //m_latticeCharacters.push_back(DeloneType("M2B", "mC", "rs0 rst"));
    //m_latticeCharacters.push_back(DeloneType("M3", "mC", "rs0 ts0"));
    //m_latticeCharacters.push_back(DeloneType("M4", "mP", "00r stu"));
    //m_latticeCharacters.push_back(DeloneType("A1", "aP", "rst uvw"));

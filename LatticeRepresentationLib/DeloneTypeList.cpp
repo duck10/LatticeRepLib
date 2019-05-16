@@ -1,7 +1,9 @@
 #include "DeloneTypeList.h"
 
+#include "LabeledSellaMatrices.h"
 #include "MatG6.h"
 #include "SanMatrix.h"
+#include "SellaBuild.h"
 
 #include <sstream>
 
@@ -13,11 +15,11 @@ std::vector<std::pair<std::string, std::string> > CreateBravaisTypeList() {
    v.push_back(std::make_pair("C1", "cI"));
    v.push_back(std::make_pair("C3", "cF"));
    v.push_back(std::make_pair("C5", "cP"));
+   v.push_back(std::make_pair("R1", "rP"));
+   v.push_back(std::make_pair("R3", "rP"));
    v.push_back(std::make_pair("T1", "tI"));
    v.push_back(std::make_pair("T2", "tI"));
    v.push_back(std::make_pair("T5", "tP"));
-   v.push_back(std::make_pair("R1", "rP"));
-   v.push_back(std::make_pair("R3", "rP"));
    v.push_back(std::make_pair("O1A", "oF"));
    v.push_back(std::make_pair("O1B", "oI"));
    v.push_back(std::make_pair("O2", "oI"));
@@ -42,11 +44,11 @@ std::vector<std::pair<std::string, std::string> > CreateCharacterList() {
    v.push_back(std::make_pair("C1", "rrr rrr"));
    v.push_back(std::make_pair("C3", "rr0 rr0"));
    v.push_back(std::make_pair("C5", "000 rrr"));
+   v.push_back(std::make_pair("R1", "rrr sss"));
+   v.push_back(std::make_pair("R3", "r0r sr0"));
    v.push_back(std::make_pair("T1", "rrs rrs"));
    v.push_back(std::make_pair("T2", "rr0 rrs"));
    v.push_back(std::make_pair("T5", "000 rrs"));
-   v.push_back(std::make_pair("R1", "rrr sss"));
-   v.push_back(std::make_pair("R3", "r0r sr0"));
    v.push_back(std::make_pair("O1A", "rrs rrt"));
    v.push_back(std::make_pair("O1B", "rrs rrs"));
    v.push_back(std::make_pair("O2", "rs0 sr0"));
@@ -55,8 +57,8 @@ std::vector<std::pair<std::string, std::string> > CreateCharacterList() {
    v.push_back(std::make_pair("O5", "000 rst"));
    v.push_back(std::make_pair("M1A", "rrs ttu"));
    v.push_back(std::make_pair("M1B", "rst rsu"));
-   v.push_back(std::make_pair("M2A", "rs0 rst"));
-   v.push_back(std::make_pair("M2B", "rs0 stu"));
+   v.push_back(std::make_pair("M2A", "rs0 stu"));
+   v.push_back(std::make_pair("M2B", "rs0 rst"));
    v.push_back(std::make_pair("M3", "rs0 ts0"));
    v.push_back(std::make_pair("M4", "00r stu"));
    v.push_back(std::make_pair("A1", "rst uvw"));
@@ -70,47 +72,76 @@ std::vector<std::pair<std::string, std::string> > CreateE3CenteringMatrixList() 
    std::vector<std::pair<std::string, std::string> > v;
    v.push_back(std::make_pair("C1", "0 1 1  1 0 1  1 1 0"));
    v.push_back(std::make_pair("C3", "1 1 0 -1 1 0  1 1 2"));
-   v.push_back(std::make_pair("C5", "1 0 0  0 0 1  0 1 1"));
+   //v.push_back(std::make_pair("C5", "1 0 0  0 0 1  0 1 1"));
    v.push_back(std::make_pair("C5", "1 0 0  0 1 0  0 0 1"));
-   v.push_back(std::make_pair("H4", "1 0 0  0 1 0  0 0 1"));
    v.push_back(std::make_pair("R1", "1 -1 0  0 1 -1  1 1 1"));
    v.push_back(std::make_pair("R3", "1 0 0  0 0 1  1 3 2"));
    v.push_back(std::make_pair("T1", "0 1 1  1 0 1  1 1 0"));
    v.push_back(std::make_pair("T2", "1 0 0  0 1 0  1 1 2"));
    v.push_back(std::make_pair("T5", "1 0 0  0 1 0  0 0 1"));
-   v.push_back(std::make_pair("T5", "1 0 0  0 0 1  0 1 1"));
-   v.push_back(std::make_pair("T5", "0 1 0  0 1 1  1 0 0"));
+   //v.push_back(std::make_pair("T5", "1 0 0  0 0 1  0 1 1"));
+   //v.push_back(std::make_pair("T5", "0 1 0  0 1 1  1 0 0"));
    v.push_back(std::make_pair("O1A", "1 1 0 -1 1 0  1 1 2"));
    v.push_back(std::make_pair("O1B", "0 1 1  1 0 1  1 1 0"));
    v.push_back(std::make_pair("O2", "1 0 0  0 1 0  1 1 2"));
    v.push_back(std::make_pair("O3", "0 1 1  1 0 1  1 1 0"));
-   v.push_back(std::make_pair("O3", "1 0 0  0 1 0  1 1 2"));
-   v.push_back(std::make_pair("O4", "2 1 0  0 1 0  0 0 1"));
+   //v.push_back(std::make_pair("O3", "1 0 0  0 1 0  1 1 2"));
+   //v.push_back(std::make_pair("O4", "2 1 0  0 1 0  0 0 1"));
    v.push_back(std::make_pair("O4", "1 -1 0  1 1 0  0 0 1"));
    v.push_back(std::make_pair("O5", "1 0 0  0 1 0  0 0 1"));
-   v.push_back(std::make_pair("O5", "1 0 0  0 0 1  0 1 1"));
+   //v.push_back(std::make_pair("O5", "1 0 0  0 0 1  0 1 1"));
    v.push_back(std::make_pair("M1A", "-1 -1 -1  1 -1 0  0 0 1"));
    v.push_back(std::make_pair("M1B", "0 1 1  1 1 0 -1 0 -1"));
    v.push_back(std::make_pair("M2A", "-1 -1 -2 0 1 0  1 0 0"));
    v.push_back(std::make_pair("M2B", "0 1 1  1 1 0 -1 0 -1"));
-   v.push_back(std::make_pair("M2B", "-1 -1 -1  1 -1 0  0 0 1"));
+   //v.push_back(std::make_pair("M2B", "-1 -1 -1  1 -1 0  0 0 1"));
    v.push_back(std::make_pair("M3", "-1 -1 -2  0 1 0  1 0 0"));
-   v.push_back(std::make_pair("M3", "1 1 0  0 -1 -1 -1 0 -1"));
+   //v.push_back(std::make_pair("M3", "1 1 0  0 -1 -1 -1 0 -1"));
    v.push_back(std::make_pair("M4", "1 0 0  0 1 0  0 0 1"));
    v.push_back(std::make_pair("A1", "1 0 0  0 1 0  0 0 1"));
    v.push_back(std::make_pair("A2", "1 0 0  0 1 0  0 0 1"));
    v.push_back(std::make_pair("A3", "1 0 0  0 1 0  0 0 1"));
+   v.push_back(std::make_pair("H4", "1 0 0  0 1 0  0 0 1"));
    return v;
 }
 
+std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPrjs() {
+   std::vector<LabeledSellaMatrices> vprj = LabeledSellaMatrices::CreateAllPrjs();
+   std::vector<std::pair< std::string, std::vector<MatS6> > > v;
+   for (auto i = 0; i < vprj.size(); ++i) {
+      v.push_back(std::make_pair(vprj[i].GetLabel(), vprj[i].GetMatrices()));
+   }return v;
+}
+
+std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPerps() {
+   std::vector<LabeledSellaMatrices> vperp = LabeledSellaMatrices::CreateAllPerps();
+   std::vector<std::pair< std::string, std::vector<MatS6> > > v;
+   for (auto i = 0; i < vperp.size(); ++i) {
+      v.push_back(std::make_pair(vperp[i].GetLabel(), vperp[i].GetMatrices()));
+   }return v;
+}
+
+std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllToCanaon() {
+   SellaBuild sb;
+   const std::vector<LabeledDeloneTypeMatrices>   sbmap = sb.Build();
+   std::vector<std::pair< std::string, std::vector<MatS6> > > v;
+
+   for ( auto it= sbmap.begin(); it!= sbmap.end(); ++it ) {
+      LabeledDeloneTypeMatrices ldtm = *it;
+      const std::string label = ldtm.GetLabel();
+      v.push_back(std::make_pair(label, ldtm.GetTocanon(label)));
+   }
+   return v;
+}
 
 DeloneTypeList::DeloneTypeList()
    : m_types()
 {
+
    //const std::vector<std::pair<std::string, MatS6> > toCentered = CreateListOfCenteringMatrices();
-   const std::vector<std::pair< std::string, std::vector<MatS6> > > prjs;
-   const std::vector<std::pair< std::string, std::vector<MatS6> > > perps;
-   const std::vector<std::pair< std::string, std::vector<MatS6> > > toCanons;
+   const std::vector<std::pair< std::string, std::vector<MatS6> > > prjs = CreateAllPrjs();
+   const std::vector<std::pair< std::string, std::vector<MatS6> > > perps = CreateAllPerps();
+   const std::vector<std::pair< std::string, std::vector<MatS6> > > toCanons = CreateAllToCanaon();
    const std::vector<std::pair<std::string, std::string> > characters = CreateCharacterList();
    const std::vector<std::pair<std::string, std::string> > e3matrices = CreateE3CenteringMatrixList();
    const std::vector<std::pair<std::string, std::string> > bravaisLatticeTypes = CreateBravaisTypeList();
@@ -255,7 +286,7 @@ std::vector<std::pair<std::string,std::vector<double> > > DeloneTypeList::Make3d
    std::vector<std::pair<std::string, std::vector<double> > > v;
    v.push_back(std::make_pair("C1",  Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("C3",  Make3dVector("1 1 0 -1 1 0  1 1 2")));
-   v.push_back(std::make_pair("C5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
+   //v.push_back(std::make_pair("C5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
    v.push_back(std::make_pair("C5",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("H4",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("R1",  Make3dVector("1 -1 0  0 1 -1  1 1 1")));
@@ -263,28 +294,53 @@ std::vector<std::pair<std::string,std::vector<double> > > DeloneTypeList::Make3d
    v.push_back(std::make_pair("T1",  Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("T2",  Make3dVector("1 0 0  0 1 0  1 1 2")));
    v.push_back(std::make_pair("T5",  Make3dVector("1 0 0  0 1 0  0 0 1")));
-   v.push_back(std::make_pair("T5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
-   v.push_back(std::make_pair("T5",  Make3dVector("0 1 0  0 1 1  1 0 0")));
+   //v.push_back(std::make_pair("T5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
+   //v.push_back(std::make_pair("T5",  Make3dVector("0 1 0  0 1 1  1 0 0")));
    v.push_back(std::make_pair("O1A", Make3dVector("1 1 0 -1 1 0  1 1 2")));
    v.push_back(std::make_pair("O1B", Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("O2",  Make3dVector("1 0 0  0 1 0  1 1 2")));
    v.push_back(std::make_pair("O3",  Make3dVector("0 1 1  1 0 1  1 1 0")));
-   v.push_back(std::make_pair("O3",  Make3dVector("1 0 0  0 1 0  1 1 2")));
-   v.push_back(std::make_pair("O4",  Make3dVector("2 1 0  0 1 0  0 0 1")));
+   //v.push_back(std::make_pair("O3",  Make3dVector("1 0 0  0 1 0  1 1 2")));
+   //v.push_back(std::make_pair("O4",  Make3dVector("2 1 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("O4",  Make3dVector("1 -1 0  1 1 0  0 0 1")));
    v.push_back(std::make_pair("O5",  Make3dVector("1 0 0  0 1 0  0 0 1")));
-   v.push_back(std::make_pair("O5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
+   //v.push_back(std::make_pair("O5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
    v.push_back(std::make_pair("M1A", Make3dVector("-1 -1 -1  1 -1 0  0 0 1")));
    v.push_back(std::make_pair("M1B", Make3dVector("0 1 1  1 1 0 -1 0 -1")));
    v.push_back(std::make_pair("M2A", Make3dVector("-1 -1 -2 0 1 0  1 0 0")));
-   v.push_back(std::make_pair("M2B", Make3dVector("0 1 1  1 1 0 -1 0 -1")));
-   v.push_back(std::make_pair("M2B", Make3dVector("-1 -1 -1  1 -1 0  0 0 1")));
+   v.push_back(std::make_pair("M2B", Make3dVector("0 1 1  1 1 0 -1 0 -1"))); //  ?????????????????????????
+   //v.push_back(std::make_pair("M2B", Make3dVector("-1 -1 -1  1 -1 0  0 0 1"))); //  ?????????????????????????
    v.push_back(std::make_pair("M3",  Make3dVector("-1 -1 -2  0 1 0  1 0 0")));
-   v.push_back(std::make_pair("M3",  Make3dVector("1 1 0  0 -1 -1 -1 0 -1")));
+   //v.push_back(std::make_pair("M3",  Make3dVector("1 1 0  0 -1 -1 -1 0 -1")));
    v.push_back(std::make_pair("M4",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A1",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A2",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A3",  Make3dVector("1 0 0  0 1 0  0 0 1")));
+
+   //m_latticeCharacters.push_back(DeloneType("C1", "cI", "rrr rrr"));
+   //m_latticeCharacters.push_back(DeloneType("C3", "cF", "rr0 rr0"));
+   //m_latticeCharacters.push_back(DeloneType("C5", "cP", "000 rrr"));
+   //m_latticeCharacters.push_back(DeloneType("T1", "tI", "rrs rrs"));
+   //m_latticeCharacters.push_back(DeloneType("T2", "tI", "rr0 rrs"));
+   //m_latticeCharacters.push_back(DeloneType("T5", "tP", "000 rrs"));
+   //m_latticeCharacters.push_back(DeloneType("R1", "rP", "rrr sss"));
+   //m_latticeCharacters.push_back(DeloneType("R3", "rP", "r0r sr0"));
+   //m_latticeCharacters.push_back(DeloneType("O1A", "oF", "rrs rrt"));
+   //m_latticeCharacters.push_back(DeloneType("O1B", "oI", "rrs rrs"));
+   //m_latticeCharacters.push_back(DeloneType("O2", "oI", "rs0 sr0"));
+   //m_latticeCharacters.push_back(DeloneType("O3", "oI", "rs0 rs0"));
+   //m_latticeCharacters.push_back(DeloneType("O4", "oP", "00r sst"));
+   //m_latticeCharacters.push_back(DeloneType("O5", "oP", "000 rst"));
+   //m_latticeCharacters.push_back(DeloneType("M1A", "mC", "rrs ttu"));
+   //m_latticeCharacters.push_back(DeloneType("M1B", "mC", "rst rsu"));
+   //m_latticeCharacters.push_back(DeloneType("M2A", "mC", "rs0 stu"));
+   //m_latticeCharacters.push_back(DeloneType("M2B", "mC", "rs0 rst"));
+   //m_latticeCharacters.push_back(DeloneType("M3", "mC", "rs0 ts0"));
+   //m_latticeCharacters.push_back(DeloneType("M4", "mP", "00r stu"));
+   //m_latticeCharacters.push_back(DeloneType("A1", "aP", "rst uvw"));
+   //m_latticeCharacters.push_back(DeloneType("A2", "aP", "rs0 tuv"));
+   //m_latticeCharacters.push_back(DeloneType("A3", "aP", "rs0 tu0"));
+   //m_latticeCharacters.push_back(DeloneType("H4", "hP", "00r rrs"));
 
    return v;
 }

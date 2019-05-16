@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Delone.h"
+#include "LabeledDeloneTypeMatrices.h"
 #include "LabeledSellaMatrices.h"
 #include "MatS6.h"
 #include "S6.h"
@@ -19,13 +20,13 @@ class SellaBuild {
 public:
 
    SellaBuild();
-   void Build();
+   std::vector<LabeledDeloneTypeMatrices>  Build();
    double TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm);
    void TestAllTypes(const S6& s6);
    void TestPerps();
    std::vector<std::pair<std::string, double> > GetVectorOfFits(const S6& s6);
    void ShowIndexResults() const;
-   size_t size(void) const { return themap.size(); }
+   const std::map<std::string, std::vector<S6_Ordinals> >& SellaBuildMap() { return themap; }
 
 private:
    std::map<std::string, std::vector<S6_Ordinals> > themap;
