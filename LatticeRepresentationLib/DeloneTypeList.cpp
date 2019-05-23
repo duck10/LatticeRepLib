@@ -2,13 +2,11 @@
 
 #include "LabeledSellaMatrices.h"
 #include "MatG6.h"
+#include "LRL_MaximaTools.h"
 #include "SanMatrix.h"
 #include "SellaBuild.h"
 
 #include <sstream>
-
-//const std::vector<std::pair<char, MatS6> > DeloneTypeList::m_ToPrimitive = DeloneTypeList::MakeUncenterMatrices();;
-//const std::vector<std::pair<char, MatS6> > DeloneTypeList::m_ToCentered = DeloneTypeList::MakeCenteringMatrices();
 
 std::vector<std::pair<std::string, std::string> > CreateBravaisTypeList() {
    std::vector<std::pair<std::string, std::string> > v;
@@ -139,37 +137,34 @@ DeloneTypeList::DeloneTypeList()
 {
 
    //const std::vector<std::pair<std::string, MatS6> > toCentered = CreateListOfCenteringMatrices();
-   const std::vector<std::pair< std::string, std::vector<MatS6> > > prjs = CreateAllPrjs();
-   const std::vector<std::pair< std::string, std::vector<MatS6> > > perps = CreateAllPerps();
-   const std::vector<std::pair< std::string, std::vector<MatS6> > > toCanons = CreateAllToCanaon();
-   const std::vector<std::pair<std::string, std::string> > characters = CreateCharacterList();
-   const std::vector<std::pair<std::string, std::string> > e3matrices = CreateE3CenteringMatrixList();
-   const std::vector<std::pair<std::string, std::string> > bravaisLatticeTypes = CreateBravaisTypeList();
+   m_prjs = CreateAllPrjs();
+   m_perps = CreateAllPerps();
+   m_toCanons = CreateAllToCanaon();
+   m_characters = CreateCharacterList();
+   m_e3matrices = CreateE3CenteringMatrixList();
+   m_bravaisLatticeTypes = CreateBravaisTypeList();
+   m_centeringMatrices = CreateListOfCenteringMatrices();
 
+   for (auto i = 0; i < m_e3matrices.size(); ++i) {
+      std::cout << m_e3matrices[i].first << "   " << LRL_MaximaTools::MaximaFromString(m_e3matrices[i].second) << " &  " <<
+      LRL_MaximaTools::MaximaFromMat(m_centeringMatrices[i].second) << std::endl;
+   }
 
-   if (/*(toCentered.size() != 24) || */(prjs.size() != 24) || (perps.size() != 24) || (toCanons.size() != 24)
-      || (characters.size() != 24) || (e3matrices.size() != 24) || (bravaisLatticeTypes.size() != 24)) throw "wrong size";
+   if ((m_centeringMatrices.size() != 24) || (m_prjs.size() != 24) || (m_perps.size() != 24) || (m_toCanons.size() != 24)
+      || (m_characters.size() != 24) || (m_e3matrices.size() != 24) || (m_bravaisLatticeTypes.size() != 24)) throw "wrong size";
+
+   const std::string character = GetCharacter("C5");
+   const std::string ematrix = Gete3matrix("C5");
+   const std::string bravaisLatticeType = GetBravaisLatticeType("C5");
+   const MatS6  centeringMatrix =  GetCenteringMatrix("C5");
+   const std::vector<MatS6> prj =  GetPrjs("C5");
+   const std::vector<MatS6> perp =  GetPerps("C5");
+   const std::vector<MatS6> toCanon =  GetToCanons("C5");
+
    for (unsigned long i=0; i<24; ++i ) {
       //m_types.push_back(DeloneType(toCentered[i],prjs[i], perps[i], toCanons[i]));
    }
-}
 
-std::vector<std::pair<char, MatS6> > DeloneTypeList::MakeUncenterMatrices() {
-   //if (m_ToPrimitive.empty()) {
-   //   std::vector<std::pair<char, MatS6> >v;
-   //   v.push_back(std::make_pair('P', MatG6::Eye()));
-   //   v.push_back(std::make_pair('I', MatG6("1 0 0 0 0 0    0 1 0 0 0 0    .25 .25 .25 .25 .25 .25   0 1 0 .5 0 .5   1 0 0 0 .5 .5   0 0 0 0 0 1"))); // for monoclinic, assumes b unique
-   //   v.push_back(std::make_pair('A', MatG6("1 0 0 0 0 0   0 1 0 0 0 0   0 .25 .25 .25 0 0    0 1 0 .5 0 0   0 0 0 0 .5 .5   0 0 0 0 0 1"))); // for monoclinic, assumes b unique
-   //   v.push_back(std::make_pair('B', MatG6("1 0 0 0 0 0   0 1 0 0 0 0   .25 0 .25 0 .25 0   0 0 0 .5 0 .5   1 0 0 0 .5 0   0 0 0 0 0 1"))); // for monoclinic, assumes c unique
-   //   v.push_back(std::make_pair('C', MatG6("1 0 0 0 0 0   .25 .25 0 0 0 .25   0 0 1 0 0 0    0 0 0 .5 .5 0   0 0 0 0 1 0   1 0 0 0 0 .5"))); // for monoclinic, assumes b unique
-   //   v.push_back(std::make_pair('F', MatG6(".25 .25 0 0 0 .25     .25 0 .25 0 .25 0     0 .25 .25 .25  0 0    0 0 .5 .25 .25 .25     0 .5 0 .25 .25 .25     .5 0 0 .25 .25 .25")));
-   //   v.push_back(std::make_pair('R', (1.0 / 9.0)* MatG6("1 1 1 1 -1 -1    4 1 1  1  2  2     1  4  1  -2  -1  2     -4  -4  2  -1  1  -5     2  -4  2  -1  -2  1     -4  2  2  2  1  1")));
-   //   v.push_back(std::make_pair('H', MatG6::Eye()));
-   //   return v;
-   //}
-   //else
-   //return m_ToPrimitive;
-   return std::vector<std::pair<char, MatS6> >();
 }
 
 MatS6 DeloneTypeList::MakeCentering(const MatS6& m) {
@@ -177,16 +172,6 @@ MatS6 DeloneTypeList::MakeCentering(const MatS6& m) {
    const CMatrix inv = cm.Inverse();
    const MatS6 m6(inv.GetVector());
    return m6;
-}
-
-std::vector<std::pair<char, MatS6> > DeloneTypeList::MakeCenteringMatrices() {
-   if (m_types.empty()) MakeUncenterMatrices();
-
-   std::vector<std::pair<char, MatS6> > v;
-   //for ( unsigned long i=0; i< m_types.size(); ++i )
-   //   v.push_back(std::make_pair(m_types[i].GetName(), MakeCentering(m_ToPrimitive[i].second)));
-   throw;
-   return v;
 }
 
 std::vector<std::pair<char, MatS6> > DeloneTypeList::GetMakePrimitiveMatrices() {
@@ -245,40 +230,40 @@ std::pair<std::string, MatS6 > DeloneTypeList::CreateCenteringMatrix(const std::
    return std::make_pair(lattice, MatS6::e3Tos6(Make3dVector(threespaceMatrix)));
 }
 
-std::vector<std::pair<std::string, MatS6> > CreateListOfCenteringMatrices() {
+std::vector<std::pair<std::string, MatS6> > DeloneTypeList::CreateListOfCenteringMatrices() {
    std::vector<std::pair<std::string, MatS6> > v;
    v.push_back(DeloneTypeList::CreateCenteringMatrix("C1", "0 1 1  1 0 1  1 1 0"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("C3", "1 1 0 -1 1 0  1 1 2"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("C5", "1 0 0  0 0 1  0 1 1"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("C5", "1 0 0  0 0 1  0 1 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("C5", "1 0 0  0 1 0  0 0 1"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("H4", "1 0 0  0 1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("R1", "1 -1 0  0 1 -1  1 1 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("R3", "1 0 0  0 0 1  1 3 2"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("T1", "0 1 1  1 0 1  1 1 0"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("T2", "1 0 0  0 1 0  1 1 2"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "1 0 0  0 1 0  0 0 1"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "1 0 0  0 0 1  0 1 1"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "0 1 0  0 1 1  1 0 0"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "1 0 0  0 0 1  0 1 1"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "0 1 0  0 1 1  1 0 0"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("O1A", "1 1 0 -1 1 0  1 1 2"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("O1B", "0 1 1  1 0 1  1 1 0"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("O2", "1 0 0  0 1 0  1 1 2"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("O3", "0 1 1  1 0 1  1 1 0"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("O3", "1 0 0  0 1 0  1 1 2"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("O4", "2 1 0  0 1 0  0 0 1"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("O3", "1 0 0  0 1 0  1 1 2"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("O4", "2 1 0  0 1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("O4", "1 -1 0  1 1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("O5", "1 0 0  0 1 0  0 0 1"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("O5", "1 0 0  0 0 1  0 1 1"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("O5", "1 0 0  0 0 1  0 1 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("M1A", "-1 -1 -1  1 -1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("M1B", "0 1 1  1 1 0 -1 0 -1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("M2A", "-1 -1 -2 0 1 0  1 0 0"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("M2B", "0 1 1  1 1 0 -1 0 -1"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("M2B", "-1 -1 -1  1 -1 0  0 0 1"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("M2B", "-1 -1 -1  1 -1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("M3", "-1 -1 -2  0 1 0  1 0 0"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("M3", "1 1 0  0 -1 -1 -1 0 -1"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("M3", "1 1 0  0 -1 -1 -1 0 -1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("M4", "1 0 0  0 1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("A1", "1 0 0  0 1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("A2", "1 0 0  0 1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("A3", "1 0 0  0 1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("H4", "1 0 0  0 1 0  0 0 1"));
    return v;
 }
 
