@@ -257,7 +257,8 @@ int main()
 
    MatMN gd = LRL_CoordinateConversionMatrices::D7_FROM_S6;
 
-   DeloneTypeList lc;
+   DeloneTypeList DeloneList;
+
    //const std::vector<LabeledSellaMatrices> prjs = Sella::CreateAllPrjs();
    //for ( unsigned long i=0; i<prjs.size(); ++i ) {
    //   std::cout << prjs[i].GetLabel() << "  " << prjs[i].size() << std::endl;
