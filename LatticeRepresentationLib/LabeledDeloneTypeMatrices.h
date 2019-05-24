@@ -12,11 +12,6 @@
 class LabeledDeloneTypeMatrices {
 public:
    LabeledDeloneTypeMatrices(){}
-   LabeledDeloneTypeMatrices(
-      const std::string& label,
-      const LabeledSellaMatrices& prjs,
-      const LabeledSellaMatrices& perps,
-      const LabeledSellaMatrices& toCanons);
    std::vector<LabeledDeloneTypeMatrices>
       ProcessVectorMapToPerpsAndProjectors
       (const std::map<std::string, std::vector<S6_Ordinals> >& themap);

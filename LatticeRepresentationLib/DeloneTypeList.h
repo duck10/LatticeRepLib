@@ -43,12 +43,14 @@ public:
    std::string        Gete3matrix(const std::string& type) const { return Getter(type, m_e3matrices); }
    std::string        GetBravaisLatticeType(const std::string& type) const { return Getter(type, m_bravaisLatticeTypes); }
    MatS6              GetCenteringMatrix(const std::string& type) const { return Getter(type, m_centeringMatrices); }
-   std::vector<MatS6> GetPrjs(const std::string& type) const { return Getter(type, m_prjs); }
-   std::vector<MatS6> GetPerps(const std::string& type) const { return Getter(type, m_perps); }
-   std::vector<MatS6> GetToCanons(const std::string& type) const { return Getter(type, m_toCanons); }
+   std::vector<MatS6> GetPrjList(const std::string& type) const { return Getter(type, m_prjs); }
+   std::vector<MatS6> GetPerpList(const std::string& type) const { return Getter(type, m_perps); }
+   std::vector<MatS6> GetToCanonList(const std::string& type) const { return Getter(type, m_toCanons); }
 
 protected:
    static std::vector<double> Make3dVector(const std::string& s);
+   static const std::vector<std::string> m_typeList;
+
    std::vector<DeloneType> m_types;
 
    std::vector<std::pair< std::string, std::vector<MatS6> > > m_prjs;

@@ -8,6 +8,9 @@
 
 #include <sstream>
 
+const std::vector<std::string> DeloneTypeList::m_typeList{ "C1","C3","C5","R1","R3","T1","T2","T5","O1A","O1B","O2","O3","O4","O5","M1A","M1B","M2A","M2B","M3","M4","A1","A2","A3","H4" };
+
+
 std::vector<std::pair<std::string, std::string> > CreateBravaisTypeList() {
    std::vector<std::pair<std::string, std::string> > v;
    v.push_back(std::make_pair("C1", "cI"));
@@ -135,7 +138,7 @@ std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllToCanaon() {
 DeloneTypeList::DeloneTypeList()
    : m_types()
 {
-
+   m_typeList;
    //const std::vector<std::pair<std::string, MatS6> > toCentered = CreateListOfCenteringMatrices();
    m_prjs = CreateAllPrjs();
    m_perps = CreateAllPerps();
@@ -157,9 +160,9 @@ DeloneTypeList::DeloneTypeList()
    const std::string ematrix = Gete3matrix("C5");
    const std::string bravaisLatticeType = GetBravaisLatticeType("C5");
    const MatS6  centeringMatrix =  GetCenteringMatrix("C5");
-   const std::vector<MatS6> prj =  GetPrjs("C5");
-   const std::vector<MatS6> perp =  GetPerps("C5");
-   const std::vector<MatS6> toCanon =  GetToCanons("C5");
+   const std::vector<MatS6> prj =  GetPrjList("C5");
+   const std::vector<MatS6> perp =  GetPerpList("C5");
+   const std::vector<MatS6> toCanon =  GetToCanonList("C5");
 
    for (unsigned long i=0; i<24; ++i ) {
       //m_types.push_back(DeloneType(toCentered[i],prjs[i], perps[i], toCanons[i]));

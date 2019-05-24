@@ -21,11 +21,9 @@
   <ItemGroup>
     <ClCompile Include="..\LatticeRepresentationLib\S6_Ordinals.cpp" />
     <ClCompile Include="MAIN_SELLA_DEV.cpp" />
-    <ClCompile Include="SellaBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\S6_Ordinals.h" />
-    <ClInclude Include="SellaBuild.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">

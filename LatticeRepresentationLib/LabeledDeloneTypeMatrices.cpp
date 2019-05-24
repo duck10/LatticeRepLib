@@ -5,13 +5,6 @@
 #include "DeloneTypeList.h"
 #include <string>
 
-LabeledDeloneTypeMatrices::LabeledDeloneTypeMatrices(
-   const std::string& label,
-   const LabeledSellaMatrices& prjs,
-   const LabeledSellaMatrices& perps,
-   const LabeledSellaMatrices& toCanons)
-{}
-
 
 bool LabeledDeloneTypeMatrices::AlreadyHasThisProjector( const MatS6& m, const LabeledDeloneTypeMatrices& lsm) const{
    for ( auto i=0; i<lsm.m_prjs.size(); ++i ) {
