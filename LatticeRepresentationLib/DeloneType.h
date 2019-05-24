@@ -15,12 +15,6 @@ public:
    void InsertMatricesForDeloneType(const std::string& s);
    void AddToCenteredE3();
    void AddToCenteredS6();
-   void AddToLabeledSellaMatricesForDeloneType(
-      const std::string& label,
-      const LabeledSellaMatrices& prjs,
-      const LabeledSellaMatrices& perps,
-      const LabeledSellaMatrices& toCanons,
-      const LabeledSellaMatrices& toCentereds);
 
    std::string GetName(void) const { return m_deloneName; }
    std::string GetBravaisType(void) const { return m_bravaisType;}

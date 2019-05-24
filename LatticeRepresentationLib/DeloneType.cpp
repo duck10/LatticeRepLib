@@ -15,11 +15,3 @@ void DeloneType::InsertMatricesForDeloneType(const std::string& s) {
    //(*this).m_perps = GetPerp(s);
    //(*this).m_toCanons = GetTocanon(s);
 }
-
-void DeloneType::AddToLabeledSellaMatricesForDeloneType(
-   const std::string& label,
-   const LabeledSellaMatrices& prjs, 
-   const LabeledSellaMatrices& perps,
-   const LabeledSellaMatrices& toCanons,
-   const LabeledSellaMatrices& toCentereds) {
-}
