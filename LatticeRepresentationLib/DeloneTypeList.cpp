@@ -304,32 +304,6 @@ std::vector<std::pair<std::string,std::vector<double> > > DeloneTypeList::Make3d
    v.push_back(std::make_pair("A1",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A2",  Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A3",  Make3dVector("1 0 0  0 1 0  0 0 1")));
-
-   //m_latticeCharacters.push_back(DeloneType("C1", "cI", "rrr rrr"));
-   //m_latticeCharacters.push_back(DeloneType("C3", "cF", "rr0 rr0"));
-   //m_latticeCharacters.push_back(DeloneType("C5", "cP", "000 rrr"));
-   //m_latticeCharacters.push_back(DeloneType("T1", "tI", "rrs rrs"));
-   //m_latticeCharacters.push_back(DeloneType("T2", "tI", "rr0 rrs"));
-   //m_latticeCharacters.push_back(DeloneType("T5", "tP", "000 rrs"));
-   //m_latticeCharacters.push_back(DeloneType("R1", "rP", "rrr sss"));
-   //m_latticeCharacters.push_back(DeloneType("R3", "rP", "r0r sr0"));
-   //m_latticeCharacters.push_back(DeloneType("O1A", "oF", "rrs rrt"));
-   //m_latticeCharacters.push_back(DeloneType("O1B", "oI", "rrs rrs"));
-   //m_latticeCharacters.push_back(DeloneType("O2", "oI", "rs0 sr0"));
-   //m_latticeCharacters.push_back(DeloneType("O3", "oI", "rs0 rs0"));
-   //m_latticeCharacters.push_back(DeloneType("O4", "oP", "00r sst"));
-   //m_latticeCharacters.push_back(DeloneType("O5", "oP", "000 rst"));
-   //m_latticeCharacters.push_back(DeloneType("M1A", "mC", "rrs ttu"));
-   //m_latticeCharacters.push_back(DeloneType("M1B", "mC", "rst rsu"));
-   //m_latticeCharacters.push_back(DeloneType("M2A", "mC", "rs0 stu"));
-   //m_latticeCharacters.push_back(DeloneType("M2B", "mC", "rs0 rst"));
-   //m_latticeCharacters.push_back(DeloneType("M3", "mC", "rs0 ts0"));
-   //m_latticeCharacters.push_back(DeloneType("M4", "mP", "00r stu"));
-   //m_latticeCharacters.push_back(DeloneType("A1", "aP", "rst uvw"));
-   //m_latticeCharacters.push_back(DeloneType("A2", "aP", "rs0 tuv"));
-   //m_latticeCharacters.push_back(DeloneType("A3", "aP", "rs0 tu0"));
-   //m_latticeCharacters.push_back(DeloneType("H4", "hP", "00r rrs"));
-
    return v;
 }
 
