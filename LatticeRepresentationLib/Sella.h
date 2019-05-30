@@ -24,23 +24,6 @@ public:
    const S6 m_projected;
    const S6 m_perped;
 };
-//
-//class LabeledSellaMatrices {
-//public:
-//   LabeledSellaMatrices()
-//   {}
-//   LabeledSellaMatrices(const std::string& label, const std::vector<MatS6>& vm) : m_label(label), m_vector(vm)
-//   {}
-//
-//   std::string GetLabel() const { return m_label; }
-//
-//   std::vector<MatS6>  GetMatrices() const { return m_vector; }
-//
-//   size_t size() const { return m_vector.size(); }
-//private:
-//   std::string m_label;
-//   std::vector<MatS6> m_vector;
-//};
 
 class Sella {
 public:
