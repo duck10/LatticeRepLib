@@ -53,13 +53,14 @@ protected:
 
    std::vector<DeloneType> m_types;
 
-   std::vector<std::pair< std::string, std::vector<MatS6> > > m_prjs;
-   std::vector<std::pair< std::string, std::vector<MatS6> > > m_perps;
-   std::vector<std::pair< std::string, std::vector<MatS6> > > m_toCanons;
    std::vector<std::pair<std::string, std::string> > m_characters;
    std::vector<std::pair<std::string, std::string> > m_e3matrices;
    std::vector<std::pair<std::string, std::string> > m_bravaisLatticeTypes;
    std::vector<std::pair<std::string, MatS6> > m_centeringMatrices;
+
+   std::vector<std::pair< std::string, std::vector<MatS6> > > m_prjs;
+   std::vector<std::pair< std::string, std::vector<MatS6> > > m_perps;
+   std::vector<std::pair< std::string, std::vector<MatS6> > > m_toCanons;
 
 };
 
