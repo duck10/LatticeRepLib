@@ -238,7 +238,6 @@
     <ClInclude Include="Niggli.h" />
     <ClInclude Include="S6_Matrices.h" />
     <ClInclude Include="S6_Ordinals.h" />
-    <ClInclude Include="SanMatrix.h" />
     <ClInclude Include="SellaBuild.h" />
     <ClInclude Include="Selling.h" />
     <ClInclude Include="V7Dist.h" />

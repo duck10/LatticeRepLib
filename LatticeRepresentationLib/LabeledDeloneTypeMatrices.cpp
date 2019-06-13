@@ -7,7 +7,7 @@
 
 
 bool LabeledDeloneTypeMatrices::AlreadyHasThisProjector( const MatS6& m, const LabeledDeloneTypeMatrices& lsm) const{
-   for ( auto i=0; i<lsm.m_prjs.size(); ++i ) {
+   for (unsigned long i=0; i<lsm.m_prjs.size(); ++i ) {
       const double d = (m - lsm.m_prjs[i]).norm();
       if ((m - lsm.m_prjs[i]).norm() < 1.0E-4) return true;
    }
@@ -20,7 +20,7 @@ std::vector<LabeledDeloneTypeMatrices>
 {
    static const MatS6 unit = MatS6().unit();
    std::vector<LabeledDeloneTypeMatrices> vlsm;
-   for (auto it = themap.begin(); it != themap.end(); ++it) {
+   for (std::map<std::string, std::vector<S6_Ordinals> >::const_iterator it = themap.begin(); it != themap.end(); ++it) {
       const std::pair<std::string, std::vector<S6_Ordinals> > p = *it;
       LabeledDeloneTypeMatrices lsm;
       std::vector<MatS6> vmprj;
@@ -43,12 +43,17 @@ std::vector<LabeledDeloneTypeMatrices>
 }
 
 MatS6 LabeledDeloneTypeMatrices::ToCanon(const S6_Ordinals& s) {
-   return ToCanon(s.m_ordinals);
+   const MatS6 fromCanon = ToCanon(s.m_ordinals);
+   MatN mn(6);
+   mn.SetVector(fromCanon.GetVector());
+   MatS6 ms6I = mn.inverse();
+   for (unsigned long i = 0; i < 36; ++i) if(ms6I[i] == 0.0) ms6I[i] = 0.0;
+   return ms6I;
 }
 
 MatS6 LabeledDeloneTypeMatrices::ToCanon(const S6& s) {
    MatS6 m(MatS6().Zero());
-   for (auto i = 0; i < 6; ++i) {
+   for (unsigned long i = 0; i < 6; ++i) {
       m[6 * i + int(s[i])] = 1.0;
    }
    return m;
@@ -120,19 +125,19 @@ static std::string WriteOneNumber(const double d) {
 }
 
 void LabeledDeloneTypeMatrices::DoPerps(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   for ( auto i=0; i<matsForAllDeloneTypes.size(); ++i ) {
+   for (unsigned long i=0; i<matsForAllDeloneTypes.size(); ++i ) {
       WriteSellaMatrices("Perp", matsForAllDeloneTypes[i].m_label, matsForAllDeloneTypes[i].m_perps);
    }
 }
 
 void LabeledDeloneTypeMatrices::DoPrjs(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   for (auto i = 0; i < matsForAllDeloneTypes.size(); ++i) {
+   for (unsigned long i = 0; i < matsForAllDeloneTypes.size(); ++i) {
       WriteSellaMatrices("Prj", matsForAllDeloneTypes[i].m_label, matsForAllDeloneTypes[i].m_perps);
    }
 }
 
 void LabeledDeloneTypeMatrices::DoToCanon(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   for (auto i = 0; i < matsForAllDeloneTypes.size(); ++i) {
+   for (unsigned long i = 0; i < matsForAllDeloneTypes.size(); ++i) {
       WriteSellaMatrices("ToCanon", matsForAllDeloneTypes[i].m_label, matsForAllDeloneTypes[i].m_toCanons);
    }
 }

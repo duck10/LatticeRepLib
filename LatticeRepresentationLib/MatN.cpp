@@ -231,7 +231,7 @@ inline unsigned long LinearIndex( const unsigned long row, const unsigned long c
 }
 
 MatN MatN::inverse( void ) const {
-   MatN I( ( *this ).size( ) );
+   MatN I((*this).size()*(*this).size());
 
    const unsigned long dim=I.GetDim( );
    const unsigned long rowdim = I.GetRowDim( );

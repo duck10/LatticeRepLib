@@ -1,7 +1,7 @@
 /* inverse.h  basic Gaussian elimination version */
 
-#ifndef LRL_inverse
-#define LRL_inverse
+#ifndef LRL_INVERSE
+#define LRL_INVERSE
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,4 +12,4 @@ extern "C" {
 }
 #endif 
 
-#endif // LRL_inverse
+#endif // LRL_INVERSE

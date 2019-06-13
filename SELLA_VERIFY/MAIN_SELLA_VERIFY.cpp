@@ -203,7 +203,7 @@ void ParseArgs(const int argc, char* argv[], std::vector<std::string>& sRet, std
    sRet.clear();
    for (unsigned long i = 1; int(i) < argc; ++i) {
       std::string s(argv[i]);
-	  for (auto k = 0; k < s.length(); ++k)
+	  for (unsigned long k = 0; k < s.length(); ++k)
 		  s[k] = static_cast<char>(toupper(s[k]));
       sRet.push_back(s);
    }
