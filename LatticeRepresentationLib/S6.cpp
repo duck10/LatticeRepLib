@@ -22,9 +22,6 @@ static const double randomLatticeNormalizationConstantSquared = randomLatticeNor
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
 
-const double pi = 4.0*atan(1.0);
-const double twopi = 2.0*pi;
-
 static int s6RandomSeedS6 = 19195;
 static RHrand rhrandS6(s6RandomSeedS6);
 
@@ -83,8 +80,13 @@ S6::S6(const double v[6])
 S6::S6(const LRL_Cell& c)
    : S6()
 {
+   static const double pi = 4.0*atan(1.0);
+   static const double twopi = 2.0*pi;
+
    (*this) = G6(c);
-   m_valid = c.GetValid() && c[3] < pi && c[4] < pi && c[5] < pi && (c[3] + c[4] + c[5])< twopi;
+   const bool btest1 = c.GetValid();
+   const bool btest2 = (c[3] + c[4] + c[5])< twopi;
+   m_valid = btest1 && c[3] < pi && c[4] < pi && c[5] < pi && btest2;
 }
 
 S6::S6(const D7& v7)
@@ -262,6 +264,8 @@ S6& S6::operator= (const B4& v) {
 }
 
 S6& S6::operator= (const LRL_Cell& v) {
+   static const double pi = 4.0*atan(1.0);
+   static const double twopi = 2.0*pi;
    (*this) = G6(v);
    m_valid = GetValid() && v.GetValid() && v[3] < pi && v[4] < pi && v[5] < pi && (v[3] + v[4] + v[5])< twopi;
    return *this;

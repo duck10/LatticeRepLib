@@ -93,8 +93,10 @@ public:
       S6 out;
       bool valid = false;
       unsigned long count = 0;
-      while ( !valid) {
-         const bool b = Selling::Reduce(S6(RandCell()), out);
+      while ( !valid && count < 100) {
+         const S6 ran(rand());
+         const bool b = Selling::Reduce(ran, out);
+         const LRL_Cell_Degrees cell(out);
          //if ( count > 1000) std::cout << LRL_Cell(out) << std::endl;
          valid = LRL_Cell(out).GetValid();
          ++count;

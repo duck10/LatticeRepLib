@@ -18,6 +18,10 @@ SellaBuild::SellaBuild() {
 
 std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
 	MatS6 transformations;
+
+   if (vDeloneTypes.empty()) SellaBuild::vDeloneTypes = Delone::LoadLabeledLatticeTypeProjectors();
+
+
    for (unsigned long i = 0; i < vDeloneTypes.size(); ++i) {
       transformations = transformations.unit();
       //for (unsigned long i = 2; i < 3; ++i) {  // to show only C5

@@ -25,8 +25,6 @@
 #define Default6 6
 
 static int randSeed1 = 19191;
-const double pi = 4.0*atan(1.0);
-const double twopi = 2.0*pi;
 
 G6::G6(void) {
    m_vec.resize(6);
@@ -53,6 +51,9 @@ G6::G6(const double v[6])
 }
 
 G6::G6(const LRL_Cell& c) {
+   static const double pi = 4.0*atan(1.0);
+   static const double twopi = 2.0*pi;
+
    m_vec.resize(6);
    m_valid = c.GetValid();
    m_vec[0] = c[0] * c[0];
@@ -100,6 +101,8 @@ G6::G6(const S6& ds)
       std::abs(g5*g5 / g1 / g3) <= 4.0 &&
       std::abs(g6*g6 / g1 / g2) <= 4.0 &&
       ds.GetValid();
+   m_vec.SetValid(m_valid);
+ 
 }
 
 G6::G6(const C3& c3) {
@@ -213,6 +216,9 @@ G6& G6::operator= (const B4& v)
 
 G6& G6::operator= (const LRL_Cell& v)
 {
+   static const double pi = 4.0*atan(1.0);
+   static const double twopi = 2.0*pi;
+
    (*this) = G6(v);
    m_valid = v.GetValid() && v[3] < pi && v[4] < pi && v[5] < pi && (v[3] + v[4] + v[5])< twopi;
    return *this;
