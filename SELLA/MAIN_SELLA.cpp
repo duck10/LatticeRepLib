@@ -251,44 +251,30 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    storeM2B.ShowResults();
    exit(0);
 }
+
+void Fitter(const S6& s6) {
+   static const DeloneTypeList deloneList;
+   for (unsigned long i = 0; i < deloneList.size(); ++i) {
+      const std::tuple<double, S6, MatS6> fit = deloneList[i].GetFit(s6);
+      std::cout << i << "  " << deloneList[i].GetName() << "  " << std::get<double>(fit) << "     " << deloneList[i].GetCharacter() <<
+         std::endl << std::get<S6>(fit) << std::endl << std::get<MatS6>(fit) << std::endl;
+      std::cout << "result  " << std::get<MatS6>(fit) * std::get<S6>(fit) << std::endl;
+      const MatS6 ms6 = std::get<MatS6>(fit);
+      std::cout << deloneList[i].GetToCentered() * std::get<MatS6>(fit) * std::get<S6>(fit) << std::endl;
+      std::cout << LRL_Cell_Degrees(deloneList[i].GetToCentered() * std::get<MatS6>(fit) * std::get<S6>(fit)) << std::endl << std::endl;
+   }
+}
+
 int main()
 {
-   LRL_CoordinateConversionMatrices ccm;
-
-   MatMN gd = LRL_CoordinateConversionMatrices::D7_FROM_S6;
-
-   DeloneTypeList DeloneList;
-   const std::vector<MatS6>  vdl = DeloneList.GetPrjList("C5");
-
-   //const std::vector<LabeledSellaMatrices> prjs = Sella::CreateAllPrjs();
-   //for ( unsigned long i=0; i<prjs.size(); ++i ) {
-   //   std::cout << prjs[i].GetLabel() << "  " << prjs[i].size() << std::endl;
-   //}
-
-   Sella sella;
-
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
-   //std::vector<S6> vLat = GetInputSellingReducedVectors(input);
-   //SellaTwoLatticeLineTest(vLat[0], vLat[1]);
-   //exit(0);
-   AnalyzePDBCells(input);
-   LatticeConverter converter;
 
    std::cout << S6(input[0].GetCell()) << std::endl;
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
 
-   //const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("m", vLat[0]);
-   //const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("T5", vLat[0]);
-
    for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
-      std::vector<std::pair<std::string, double> > out;
-
-      std::cout << input[lat].GetStrCell() << std::endl;
-      out = sella.GetVectorOfFits(/*ScaleAndThenPerturbByPercent(*/vLat[lat]/*, 1000.0, 0.0)*/);
-      for (unsigned long i = 0; i < out.size(); ++i) {
-         std::cout << out[i].first << "  " << out[i].second <<  "   " << S6(C3::ConvertToFundamentalUnit(C3(vLat[lat]))) << "   " << LRL_Cell_Degrees(vLat[lat])<< std::endl;
-      }
-      std::cout << std::endl;
+      Fitter(vLat[lat]);
+      std::cout << "****************************************************************" << std::endl;
    }
 
    const int  i19191 = 19191;

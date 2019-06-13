@@ -1202,7 +1202,7 @@ int main(int argc, char *argv[])
 	//e3[7] = 1;
 	//e3[8] = 2;
 	//std::cout << "E3 matrix for P to F for cF  " << std::endl;
-	//for (auto i = 0; i < 9; ++i) {
+	//for (unsigned long i = 0; i < 9; ++i) {
 	//	if (i % 3 == 0) std::cout << std::endl;
 	//	std::cout << e3[i];
 	//}
@@ -1210,7 +1210,7 @@ int main(int argc, char *argv[])
 	std::cout << std::endl << std::endl;
 	std::vector<std::pair<std::string, std::vector<double> > > vcenters = DeloneTypeList::Make3dCenteringMatrices();
 	std::cout << "size" << vcenters.size() << std::endl;
-	for ( auto i=0; i<vcenters.size(); ++i ) {
+	for (unsigned long i=0; i<vcenters.size(); ++i ) {
 	   const MatS6 m6 = MatS6::e3Tos6(vcenters[i].second);
 		std::cout << std::endl << "\"" << vcenters[i].first << "\", MatS6(" << std::endl << m6 << std::endl;
 	}

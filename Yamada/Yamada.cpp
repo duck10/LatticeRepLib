@@ -59,13 +59,13 @@ int main()
    while (nread < 1000) {
       const V2 v2 = ReadOneYamadaCell();
       if ( nread%100 == 0) std::cout << v2[0] << " " << v2[1] << std::endl;
-      auto nti = nt.NearestNeighbor(100000, v2);
+      CNearTree<V2>::iterator nti = nt.NearestNeighbor(100000, v2);
       const unsigned long index = nti.get_position();
       if (index > nt.size()-1) break;
       ++count[index];
       ++nread;
    }
    std::cout << std::endl;
-   for (auto i = 0; i < count.size(); ++i) std::cout << count[i] << std::endl;
+   for (unsigned long i = 0; i < count.size(); ++i) std::cout << count[i] << std::endl;
    int i19191 = 19191;;
 }

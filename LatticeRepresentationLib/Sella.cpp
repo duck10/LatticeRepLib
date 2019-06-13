@@ -25,9 +25,9 @@ Sella::Sella()
    DeloneType dt;
    std::string label;
    label = "C1";
-   dt = DeloneType(label, "cI", "rrr rrr", DeloneTypeList::CreateCenteringMatrix("C1", "0 1 1  1 0 1  1 1 0"));
-   dt.InsertMatricesForDeloneType(label);
-   m_latticeCharacters.push_back(dt);
+   //dt = DeloneType(label, "cI", "rrr rrr", DeloneTypeList::CreateCenteringMatrix("C1", "0 1 1  1 0 1  1 1 0"));
+   //dt.InsertMatricesForDeloneType(label);
+   //m_latticeCharacters.push_back(dt);
 
 
 }

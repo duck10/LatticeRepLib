@@ -102,6 +102,7 @@ MatS6 MatS6::e3Tos6(const std::vector<double>& m) {
 	m6[29] = (-m23 * m33) - m23 * m23 - m13 * m23;
 	m6[35] = (-m33 * m33) - m23 * m33 - m13 * m33;
 
+   for (unsigned long i = 0; i < 36; ++i) if (m6[i] == 0.0) m6[i] = -0.0;
 	return -m6;
 }
 
