@@ -272,3 +272,20 @@ DeloneType DeloneTypeList::operator[] (const std::string& s) const {
       if (m_deloneTypes[i].GetName() == s) return m_deloneTypes[i];
    return DeloneType();
 }
+
+std::vector<std::tuple<double, S6, MatS6> > DeloneTypeList::Fit( const std::string& type, const S6& s6 ) const {
+   std::vector<std::tuple<double, S6, MatS6> > v;
+   for (unsigned long i = 0; i < m_deloneTypes.size( ); ++i) {
+      const std::string name = m_deloneTypes[i].GetName( );
+      if (type.empty( ) || name.find( type ) != std::string::npos) {  // LCA make type UC
+         const std::tuple<double, S6, MatS6> fit = m_deloneTypes[i].GetFit( s6 );
+         v.push_back( fit );
+      }
+   }
+   return v;
+}
+
+std::vector<std::tuple<double, S6, MatS6> >  DeloneTypeList::Fit( const S6& s6 ) const {
+   return Fit( "", s6 );
+}
+

@@ -252,34 +252,42 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    exit(0);
 }
 
-   static const DeloneTypeList deloneList;
-
-void ReportFit(const unsigned long i, const std::tuple<double, S6, MatS6>& fit) {
-   std::cout << i << "  " << deloneList[i].GetName() << "  " << std::get<double>(fit) << "     " << deloneList[i].GetCharacter() <<
-      std::endl << std::get<S6>(fit) << std::endl << std::get<MatS6>(fit) << std::endl;
-   std::cout << "result  " << std::get<MatS6>(fit) * std::get<S6>(fit) << std::endl;
-   const MatS6 ms6 = std::get<MatS6>(fit);
-   std::cout << deloneList[i].GetToCentered() * std::get<MatS6>(fit) * std::get<S6>(fit) << std::endl;
-   std::cout << LRL_Cell_Degrees(deloneList[i].GetToCentered() * std::get<MatS6>(fit) * std::get<S6>(fit)) << std::endl << std::endl;
+void ReportFit( const unsigned long i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
+   std::cout << i << "  " << type.GetName( ) << "  " << std::get<double>( fit ) << "     " << type.GetCharacter( ) <<
+      std::endl << "input  " << std::get<S6>( fit ) << std::endl << std::get<MatS6>( fit ) << std::endl;
+   std::cout << "result  " << std::get<MatS6>( fit ) * std::get<S6>( fit ) << std::endl;
+   const MatS6 ms6 = std::get<MatS6>( fit );
+   std::cout << type.GetToCentered( ) * std::get<MatS6>( fit ) * std::get<S6>( fit ) << std::endl;
+   std::cout << "centered cell  " << LRL_Cell_Degrees( type.GetToCentered( ) * std::get<MatS6>( fit ) * std::get<S6>( fit ) ) << std::endl << std::endl;
+   std::cout << "  "
+      << type.GetName( ) 
+      << "  " 
+      << std::get<double>( fit ) 
+      << "     " 
+      << std::get<S6>( fit ) 
+      << "     "
+      << LRL_Cell_Degrees( std::get<S6>( fit ) )
+      << std::endl;
 }
 
-void Fitter(const S6& s6) {
-   for (unsigned long i = 0; i < deloneList.size(); ++i) {
-      const std::tuple<double, S6, MatS6> fit = deloneList[i].GetFit(s6);
-      ReportFit(i, fit);
-   }
+void ReportFit( const unsigned long n, const DeloneTypeList& types, const std::vector<std::tuple<double, S6, MatS6> >& fit ) {
+   for ( unsigned long i=0; i<fit.size(); ++i )
+      ReportFit( i, types[i], fit[i] );
 }
 
 int main()
 {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
+   static const DeloneTypeList deloneList;
 
-   std::cout << S6(input[0].GetCell()) << std::endl;
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
 
    for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
-      Fitter(vLat[lat]);
-      std::cout << "****************************************************************" << std::endl;
+      std::cout << "input  " << input[lat].GetStrCell() << "    (" << S6(input[lat].GetCell()) <<")" << std::endl;
+      //const std::vector<std::tuple<double, S6, MatS6> >  v = DeloneTypeList::Fit( "T", vLat[lat] );
+      const std::vector<std::tuple<double, S6, MatS6> >  v = deloneList.Fit( vLat[lat] );
+      ReportFit( lat, deloneList,  v );
+      std::cout << "************************************" << std::endl;
    }
 
    const int  i19191 = 19191;

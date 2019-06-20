@@ -27,11 +27,11 @@ DeloneType::DeloneType(
 {
 }
 
-std::tuple<double, S6, MatS6> DeloneType::GetFit(const S6& s6) {
+std::tuple<double, S6, MatS6> DeloneType::GetFit(const S6& s6) const {
    unsigned long n = 0;
    double best = DBL_MAX;
    for ( unsigned long i=0; i< m_matrices.size(); ++i ) {
-      const S6 testv = m_matrices.GetPerps(i) * s6;
+      const S6 testv = m_matrices.GetPerp(i) * s6;
       const S6 bestv = m_matrices.GetPrj(i) * s6;
       const double test = testv.norm();
       if ( best > test){
@@ -48,7 +48,7 @@ std::tuple<double, S6, MatS6> DeloneType::GetFit(const S6& s6) {
       }
    }
    if (best < 1.0E-8) best = 0.0;
-   return std::make_tuple(best, m_matrices.GetPrj(n)*s6, m_matrices.GetToCanon(n));
+   return std::make_tuple(sqrt(best/100.0), m_matrices.GetPrj(n)*s6, m_matrices.GetToCanon(n));
 }
 
 

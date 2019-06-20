@@ -23,9 +23,12 @@ public:
       , m_toCanons(toCanon)
    {}
 
-   MatS6 GetPrj(const unsigned long n) { return m_prjs[n]; }
-   MatS6 GetPerps(const unsigned long n) { return m_perps[n]; }
-   MatS6 GetToCanon(const unsigned long n) { return m_toCanons[n]; }
+   MatS6 GetPrj( const unsigned long n ) const { return m_prjs[n]; }
+   MatS6 GetPerp( const unsigned long n ) const { return m_perps[n]; }
+   MatS6 GetToCanon( const unsigned long n ) const { return m_toCanons[n]; }
+   std::vector<MatS6> GetPrjs    ( void ) const { return m_prjs; }
+   std::vector<MatS6> GetPerps   ( void ) const { return m_perps; }
+   std::vector<MatS6> GetToCanons( void ) const { return m_toCanons; }
 
    size_t size(void) const { return m_prjs.size(); }
 
@@ -50,7 +53,7 @@ public:
       const MatS6& ToCentered,
       const MatricesForOneDeloneType& vm);
 
-   std::tuple<double, S6, MatS6> GetFit(const S6& s6);
+   std::tuple<double, S6, MatS6> GetFit(const S6& s6) const;
 
    std::string GetName(void) const { return m_deloneName; }
    std::string GetBravaisType(void) const { return m_bravaisType; }
@@ -58,6 +61,8 @@ public:
    std::string GetToCenteredString(void) const { return m_toCentered_E3; }
    MatS6 GetToCentered(void) const { return m_toCentered_S6; }
    MatricesForOneDeloneType GetFamilyOfMattrices() const  { return m_matrices; }
+   std::vector<MatS6> GetPrjs( void ) const { return m_matrices.GetPrjs( ); }
+   std::vector<MatS6> GetPerps( void ) const { return m_matrices.GetPerps( ); }
 
 private:
    std::string m_deloneName;
