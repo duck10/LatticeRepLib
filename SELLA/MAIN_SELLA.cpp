@@ -252,19 +252,22 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    exit(0);
 }
 
-void ReportFit( const unsigned long i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
+void ReportFit1( const unsigned long i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
    std::cout << i << "  " << type.GetName( ) << "  " << std::get<double>( fit ) << "     " << type.GetCharacter( ) <<
       std::endl << "input  " << std::get<S6>( fit ) << std::endl << std::get<MatS6>( fit ) << std::endl;
    std::cout << "result  " << std::get<MatS6>( fit ) * std::get<S6>( fit ) << std::endl;
    const MatS6 ms6 = std::get<MatS6>( fit );
    std::cout << type.GetToCentered( ) * std::get<MatS6>( fit ) * std::get<S6>( fit ) << std::endl;
    std::cout << "centered cell  " << LRL_Cell_Degrees( type.GetToCentered( ) * std::get<MatS6>( fit ) * std::get<S6>( fit ) ) << std::endl << std::endl;
+}
+
+void ReportFit2( const unsigned long i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
    std::cout << "  "
-      << type.GetName( ) 
-      << "  " 
-      << std::get<double>( fit ) 
-      << "     " 
-      << std::get<S6>( fit ) 
+      << type.GetName( )
+      << "  "
+      << std::get<double>( fit )
+      << "     "
+      << std::get<S6>( fit )
       << "     "
       << LRL_Cell_Degrees( std::get<S6>( fit ) )
       << std::endl;
@@ -272,7 +275,7 @@ void ReportFit( const unsigned long i, const DeloneType& type, const std::tuple<
 
 void ReportFit( const unsigned long n, const DeloneTypeList& types, const std::vector<std::tuple<double, S6, MatS6> >& fit ) {
    for ( unsigned long i=0; i<fit.size(); ++i )
-      ReportFit( i, types[i], fit[i] );
+      ReportFit1( i, types[i], fit[i] );
 }
 
 int main()
