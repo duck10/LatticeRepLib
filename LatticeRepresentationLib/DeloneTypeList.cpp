@@ -26,7 +26,7 @@ std::vector<std::pair<std::string, std::string> > CreateBravaisTypeList() {
    v.push_back(std::make_pair("O1B", "oI"));
    v.push_back(std::make_pair("O2", "oI"));
    v.push_back(std::make_pair("O3", "oI"));
-   v.push_back(std::make_pair("O4", "oP"));
+   v.push_back(std::make_pair("O4", "oS"));
    v.push_back(std::make_pair("O5", "oP"));
    v.push_back(std::make_pair("M1A", "mC"));
    v.push_back(std::make_pair("M1B", "mC"));
