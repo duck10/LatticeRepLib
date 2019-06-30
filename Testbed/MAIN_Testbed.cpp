@@ -1005,14 +1005,16 @@ void TimingForNewNiggliReduce() {
 
    G6 vout;
    start = std::clock();
-   for (unsigned long i = 0; i <= nv; ++i)
-      bool b = Niggli::Reduce(v[i], vout);
+   for (unsigned long i = 0; i <= nv; ++i) {
+      bool b = Niggli::Reduce( v[i], vout ); b;
+   }
    elapsedTime = std::clock() - start;
    std::cout << elapsedTime << std::endl;
 
    start = std::clock();
-   for (unsigned long i = 0; i <= nv; ++i)
-      bool b = Niggli::ReduceWithoutMatrices(v[i], vout, 0.0);
+   for (unsigned long i = 0; i <= nv; ++i) {
+      bool b = Niggli::ReduceWithoutMatrices( v[i], vout, 0.0 ); b;
+   }
    elapsedTime = std::clock() - start;
    std::cout << elapsedTime << std::endl;
    exit(0);
