@@ -51,7 +51,7 @@ std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeD
 int seed = 19192;
 GenerateRandomLattice<S6> generator(seed);
 
-S6 GenerateRandomSphere(const double radius) {
+S6 GenerateRandomUnitSphereAtOrigin(const double radius) {
    S6 s6;
    for (unsigned long i = 0; i < 6; ++i) {
       s6[i] = 2.0 * rhrand.urand() - 1.0;
@@ -61,7 +61,7 @@ S6 GenerateRandomSphere(const double radius) {
 
 S6 ScaleAndThenPerturbByPercent( const S6& s6, const double scale, const double percent) {
    const S6 master = scale * s6 / s6.norm();
-   const S6 ran = GenerateRandomSphere(percent/100.0);
+   const S6 ran = GenerateRandomUnitSphereAtOrigin(percent/100.0);
    const S6 scaledRandom = scale * percent / 100.0 * ran / ran.norm();
 
    const double n1 = master.norm();
@@ -275,7 +275,7 @@ void ReportFit2( const unsigned long i, const DeloneType& type, const std::tuple
 
 void ReportFit( const unsigned long n, const DeloneTypeList& types, const std::vector<std::tuple<double, S6, MatS6> >& fit ) {
    for ( unsigned long i=0; i<fit.size(); ++i )
-      ReportFit1( i, types[i], fit[i] );
+      ReportFit2( i, types[i], fit[i] );
 }
 
 int main()

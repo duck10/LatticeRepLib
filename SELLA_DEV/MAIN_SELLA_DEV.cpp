@@ -29,7 +29,6 @@ void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatti
    for (size_t i1 = 0; i1 < cellDataList.size(); ++i1) {
       const LRL_ReadLatticeData& rcd = cellDataList[i1];
       const std::string lattice = rcd.GetLattice();
-      size_t place = letters.find(lattice);
       if (letters.find(LRL_StringTools::strToupper(lattice)) == std::string::npos) continue;
       std::cout << std::endl;
       std::cout << "LRL_Cell # " << i1 << "  *******************************" << std::endl;
@@ -114,42 +113,6 @@ void TestLatticeCentering() {
    DeloneTypeList latcenter;
    std::vector<LRL_ReadLatticeData> input = GetInputCells();
 
-   for (unsigned long i = 0; i < input.size(); ++i) {
-      const LRL_ReadLatticeData& rcd = input[i];
-      const LRL_Cell centeredCell = input[i].GetCell();
-      const MatS6 toCentered  = latcenter.findToCentered( input[i].GetLattice());
-      const MatS6 toPrimitive = latcenter.findToPrimitive(input[i].GetLattice());
-
-      const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), centeredCell);
-      std::cout << "_____________________" << std::endl;
-      std::cout << "input " << rcd.GetStrCell() << std::endl;
-      std::cout << "Reduced  " << s6 << std::endl;
-      std::cout << "Reduced  " << LRL_Cell_Degrees(s6) << "               " << LRL_Cell(s6).Volume() << std::endl;
-      const std::vector<S6> vREFLS = MakeReflections(s6);
-      /* first test of centering
-      //for (unsigned long i = 0; i < vREFLS.size(); ++i)
-      //   std::cout << LRL_Cell_Degrees(FromPrimitiveTo_R1_A(vREFLS[i])) << "               " << LRL_Cell(s6).Volume() << std::endl;
-      //   std::cout << std::endl;
-      */
-
-      /* second test of centering -- trial for R1 and R2
-      for (unsigned long i = 0; i < vREFLS.size(); ++i)
-         std::cout << LRL_Cell_Degrees(FromPrimitiveTo_R1_TRANSPOSE(vREFLS[i])) << "               " << LRL_Cell(FromPrimitiveTo_R1_TRANSPOSE(vREFLS[i])).Volume() << std::endl;
-      for (unsigned long i = 0; i < vREFLS.size(); ++i)
-         std::cout << S6(FromPrimitiveTo_R1_TRANSPOSE(vREFLS[i])) << "               " << LRL_Cell(FromPrimitiveTo_R1_TRANSPOSE(vREFLS[i])).Volume() << std::endl;
-      for (unsigned long i = 0; i < vREFLS.size(); ++i)
-         std::cout << S6((vREFLS[i])) << "               " << LRL_Cell(vREFLS[i]).Volume() << std::endl;
-         */
-
-      // third test of centering
-      static const std::vector<MatS6> refls = MatS6::GetReflections();
-      for (unsigned long j = 0; j < latcenter.size(); ++j) {
-         for ( unsigned long k=0; k<refls.size(); ++k ) {
-         //std::cout << latcenter[j].GetName << " "  L
-         //   << LRL_Cell_Degrees(FromPrimitiveToCentered(latcenter[j].second, LRL_Cell(refls[k]*s6))) << std::endl;
-         }
-      }
-   }
    exit(0);
 }
 
@@ -170,7 +133,7 @@ std::vector<S6> GetInputSellingReducedVectors() {
 int seed = 19192;
 GenerateRandomLattice<S6> generator(seed);
 
-S6 GenerateRandomSphere(const double radius) {
+S6 GenerateRandomUnitSphereAtOrigin(const double radius) {
    S6 s6;
    for (unsigned long i = 0; i < 6; ++i) {
       s6[i] = 2.0 * rhrand.urand() - 1.0;
@@ -180,7 +143,7 @@ S6 GenerateRandomSphere(const double radius) {
 
 S6 ScaleAndThenPerturbByPercent( const S6& s6, const double scale, const double percent) {
    const S6 master = scale * s6 / s6.norm();
-   const S6 ran = GenerateRandomSphere(percent/100.0);
+   const S6 ran = GenerateRandomUnitSphereAtOrigin(percent/100.0);
    const S6 scaledRandom = scale * percent / 100.0 * ran / ran.norm();
 
    const double n1 = master.norm();
