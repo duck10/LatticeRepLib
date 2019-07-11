@@ -222,19 +222,22 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
    Sella sella;
 
+   const std::vector<std::string>& typelist = DeloneTypeList::typelist;
    for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
       const std::string strCell = input[lat].GetStrCell();
-      if (strCell[0] == 'A' || strCell[0] == 'a') continue;
-      const std::string xtalSystem = std::string(1, strCell[strCell.length() - 1]);
-      std::string deloneType = strCell.substr(0, 3);
-      deloneType = Trim(deloneType);
-      if ( xtalSystem == "a" ) continue;
-
-      const std::pair<std::string, double> fit = sella.GetBestFitForCrystalSystem(xtalSystem, vLat[lat]);
+      //if (strCell[0] == 'A' || strCell[0] == 'a') continue;
+      //const std::string xtalSystem = std::string(1, strCell[strCell.length() - 1]);
+      //std::string deloneType = strCell.substr(0, 3);
+      //deloneType = Trim(deloneType);
+      //if ( xtalSystem == "a" ) continue;
+      for ( size_t type=0; type < typelist.size(); ++type){
+         const std::string& xtalSystem = typelist[type];
+      //const std::pair<std::string, double> fit = sella.GetBestFitForCrystalSystem(xtalSystem, vLat[lat]);
+      const std::vector<std::pair<std::string, double> > fit = sella.GetVectorOfFits( vLat[lat] );
       const double normlat = vLat[lat].norm();
-      if (fit.second > 1.0E-5) storeLocalProblems.Store(fit.first, LRL_ToString(" ", fit.first, "  ", fit.second, " (", normlat, ")  ",  strCell, "  ", vLat[lat]));
-      if (fit.second < 1.0E-5) storeGood.Store(fit.first, LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat]));
- //     std::cout << LRL_ToString(fit.first, "  ") << LRL_ToString( LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat])) << std::endl;
+      //if (fit.second > 1.0E-5) storeLocalProblems.Store(fit.first, LRL_ToString(" ", fit.first, "  ", fit.second, " (", normlat, ")  ",  strCell, "  ", vLat[lat]));
+      //if (fit.second < 1.0E-5) storeGood.Store(fit.first, LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat]));
+      //std::cout << LRL_ToString(fit.first, "  ") << LRL_ToString( LRL_ToString(" ", fit.first, " ", fit.second, "  ", strCell, "  ", vLat[lat])) << std::endl;
 
       //const double fitO3  = FitRange(sella.GetFitForDeloneType("O3", vLat[lat]));
       //const double fitM3  = FitRange(sella.GetFitForDeloneType("M3", vLat[lat]));
@@ -242,6 +245,7 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
       //storeO3 .Store(fitO3 , LRL_ToString("(", fitO3, "  ", strCell, "   ",vLat[lat]));
       //storeM3 .Store(fitM3 , LRL_ToString("(", fitM3, "  ", strCell, "   ",vLat[lat]));
       //storeM2B.Store(fitM2B, LRL_ToString("(", fitM2B, "  ", strCell, "   ",vLat[lat]));
+      }
    }
    storeLocalProblems.ShowResults();
    storeGood.ShowResults();
@@ -281,6 +285,8 @@ void ReportFit( const unsigned long n, const DeloneTypeList& types, const std::v
 int main()
 {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
+   AnalyzePDBCells( input );
+   exit( 0 );
    static const DeloneTypeList deloneList;
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);

@@ -29,6 +29,7 @@ public:
    static std::vector<std::pair<std::string, std::vector<double> > > Make3dCenteringMatrices();
    std::vector<std::tuple<double, S6, MatS6> > Fit( const std::string& type, const S6& s6 ) const;
    std::vector<std::tuple<double, S6, MatS6> > Fit( const S6& s6 ) const;
+   static const std::vector<std::string> typelist;
 
 protected:
    static std::vector<double> Make3dVector(const std::string& s);
