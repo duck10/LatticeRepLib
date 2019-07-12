@@ -285,8 +285,8 @@ void ReportFit( const unsigned long n, const DeloneTypeList& types, const std::v
 int main()
 {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
-   AnalyzePDBCells( input );
-   exit( 0 );
+   //AnalyzePDBCells( input );
+   //exit( 0 );
    static const DeloneTypeList deloneList;
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
