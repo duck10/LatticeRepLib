@@ -50,13 +50,13 @@ public:
    C3 operator- (void) const; // unary
    bool operator== (const C3& c3) const;
    bool operator!= (const C3& c3) const;
-   std::complex<double> operator[](const unsigned long n) const;
-   std::complex<double>& operator[](const unsigned long n);
+   std::complex<double> operator[](const size_t n) const;
+   std::complex<double>& operator[](const size_t n);
    void report() const;
    operator S6() const;
 
    double DistanceBetween(const C3& v1, const C3& v2);
-   unsigned long size(void) const { return (unsigned long)(m_c.size()); }
+   size_t size(void) const { return m_c.size(); }
    double norm(void) const;
    double norm(const C3& c3) const;
    double Norm() const { return norm(); }
@@ -69,7 +69,7 @@ public:
    bool GetValid(void) const { return m_valid; }
    void SetValid(const bool b) { m_valid = b; }
 
-   std::complex<double> at(const unsigned long n) const { return m_c[n]; }
+   std::complex<double> at(const size_t n) const { return m_c[n]; }
 
 
    //static std::vector<C3(*)(const C3&)> SetUnreduceFunctions();

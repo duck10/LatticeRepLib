@@ -12,7 +12,7 @@
 
 static void MakeArray(const D7& g, double *a)
 {
-   for (unsigned long i = 0; i < 7; ++i) a[i] = g[i];
+   for (size_t i = 0; i < 7; ++i) a[i] = g[i];
 }
 
 template<typename T1, typename T2>

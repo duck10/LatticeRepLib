@@ -36,7 +36,7 @@ int main()
    std::cout << LRL_Cell_Degrees(LRL_Cell(out)) << "   V= " << LRL_Cell(out).Volume() << "   reduced" << std::endl << std::endl << std::endl << std::endl;
    
    
-   for (unsigned long i = 0; i < v.size(); ++i) {
+   for (size_t i = 0; i < v.size(); ++i) {
       std::cout << "cell # " << i << std::endl;
       const LRL_Cell cell2 = LRL_Cell(v[i] * G6(cell));
       std::cout << LRL_Cell_Degrees(cell2) << "   V= " << cell2.Volume() << std::endl;
@@ -47,7 +47,7 @@ int main()
 
    std::cout << std::endl << std::endl;
 
-   for (unsigned long i = 0; i < v.size(); ++i) {
+   for (size_t i = 0; i < v.size(); ++i) {
       std::cout << i << "   " << LRL_MaximaTools::MaximaFromMat(v[i]) << std::endl;;
    }
 

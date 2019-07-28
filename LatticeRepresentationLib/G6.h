@@ -60,12 +60,12 @@ public:
    bool operator== (const G6& g6) const;
    bool operator!= (const G6& g6) const;
 
-   double operator[](const unsigned long n) const { return m_vec[n]; }
-   double& operator[](const unsigned long n) { return m_vec[n]; }
+   double operator[](const size_t n) const { return m_vec[n]; }
+   double& operator[](const size_t n) { return m_vec[n]; }
    double DistanceBetween(const G6& v1, const G6& v2);
    std::vector<std::pair<std::string, std::string> > ClassifyVector(const double delta) const;
    bool TestBoundaryDetection(void);
-   unsigned long size(void) const { return 6; }
+   size_t size(void) const { return 6; }
    double norm() const { return m_vec.norm(); }
    double norm(const G6& g6) const { return g6.norm(); }
    double Norm() const { return m_vec.norm(); }
@@ -80,7 +80,7 @@ public:
    bool IsValid(void) const { return m_valid; }
    void SetValid(const bool b) { m_valid = b; }
 
-   double at(const unsigned long n) const { return m_vec[n]; }
+   double at(const size_t n) const { return m_vec[n]; }
 
    static G6 rand();
    static G6 randDeloneReduced();
@@ -94,7 +94,7 @@ public:
 
 private:
    VecN m_vec;
-   unsigned long m_dim;
+   size_t m_dim;
    bool m_valid;
 };
 

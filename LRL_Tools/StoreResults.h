@@ -26,7 +26,7 @@ public:
 
    bool operator< (const SampleData<TSAMPLEKEY, TSAMPLE>& ts) const { return m_key < ts.m_key; }
 
-   unsigned long GetCount(void) const { return m_countPerKey; }
+   size_t GetCount(void) const { return m_countPerKey; }
       SampleData operator= ( const SampleData& data ){ 
          m_sampleData = data.m_sampleData;
          m_key = data.m_key;
@@ -35,7 +35,7 @@ public:
          return *this;
       }
    std::vector<TSAMPLE> m_sampleData;
-   unsigned long m_countPerKey;
+   size_t m_countPerKey;
    TSAMPLEKEY m_key;
    protected:
       time_t m_creationTime;
@@ -54,7 +54,7 @@ public:
       return os;
    }
 
-   StoreResults(const unsigned long nMax = 1)
+   StoreResults(const size_t nMax = 1)
       : m_nmax(nMax)
       , m_keyName("Key")
       , m_creationTime(static_cast<long int>(time(NULL))) 
@@ -72,7 +72,7 @@ public:
       }
    }
 
-   unsigned long size(void) const { return (unsigned long)(m_tree.size()); }
+   size_t size(void) const { return m_tree.size(); }
 
    bool empty(void) const { return m_tree.empty(); }
 
@@ -80,11 +80,11 @@ public:
       m_tree.erase(key);   
    }
 
-   TKEY GetByTreeIndex(const unsigned long index) const {
+   TKEY GetByTreeIndex(const size_t index) const {
       return m_tree[index];
    }
 
-   unsigned long GetItemCount(const TKEY& key) const {
+   size_t GetItemCount(const TKEY& key) const {
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator itfind = m_tree.find(key);
       if (itfind != m_tree.end()) {
          return (*itfind).second.GetCount();
@@ -93,18 +93,18 @@ public:
          return 0UL;
    }
 
-   unsigned long GetTotalSampleCount(void) const {
+   size_t GetTotalSampleCount(void) const {
       std::vector < TKEY > keys = GetKeys();
-      unsigned long totalSampleCount = 0UL;
+      size_t totalSampleCount = 0UL;
 
-      for (unsigned long i = 0; i < keys.size(); ++i) {
-         totalSampleCount += (unsigned long)(GetResult(keys[i]).size());
+      for (size_t i = 0; i < keys.size(); ++i) {
+         totalSampleCount += GetResult(keys[i]).size();
       }
       return totalSampleCount;
    }
 
-   unsigned long GetTotalSeen() const {
-      unsigned long totalSeen = 0UL;
+   size_t GetTotalSeen() const {
+      size_t totalSeen = 0UL;
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
       for (it = m_tree.begin(); it != m_tree.end(); ++it) {
          totalSeen += (*it).second.m_countPerKey;
@@ -126,7 +126,7 @@ public:
       return ostr.str();
    }
 
-   unsigned long GetNmax(void) const { return m_nmax; }
+   size_t GetNmax(void) const { return m_nmax; }
 
    std::vector<std::pair<TKEY, TDATA> > GetResult(const TKEY& key) const {
       const typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it = m_tree.find(key);
@@ -135,7 +135,7 @@ public:
       }
       else {
          std::vector<std::pair<TKEY, TDATA> > v;
-         for (unsigned long i = 0; i < (*it).second.m_sampleData.size(); ++i) {
+         for (size_t i = 0; i < (*it).second.m_sampleData.size(); ++i) {
             const std::pair<TKEY, TDATA>  sd(key, (*it).second.m_sampleData[i]);
             v.push_back(std::make_pair(key, (*it).second.m_sampleData[i]));
          }
@@ -157,7 +157,7 @@ public:
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it = m_tree.find(key);
 
       std::cout << m_keyName << "= " << key << "    (total=" << (*it).second.m_countPerKey << ")" << std::endl;
-      for (unsigned long k = 0; k < (*it).second.m_sampleData.size(); ++k) {
+      for (size_t k = 0; k < (*it).second.m_sampleData.size(); ++k) {
          std::cout << (*it).second.m_sampleData[k] << std::endl;
       }
    }
@@ -179,13 +179,13 @@ public:
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
       std::vector<std::pair<int, SampleData<TKEY, TDATA> > > indexToSort(PrepareListOfItemsSortedByCount());
 
-      for (unsigned long i = 0; i < indexToSort.size(); ++i) {
+      for (size_t i = 0; i < indexToSort.size(); ++i) {
          if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
          std::cout << "item " << i << "    (total=" << indexToSort[i].first << ")" << "  " << m_keyName << " = " << indexToSort[i].second.m_key << std::endl;
          it = m_tree.find(indexToSort[i].second.m_key);
 
          if (m_nmax > 0) {
-            for (unsigned long k = 0; k < (*it).second.m_sampleData.size(); ++k) {
+            for (size_t k = 0; k < (*it).second.m_sampleData.size(); ++k) {
                if (!m_valueSeparator.empty()) std::cout << m_valueSeparator << std::endl;
                std::cout << (*it).second.m_sampleData[k] << std::endl;
             }
@@ -235,9 +235,9 @@ public:
       m_valueSeparator.clear();
    }
 
-   unsigned long DeleteIfCountLessThan(const unsigned long n) {
+   size_t DeleteIfCountLessThan(const size_t n) {
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::iterator it;
-      unsigned long count = 0;
+      size_t count = 0;
       for (it = m_tree.begin(); it != m_tree.end();) {
          if ((*it).second.m_countPerKey < n) {
             it = m_tree.erase(it);
@@ -253,7 +253,7 @@ public:
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::iterator it;
       long count = 0;
       for (it = m_tree.begin(); it != m_tree.end();) {
-         if ((*it).second.m_countPerKey > (unsigned long)(n)) {
+         if ((*it).second.m_countPerKey > (size_t)(n)) {
             it = m_tree.erase(it);
             ++count;
          }
@@ -286,7 +286,7 @@ public:
    void ShowTableOfKeysVersusCount() const {
       std::vector<std::pair<int, SampleData<TKEY, TDATA> > > v(PrepareListOfItemsSortedByCount());
       if (!v.empty()) std::cout << m_title << "\n" << "item   count   " << m_keyName << std::endl;
-      for (unsigned long i = 0; i<v.size(); ++i) {
+      for (size_t i = 0; i<v.size(); ++i) {
          std::cout << i << "      " << v[i].first << "       " << v[i].second.m_key << std::endl;
       }
 
@@ -310,13 +310,13 @@ private:
       std::cout << GetHerald() << std::endl;
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
 
-      for (unsigned long i = 0; i < keylist.size(); ++i) {
+      for (size_t i = 0; i < keylist.size(); ++i) {
          if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
          it = m_tree.find(keylist[i]);
          std::cout << "item " << i << "  " << m_keyName << "= " << keylist[i] << "  count=" << (*it).second.GetCount() << std::endl;
 
          if (m_nmax > 0) {
-            for (unsigned long k = 0; k < (*it).second.m_sampleData.size(); ++k) {
+            for (size_t k = 0; k < (*it).second.m_sampleData.size(); ++k) {
                if (!m_valueSeparator.empty()) std::cout << m_valueSeparator << std::endl;
                std::cout << (*it).second.m_sampleData[k] << std::endl;
             }
@@ -328,7 +328,7 @@ private:
    }
 
 private:
-   unsigned long m_nmax;
+   size_t m_nmax;
    std::map<TKEY, SampleData<TKEY, TDATA> > m_tree;
    std::string m_itemSeparator;
    std::string m_valueSeparator;

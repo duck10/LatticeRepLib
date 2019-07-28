@@ -194,19 +194,19 @@ public:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::string G6GetBoundaryString(const unsigned long n) const {
+   std::string G6GetBoundaryString(const size_t n) const {
       return m_G6Boundaries.empty() ? "" : m_G6Boundaries[n];
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::string D7GetBoundaryString(const unsigned long n) const {
+   std::string D7GetBoundaryString(const size_t n) const {
       return m_D7Boundaries.empty() ? "" : m_D7Boundaries[n];
    }
 
    void SetWhichComponentsToPlot(const int c1, const int c2) { m_whichComponentsToPlot = std::make_pair(c1, c2); }
 
    bool empty(void) const { return(m_probeList.empty()); }
-   unsigned long size(void) const { return(m_probeList.size()); }
+   size_t size(void) const { return(m_probeList.size()); }
 
 private:
    TVEC m_probe;

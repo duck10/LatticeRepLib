@@ -26,7 +26,7 @@ int ColorRange::ColorIndex( const double color ) {
    return int(255 * ColorFraction(color) + 0.499999);
 }
 
-std::string ColorTables::GetCividisHEX(const unsigned long n) {
+std::string ColorTables::GetCividisHEX(const size_t n) {
    int r, g, b;
    GetCividisRGB(n, r, g, b);
    std::ostringstream ostr;
@@ -34,7 +34,7 @@ std::string ColorTables::GetCividisHEX(const unsigned long n) {
    return (ostr.str());
 }
 
-void ColorTables::GetCividisRGB(const unsigned long n, int& r, int& g, int& b) {
+void ColorTables::GetCividisRGB(const size_t n, int& r, int& g, int& b) {
 
    int nn = n;
    if (nn < 0) nn = 0;
@@ -299,7 +299,7 @@ void ColorTables::GetCividisRGB(const unsigned long n, int& r, int& g, int& b) {
    }
 }
 
-std::string OrdinalToCividisHexString(const unsigned long n) {
+std::string OrdinalToCividisHexString(const size_t n) {
 
    int nn = n;
    nn = std::max(0, nn);

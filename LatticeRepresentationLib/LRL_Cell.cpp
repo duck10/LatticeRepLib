@@ -72,7 +72,7 @@ LRL_Cell::LRL_Cell(const std::string& s)
    m_cell = LRL_StringTools::FromString(s);
    m_valid = m_valid && m_cell[3] < oneeightyDegrees && m_cell[4] < oneeightyDegrees && m_cell[5] < oneeightyDegrees && (m_cell[3]+m_cell[4]+m_cell[5])< threesixtyDegrees;
 
-   for (unsigned long i = 3; i < 6; ++i)
+   for (size_t i = 3; i < 6; ++i)
       m_cell[i] *= 4.0*atan(1.0) / 180.0;
 }
 
@@ -104,7 +104,7 @@ LRL_Cell::LRL_Cell(const B4& dt)
 std::ostream& operator<< (std::ostream& o, const LRL_Cell& c) {
    std::streamsize oldPrecision = o.precision();
    o << std::fixed << std::setprecision(5);
-   for (unsigned long i = 0; i < 6; ++i)
+   for (size_t i = 0; i < 6; ++i)
       o << std::setw(9) << c.m_cell[i] << " ";
    o << std::setprecision(oldPrecision);
    o.unsetf(std::ios::floatfield);
@@ -195,7 +195,7 @@ LRL_Cell::~LRL_Cell(void)
 {
 }
 
-void Prepare2CellElements( const double minEdge, const double maxEdge, const unsigned long i, LRL_Cell& c ) {
+void Prepare2CellElements( const double minEdge, const double maxEdge, const size_t i, LRL_Cell& c ) {
    static RHrand r;
    const double range = std::fabs( minEdge - maxEdge );
    const double d1 = r.urand( );
@@ -232,9 +232,9 @@ bool LRL_Cell::operator!= (const LRL_Cell& cl) const {
 // Name: operator[]()
 // Description: access function for the values in a LRL_Cell object
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-double LRL_Cell::operator[](const unsigned long n) const
+double LRL_Cell::operator[](const size_t n) const
 {
-   const unsigned long nn( std::max(0UL,std::min(5UL,n)) );
+   const size_t nn( std::max(size_t(0),std::min(size_t(5),n)) );
    return m_cell[nn];
 }
 
@@ -242,9 +242,9 @@ double LRL_Cell::operator[](const unsigned long n) const
 // Name: operator[]()
 // Description: access function for the values in a LRL_Cell object
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-double& LRL_Cell::operator[](const unsigned long n)
+double& LRL_Cell::operator[](const size_t n)
 {
-   const unsigned long nn( std::max(0UL,std::min(5UL,n)) );
+   const size_t nn( std::max(size_t(0),std::min(size_t(5),n)) );
    return m_cell[nn];
 }
 

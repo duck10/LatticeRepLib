@@ -46,7 +46,7 @@ public:
 
    void clear()
    {
-      for (unsigned long i = 0; i < 3; ++i) {
+      for (size_t i = 0; i < 3; ++i) {
          m_followData[i].clear();
          m_dist23Delta[i].clear();
          m_dist13[i].clear();
@@ -136,13 +136,13 @@ public:
       const ProgressData<double>& vdist12,
       const ProgressData<double>& vdist13,
       const ProgressData<double>& vdist23,
-      const std::set<unsigned long>& glitchIndices) {
+      const std::set<size_t>& glitchIndices) {
       std::string svg;
       if (!glitchIndices.empty()) {
          svg += "  start  " + label + "\n";
-         const unsigned long nmax = maxNC(vin1.size(), vin2.size(), vin3.size());
-         std::set<unsigned long>::iterator it;
-         for (unsigned long i = 0; i < nmax; ++i) {
+         const size_t nmax = maxNC(vin1.size(), vin2.size(), vin3.size());
+         std::set<size_t>::iterator it;
+         for (size_t i = 0; i < nmax; ++i) {
             if (i == 0 || glitchIndices.find(i) != glitchIndices.end()) {
                const TVEC& v1(vin1[i]);
                const TVEC& v2(vin2[i]);
@@ -248,7 +248,7 @@ public:
       const double sqrtInputArea(SqrtTriangleAreaFromSides(d12, d13, d23));
 
 
-      for ( unsigned long i=0; i<(unsigned long)(npoints); ++i ) {
+      for ( size_t i=0; i<(size_t)(npoints); ++i ) {
          {
             double dist12(DIST(m_followData[0][i], m_followData[1][i]));
             double dist13(DIST(m_followData[0][i], m_followData[2][i]));
@@ -289,12 +289,12 @@ public:
 
       int worstViolationIndex = -INT_MAX;
       double worstViolation = -DBL_MAX;
-      //      const unsigned long dataPointCount = maxNC(m_data.sl1.size(), m_data.sl2.size(), m_data.sl3.size());
-      const unsigned long dataPointCount = (unsigned long)maxNC(m_followData[0].size(), m_followData[1].size(), m_followData[2].size());
+      //      const size_t dataPointCount = maxNC(m_data.sl1.size(), m_data.sl2.size(), m_data.sl3.size());
+      const size_t dataPointCount = maxNC(m_followData[0].size(), m_followData[1].size(), m_followData[2].size());
 
       ScalePointsAndStoreDistances(npoints, vdist12, vdist13, vdist23);
 
-      for (unsigned long i = 0; i < dataPointCount; ++i)
+      for (size_t i = 0; i < dataPointCount; ++i)
       {
          const double& dist12(vdist12[i]);
          const double& dist13(vdist13[i]);
@@ -320,8 +320,8 @@ public:
       std::vector<Glitch<TVEC> > glitches2(DetermineOutliers<TVEC>(vdist13.GetVector()));
       std::vector<Glitch<TVEC> > glitches3(DetermineOutliers<TVEC>(vdist23.GetVector()));
 
-      std::set<unsigned long> glitchIndices;
-      for ( unsigned long i=0; i<dataPointCount; ++i ) {
+      std::set<size_t> glitchIndices;
+      for ( size_t i=0; i<dataPointCount; ++i ) {
          if (i<glitches1.size()) glitchIndices.insert(glitches1[i].GetGlitchElement1().GetPosition());
          if (i<glitches2.size()) glitchIndices.insert(glitches2[i].GetGlitchElement1().GetPosition());
          if (i<glitches3.size()) glitchIndices.insert(glitches3[i].GetGlitchElement1().GetPosition());
@@ -343,10 +343,10 @@ public:
       const ProgressData<double>& vdist12, 
       const ProgressData<double>& vdist13, 
       const ProgressData<double>& vdist23,
-      const std::set<unsigned long>& glitchIndices) {
+      const std::set<size_t>& glitchIndices) {
       std::string svg;
       svg += "  start distances " + color + "\n";
-      for ( unsigned long i=0; i<vdist12.size(); ++i ){
+      for ( size_t i=0; i<vdist12.size(); ++i ){
          svg += LRL_ToString(color, i + 1, vdist12[i], vdist13[i], vdist23[i], "\n");
       }
       svg += "  end distances " + color + "\n";
@@ -409,12 +409,12 @@ public:
 
    void ReportTriangleResults(std::ostream& folOut, const std::string& prefix, const std::string& label, const ProgressData<double> t[3]) {
       folOut << std::endl << label << std::endl;
-      const unsigned long n1 = t[0].size();
-      const unsigned long n2 = t[1].size();
-      const unsigned long n3 = t[2].size();
+      const size_t n1 = t[0].size();
+      const size_t n2 = t[1].size();
+      const size_t n3 = t[2].size();
 
-      const unsigned long n = maxNC(n3, n1, n2);
-      for (unsigned long i = 0; i < n; ++i)
+      const size_t n = maxNC(n3, n1, n2);
+      for (size_t i = 0; i < n; ++i)
          folOut << prefix << " " << i << "  " <<
          ((i < n1) ? LRL_ToString(t[0][i]) : "XXXX") + "  "
          + ((i < n2) ? LRL_ToString(t[1][i]) : "XXXX") + "  "

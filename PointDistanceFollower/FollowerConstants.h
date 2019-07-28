@@ -28,8 +28,8 @@ namespace FollowerConstants {
    extern std::vector<std::string> globalDistanceEnableList;
    extern std::string globalDistanceDisable;
 
-   extern unsigned long    globalStepsPerFrame;
-   extern unsigned long    globalNumberOfTrialsToAttempt;  // applies when not in movie generation
+   extern size_t    globalStepsPerFrame;
+   extern size_t    globalNumberOfTrialsToAttempt;  // applies when not in movie generation
    extern bool   globalPlotAllSegmentsAsBlack;
 
    extern std::string globalFileNamePrefix;
@@ -63,7 +63,7 @@ namespace GLOBAL_RunInputVector {
 };
 
 namespace GLOBAL_Files {
-   extern unsigned long globalCounter;
+   extern size_t globalCounter;
    extern bool globalShouldTimeStamp;
 }
 

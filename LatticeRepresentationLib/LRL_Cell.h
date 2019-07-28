@@ -66,10 +66,10 @@ public:
       bool operator== (const LRL_Cell& cl) const;
    bool operator!= (const LRL_Cell& cl) const;
 
-   double operator[] (const unsigned long n) const;
-   double& operator[](const unsigned long n);
+   double operator[] (const size_t n) const;
+   double& operator[](const size_t n);
    double DistanceBetween(const LRL_Cell& v1, const LRL_Cell& v2);
-   unsigned long size(void) const { return 6; }
+   size_t size(void) const { return 6; }
    double norm() const { return (*this).Volume();}
    double norm(const LRL_Cell& cell) const { return cell.Volume();}
    double Norm() const { return (*this).Volume();}
@@ -82,7 +82,7 @@ public:
    bool GetValid(void) const { return m_valid; }
    bool IsValid(void) const { return m_valid; }
    void SetValid(const bool b) { m_valid = b; };
-   double at(const unsigned long n) const { return (*this)[n]; }
+   double at(const size_t n) const { return (*this)[n]; }
 
 
    LRL_Cell Inverse(void) const;

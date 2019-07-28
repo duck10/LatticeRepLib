@@ -63,12 +63,12 @@ public:
 
    std::pair< double, std::pair<S6, S6> > GetBestPosition() const;
 
-   S6 ApplyReductionFunction(const unsigned long n, const S6& d) const;
-   S6 ApplyUnreduceFunction(const unsigned long n, const S6& d) const;
+   S6 ApplyReductionFunction(const size_t n, const S6& d) const;
+   S6 ApplyUnreduceFunction(const size_t n, const S6& d) const;
 
-   std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2);
-   std::pair<double, unsigned long> MinForListOfS6(const S6& d1, const std::vector<S6>& v);
-   std::pair<double, unsigned long> MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree);
+   std::pair<double, size_t> MinForListOfS6(const std::vector<S6>& v1, const std::vector<S6>& v2);
+   std::pair<double, size_t> MinForListOfS6(const S6& d1, const std::vector<S6>& v);
+   std::pair<double, size_t> MinForListOfS6(const std::vector<S6>& v1, const CNearTree<S6>& tree);
    void SetDebug(const bool b) { m_s6Debug = b; }
 
    static const std::vector<S6> Generate24Reflections(const S6& s6in);

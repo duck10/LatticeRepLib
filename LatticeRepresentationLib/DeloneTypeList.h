@@ -10,7 +10,7 @@
 
 template< typename R>
 auto Getter(const std::string& s, const R& r) {
-   for (unsigned long i = 0; i < r.size(); ++i) {
+   for (size_t i = 0; i < r.size(); ++i) {
       const std::string test = r[i].first;
       if (test == s) {
          return r[i].second;
@@ -24,7 +24,7 @@ public:
    DeloneTypeList();
 
    DeloneType operator[] (const std::string& s) const;
-   DeloneType operator[] (const unsigned long n) const;
+   DeloneType operator[] (const size_t n) const;
    size_t size() const { return m_deloneTypes.size(); }
    static std::vector<std::pair<std::string, std::vector<double> > > Make3dCenteringMatrices();
    std::vector<std::tuple<double, S6, MatS6> > Fit( const std::string& type, const S6& s6 ) const;

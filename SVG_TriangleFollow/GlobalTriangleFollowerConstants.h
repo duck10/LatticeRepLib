@@ -26,9 +26,9 @@ namespace GlobalConstants {
    extern double globalMovieMaxDistRejectionTest;
 
 
-   extern unsigned long    globalFramesPerSegment;
-   extern unsigned long    globalStepsPerFrame;
-   extern unsigned long    globalNumberOfTrialsToAttempt;  // applies when not in movie generation
+   extern size_t    globalFramesPerSegment;
+   extern size_t    globalStepsPerFrame;
+   extern size_t    globalNumberOfTrialsToAttempt;  // applies when not in movie generation
    extern bool   globalPlotAllSegmentsAsBlack;
 
    extern std::vector<std::string> globalColorsForBoundaries;
@@ -69,7 +69,7 @@ namespace GLOBAL_RunInputVector {
 };
 
 namespace GLOBAL_FileNames {
-   extern unsigned long globalCounter;
+   extern size_t globalCounter;
    extern bool globalShouldTimeStamp;
 };
 #endif  //GLOBALCONSTANTS_H

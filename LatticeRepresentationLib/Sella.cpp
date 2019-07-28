@@ -35,10 +35,10 @@ Sella::Sella()
 static int seed = 19191;
 double Sella::TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm) {
    double best = DBL_MAX;
-   unsigned long bestIndex;
+   size_t bestIndex;
    S6 bestS6;
    const double s6norm = s6.norm();
-   for (unsigned long i = 0; i < vm.size(); ++i) {
+   for (size_t i = 0; i < vm.size(); ++i) {
       S6 prp = vm[i] * s6;
       if (best > prp.norm()) {
          best = prp.norm();
@@ -60,7 +60,7 @@ std::vector<std::pair<std::string, double> > Sella::GetVectorOfFits(const S6& s6
    if (b) {
       const double n1 = s6.norm();
       const double n2 = out.norm();
-      for (unsigned long i = 0; i < perps.size(); ++i) {
+      for (size_t i = 0; i < perps.size(); ++i) {
          const std::string label = perps[i].GetLabel();
          const double best = TestOneType(label, out, perps[i].GetMatrices());
          v.push_back(std::make_pair(label, best));
@@ -75,11 +75,11 @@ std::pair<std::string, double>  Sella::GetBestFitForCrystalSystem(const std::str
    double bestFit = DBL_MAX;
    const char crystSystem = (LRL_StringTools::strToupper(type))[0];
 
-   for (unsigned long i = 0; i < perps.size(); ++i) {
+   for (size_t i = 0; i < perps.size(); ++i) {
       const std::string currentLabel = perps[i].GetLabel();
       if (crystSystem == currentLabel[0]) {
          const std::vector<MatS6> mats = perps[i].GetMatrices();
-         for (unsigned long mv = 0; mv < mats.size(); ++mv) {
+         for (size_t mv = 0; mv < mats.size(); ++mv) {
             const S6 projected = mats[mv] * s6;
             //std::cout << s6 << std::endl;
             //std::cout << projected << std::endl;
@@ -100,11 +100,11 @@ std::pair<std::string, double>  Sella::GetBestFitForCrystalSystem(const std::str
 double Sella::GetFitForDeloneType(const std::string& type, const S6& s6) {
    double bestFit = DBL_MAX;
 
-   for (unsigned long i = 0; i < perps.size(); ++i) {
+   for (size_t i = 0; i < perps.size(); ++i) {
       const std::string currentLabel = perps[i].GetLabel();
       if (type == currentLabel) {
          const std::vector<MatS6> mats = perps[i].GetMatrices();
-         for (unsigned long mv = 0; mv < mats.size(); ++mv) {
+         for (size_t mv = 0; mv < mats.size(); ++mv) {
             const double fit = (mats[mv] * s6).norm();
             bestFit = std::min(fit, bestFit);
          }

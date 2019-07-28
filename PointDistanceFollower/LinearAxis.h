@@ -24,8 +24,8 @@ public:
                    const double maxDataValue  = DBL_MAX, 
                    const double minDataValue  = DBL_MAX, 
                    const double upperLimit    = DBL_MAX,
-                   const unsigned long& numSteps      = ULONG_MAX,
-                   const unsigned long& objectScaleFactor = ULONG_MAX);
+                   const size_t& numSteps      = ULONG_MAX,
+                   const size_t& objectScaleFactor = ULONG_MAX);
    AxisLimits& operator=( const AxisLimits& ) const; // no assignment operator allowed
 
 public:
@@ -33,8 +33,8 @@ public:
 	const double m_maxDataValue;
 	const double m_minDataValue;
 	const double m_upperLimit;
-	const unsigned long m_numSteps;
-	const unsigned long m_objectScaleFactor;
+	const size_t m_numSteps;
+	const size_t m_objectScaleFactor;
 
 };
 
@@ -46,12 +46,12 @@ public:
 	virtual ~StepSizeList( );
 
 	void clear ( );
-	unsigned long size( ) const;
+	size_t size( ) const;
    StepSizeList operator<< ( const double d );
-   double operator[ ] ( const unsigned long& i ) const;
+   double operator[ ] ( const size_t& i ) const;
    std::vector<double> m_vStepSizes;
 private:
-	unsigned long sort( );
+	size_t sort( );
 
 };
 
@@ -132,10 +132,10 @@ public:
 public:
 	LinearAxis( );
 	StepSizeList m_Steps;
-	LinearAxis ( const unsigned long uiTickMax );
+	LinearAxis ( const size_t uiTickMax );
 	virtual ~LinearAxis( );
 	AxisLimits LinearAxisLimits( const double dMin, const double dMax );
-   unsigned long SetAxisConstants( const unsigned long uiMaxTicks = 11 );
+   size_t SetAxisConstants( const size_t uiMaxTicks = 11 );
 	virtual void SetStepSizeList( );
    const std::vector<Scale>& GetScale( void ) const { return( m_vScale ); }
 

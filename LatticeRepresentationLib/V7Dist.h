@@ -30,7 +30,7 @@
       terms[6] = std::pow(volumed1, 1.0 / 3.0) - std::pow(volumed2, 1.0 / 3.0);
 
       double distSquared = 0.0;
-      for (unsigned long i = 0; i < 7; ++i) distSquared += terms[i] * terms[i];
+      for (size_t i = 0; i < 7; ++i) distSquared += terms[i] * terms[i];
 
       return sqrt(distSquared);
    }

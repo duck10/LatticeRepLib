@@ -34,8 +34,8 @@ int main()
 
    while (count != prevcount) {
       prevcount = nt.size();
-      for (unsigned long i3 = 0; i3 < v3fold.size(); ++i3) {
-         for (unsigned long knt = 0; knt < nt.size(); ++knt) {
+      for (size_t i3 = 0; i3 < v3fold.size(); ++i3) {
+         for (size_t knt = 0; knt < nt.size(); ++knt) {
             MatB4 m = v3fold[i3] * nt[knt];
             nt.NearestNeighbor(0.01, close, m);
             const double d = (m - close).norm();
@@ -52,8 +52,8 @@ int main()
 
    while (count != prevcount) {
       prevcount = nt.size();
-      for (unsigned long i2 = 0; i2 < v2fold.size(); ++i2) {
-         for (unsigned long knt = 0; knt < nt.size(); ++knt) {
+      for (size_t i2 = 0; i2 < v2fold.size(); ++i2) {
+         for (size_t knt = 0; knt < nt.size(); ++knt) {
             MatB4 m = v2fold[i2] * nt[knt];
             //std::cout << "m   " << std::endl << m << std::endl << std::endl;
             nt.NearestNeighbor(0.01, close, m);
@@ -70,7 +70,7 @@ int main()
    }
 
 
-   for (unsigned long knt = 0; knt < nt.size(); ++knt) {
+   for (size_t knt = 0; knt < nt.size(); ++knt) {
       MatB4 m = nt[knt];
       std::cout << m << std::endl << std::endl;
    }

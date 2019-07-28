@@ -1,5 +1,6 @@
 #include "DeloneType.h"
 
+#include <cfloat>
 DeloneType::DeloneType(const std::string& deloneType, 
 	const std::string& bravaisType, const std::string& character, const std::pair<std::string, MatS6 >& fromCanon)
 	: m_deloneName(deloneType)
@@ -28,9 +29,9 @@ DeloneType::DeloneType(
 }
 
 std::tuple<double, S6, MatS6> DeloneType::GetFit(const S6& s6) const {
-   unsigned long n = 0;
+   size_t n = 0;
    double best = DBL_MAX;
-   for ( unsigned long i=0; i< m_matrices.size(); ++i ) {
+   for ( size_t i=0; i< m_matrices.size(); ++i ) {
       const S6 testv = m_matrices.GetPerp(i) * s6;
       const S6 bestv = m_matrices.GetPrj(i) * s6;
       const double test = testv.norm();

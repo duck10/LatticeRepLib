@@ -152,20 +152,20 @@ StepSizeList StepSizeList::operator<< ( double d )
 }
 
 //-----------------------------------------------------------------------------sort StepSizeList
-unsigned long StepSizeList::sort( )
+size_t StepSizeList::sort( )
 {
    std::sort( m_vStepSizes.begin( ), m_vStepSizes.end( ) );
-   return ((unsigned long) (m_vStepSizes.size( )) );
+   return m_vStepSizes.size( );
 }
 
 //-----------------------------------------------------------------------------size StepSizeList
-unsigned long StepSizeList::size( ) const
+size_t StepSizeList::size( ) const
 {
-   return (unsigned long)( m_vStepSizes.size( ) );
+   return m_vStepSizes.size( );
 }
 
 //-----------------------------------------------------------------------------operator[] StepSizeList
-double StepSizeList::operator [ ]( const unsigned long& i ) const
+double StepSizeList::operator [ ]( const size_t& i ) const
 {
    return ( m_vStepSizes[ i ] );
 }
@@ -191,8 +191,8 @@ AxisLimits::AxisLimits(
                          const double maxDataValue, 
                          const double minDataValue, 
                          const double upperLimit,
-                         const unsigned long& numSteps,
-                         const unsigned long& objectScaleFactor )
+                         const size_t& numSteps,
+                         const size_t& objectScaleFactor )
 
    : m_lowerLimit   ( lowerLimit   ) 
    , m_maxDataValue ( maxDataValue ) 
@@ -210,12 +210,12 @@ AxisLimits::AxisLimits(
 //-----------------------------------------------------------------------------constructor LinearAxis
 // default uiTickLimit is set to 11 in the declaration
 //
-LinearAxis::LinearAxis( const unsigned long uiTickLimit )
+LinearAxis::LinearAxis( const size_t uiTickLimit )
 {
    m_vScale.clear( );
    m_Steps .clear( );
    LinearAxis::SetStepSizeList( );
-   const unsigned long uiNumberOfScalingObjectsCreated = SetAxisConstants( uiTickLimit );
+   const size_t uiNumberOfScalingObjectsCreated = SetAxisConstants( uiTickLimit );
    uiNumberOfScalingObjectsCreated;
 }
 
@@ -395,14 +395,14 @@ double LinearAxis::Scale::GetRange( ) const
 //
 std::ostream& operator<< ( std::ostream& os, const LinearAxis& la )
 {
-   const unsigned long iTemp              = (unsigned long)(la.GetScale( ).size( ));
+   const size_t iTemp              = la.GetScale( ).size( );
    const std::streamsize Precision = os.precision( );
    const std::streamsize Width     = os.width( );
    os << "i,  range,  step size, modulus, steps" << std::endl;
    os << std::setw( 3 );
    os << std::setprecision( 3 );
    os << std::showpoint;
-   for ( unsigned long i=0; i<iTemp; ++i )
+   for ( size_t i=0; i<iTemp; ++i )
    {
       os << std::setw( 3 );
       os << i << "  ";
@@ -429,7 +429,7 @@ std::ostream& operator<< ( std::ostream& os, const LinearAxis& la )
 // build and sort the scaling objects, based on the list of step sizes
 // assigned by SetStepSizeList.
 //
-unsigned long LinearAxis::SetAxisConstants( const unsigned long uiMaxTicks )
+size_t LinearAxis::SetAxisConstants( const size_t uiMaxTicks )
 {
    // If the user didn't build his own list or didn't call the default list
    // to assign a maximum number of steps, then just use a default one.
@@ -440,13 +440,13 @@ unsigned long LinearAxis::SetAxisConstants( const unsigned long uiMaxTicks )
    // If there's already a list, just delete it.
    m_vScale.clear( );
    // generate the scaling data
-   unsigned long ulCount = 0;
-   const unsigned long uiMinTicks = Min( 4u, uiMaxTicks );
-   unsigned long ni = m_Steps.size( );
+   size_t ulCount = 0;
+   const size_t uiMinTicks = Min( 4u, uiMaxTicks );
+   size_t ni = m_Steps.size( );
    ni;
-   for( unsigned long iStep=0; iStep<m_Steps.size( ); ++iStep )
+   for( size_t iStep=0; iStep<m_Steps.size( ); ++iStep )
    {
-      for( unsigned long iTicks=uiMinTicks; iTicks<=uiMaxTicks; ++iTicks )
+      for( size_t iTicks=uiMinTicks; iTicks<=uiMaxTicks; ++iTicks )
       {
          double dModulus=DBL_MAX;
          const double dRangeTemp = iTicks * m_Steps[iStep];

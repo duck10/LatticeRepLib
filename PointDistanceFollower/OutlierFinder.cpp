@@ -12,7 +12,7 @@ OutlierFinder::OutlierFinder( const std::vector<double>& data )
    , m_sut(spline_under_tension(0.1, data, 3))
    , m_intrp()
 {
-   for (unsigned long i = 0; i < data.size(); ++i) {
+   for (size_t i = 0; i < data.size(); ++i) {
       m_intrp.push_back(GetValue(double(i)));
    }
 }
@@ -21,23 +21,23 @@ bool IsNonNegative( const double d ) {
    return d >= 0.0;
 }
 
-unsigned long FindLastNonzeroDistance( const std::vector<double>& v ) {
+size_t FindLastNonzeroDistance( const std::vector<double>& v ) {
    const std::vector<double>::const_reverse_iterator it = find_if(v.rbegin(), v.rend(), IsNonNegative);
-   return (unsigned long)(v.size()) - (unsigned long)(it - v.rbegin());
+   return v.size() - (size_t)(it - v.rbegin());
 }
 
 std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransitionPoints(const double cutoff) {
    std::vector<std::pair<double, double> > biggiesL;
    double prevDataDiff = 0.0;
    double prevData = m_data[0];
-   const unsigned long endMask = std::max(3UL, (unsigned long)(0.03*(double)(m_data.size())));
-   const unsigned long endpt = FindLastNonzeroDistance(m_data);
-   for (unsigned long i = endMask; i < endpt - 1 - endMask; ++i) {
+   const size_t endMask = std::max(size_t(3), (size_t)(0.03*(double)(m_data.size())));
+   const size_t endpt = FindLastNonzeroDistance(m_data);
+   for (size_t i = endMask; i < endpt - 1 - endMask; ++i) {
       const double& mdatai = m_data[i];
       if (mdatai < 0.0) continue;
       const double& mdataim1 = m_data[i - 1];
       if (mdataim1 < 0.0) continue;
-      const double& mdataip1 = m_data[std::min(i,(unsigned long)(m_data.size())-1UL) + 1];
+      const double& mdataip1 = m_data[std::min(i,(size_t)(m_data.size())-1UL) + 1];
       if (mdataip1 < 0.0) continue;
       const double percentDelta2Diff = 50.0 * std::abs(mdataim1 - mdataip1) / (mdataim1 + mdataip1);
       const double absDataDiff = std::abs(100.0*std::abs(mdatai - mdataip1) / std::max(mdatai, mdataip1));

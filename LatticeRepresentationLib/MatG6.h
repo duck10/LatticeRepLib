@@ -58,18 +58,18 @@ public:
 
    G6 operator* (const G6& v) const;
 
-   double operator[] (const unsigned long n) const;
-   double& operator[] (const unsigned long n);
+   double operator[] (const size_t n) const;
+   double& operator[] (const size_t n);
 
    double DistanceBetween(const MatG6& v1, const MatG6& v2);
-   unsigned long size(void) const;
+   size_t size(void) const;
    double norm() const;
    double norm(const MatG6& t) const;
    double Norm() const;
    double Norm(const MatG6& t) const;
 
-   unsigned long GetRowDim(void) const { return 6; }
-   unsigned long GetColDim(void) const { return 6; }
+   size_t GetRowDim(void) const { return 6; }
+   size_t GetColDim(void) const { return 6; }
    virtual bool IsUnit() const;
    static MatG6 Eye(void);
    static MatG6 Zero(void);
@@ -79,7 +79,7 @@ public:
    MatG6 transpose(const MatG6& m) const;
    void transpose(void);
 
-   double at(const unsigned long n) const;
+   double at(const size_t n) const;
 
    MatG6 unit(void);
    static MatG6 unit(const MatG6& m);
@@ -89,7 +89,7 @@ public:
    MatN GetMatrix(void) const { return m_mat; }
 
    static std::vector<MatG6> GetReflections();
-   static MatG6 GetReflection(const unsigned long n);
+   static MatG6 GetReflection(const size_t n);
    static std::string GetName() { return "MatG6"; }
 
 private:

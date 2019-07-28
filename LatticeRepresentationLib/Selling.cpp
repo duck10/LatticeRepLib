@@ -13,7 +13,7 @@
 #include "S6Dist.h"
 
 bool Selling::m_debugInstrument = false;
-unsigned long Selling::m_ReductionCycleCount = 0;
+size_t Selling::m_ReductionCycleCount = 0;
 
 std::vector< S6(*)(const S6&)> FillReduceFunctionArray() {
    static std::vector< S6(*)(const S6&)> vf;
@@ -50,7 +50,7 @@ bool Selling::Reduce(const S6& in, S6& out, const bool sellingFirst) {
 
 bool Selling::Reduce(const S6& in, S6& out) {
    static const std::vector< S6(*)(const S6&)> reductionFunctions = FillReduceFunctionArray();
-   unsigned long maxIndex = INT_MAX;
+   size_t maxIndex = INT_MAX;
    m_ReductionCycleCount = 0;
    out = in;
    if (out[0] <= 0.0 && out[1] <= 0.0 && out[2] <= 0.0 && out[3] <= 0.0 && out[4] <= 0.0 && out[5] <= 0.0) return true;
@@ -60,7 +60,7 @@ bool Selling::Reduce(const S6& in, S6& out) {
    while (S6::CountPositive(out) != 0) {
       double maxScalar = -DBL_MAX;
 
-      for (unsigned long i = 0; i < 6; ++i) {
+      for (size_t i = 0; i < 6; ++i) {
          if (out[i] > maxScalar) {
             maxIndex = i;
             maxScalar = out[i];
@@ -89,14 +89,14 @@ bool Selling::Reduce(const S6& in, S6& out) {
          vm.push_back(MatS6(" 0 0 1  0 1 0   0  1 0 0 -1 0   1 0  0 0 1  0    0 0 0  1 1 0   0  0 0 0 -1 0   0 0  0 0 1  1"));  // mReduce or t
          vm.push_back(MatS6(" 0 1 0  0 0 1   1  0 0 0  0 1   0 0  1 0 0 -1    0 0 0  1 0 1   0  0 0 0  1 1   0 0  0 0 0 -1"));  // n or u
       }
-      unsigned long maxIndex = INT_MAX;
+      size_t maxIndex = INT_MAX;
       out = in;
       long countPositive = 0;
       double prevMaxScalar = -DBL_MAX;
       while (true) {
          double maxScalar = -DBL_MAX;
 
-         for (unsigned long i = 0; i < 6; ++i) {
+         for (size_t i = 0; i < 6; ++i) {
             if (out[i] > maxScalar) {
                maxIndex = i;
                maxScalar = out[i];

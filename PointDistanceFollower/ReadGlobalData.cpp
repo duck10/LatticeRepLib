@@ -51,7 +51,7 @@ const std::vector<std::string> SplitBetweenBlanks( const std::string& s ) {
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-const std::string GetDataString( const std::string& s, const unsigned long n ) {
+const std::string GetDataString( const std::string& s, const size_t n ) {
    std::vector<std::string> vstr = SplitBetweenBlanks(s);
    if ( vstr.size( ) < n+1 ) vstr.resize( n+1, "0" );
    return( vstr[n] );
@@ -90,7 +90,7 @@ const std::pair<int,int> Get2IntData( const std::vector<std::string>& s ) {
 ///*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 //std::string GetG6Data( const std::vector<std::string>& v ) {
 //   std::string s = """";
-//   for( unsigned long i=1; i<7; ++i )
+//   for( size_t i=1; i<7; ++i )
 //      s += v[i] + " ";
 //   return( s + """" );
 //}
@@ -200,11 +200,11 @@ std::string TranslateGlobalValue( const std::string& dataType, void* pData ) {
 const std::pair<std::string, void*> FindBestTextMatch( const std::string& stringToMatch,
                                                        const std::vector<ReadGlobalData::ParseData>& parseData,
                                                        const ThetaMatch<std::string>& tMatch ) {
-   unsigned long bestMatchIndex = 0;
+   size_t bestMatchIndex = 0;
    double bestMatch = DBL_MAX;
    const std::string commandToMatch = SplitBetweenBlanks(stringToMatch)[0];
 
-   for( unsigned long i=0; i!=parseData.size( ); ++i ) {
+   for( size_t i=0; i!=parseData.size( ); ++i ) {
       const double match = tMatch.theta(LRL_StringTools::strToupper(commandToMatch), parseData[i].m_label);
       if ( match < bestMatch ) {
          bestMatch = match;
@@ -294,7 +294,7 @@ const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 std::string ReadGlobalData::FormatGlobalDataAsString( const std::vector<ParseData>& parseData ) {   
    std::string s;
-   for( unsigned long i=0; i<parseData.size(); ++i )
+   for( size_t i=0; i<parseData.size(); ++i )
    {
       const ParseData& pd = parseData[i];
       s += pd.m_label + " " + pd.m_dataTypeToRead + " " + TranslateGlobalValue(pd.m_dataTypeToRead, pd.m_dataLocation) + "\n";

@@ -16,7 +16,7 @@
 static int randSeed1 = 19191;
 
 std::ostream& operator<< (std::ostream& o, const B4& dt) {
-   for (unsigned long i = 0; i < 4; ++i)
+   for (size_t i = 0; i < 4; ++i)
       o << dt.m_vec[i];
    return o;
 }
@@ -88,17 +88,17 @@ double B4::DistanceBetween(const B4& v1, const B4& v2) {
    return (v1 - v2).norm();
 }
 
-Vector_3 B4::operator[] (const unsigned long n) const {
+Vector_3 B4::operator[] (const size_t n) const {
    return m_vec[n];
 }
 
-Vector_3& B4::operator[] (const unsigned long n) {
+Vector_3& B4::operator[] (const size_t n) {
    return m_vec[n];
 }
 
 B4& B4::operator= (const B4& dt)
 {
-   for (unsigned long i = 0; i < 4; ++i)
+   for (size_t i = 0; i < 4; ++i)
       m_vec[i] = dt.m_vec[i];
    m_valid = dt.m_valid;
    return *this;
@@ -142,14 +142,14 @@ B4& B4::operator= (const std::string& s)
 
 B4 B4::operator+ (const B4& dt) const {
    B4 temp;
-   for (unsigned long i = 0; i<4; ++i)
+   for (size_t i = 0; i<4; ++i)
       temp[i] = (*this)[i] + dt[i];
    return temp;
 }
 
 B4 B4::operator- (const B4& dt) const {
    B4 temp;
-   for ( unsigned long i=0; i<4; ++i )
+   for ( size_t i=0; i<4; ++i )
    temp[i] = (*this)[i] - dt[i];
    return temp;
 }
@@ -157,7 +157,7 @@ B4 B4::operator- (const B4& dt) const {
 B4 B4::operator* (const double d) const
 {
    B4 dt;
-   for (unsigned long i = 0; i < dt.size(); ++i)
+   for (size_t i = 0; i < dt.size(); ++i)
       dt[i] = ((*this)[i]) * d;
    return dt;
 }
@@ -165,7 +165,7 @@ B4 B4::operator* (const double d) const
 B4 B4::operator/ (const double d) const
 {
    B4 dt;
-   for (unsigned long i = 0; i < dt.size(); ++i)
+   for (size_t i = 0; i < dt.size(); ++i)
       dt[i] = ((*this)[i]) / d;
    return dt;
 }
@@ -180,25 +180,25 @@ B4 B4::operator- (void) const { // unary
 }
 
 B4& B4::operator*= (const double d) {
-   for (unsigned long i = 0; i < size(); ++i)
+   for (size_t i = 0; i < size(); ++i)
       m_vec[i] = d * m_vec[i];
    return *this;
 }
 
 B4& B4::operator/= (const double d) {
-   for (unsigned long i = 0; i < size(); ++i)
+   for (size_t i = 0; i < size(); ++i)
       m_vec[i] = m_vec[i] / d;
    return *this;
 }
 
 B4& B4::operator+= (const B4& dt) {
-   for (unsigned long i = 0; i < size(); ++i)
+   for (size_t i = 0; i < size(); ++i)
       m_vec[i] = m_vec[i] + dt.m_vec[i];
    return *this;
 }
 
 B4& B4::operator-= (const B4& dt) {
-   for (unsigned long i = 0; i < size(); ++i)
+   for (size_t i = 0; i < size(); ++i)
       m_vec[i] = m_vec[i] - dt.m_vec[i];
    return *this;
 }
@@ -264,7 +264,7 @@ B4 B4::sort(const B4& din) {
    B4 dt(din);
    while (again) {
       again = false;
-      for (unsigned long i = 0; i < 3; ++i) {
+      for (size_t i = 0; i < 3; ++i) {
          if (dt[i + 1].Norm() < dt[i].Norm()) {
             std::swap(dt[i], dt[i + 1]);
             again = true;

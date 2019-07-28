@@ -20,7 +20,7 @@ public:
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    GlitchElement(
       const double      glitchDistance1,
-      const unsigned long      glitchPosition1,
+      const size_t      glitchPosition1,
       const TVEC& glichVector1
       )
       : m_glitchDistance( glitchDistance1 )
@@ -40,7 +40,7 @@ public:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   const unsigned long GetPosition( void ) const {
+   const size_t GetPosition( void ) const {
       return(m_glitchPosition);
    }
 
@@ -51,7 +51,7 @@ public:
 
 private:
    double     m_glitchDistance;
-   unsigned long     m_glitchPosition;
+   size_t     m_glitchPosition;
    TVEC m_glichVector;
 };
 

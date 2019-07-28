@@ -66,7 +66,7 @@ public:
       S6 s6out;
       T t;
       S6 s1;
-      unsigned long count = 0;
+      size_t count = 0;
       while (again) {
          s1 = S6::randDeloneReduced();
          S6 s2 = S6::randDeloneReduced();
@@ -92,7 +92,7 @@ public:
    T randSellingReduced() {
       S6 out;
       bool valid = false;
-      unsigned long count = 0;
+      size_t count = 0;
       while ( !valid && count < 100) {
          const S6 ran(rand());
          const bool b = Selling::Reduce(ran, out);
@@ -228,15 +228,15 @@ private:
       return;
    }
 
-   void Prepare2CellElements(const double minEdge, const double maxEdge, const unsigned long i, LRL_Cell& c) {
+   void Prepare2CellElements(const double minEdge, const double maxEdge, const size_t i, LRL_Cell& c) {
       const double range = std::fabs(minEdge - maxEdge);
       const double d1 = rhrand.urand();
       c[i] = range * d1 + minEdge;
    }
 
-   unsigned long CountPositive(const S6& s6) const {
-      unsigned long sum = 0;
-      for (unsigned long i = 0; i < 6; ++i) sum += (s6[i] > 0.0) ? 1 : 0;
+   size_t CountPositive(const S6& s6) const {
+      size_t sum = 0;
+      for (size_t i = 0; i < 6; ++i) sum += (s6[i] > 0.0) ? 1 : 0;
       return sum;
    }
 
@@ -273,7 +273,7 @@ private:
    }
    S6 S6_randDeloneReduced() {
       S6 s6;
-      for (unsigned long i = 0; i < 6; ++i)
+      for (size_t i = 0; i < 6; ++i)
          s6[i] = -rhrand.urand() * LRL_Cell::randomLatticeNormalizationConstantSquared;
       s6.m_valid = true;
       return s6;
@@ -284,7 +284,7 @@ private:
       // norm doesn't work here because s2 is invalid !!!!!!!!!!
       // operator- doesn't work here because s2 is invalid !!!!!!!!!!
       S6 s6delta;
-      for (unsigned long i = 0; i < 6; ++i) s6delta[i] = s2[i] - s1[i];
+      for (size_t i = 0; i < 6; ++i) s6delta[i] = s2[i] - s1[i];
       const double diff = s6delta.norm();
       S6 midpoint = s1 + 0.5 * s6delta;
       const bool bmid = LRL_Cell(midpoint).GetValid();
@@ -305,7 +305,7 @@ private:
       // norm doesn't work here because s2 is invalid !!!!!!!!!!
       // operator- doesn't work here because s2 is invalid !!!!!!!!!!
       S6 s6delta;
-      for (unsigned long i = 0; i < 6; ++i) s6delta[i] = s2[i] - s1[i];
+      for (size_t i = 0; i < 6; ++i) s6delta[i] = s2[i] - s1[i];
       const double diff = s6delta.norm();
       S6 midpoint = s1 + 0.5 * s6delta;
       const bool bmid = LRL_Cell(midpoint).GetValid();

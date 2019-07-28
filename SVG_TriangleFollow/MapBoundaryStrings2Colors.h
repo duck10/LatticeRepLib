@@ -18,8 +18,8 @@ private:
    std::string BoundaryNeedsColorAssignment( const std::string& boundary );
 
    std::map<std::string, std::string> m_colorAssignments;
-   unsigned long m_nextColorIndex;
-   const unsigned long m_numberOfAssignableColors;
+   size_t m_nextColorIndex;
+   const size_t m_numberOfAssignableColors;
 
 private: // don't implement
    MapBoundaryStrings2Colors& operator=( const MapBoundaryStrings2Colors& ) const;

@@ -22,8 +22,8 @@ class MatMN {
 public:
    friend std::ostream& operator<< ( std::ostream&, const MatMN& );
 
-   MatMN( const unsigned long rowCount, const unsigned long colCount );
-   MatMN(const unsigned long rowCount, const unsigned long colCount, const std::string& s );
+   MatMN( const size_t rowCount, const size_t colCount );
+   MatMN(const size_t rowCount, const size_t colCount, const std::string& s );
    MatMN( const MatMN& m );
    MatMN(const MatS6& m6);
    MatMN(const MatD7& m6);
@@ -36,14 +36,14 @@ public:
    MatMN transpose( void ) const;
    MatMN inverse( void ) const;
 
-   unsigned long size( void ) const { return m_dim; }
+   size_t size( void ) const { return m_dim; }
 
    double norm( void ) const;
 
    MatMN operator* ( const double d ) const;
    MatMN operator/ ( const double d ) const;
-   double operator[]( const unsigned long i ) const;
-   double& operator[]( const unsigned long i );
+   double operator[]( const size_t i ) const;
+   double& operator[]( const size_t i );
    MatMN& operator= ( const MatMN& m2 );
    bool operator== (const MatMN& m2) const;
    bool operator!= (const MatMN& m2) const;
@@ -57,14 +57,14 @@ public:
    void zeros( void );
    MatMN FromString( const std::string& s ) const;
 
-   double operator() ( const unsigned long i );
-   double operator() ( const unsigned long row, const unsigned long col );
+   double operator() ( const size_t i );
+   double operator() ( const size_t row, const size_t col );
 
    VecN operator*( const VecN& v ) const;
 
-   unsigned long GetDim( void ) const { return m_dim; }
-   unsigned long GetRowDim( void ) const { return m_rowCount; }
-   unsigned long GetColDim( void ) const { return m_colCount; }
+   size_t GetDim( void ) const { return m_dim; }
+   size_t GetRowDim( void ) const { return m_rowCount; }
+   size_t GetColDim( void ) const { return m_colCount; }
    std::vector<double> GetVector(void) const { return m_mat; }
 
    MatMN Eye( void ) const;
@@ -72,13 +72,13 @@ public:
    std::vector<double> GetMatrix( void ) const { return m_mat; }
 
 protected:
-   unsigned long LinearIndex( const unsigned long row, const unsigned long col) const;
+   size_t LinearIndex( const size_t row, const size_t col) const;
 
 protected:
    std::vector<double> m_mat;
-   unsigned long m_dim;
-   unsigned long m_rowCount;
-   unsigned long m_colCount;
+   size_t m_dim;
+   size_t m_rowCount;
+   size_t m_colCount;
 
 
 };

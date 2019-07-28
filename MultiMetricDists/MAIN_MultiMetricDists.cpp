@@ -41,7 +41,7 @@ std::string OutputIntialInput(const std::vector<LRL_ReadLatticeData>& cellDataLi
    for (size_t i = 0; i < cellDataList.size(); ++i) {
       const std::vector<std::pair<std::string, std::string > > boundaryCases = D7(cellDataList[i].GetCell()).ClassifyVector(0.5);
       std::string boundary;
-      for (unsigned long k = 0; k < boundaryCases.size(); ++k) {
+      for (size_t k = 0; k < boundaryCases.size(); ++k) {
          boundary += " " + boundaryCases[k].second;
       }
       s += LRL_ToString("Input ", i, ":  ") + cellDataList[i].GetStrCell() + boundary + "\n";
@@ -50,7 +50,7 @@ std::string OutputIntialInput(const std::vector<LRL_ReadLatticeData>& cellDataLi
    for (size_t i = 0; i < cellDataList.size(); ++i) {
       const std::vector<std::pair<std::string, std::string > > boundaryCases = D7(cellDataList[i].GetCell()).ClassifyVector(0.5);
       std::string boundary;
-      for (unsigned long k = 0; k < boundaryCases.size(); ++k) {
+      for (size_t k = 0; k < boundaryCases.size(); ++k) {
          boundary += " " + boundaryCases[k].second;
       }
       s += LRL_ToString("Input ", i, ":  ") + LRL_ToString(C3(cellDataList[i].GetCell())) + "\n";
@@ -213,11 +213,11 @@ void ListReflections(const S6& s) {
 void ListReflectionsByC3() {
    StoreResults<int, PairReporter<C3, MatS6> > storeMat(100);
    const std::vector<MatS6> vmR = MatS6::GetReflections();
-   for (unsigned long i = 0; i < vmR.size(); ++i) {
+   for (size_t i = 0; i < vmR.size(); ++i) {
       int index = 0;
       const S6 ord("1 2 3 4 5 6");
       const C3 c(vmR[i] * ord);
-      for (unsigned long kk = 0; kk < 3; ++kk) {
+      for (size_t kk = 0; kk < 3; ++kk) {
          if (c[kk] == std::complex<double>(1, 4)) index += 1;
          if (c[kk] == std::complex<double>(4, 1)) index += 2;
          if (c[kk] == std::complex<double>(2, 5)) index += 10;

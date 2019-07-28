@@ -55,7 +55,7 @@ MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const
    if (! S6::IsInvalidPair(path[0])) {
       if (mf.GetS6().HasSecondPath()) {
          double distance;
-         for (unsigned long i = 0; i < path.size(); ++i) {
+         for (size_t i = 0; i < path.size(); ++i) {
             if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
                distance = -1.0;
             else
@@ -66,7 +66,7 @@ MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const
       else
       {
          if (!S6::IsInvalidPair(path[0])) {
-            for (unsigned long i = 0; i < path.size(); ++i) {
+            for (size_t i = 0; i < path.size(); ++i) {
                double distance = s6dist.DistanceBetween(path[0].second, path[i].second);
                if (S6::IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
@@ -88,7 +88,7 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
    /*if (!S6::IsInvalidPair(path[0]))*/ {
       if (mf.GetG6().HasSecondPath()) {
          double distance;
-         for (unsigned long i = 0; i < path.size(); ++i) {
+         for (size_t i = 0; i < path.size(); ++i) {
             if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
                distance = -1.0;
             else
@@ -100,7 +100,7 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
       {
 
          /*if (path[0].second.IsValid())*/ {
-            for (unsigned long i = 0; i < path.size(); ++i) {
+            for (size_t i = 0; i < path.size(); ++i) {
                double distance = NCDist(path[0].second.data(), path[i].second.data());
                if (S6::IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
@@ -121,7 +121,7 @@ MultiFollower MultiFollower::CalculateDistancesV7(const MultiFollower& mf) const
    if (!S6::IsInvalidPair(path[0])) {
       if (mf.GetG6().HasSecondPath()) {
          double distance;
-         for (unsigned long i = 0; i < path.size(); ++i) {
+         for (size_t i = 0; i < path.size(); ++i) {
             if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
                distance = -1.0;
             else
@@ -132,7 +132,7 @@ MultiFollower MultiFollower::CalculateDistancesV7(const MultiFollower& mf) const
       else
       {
          if (path[0].second.IsValid()) {
-            for (unsigned long i = 0; i < path.size(); ++i) {
+            for (size_t i = 0; i < path.size(); ++i) {
                double distance = V7Dist(path[0].second, path[i].second);
                if (S6::IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
@@ -153,7 +153,7 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
    if (!S6::IsInvalidPair(path[0])) {
       if (mf.GetD7().HasSecondPath()) {
          double distance;
-         for (unsigned long i = 0; i < path.size(); ++i) {
+         for (size_t i = 0; i < path.size(); ++i) {
             if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
                distance = -1.0;
             else
@@ -164,7 +164,7 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
       else
       {
          if (path[0].second.IsValid()) {
-            for (unsigned long i = 0; i < path.size(); ++i) {
+            for (size_t i = 0; i < path.size(); ++i) {
                double distance = D7Dist(path[0].second.data(), path[i].second.data());
                if (S6::IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
@@ -185,7 +185,7 @@ MultiFollower MultiFollower::CalculateDistancesCS( const MultiFollower& mf) cons
    if (!S6::IsInvalidPair(path[0])) {
       if (mf.GetS6().HasSecondPath()) {
          double distance;
-         for (unsigned long i = 0; i < path.size(); ++i) {
+         for (size_t i = 0; i < path.size(); ++i) {
             if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i])) 
                distance = -1.0;
             else
@@ -196,7 +196,7 @@ MultiFollower MultiFollower::CalculateDistancesCS( const MultiFollower& mf) cons
       else
       {
          if (path[0].second.IsValid()) {
-            for (unsigned long i = 0; i < path.size(); ++i) {
+            for (size_t i = 0; i < path.size(); ++i) {
                double distance = CS6Dist(path[0].second.data(), path[i].second.data());
                if (S6::IsInvalidPair(path[i])) distance = -1.0;
                vdist.push_back(distance);
@@ -259,26 +259,26 @@ MultiFollower MultiFollower::GenerateAllDistances(void) {
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-const std::set<unsigned long> MultiFollower::DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const
+const std::set<size_t> MultiFollower::DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const
 /*-------------------------------------------------------------------------------------*/
 {
    const double maximumDistance = *std::max_element(distances.begin(), distances.end());
-   std::set<unsigned long> glitches(DetermineOutliers(distances));
+   std::set<size_t> glitches(DetermineOutliers(distances));
 
    return(glitches);
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-std::set<unsigned long> MultiFollower::DetermineOutliers(const std::vector<double> distanceList) const
+std::set<size_t> MultiFollower::DetermineOutliers(const std::vector<double> distanceList) const
 /*-------------------------------------------------------------------------------------*/
 {
-   std::set<unsigned long> glitches;
+   std::set<size_t> glitches;
    if (distanceList.empty()) return glitches;
    OutlierFinder of(distanceList);
    std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(FollowerConstants::globalPercentChangeToDetect);
 
-   for (unsigned long i = 0; i < steps.size(); ++i) {
-      glitches.insert((unsigned long)(steps[i].first) + 1UL);
+   for (size_t i = 0; i < steps.size(); ++i) {
+      glitches.insert(steps[i].first + 1UL);
    }
    return glitches;
 }
@@ -291,7 +291,7 @@ std::pair<double, double> GetPathMinMax(const LRL_Path<T>& path) {
       if (p.first < 0.0) {
          const std::vector<double> distances = path.GetDistances();
          double distmin = DBL_MAX;
-         for (unsigned long i = 0; i < distances.size(); ++i) {
+         for (size_t i = 0; i < distances.size(); ++i) {
             if (distances[i] > 0.0)
                distmin = std::min(distmin, distances[i]);
          }

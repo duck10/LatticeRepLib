@@ -11,7 +11,7 @@ OutlierFinder::OutlierFinder( const std::vector<double>& data )
    , m_sut(spline_under_tension(0.1, data, 3))
    , m_intrp()
 {
-   for (unsigned long i = 0; i < data.size(); ++i) {
+   for (size_t i = 0; i < data.size(); ++i) {
       m_intrp.push_back(GetValue(double(i)));
    }
 }
@@ -19,7 +19,7 @@ OutlierFinder::OutlierFinder( const std::vector<double>& data )
 std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransitionPoints(const double cutoff) {
    std::vector<std::pair<double, double> > biggiesL;
    double prevDataDiff = 0.0;
-   for (unsigned long i = 0; i < m_data.size() - 1; ++i) {
+   for (size_t i = 0; i < m_data.size() - 1; ++i) {
       if ((i <= 3) || (i >= m_data.size() - 4)) {
          prevDataDiff = 0.0;
       }

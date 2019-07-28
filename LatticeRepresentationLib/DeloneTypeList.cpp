@@ -110,7 +110,7 @@ std::vector<std::pair<std::string, std::string> > CreateE3CenteringMatrixList() 
 std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPrjs() {
    std::vector<LabeledSellaMatrices> vprj = LabeledSellaMatrices::CreateAllPrjs();
    std::vector<std::pair< std::string, std::vector<MatS6> > > v;
-   for (unsigned long i = 0; i < vprj.size(); ++i) {
+   for (size_t i = 0; i < vprj.size(); ++i) {
       v.push_back(std::make_pair(vprj[i].GetLabel(), vprj[i].GetMatrices()));
    }return v;
 }
@@ -118,7 +118,7 @@ std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPrjs() {
 std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPerps() {
    std::vector<LabeledSellaMatrices> vperp = LabeledSellaMatrices::CreateAllPerps();
    std::vector<std::pair< std::string, std::vector<MatS6> > > v;
-   for (unsigned long i = 0; i < vperp.size(); ++i) {
+   for (size_t i = 0; i < vperp.size(); ++i) {
       v.push_back(std::make_pair(vperp[i].GetLabel(), vperp[i].GetMatrices()));
    }return v;
 }
@@ -149,7 +149,7 @@ DeloneTypeList::DeloneTypeList()
 
    static std::vector<std::pair<std::string,MatricesForOneDeloneType> > matrices;
    if (matrices.empty()) {
-      for (unsigned long i = 0; i < typelist.size(); ++i) {
+      for (size_t i = 0; i < typelist.size(); ++i) {
          matrices.push_back(
             std::make_pair(typelist[i],
             MatricesForOneDeloneType(
@@ -159,7 +159,7 @@ DeloneTypeList::DeloneTypeList()
       }
    }
 
-   for (unsigned long i=0; i< typelist.size(); ++i ) {
+   for (size_t i=0; i< typelist.size(); ++i ) {
       const DeloneType dt(typelist[i],
          Getter(typelist[i], bravaisLatticeTypes),
          Getter(typelist[i], characters),
@@ -263,19 +263,19 @@ std::vector<std::pair<std::string,std::vector<double> > > DeloneTypeList::Make3d
    return v;
 }
 
-DeloneType DeloneTypeList::operator[] (const unsigned long n) const {
+DeloneType DeloneTypeList::operator[] (const size_t n) const {
    return m_deloneTypes[n];
 }
 
 DeloneType DeloneTypeList::operator[] (const std::string& s) const {
-   for (unsigned long i = 0; i < m_deloneTypes.size(); ++i)
+   for (size_t i = 0; i < m_deloneTypes.size(); ++i)
       if (m_deloneTypes[i].GetName() == s) return m_deloneTypes[i];
    return DeloneType();
 }
 
 std::vector<std::tuple<double, S6, MatS6> > DeloneTypeList::Fit( const std::string& type, const S6& s6 ) const {
    std::vector<std::tuple<double, S6, MatS6> > v;
-   for (unsigned long i = 0; i < m_deloneTypes.size( ); ++i) {
+   for (size_t i = 0; i < m_deloneTypes.size( ); ++i) {
       const std::string name = m_deloneTypes[i].GetName( );
       if (type.empty( ) || name.find( type ) != std::string::npos) {  // LCA make type UC
          const std::tuple<double, S6, MatS6> fit = m_deloneTypes[i].GetFit( s6 );

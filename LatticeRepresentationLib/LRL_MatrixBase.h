@@ -26,7 +26,7 @@ class LRL_MatrixBase {
 public:
 
    friend std::ostream& operator<< (std::ostream& o, const TMAT& m) {
-      for (unsigned long i = 0; i<m.size(); ++i) {
+      for (size_t i = 0; i<m.size(); ++i) {
          if (i > 0 && (i % (m.GetRowDim()) == 0)) o << std::endl;
          o << m[i] << " ";
       }
@@ -59,24 +59,24 @@ public:
 
    virtual TVEC operator* (const TVEC& v) const = 0;
 
-   virtual TELEMENT operator[] (const unsigned long n) const = 0;
-   virtual TELEMENT& operator[] (const unsigned long n) = 0;
+   virtual TELEMENT operator[] (const size_t n) const = 0;
+   virtual TELEMENT& operator[] (const size_t n) = 0;
 
    virtual double DistanceBetween(const TMAT& v1, const TMAT& v2) = 0;
-   virtual unsigned long size(void) const = 0;
+   virtual size_t size(void) const = 0;
    virtual double norm() const = 0;
    virtual double norm(const TMAT& t) const = 0;
    virtual double Norm() const = 0;
    virtual double Norm(const TMAT& t) const = 0;
 
-   virtual unsigned long GetRowDim(void) const = 0;
+   virtual size_t GetRowDim(void) const = 0;
    virtual bool IsUnit() const = 0;
 
    virtual std::vector<TELEMENT> GetVector(void) const = 0;
    virtual TMAT transpose(const TMAT& m) const = 0;
    virtual void transpose(void) = 0;
 
-   virtual TELEMENT at(const unsigned long n) const = 0;
+   virtual TELEMENT at(const size_t n) const = 0;
 
 };
 

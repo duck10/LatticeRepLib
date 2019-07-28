@@ -14,7 +14,7 @@ class G6;
 #include <ostream>
 #include <string>
 
-class S6 : private BasisBase<S6> {
+class S6 {
 public:
    friend std::ostream& operator<< (std::ostream&, const S6&);
    friend S6 operator* (const double d, const S6& ds);
@@ -54,10 +54,10 @@ public:
    bool operator== (const S6& s6) const;
    bool operator!= (const S6& s6) const;
 
-   double operator[](const unsigned long n) const { return m_vec[n]; }
-   double& operator[](const unsigned long n) { return m_vec[n]; }
+   double operator[](const size_t n) const { return m_vec[n]; }
+   double& operator[](const size_t n) { return m_vec[n]; }
    double DistanceBetween(const S6& v1, const S6& v2);
-   unsigned long size(void) const { return 6; }
+   size_t size(void) const { return 6; }
    double norm() const { return m_vec.norm(); }
    double norm(const S6& s6) const { return norm(s6); }
    double Norm() const { return m_vec.norm(); }
@@ -74,7 +74,7 @@ public:
    static bool IsValid(const std::pair<S6, S6>& p);
    static bool IsInvalidPair(const std::pair<S6, S6>& p);
 
-   double at(const unsigned long n) const { return m_vec[n]; }
+   double at(const size_t n) const { return m_vec[n]; }
 
    static void SetSeed(const int n);
    static S6 rand(const double d=1.0);
@@ -83,8 +83,8 @@ public:
 
    bool IsAllMinus() const;
    static std::string GetName(void) { return "S6, Selling scalars"; }
-   static S6 InvertCoord(const unsigned long n, const S6& din);
-   S6 InvertCoord(const unsigned long n) const;
+   static S6 InvertCoord(const size_t n, const S6& din);
+   S6 InvertCoord(const size_t n) const;
    static std::string Signature(const S6& s6);
 
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();
@@ -116,9 +116,9 @@ public:
    static S6 Unreduce52(const S6& din);
    static S6 Unreduce61(const S6& din);
    static S6 Unreduce62(const S6& din);
-   static unsigned long CountPositive(const S6& s6);
-   unsigned long CountZeros(void) const;
-   unsigned long CountPositive(void) const;
+   static size_t CountPositive(const S6& s6);
+   size_t CountZeros(void) const;
+   size_t CountPositive(void) const;
 
 
    static double NegativeSumOfScalars(const S6& s) {
@@ -156,7 +156,7 @@ private:
    static S6 RandomUnreduceThree(const S6& s6);
 
    VecN m_vec;
-   unsigned long m_dim;
+   size_t m_dim;
    bool m_valid;
 };
 

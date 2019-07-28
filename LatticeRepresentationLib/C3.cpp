@@ -27,7 +27,7 @@ std::vector< C3(*)(const C3&)> m_reflectionFunctions = C3::SetReflections();
 std::ostream& operator<< (std::ostream& o, const C3& v) {
    std::streamsize oldPrecision = o.precision();
    o << std::fixed << std::setprecision(3);
-   for (unsigned long i = 0; i < v.size(); ++i)
+   for (size_t i = 0; i < v.size(); ++i)
       o << std::setw(9) << v[i] << " ";
    o << std::setprecision(oldPrecision);
    o.unsetf(std::ios::floatfield);
@@ -80,7 +80,7 @@ C3::C3(const VecN& v)
    if (v.size() == 6) {
       C3::m_reductionFunctions = C3::SetReduceFunctions();      m_c.resize(3);
       m_valid = true;
-      for (unsigned long i = 0; i < C3::size(); ++i)
+      for (size_t i = 0; i < C3::size(); ++i)
          m_c[i] = std::complex<double>(v[i], v[i + 3]);
    }
 }
@@ -123,14 +123,14 @@ C3::C3(const std::vector<double>& v)
       C3::m_reductionFunctions = C3::SetReduceFunctions();
       m_c.resize(3);
       m_valid = true;
-      for (unsigned long i = 0; i < C3::size(); ++i)
+      for (size_t i = 0; i < C3::size(); ++i)
          m_c[i] = std::complex<double>(v[i], v[i + 3]);
    }
 }
 
 double C3::DistanceBetween(const C3& v1, const C3& v2) {
    double sum = 0.0;
-   for (unsigned long i = 0; i < C3::size(); ++i)  sum += std::abs(v1[i] - v2[i]) * std::abs(v1[i] - v2[i]);
+   for (size_t i = 0; i < C3::size(); ++i)  sum += std::abs(v1[i] - v2[i]) * std::abs(v1[i] - v2[i]);
    return sqrt(sum);
 }
 
@@ -157,11 +157,11 @@ std::vector<std::complex<double>> C3::GetVector(void) const {
    return v;
 }
 
-std::complex<double> C3::operator[] (const unsigned long n) const {
+std::complex<double> C3::operator[] (const size_t n) const {
    return m_c[n];
 }
 
-std::complex<double>& C3::operator[] (const unsigned long n) {
+std::complex<double>& C3::operator[] (const size_t n) {
    return m_c[n];
 }
 
@@ -204,18 +204,18 @@ C3& C3::operator= (const LRL_Cell& v) {
 
 C3 C3::operator- (void) const {
    C3 temp;
-   for (unsigned long i = 0; i < C3::size(); ++i) temp[i] = -m_c[i];
+   for (size_t i = 0; i < C3::size(); ++i) temp[i] = -m_c[i];
    return temp; // unary
 }
 
 C3& C3::operator+= (const C3& c3) {
-   for (unsigned long i = 0; i < C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       m_c[i] += c3.m_c[i];
    return *this;
 }
 
 C3& C3::operator-= (const C3& c3) {
-   for (unsigned long i = 0; i < C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       m_c[i] -= c3.m_c[i];
    return *this;
 }
@@ -229,41 +229,41 @@ bool C3::operator!= (const C3& C3) const {
 }
 
 C3& C3::operator/= (const double d) {
-   for (unsigned long i=0; i<C3::size(); ++i)
+   for (size_t i=0; i<C3::size(); ++i)
       (*this).m_c[i] /= d;
    return *this;
 }
 
 C3& C3::operator*= (const double d) {
-   for (unsigned long i = 0; i<C3::size(); ++i)
+   for (size_t i = 0; i<C3::size(); ++i)
       (*this).m_c[i] *= d;
    return *this;
 }
 
 C3 C3::operator* (const double d) const {
    C3 c3(*this);
-   for (unsigned long i = 0; i < C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       c3[i] *= d;
    return c3;
 }
 
 C3 C3::operator/ (const double d) const {
    C3 c3(*this);
-   for (unsigned long i = 0; i < C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       c3[i] /= d;
    return c3;
 }
 
 C3 C3::operator+ (const C3& ds) const {
    C3 c3(*this);
-   for (unsigned long i = 0; i < C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       c3[i] += ds[i];
    return c3;
 }
 
 C3 C3::operator- (const C3& ds) const {
    C3 c3(*this);
-   for (unsigned long i = 0; i < C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       c3[i] -= ds[i];
    return c3;
 }
@@ -282,7 +282,7 @@ double C3::norm(const C3& c3) const {
 
 void C3::report(void) const {
    double norm = 0;
-   for (unsigned long i = 0; i < C3::size(); ++i) {
+   for (size_t i = 0; i < C3::size(); ++i) {
       norm += std::abs(m_c[i]) * std::abs(m_c[i]);
       std::cout << i << "   ";
       std::cout << m_c[i] << "  magnitude  " << std::abs(m_c[i]);
@@ -293,7 +293,7 @@ void C3::report(void) const {
 
 
 bool C3::IsAllMinus() const {
-   for (unsigned long i = 0; i < C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       if (m_c[i].real() > 0.0 || m_c[i].imag() > 0.0) return false;
    return true;
 }
@@ -603,7 +603,7 @@ C3 C3::SortC3(const C3& c3in) {
 
 C3 C3::ConvertToFundamentalUnit(const C3& c3in) {
    C3 c3(c3in);
-   for (unsigned long i = 0; i < 3; ++i) {
+   for (size_t i = 0; i < 3; ++i) {
       c3 = SortC3(c3);
       if (std::abs(c3[0].real()) > std::abs(c3[0].imag())) C3::ComplexInvertSwap(c3[0], c3[1]);
       if (std::abs(c3[1].real()) > std::abs(c3[1].imag())) C3::ComplexInvertSwap(c3[1], c3[2]);

@@ -23,7 +23,7 @@
     <ProjectGuid>{BF25D7AA-648C-48D2-B857-D383FAF1E215}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>LatticeRepresentationLib</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>LatticeRepresentationLib</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -155,7 +155,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Allman.cpp" />
     <ClCompile Include="C3.cpp" />
     <ClCompile Include="ColorTables.cpp" />
     <ClCompile Include="LabeledDeloneTypeMatrices.cpp" />
@@ -195,7 +194,6 @@
     <ClCompile Include="VecN.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Allman.h" />
     <ClInclude Include="BasisBase.h" />
     <ClInclude Include="C3.h" />
     <ClInclude Include="ColorTables.h" />

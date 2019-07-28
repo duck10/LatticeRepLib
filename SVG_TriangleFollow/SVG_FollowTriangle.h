@@ -40,11 +40,11 @@ public:
       fix for the problem would be to use a deeper time
       function.
       */
-      const unsigned long n = (unsigned long)(rand() | 64);
+      const size_t n = (size_t)(rand() | 64);
 
       os << std::setw(3) << std::setfill('0') << g_instanceCounter++;
       m_OutputFilename = LRL_CreateFileName::Create(GlobalConstants::globalFileNamePrefix, os.str() + std::string(".svg"));
-      const unsigned long npoints = tf.m_triangleDiff[0].size();
+      const size_t npoints = tf.m_triangleDiff[0].size();
       m_rawDeltaDist12 = (tf.m_inputVector1 - tf.m_inputVector2).norm() / (npoints - 1U);
       m_rawDeltaDist13 = (tf.m_inputVector1 - tf.m_inputVector3).norm() / (npoints - 1U);
       m_rawDeltaDist23 = (tf.m_inputVector3 - tf.m_inputVector2).norm() / (npoints - 1U);
@@ -108,7 +108,7 @@ public:
       finalsvg.insert(finalsvg.end(), vs.begin(), vs.end());
 
       bool drawGlitchesOnlyTrue = false;
-      for ( unsigned long i=0; i<finalsvg.size(); ++i ) {
+      for ( size_t i=0; i<finalsvg.size(); ++i ) {
          if (GlobalConstants::globalOutputGlitchesOnly && finalsvg[i].find("Draw Glitches") != std::string::npos) drawGlitchesOnlyTrue = true;
       }
 
@@ -208,7 +208,7 @@ public:
       const AxisLimits al(LinearAxis().LinearAxisLimits(minX, maxX));
       const double deltaPos = (0.9*m_plotWidth - m_borderWidth) / (al.m_numSteps);
       std::string svg;
-      for (unsigned long i = 0; i <= al.m_numSteps; ++i) {
+      for (size_t i = 0; i <= al.m_numSteps; ++i) {
          const int pos = int(m_borderWidth + i * deltaPos);
          svg += DrawOneXTicMark(pos) + "\n";
       }
@@ -245,7 +245,7 @@ public:
       const double deltaPos = (0.9*m_plotWidth - m_borderWidth) / (al.m_numSteps);
       const double deltaValue = double(al.m_upperLimit - al.m_lowerLimit) / double(al.m_numSteps);
       std::string svg;
-      for (unsigned long i = 0; i <= al.m_numSteps; ++i) {
+      for (size_t i = 0; i <= al.m_numSteps; ++i) {
          const int pos = int(2.0*m_borderWidth + double(i)*deltaPos);
          const double posValue = al.m_lowerLimit + i * deltaValue;
          svg += DrawOneX_AxisLabel(pos, 0.1, posValue) + "\n";
@@ -287,7 +287,7 @@ public:
 
 
 
-      for (unsigned long i = 0; i < al.m_numSteps + 1; ++i) {
+      for (size_t i = 0; i < al.m_numSteps + 1; ++i) {
          double ticValue = al.m_upperLimit - i * deltaValue;
          if (std::abs(ticValue) <0.00016) ticValue = 0.0;
          const int pos = int(-2.5*m_borderWidth - double(i)*(double)deltaPos);
@@ -300,7 +300,7 @@ public:
       const AxisLimits al(ComputeAxisLimits(data));
       std::string svg;
       const int delta = int(0.9*m_plotHeight - m_borderWidth) / al.m_numSteps;
-      for (unsigned long i = 0; i < al.m_numSteps + 1; ++i) {
+      for (size_t i = 0; i < al.m_numSteps + 1; ++i) {
          svg += DrawOneYTicMark(m_borderWidth + i * delta) + "\n";
       }
       return svg;
@@ -346,7 +346,7 @@ public:
    static std::vector<std::string> WriteErrorStrings(const std::vector<std::string>& errorStrings) {
       std::vector<std::string> svg;
       if (!errorStrings.empty()) {
-         for (unsigned long i = 0; i < errorStrings.size(); ++i) {
+         for (size_t i = 0; i < errorStrings.size(); ++i) {
             svg.push_back(WriteOneErrorLine("black", 6 * SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, errorStrings[i]));
             svg.push_back(WriteOneErrorLine("yellow", 4 * SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, errorStrings[i]));
          }
@@ -368,9 +368,9 @@ public:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::set<unsigned long> GetGlitchSet(const std::vector<Glitch<TVEC> > glitches) {
-      std::set<unsigned long> s;
-      for (unsigned long i = 0; i<glitches.size(); ++i) {
+   std::set<size_t> GetGlitchSet(const std::vector<Glitch<TVEC> > glitches) {
+      std::set<size_t> s;
+      for (size_t i = 0; i<glitches.size(); ++i) {
          s.insert(glitches[i].GetGlitchElement1().GetPosition());
       }
       return s;
@@ -395,7 +395,7 @@ public:
          + " y2=\"" + LRL_ToString( y-45) + "\" />";
    }
 
-   std::string DrawGlitch( const std::set<unsigned long>& setOfGlitches, const unsigned long ordinal, const double x, const double y ) {
+   std::string DrawGlitch( const std::set<size_t>& setOfGlitches, const size_t ordinal, const double x, const double y ) {
       std::string svg;
       if ( setOfGlitches.find(ordinal) != setOfGlitches.end() )
          svg = DrawGlitchLocation(x, y) + DrawGlitchLabel(x, y, ordinal + 1) + "\n";
@@ -442,7 +442,7 @@ public:
 
       };  // end LOCAL class CalculateOneGraphScaling
 
-      const std::set<unsigned long> setOfGlitches(GetGlitchSet(DetermineOutliers<TVEC>(d.GetVector())));
+      const std::set<size_t> setOfGlitches(GetGlitchSet(DetermineOutliers<TVEC>(d.GetVector())));
 
       std::string allDatapointsAsString = LRL_ToString("   <polyline fill=\"none\" stroke=", ToQuotedString(color), " stroke-width=\"", SVG_DistancePlotConstants::globalG6DataLineStrokeWidth, "\" points=\" ");
 
@@ -603,7 +603,7 @@ public:
       m_triangleViolations[0].resize(m_triangleFollow.m_dist12[0].size());
       m_triangleViolations[1].resize(m_triangleFollow.m_dist12[1].size());
       m_triangleViolations[2].resize(m_triangleFollow.m_dist12[2].size());
-      for (unsigned long i = 0; i < m_triangleFollow.m_dist12[0].size(); ++i) {
+      for (size_t i = 0; i < m_triangleFollow.m_dist12[0].size(); ++i) {
          const double d12 = m_triangleFollow.m_dist12[0][i];
          const double d13 = m_triangleFollow.m_dist13[1][i];
          const double d23 = m_triangleFollow.m_dist23[2][i];
@@ -637,7 +637,7 @@ public:
 
       svgOut.open(m_OutputFilename.c_str(), std::ios::out | std::ios::app | std::ios::ate);
 
-      for (unsigned long i = 0; i < v.size(); ++i) {
+      for (size_t i = 0; i < v.size(); ++i) {
          svgOut << v[i] << std::endl;
       }
    }

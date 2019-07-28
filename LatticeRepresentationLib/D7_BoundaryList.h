@@ -34,7 +34,7 @@ public:
    static D7_Boundary Case7( void );
    static D7_Boundary Case8( void );
    static D7_Boundary Case9( void );
-   static unsigned long size( void ) {return (unsigned long)( m_boundaries.size( ));
+   static size_t size( void ) {return m_boundaries.size( );
 }
 
 public:

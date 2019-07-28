@@ -16,17 +16,17 @@ MatMN::MatMN( const MatMN& m )
 , m_colCount( m.m_colCount ) {
 }
 
-MatMN::MatMN( const unsigned long rowCount, const unsigned long colCount )
+MatMN::MatMN( const size_t rowCount, const size_t colCount )
 : m_mat( colCount*rowCount )
 , m_rowCount( rowCount )
-, m_dim( (unsigned long)m_mat.size( ) )
+, m_dim( m_mat.size( ) )
 , m_colCount( colCount ) {
 }
 
 MatMN::MatMN(const MatS6& m6)
    : m_mat(m6.GetVector())
    , m_rowCount(m6.GetRowDim())
-   , m_dim((unsigned long)m_mat.size())
+   , m_dim(m_mat.size())
    , m_colCount(m6.GetRowDim())
 {
 }
@@ -34,7 +34,7 @@ MatMN::MatMN(const MatS6& m6)
 MatMN::MatMN(const MatD7& m7)
    : m_mat(m7.GetVector())
    , m_rowCount(m7.GetRowDim())
-   , m_dim((unsigned long)m_mat.size())
+   , m_dim(m_mat.size())
    , m_colCount(m7.GetRowDim())
 {
 }
@@ -42,12 +42,12 @@ MatMN::MatMN(const MatD7& m7)
 MatMN::MatMN(const MatG6& m6)
    : m_mat(m6.GetVector())
    , m_rowCount(m6.GetRowDim())
-   , m_dim((unsigned long)m_mat.size())
+   , m_dim(m_mat.size())
    , m_colCount(m6.GetRowDim())
 {
 }
 
-MatMN::MatMN(const unsigned long rowCount, const unsigned long colCount, const std::string& s )
+MatMN::MatMN(const size_t rowCount, const size_t colCount, const std::string& s )
    : m_mat()
    , m_rowCount(rowCount)
    , m_dim(colCount*rowCount)
@@ -55,29 +55,29 @@ MatMN::MatMN(const unsigned long rowCount, const unsigned long colCount, const s
    m_mat = LRL_StringTools::FromString( s );
 }
 
-unsigned long MatMN::LinearIndex( const unsigned long row, const unsigned long col) const {
-   const unsigned long n = row*(*this).m_colCount + col;
+size_t MatMN::LinearIndex( const size_t row, const size_t col) const {
+   const size_t n = row*(*this).m_colCount + col;
    return n;
 }
 
-double  MatMN::operator[]( const unsigned long i ) const {
+double  MatMN::operator[]( const size_t i ) const {
    return m_mat[i];
 }
 
-double& MatMN::operator[]( const unsigned long i ) {
+double& MatMN::operator[]( const size_t i ) {
    return m_mat[i];
 }
 
 MatMN MatMN::transpose( void ) const {
    //  transpose a symmetrical matrix
    MatMN m( *this );
-   for (unsigned long i = 0; i < m_dim; ++i) m.m_mat[i] = 19191;
+   for (size_t i = 0; i < m_dim; ++i) m.m_mat[i] = 19191;
    std::swap( m.m_rowCount, m.m_colCount );
 
-   for (unsigned long ij = 0; ij < m_dim; ++ij) {
-      const unsigned long i = ij % m_colCount;
-      const unsigned long j = ij / m_colCount;
-      const unsigned long n = i * m.m_colCount + j;
+   for (size_t ij = 0; ij < m_dim; ++ij) {
+      const size_t i = ij % m_colCount;
+      const size_t j = ij / m_colCount;
+      const size_t n = i * m.m_colCount + j;
       m[n] = (*this)[ij];
    }
    return m;
@@ -88,13 +88,13 @@ MatMN MatMN::operator*( const MatMN& m2 ) const {
    if ( m1.m_colCount != m2.m_rowCount ) throw;
    MatMN m3( m_rowCount, m2.m_colCount );
 
-   for (unsigned long i_outputRowNum=0; i_outputRowNum<m3.m_rowCount; ++i_outputRowNum ) {
-      for (unsigned long j_outputColNum=0; j_outputColNum<m3.m_colCount; ++j_outputColNum ) {
-         const unsigned long index3 = m3.LinearIndex( i_outputRowNum, j_outputColNum );
+   for (size_t i_outputRowNum=0; i_outputRowNum<m3.m_rowCount; ++i_outputRowNum ) {
+      for (size_t j_outputColNum=0; j_outputColNum<m3.m_colCount; ++j_outputColNum ) {
+         const size_t index3 = m3.LinearIndex( i_outputRowNum, j_outputColNum );
          m3[index3]=0;
-         for (unsigned long k_inputRowNum=0; k_inputRowNum<m2.m_rowCount; ++k_inputRowNum ) {
-            const unsigned long index1 = LinearIndex( i_outputRowNum, k_inputRowNum );
-            const unsigned long index2 = m2.LinearIndex( k_inputRowNum, j_outputColNum );
+         for (size_t k_inputRowNum=0; k_inputRowNum<m2.m_rowCount; ++k_inputRowNum ) {
+            const size_t index1 = LinearIndex( i_outputRowNum, k_inputRowNum );
+            const size_t index2 = m2.LinearIndex( k_inputRowNum, j_outputColNum );
             m3[index3] += m1[index1]*m2[index2];
          }
       }
@@ -104,14 +104,14 @@ MatMN MatMN::operator*( const MatMN& m2 ) const {
 
 VecN MatMN::operator*( const VecN& v ) const {
    const MatMN& m( *this );
-   const unsigned long vdim = v.GetDim( );
+   const size_t vdim = v.GetDim( );
    if ( vdim != m.m_colCount ) throw "Vector Dimension not same as matrix";
    VecN vout( m.GetRowDim() );
    vout.zero( );
 
-   for (unsigned long row=0; row<m.m_rowCount; ++row ) {
-      for (unsigned long col = 0; col < m.m_colCount; ++col) {
-         const unsigned long index = LinearIndex(row, col);
+   for (size_t row=0; row<m.m_rowCount; ++row ) {
+      for (size_t col = 0; col < m.m_colCount; ++col) {
+         const size_t index = LinearIndex(row, col);
          const double currentMatValue = m.m_mat[LinearIndex(row, col)];
          const double d = v[col] * m.m_mat[LinearIndex(row, col)];
          const double sum = vout[row] + d;
@@ -158,7 +158,7 @@ MatMN  MatMN::operator+ ( const MatMN& m2 ) const {
    std::vector<double> v( m_dim );
 
    MatMN matout( m1 );
-   for ( unsigned long i=0; i<m_dim; ++i )
+   for ( size_t i=0; i<m_dim; ++i )
       matout.m_mat[i] = m1.m_mat[i] + m2.m_mat[i];
 
    return matout;
@@ -170,7 +170,7 @@ MatMN  MatMN::operator- ( const MatMN& m2 ) const {
    std::vector<double> v( m_dim );
 
    MatMN matout( m1 );
-   for ( unsigned long i=0; i<m_dim; ++i )
+   for ( size_t i=0; i<m_dim; ++i )
       matout.m_mat[i] = m1.m_mat[i] - m2.m_mat[i];
 
    return matout;
@@ -178,9 +178,9 @@ MatMN  MatMN::operator- ( const MatMN& m2 ) const {
 
 
 std::ostream& operator<< ( std::ostream& o, const MatMN& m ) {
-   const unsigned long dim = m.GetDim( );
-   const unsigned long n = m.GetRowDim( );
-   for ( unsigned long i=0; i<dim; ++i ) {
+   const size_t dim = m.GetDim( );
+   const size_t n = m.GetRowDim( );
+   for ( size_t i=0; i<dim; ++i ) {
       if ( i > 0 && i%m.GetColDim( )==0 ) o << std::endl;
       o << ( std::fabs( m[i] ) < 1.0E-20? 0.0: m[i] ) << " ";
    }
@@ -189,23 +189,23 @@ std::ostream& operator<< ( std::ostream& o, const MatMN& m ) {
 
 MatMN MatMN::operator* ( const double d ) const {
    MatMN m2( *this );
-   for ( unsigned long i=0; i<m_dim; ++i )
+   for ( size_t i=0; i<m_dim; ++i )
       m2[i] = d*m2[i];
    return m2;
 }
 
 MatMN operator* ( const double d, const MatMN& m1 ) {
    MatMN m2( m1 );
-   for ( unsigned long i=0; i<m2.GetDim( ); ++i )
+   for ( size_t i=0; i<m2.GetDim( ); ++i )
       m2[i] = d*m2[i];
    return m2;
 }
 
 MatMN MatMN::Eye( void ) const {
    MatMN m( *this );
-   for (unsigned long row=0; row<m_rowCount; ++row ) {
-      for (unsigned long col=0; col<m_colCount; ++col ) {
-         const unsigned long index = LinearIndex( row, col );
+   for (size_t row=0; row<m_rowCount; ++row ) {
+      for (size_t col=0; col<m_colCount; ++col ) {
+         const size_t index = LinearIndex( row, col );
          m.m_mat[index] = ( row!=col ) ? 0 : 1;
       }
    }
@@ -213,29 +213,29 @@ MatMN MatMN::Eye( void ) const {
 }
 
 MatMN MatMN::operator*= ( const double d ){
-   for ( unsigned long i=0; i<m_dim; ++i )
+   for ( size_t i=0; i<m_dim; ++i )
       m_mat[i] *= d;
    return *this;
 }
 
 MatMN MatMN::operator/ ( const double d ) const{
    MatMN m(*this);
-   for ( unsigned long i=0; i<m_dim; ++i )
+   for ( size_t i=0; i<m_dim; ++i )
       m.m_mat[i] /= d;
    return m;
 }
 
 MatMN MatMN::operator/= ( const double d ){
-   for ( unsigned long i=0; i<m_dim; ++i )
+   for ( size_t i=0; i<m_dim; ++i )
       m_mat[i] /= d;
    return *this;
 }
 
-double MatMN::operator() ( const unsigned long i ) {
+double MatMN::operator() ( const size_t i ) {
    return m_mat[i];
 }
 
-double MatMN::operator() ( const unsigned long row, const unsigned long col ) {
+double MatMN::operator() ( const size_t row, const size_t col ) {
    return m_mat[LinearIndex(  row, col )];
 }
 

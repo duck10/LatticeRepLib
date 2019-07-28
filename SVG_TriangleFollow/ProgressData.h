@@ -20,7 +20,7 @@ public:
    std::vector<T> GetVector( void ) const { return m_progressdata; }
 public:
    void push_back( const T& t ) { m_progressdata.push_back( t ); }
-   unsigned long size( void ) const { return (unsigned long)m_progressdata.size( ); }
+   size_t size( void ) const { return m_progressdata.size( ); }
    T operator[] (const unsigned int n) const { return m_progressdata[n]; }
    T& operator[] (const unsigned int n) { return m_progressdata[n]; }
    bool empty( ) const { return m_progressdata.empty( ); }

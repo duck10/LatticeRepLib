@@ -27,7 +27,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& lattice, const std::stri
 
 static int folseed = 19192;
 
-//static const std::vector<unsigned long> vAvoid(avoidList, avoidList + sizeof(avoidList) / sizeof(avoidList[0]));
+//static const std::vector<size_t> vAvoid(avoidList, avoidList + sizeof(avoidList) / sizeof(avoidList[0]));
 std::string G6_names[] = { "G ", "V ", "G6 " };
 std::vector<std::string> vG6_names(G6_names, G6_names + sizeof(G6_names) / sizeof(G6_names[0]));
 
@@ -72,7 +72,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
       }
       else if ( IsLatticeName(m_inputDataType, vG6_names) ) {
          G6 v6;
-         for (unsigned long i = 0; i < 6; ++i)
+         for (size_t i = 0; i < 6; ++i)
             iss >> v6[i];
          m_cell = v6;
          valid = m_cell.GetValid();
@@ -80,7 +80,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
       else if (IsLatticeName(m_inputDataType, vD7_names)) {
          D7 v7;
          double d;
-         for (unsigned long i = 0; i < 7; ++i) {
+         for (size_t i = 0; i < 7; ++i) {
             iss >> d;
             v7[i] = d;
          }
@@ -91,7 +91,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
       }
       else if (IsLatticeName(m_inputDataType, vS6_names)) {
          S6 e;
-         for (unsigned long i = 0; i < 6; ++i)
+         for (size_t i = 0; i < 6; ++i)
             iss >> e[i];
          valid = true;
          m_cell = e;
@@ -100,7 +100,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          C3 e;
          std::vector<double> vd(20);
          double d;
-         for (unsigned long i = 0; i < 6; ++i) {
+         for (size_t i = 0; i < 6; ++i) {
             iss >> d;
             vd[i] = d;
          }
@@ -114,9 +114,9 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          valid = true;
       }
       else if (IsLatticeName(m_inputDataType, vlattice_names)) {
-         for (unsigned long i = 0; i < 6; ++i)
+         for (size_t i = 0; i < 6; ++i)
             iss >> m_cell[i];
-         for (unsigned long i = 3; i < 6; ++i)
+         for (size_t i = 3; i < 6; ++i)
             m_cell[i] *= 4.0 * atan(1.0) / 180.0;
          valid = true;
          m_cell.SetValid(true);
@@ -158,7 +158,7 @@ std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeData(const int see
 
 std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(const int seed){
    std::vector<CellInputData> cellData = ReadAllLatticeData(seed);
-   for ( unsigned long i=0; i<cellData.size(); ++i ) {
+   for ( size_t i=0; i<cellData.size(); ++i ) {
       if ( cellData[i].GetLattice() != "P") {
          LRL_Cell cell = LatticeConverter::MakePrimitiveCell(cellData[i].GetLattice(), cellData[i].GetCell());
          cellData[i].SetCell(cell);

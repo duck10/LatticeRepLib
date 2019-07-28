@@ -11,7 +11,7 @@ public:
    template<typename TVEC, typename TMAT>
    static bool Reduce(const TVEC& in, TMAT& m, TVEC& out) { out = in; return true; }
 
-   static unsigned long GetCycles() { return 0; }
+   static size_t GetCycles() { return 0; }
    static std::string GetName() { return "NullOps"; }
 
 };

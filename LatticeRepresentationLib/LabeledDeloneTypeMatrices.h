@@ -29,7 +29,7 @@ public:
 private:
 
    static double Fraction(const double d, const S6& s);
-   static unsigned long Index6(const unsigned long i, const unsigned long j);
+   static size_t Index6(const size_t i, const size_t j);
    static MatS6 ProjectorFromVector(const std::string& label, const S6& s);
    static MatS6 ToCanon(const S6& s);
    static MatS6 ToCanon(const S6_Ordinals& s);

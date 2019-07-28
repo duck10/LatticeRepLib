@@ -45,7 +45,7 @@ private:
 
    static bool FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ordinals s6);
    static S6 MakeSampleType(const MatS6& m);
-   static std::vector<unsigned long> FindS6Zeros(const S6& s);
+   static std::vector<size_t> FindS6Zeros(const S6& s);
 };
 
 #endif // SELLA_H
