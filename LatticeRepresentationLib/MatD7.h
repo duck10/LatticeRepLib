@@ -59,17 +59,17 @@ public:
 
    D7 operator* (const D7& v) const;
 
-   double operator[] (const unsigned long n) const;
-   double& operator[] (const unsigned long n);
+   double operator[] (const size_t n) const;
+   double& operator[] (const size_t n);
 
    double DistanceBetween(const MatD7& v1, const MatD7& v2);
-   unsigned long size(void) const;
+   size_t size(void) const;
    double norm() const;
    double norm(const MatD7& t) const;
    double Norm() const;
    double Norm(const MatD7& t) const;
 
-   unsigned long GetRowDim(void) const { return 7; }
+   size_t GetRowDim(void) const { return 7; }
    virtual bool IsUnit() const;
    static MatD7 Eye(void);
    static MatD7 Zero(void);
@@ -79,7 +79,7 @@ public:
    MatD7 transpose(const MatD7& m) const;
    void transpose(void);
 
-   double at(const unsigned long n) const;
+   double at(const size_t n) const;
 
    MatD7 unit(void);
    static MatD7 unit(const MatD7& m);
@@ -87,7 +87,7 @@ public:
    MatD7 Reduce(void) const;
    void ReplaceTwosInRows7x7(MatD7& m);
    static std::vector<MatD7> GetReflections();
-   static MatD7 GetReflection(const unsigned long n);
+   static MatD7 GetReflection(const size_t n);
 
 private:
    MatN m_mat;

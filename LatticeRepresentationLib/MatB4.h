@@ -58,17 +58,17 @@ public:
 
    B4 operator* (const B4& v) const;
 
-   double operator[] (const unsigned long n) const;
-   double& operator[] (const unsigned long n);
+   double operator[] (const size_t n) const;
+   double& operator[] (const size_t n);
 
    double DistanceBetween(const MatB4& v1, const MatB4& v2);
-   unsigned long size(void) const;
+   size_t size(void) const;
    double norm() const;
    double norm(const MatB4& t) const;
    double Norm() const;
    double Norm(const MatB4& t) const;
 
-   unsigned long GetRowDim(void) const { return 4; }
+   size_t GetRowDim(void) const { return 4; }
    virtual bool IsUnit() const;
    static MatB4 Eye(void);
    static MatB4 Zero(void);
@@ -77,7 +77,7 @@ public:
    MatB4 transpose(const MatB4& m) const;
    void transpose(void);
 
-   double at(const unsigned long n) const;
+   double at(const size_t n) const;
 
    MatB4 unit(void);
    static MatB4 unit(const MatB4& m);
@@ -85,7 +85,7 @@ public:
    std::vector<double> GetVector(void) { return m_mat.GetMatrix(); }
    void SetVector(const std::vector<double>& v) { m_mat.SetVector(v); }
  
-   static MatB4 GetReflection(const unsigned long n);
+   static MatB4 GetReflection(const size_t n);
    static std::vector<MatB4>  GetReflections();
 
 private:

@@ -54,7 +54,7 @@ private:
 */
 
 const bool DEBUG_REDUCER(false);
-unsigned long Niggli::m_ReductionCycleCount;
+size_t Niggli::m_ReductionCycleCount;
 
 //-----------------------------------------------------------------------------
 // Name: g6sign()
@@ -848,13 +848,13 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
 
       // probably don't need to do this group of code when again==false !!!!!!!!!!!!!!
       MKnormWithoutMatrices(vout, vin, delta);
-      for (unsigned long i = 3; i<6; ++i)
+      for (size_t i = 3; i<6; ++i)
          if (std::fabs(vin[i]) < 1.0E-10) vin[i] = 0.0;
 
       if (vin[0]<0.0 || vin[1]<0.0 || vin[2]<0.0) {
          // ERROR ERROR ERROR
          if (DEBUG_REDUCER) {
-            fprintf(stderr, " Negative sq, axis %d \n", m_ReductionCycleCount);
+            fprintf(stderr, " Negative sq, axis %d \n", (int)(m_ReductionCycleCount));
             fprintf(stderr, " vin: [%g,%g,%g,%g,%g,%g]\n",
                vin[0], vin[1], vin[2], vin[3], vin[4], vin[5]);
             fprintf(stderr, " vi: [%g,%g,%g,%g,%g,%g]\n",
@@ -1086,13 +1086,13 @@ bool Niggli::Reduce( const G6& vi, MatG6& m, G6& vout, const double delta )
       const MatG6 mtemp = m1*m;
       m = mtemp;
       Reporter( "vout after MKnorm at end of reduced m_ReductionCycleCount", vout, vin, m1 );
-      for( unsigned long i=3; i<6; ++i )
+      for( size_t i=3; i<6; ++i )
          if ( std::fabs(vin[i]) < 1.0E-10 ) vin[i] = 0.0;
 
       if ( vin[0]<0.0 || vin[1]<0.0 || vin[2]<0.0 ) {
          // ERROR ERROR ERROR
          if ( DEBUG_REDUCER ) {
-            fprintf( stderr, " Negative sq, axis %d \n", m_ReductionCycleCount);
+            fprintf( stderr, " Negative sq, axis %d \n",(int)( m_ReductionCycleCount));
             fprintf( stderr, " vin: [%g,%g,%g,%g,%g,%g]\n",
                vin[0], vin[1], vin[2], vin[3], vin[4], vin[5] );
             fprintf( stderr, " vi: [%g,%g,%g,%g,%g,%g]\n",
@@ -1228,7 +1228,7 @@ bool Niggli::IsNiggli(const G6& v) {
    if (abs(g5) > g1) return false;
    if (abs(g6) > g1) return false;
    int nneg = 0;
-   for (unsigned long i = 3; i < 6; ++i) if (v[i] <= 0.0) ++nneg;
+   for (size_t i = 3; i < 6; ++i) if (v[i] <= 0.0) ++nneg;
    if (nneg != 0 && nneg != 3) return false;
 
    if (g4 == g2 && g6 > 2.0*g5) return false;

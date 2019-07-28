@@ -39,10 +39,10 @@ public:
    virtual bool operator== (const T& v) const = 0;
    virtual bool operator!= (const T& v) const = 0;
 
-   virtual TELEMENT operator[](const unsigned long n) const = 0;
-   virtual TELEMENT& operator[](const unsigned long n) = 0;
+   virtual TELEMENT operator[](const size_t n) const = 0;
+   virtual TELEMENT& operator[](const size_t n) = 0;
    virtual double DistanceBetween(const T& v1, const T& v2) = 0;
-   virtual unsigned long size(void) const = 0;
+   virtual size_t size(void) const = 0;
    virtual double norm() const = 0;
    virtual double norm(const T& t) const = 0;
    virtual double Norm() const = 0;
@@ -52,7 +52,7 @@ public:
    virtual void SetVector(const std::vector<TELEMENT>& v) = 0;
    virtual void SetValid(const bool b) = 0;
 
-   virtual TELEMENT at(const unsigned long n) const {
+   virtual TELEMENT at(const size_t n) const {
       return (*this)[n];
    }
 

@@ -58,7 +58,7 @@ MatB4::MatB4(const std::string& s)
 MatB4::MatB4(const std::vector<double>& v)
    : MatB4()
 {
-   for (unsigned long i = 0; i < 16; ++i) {
+   for (size_t i = 0; i < 16; ++i) {
       m_mat[i] = v[i];
    }
 }
@@ -87,17 +87,17 @@ MatB4& MatB4::operator= (const MatG6& m) {
 }
 
 MatB4& MatB4::operator+= (const MatB4& d) {
-   for (unsigned long i = 0; i < 16; ++i) m_mat[i] += d[i];
+   for (size_t i = 0; i < 16; ++i) m_mat[i] += d[i];
    return *this;
 }
 
 MatB4& MatB4::operator-= (const MatB4& d) {
-   for (unsigned long i = 0; i < 16; ++i) m_mat[i] -= d[i];
+   for (size_t i = 0; i < 16; ++i) m_mat[i] -= d[i];
    return *this;
 }
 
 bool MatB4::operator== (const MatB4& m) const {
-   for (unsigned long i = 0; i < 16; ++i) if (m_mat[i] != m[i]) return false;
+   for (size_t i = 0; i < 16; ++i) if (m_mat[i] != m[i]) return false;
    return true;
 }
 
@@ -106,12 +106,12 @@ bool MatB4::operator!= (const MatB4& m) const {
 }
 
 MatB4& MatB4::operator/= (const double d) {
-   for (unsigned long i = 0; i < 16; ++i) m_mat[i] /= d;
+   for (size_t i = 0; i < 16; ++i) m_mat[i] /= d;
    return *this;
 }
 
 MatB4& MatB4::operator*= (const double d) {
-   for (unsigned long i = 0; i < 16; ++i) m_mat[i] *= d;
+   for (size_t i = 0; i < 16; ++i) m_mat[i] *= d;
    return *this;
 }
 
@@ -139,13 +139,13 @@ MatB4 MatB4::operator* (const MatB4& m2) const {
 
 MatB4 MatB4::operator* (const double d) const {
    MatB4 m(*this);
-   for (unsigned long i = 0; i < 16; ++i) m.m_mat[i] *= d;
+   for (size_t i = 0; i < 16; ++i) m.m_mat[i] *= d;
    return m;
 }
 
 MatB4 MatB4::operator/ (const double d) const {
    MatB4 m(*this);
-   for (unsigned long i = 0; i < 16; ++i) m.m_mat[i] /= d;
+   for (size_t i = 0; i < 16; ++i) m.m_mat[i] /= d;
    return m;
 }
 
@@ -170,11 +170,11 @@ B4 MatB4::operator* (const B4& m) const {
 }
 
 
-double MatB4::operator[] (const unsigned long n) const {
+double MatB4::operator[] (const size_t n) const {
    return m_mat[n];
 }
 
-double& MatB4::operator[] (const unsigned long n) {
+double& MatB4::operator[] (const size_t n) {
    return m_mat[n];
 }
 
@@ -183,13 +183,13 @@ double MatB4::DistanceBetween(const MatB4& v1, const MatB4& v2) {
    return ((v1 - v2).norm());
 }
 
-unsigned long MatB4::size(void) const {
+size_t MatB4::size(void) const {
    return 16;
 }
 
 double MatB4::norm() const {
    double sum = 0.0;
-   for (unsigned long i = 0; i < 16; ++i) sum += m_mat[i]* m_mat[i];
+   for (size_t i = 0; i < 16; ++i) sum += m_mat[i]* m_mat[i];
    return sqrt(sum);
 }
 
@@ -207,7 +207,7 @@ double MatB4::Norm(const MatB4& t) const {
 
 bool MatB4::IsUnit() const {
    long row = -1;
-   for (unsigned long i = 0; i < 16; ++i) {
+   for (size_t i = 0; i < 16; ++i) {
       long column = i % 7;
       if (column == 0) ++row;
       if (column == row && m_mat[i] != 1.0) return false;
@@ -218,16 +218,16 @@ bool MatB4::IsUnit() const {
 
 MatB4 MatB4::Eye(void) {
    MatB4 m;
-   for (unsigned long i = 0; i < 16; ++i)
+   for (size_t i = 0; i < 16; ++i)
       m.m_mat[i] = 0.0;
-   for (unsigned long i = 0; i < 16; i += 5)
+   for (size_t i = 0; i < 16; i += 5)
       m.m_mat[i] = 1.0;
    return m;
 }
 
 MatB4 MatB4::Zero(void) {
    MatB4 m;
-   for (unsigned long i = 0; i < 16; ++i)
+   for (size_t i = 0; i < 16; ++i)
       m[i] = 0.0;
    return m;
 }
@@ -260,29 +260,29 @@ void MatB4::transpose(void) {
    }
 }
 
-double MatB4::at(const unsigned long n) const {
+double MatB4::at(const size_t n) const {
    return m_mat[n];
 }
 
 MatB4 MatB4::unit(void) {
    m_mat.resize(16);
-   for (unsigned long i = 0; i < 16; ++i)
+   for (size_t i = 0; i < 16; ++i)
       m_mat[i] = 0.0;
-   for (unsigned long i = 0; i < 16; i += 4 + 1)
+   for (size_t i = 0; i < 16; i += 4 + 1)
       m_mat[i] = 1.0;
    return *this;
 }
 
 MatB4 MatB4::unit(const MatB4& min) {
    MatB4 m(min);
-   for (unsigned long i = 0; i < 16; ++i)
+   for (size_t i = 0; i < 16; ++i)
       m.m_mat[i] = 0.0;
-   for (unsigned long i = 0; i < 16; i += 4 + 1)
+   for (size_t i = 0; i < 16; i += 4 + 1)
       m.m_mat[i] = 1.0;
    return m;
 }
 
-MatB4  MatB4::GetReflection(const unsigned long n) {
+MatB4  MatB4::GetReflection(const size_t n) {
    if (vB4_Refl.empty()) GetReflections();
    return vB4_Refl[n];
 }

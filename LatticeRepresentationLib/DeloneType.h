@@ -23,9 +23,9 @@ public:
       , m_toCanons(toCanon)
    {}
 
-   MatS6 GetPrj( const unsigned long n ) const { return m_prjs[n]; }
-   MatS6 GetPerp( const unsigned long n ) const { return m_perps[n]; }
-   MatS6 GetToCanon( const unsigned long n ) const { return m_toCanons[n]; }
+   MatS6 GetPrj( const size_t n ) const { return m_prjs[n]; }
+   MatS6 GetPerp( const size_t n ) const { return m_perps[n]; }
+   MatS6 GetToCanon( const size_t n ) const { return m_toCanons[n]; }
    std::vector<MatS6> GetPrjs    ( void ) const { return m_prjs; }
    std::vector<MatS6> GetPerps   ( void ) const { return m_perps; }
    std::vector<MatS6> GetToCanons( void ) const { return m_toCanons; }

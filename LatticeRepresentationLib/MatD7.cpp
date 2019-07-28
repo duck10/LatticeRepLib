@@ -54,7 +54,7 @@ MatD7::MatD7(const MatMN& m)
    : m_mat(m.GetDim())
 {
    if (m.GetColDim() != m.GetRowDim()) throw;
-   const unsigned long n = m.GetRowDim();
+   const size_t n = m.GetRowDim();
    m_mat.resize(n);
    m_mat.SetVector(m.GetVector());
    m_mat.SetDim(n*n);
@@ -71,7 +71,7 @@ MatD7::MatD7(const std::string& s)
 MatD7::MatD7(const std::vector<double>& v)
    : MatD7()
 {
-   for (unsigned long i = 0; i < 49; ++i) {
+   for (size_t i = 0; i < 49; ++i) {
       m_mat[i] = v[i];
    }
 }
@@ -101,17 +101,17 @@ MatD7& MatD7::operator= (const MatG6& m) {
 }
 
 MatD7& MatD7::operator+= (const MatD7& d) {
-   for (unsigned long i = 0; i < 49; ++i) m_mat[i] += d[i];
+   for (size_t i = 0; i < 49; ++i) m_mat[i] += d[i];
    return *this;
 }
 
 MatD7& MatD7::operator-= (const MatD7& d) {
-   for (unsigned long i = 0; i < 49; ++i) m_mat[i] -= d[i];
+   for (size_t i = 0; i < 49; ++i) m_mat[i] -= d[i];
    return *this;
 }
 
 bool MatD7::operator== (const MatD7& m) const {
-   for (unsigned long i = 0; i < 49; ++i) if( m_mat[i] != m[i]) return false;
+   for (size_t i = 0; i < 49; ++i) if( m_mat[i] != m[i]) return false;
    return true;
 }
 
@@ -120,12 +120,12 @@ bool MatD7::operator!= (const MatD7& m) const {
 }
 
 MatD7& MatD7::operator/= (const double d) {
-   for (unsigned long i = 0; i < 49; ++i) m_mat[i] /= d;
+   for (size_t i = 0; i < 49; ++i) m_mat[i] /= d;
    return *this;
 }
 
 MatD7& MatD7::operator*= (const double d) {
-   for (unsigned long i = 0; i < 49; ++i) m_mat[i] *= d;
+   for (size_t i = 0; i < 49; ++i) m_mat[i] *= d;
    return *this;
 }
 
@@ -153,13 +153,13 @@ MatD7 MatD7::operator* (const MatD7& m2) const {
 
 MatD7 MatD7::operator* (const double d) const {
    MatD7 m(*this);
-   for (unsigned long i = 0; i < 49; ++i) m.m_mat[i] *= d;
+   for (size_t i = 0; i < 49; ++i) m.m_mat[i] *= d;
    return m;
 }
 
 MatD7 MatD7::operator/ (const double d) const {
    MatD7 m(*this);
-   for (unsigned long i = 0; i < 49; ++i) m.m_mat[i] /= d;
+   for (size_t i = 0; i < 49; ++i) m.m_mat[i] /= d;
    return m;
 }
 
@@ -178,11 +178,11 @@ D7 MatD7::operator* (const D7& v) const {
 }
 
 
-double MatD7::operator[] (const unsigned long n) const {
+double MatD7::operator[] (const size_t n) const {
    return m_mat[n];
 }
 
-double& MatD7::operator[] (const unsigned long n) {
+double& MatD7::operator[] (const size_t n) {
    return m_mat[n];
 }
 
@@ -191,13 +191,13 @@ double MatD7::DistanceBetween(const MatD7& v1, const MatD7& v2) {
    return ((v1 - v2).norm());
 }
 
-unsigned long MatD7::size(void) const {
+size_t MatD7::size(void) const {
    return 49;
 }
 
 double MatD7::norm() const {
    double sum = 0.0;
-   for (unsigned long i = 0; i < 49; ++i) sum += m_mat[i]* m_mat[i];
+   for (size_t i = 0; i < 49; ++i) sum += m_mat[i]* m_mat[i];
    return sqrt(sum);
 }
 
@@ -215,7 +215,7 @@ double MatD7::Norm(const MatD7& t) const {
 
 bool MatD7::IsUnit() const {
    long row = -1;
-   for (unsigned long i = 0; i < 49; ++i) {
+   for (size_t i = 0; i < 49; ++i) {
       long column = i % 7;
       if (column == 0) ++row;
       if (column == row && m_mat[i] != 1.0) return false;
@@ -226,16 +226,16 @@ bool MatD7::IsUnit() const {
 
 MatD7 MatD7::Eye() {
    MatD7 m;
-   for (unsigned long i = 0; i<49; ++i)
+   for (size_t i = 0; i<49; ++i)
       m.m_mat[i] = 0.0;
-   for (unsigned long i = 0; i<49; i += 8)
+   for (size_t i = 0; i<49; i += 8)
       m.m_mat[i] = 1.0;
    return m;
 }
 
 MatD7 MatD7::Zero(void) {
    MatD7 m;
-   for (unsigned long i = 0; i < 49; ++i)
+   for (size_t i = 0; i < 49; ++i)
       m[i] = 0.0;
    return m;
 }
@@ -269,24 +269,24 @@ void MatD7::transpose(void) {
 }
 
 
-double MatD7::at(const unsigned long n) const {
+double MatD7::at(const size_t n) const {
    return m_mat[n];
 }
 
 MatD7 MatD7::unit(void) {
    m_mat.resize(49);
-   for (unsigned long i = 0; i < 49; ++i)
+   for (size_t i = 0; i < 49; ++i)
       m_mat[i] = 0.0;
-   for (unsigned long i = 0; i < 49; i += 7+1)
+   for (size_t i = 0; i < 49; i += 7+1)
       m_mat[i] = 1.0;
    return *this;
 }
 
 MatD7 MatD7::unit(const MatD7& min) {
    MatD7 m(min);
-   for (unsigned long i = 0; i < 49; ++i)
+   for (size_t i = 0; i < 49; ++i)
       m.m_mat[i] = 0.0;
-   for (unsigned long i = 0; i < 49; i += 7+1)
+   for (size_t i = 0; i < 49; i += 7+1)
       m.m_mat[i] = 1.0;
    return m;
 }
@@ -318,8 +318,8 @@ MatD7 MatD7::Reduce(void) const {
 
    while (count <1 || mNorm - lastNorm > testValue) {
       ++count;
-      for (unsigned long nloops = 1; nloops < 4; ++nloops) {
-         for (unsigned long i = 0; i < vReducer.size(); ++i) {
+      for (size_t nloops = 1; nloops < 4; ++nloops) {
+         for (size_t i = 0; i < vReducer.size(); ++i) {
             const MatD7 m1 = mToReduce - vReducer[i];
             const MatD7 m2 = mToReduce + vReducer[i];
 
@@ -341,23 +341,23 @@ const double t4[10] = { 0, 0, 0, 2, 0, 0, 0, 1, 1, 1 };
 
 //const double tx[10] = { 1, 1, 1, -1, 1, 1, 1, 0, 0, 0 };
 
-void FixColumnMinus7(MatD7& m, const unsigned long start, const double v[7]) {
-   for (unsigned long i = start, j = 0; i<start + 7; ++i, ++j)
+void FixColumnMinus7(MatD7& m, const size_t start, const double v[7]) {
+   for (size_t i = start, j = 0; i<start + 7; ++i, ++j)
       m[i] += v[j];
 }
-void FixColumnPlus7(MatD7& m, const unsigned long start, const double v[7]) {
-   for (unsigned long i = start, j = 0; i<start + 7; ++i, ++j)
+void FixColumnPlus7(MatD7& m, const size_t start, const double v[7]) {
+   for (size_t i = start, j = 0; i<start + 7; ++i, ++j)
       m[i] -= v[j];
 }
 
-void FixSixColumnsOneAndOneZero(MatD7& m, const unsigned long start) {
-   for (unsigned long i = start; i < start + 7; ++i)
+void FixSixColumnsOneAndOneZero(MatD7& m, const size_t start) {
+   for (size_t i = start; i < start + 7; ++i)
       m[i] = m[i] == 0.0 ? 1.0 : 0.0;
 }
 
 // special function for simplifying 7-space transformation matrices
 void MatD7::ReplaceTwosInRows7x7( MatD7& m ) {
-   for( unsigned long i=0; i<49; i = i+7 ) {
+   for( size_t i=0; i<49; i = i+7 ) {
       if ( m[i+0] == -2.0 ) FixColumnMinus7( m, i, t1 );
       if ( m[i+1] == -2.0 ) FixColumnMinus7( m, i, t2 );
       if ( m[i+2] == -2.0 ) FixColumnMinus7( m, i, t3 );
@@ -371,7 +371,7 @@ void MatD7::ReplaceTwosInRows7x7( MatD7& m ) {
       double sum = 0.0;
       double maxAbs = 0.0;
       double fourSum = 0;
-      for (unsigned long j = i; j < i + 7; ++j) {
+      for (size_t j = i; j < i + 7; ++j) {
          const double mj = m[j];
          sumAbs += std::abs(mj);
          sum += mj;
@@ -383,7 +383,7 @@ void MatD7::ReplaceTwosInRows7x7( MatD7& m ) {
    }
 }
 
-MatD7  MatD7::GetReflection(const unsigned long n) {
+MatD7  MatD7::GetReflection(const size_t n) {
    if (vD7_Refl.empty()) GetReflections();
    return vD7_Refl[n];
 }

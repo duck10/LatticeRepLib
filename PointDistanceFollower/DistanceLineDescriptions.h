@@ -43,8 +43,8 @@ public:
       //m_lineColorMap.insert(std::make_pair("INVALID", Line("INVALID", "orange", 3, -1.0, "10,10" )));
 
 
-      unsigned long startcolor = 0;
-      unsigned long delcolor = 255 / 5;
+      size_t startcolor = 0;
+      size_t delcolor = 255 / 5;
       m_lineColorMap.insert(std::make_pair("S6", Line("S6", ColorTables::GetCividisHEX(startcolor), 12, -1.0, "10,5")));
       m_lineColorMap.insert(std::make_pair("G6", Line("NCDist", ColorTables::GetCividisHEX(startcolor + 1 * delcolor), 9, -1.0, "")));
       m_lineColorMap.insert(std::make_pair("D7", Line("D7", ColorTables::GetCividisHEX(startcolor + 2 * delcolor), 6, -1.0, "")));

@@ -21,7 +21,7 @@ public:
 
    double norm() const { return sqrt(m1*m1 + m2*m2);; }
    double norm(const V2 d) const { d.norm(); }
-   double operator[] (const unsigned long n) const { return (n==0) ? m1 : m2; }
+   double operator[] (const size_t n) const { return (n==0) ? m1 : m2; }
 
 private: 
    double m1;
@@ -60,12 +60,12 @@ int main()
       const V2 v2 = ReadOneYamadaCell();
       if ( nread%100 == 0) std::cout << v2[0] << " " << v2[1] << std::endl;
       CNearTree<V2>::iterator nti = nt.NearestNeighbor(100000, v2);
-      const unsigned long index = nti.get_position();
+      const size_t index = nti.get_position();
       if (index > nt.size()-1) break;
       ++count[index];
       ++nread;
    }
    std::cout << std::endl;
-   for (unsigned long i = 0; i < count.size(); ++i) std::cout << count[i] << std::endl;
+   for (size_t i = 0; i < count.size(); ++i) std::cout << count[i] << std::endl;
    int i19191 = 19191;;
 }

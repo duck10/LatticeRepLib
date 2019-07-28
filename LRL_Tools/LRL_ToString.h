@@ -117,8 +117,8 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5,
 template<typename T>
 static std::string LRL_ToString( const std::vector<T>& t ) {
    std::string s;
-   const unsigned long n = (unsigned long)t.size( );
-   for( unsigned long i = 0; i < n; ++i ) {
+   const size_t n = t.size( );
+   for( size_t i = 0; i < n; ++i ) {
       s += LRL_ToString(t[i]) + "\t";
    }
    return s;

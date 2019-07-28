@@ -5,7 +5,6 @@
 
 #include "ColorTables.h"
 
-#include "Allman.h"
 #include "B4.h"
 #include "CellInputData.h"
 #include "LRL_CreateFileName.h"
@@ -145,18 +144,18 @@ StoreResults<std::string, S6> g_storeRand(10);
 StoreResults<int, LRL_Cell> g_store(10);
 StoreResults<std::string, LRL_Cell> g_storeStr(10);
 StoreResults<std::string, std::string> g_storeStrStr(10);
-StoreResults<unsigned long, unsigned long> g_storeReduceCount(0);
+StoreResults<size_t, size_t> g_storeReduceCount(0);
 
 void Reflects() {
    std::vector<MatD7> refl;
    MatD7 ref;
-   for (unsigned long i = 0; i < 24; ++i) {
-      for (unsigned long k = 0; k < 49; ++k) {
+   for (size_t i = 0; i < 24; ++i) {
+      for (size_t k = 0; k < 49; ++k) {
          ref[k] = D7Refl[i][k];
       }
       refl.push_back(ref);
    }
-   for (unsigned long i = 0; i < 1000; ++i) {  // 100000000
+   for (size_t i = 0; i < 1000; ++i) {  // 100000000
       S6 s6(S6::rand());
       int n = Negatives(s6);
       LRL_Cell cell(s6);
@@ -180,7 +179,7 @@ void Reflects() {
          g_storeStrStr.Store(signature, LRL_ToString(s6) + "   " + LRL_ToString(s6red));
       }
       if (!g_storeStr.HasKey(signature) && invalids == 0) {
-         for (unsigned long kkkk = 0; kkkk < 24; ++kkkk) {
+         for (size_t kkkk = 0; kkkk < 24; ++kkkk) {
             //g_store.Store(n, refl[kkkk]*cell);
             g_storeStr.Store(signature, refl[kkkk] * cell);
          }
@@ -214,7 +213,7 @@ void TestUnreducePairs() {
    std::vector<S6> vinside;
    std::vector<S6> voutside;
 
-   for (unsigned long i = 0; i < unreducers.size(); ++i) {
+   for (size_t i = 0; i < unreducers.size(); ++i) {
       vinside.push_back(unreducers[i].first(s6));  // generate using the first of each unreduce pair of functions
       voutside.push_back(unreducers[i].second(s6));  // generate using the second of each unreduce pair of functions
    }
@@ -222,25 +221,25 @@ void TestUnreducePairs() {
    voutside = s6dist.Generate24Reflections(voutside); // for outside, generate the 24 reflections for each unreduced cell
 
    std::cout << "vinside   " << vinside.size() << std::endl;
-   for (unsigned long i = 0; i < vinside.size(); ++i) {
+   for (size_t i = 0; i < vinside.size(); ++i) {
       std::cout << vinside[i] << std::endl;
    }
    std::cout << std::endl;
 
    std::cout << "voutside   " << voutside.size() << std::endl;
-   for (unsigned long i = 0; i < voutside.size(); ++i) {
+   for (size_t i = 0; i < voutside.size(); ++i) {
       std::cout << voutside[i] << std::endl;
    }
    std::cout << std::endl;
 
    std::cout << "vinside   Cell, unreduced angles in degrees       " << vinside.size() << std::endl;
-   for (unsigned long i = 0; i < vinside.size(); ++i) {
+   for (size_t i = 0; i < vinside.size(); ++i) {
       std::cout << LRL_Cell_Degrees(LRL_Cell(vinside[i])) << std::endl;
    }
    std::cout << std::endl;
 
    std::cout << "vinside   NIGGLI REDUCED --  G6        " << vinside.size() << std::endl;
-   for (unsigned long i = 0; i < vinside.size(); ++i) {
+   for (size_t i = 0; i < vinside.size(); ++i) {
       S6 s6out;
       Niggli::Reduce<S6>((vinside[i]), s6out);
       std::cout << G6(s6out) << std::endl;
@@ -249,7 +248,7 @@ void TestUnreducePairs() {
 
    const CNearTree<S6> tree = voutside;
 
-   for (unsigned long i = 0; i < vinside.size(); ++i) {
+   for (size_t i = 0; i < vinside.size(); ++i) {
       CNearTree<S6>::iterator it = tree.NearestNeighbor(0.0001, vinside[i]);
       std::cout << i << "  " << ((it == tree.end()) ? "bad" : "good ") << std::endl;
    }
@@ -271,7 +270,7 @@ void TestSellingReduceUnreduceFunctions() {
    //exit(0);
 
    //const std::vector<std::pair<MatS6, MatS6> > vRed = S6Dist::SetunreductionReductionMatricesFromReductionMatrices();
-   //for (unsigned long i = 0; i < vRed.size(); ++i) {
+   //for (size_t i = 0; i < vRed.size(); ++i) {
    //   std::cout << "For scale " << i << "1" << std::endl;
    //   std::cout << MaximaTools::MaximaFromMat(vRed[i].first) << std::endl << std::endl;
    //   std::cout << "For scale " << i << "2" << std::endl;
@@ -279,7 +278,7 @@ void TestSellingReduceUnreduceFunctions() {
    //}
    //exit(0);
    //std::list<S6> vs6;
-   //for (unsigned long i = 0; i < 5000000; ++i) {
+   //for (size_t i = 0; i < 5000000; ++i) {
    //   Cell cl = Cell::rand();
    //   vs6.push_back(S6(cl));;
    //}
@@ -291,7 +290,7 @@ void TestReductionTiming() {
 
    GenerateRandomLattice<S6> grl(19191);
    grl.SetLengthLimits(10.0, 90.0);
-   for (unsigned long i = 0; i < 100000; ++i) {
+   for (size_t i = 0; i < 100000; ++i) {
       //const S6 s6 = S6::randDeloneUnreduced();
       const S6 s6 = G6::rand();
       vcell.push_back(s6);
@@ -379,7 +378,7 @@ void CompareBothUnreduces() {
    std::vector<S6> voutside;
 
    // unreduce by each of the 6 unreduces of the two types
-   for (unsigned long i = 0; i < unreducers.size(); ++i) {
+   for (size_t i = 0; i < unreducers.size(); ++i) {
       vinside.push_back(unreducers[i].first(s6));  // generate using the first of each unreduce pair of functions
       voutside.push_back(unreducers[i].second(s6));  // generate using the second of each unreduce pair of functions
    }
@@ -388,13 +387,13 @@ void CompareBothUnreduces() {
    voutside = s6dist.Generate24Reflections(voutside);
 
    std::cout << "vinside   " << vinside.size() << std::endl;
-   for (unsigned long i = 0; i < vinside.size(); ++i) {
+   for (size_t i = 0; i < vinside.size(); ++i) {
       std::cout << LRL_MaximaTools::MaximaFromString(LRL_ToString(vinside[i])) << std::endl;
    }
    std::cout << std::endl;
 
    std::cout << "voutside   " << voutside.size() << std::endl;
-   for (unsigned long i = 0; i < voutside.size(); ++i) {
+   for (size_t i = 0; i < voutside.size(); ++i) {
       std::cout << LRL_MaximaTools::MaximaFromString(LRL_ToString(voutside[i])) << std::endl;
    }
    std::cout << std::endl;
@@ -409,7 +408,7 @@ void CompareBothUnreduces() {
    // this can never be true for the different unreduce targets, so we get
    // no spurious results
    // MAKE SURE THAT THE LAST ONE IS BAD !!!!!
-   for (unsigned long i = 0; i < vinside.size(); ++i) {
+   for (size_t i = 0; i < vinside.size(); ++i) {
       CNearTree<S6>::iterator it = tree.NearestNeighbor(0.0001, vinside[i]);
       std::cout << i << "  " << ((it == tree.end()) ? "bad" : "good ") << std::endl;
    }
@@ -418,7 +417,7 @@ void CompareBothUnreduces() {
 void TestDistanceWhenReducing() {
    static std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > unreducers = S6Dist::SetUnreduceFunctionPairs();
 
-   for (unsigned long i = 0; i < 10; ++i) {
+   for (size_t i = 0; i < 10; ++i) {
       const S6 sB(S6::randDeloneReduced());
       const S6 sA(S6::randDeloneReduced());
       const S6 sAu(unreducers[0].first(sA));
@@ -445,7 +444,7 @@ void TestRandCell() {
    sr_failed.SetFooter("***********************************************");
    GenerateRandomLattice<S6> grl(19191);
    grl.SetLengthLimits(10.0, 90.0);
-   for (unsigned long i = 0; i < 10000; ++i) {
+   for (size_t i = 0; i < 10000; ++i) {
       const LRL_Cell cell = grl.Generate();
       LRL_Cell_Degrees deg(cell);
       const bool b = deg.GetValid();
@@ -473,7 +472,7 @@ void TestGenerateRandomLattice() {
    GenerateRandomLattice<S6> grl(19191);
 
    StoreResults<int, PairReporter<S6, LRL_Cell> > store(5);
-   for (unsigned long i = 0; i < 4000; ++i) {
+   for (size_t i = 0; i < 4000; ++i) {
       S6 sa = grl.Generate();
       //std::cout << " " << sa << "    " << LRL_Cell_Degrees(sa) << std::endl;
       LRL_Cell cell(sa);
@@ -500,13 +499,13 @@ void Test_ompPS6Speed() {
    S6Dist s6dist(1);
    std::cout << LRL_CreateFileName::Create("", "") << std::endl;
    std::vector<S6> v;
-   for (unsigned long i = 0; i < 10000; ++i) {
+   for (size_t i = 0; i < 10000; ++i) {
       v.push_back(S6::randDeloneUnreduced());
    }
    //#pragma omp parallel
    {
       //#pragma omp for schedule(dynamic)
-      for (unsigned long i = 0; i < v.size() - 1; ++i) {
+      for (size_t i = 0; i < v.size() - 1; ++i) {
          s6dist.DistanceBetween(v[i], v[i + 1]);
       }
    }
@@ -540,16 +539,16 @@ void TestGetBestPairS6() {
 
 void TestS6Speed() {
    std::vector<S6> v;
-   const unsigned long nv = 1000000;
+   const size_t nv = 1000000;
    std::cout << "number of distances = " << nv << std::endl;
    int seed = 10;
    GenerateRandomLattice<S6> grl(seed);
-   for (unsigned long i = 0; i <= nv; ++i)
+   for (size_t i = 0; i <= nv; ++i)
       v.push_back(grl.GenerateExtreme());
 
    std::cout << LRL_CreateFileName().Create("", "") << std::endl;
    S6Dist s6dist(10);
-   for (unsigned long i = 0; i < nv; ++i)
+   for (size_t i = 0; i < nv; ++i)
       s6dist.DistanceBetween(v[i], v[i + 1]);
    std::cout << LRL_CreateFileName().Create("", "") << std::endl;
    exit(0);
@@ -560,7 +559,7 @@ void TestFollowStarter()
 
    //TestS6Speed();
    StoreResults<int, LRL_Cell> store(330);
-   for (unsigned long i = 0; i < 100000; ++i) {
+   for (size_t i = 0; i < 100000; ++i) {
       const S6 s6 = GenerateRandomLattice<S6>::GenerateExtreme();
       LRL_Cell cell = LRL_Cell(s6);
       //if (d < 1.e-6) std::cout << s6 << std::endl;
@@ -581,9 +580,9 @@ void TestDataForHJB() {
    std::vector< C3(*)(const C3&)> fnRefl = C3::SetReflections();
    const C3 checkValue = S6(" 0 -10 -11 -12 -13 -14");
 
-   for (unsigned long i = 0; i < fnRefl.size(); ++i) {
+   for (size_t i = 0; i < fnRefl.size(); ++i) {
       S6 s6refl = fnRefl[i](checkValue);
-      for (unsigned long k = 0; k < 6; ++k) {
+      for (size_t k = 0; k < 6; ++k) {
          if (s6refl[k] == 0.0) s6refl[k] = -0.1;
       }
       std::cout << " " << LRL_MaximaTools::MaximaFromString(LRL_ToString(s6refl)) << std::endl;
@@ -610,20 +609,20 @@ void ListS6ReductionSteps() {
    exit(0);
 }
 
-unsigned long cycles = 100000;
+size_t cycles = 100000;
 StoreResults<int, int> store(0);
 
 class TestStaticSpeed {
 public:
    TestStaticSpeed() {
-      for (unsigned long i = 0; i < 10000000; ++i) { v.push_back(double(i)); }
+      for (size_t i = 0; i < 10000000; ++i) { v.push_back(double(i)); }
    }
 
    static double mulStatic(const double a, std::vector<double>& v) {
       double d[4];
-      for (unsigned long j = 0; j < cycles; ++j)
-         for (unsigned long k = 0; k < 10 * cycles; ++k) {
-            for (unsigned long i = 0; i < v.size(); ++i) {
+      for (size_t j = 0; j < cycles; ++j)
+         for (size_t k = 0; k < 10 * cycles; ++k) {
+            for (size_t i = 0; i < v.size(); ++i) {
                d[k % 4] = a * v[i];
             }
             if (k == 0) store.Store(k, 0);
@@ -634,9 +633,9 @@ public:
 
    double mulPlain(const double a, std::vector<double>& vin) {
       double d[4];
-      for (unsigned long j = 0; j < cycles; ++j)
-         for (unsigned long k = 0; k < 10 * cycles; ++k) {
-            for (unsigned long i = 0; i < vin.size(); ++i) {
+      for (size_t j = 0; j < cycles; ++j)
+         for (size_t k = 0; k < 10 * cycles; ++k) {
+            for (size_t i = 0; i < vin.size(); ++i) {
                d[k % 4] = a * vin[i];
             }
             if (k == 0) store.Store(k, 0);
@@ -666,7 +665,7 @@ void TestStatic() {
 int seed = 19191;
 void TestCS6Dist1() {
    GenerateRandomLattice<S6> generator(seed);
-   for (unsigned long i = 0; i < 1000; ++i) {
+   for (size_t i = 0; i < 1000; ++i) {
       const S6 s6 = generator.randSellingReduced();
       const double d = CS6Dist(s6.data(), s6.data());
       if (d > 1.0) {
@@ -678,12 +677,12 @@ void TestCS6Dist1() {
 
 void TestCS6Dist2() {
    double ar[] = { 0,3,5,7,11,13,17,19 };
-   for (unsigned long i = 0; i < 100; ++i) {
+   for (size_t i = 0; i < 100; ++i) {
       double s6[6];
-      for (unsigned long k = 0; k < 6; ++k) {
+      for (size_t k = 0; k < 6; ++k) {
          s6[k] = -ar[rand() % 8];
       }
-      printf("\n  i = %d\n", i);
+      printf("\n  i = %d\n", (int)(i));
       printf("before %8f  %8f  %8f  %8f  %8f  %8f \n", s6[0], s6[1], s6[2], s6[3], s6[4], s6[5]);
       const double d = CS6Dist(s6, s6);
       if (d > 1.0) {
@@ -697,10 +696,10 @@ void TestCS6Dist2() {
 void TestCS6Dist3() {
    std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
    GenerateRandomLattice<S6> generator(seed);
-   for (unsigned long i = 0; i < 1000; ++i) {
+   for (size_t i = 0; i < 1000; ++i) {
       S6 s6red;
       Delone::Reduce(generator.randSellingReduced(), s6red);
-      for (unsigned long ir = 0; ir < 24; ++ir) {
+      for (size_t ir = 0; ir < 24; ++ir) {
          const S6 s6 = refl[ir](s6red);
          const double d = CS6Dist(s6.data(), s6.data());
          if (d > 1.0) {
@@ -719,11 +718,11 @@ void TestCS6Dist4() {
    S6Dist s6dist(1);
    std::vector<S6> voutside;
    S6 red1, red2;
-   for (unsigned long i2 = 0; i2 < 1000; ++i2) {
+   for (size_t i2 = 0; i2 < 1000; ++i2) {
       const S6 s1(generator.randSellingUnreduced());
       Selling::Reduce(s1, red1);
       voutside = s6dist.Generate24Reflections(s1); // for outside, generate the 24 reflections for each unreduced cell
-      for (unsigned long i1 = 0; i1 < 24; ++i1) {
+      for (size_t i1 = 0; i1 < 24; ++i1) {
          Selling::Reduce(voutside[i1], red2);
          const double d1 = CS6Dist(red2.data(), red1.data());
          const double d2 = s6dist.DistanceBetween(red2.data(), red1.data());
@@ -741,8 +740,8 @@ void TestCS_Reflections() {
    std::vector<MatS6> vm(24);
    MatS6 closest;
    const double radius = 0.1;
-   for (unsigned long im = 0; im < 24; ++im) {
-      for (unsigned long i = 0; i < 36; ++i) {
+   for (size_t im = 0; im < 24; ++im) {
+      for (size_t i = 0; i < 36; ++i) {
          vm[im][i] = **(S6Refl + i);
       }
       tree.insert(vm[im]);
@@ -754,13 +753,13 @@ void TestCS_Reflections() {
 }
 
 void TestReflVCP() {
-   StoreResults<unsigned long, std::string> storeLocal(5);
+   StoreResults<size_t, std::string> storeLocal(5);
    storeLocal.SetKeyLabel("Reflection#");
    const static std::vector< std::pair<S6(*)(const S6&), S6(*)(const S6&)> > unredfun = S6Dist::SetUnreduceFunctionPairs();
    const static std::vector< S6(*)(const S6&)> reflfun = S6::SetRelectionFunctions();
    int seed1 = 19;
    GenerateRandomLattice<S6> grl(seed1);
-   for (unsigned long i = 0; i < 2; ++i) grl.randSellingReduced();
+   for (size_t i = 0; i < 2; ++i) grl.randSellingReduced();
    const S6 start = grl.randSellingReduced();
    std::cout << "the initial inside point is: " << start << std::endl << std::endl;
    S6 in = unredfun[0].first(start);
@@ -768,14 +767,14 @@ void TestReflVCP() {
 
    std::cout << "the initial outside point is: " << in << std::endl << std::endl;
 
-   for (unsigned long i = 0; i < 100000; ++i) {
+   for (size_t i = 0; i < 100000; ++i) {
       S6 svar = grl.randSellingReduced();
       svar[0] = -0.0001;
       if (svar.IsValid()) {
          double dmin = DBL_MAX;
-         unsigned long kmin = ULONG_MAX;
+         size_t kmin = ULONG_MAX;
          S6 ref;
-         for (unsigned long k = 0; k < 24; ++k) {
+         for (size_t k = 0; k < 24; ++k) {
             ref = reflfun[k](svar);
             if ((ref - in).norm() < dmin) {
                dmin = (ref - in).norm();
@@ -792,85 +791,85 @@ void TestReflVCP() {
 
 void TestSellingTiming(const std::vector<S6>& testData) {
 
-   for (unsigned long i = 0; i < testData.size(); ++i) {
+   for (size_t i = 0; i < testData.size(); ++i) {
       S6 s6out;
       Selling::Reduce(testData[i], s6out);
    }
 }
 
 void TestNiggliTiming(const std::vector<G6>& testData, const bool doSelling) {
-   for (unsigned long i = 0; i < testData.size(); ++i) {
+   for (size_t i = 0; i < testData.size(); ++i) {
       G6 g6out;
       Niggli::Reduce(testData[i], g6out, doSelling);
    }
 }
 
 void TestCS6DistancesTiming(const std::vector<S6>& testData) {
-   const unsigned long ntests = (unsigned long)(testData.size());
+   const size_t ntests = testData.size();
    const double distA = CS6Dist(testData[0].data(), testData[ntests - 1].data());
-   for (unsigned long i = 0; i < ntests - 1; ++i) {
+   for (size_t i = 0; i < ntests - 1; ++i) {
       const double dist = CS6Dist(testData[i].data(), testData[i + 1].data());
    }
 }
 
 void TestD7DistancesTiming(const std::vector<S6>& testData) {
-   const unsigned long ntests = (unsigned long)(testData.size());
+   const size_t ntests = testData.size();
    const double distA = D7Dist(testData[0].data(), testData[ntests - 1].data());
-   for (unsigned long i = 0; i < ntests - 1; ++i) {
+   for (size_t i = 0; i < ntests - 1; ++i) {
       const double dist = D7Dist(testData[i].data(), testData[i + 1].data());
    }
 }
 
 void TestS6DistancesTiming(const std::vector<S6>& testData) {
-   const unsigned long ntests = (unsigned long)(testData.size());
+   const size_t ntests = testData.size();
    S6Dist s6dist(1);
    const double distA = s6dist.DistanceBetween(testData[0], testData[ntests - 1]);
-   for (unsigned long i = 0; i < ntests - 1; ++i) {
+   for (size_t i = 0; i < ntests - 1; ++i) {
       const double dist = s6dist.DistanceBetween(testData[i], testData[i + 1]);
    }
 }
 
 void TestG6DistancesTiming(const std::vector<G6>& testData) {
-   const unsigned long ntests = (unsigned long)(testData.size());
+   const size_t ntests = testData.size();
    const double distA = NCDist(testData[0].data(), testData[ntests - 1].data());
-   for (unsigned long i = 0; i < ntests - 1; ++i) {
+   for (size_t i = 0; i < ntests - 1; ++i) {
       NCDist(testData[i].data(), testData[i + 1].data());
    }
 }
 
 void TestV7DistancesTiming(const std::vector<G6>& testData) {
-   const unsigned long ntests = (unsigned long)(testData.size());
+   const size_t ntests = testData.size();
    const double distA = V7Dist(testData[0].data(), testData[ntests - 1].data());
-   for (unsigned long i = 0; i < ntests - 1; ++i) {
+   for (size_t i = 0; i < ntests - 1; ++i) {
       V7Dist(testData[i].data(), testData[i + 1].data());
    }
 }
 
 void CheckReduceAndDistanceTiming() {
    StoreResults < std::string, double> storeLocal(100);
-   const unsigned long nReduceSamples = 1000;
+   const size_t nReduceSamples = 1000;
    std::cout << "number of test samples " << nReduceSamples << std::endl;
    int seed2(19191);
    GenerateRandomLattice<G6> grl(seed2);
 
    std::vector<S6> testDataS6REDUCED;
-   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+   for (size_t i = 0; i < nReduceSamples; ++i) {
       testDataS6REDUCED.push_back(grl.randSellingReduced());
    }
 
    std::vector<G6> testDataG6REDUCED;
-   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+   for (size_t i = 0; i < nReduceSamples; ++i) {
       G6 g6out;
       testDataG6REDUCED.push_back(G6(testDataS6REDUCED[i]));
    }
 
    std::vector<S6> unreducedTestDataS6;
-   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+   for (size_t i = 0; i < nReduceSamples; ++i) {
       unreducedTestDataS6.push_back(grl.GenerateExtreme());
    }
 
    std::vector<G6> unreducedTestDataG6;
-   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+   for (size_t i = 0; i < nReduceSamples; ++i) {
       G6 g6out;
       unreducedTestDataG6.push_back(G6(unreducedTestDataS6[i]));
    }
@@ -878,7 +877,7 @@ void CheckReduceAndDistanceTiming() {
    auto start = std::clock();
    double endTime;
 
-   for (unsigned long cycle = 0; cycle < 10; ++cycle) {
+   for (size_t cycle = 0; cycle < 10; ++cycle) {
       std::cout << " cycle " << cycle << std::endl;
       //---------------------------------- test reduced reductions
       {
@@ -961,8 +960,8 @@ void LookAtReductions() {
    S6 s6out;
    G6 g6out;
    S6 deout;
-   const unsigned long nReduceSamples = 10;
-   for (unsigned long i = 0; i < nReduceSamples; ++i) {
+   const size_t nReduceSamples = 10;
+   for (size_t i = 0; i < nReduceSamples; ++i) {
       test = grl.GenerateExtreme();
       Selling::Reduce(test, s6out);
       Delone::Reduce(test, deout);
@@ -972,7 +971,6 @@ void LookAtReductions() {
       std::cout << "Niggli reduced " << LRL_Cell_Degrees(g6out) << std::endl;
       std::cout << "Selling reduced " << LRL_Cell_Degrees(s6out) << std::endl;
       std::cout << "Delone reduced " << LRL_Cell_Degrees(deout) << std::endl;
-      std::cout << "Allman " << LRL_Cell_Degrees(Allman::Reduce(g6out)) << std::endl << std::endl;
    }
    exit(0);
 }
@@ -982,8 +980,8 @@ void VerifyIsNiggli() {
    int seed6 = 9;
    GenerateRandomLattice<G6> grl(seed6);
    G6 vout;
-   const unsigned long ntest = 10000;
-   for (unsigned long i = 0; i < ntest; ++i) {
+   const size_t ntest = 10000;
+   for (size_t i = 0; i < ntest; ++i) {
       const G6 g6 = grl.GenerateExtreme();
       storeLocal.Store(Niggli::IsNiggli(vout), LRL_ToString(LRL_Cell_Degrees(g6), "  ", LRL_Cell_Degrees(vout)));
    }
@@ -993,11 +991,11 @@ void VerifyIsNiggli() {
 
 void TimingForNewNiggliReduce() {
    std::vector<G6> v;
-   const unsigned long nv = 100000;
+   const size_t nv = 100000;
    std::cout << "number of distances = " << nv << std::endl;
    int seed5 = 10;
    GenerateRandomLattice<G6> grl(seed5);
-   for (unsigned long i = 0; i <= nv; ++i)
+   for (size_t i = 0; i <= nv; ++i)
       v.push_back(grl.GenerateExtreme());
 
    auto start = std::clock();
@@ -1005,14 +1003,14 @@ void TimingForNewNiggliReduce() {
 
    G6 vout;
    start = std::clock();
-   for (unsigned long i = 0; i <= nv; ++i) {
+   for (size_t i = 0; i <= nv; ++i) {
       bool b = Niggli::Reduce( v[i], vout ); b;
    }
    elapsedTime = std::clock() - start;
    std::cout << elapsedTime << std::endl;
 
    start = std::clock();
-   for (unsigned long i = 0; i <= nv; ++i) {
+   for (size_t i = 0; i <= nv; ++i) {
       bool b = Niggli::ReduceWithoutMatrices( v[i], vout, 0.0 ); b;
    }
    elapsedTime = std::clock() - start;
@@ -1024,17 +1022,17 @@ void VerifyNiggli() {
    StoreResults<double, std::string> storeLocal(10);
    int seed3 = 9;
    //GenerateRandomLattice<G6> grl(seed3);
-   //const unsigned long ntest = 100000;
-   //for (unsigned long i = 0; i < ntest; ++i) {
+   //const size_t ntest = 100000;
+   //for (size_t i = 0; i < ntest; ++i) {
    //   const G6 g6 = grl.GenerateExtreme();
    const std::vector<CellInputData> cellData = LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(seed3);  // read the data
 
-   const unsigned long n = (unsigned long)(cellData.size());
+   const size_t n = cellData.size();
    std::cout << "number of cells read   " << n << std::endl;
    G6 vout1;
    G6 vout2;
 
-   for (unsigned long i = 0; i < n; ++i) {
+   for (size_t i = 0; i < n; ++i) {
       LRL_Cell cell = cellData[i].GetCell();
 
       if (vout1 == vout2) storeLocal.Store(0, LRL_ToString(LRL_Cell_Degrees(vout1), "  ", LRL_Cell_Degrees(vout2)));
@@ -1053,7 +1051,7 @@ std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeD
    LatticeConverter converter;
 
 
-   for ( unsigned long i=0; i<input.size(); ++i ) {
+   for ( size_t i=0; i<input.size(); ++i ) {
       const LRL_ReadLatticeData& rcd = input[i];
       const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell());
       v.push_back(s6);
@@ -1068,7 +1066,7 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
    Sella sella;
 
-   for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
+   for (size_t lat = 0; lat < vLat.size(); ++lat) {
       const std::string strCell = input[lat].GetStrCell();
       if (strCell[0] == 'A' || strCell[0] == 'a') continue;
       const std::string xtalSystem = std::string(1, strCell[strCell.length() - 1]);
@@ -1111,7 +1109,7 @@ LRL_Cell PDB_ReduceTimingTest() {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
    std::vector<LRL_Cell> vcell;
    std::vector<std::string> vlattice;
-   for (unsigned long i = 0; i < input.size(); ++i) {
+   for (size_t i = 0; i < input.size(); ++i) {
       vcell.push_back(input[i].GetCell());
       vlattice.push_back(input[i].GetLattice());
    }
@@ -1123,7 +1121,7 @@ LRL_Cell PDB_ReduceTimingTest() {
    {
       start = std::clock();
       S6 red1;
-      for (unsigned long i = 0; i < vcell.size(); ++i) {
+      for (size_t i = 0; i < vcell.size(); ++i) {
          const LRL_Cell cell = converter.MakePrimitiveCell(vlattice[i], vcell[i]);
          const bool b = Selling::Reduce(cell, red1);
          dummy = red1;
@@ -1138,7 +1136,7 @@ LRL_Cell PDB_ReduceTimingTest() {
    {
       start = std::clock();
       G6 red6;
-      for (unsigned long i = 0; i < vcell.size(); ++i) {
+      for (size_t i = 0; i < vcell.size(); ++i) {
          const LRL_Cell cell = converter.MakePrimitiveCell(vlattice[i], vcell[i]);
          const bool b = Niggli::Reduce(cell, red6);
          dummy = red6;
@@ -1150,7 +1148,7 @@ LRL_Cell PDB_ReduceTimingTest() {
    {
       start = std::clock();
       S6 red1;
-      for (unsigned long i = 0; i < vcell.size(); ++i) {
+      for (size_t i = 0; i < vcell.size(); ++i) {
          const LRL_Cell cell = converter.MakePrimitiveCell(vlattice[i], vcell[i]);
          const bool b = Delone::Reduce(cell, red1);
          dummy = red1;
@@ -1204,7 +1202,7 @@ int main(int argc, char *argv[])
 	//e3[7] = 1;
 	//e3[8] = 2;
 	//std::cout << "E3 matrix for P to F for cF  " << std::endl;
-	//for (unsigned long i = 0; i < 9; ++i) {
+	//for (size_t i = 0; i < 9; ++i) {
 	//	if (i % 3 == 0) std::cout << std::endl;
 	//	std::cout << e3[i];
 	//}
@@ -1212,7 +1210,7 @@ int main(int argc, char *argv[])
 	std::cout << std::endl << std::endl;
 	std::vector<std::pair<std::string, std::vector<double> > > vcenters = DeloneTypeList::Make3dCenteringMatrices();
 	std::cout << "size" << vcenters.size() << std::endl;
-	for (unsigned long i=0; i<vcenters.size(); ++i ) {
+	for (size_t i=0; i<vcenters.size(); ++i ) {
 	   const MatS6 m6 = MatS6::e3Tos6(vcenters[i].second);
 		std::cout << std::endl << "\"" << vcenters[i].first << "\", MatS6(" << std::endl << m6 << std::endl;
 	}
@@ -1233,11 +1231,11 @@ int main(int argc, char *argv[])
 
    exit(0);
    const std::vector<std::pair<MatS6, MatS6> > unred = S6::SetUnreductionMatrices();
-   for (unsigned long i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(unred[i].first) << "   " <<
+   for (size_t i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(unred[i].first) << "   " <<
       LRL_MaximaTools::MaximaFromMat(unred[i].second) << std::endl;
 
    const std::vector<MatS6> vmats6 = MatS6::GetReflections();
-   for (unsigned long i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(vmats6[i]) << std::endl;
+   for (size_t i = 0; i < 24; ++i) std::cout << LRL_MaximaTools::MaximaFromMat(vmats6[i]) << std::endl;
    exit(0);
    VerifyNiggli();
    VerifyIsNiggli();
@@ -1275,7 +1273,7 @@ int main(int argc, char *argv[])
    TestCellParams();
 
    TestDistanceWhenReducing();
-   for (unsigned long i = 0; i < 10000000; ++i) {
+   for (size_t i = 0; i < 10000000; ++i) {
       const S6 s6(S6::randDeloneUnreduced());
       if (!s6.GetValid()) {
          throw;

@@ -61,7 +61,7 @@ std::vector<MatS6> vS6_Refl = MatS6::GetReflections();
 
 std::vector<S6> MakeReflections(const S6& s6) {
    std::vector<S6> v;
-   for (unsigned long i = 0; i < vS6_Refl.size(); ++i) {
+   for (size_t i = 0; i < vS6_Refl.size(); ++i) {
       v.push_back(vS6_Refl[i] * s6);
    }
    return v;
@@ -122,7 +122,7 @@ std::vector<S6> GetInputSellingReducedVectors() {
    LatticeConverter converter;
 
 
-   for (unsigned long i = 0; i < input.size(); ++i) {
+   for (size_t i = 0; i < input.size(); ++i) {
       const LRL_ReadLatticeData& rcd = input[i];
       const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell());
       v.push_back(s6);
@@ -135,7 +135,7 @@ GenerateRandomLattice<S6> generator(seed);
 
 S6 GenerateRandomUnitSphereAtOrigin(const double radius) {
    S6 s6;
-   for (unsigned long i = 0; i < 6; ++i) {
+   for (size_t i = 0; i < 6; ++i) {
       s6[i] = 2.0 * rhrand.urand() - 1.0;
    }
    return s6 / s6.norm();
@@ -154,14 +154,14 @@ S6 ScaleAndThenPerturbByPercent( const S6& s6, const double scale, const double 
 
 void SellaLineTest(const S6& s6) {
    const S6 delta = generator.randSellingReduced();
-   const unsigned long nsteps = 100;
+   const size_t nsteps = 100;
    S6 step = 2.0 * delta / (nsteps - 1);
    step /= step.norm();
    S6 stepper = s6 + step * nsteps / 2;
    SellaBuild sellaBuild;
    std::vector<std::vector<std::pair<std::string, double> >  > fits;
 
-   for (unsigned long i = 0; i < nsteps; ++i) {
+   for (size_t i = 0; i < nsteps; ++i) {
       S6 reducedStepper;
       const bool b = Selling::Reduce(stepper, reducedStepper);
       reducedStepper = s6.norm() * reducedStepper / reducedStepper.norm();
@@ -170,11 +170,11 @@ void SellaLineTest(const S6& s6) {
       fits.push_back(out);
 
       if (i == 0) {
-         for (unsigned long k = 0; k < out.size(); ++k) {
+         for (size_t k = 0; k < out.size(); ++k) {
             std::cout << out[k].first << " ";
          }
       }
-      for (unsigned long k = 0; k < out.size(); ++k) {
+      for (size_t k = 0; k < out.size(); ++k) {
          std::cout << out[k].second << " ";
       }
       std::cout << std::endl;
@@ -185,12 +185,12 @@ void SellaLineTest(const S6& s6) {
 void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
    const S6& start(s1);
    const S6& target(s2);
-   const unsigned long nsteps = 100;
+   const size_t nsteps = 100;
    S6 step = (target-start) / (nsteps);
    SellaBuild sellaBuild;
    std::vector<std::vector<std::pair<std::string, double> >  > fits;
 
-   for (unsigned long i = 0; i <= nsteps; ++i) {
+   for (size_t i = 0; i <= nsteps; ++i) {
       S6 reducedStepper;
       S6 stepper = start + step * i;
       const bool b = Selling::Reduce(stepper, reducedStepper);
@@ -199,11 +199,11 @@ void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
       fits.push_back(out);
 
       if (i == 0) {
-         for (unsigned long k = 0; k < out.size(); ++k) {
+         for (size_t k = 0; k < out.size(); ++k) {
             std::cout << out[k].first << " ";
          }
       }
-      for (unsigned long k = 0; k < out.size(); ++k) {
+      for (size_t k = 0; k < out.size(); ++k) {
          std::cout << out[k].second << " ";
       }
       std::cout << std::endl;
@@ -222,22 +222,22 @@ int main()
 
    //std::vector<S6> vLat = GetInputSellingReducedVectors();
 
-   //const unsigned long n = 1000;
+   //const size_t n = 1000;
 
-   //for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
+   //for (size_t lat = 0; lat < vLat.size(); ++lat) {
    //   std::vector<std::pair<std::string, double> > out;
    //   std::vector<double> sum(24, 0.0);
    //   std::vector<double> sumsq(24, 0.0);
    //   std::vector<double> maxDist(24, -DBL_MAX);
 
    //   double sign = 1.0;
-   //   for (unsigned long k = 0; k < n; ++k) {
+   //   for (size_t k = 0; k < n; ++k) {
    //      out = sellaBuild.GetVectorOfFits(ScaleAndThenPerturbByPercent(vLat[lat], 1000.0, sign * 0.0));
    //      if ( out.size() < sum.size()) {
    //         sum.resize(out.size());
    //         sumsq.resize(out.size());
    //      }
-   //      for (unsigned long i = 0; i < out.size(); ++i) {
+   //      for (size_t i = 0; i < out.size(); ++i) {
    //         if ( out[i].second > 2.0 && out[i].first == "C5 ") {
    //            const int i19191 = 19191;
    //         }
@@ -248,7 +248,7 @@ int main()
    //      sign = -sign;
    //   }
 
-   //   for (unsigned long i = 0; i < sum.size(); ++i) {
+   //   for (size_t i = 0; i < sum.size(); ++i) {
    //      const double avg = sum[i] / n;
    //      const double stddev = sqrt(sumsq[i] / n - avg * avg);
    //      std::cout << out[i].first << "  " << avg << "   " << stddev << "      max " << maxDist[i];

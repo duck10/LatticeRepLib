@@ -46,7 +46,7 @@ public:
    LRL_Path<S6>& GetPathCS(void) { return m_cspath; }
    LRL_Path<G6>& GetPathV7(void) { return m_v7path; }
    std::pair<double, double> GetMinMax(void) const;
-   unsigned long size(void)const { return maxNC(m_s6path.size(), m_g6path.size(), m_d7path.size(), m_cspath.size()); }
+   size_t size(void)const { return maxNC(m_s6path.size(), m_g6path.size(), m_d7path.size(), m_cspath.size()); }
    const double GetTime2ComputerFrame(void) const;
    void SetTime2ComputeFrame(const double computeTime);
    DistanceLineDescriptions GetLineDescriptions(void) const { return m_lineDescription; }
@@ -54,8 +54,8 @@ public:
    double GetTime2ComputeFrame(void) const { return m_seconds2ComputerFrame; }
    std::clock_t GetComputeStartTime(void) const {return m_ComputeStartTime; }
 
-   std::set<unsigned long> DetermineOutliers(const std::vector<double> distanceList) const;
-   const std::set<unsigned long> DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const;
+   std::set<size_t> DetermineOutliers(const std::vector<double> distanceList) const;
+   const std::set<size_t> DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const;
    bool HasGlitches(void) const;
    void SetComputeTime(const std::string& name, const double time);
 
@@ -67,14 +67,14 @@ private:
    LRL_Path<G6> m_v7path;
    std::clock_t m_ComputeStartTime;
    double m_seconds2ComputerFrame;
-   std::set<unsigned long> m_glitches;
+   std::set<size_t> m_glitches;
    DistanceLineDescriptions m_lineDescription;
 
 
    template<typename T1, typename T2, typename TREDUCE>
    T2 Converter(const std::vector<std::pair<S6, S6> >& s6path) {
       std::vector<std::pair<T1, T1> > v;
-      for (unsigned long i = 0; i < s6path.size(); ++i) {
+      for (size_t i = 0; i < s6path.size(); ++i) {
          const std::pair<S6, S6> p(s6path[i]);
          T1 out;
          const bool b = TREDUCE::Reduce(p.second, out, FollowerConstants::NiggliSellingFirst);
@@ -85,7 +85,7 @@ private:
 
    template<typename TVEC>
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   const std::vector<unsigned long> DetermineIfSomeDeltaIsTooLarge(const LRL_Path<TVEC>& path) {
+   const std::vector<size_t> DetermineIfSomeDeltaIsTooLarge(const LRL_Path<TVEC>& path) {
       return(DetermineIfSomeDeltaIsTooLarge(path.GetDistances()));
    }
 

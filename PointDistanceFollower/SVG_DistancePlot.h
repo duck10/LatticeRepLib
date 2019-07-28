@@ -65,14 +65,14 @@ private:
    {
       std::list<std::string> svg;
       if (!distances.empty()) {
-         const unsigned long xmax((unsigned long)(distances.size()));
+         const size_t xmax(distances.size());
          const std::vector<double>::const_iterator firstNegative = std::find_if(distances.begin(), distances.end(), IsNegative);
-         const unsigned long lastPositiveIndex = (unsigned long)((firstNegative == distances.end()) ? xmax : firstNegative - distances.begin());
+         const size_t lastPositiveIndex = (size_t)((firstNegative == distances.end()) ? xmax : firstNegative - distances.begin());
 
          std::string s = LRL_ToString("   <polyline fill=\"none\" stroke=\"", color, "\" stroke-width=\"", lineWidth, "\" stroke-dasharray = \"", dashMode, "\" points=\" ");
 
          std::vector<double>::const_iterator it = distances.begin();
-         for (unsigned long i = 1; i <= lastPositiveIndex; ++i, ++it)
+         for (size_t i = 1; i <= lastPositiveIndex; ++i, ++it)
             s += LRL_DataToSVG(double(i)*xscale, ",") +
             LRL_DataToSVG(((*it) - minimumDistance) *yscale, " ");
 
@@ -126,7 +126,7 @@ private:
       svg.push_back( "\n<!--Draw labels and tics for Y axis -->\n" );
 
       const double yDelta = (alY.m_upperLimit - alY.m_lowerLimit) / alY.m_numSteps;
-      for( unsigned long i = 0; i < alY.m_numSteps + 1; ++i)
+      for( size_t i = 0; i < alY.m_numSteps + 1; ++i)
       {
          const double y = (alY.m_lowerLimit + double( i )*yDelta - minimumDistance) * yscale;
          svg.push_back( DrawOneY_AxisTicMark( y ) );
@@ -146,9 +146,9 @@ private:
       svg.push_back( "\n<!--Draw labels and tics for X axis -->\n" );
       const double& xMinAxis = alX.m_lowerLimit;
       const double& xMaxAxis = alX.m_upperLimit;
-      const unsigned long& xsteps = alX.m_numSteps; // does not include the starting point, just the steps
+      const size_t& xsteps = alX.m_numSteps; // does not include the starting point, just the steps
       double xPosition = xMinAxis*xscale + 0.5;
-      for (unsigned long i = 0; i <= xsteps; ++i)
+      for (size_t i = 0; i <= xsteps; ++i)
       {
          const double& y = -SVG_DistancePlotConstants::globalX_AxisTicMarkLength;
          const double xDelta = (xMaxAxis - xMinAxis) / double( xsteps );
@@ -178,14 +178,14 @@ private:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::list<std::string> DrawOneDistanceGlitches(const std::vector<double>& distances, const std::set<unsigned long>& glitches, 
+   std::list<std::string> DrawOneDistanceGlitches(const std::vector<double>& distances, const std::set<size_t>& glitches, 
       const double minimumDistance, const double xscale, const double yscale, const std::string& color) const
       /*-------------------------------------------------------------------------------------*/
    {
       std::list<std::string> svg;
       if (!glitches.empty( )) {
          svg.push_back( "\n<!--Draw Glitches -->\n" );
-         std::set<unsigned long>::iterator it;
+         std::set<size_t>::iterator it;
          for( it=glitches.begin(); it != glitches.end( ); ++it)
          {
             const double currentDistance = distances[*it];
@@ -237,12 +237,12 @@ private:
          itDataSubrangeBegin = std::find_if(distances.begin(), distances.end(), IsPositiveOrZero);
          itDataSubrangeEnd = std::find_if(distances.begin(), distances.end(), IsNegative);
 
-         unsigned long firstPositiveSubrange = (unsigned long)(itDataSubrangeEnd - itDataSubrangeBegin);
+         size_t firstPositiveSubrange = (size_t)(itDataSubrangeEnd - itDataSubrangeBegin);
 
          itDataSubrangeSecondBegin = std::find_if(itDataSubrangeEnd, distances.end(), IsNegative);
          itDataSubrangeSecondEnd = std::find_if(itDataSubrangeEnd, distances.end(), IsPositiveOrZero);
 
-         if ((firstPositiveSubrange + (itDataSubrangeSecondEnd - itDataSubrangeSecondBegin)) == (unsigned long)(distances.size()))//  the branch where there is ONLY one (starting) + range followed by a single - range
+         if ((firstPositiveSubrange + (itDataSubrangeSecondEnd - itDataSubrangeSecondBegin)) == distances.size())//  the branch where there is ONLY one (starting) + range followed by a single - range
          {
             return eOneDataLineAndOneInvalid;
          }
@@ -277,7 +277,7 @@ private:
       /*-------------------------------------------------------------------------------------*/
    {
       std::string groupedDataFileName( m_fileName );
-      const unsigned long firstPeriodLocation = (unsigned long)(m_fileName.find( '.' ));
+      const size_t firstPeriodLocation = m_fileName.find( '.' );
       groupedDataFileName.resize( firstPeriodLocation + 1 ); // cut off the .svg and count
 
       // now do the distance data file content
@@ -346,11 +346,11 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
       const LRL_Path<S6> pathCS = multiFollow.GetCS();
       const LRL_Path<G6> pathV7 = multiFollow.GetV7();
 
-      const std::set<unsigned long> glitchesS6 = pathS6.GetGlitches();
-      const std::set<unsigned long> glitchesG6 = pathG6.GetGlitches();
-      const std::set<unsigned long> glitchesD7 = pathD7.GetGlitches();
-      const std::set<unsigned long> glitchesCS = pathCS.GetGlitches();
-      const std::set<unsigned long> glitchesV7 = pathV7.GetGlitches();
+      const std::set<size_t> glitchesS6 = pathS6.GetGlitches();
+      const std::set<size_t> glitchesG6 = pathG6.GetGlitches();
+      const std::set<size_t> glitchesD7 = pathD7.GetGlitches();
+      const std::set<size_t> glitchesCS = pathCS.GetGlitches();
+      const std::set<size_t> glitchesV7 = pathV7.GetGlitches();
 
       std::list<std::string> svgS6 = DrawOneDistanceGlitches(multiFollow.GetS6().GetDistances(), glitchesS6, minimumDistance, xscale, yscale, lines.GetColor("S6"));
       std::list<std::string> svgG6 = DrawOneDistanceGlitches(multiFollow.GetG6().GetDistances(), glitchesG6, minimumDistance, xscale, yscale, lines.GetColor("G6"));

@@ -28,7 +28,7 @@ int seed = 19191;
 void TestCreator() {
    GenerateRandomLattice<S6> generator(seed);
    const S6 s = generator.randSellingReduced();
-   for (unsigned long i = 0; i<24; ++i) {
+   for (size_t i = 0; i<24; ++i) {
       std::cout << Creator(MatS6::GetReflection(i) * s) << std::endl;
    }
 
@@ -42,7 +42,7 @@ int main()
    std::vector<std::vector<double> > a;
    std::vector<std::vector<double> > v;
    std::vector<double> w;
-   for (unsigned long n = 0; n < cellData.size(); ++n) {
+   for (size_t n = 0; n < cellData.size(); ++n) {
       const S6& s = cellData[n].GetCell();
       std::cout << s << std::endl;
       a.push_back(s.GetVector());
@@ -54,7 +54,7 @@ int main()
 
    svdcmp(a, w, v);
 
-   for (unsigned long i = 0; i<v.size(); ++i) {
+   for (size_t i = 0; i<v.size(); ++i) {
       std::cout << w[i] << "      " << LRL_ToString(v[i]) << std::endl;
    }
    std::cout << std::endl;

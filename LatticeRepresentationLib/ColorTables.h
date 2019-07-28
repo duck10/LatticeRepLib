@@ -16,9 +16,9 @@ private:
 
 class ColorTables {
 public:
-   static std::string GetCividisHEX(const unsigned long n);
+   static std::string GetCividisHEX(const size_t n);
 
-   static void GetCividisRGB(const unsigned long n, int& rreturn, int& greturn, int& breturn);
+   static void GetCividisRGB(const size_t n, int& rreturn, int& greturn, int& breturn);
 
 
    static const std::string BASIC_COLORS[];

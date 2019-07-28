@@ -32,20 +32,20 @@ public:
 
    std::vector<std::string> PopulateGlitchStrings( void ) {
       m_multiFollow.GetS6().GetDistances();
-      const std::set<unsigned long> glSetS6 = m_multiFollow.DetermineOutliers(m_multiFollow.GetS6().GetDistances());
-      const std::set<unsigned long> glSetG6 = m_multiFollow.DetermineOutliers(m_multiFollow.GetG6().GetDistances());
-      const std::set<unsigned long> glSetD7 = m_multiFollow.DetermineOutliers(m_multiFollow.GetD7().GetDistances());
-      const std::set<unsigned long> glSetCS = m_multiFollow.DetermineOutliers(m_multiFollow.GetCS().GetDistances());
+      const std::set<size_t> glSetS6 = m_multiFollow.DetermineOutliers(m_multiFollow.GetS6().GetDistances());
+      const std::set<size_t> glSetG6 = m_multiFollow.DetermineOutliers(m_multiFollow.GetG6().GetDistances());
+      const std::set<size_t> glSetD7 = m_multiFollow.DetermineOutliers(m_multiFollow.GetD7().GetDistances());
+      const std::set<size_t> glSetCS = m_multiFollow.DetermineOutliers(m_multiFollow.GetCS().GetDistances());
 
 
-      const unsigned long nS6 = (unsigned long)(m_multiFollow.GetS6().GetDistances().size());
-      const unsigned long nG6 = (unsigned long)(m_multiFollow.GetG6().GetDistances().size());
-      const unsigned long nD7 = (unsigned long)(m_multiFollow.GetD7().GetDistances().size());
-      const unsigned long nCS = (unsigned long)(m_multiFollow.GetCS().GetDistances().size());
-      const unsigned long nmaxDist = maxNC( nS6, nG6, nD7,nCS );
+      const size_t nS6 = m_multiFollow.GetS6().GetDistances().size();
+      const size_t nG6 = m_multiFollow.GetG6().GetDistances().size();
+      const size_t nD7 = m_multiFollow.GetD7().GetDistances().size();
+      const size_t nCS = m_multiFollow.GetCS().GetDistances().size();
+      const size_t nmaxDist = maxNC( nS6, nG6, nD7,nCS );
 
       std::vector<std::string> glitches(nmaxDist, "");
-      for ( unsigned long i=0; i<nmaxDist; ++i ) {
+      for ( size_t i=0; i<nmaxDist; ++i ) {
          if (i < nS6 && glSetS6.find(i) != glSetS6.end()) glitches[i] = "   glitch";
          if (i < nG6 && glSetG6.find(i) != glSetG6.end()) glitches[i] = "   glitch";
          if (i < nD7 && glSetD7.find(i) != glSetD7.end()) glitches[i] = "   glitch";
@@ -158,7 +158,7 @@ public:
          folOut << sFileName << "     Output is S6 probe cell, C3 reduced cell, " <<
             ConstructListOfNamesOfOutputDistances() << "distance between" << std::endl;
 
-         for (unsigned long counter = 0; counter < m_multiFollow.size(); ++counter) {
+         for (size_t counter = 0; counter < m_multiFollow.size(); ++counter) {
             const std::string strS6 = (distancesS6.empty()) ? "" : LRL_ToString(distancesS6[counter], " ");
             const std::string strG6 = (distancesG6.empty()) ? "" : LRL_ToString(distancesG6[counter], " ");
             const std::string strD7 = (distancesD7.empty()) ? "" : LRL_ToString(distancesD7[counter], " ");

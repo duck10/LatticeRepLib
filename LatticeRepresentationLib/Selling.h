@@ -35,7 +35,7 @@ public:
 
    static void SetDebug(const bool b) { m_debugInstrument = b; }
 
-   static unsigned long GetCycles() { 
+   static size_t GetCycles() { 
       return m_ReductionCycleCount;
    }
 
@@ -47,7 +47,7 @@ private:
    static void ListSteps(const S6& s6);
 
    static bool m_debugInstrument;
-   static unsigned long m_ReductionCycleCount;
+   static size_t m_ReductionCycleCount;
    static bool listSteps;
 private:
 

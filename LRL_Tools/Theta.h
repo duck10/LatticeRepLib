@@ -24,7 +24,7 @@ public:
    };
 
 //=================================================================
-   ThetaMatch ( const unsigned long lMaxCharacter )
+   ThetaMatch ( const size_t lMaxCharacter )
    {
       m_lMaxCharacter = lMaxCharacter;
       m_wf.resize( m_lMaxCharacter, 1.0 );
@@ -86,17 +86,17 @@ private:
    std::valarray<double> m_wf ;
    std::valarray<double> m_wr ;
    std::valarray<double> m_wc ;
-   unsigned long m_lMaxCharacter;
+   size_t m_lMaxCharacter;
    bool m_bDoCompensation;
 
 //=================================================================
    double totalM ( const T& x ) const
    {
-      unsigned long lParticularCharacter;
+      size_t lParticularCharacter;
       double dReturn = 0;
-      const unsigned long lLengthOfString = (unsigned long)x.length( );
+      const size_t lLengthOfString = (size_t)x.length( );
 
-      for ( unsigned long i=0; i<lLengthOfString; ++i )
+      for ( size_t i=0; i<lLengthOfString; ++i )
       {
          lParticularCharacter = static_cast<long> (x[i] );
          dReturn += ( lLengthOfString - i ) *
@@ -113,11 +113,11 @@ private:
    // signed char
    {  
        double sum = 0.0;
-       unsigned long i;
+       size_t i;
        const long lIncrement = ( direction>0 ? 1 : -1 );
 
-       std::valarray<unsigned long> cnts ( m_lMaxCharacter );
-       std::valarray<unsigned long> cntt ( m_lMaxCharacter );
+       std::valarray<size_t> cnts ( m_lMaxCharacter );
+       std::valarray<size_t> cntt ( m_lMaxCharacter );
        cnts = 0;
        cntt = 0;
 
@@ -125,8 +125,8 @@ private:
        long lptt = ( lIncrement < 1 ? (long)t.length( ) : -1L );
        long s_count = (long)s.length( ) + 1;
        long t_count = (long)t.length( ) + 1;
-       unsigned long s_char = 0;
-       unsigned long t_char = 0;
+       size_t s_char = 0;
+       size_t t_char = 0;
 
        //cout << endl << endl;
        //cout << " increment " << direction << endl;
@@ -142,12 +142,12 @@ private:
            //       << " \t" << s_count << " \t" << t_count << endl;
            if ( s_count > 0 )
            {
-               s_char = static_cast<unsigned long> ( s[lpts] );
+               s_char = static_cast<size_t> ( s[lpts] );
                cnts[s_char] += 1;
            }
            if ( t_count > 0)
            {
-               t_char = static_cast<unsigned long> ( t[lptt] );
+               t_char = static_cast<size_t> ( t[lptt] );
                cntt[t_char] += 1;
            }
            if ( ( s_count > 0 ) && ( t_count > 0 ) && 

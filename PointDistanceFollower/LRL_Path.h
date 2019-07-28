@@ -18,7 +18,7 @@ public:
 
    bool HasSecondPath(void) const { return !m_secondPath.empty(); }
 
-   unsigned long size() const { return (unsigned long)(m_path.size()); }
+   size_t size() const { return m_path.size(); }
 
    bool empty(void) const { return m_path.empty(); }
 
@@ -37,8 +37,8 @@ public:
       return *std::max_element(m_distances.begin(), m_distances.end());
    }
 
-   std::set<unsigned long> GetGlitches(void) const { return m_glitches; }
-   void SetGlitches(const std::set<unsigned long>& glitches) { m_glitches = glitches; }
+   std::set<size_t> GetGlitches(void) const { return m_glitches; }
+   void SetGlitches(const std::set<size_t>& glitches) { m_glitches = glitches; }
 
    bool HasGlitches(void) const { return !m_glitches.empty(); }
 
@@ -55,7 +55,7 @@ private:
    std::clock_t m_ComputeStartTime;
    double m_seconds2ComputerFrame;
    std::vector<double> m_distances;
-   std::set<unsigned long> m_glitches;
+   std::set<size_t> m_glitches;
 };
 
 

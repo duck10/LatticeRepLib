@@ -24,7 +24,7 @@
 #include <utility>
 #include <vector>
 
-unsigned long Delone::m_ReductionCycleCount;
+size_t Delone::m_ReductionCycleCount;
 
 bool Delone::IsReduced(const G6& v) {
    return IsReduced(v, 0.0);
@@ -110,8 +110,8 @@ std::vector<MatD7> Delone::GetD7Reflections() {
    std::vector<MatD7> r;
    if (r.empty()) {
       MatD7 m;
-      for (unsigned long i = 0; i < 24; ++i) {
-         for (unsigned long j = 0; j < 49; ++j) {
+      for (size_t i = 0; i < 24; ++i) {
+         for (size_t j = 0; j < 49; ++j) {
             m[j] = D7Refl[i][j];
          }
          r.push_back(m);
@@ -138,10 +138,10 @@ int Delone::GenMaxMinKey(const D7& d) {
    return key;
 }
 
-unsigned long Delone::FindRefl(const unsigned long key, const D7& random, std::set<unsigned long>& sr) {
+size_t Delone::FindRefl(const size_t key, const D7& random, std::set<size_t>& sr) {
    const static std::vector<MatD7> refl = GetD7Reflections();
-   unsigned long n = INT_MAX;
-   for (unsigned long i = 0; i < 24; ++i) {
+   size_t n = INT_MAX;
+   for (size_t i = 0; i < 24; ++i) {
       if (GenMaxMinKey(refl[i] * random) == 123) {
          sr.insert(key);
          n = i;
@@ -159,13 +159,13 @@ bool Delone::IsDelone(const D7& v, const double delta) {
 D7 Delone::sort(const D7& d, MatD7& m) {
    m = MatD7::Eye();
    const static std::vector<MatD7> refl = GetD7Reflections();
-   static std::set<unsigned long> sr;
-   static std::map<unsigned long, unsigned long> sm;
+   static std::set<size_t> sr;
+   static std::map<size_t, size_t> sm;
 
    D7 random(d);
-   unsigned long key = GenMaxMinKey(random);
+   size_t key = GenMaxMinKey(random);
    if (sr.find(key) == sr.end()) {
-      const unsigned long n = FindRefl(key, random, sr);
+      const size_t n = FindRefl(key, random, sr);
       sm.insert(std::make_pair(key, n));
       m = (m*refl[n]).Reduce();
       return refl[n] * random;
@@ -178,13 +178,13 @@ D7 Delone::sort(const D7& d, MatD7& m) {
 
 D7 Delone::sort(const D7& d) {
    const static std::vector<MatD7> refl = GetD7Reflections();
-   static std::set<unsigned long> sr;
-   static std::map<unsigned long, unsigned long> sm;
+   static std::set<size_t> sr;
+   static std::map<size_t, size_t> sm;
 
    D7 random(d);
-   unsigned long key = GenMaxMinKey(random);
+   size_t key = GenMaxMinKey(random);
    if (sr.find(key) == sr.end()) {
-      const unsigned long n = FindRefl(key, random, sr);
+      const size_t n = FindRefl(key, random, sr);
       sm.insert(std::make_pair(key, n));
       return refl[n] * random;
    }
@@ -200,7 +200,7 @@ std::vector<MatS6> Delone::LoadLatticeTypeProjectors() {
 
    if (!vDeloneTypes.empty()) return vDeloneTypes;
 
-   for ( unsigned long i=0; i< vLabledDeloneTypes.size(); ++i) {
+   for ( size_t i=0; i< vLabledDeloneTypes.size(); ++i) {
       vDeloneTypes.push_back(vLabledDeloneTypes[i].second);
    }
 

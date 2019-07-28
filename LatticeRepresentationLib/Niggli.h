@@ -64,11 +64,11 @@ public:
    }
 
    static std::string GetName() { return "Niggli"; }
-   static unsigned long GetCycles() { return m_ReductionCycleCount; }
+   static size_t GetCycles() { return m_ReductionCycleCount; }
 
 private:
    static void Reporter(const std::string& text, const G6& vin, const G6& vout, const MatG6& m);
-   static unsigned long m_ReductionCycleCount;
+   static size_t m_ReductionCycleCount;
 
    // at least for now, all functions are static, and there is no member data
    // forbid constructor

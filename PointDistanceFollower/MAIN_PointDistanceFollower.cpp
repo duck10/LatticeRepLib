@@ -50,7 +50,7 @@ std::vector<CellInputData> ReadAllLatticeData() {
    return celldata;
 }
 
-std::string NameOneFileForOneLattice(const unsigned long cellNumber) {
+std::string NameOneFileForOneLattice(const size_t cellNumber) {
    return
       LRL_ToString(LRL_CreateFileName::Create(FollowerConstants::globalFileNamePrefix, LRL_ToString(cellNumber) + "_",
          GLOBAL_Files::globalShouldTimeStamp));
@@ -74,7 +74,7 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
    S6 reduced1;
    S6 reduced2;
 
-   for (unsigned long step = 0; step<FollowerConstants::globalStepsPerFrame; ++step) {
+   for (size_t step = 0; step<FollowerConstants::globalStepsPerFrame; ++step) {
       const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
       const S6 nextMid = (1.0 - t)*midpoint + t * focus3;
       const S6 next1 = nextMid + delta1;
@@ -114,7 +114,7 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
 
    const bool bfocus = Selling::Reduce(focus3, reducedFocus);
 
-   for (unsigned long step = 1; step<FollowerConstants::globalStepsPerFrame+1; ++step) {
+   for (size_t step = 1; step<FollowerConstants::globalStepsPerFrame+1; ++step) {
       const double nonZeroStep = std::max(1.0E-3, double(step));
       const double t(nonZeroStep / (FollowerConstants::globalStepsPerFrame - 1));
 
@@ -140,7 +140,7 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
    S6 reduced;
    const bool b = Selling::Reduce(probe, reducedProbe);
    if (b) {
-      for (unsigned long step = 0; step < FollowerConstants::globalStepsPerFrame; ++step) {
+      for (size_t step = 0; step < FollowerConstants::globalStepsPerFrame; ++step) {
          const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
          S6 next = (1.0 - t)*probe + t * reducedProbe;
          if (!next.IsValid()) next = InvalidPoint();
@@ -151,7 +151,7 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
    return points;
 }
 
-MultiFollower ProcessOneLattice(const unsigned long inputCellOrdinal, const unsigned long plotCounter, const CellInputData& cell,
+MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plotCounter, const CellInputData& cell,
    const CellInputData& cell2, const CellInputData& cell3) {
    const std::string baseFileName = NameOneFileForOneLattice(inputCellOrdinal) + LRL_ToString(plotCounter);
 
@@ -190,7 +190,7 @@ MultiFollower ProcessOneLattice(const unsigned long inputCellOrdinal, const unsi
 
 template<typename T>
 void PrintPoints(const std::vector<std::pair<T,T> >& v) {
-   for (unsigned long i = 0; i<v.size(); ++i) {
+   for (size_t i = 0; i<v.size(); ++i) {
       std::cout << v[i].first << "   " << v[i].second << std::endl;
    }
    std::cout << std::endl;
@@ -198,20 +198,20 @@ void PrintPoints(const std::vector<std::pair<T,T> >& v) {
 
 template<typename T>
 void PrintPoints(const std::vector<T>& v) {
-   for (unsigned long i = 0; i<v.size(); ++i) {
+   for (size_t i = 0; i<v.size(); ++i) {
       std::cout << v[i] << std::endl;
    }
    std::cout << std::endl;
 }
 
-void GetCellsForChosenMode(const std::vector<CellInputData>& inputCellList, const unsigned long nextCell,
+void GetCellsForChosenMode(const std::vector<CellInputData>& inputCellList, const size_t nextCell,
    const FollowerConstants::enumFollowerMode& mode,
    CellInputData& cell1, CellInputData& cell2, CellInputData& cell3) {
 
-   unsigned long returnedNextCell = nextCell;
+   size_t returnedNextCell = nextCell;
 
-   const unsigned long secondCell = nextCell + 1;
-   const unsigned long thirdCell = secondCell + 1;
+   const size_t secondCell = nextCell + 1;
+   const size_t thirdCell = secondCell + 1;
 
    cell1.SetCell(LRL_Cell(0, 0, 0, 0, 0, 0));
    cell2.SetCell(LRL_Cell(0, 0, 0, 0, 0, 0));
@@ -230,7 +230,7 @@ void GetCellsForChosenMode(const std::vector<CellInputData>& inputCellList, cons
    }
 }
 
-void ProcessTrialsForOneLattice(const std::vector<CellInputData>& inputCellList, const unsigned long nextCell, const unsigned long cellcount,
+void ProcessTrialsForOneLattice(const std::vector<CellInputData>& inputCellList, const size_t nextCell, const size_t cellcount,
    const FollowerConstants::enumFollowerMode& mode,
    CellInputData& cell1, CellInputData& cell2, CellInputData& cell3) {
 
@@ -240,7 +240,7 @@ void ProcessTrialsForOneLattice(const std::vector<CellInputData>& inputCellList,
    CellInputData cell2Perturbed;
    CellInputData cell3Perturbed;
 
-   for (unsigned long trialNo = 0; trialNo < std::max(1UL, FollowerConstants::globalNumberOfTrialsToAttempt); ++trialNo) {
+   for (size_t trialNo = 0; trialNo < std::max(size_t(1), FollowerConstants::globalNumberOfTrialsToAttempt); ++trialNo) {
       cell1Perturbed.SetCell(ReadGlobalData::GeneratePerturbation(G6(cell1.GetCell())));
       cell2Perturbed.SetCell(ReadGlobalData::GeneratePerturbation(G6(cell2.GetCell())));
       cell3Perturbed.SetCell(ReadGlobalData::GeneratePerturbation(G6(cell3.GetCell())));
@@ -253,12 +253,12 @@ int main(int argc, char* argv[]) {
 
    std::vector<CellInputData> celldata = ReadAllLatticeData();;
 
-   unsigned long cellcount = 0;
+   size_t cellcount = 0;
    std::vector<CellInputData>::const_iterator it = celldata.begin();
    CellInputData cell1;
    CellInputData cell2;
    CellInputData cell3;
-   for (unsigned long i = 0; i < celldata.size(); ++i) {
+   for (size_t i = 0; i < celldata.size(); ++i) {
 
       // are we done with input?
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine &&

@@ -5,7 +5,6 @@ project(${PROJECT_NAME} CXX)
 # Header files
 ################################################################################
 set(HEADERS_FILES
-    Allman.h
     B4.h
     BasisBase.h
     C3.h
@@ -47,7 +46,6 @@ source_group("Headers" FILES ${HEADERS_FILES})
 # Source files
 ################################################################################
 set(SRC_FILES
-    Allman.cpp
     B4.cpp
     C3.cpp
     CellInputData.cpp

@@ -48,12 +48,12 @@ static std::string SmallValueFormat( const double value )
 {
    std::ostringstream oss;
    oss << std::setprecision(1) << std::scientific << value;
-   unsigned int ePos = (unsigned long)oss.str().find("e");
+   unsigned int ePos = oss.str().find("e");
    const std::string output(oss.str());
    const std::string mantissa = output.substr(0,ePos);
    std::string exponent = output.substr(ePos+1,output.length());
    unsigned int eZeroPos;
-   while (eZeroPos=(unsigned long)(exponent.find("0")), eZeroPos!=(unsigned long)(std::string::npos))
+   while (eZeroPos=exponent.find("0"), eZeroPos!=std::string::npos)
    {
       exponent.erase(eZeroPos,1);
    }

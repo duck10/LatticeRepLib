@@ -26,7 +26,7 @@ public:
       const std::vector<std::pair<std::string, std::string> > bounds = v.ClassifyVector(delta);
       std::string boundList;
       std::string subboundList;
-      for (unsigned long i = 0; i < bounds.size(); ++i) {
+      for (size_t i = 0; i < bounds.size(); ++i) {
          boundList += bounds[i].first + " ";
          subboundList += bounds[i].second + " ";
       }

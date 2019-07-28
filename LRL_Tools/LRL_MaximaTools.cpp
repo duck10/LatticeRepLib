@@ -37,7 +37,7 @@ std::string LRL_MaximaTools::MaximaFromString( const std::string& s ) {
    return "[" + s_out + "]";
 }
 
-const std::string LRL_MaximaTools::Retrieve_One_Matrix_Row( const unsigned long rowLength, const std::string& s ) {
+const std::string LRL_MaximaTools::Retrieve_One_Matrix_Row( const size_t rowLength, const std::string& s ) {
    unsigned int count = 0;
 
    std::string::const_iterator it = s.begin();
@@ -49,13 +49,13 @@ const std::string LRL_MaximaTools::Retrieve_One_Matrix_Row( const unsigned long 
    return std::string( s.begin( ), it );
 }
 
-std::string LRL_MaximaTools::MaximaFromString( const unsigned long rowLength, const std::string& s ) {
-   unsigned long pos = 0;
+std::string LRL_MaximaTools::MaximaFromString( const size_t rowLength, const std::string& s ) {
+   size_t pos = 0;
    std::string sFrag;
    while ( pos < s.length( ) ) {
       const std::string nextFrag = Retrieve_One_Matrix_Row( rowLength, s.substr( pos, s.length( ) ) );
       if (nextFrag != "\n" && nextFrag != " \n") sFrag += MaximaFromString( nextFrag );
-      pos += (unsigned long)(nextFrag.length( ));
+      pos += nextFrag.length( );
       const std::string remaining = s.substr( pos, s.length() );
       if (remaining.find_first_not_of(" ") != std::string::npos)
          if (remaining != "\n" && remaining != " \n")sFrag += ",";

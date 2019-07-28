@@ -128,12 +128,12 @@ int main( int argc, char* argv[] )
    //exit(0);
 
    std::vector<CellInputData> celldata = Startup();
-   unsigned long triangleCount = 0;
+   size_t triangleCount = 0;
    bool btemp;
    G6 v1;
    G6 v2;
    G6 v3;
-   const unsigned long trialsToAttempt = std::max( (unsigned long)(GlobalConstants::globalNumberOfTrialsToAttempt), (unsigned long)(celldata.size()));
+   const size_t trialsToAttempt = std::max( GlobalConstants::globalNumberOfTrialsToAttempt, celldata.size());
    GenerateRandomLattice<S6> grl(GLOBAL_RunInputVector::globalInputRandomSeed);
    while (triangleCount < trialsToAttempt) {
       ++triangleCount;
@@ -143,7 +143,7 @@ int main( int argc, char* argv[] )
       }
 
       if (3 * triangleCount <= celldata.size()) {
-         const unsigned long pos = 3 * triangleCount - 3;
+         const size_t pos = 3 * triangleCount - 3;
          const LRL_Cell cell1 = celldata[pos + 0].GetCell();
          const LRL_Cell cell2 = celldata[pos + 1].GetCell();
          const LRL_Cell cell3 = celldata[pos + 2].GetCell();

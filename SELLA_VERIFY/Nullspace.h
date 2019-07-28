@@ -7,15 +7,15 @@
 class Nullspace {
 public:
 
-   static void FillZeros(const S6& s6in, const double cirilepart, const std::vector<unsigned long>& vzeros);
-   static std::vector<unsigned long> FindQuartets(const S6& s6);
-   static void FindNonZeroTriplets(const S6& s6, std::vector<std::vector<unsigned long> >& triplets);
-   static std::vector<unsigned long> FindZeros(const S6& s6);
-   static std::vector<std::pair<unsigned long, unsigned long> > FindEqualNonZeroPairs(const S6& s6);
-   static int FindNullspace(const S6& s6, std::vector<unsigned long>&  quartets,
-       std::vector<std::vector<unsigned long> >& triplets,
-       std::vector<std::pair<unsigned long, unsigned long> >&  pairs,
-       std::vector<unsigned long>&  zeros);
+   static void FillZeros(const S6& s6in, const double circlepart, const std::vector<size_t>& vzeros);
+   static std::vector<size_t> FindQuartets(const S6& s6);
+   static void FindNonZeroTriplets(const S6& s6, std::vector<std::vector<size_t> >& triplets);
+   static std::vector<size_t> FindZeros(const S6& s6);
+   static std::vector<std::pair<size_t, size_t> > FindEqualNonZeroPairs(const S6& s6);
+   static int FindNullspace(const S6& s6, std::vector<size_t>&  quartets,
+       std::vector<std::vector<size_t> >& triplets,
+       std::vector<std::pair<size_t, size_t> >&  pairs,
+       std::vector<size_t>&  zeros);
    static S6 MakeCircle(const S6& s6, const Vector_3& v);
    static void Test_CenteredNullspace2And3(
       const std::string& deloneVariety,

@@ -51,11 +51,11 @@ public:
    bool operator== (const B4& b4) const;
    bool operator!= (const B4& b4) const;
 
-   Vector_3  operator[] (const unsigned long n) const;
-   Vector_3& operator[] (const unsigned long n);
+   Vector_3  operator[] (const size_t n) const;
+   Vector_3& operator[] (const size_t n);
 
    double DistanceBetween( const B4& v1, const B4& v2 );
-   unsigned long size(void) const { return 4; }
+   size_t size(void) const { return 4; }
    double norm(void) const;
    double norm(const B4& dt) const;
    double Norm() const { return norm(); }
@@ -70,7 +70,7 @@ public:
    bool GetValid(void) const { return m_valid; }
    void SetValid(const bool b) { m_valid = b; }
 
-   Vector_3 at(const unsigned long n) const { return m_vec[n]; }
+   Vector_3 at(const size_t n) const { return m_vec[n]; }
 
    static B4 rand();
    static B4 randDeloneReduced();

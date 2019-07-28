@@ -134,7 +134,7 @@ D7::D7(const std::vector<double>& v) {
 
 double D7::DistanceBetween( const D7& v1, const D7& v2 ) {
    double sum = 0.0;
-   for( unsigned long i=0; i<7; ++i )  sum += (v1[i]-v2[i])*(v1[i]-v2[i]);
+   for( size_t i=0; i<7; ++i )  sum += (v1[i]-v2[i])*(v1[i]-v2[i]);
    return sqrt( sum );
 }
 
@@ -214,13 +214,13 @@ D7& D7::operator*= (const double d) {
 }
 
 D7& D7::operator+= (const D7& d7) {
-   for (unsigned long i = 0; i < d7.size(); ++i)
+   for (size_t i = 0; i < d7.size(); ++i)
       m_vec[i] += d7.m_vec[i];
    return *this;
 }
 
 D7& D7::operator-= (const D7& d7) {
-   for (unsigned long i = 0; i < d7.size(); ++i)
+   for (size_t i = 0; i < d7.size(); ++i)
       m_vec[i] -= d7.m_vec[i];
    return *this;
 }
@@ -288,8 +288,8 @@ std::vector<std::pair<std::string, std::string> > D7::ClassifyVector(const doubl
    vbl.push_back(g_bl_D7.Case9());
    std::vector<std::pair<std::string, std::string> > vss;
 
-   const unsigned long blsize = g_bl_D7.size();
-   const unsigned long howbig = D7_BoundaryList::size();
+   const size_t blsize = g_bl_D7.size();
+   const size_t howbig = D7_BoundaryList::size();
    for (unsigned int ibl = 0; ibl < vbl.size(); ++ibl) {
       const double perpdist = (vbl[ibl].GetPerp() *(*this)).norm();
       const std::string casenum = vbl[ibl].GetName();
@@ -446,7 +446,7 @@ std::pair<int, std::string> D7::IdentifyNearbyBoundaries(const D7& v, const doub
 std::ostream& operator<< ( std::ostream& o, const D7& v ) {
    std::streamsize oldPrecision = o.precision();
    o << std::fixed <<std::setprecision(3);
-   for( unsigned long i=0; i<v.size( ); ++i )
+   for( size_t i=0; i<v.size( ); ++i )
       o << std::setw(9) << v[i] << " ";
    o << std::setprecision(oldPrecision);
    o.unsetf(std::ios::floatfield);
@@ -461,7 +461,7 @@ std::pair<std::string, std::string> D7::SummarizeBoundaries( const double delta)
    const std::vector<std::pair<std::string, std::string> > bounds = ClassifyVector(delta);
    std::string boundList;
    std::string subboundList;
-   for (unsigned long i = 0; i < bounds.size(); ++i) {
+   for (size_t i = 0; i < bounds.size(); ++i) {
       boundList += bounds[i].first + " ";
       subboundList += bounds[i].second + " ";
    }

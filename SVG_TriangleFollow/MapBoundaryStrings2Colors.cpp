@@ -10,7 +10,7 @@
 MapBoundaryStrings2Colors::MapBoundaryStrings2Colors(void)
    : m_colorAssignments( )
    , m_nextColorIndex( 0 )
-   , m_numberOfAssignableColors( (unsigned long)GlobalConstants::globalColorsForBoundaries.size() )
+   , m_numberOfAssignableColors( GlobalConstants::globalColorsForBoundaries.size() )
 /*-------------------------------------------------------------------------------------*/
 {
 }

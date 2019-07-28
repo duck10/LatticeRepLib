@@ -29,9 +29,9 @@ namespace {
    double GlobalConstants::globalFractionToDetermineCloseToBoundary = 0.065;
    double GlobalConstants::globalMovieMaxDistRejectionTest          = 0.1;
    
-   unsigned long GlobalConstants::globalFramesPerSegment        = 200;
-   unsigned long GlobalConstants::globalStepsPerFrame           = 100;
-   unsigned long GlobalConstants::globalNumberOfTrialsToAttempt = 20;  // applies when not in movie generation
+   size_t GlobalConstants::globalFramesPerSegment        = 200;
+   size_t GlobalConstants::globalStepsPerFrame           = 100;
+   size_t GlobalConstants::globalNumberOfTrialsToAttempt = 20;  // applies when not in movie generation
    bool GlobalConstants::globalPlotAllSegmentsAsBlack  = false;
 
    std::vector<std::string> GlobalConstants::globalColorsForBoundaries = std::vector<std::string>( BASIC_COLORS, BASIC_COLORS + sizeof(BASIC_COLORS)/sizeof(BASIC_COLORS[0]) );
@@ -62,5 +62,5 @@ namespace {
    bool GLOBAL_RunInputVector::globalConstantRandomSeed = false;
    int GLOBAL_RunInputVector::globalInputRandomSeed = 19;
 
-   unsigned long GLOBAL_FileNames::globalCounter = 0;
+   size_t GLOBAL_FileNames::globalCounter = 0;
    bool GLOBAL_FileNames::globalShouldTimeStamp = true;

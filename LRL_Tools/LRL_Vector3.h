@@ -282,18 +282,18 @@ static Vector_3 GetCenterOfMass( const ContainerType& lv )
     // Description: access function for the components of a vector
     //
     /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-    inline double operator[] ( const int& i ) const
+    inline double operator[] ( const size_t i ) const
     //-------------------------------------------------------------------------------------
     {
-        int n = ( i<0 ) ? 0 : i;
+       size_t n = ( i<0 ) ? 0 : i;
         if( i > 2 ) n = 2;
         return (v[n]);
     }
 
-    inline double& operator[] ( const int& i )
+    inline double& operator[] ( const size_t i )
     //-------------------------------------------------------------------------------------
     {
-        int n = ( i<0 ) ? 0 : i;
+       size_t n = ( i<0 ) ? 0 : i;
         if( i > 2 ) n = 2;
         return (v[n]);
     }
@@ -303,10 +303,10 @@ static Vector_3 GetCenterOfMass( const ContainerType& lv )
     // Description: access function for the components of a vector
     //
     /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-    inline double at ( const int& i ) const
+    inline double at ( const size_t i ) const
     //-------------------------------------------------------------------------------------
     {
-        int n = ( i<0 ) ? 0 : i;
+       size_t n = ( i<0 ) ? 0 : i;
         if( i > 2 ) n = 2;
         return (v[n]);
     }

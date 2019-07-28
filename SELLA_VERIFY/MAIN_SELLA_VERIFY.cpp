@@ -40,7 +40,7 @@ std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeD
    LatticeConverter converter;
 
 
-   for (unsigned long i = 0; i < input.size(); ++i) {
+   for (size_t i = 0; i < input.size(); ++i) {
       const LRL_ReadLatticeData& rcd = input[i];
       const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell());
       v.push_back(s6);
@@ -54,7 +54,7 @@ GenerateRandomLattice<S6> generator(seed);
 
 S6 GenerateRandomUnitSphereAtOrigin(const double radius) {
    S6 s6;
-   for (unsigned long i = 0; i < 6; ++i) {
+   for (size_t i = 0; i < 6; ++i) {
       s6[i] = 2.0 * rhrand.urand() - 1.0;
    }
    return s6 / s6.norm();
@@ -74,14 +74,14 @@ S6 ScaleAndThenPerturbByPercent(const S6& s6, const double scale, const double p
 
 void SellaLineTest(const S6& s6) {
    const S6 delta = generator.randSellingReduced();
-   const unsigned long nsteps = 100;
+   const size_t nsteps = 100;
    S6 step = 2.0 * delta / (nsteps - 1);
    step /= step.norm();
    S6 stepper = s6 + step * nsteps / 2;
    Sella sella;
    std::vector<std::vector<std::pair<std::string, double> >  > fits;
 
-   for (unsigned long i = 0; i < nsteps; ++i) {
+   for (size_t i = 0; i < nsteps; ++i) {
       S6 reducedStepper;
       const bool b = Selling::Reduce(stepper, reducedStepper);
       reducedStepper = s6.norm() * reducedStepper / reducedStepper.norm();
@@ -90,11 +90,11 @@ void SellaLineTest(const S6& s6) {
       fits.push_back(out);
 
       if (i == 0) {
-         for (unsigned long k = 0; k < out.size(); ++k) {
+         for (size_t k = 0; k < out.size(); ++k) {
             std::cout << out[k].first << " ";
          }
       }
-      for (unsigned long k = 0; k < out.size(); ++k) {
+      for (size_t k = 0; k < out.size(); ++k) {
          std::cout << out[k].second << " ";
       }
       std::cout << std::endl;
@@ -107,7 +107,7 @@ StoreResults<std::string, S6> storeProblems(10);
 std::vector<S6> GenerateOrthorhombicTestCells(const std::string& type) {
    Sella sella;
    std::vector<S6> v;
-   unsigned long iy, iz;
+   size_t iy, iz;
    const double x0 = 10.0;
    const double y0 = 0.1;
    const double z0 = 0.1;
@@ -190,7 +190,7 @@ StoreResults<std::string, std::string> store_cF(1000);
 //}
 
 std::string Trim(const std::string type) {
-   for (unsigned long i = 0; i < type.size(); ++i) {
+   for (size_t i = 0; i < type.size(); ++i) {
       if (type[i] == ' ') return type.substr(0, i);
    }
    return type;
@@ -201,9 +201,9 @@ void ParseArgs(const int argc, char* argv[], std::vector<std::string>& sRet, std
 //---------------------------------------------------------------------
 {
    sRet.clear();
-   for (unsigned long i = 1; int(i) < argc; ++i) {
+   for (size_t i = 1; int(i) < argc; ++i) {
       std::string s(argv[i]);
-	  for (unsigned long k = 0; k < s.length(); ++k)
+	  for (size_t k = 0; k < s.length(); ++k)
 		  s[k] = static_cast<char>(toupper(s[k]));
       sRet.push_back(s);
    }
@@ -255,11 +255,11 @@ int main(int argc, char* argv[])
    //s6.push_back(S6("0 0 1 3 1 1"));
    //s6.push_back(S6("1 1 2 2 3 3"));
    //s6.push_back(S6("3 3 3 1 1 0"));
-   //for (unsigned long i = 0; i < s6.size(); ++i) {
-   //   std::vector<std::pair<unsigned long, unsigned long> >  pairs;
-   //   std::vector<std::vector<unsigned long> > triplets;
-   //   std::vector<unsigned long>  quartets;
-   //   std::vector<unsigned long>  zeros;
+   //for (size_t i = 0; i < s6.size(); ++i) {
+   //   std::vector<std::pair<size_t, size_t> >  pairs;
+   //   std::vector<std::vector<size_t> > triplets;
+   //   std::vector<size_t>  quartets;
+   //   std::vector<size_t>  zeros;
 
 
    //   Nullspace::FindNullspace(s6[i], quartets, triplets, pairs, zeros);

@@ -92,9 +92,6 @@
     <ClCompile Include="LRL_Cell_Degrees.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Allman.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ColorTables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -233,9 +230,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="V7Dist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Allman.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NullOps.h">

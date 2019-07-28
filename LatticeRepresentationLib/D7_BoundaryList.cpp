@@ -26,7 +26,7 @@ D7_Boundary D7_BoundaryList::GetBoundary(const std::string& name) {
 
 int D7_BoundaryList::GetBoundaryIndex(const std::string& nameIn) {
    int nreturn = -1;
-   const unsigned long found = (unsigned long)(nameIn.find('.'));
+   const size_t found = nameIn.find('.');
    const std::string name = (found == std::string::npos) ? nameIn : nameIn.substr(0, found);
    if (nameIn.find("."))
       for (unsigned int i = 0; i < D7_BoundaryList::size(); ++i) {
@@ -447,7 +447,7 @@ D7_BoundaryList::D7_BoundaryList()
 
 
    //std::cout << "Outward Pointing Normals" << std::endl;
-   //for (unsigned long i = 0; i < (*this).size(); ++i) {
+   //for (size_t i = 0; i < (*this).size(); ++i) {
    //   const D7 d7 = m_boundaries[i].GetExternalNormalUnitVector();
    //   std::cout << m_boundaries[i].GetName() << "   " << d7 << std::endl;
    //}

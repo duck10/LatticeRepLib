@@ -52,13 +52,13 @@ public:
    static std::vector<MatS6> LoadLatticeTypeProjectors();
    static std::vector<std::pair<std::string, MatS6> > LoadLabeledLatticeTypeProjectors();
    static std::string GetName() { return "Delone"; }
-   static unsigned long GetCycles() { return m_ReductionCycleCount; }
+   static size_t GetCycles() { return m_ReductionCycleCount; }
 
 private:
    static int GenMaxMinKey(const D7& d);
-   static unsigned long FindRefl(const unsigned long key, const D7& random, std::set<unsigned long>& sr);
+   static size_t FindRefl(const size_t key, const D7& random, std::set<size_t>& sr);
    static std::vector<std::pair<std::string, MatS6> > PrivateLoadLabeledLatticeTypeProjectors();
-   static unsigned long m_ReductionCycleCount;
+   static size_t m_ReductionCycleCount;
 };
 
 #endif   //  DELAUNAY_H

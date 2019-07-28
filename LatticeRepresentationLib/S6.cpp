@@ -172,7 +172,7 @@ S6::S6(const std::string& s)
 S6::S6(const std::vector<double>& v)
    : S6()
 {
-   m_dim = (unsigned long)(v.size());
+   m_dim = v.size();
    if (m_dim != 6) throw "bad dimension in D7 from a string";
    m_vec = v;
 }
@@ -195,7 +195,7 @@ bool S6::IsValid(const S6& s6)const {
 }
 
 bool S6::IsValid(void) const {
-   const unsigned long nPositive = CountPositive(*this);
+   const size_t nPositive = CountPositive(*this);
    if (nPositive > 4) return false;
    if (CountZeros() > 3) return false;
    const double& p = (*this)[0];
@@ -218,15 +218,15 @@ bool S6::IsValid(void) const {
       std::abs(g6*g6 / g1 / g2) <= 4.0;
 }
 
-unsigned long S6::CountZeros(void) const {
-   unsigned long sum = 0;
-   for (unsigned long i = 0; i < 6; ++i) sum += ((*this)[i] == 0.0) ? 1 : 0;
+size_t S6::CountZeros(void) const {
+   size_t sum = 0;
+   for (size_t i = 0; i < 6; ++i) sum += ((*this)[i] == 0.0) ? 1 : 0;
    return sum;
 }
 
 double S6::DistanceBetween( const S6& v1, const S6& v2 ) {
    double sum = 0.0;
-   for( unsigned long i=0; i<6; ++i )  sum += (v1[i]-v2[i])*(v1[i]-v2[i]);
+   for( size_t i=0; i<6; ++i )  sum += (v1[i]-v2[i])*(v1[i]-v2[i]);
    return sqrt( sum );
 }
 
@@ -273,19 +273,19 @@ S6& S6::operator= (const LRL_Cell& v) {
 
 S6 S6::operator- (void) const {
    S6 s6;
-   for (unsigned long i = 0; i < 6; ++i)
+   for (size_t i = 0; i < 6; ++i)
       s6.m_vec[i] = -m_vec[i];
    return s6; // unary
 }
 
 S6& S6::operator+= (const S6& s6) {
-   for (unsigned long i = 0; i < s6.size(); ++i)
+   for (size_t i = 0; i < s6.size(); ++i)
       m_vec[i] += s6.m_vec[i];
    return *this;
 }
 
 S6& S6::operator-= (const S6& s6) {
-   for (unsigned long i = 0; i < s6.size(); ++i)
+   for (size_t i = 0; i < s6.size(); ++i)
       m_vec[i] -= s6.m_vec[i];
    return *this;
 }
@@ -310,21 +310,21 @@ S6& S6::operator*= (const double d) {
 
 S6 S6::operator* (const double d) const {
    S6 dt(*this);
-   for (unsigned long i = 0; i < 6; ++i)
+   for (size_t i = 0; i < 6; ++i)
       dt[i] *= d;
    return dt;
 }
 
 S6 S6::operator/ (const double d) const {
    S6 dt(*this);
-   for (unsigned long i = 0; i < 6; ++i)
+   for (size_t i = 0; i < 6; ++i)
       dt[i] /= d;
    return dt;
 }
 
 S6 S6::operator+ (const S6& ds) const {
    S6 v;
-   for (unsigned long i = 0; i < 6; ++i)
+   for (size_t i = 0; i < 6; ++i)
       v[i] = (*this)[i] + ds[i];
    return v;
 }
@@ -343,7 +343,7 @@ S6 S6::operator- (const S6& v) const {
 std::ostream& operator<< (std::ostream& o, const S6& dc) {
    std::streamsize oldPrecision = o.precision();
    o << std::fixed << std::setprecision(5);
-   for( unsigned long i = 0; i < dc.size(); ++i)
+   for( size_t i = 0; i < dc.size(); ++i)
       o << std::setw(9) << dc[i] << " ";
    o << std::setprecision(oldPrecision);
    o.unsetf(std::ios::floatfield);
@@ -355,25 +355,25 @@ S6 operator* (const double d, const S6& ds) { // friend
 }
 
 bool S6::IsAllMinus() const {
-   for (unsigned long i = 0; i < 6; ++i)
+   for (size_t i = 0; i < 6; ++i)
       if (m_vec[i] > 0.0) return false;
    return true;
 }
 
-S6 S6::InvertCoord(const unsigned long n, const S6& din) {
+S6 S6::InvertCoord(const size_t n, const S6& din) {
    S6 temp(din);
    temp[n] = -temp[n];
    return temp;
 }
 
-S6 S6::InvertCoord(const unsigned long n) const {
+S6 S6::InvertCoord(const size_t n) const {
    S6 temp(*this);
    temp[n] = -temp[n];
    return temp;
 }
 std::string S6::Signature(const S6& s6) {
    std::string s;
-   for (unsigned long i = 0; i < 6; ++i) {
+   for (size_t i = 0; i < 6; ++i) {
       s.push_back((s6[i] <= 0.0) ? '-' : '+');
       if (i == 2) s.push_back(',');
    }
@@ -397,7 +397,7 @@ S6 S6::rand(const double d) {
 
 S6 S6::randDeloneReduced(const double d) {
    S6 s6;
-   for (unsigned long i = 0; i < 6; ++i)
+   for (size_t i = 0; i < 6; ++i)
       s6[i] = -rhrandS6.urand()*randomLatticeNormalizationConstantSquared;
    s6.m_valid = true;
    return s6;
@@ -409,13 +409,13 @@ S6 S6::randDeloneUnreduced(const double d) {
    return s6;
 }
 
-unsigned long S6::CountPositive(const S6& s6) {
-   unsigned long sum = 0;
-   for (unsigned long i = 0; i < 6; ++i) sum += (s6[i] > 0.0) ? 1 : 0;
+size_t S6::CountPositive(const S6& s6) {
+   size_t sum = 0;
+   for (size_t i = 0; i < 6; ++i) sum += (s6[i] > 0.0) ? 1 : 0;
    return sum;
 }
 
-unsigned long S6::CountPositive(void) const {
+size_t S6::CountPositive(void) const {
    return CountPositive(*this);
 }
 

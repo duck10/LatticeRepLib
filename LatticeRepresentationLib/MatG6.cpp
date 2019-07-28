@@ -31,7 +31,7 @@ MatG6::MatG6(const MatS6& m)
    : MatG6()
 {
    MatMN mnS6(6,6);
-   for (unsigned long i = 0; i < m.size(); ++i) mnS6[i] = m[i];
+   for (size_t i = 0; i < m.size(); ++i) mnS6[i] = m[i];
    MatMN mn = LRL_CoordinateConversionMatrices::G6_FROM_S6 * mnS6 * LRL_CoordinateConversionMatrices::S6_FROM_G6;
    m_mat.SetVector(mn.GetVector());
 }
@@ -40,7 +40,7 @@ MatG6::MatG6(const MatD7& m)
    : MatG6()
 {
    MatMN mnD7(7, 7);
-   for (unsigned long i = 0; i < m.size(); ++i) mnD7[i] = m[i];
+   for (size_t i = 0; i < m.size(); ++i) mnD7[i] = m[i];
    MatMN mn = LRL_CoordinateConversionMatrices::G6_FROM_D7 * mnD7 * LRL_CoordinateConversionMatrices::D7_FROM_G6;
    m_mat.SetVector(mn.GetVector());
 }
@@ -58,9 +58,9 @@ MatG6::MatG6(const MatMN& m)
    : m_mat(m.GetDim())
 {
    if (m.GetColDim() != m.GetRowDim()) throw;
-   const unsigned long n = m.GetRowDim();
+   const size_t n = m.GetRowDim();
    m_mat.resize(n*n);
-   for (unsigned long i = 0; i < n; ++i) m_mat[i] = m[i];
+   for (size_t i = 0; i < n; ++i) m_mat[i] = m[i];
    m_mat.SetDim(n*n);
    m_mat.SetRowDim(n);
 }
@@ -75,7 +75,7 @@ MatG6::MatG6(const std::string& s)
 MatG6::MatG6(const std::vector<double>& v)
    : MatG6()
 {
-   for (unsigned long i = 0; i < 36; ++i) {
+   for (size_t i = 0; i < 36; ++i) {
       m_mat[i] = v[i];
    }
 }
@@ -105,17 +105,17 @@ MatG6& MatG6::operator= (const MatD7& m) {
 }
 
 MatG6& MatG6::operator+= (const MatG6& d) {
-   for (unsigned long i = 0; i < 36; ++i) m_mat[i] += d[i];
+   for (size_t i = 0; i < 36; ++i) m_mat[i] += d[i];
    return *this;
 }
 
 MatG6& MatG6::operator-= (const MatG6& d) {
-   for (unsigned long i = 0; i < 36; ++i) m_mat[i] -= d[i];
+   for (size_t i = 0; i < 36; ++i) m_mat[i] -= d[i];
    return *this;
 }
 
 bool MatG6::operator== (const MatG6& m) const {
-   for (unsigned long i = 0; i < 36; ++i) if (m_mat[i] != m[i]) return false;
+   for (size_t i = 0; i < 36; ++i) if (m_mat[i] != m[i]) return false;
    return true;
 }
 
@@ -124,12 +124,12 @@ bool MatG6::operator!= (const MatG6& m) const {
 }
 
 MatG6& MatG6::operator/= (const double d) {
-   for (unsigned long i = 0; i < 36; ++i) m_mat[i] /= d;
+   for (size_t i = 0; i < 36; ++i) m_mat[i] /= d;
    return *this;
 }
 
 MatG6& MatG6::operator*= (const double d) {
-   for (unsigned long i = 0; i < 36; ++i) m_mat[i] *= d;
+   for (size_t i = 0; i < 36; ++i) m_mat[i] *= d;
    return *this;
 }
 
@@ -157,13 +157,13 @@ MatG6 MatG6::operator* (const MatG6& m2) const {
 
 MatG6 MatG6::operator* (const double d) const {
    MatG6 m(*this);
-   for (unsigned long i = 0; i < 36; ++i) m.m_mat[i] *= d;
+   for (size_t i = 0; i < 36; ++i) m.m_mat[i] *= d;
    return m;
 }
 
 MatG6 MatG6::operator/ (const double d) const {
    MatG6 m(*this);
-   for (unsigned long i = 0; i < 36; ++i) m.m_mat[i] /= d;
+   for (size_t i = 0; i < 36; ++i) m.m_mat[i] /= d;
    return m;
 }
 
@@ -182,11 +182,11 @@ G6 MatG6::operator* (const G6& v) const {
 }
 
 
-double MatG6::operator[] (const unsigned long n) const {
+double MatG6::operator[] (const size_t n) const {
    return m_mat[n];
 }
 
-double& MatG6::operator[] (const unsigned long n) {
+double& MatG6::operator[] (const size_t n) {
    return m_mat[n];
 }
 
@@ -195,13 +195,13 @@ double MatG6::DistanceBetween(const MatG6& v1, const MatG6& v2) {
    return ((v1 - v2).norm());
 }
 
-unsigned long MatG6::size(void) const {
+size_t MatG6::size(void) const {
    return 36;
 }
 
 double MatG6::norm() const {
    double sum = 0.0;
-   for (unsigned long i = 0; i < 36; ++i) sum += m_mat[i] * m_mat[i];
+   for (size_t i = 0; i < 36; ++i) sum += m_mat[i] * m_mat[i];
    return sqrt(sum);
 }
 
@@ -219,7 +219,7 @@ double MatG6::Norm(const MatG6& t) const {
 
 bool MatG6::IsUnit() const {
    long row = -1;
-   for (unsigned long i = 0; i < 36; ++i) {
+   for (size_t i = 0; i < 36; ++i) {
       long column = i % 6;
       if (column == 0) ++row;
       if (column == row && m_mat[i] != 1.0) return false;
@@ -230,16 +230,16 @@ bool MatG6::IsUnit() const {
 
 MatG6 MatG6::Eye(void) {
    MatG6 m;
-   for (unsigned long i = 0; i < 36; ++i)
+   for (size_t i = 0; i < 36; ++i)
       m.m_mat[i] = 0.0;
-   for (unsigned long i = 0; i < 36; i += 7)
+   for (size_t i = 0; i < 36; i += 7)
       m.m_mat[i] = 1.0;
    return m;
 }
 
 MatG6 MatG6::Zero(void) {
    MatG6 m;
-   for (unsigned long i = 0; i < 36; ++i)
+   for (size_t i = 0; i < 36; ++i)
       m[i] = 0.0;
    return m;
 }
@@ -273,24 +273,24 @@ void MatG6::transpose(void) {
 }
 
 
-double MatG6::at(const unsigned long n) const {
+double MatG6::at(const size_t n) const {
    return m_mat[n];
 }
 
 MatG6 MatG6::unit(void) {
    m_mat.resize(36);
-   for (unsigned long i = 0; i < 36; ++i)
+   for (size_t i = 0; i < 36; ++i)
       m_mat[i] = 0.0;
-   for (unsigned long i = 0; i < 36; i += 6 + 1)
+   for (size_t i = 0; i < 36; i += 6 + 1)
       m_mat[i] = 1.0;
    return *this;
 }
 
 MatG6 MatG6::unit(const MatG6& min) {
    MatG6 m(min);
-   for (unsigned long i = 0; i < 36; ++i)
+   for (size_t i = 0; i < 36; ++i)
       m.m_mat[i] = 0.0;
-   for (unsigned long i = 0; i < 36; i += 6 + 1)
+   for (size_t i = 0; i < 36; i += 6 + 1)
       m.m_mat[i] = 1.0;
    return m;
 }
@@ -306,7 +306,7 @@ void MatG6::ReplaceTwosInRows7x7(MatG6& m) {
    throw;
 }
 
-MatG6  MatG6::GetReflection(const unsigned long n) {
+MatG6  MatG6::GetReflection(const size_t n) {
    if (vG6_Refl.empty()) GetReflections();
    return vG6_Refl[n];
 }

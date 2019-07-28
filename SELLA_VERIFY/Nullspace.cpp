@@ -10,12 +10,12 @@
 #include "Sella.h"
 
 
-void Nullspace::FillZeros(const S6& s6in, const double cirilepart, const std::vector<unsigned long>& vzeros ) {
+void Nullspace::FillZeros(const S6& s6in, const double circlepart, const std::vector<size_t>& vzeros ) {
    S6 s6(s6in);
 }
 
-std::vector<unsigned long> Nullspace::FindQuartets(const S6& s6) {
-   unsigned long i, k;
+std::vector<size_t> Nullspace::FindQuartets(const S6& s6) {
+   size_t i, k;
    double vi;
    bool foundQuartet = false;
    for (i = 0; i < 3; ++i) {
@@ -31,7 +31,7 @@ std::vector<unsigned long> Nullspace::FindQuartets(const S6& s6) {
       if (foundQuartet) break;
    }
 
-   std::vector<unsigned long> vout;
+   std::vector<size_t> vout;
    if (foundQuartet) {
       for (i = 0; i < 6; ++i) {
          if (vi == s6[i]) vout.push_back(i);
@@ -42,9 +42,9 @@ std::vector<unsigned long> Nullspace::FindQuartets(const S6& s6) {
    return vout;
 }
 
-void Nullspace::FindNonZeroTriplets(const S6& s6, std::vector<std::vector<unsigned long> >& triplets) {
+void Nullspace::FindNonZeroTriplets(const S6& s6, std::vector<std::vector<size_t> >& triplets) {
    int count = 0;
-   unsigned long i, k;
+   size_t i, k;
    double vi= -DBL_MAX;
    for (i = 0; i < 3; ++i) {
       for (k = i + 1; k < 6; ++k) {
@@ -56,7 +56,7 @@ void Nullspace::FindNonZeroTriplets(const S6& s6, std::vector<std::vector<unsign
       }
    }
 
-   std::vector<unsigned long> vout;
+   std::vector<size_t> vout;
    for (i = 0; i < 6; ++i) {
       if (vi == s6[i]) vout.push_back(i);
    }
@@ -64,32 +64,32 @@ void Nullspace::FindNonZeroTriplets(const S6& s6, std::vector<std::vector<unsign
    if (vout.size() == 3) {
       triplets.push_back(vout);
       S6 temp(s6);
-      for (unsigned long kk = 0; kk < vout.size(); ++kk) temp[vout[kk]] = 19191UL + kk + temp.norm();
+      for (size_t kk = 0; kk < vout.size(); ++kk) temp[vout[kk]] = 19191UL + kk + temp.norm();
       FindNonZeroTriplets(temp, triplets);
    }
 }
 
 
-std::vector<unsigned long> Nullspace::FindZeros(const S6& s6) {
-   std::vector<unsigned long> v;
-   for (unsigned long i = 0; i < 6; ++i)
+std::vector<size_t> Nullspace::FindZeros(const S6& s6) {
+   std::vector<size_t> v;
+   for (size_t i = 0; i < 6; ++i)
       if (abs(s6[i]) < 1.0E-10) v.push_back(i);
    return v;
 }
 
-std::vector<std::pair<unsigned long,unsigned long> > Nullspace::FindEqualNonZeroPairs(const S6& s6) {
-   std::vector<std::pair<unsigned long, unsigned long> > v;
-   for (unsigned long i = 0; i < 5; ++i)
-      for (unsigned long k = i + 1; k < 6; ++k)
+std::vector<std::pair<size_t,size_t> > Nullspace::FindEqualNonZeroPairs(const S6& s6) {
+   std::vector<std::pair<size_t, size_t> > v;
+   for (size_t i = 0; i < 5; ++i)
+      for (size_t k = i + 1; k < 6; ++k)
          if ( abs(s6[i]) > 1.0E-10 && abs(s6[i] -s6[k]) < 1.0E-6) v.push_back(std::make_pair(i,k));
    return v;
 }
 
 
-int Nullspace::FindNullspace(const S6& s6, std::vector<unsigned long>&  quartets,
-   std::vector<std::vector<unsigned long> >& triplets,
-   std::vector<std::pair<unsigned long, unsigned long> >&  pairs,
-   std::vector<unsigned long>&  zeros) {
+int Nullspace::FindNullspace(const S6& s6, std::vector<size_t>&  quartets,
+   std::vector<std::vector<size_t> >& triplets,
+   std::vector<std::pair<size_t, size_t> >&  pairs,
+   std::vector<size_t>&  zeros) {
    quartets = FindQuartets(s6);
    if (quartets.empty()) {
       FindNonZeroTriplets(s6, triplets);
@@ -102,29 +102,29 @@ int Nullspace::FindNullspace(const S6& s6, std::vector<unsigned long>&  quartets
 }
 
 S6 Nullspace::MakeCircle( const S6& s6, const Vector_3& v) {
-   std::vector<unsigned long>  quartets;
-   std::vector<std::vector<unsigned long> > triplets;
-   std::vector<std::pair<unsigned long, unsigned long> >  pairs;
-   std::vector<unsigned long>  zeros;
+   std::vector<size_t>  quartets;
+   std::vector<std::vector<size_t> > triplets;
+   std::vector<std::pair<size_t, size_t> >  pairs;
+   std::vector<size_t>  zeros;
 
    FindNullspace(s6, quartets, triplets, pairs, zeros);
-   unsigned long vpos = 0;
+   size_t vpos = 0;
    S6 circle("0 0 0  0 0 0");
-   for (unsigned long i = 0; i < zeros.size(); ++i) {
+   for (size_t i = 0; i < zeros.size(); ++i) {
       circle[zeros[i]] = v[vpos];
       ++vpos;
    }
 
-   for (unsigned long i = 0; i < pairs.size(); ++i) {
+   for (size_t i = 0; i < pairs.size(); ++i) {
       circle[pairs[i].first] = v[vpos]/2.0;
       circle[pairs[i].second] = -v[vpos]/2.0;
       ++vpos;
    }
 
    // NOTE: triplets only occur for R lattices, and there can be one triplet or one plus zeros or for H and then one plus two zeros
-   // rquires 4-D input if there are twog
+   // rquires 4-D input if there are two
    vpos = 0;
-   for (unsigned long i = 0; i < triplets.size(); ++i) {
+   for (size_t i = 0; i < triplets.size(); ++i) {
       circle[triplets[i][0]] = v[0 + vpos] / 3.0;
       circle[triplets[i][1]] = v[1 + vpos] / 3.0;
       circle[triplets[i][2]] = -(v[0 + vpos] + v[1 + vpos]) / 3.0;
@@ -132,7 +132,7 @@ S6 Nullspace::MakeCircle( const S6& s6, const Vector_3& v) {
    }
 
    // quartets only occur for O1A (primitive cell) and T2, and then only one is possible
-   for (unsigned long i = 0; i < quartets.size(); ++i) {
+   for (size_t i = 0; i < quartets.size(); ++i) {
       circle[quartets[0]] = v[0] / 4.0;
       circle[quartets[1]] = v[1] / 4.0;
       circle[quartets[2]] = v[2] / 4.0;
@@ -143,10 +143,10 @@ S6 Nullspace::MakeCircle( const S6& s6, const Vector_3& v) {
 }
 
 int Nullspace::GetNullspaceDimension(const S6& s6) {
-   std::vector<unsigned long>  quartets;
-   std::vector<std::vector<unsigned long> > triplets;
-   std::vector<std::pair<unsigned long, unsigned long> >  pairs;
-   std::vector<unsigned long>  zeros;
+   std::vector<size_t>  quartets;
+   std::vector<std::vector<size_t> > triplets;
+   std::vector<std::pair<size_t, size_t> >  pairs;
+   std::vector<size_t>  zeros;
    const int dimension = FindNullspace(s6, quartets, triplets, pairs, zeros);
    return dimension;
 }

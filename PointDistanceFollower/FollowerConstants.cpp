@@ -23,8 +23,8 @@ namespace {
    double FollowerConstants::globalPercentChangeToDetect                = 3.0; // GLITCH DETECTION LEVEL - percent of deltas in either of the top two histogram bins
    double FollowerConstants::globalFractionToDetermineCloseToBoundary = 0.065;
    
-   unsigned long FollowerConstants::globalStepsPerFrame           = 100;
-   unsigned long FollowerConstants::globalNumberOfTrialsToAttempt = 20;  // applies when not in movie generation
+   size_t FollowerConstants::globalStepsPerFrame           = 100;
+   size_t FollowerConstants::globalNumberOfTrialsToAttempt = 20;  // applies when not in movie generation
    bool FollowerConstants::globalPlotAllSegmentsAsBlack  = true;
 
    std::string FollowerConstants::globalFileNamePrefix   = "Fol";
@@ -47,5 +47,5 @@ namespace {
 
    bool GLOBAL_RunInputVector::globalConstantRandomSeed = false;
    int GLOBAL_RunInputVector::globalInputRandomSeed = 19191;
-   unsigned long GLOBAL_Files::globalCounter = 0;
+   size_t GLOBAL_Files::globalCounter = 0;
    bool GLOBAL_Files::globalShouldTimeStamp = true;

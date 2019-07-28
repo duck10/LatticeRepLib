@@ -62,7 +62,7 @@ G6::G6(const LRL_Cell& c) {
    m_vec[3] = 2.0 * c[1] * c[2] * cos(c[3]);
    m_vec[4] = 2.0 * c[0] * c[2] * cos(c[4]);
    m_vec[5] = 2.0 * c[0] * c[1] * cos(c[5]);
-   for (unsigned long i = 3; i<6; ++i) if (std::fabs(m_vec[i]) < 1.0E-10) m_vec[i] = 0.0;
+   for (size_t i = 3; i<6; ++i) if (std::fabs(m_vec[i]) < 1.0E-10) m_vec[i] = 0.0;
 
    bool b1 = c.GetValid();
    bool b2 = c[3] < pi;
@@ -157,14 +157,14 @@ G6::G6(const D7& v7) {
 G6::G6(const std::string& s) {
    m_vec.resize(6);
    m_vec = LRL_StringTools::FromString(s);
-   m_dim = (unsigned long)(m_vec.size());
+   m_dim = m_vec.size();
    m_valid = true;
    if (m_dim != 6) throw "bad dimension in G6 from a string";
 }
 
 G6::G6(const std::vector<double>& v) {
    m_vec.resize(6);
-   m_dim = (unsigned long)(v.size());
+   m_dim = v.size();
    if (m_dim != 6) throw "bad dimension in G6 from a vector";
    m_vec = v;
    m_valid = true;
@@ -172,7 +172,7 @@ G6::G6(const std::vector<double>& v) {
 
 double G6::DistanceBetween(const G6& v1, const G6& v2) {
    double sum = 0.0;
-   for (unsigned long i = 0; i < 6; ++i)  sum += (v1[i] - v2[i])*(v1[i] - v2[i]);
+   for (size_t i = 0; i < 6; ++i)  sum += (v1[i] - v2[i])*(v1[i] - v2[i]);
    return sqrt(sum);
 }
 
@@ -253,13 +253,13 @@ G6 G6::operator- (void) const {
 }
 
 G6& G6::operator+= (const G6& g6) {
-   for (unsigned long i = 0; i < g6.size(); ++i)
+   for (size_t i = 0; i < g6.size(); ++i)
       m_vec[i] += g6.m_vec[i];
    return *this;
 }
 
 G6& G6::operator-= (const G6& g6) {
-   for (unsigned long i = 0; i < g6.size(); ++i)
+   for (size_t i = 0; i < g6.size(); ++i)
       m_vec[i] -= g6.m_vec[i];
    return *this;
 }
@@ -729,7 +729,7 @@ bool G6::TestBoundaryDetection(void) {
 std::ostream& operator<< (std::ostream& o, const G6& v) {
    std::streamsize oldPrecision = o.precision();
    o << std::fixed << std::setprecision(3);
-   for (unsigned long i = 0; i < v.size(); ++i)
+   for (size_t i = 0; i < v.size(); ++i)
       o << std::setw(9) << v[i] << " ";
    o << std::setprecision(oldPrecision);
    o.unsetf(std::ios::floatfield);

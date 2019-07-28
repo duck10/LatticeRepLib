@@ -41,65 +41,13 @@ std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeD
    LatticeConverter converter;
 
 
-   for ( unsigned long i=0; i<input.size(); ++i ) {
+   for ( size_t i=0; i<input.size(); ++i ) {
       const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell());
       v.push_back(s6);
    }
    return v;
 }
 
-int seed = 19192;
-GenerateRandomLattice<S6> generator(seed);
-
-S6 GenerateRandomUnitSphereAtOrigin(const double radius) {
-   S6 s6;
-   for (unsigned long i = 0; i < 6; ++i) {
-      s6[i] = 2.0 * rhrand.urand() - 1.0;
-   }
-   return s6 / s6.norm();
-}
-
-S6 ScaleAndThenPerturbByPercent( const S6& s6, const double scale, const double percent) {
-   const S6 master = scale * s6 / s6.norm();
-   const S6 ran = GenerateRandomUnitSphereAtOrigin(percent/100.0);
-   const S6 scaledRandom = scale * percent / 100.0 * ran / ran.norm();
-
-   const double n1 = master.norm();
-   const double n2 = scaledRandom.norm();
-   const double n3 = (master + scaledRandom).norm();
-   const S6 result = master + scaledRandom;
-   return result;
-}
-
-void SellaLineTest(const S6& s6) {
-   const S6 delta = generator.randSellingReduced();
-   const unsigned long nsteps = 100;
-   S6 step = 2.0 * delta / (nsteps - 1);
-   step /= step.norm();
-   S6 stepper = s6 + step * nsteps/2;
-   Sella sella;
-   std::vector<std::vector<std::pair<std::string, double> >  > fits;
-
-   for (unsigned long i = 0; i < nsteps; ++i) {
-      S6 reducedStepper;
-      const bool b = Selling::Reduce(stepper, reducedStepper);
-      reducedStepper = s6.norm() * reducedStepper / reducedStepper.norm();
-      const std::vector<std::pair<std::string, double> > out = sella.GetVectorOfFits(reducedStepper);
-      stepper -= step;
-      fits.push_back(out);
-
-      if (i == 0) {
-         for (unsigned long k = 0; k < out.size(); ++k) {
-            std::cout << out[k].first << " ";
-         }
-      }
-      for (unsigned long k = 0; k < out.size(); ++k) {
-         std::cout << out[k].second << " ";
-      }
-      std::cout << std::endl;
-   }
-   std::cout << fits.size() << std::endl;
-}
 
 S6 ReduceLatticeType( const std::string& type, const S6& s6) {
    const static    LatticeConverter converter;
@@ -108,96 +56,12 @@ S6 ReduceLatticeType( const std::string& type, const S6& s6) {
 
 StoreResults<std::string, S6> storeProblems(10);
 
-std::vector<S6> GenerateOrthorhombicTestCells(const std::string& type) {
-   Sella sella;
-   std::vector<S6> v;
-   unsigned long iy, iz;
-   const double x0 = 10.0;
-   const double y0 = 0.1;
-   const double z0 = 0.1;
-   const double ydel = 1.3;
-   const double zdel = 1.3;
-
-   double y, z;
-
-   for (iy = 0; iy < 40; ++iy) {
-      y = y0 + iy * ydel;
-      for (iz = 0; iz < 40; ++iz) {
-         z = z0 + iz * zdel;
-         const LRL_Cell cell(x0, y, z, 90, 90, 90);
-         const S6 s6(cell);
-         const S6 red = ReduceLatticeType(type, s6);
-         const std::pair<std::string, double> best = sella.GetBestFitForCrystalSystem("O", red);
-         const int i19191 = 19191;
-         storeProblems.Store(best.first, red);
-
-
-
-      }
-   }
-   storeProblems.ShowResults();
-   exit(0);
-}
-
 StoreResults<std::string, std::string> store_cP(1000);
 StoreResults<std::string, std::string> store_cI(1000);
 StoreResults<std::string, std::string> store_cF(1000);
 
-void GenerateCubicTest() {
-   S6 s6;
-   Sella sella;
-
-   std::vector<S6> v;
-   long iy, iz;
-   const double x0 = 0.0;
-   const double ydel = 1.0;
-   const double zdel = 1.0;
-   const double y0 = -2*ydel;
-   const double z0 = -2*zdel;
-
-   s6[0] = 0.0;
-   double& y = s6[1];
-   double& z = s6[2];
-   s6[3] = -100.0;
-   s6[4] = -100.0;
-   s6[5] = -100.0;
-
-   const double range = 40;
-   int rowcount = 0;
-   int colcount = 0;
-   for (iy = (long)(-ydel); iy < range; iy += (long)(ydel)) {
-      y = y0 + (double)(iy) + ydel;
-      colcount = 0;
-      ++rowcount;
-      for (iz = (long)(-zdel); iz < range; iz += (long)(zdel)) {
-         z = z0 + (double)(iz) + zdel;
-
-         const S6 redP = ReduceLatticeType("p", s6);
-         const S6 redI = ReduceLatticeType("i", s6);
-         const S6 redF = ReduceLatticeType("f", s6);
-         const double bestP = sella.GetFitForDeloneType("C5", redP);
-         const double bestI = sella.GetFitForDeloneType("C1", redI);
-         const double bestF = sella.GetFitForDeloneType("C3", redF);
-         std::cout << bestP << " ";
-         //std::cout << iy << " " << iz << "  " << bestP << "   " <<  s6 << "    "<< redP << std::endl;
-
- /*        store_cP.Store("C1",  LRL_ToString( " ", bestP, "   ", redP));
-         store_cI.Store("C3",  LRL_ToString( " ", bestI, "   ", redI));
-         store_cF.Store("C5",  LRL_ToString( " ", bestF, "   ", redF));*/
-
-
-      }
-      std::cout << std::endl;
-   }
-   //store_cP.ShowResults();
-   //store_cI.ShowResults();
-   //store_cF.ShowResults();
-   exit(0);
-
-}
-
 std::string Trim(const std::string type) {
-   for ( unsigned long i=0; i<type.size(); ++i ) {
+   for ( size_t i=0; i<type.size(); ++i ) {
       if (type[i] == ' ') return type.substr(0, i);
    }
    return type;
@@ -223,7 +87,7 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    Sella sella;
 
    const std::vector<std::string>& typelist = DeloneTypeList::typelist;
-   for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
+   for (size_t lat = 0; lat < vLat.size(); ++lat) {
       const std::string strCell = input[lat].GetStrCell();
       //if (strCell[0] == 'A' || strCell[0] == 'a') continue;
       //const std::string xtalSystem = std::string(1, strCell[strCell.length() - 1]);
@@ -256,7 +120,7 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    exit(0);
 }
 
-void ReportFit1( const unsigned long i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
+void ReportFit1( const size_t i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
    std::cout << i << "  " << type.GetName( ) << "  " << std::get<double>( fit ) << "     " << type.GetCharacter( ) <<
       std::endl << "input  " << std::get<S6>( fit ) << std::endl << std::get<MatS6>( fit ) << std::endl;
    std::cout << "result  " << std::get<MatS6>( fit ) * std::get<S6>( fit ) << std::endl;
@@ -265,7 +129,7 @@ void ReportFit1( const unsigned long i, const DeloneType& type, const std::tuple
    std::cout << "centered cell  " << LRL_Cell_Degrees( type.GetToCentered( ) * std::get<MatS6>( fit ) * std::get<S6>( fit ) ) << std::endl << std::endl;
 }
 
-void ReportFit2( const unsigned long i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
+void ReportFit2( const size_t i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
    std::cout << "  "
       << type.GetName( )
       << "  "
@@ -277,8 +141,8 @@ void ReportFit2( const unsigned long i, const DeloneType& type, const std::tuple
       << std::endl;
 }
 
-void ReportFit( const unsigned long n, const DeloneTypeList& types, const std::vector<std::tuple<double, S6, MatS6> >& fit ) {
-   for ( unsigned long i=0; i<fit.size(); ++i )
+void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<std::tuple<double, S6, MatS6> >& fit ) {
+   for ( size_t i=0; i<fit.size(); ++i )
       ReportFit2( i, types[i], fit[i] );
 }
 
@@ -291,7 +155,7 @@ int main()
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
 
-   for (unsigned long lat = 0; lat < vLat.size(); ++lat) {
+   for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::cout << "input  " << input[lat].GetStrCell() << "    (" << S6(input[lat].GetCell()) <<")" << std::endl;
       //const std::vector<std::tuple<double, S6, MatS6> >  v = DeloneTypeList::Fit( "T", vLat[lat] );
       const std::vector<std::tuple<double, S6, MatS6> >  v = deloneList.Fit( vLat[lat] );

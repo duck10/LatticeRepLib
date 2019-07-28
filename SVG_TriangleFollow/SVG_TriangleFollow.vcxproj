@@ -67,7 +67,7 @@
     <ProjectGuid>{5721FE52-2363-49C4-AAFB-A57825CBD5A6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SVG_TriangleFollow</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

@@ -114,9 +114,9 @@ private:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   std::string ScaleToGraph( const unsigned long n, const unsigned long totalItemCount ) const {
-      const unsigned long placement = (unsigned long)( SVG_WriterConstants::globalGraphBorder +
-         n  * (unsigned long)( SVG_WriterConstants::globalGraphSpace / double( totalItemCount ) ) );
+   std::string ScaleToGraph( const size_t n, const size_t totalItemCount ) const {
+      const size_t placement = (size_t)( SVG_WriterConstants::globalGraphBorder +
+         n  * (size_t)( SVG_WriterConstants::globalGraphSpace / double( totalItemCount ) ) );
       return(LRL_ToString( placement ));
    }
 
