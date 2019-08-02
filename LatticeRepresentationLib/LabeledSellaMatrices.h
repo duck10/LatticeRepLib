@@ -17,7 +17,7 @@ public:
 
    static std::vector<LabeledSellaMatrices> CreateAllPerps();
    static std::vector<LabeledSellaMatrices> CreateAllPrjs();
-
+   static std::vector<LabeledSellaMatrices> CreateAllToCanon( );
    std::string GetLabel() const { return m_label; }
 
    std::vector<MatS6>  GetMatrices() const { return m_vector; }
@@ -26,6 +26,11 @@ public:
 
    static const std::vector<LabeledSellaMatrices> projectors;
    static const std::vector<LabeledSellaMatrices> perps;
+   static const std::vector<LabeledSellaMatrices> toCanons;
+
+   std::vector<LabeledSellaMatrices> GetPerps( ) const { return perps; }
+   std::vector<LabeledSellaMatrices> GetPrjs( ) const { return projectors; }
+   std::vector<LabeledSellaMatrices> GetToCanons( ) const { return toCanons; }
 
    static LabeledSellaMatrices CreatePerps_A1();
    static LabeledSellaMatrices CreatePerps_A2();
@@ -77,6 +82,30 @@ public:
    static LabeledSellaMatrices CreatePrjs_R1();
    static LabeledSellaMatrices CreatePrjs_R3();
 
+   static LabeledSellaMatrices CreateToCanon_A1( );
+   static LabeledSellaMatrices CreateToCanon_A2( );
+   static LabeledSellaMatrices CreateToCanon_A3( );
+   static LabeledSellaMatrices CreateToCanon_C1( );
+   static LabeledSellaMatrices CreateToCanon_C3( );
+   static LabeledSellaMatrices CreateToCanon_C5( );
+   static LabeledSellaMatrices CreateToCanon_H4( );
+   static LabeledSellaMatrices CreateToCanon_M1A( );
+   static LabeledSellaMatrices CreateToCanon_M1B( );
+   static LabeledSellaMatrices CreateToCanon_M2A( );
+   static LabeledSellaMatrices CreateToCanon_M2B( );
+   static LabeledSellaMatrices CreateToCanon_M3( );
+   static LabeledSellaMatrices CreateToCanon_M4( );
+   static LabeledSellaMatrices CreateToCanon_O1A( );
+   static LabeledSellaMatrices CreateToCanon_O1B( );
+   static LabeledSellaMatrices CreateToCanon_O2( );
+   static LabeledSellaMatrices CreateToCanon_O3( );
+   static LabeledSellaMatrices CreateToCanon_O4( );
+   static LabeledSellaMatrices CreateToCanon_O5( );
+   static LabeledSellaMatrices CreateToCanon_R1( );
+   static LabeledSellaMatrices CreateToCanon_R3( );
+   static LabeledSellaMatrices CreateToCanon_T1( );
+   static LabeledSellaMatrices CreateToCanon_T2( );
+   static LabeledSellaMatrices CreateToCanon_T5( );
 private:
 
    std::string m_label;

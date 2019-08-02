@@ -214,9 +214,9 @@ void SellaTwoLatticeLineTest(const S6& s1, const S6& s2) {
 int main()
 {
    DeloneTypeList();
-   //SellaBuild sellaBuild;
+   SellaBuild sellaBuild;
    //sellaBuild.Build();
-   exit(0);
+   //exit(0);
 
    //TestLatticeCentering();
 
@@ -228,7 +228,7 @@ int main()
    //   std::vector<std::pair<std::string, double> > out;
    //   std::vector<double> sum(24, 0.0);
    //   std::vector<double> sumsq(24, 0.0);
-   //   std::vector<double> maxDist(24, -DBL_MAX);
+   //   std::vector<doublpdbe> maxDist(24, -DBL_MAX);
 
    //   double sign = 1.0;
    //   for (size_t k = 0; k < n; ++k) {

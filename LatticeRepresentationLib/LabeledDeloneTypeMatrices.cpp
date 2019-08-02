@@ -131,8 +131,11 @@ void LabeledDeloneTypeMatrices::DoPerps(const std::vector<LabeledDeloneTypeMatri
 }
 
 void LabeledDeloneTypeMatrices::DoPrjs(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   for (size_t i = 0; i < matsForAllDeloneTypes.size(); ++i) {
-      WriteSellaMatrices("Prj", matsForAllDeloneTypes[i].m_label, matsForAllDeloneTypes[i].m_perps);
+   for (size_t i = 0; i < matsForAllDeloneTypes.size( ); ++i) {
+      WriteSellaMatrices( "Prj", matsForAllDeloneTypes[i].m_label, matsForAllDeloneTypes[i].m_perps );
+   }
+   for (size_t i = 0; i < matsForAllDeloneTypes.size( ); ++i) {
+      std::cout << matsForAllDeloneTypes[i].GetLabel( ) << "   " << matsForAllDeloneTypes[i].size( ) << std::endl;;
    }
 }
 

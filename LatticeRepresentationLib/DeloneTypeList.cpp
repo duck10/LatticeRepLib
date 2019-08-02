@@ -108,68 +108,101 @@ std::vector<std::pair<std::string, std::string> > CreateE3CenteringMatrixList() 
 }
 
 std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPrjs() {
-   std::vector<LabeledSellaMatrices> vprj = LabeledSellaMatrices::CreateAllPrjs();
+   LabeledSellaMatrices lsm;
+   std::vector<LabeledSellaMatrices> vprj = lsm.GetPrjs();
    std::vector<std::pair< std::string, std::vector<MatS6> > > v;
    for (size_t i = 0; i < vprj.size(); ++i) {
       v.push_back(std::make_pair(vprj[i].GetLabel(), vprj[i].GetMatrices()));
-   }return v;
-}
-
-std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPerps() {
-   std::vector<LabeledSellaMatrices> vperp = LabeledSellaMatrices::CreateAllPerps();
-   std::vector<std::pair< std::string, std::vector<MatS6> > > v;
-   for (size_t i = 0; i < vperp.size(); ++i) {
-      v.push_back(std::make_pair(vperp[i].GetLabel(), vperp[i].GetMatrices()));
-   }return v;
-}
-
-std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllToCanaon() {
-   SellaBuild sb;
-   const std::vector<LabeledDeloneTypeMatrices>   sbmap = sb.Build();
-   std::vector<std::pair< std::string, std::vector<MatS6> > > v;
-
-   for (std::vector<LabeledDeloneTypeMatrices>::const_iterator it= sbmap.begin(); it!= sbmap.end(); ++it ) {
-      LabeledDeloneTypeMatrices ldtm = *it;
-      const std::string label = ldtm.GetLabel();
-      v.push_back(std::make_pair(label, ldtm.GetTocanon(label)));
    }
    return v;
 }
 
-DeloneTypeList::DeloneTypeList()
+std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPerps() {
+   LabeledSellaMatrices lsm;
+   std::vector<LabeledSellaMatrices> vperp = lsm.GetPerps();
+   std::vector<std::pair< std::string, std::vector<MatS6> > > v;
+   for (size_t i = 0; i < vperp.size(); ++i) {
+      v.push_back(std::make_pair(vperp[i].GetLabel(), vperp[i].GetMatrices()));
+   }
+   return v;
+}
+
+std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllToCanon() {
+   LabeledSellaMatrices lsm;
+   std::vector<LabeledSellaMatrices> vToCanon = lsm.GetToCanons( );
+   std::vector<std::pair< std::string, std::vector<MatS6> > > v;
+   for (size_t i = 0; i < vToCanon.size( ); ++i) {
+      v.push_back( std::make_pair( vToCanon[i].GetLabel( ), vToCanon[i].GetMatrices( ) ) );
+   }
+   return v;
+}
+
+DeloneTypeList::DeloneTypeList(const bool build)
 {
-   static const std::vector<std::pair<std::string, std::string> > characters = CreateCharacterList();
-   static const std::vector<std::pair<std::string, std::string> > e3matrices = CreateE3CenteringMatrixList();
-   static const std::vector<std::pair<std::string, std::string> > bravaisLatticeTypes = CreateBravaisTypeList();
-   static const std::vector<std::pair<std::string, MatS6> >       centeringMatrices = CreateListOfCenteringMatrices();
+   static const std::vector<std::pair<std::string, std::string> > characters = CreateCharacterList( );
+   static const std::vector<std::pair<std::string, std::string> > e3matrices = CreateE3CenteringMatrixList( );
+   static const std::vector<std::pair<std::string, std::string> > bravaisLatticeTypes = CreateBravaisTypeList( );
+   static const std::vector<std::pair<std::string, MatS6> >       centeringMatrices = CreateListOfCenteringMatrices( );
 
-   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   prj = CreateAllPrjs();
-   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   perp = CreateAllPerps();
-   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   toCanon = CreateAllToCanaon();
+   LabeledSellaMatrices lsm;
+   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   prj = CreateAllPrjs( );
+   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   perp = CreateAllPerps( );
+   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   toCanon = CreateAllToCanon( );
 
-   static std::vector<std::pair<std::string,MatricesForOneDeloneType> > matrices;
-   if (matrices.empty()) {
-      for (size_t i = 0; i < typelist.size(); ++i) {
-         matrices.push_back(
-            std::make_pair(typelist[i],
-            MatricesForOneDeloneType(
-            Getter(typelist[i], prj),
-            Getter(typelist[i], perp),
-            Getter(typelist[i], toCanon))));
+   static std::vector<std::pair<std::string, MatricesForOneDeloneType> > matrices;
+
+   if (build) {
+      if (matrices.empty( )) {
+         for (size_t i = 0; i < typelist.size( ); ++i) {
+            matrices.push_back(
+               std::make_pair( typelist[i],
+                  MatricesForOneDeloneType(
+                     Getter( typelist[i], prj ),
+                     Getter( typelist[i], perp ),
+                     Getter( typelist[i], toCanon ) ) ) );
+         }
       }
    }
 
-   for (size_t i=0; i< typelist.size(); ++i ) {
-      const DeloneType dt(typelist[i],
-         Getter(typelist[i], bravaisLatticeTypes),
-         Getter(typelist[i], characters),
-         Getter(typelist[i], e3matrices),
-         Getter(typelist[i], centeringMatrices),
-         Getter(typelist[i], matrices));
+   for (size_t i = 0; i < typelist.size( ); ++i) {
+      const DeloneType dt( typelist[i],
+         Getter( typelist[i], bravaisLatticeTypes ),
+         Getter( typelist[i], characters ),
+         Getter( typelist[i], e3matrices ),
+         Getter( typelist[i], centeringMatrices ),
+         Getter( typelist[i], matrices ) );
 
-      m_deloneTypes.push_back(dt);
+      m_deloneTypes.push_back( dt );
          //std::cout << dt << std::endl;
    }
+   //else {
+   //   for (size_t i = 0; i < typelist.size( ); ++i) {
+   //      //const DeloneType dt( typelist[i],
+   //      //   Getter( typelist[i], bravaisLatticeTypes ),
+   //      //   Getter( typelist[i], characters ),
+   //      //   Getter( typelist[i], e3matrices ),
+   //      //   Getter( typelist[i], centeringMatrices ),
+   //      //   Getter( typelist[i], matrices ) );
+   //      //-------------------------------------
+   //      ////std::string m_deloneName;
+   //      ////std::string m_bravaisType;
+   //      ////std::string m_character;
+   //      ////std::string m_toCentered_E3;
+   //      ////MatS6       m_toCentered_S6;
+
+   //      ////MatricesForOneDeloneType m_matrices;
+   //      //-------------------------------------
+   //      Getter( typelist[i], bravaisLatticeTypes );
+   //      const DeloneType dt( typelist[i], );
+   //      Getter( typelist[i], characters );
+   //      Getter( typelist[i], e3matrices );
+   //      Getter( typelist[i], centeringMatrices );
+   //         Getter( typelist[i], matrices );
+
+   //      m_deloneTypes.push_back( dt );
+   //         //std::cout << dt << std::endl;
+   //   }
+   //}
 }
 
 std::vector<double> DeloneTypeList::Make3dVector( const std::string& s) {

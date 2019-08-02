@@ -21,7 +21,7 @@ auto Getter(const std::string& s, const R& r) {
 
 class DeloneTypeList {
 public:
-   DeloneTypeList();
+   DeloneTypeList(const bool build=true);
 
    DeloneType operator[] (const std::string& s) const;
    DeloneType operator[] (const size_t n) const;
