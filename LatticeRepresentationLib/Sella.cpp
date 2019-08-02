@@ -15,8 +15,6 @@
 #include <cfloat>
 
 
-const std::vector<LabeledSellaMatrices> Sella::projectors = LabeledSellaMatrices::CreateAllPrjs();
-const std::vector<LabeledSellaMatrices> Sella::perps = LabeledSellaMatrices::CreateAllPerps();
 std::vector <DeloneType> Sella::m_latticeCharacters;
 
 Sella::Sella()
@@ -25,11 +23,6 @@ Sella::Sella()
    DeloneType dt;
    std::string label;
    label = "C1";
-   //dt = DeloneType(label, "cI", "rrr rrr", DeloneTypeList::CreateCenteringMatrix("C1", "0 1 1  1 0 1  1 1 0"));
-   //dt.InsertMatricesForDeloneType(label);
-   //m_latticeCharacters.push_back(dt);
-
-
 }
 
 static int seed = 19191;
@@ -60,9 +53,9 @@ std::vector<std::pair<std::string, double> > Sella::GetVectorOfFits(const S6& s6
    if (b) {
       const double n1 = s6.norm();
       const double n2 = out.norm();
-      for (size_t i = 0; i < perps.size(); ++i) {
-         const std::string label = perps[i].GetLabel();
-         const double best = TestOneType(label, out, perps[i].GetMatrices());
+      for (size_t i = 0; i < LabeledSellaMatrices::perps.size(); ++i) {
+         const std::string label = LabeledSellaMatrices::perps[i].GetLabel();
+         const double best = TestOneType(label, out, LabeledSellaMatrices::perps[i].GetMatrices());
          v.push_back(std::make_pair(label, best));
       }
    }
@@ -75,10 +68,10 @@ std::pair<std::string, double>  Sella::GetBestFitForCrystalSystem(const std::str
    double bestFit = DBL_MAX;
    const char crystSystem = (LRL_StringTools::strToupper(type))[0];
 
-   for (size_t i = 0; i < perps.size(); ++i) {
-      const std::string currentLabel = perps[i].GetLabel();
+   for (size_t i = 0; i < LabeledSellaMatrices::perps.size(); ++i) {
+      const std::string currentLabel = LabeledSellaMatrices::perps[i].GetLabel();
       if (crystSystem == currentLabel[0]) {
-         const std::vector<MatS6> mats = perps[i].GetMatrices();
+         const std::vector<MatS6> mats = LabeledSellaMatrices::perps[i].GetMatrices();
          for (size_t mv = 0; mv < mats.size(); ++mv) {
             const S6 projected = mats[mv] * s6;
             //std::cout << s6 << std::endl;
@@ -100,10 +93,10 @@ std::pair<std::string, double>  Sella::GetBestFitForCrystalSystem(const std::str
 double Sella::GetFitForDeloneType(const std::string& type, const S6& s6) {
    double bestFit = DBL_MAX;
 
-   for (size_t i = 0; i < perps.size(); ++i) {
-      const std::string currentLabel = perps[i].GetLabel();
+   for (size_t i = 0; i < LabeledSellaMatrices::perps.size(); ++i) {
+      const std::string currentLabel = LabeledSellaMatrices::perps[i].GetLabel();
       if (type == currentLabel) {
-         const std::vector<MatS6> mats = perps[i].GetMatrices();
+         const std::vector<MatS6> mats = LabeledSellaMatrices::perps[i].GetMatrices();
          for (size_t mv = 0; mv < mats.size(); ++mv) {
             const double fit = (mats[mv] * s6).norm();
             bestFit = std::min(fit, bestFit);

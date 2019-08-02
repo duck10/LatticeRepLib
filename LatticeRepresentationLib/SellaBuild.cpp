@@ -27,17 +27,17 @@ std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
       //for (size_t i = 2; i < 3; ++i) {  // to show only C5
       Expand(vDeloneTypes[i].first, vDeloneTypes[i].second, transformations);
    }
-   //debugstore.ShowTableOfKeysVersusCount();
+   store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
-   //debugstd::cout << std::endl << std::endl << "after ProcessItemStoreToVectorMap, the map " << themap.size() << std::endl;
-   //debugfor (std::map<std::string, std::vector<S6_Ordinals> >::const_iterator ita = themap.begin(); ita != themap.end(); ++ita) std::cout << (*ita).first << "  " << (*ita).second.size() << std::endl;
+   std::cout << std::endl << std::endl << "after ProcessItemStoreToVectorMap, the map " << themap.size() << std::endl;
+   for (std::map<std::string, std::vector<S6_Ordinals> >::const_iterator ita = themap.begin(); ita != themap.end(); ++ita) std::cout << (*ita).first << "  " << (*ita).second.size() << std::endl;
    LabeledDeloneTypeMatrices lsm2;
    const std::vector<LabeledDeloneTypeMatrices> vtypes = lsm2.ProcessVectorMapToPerpsAndProjectors(themap);
-   //debuglsm2.WriteSellaMatrices(vtypes);
+   lsm2.WriteSellaMatrices(vtypes);
    return vtypes;
-   //std::cout << std::endl << std::endl << "after ProcessVectorMapToPerpsAndProjectors, the vperps " << perps.size() << std::endl;
-   //for (std::vector<LabeledSellaMatrices>::const_iterator ita = perps.begin(); ita != perps.end(); ++ita) std::cout << (*ita).GetLabel() << "  " << (*ita).size() << std::endl;
-   //store.ShowResults();
+   std::cout << std::endl << std::endl << "after ProcessVectorMapToPerpsAndProjectors, the vperps " << perps.size() << std::endl;
+   for (std::vector<LabeledSellaMatrices>::const_iterator ita = perps.begin(); ita != perps.end(); ++ita) std::cout << (*ita).GetLabel() << "  " << (*ita).size() << std::endl;
+   store.ShowResults();
 }
 
 static int seed = 19191;
