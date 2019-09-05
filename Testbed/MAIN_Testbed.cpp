@@ -126,20 +126,13 @@ void ExpandBoundaries_MV( ) {
 
    const Scaler_MV scale( v1[0] );
 
-   std::string success;
    for (size_t k = 0; k < v1.size( ); ++k) {
       for (size_t i = 0; i < redc.size( ); ++i) {
-         //std::cout << "p  " << LRL_Cell_Degrees(redc[i].first * v1[k]) << std::endl;
          const S6 scaled = scale.Scale( redc[i].first * v1[k] );
          const MV_Pair scaled_MV( scaled, Inverse(redc[i].first) );
          if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
             mvtree.insert( scaled_MV );
-            success = "succeed ";
-         } else {
-            success = "failed ";
          }
-         std::cout << std::endl << success + "k,i " << k << "  " << i << "  " << std::endl;
-         std::cout << "redc[i].first * s " << scaled_MV.GetS6( ) << std::endl;
       }
    }
 }
@@ -148,16 +141,6 @@ void Expand( const S6& s ) {
    ExpandReflections_MV( s );
    ExpandBoundaries_MV( );
    mvtree;
-}
-
-std::vector<S6> MakeListAllSameLength( const std::vector<S6>& vin) {
-   const double d = vin[0].norm( );
-   std::vector<S6> v;
-
-   for (size_t i = 0; i < vin.size( ); ++i)
-      v.push_back( d / vin[i].norm( ) * vin[i] );
-   return vin;
-   return v;
 }
 
 std::vector<S6>  GetReducedInput() {
@@ -177,17 +160,15 @@ int main( int argc, char* argv[] )
    Expand( vLat[0] );
    Scaler_MV scaler( vLat[0] );
 
-   for ( size_t i=0; i<mvtree.size(); ++i ) 
-      std::cout << mvtree[i].GetS6() << "      " << LRL_Cell_Degrees( mvtree[i].GetS6( )) << std::endl;
+   //for ( size_t i=0; i<mvtree.size(); ++i ) 
+   //   std::cout << mvtree[i].GetS6() << "      " << LRL_Cell_Degrees( mvtree[i].GetS6( )) << std::endl;
 
-   std::cout << "the closest match" << std::endl;
+   std::cout << std::endl << "the closest match" << std::endl;
    static const MatS6 constMatS6 = MatS6();
    for (size_t i = 0; i < vLat.size( ); ++i){
       CNearTree<MV_Pair>::iterator it_MV = mvtree.NearestNeighbor(100000., MV_Pair(vLat[i], constMatS6));
-      const S6 test = (*it_MV).GetS6( );
-      //std::cout << i << "  " << (vLat[i] - (*it_MV).GetS6( )).norm( ) << std::endl;
-      std::cout << i << "  " << (scaler.Scale( vLat[i] ) - (*it_MV).GetS6( )).norm( ) << 
-         "  " << LRL_Cell_Degrees((*it_MV).GetMatS6() *  vLat[i] ) << std::endl;
+      std::cout << "index " << it_MV.get_position( ) << "   " << i << "  " << (scaler.Scale( vLat[i] ) - (*it_MV).GetS6( )).norm( ) << 
+         "      " << LRL_Cell_Degrees((*it_MV).GetMatS6() *  vLat[i] ) << std::endl;
    }
 
    return 0;
