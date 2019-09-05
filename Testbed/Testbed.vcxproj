@@ -154,6 +154,10 @@
       <Project>{bf25d7aa-648c-48d2-b857-d383faf1e215}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\LRL_Tools\TNear.h" />
+    <ClInclude Include="..\LRL_Tools\triple.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

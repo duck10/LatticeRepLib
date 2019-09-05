@@ -454,7 +454,7 @@ std::vector<std::pair<MatS6, MatS6> > S6::SetUnreductionMatrices() {
    std::vector<std::pair<MatS6, MatS6> > vUnRed;
 
    // For unreducing scalar 11
-   vUnRed.push_back(std::make_pair(MatS6(" -1 0 0 0 0 0    1 1 0 0 0 0    1 0 0 0 1 0 -1 0 0 1 0 0    1 0 1 0 0 0    1 0 0 0 0 1"),
+   vUnRed.push_back(std::make_pair(MatS6(" -1 0 0 0 0 0    1 1 0 0 0 0    1 0 0 0 1 0    -1 0 0 1 0 0    1 0 1 0 0 0    1 0 0 0 0 1"),
 
       // For unreducing scalar 12
       MatS6(" -1 0 0 0 0 0    1 0 0 0 0 1    1 0 1 0 0 0 -1 0 0 1 0 0    1 0 0 0 1 0    1 1 0 0 0 0")));
