@@ -41,20 +41,21 @@ protected:
 
 class MV_Pair {
 public:
-   MV_Pair(){}
-   MV_Pair( const S6& s, const MatS6& m ) : m_s6( s ), m_ms6( m ) {}
-   MV_Pair( const MatS6& m, const S6& s ) : m_s6( s ), m_ms6( m ) {}
+   MV_Pair( ) {}
+   MV_Pair( const S6& s, const MatS6& m ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ) {}
+   MV_Pair( const MatS6& m, const S6& s ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ) {}
    MV_Pair operator- ( const MV_Pair& mv ) const { MV_Pair mvp; mvp.m_s6 = m_s6 - mv.m_s6; return mvp; }
    MV_Pair operator- ( const S6& s ) const { MV_Pair mvp; mvp.m_s6 = m_s6 - s; return mvp; }
    double norm( const MV_Pair& mv ) const { return mv.m_s6.norm( ); }
    double norm( void ) const { return m_s6.norm( ); }
    S6 GetS6( void ) const { return m_s6; }
    MatS6 GetMatS6( void ) const { return m_ms6; }
+   double GetSize( void ) const {return m_originalSize;}
 
 protected:
    S6 m_s6;
    MatS6 m_ms6;
-
+   double m_originalSize;
 };
 
 
@@ -184,7 +185,7 @@ int main( int argc, char* argv[] )
       const S6 test = (*it_MV).GetS6( );
       //std::cout << i << "  " << (vLat[i] - (*it_MV).GetS6( )).norm( ) << std::endl;
       std::cout << i << "  " << (scaler.Scale( vLat[i] ) - (*it_MV).GetS6( )).norm( ) << 
-         "  " << LRL_Cell_Degrees((*it_MV).GetMatS6() * (scaler.Scale( vLat[i] ))) << std::endl;
+         "  " << LRL_Cell_Degrees((*it_MV).GetMatS6() *  vLat[i] ) << std::endl;
    }
 
    return 0;
