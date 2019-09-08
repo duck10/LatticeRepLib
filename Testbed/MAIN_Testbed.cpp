@@ -1,7 +1,8 @@
 // Testbed.cpp : Defines the entry point for the console application.
 //
 
-//#include "stdafx.h"
+#include <iomanip>
+#include <sstream>
 
 #include "ColorTables.h"
 
@@ -41,9 +42,11 @@ protected:
 
 class MV_Pair {
 public:
-   MV_Pair( ) {}
-   MV_Pair( const S6& s, const MatS6& m ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ) {}
-   MV_Pair( const MatS6& m, const S6& s ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ) {}
+   friend std::ostream& operator<< ( std::ostream& o, const C3& v );
+
+   MV_Pair() {}
+   MV_Pair( const S6& s, const MatS6& m ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ) {m_ms6 = ResetZeros(m_ms6);}
+   MV_Pair( const MatS6& m, const S6& s ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ) {m_ms6 = ResetZeros(m_ms6);}
    MV_Pair operator- ( const MV_Pair& mv ) const { MV_Pair mvp; mvp.m_s6 = m_s6 - mv.m_s6; return mvp; }
    MV_Pair operator- ( const S6& s ) const { MV_Pair mvp; mvp.m_s6 = m_s6 - s; return mvp; }
    double norm( const MV_Pair& mv ) const { return mv.m_s6.norm( ); }
@@ -51,12 +54,26 @@ public:
    S6 GetS6( void ) const { return m_s6; }
    MatS6 GetMatS6( void ) const { return m_ms6; }
    double GetSize( void ) const {return m_originalSize;}
+   static MatS6 ResetZeros( const MatS6& m ) { MatS6 mt( m ); for (size_t i = 0; i < 6; ++i) if (m[i] == 0.0) mt[i] = 0.0; return mt; }
 
-protected:
+public:
    S6 m_s6;
    MatS6 m_ms6;
    double m_originalSize;
 };
+
+std::ostream& operator<< ( std::ostream& o, const MV_Pair& v ) {
+   o << "MV_Pair" << std::endl;
+   o << "input S6 " << v.GetS6( ) << "  size " << v.m_originalSize << std::endl;
+   o << "---------------" << std::endl;
+   MatS6 mtemp( v.m_ms6 );
+   o << mtemp << std::endl;
+   o << "---------------" << std::endl;
+   o << "matrix times input " <<  mtemp * v.GetS6( ) << std::endl;
+   o << "---------------" << std::endl;
+
+   return o;
+}
 
 
 CNearTree<MV_Pair> mvtree;
@@ -122,14 +139,19 @@ void ExpandBoundaries_MV( ) {
    static const std::vector<std::pair<MatS6, MatS6> > redc = S6::SetUnreductionMatrices( );
 
    std::vector<S6> v1;
-   for (size_t i = 0; i < mvtree.size( ); ++i) v1.push_back( mvtree[i].GetS6( ) );
+   std::vector<MatS6> m1;
+   for (size_t i = 0; i < mvtree.size( ); ++i) {
+      v1.push_back( mvtree[i].GetS6( ) );
+      m1.push_back( Inverse( mvtree[i].GetMatS6( ) ) );
+   }
 
    const Scaler_MV scale( v1[0] );
 
    for (size_t k = 0; k < v1.size( ); ++k) {
       for (size_t i = 0; i < redc.size( ); ++i) {
-         const S6 scaled = scale.Scale( redc[i].first * v1[k] );
-         const MV_Pair scaled_MV( scaled, Inverse(redc[i].first) );
+         const S6 scaledS6 = scale.Scale( redc[i].first * v1[k] );
+         const  MatS6 totalTransform = redc[i].first * m1[k];
+         const MV_Pair scaled_MV( scaledS6, Inverse( totalTransform ) );
          if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
             mvtree.insert( scaled_MV );
          }
@@ -139,8 +161,8 @@ void ExpandBoundaries_MV( ) {
 
 void Expand( const S6& s ) {
    ExpandReflections_MV( s );
+
    ExpandBoundaries_MV( );
-   mvtree;
 }
 
 std::vector<S6>  GetReducedInput() {
@@ -153,28 +175,73 @@ std::vector<S6>  GetReducedInput() {
    return vLat;
 }
 
+void ReportMultiMatch( const Scaler_MV& scaler, const double closestDistance, const S6& toFind, const std::vector<MV_Pair>& sphere ) {
+   static const MatS6 constMatS6 = MatS6( );
+   std::cout << "closestDistance " << closestDistance << std::endl;
+   for ( size_t i=0; i<sphere.size(); ++i ) {
+      std::cout << i << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
+      std::cout << sphere[i] << std::endl;
+      std::cout << "  " << closestDistance <<
+         "     " << sphere[i].GetMatS6( ) * toFind << "      " << LRL_Cell_Degrees( sphere[i].GetMatS6( ) * toFind ) << std::endl;
+   }
+}
+
+void ReportOneMatch( const Scaler_MV& scaler, const S6& toFind ) {
+   static const MatS6 constMatS6 = MatS6( );
+   CNearTree<MV_Pair>::iterator it_MV = mvtree.NearestNeighbor( 100000., MV_Pair( toFind, constMatS6 ) );
+   const double closestDistance = (scaler.Scale( toFind ) - (*it_MV).GetS6( )).norm( );
+   std::vector<MV_Pair> sphere;
+   const long n = mvtree.FindInSphere( 1.01 * closestDistance, sphere, MV_Pair( toFind, constMatS6 ) );
+   if (n == 1) {
+      std::cout << "tree index " << it_MV.get_position( ) << "  " << closestDistance <<
+         "     " << (*it_MV).GetMatS6( ) * toFind << "      " << LRL_Cell_Degrees( (*it_MV).GetMatS6( ) * toFind ) << std::endl;
+   }
+   else {
+      std::cout << "WARNING ######################################################################## found more than one match  n=" << n << std::endl;
+      ReportMultiMatch( scaler, closestDistance, toFind, sphere );
+   }
+}
+
+void DoAllMatches( const std::vector<S6>& vLat ) {
+   const Scaler_MV scaler( vLat[0] );
+
+   for (size_t i = 0; i < vLat.size( ); ++i) {
+      std::cout << std::endl << "search item index " << i << std::endl;
+      ReportOneMatch( scaler, vLat[i] );
+      std::cout << "===================================================================================================" << std::endl;
+   }
+}
+
 int main( int argc, char* argv[] )
 {
    const std::vector<S6> vLat =  GetReducedInput( );
 
    Expand( vLat[0] );
-   Scaler_MV scaler( vLat[0] );
 
-   //for ( size_t i=0; i<mvtree.size(); ++i ) 
-   //   std::cout << mvtree[i].GetS6() << "      " << LRL_Cell_Degrees( mvtree[i].GetS6( )) << std::endl;
-
-   std::cout << std::endl << "the closest match" << std::endl;
-   static const MatS6 constMatS6 = MatS6();
-   for (size_t i = 0; i < vLat.size( ); ++i){
-      CNearTree<MV_Pair>::iterator it_MV = mvtree.NearestNeighbor(100000., MV_Pair(vLat[i], constMatS6));
-      std::cout << "index " << it_MV.get_position( ) << "   " << i << "  " << (scaler.Scale( vLat[i] ) - (*it_MV).GetS6( )).norm( ) << 
-         "      " << LRL_Cell_Degrees((*it_MV).GetMatS6() *  vLat[i] ) << std::endl;
-   }
+   DoAllMatches( vLat );
 
    return 0;
 }
 
 /*
+
+f 10 10.001 10.002  90 90 90
+f 10 10 10  90 90 90
+f 11 10 10  90 90 90
+f 10 11 10  90 90 90  this is the problem one
+f 10 10 11  90 90 90
+end
+
+
+f 10 10 10  90 90 90
+f 10 10 10  90 90 90
+f 11 10 10  90 90 90
+f 10 11 10  90 90 90  this is the problem one
+f 10 10 11  90 90 90
+end
+
+
+
 f 10 10 10  90 90 90
 i 10 10 10  90 90 90
 p  10 10 10  90 90 90
