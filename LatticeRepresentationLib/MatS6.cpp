@@ -2,6 +2,7 @@
 
 
 #include "LRL_CoordinateConversionMatrices.h"
+#include "C3.h"
 #include "S6.h"
 #include "MatS6.h"
 #include "MatD7.h"
@@ -459,6 +460,10 @@ std::vector<MatS6> MatS6::GetReflections() {
       vS6_Refl.push_back(MatS6("1 0 0 0 0 0  0 0 0 0 0 1  0 0 0 0 1 0  0 0 0 1 0 0  0 0 1 0 0 0  0 1 0 0 0 0"));
       vS6_Refl.push_back(MatS6("0 1 0 0 0 0  0 0 0 1 0 0  0 0 0 0 0 1  0 0 0 0 1 0  1 0 0 0 0 0  0 0 1 0 0 0"));
       vS6_Refl.push_back(MatS6("1 0 0 0 0 0  0 0 0 0 1 0  0 0 0 0 0 1  0 0 0 1 0 0  0 1 0 0 0 0  0 0 1 0 0 0"));
+
+      //const S6 v( "1 2 3 4 5 6" );
+      //for (size_t i = 0; i < vS6_Refl.size( ); ++i)
+      //   std::cout << C3(vS6_Refl[i] * v ) << std::endl;
    }
    return vS6_Refl;
 }
