@@ -65,10 +65,10 @@ public:
 std::ostream& operator<< ( std::ostream& o, const MV_Pair& v ) {
    o << "MV_Pair" << std::endl;
    o << "input S6 " << v.GetS6( ) << "  size " << v.m_originalSize << std::endl;
-   o << "---------------" << std::endl;
    MatS6 mtemp( v.m_ms6 );
-   o << mtemp << std::endl;
-   o << "---------------" << std::endl;
+   //o << "---------------" << std::endl;
+   //o << mtemp << std::endl;
+   //o << "---------------" << std::endl;
    o << "matrix times input " <<  mtemp * v.GetS6( ) << std::endl;
    o << "---------------" << std::endl;
 
@@ -142,7 +142,7 @@ void ExpandBoundaries_MV( ) {
    std::vector<MatS6> m1;
    for (size_t i = 0; i < mvtree.size( ); ++i) {
       v1.push_back( mvtree[i].GetS6( ) );
-      m1.push_back( Inverse( mvtree[i].GetMatS6( ) ) );
+      m1.push_back( ( mvtree[i].GetMatS6( ) ) );
    }
 
    const Scaler_MV scale( v1[0] );
@@ -150,8 +150,8 @@ void ExpandBoundaries_MV( ) {
    for (size_t k = 0; k < v1.size( ); ++k) {
       for (size_t i = 0; i < redc.size( ); ++i) {
          const S6 scaledS6 = scale.Scale( redc[i].first * v1[k] );
-         const  MatS6 totalTransform = redc[i].first * m1[k];
-         const MV_Pair scaled_MV( scaledS6, Inverse( totalTransform ) );
+         const  MatS6 totalTransform = m1[k] * Inverse( redc[i].first );
+         const MV_Pair scaled_MV( scaledS6, totalTransform );
          if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
             mvtree.insert( scaled_MV );
          }
@@ -181,7 +181,7 @@ void ReportMultiMatch( const Scaler_MV& scaler, const double closestDistance, co
    for ( size_t i=0; i<sphere.size(); ++i ) {
       std::cout << i << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
       std::cout << sphere[i] << std::endl;
-      std::cout << "  " << closestDistance <<
+      std::cout << "  d=" << closestDistance <<
          "     " << sphere[i].GetMatS6( ) * toFind << "      " << LRL_Cell_Degrees( sphere[i].GetMatS6( ) * toFind ) << std::endl;
    }
 }
@@ -224,6 +224,23 @@ int main( int argc, char* argv[] )
 }
 
 /*
+
+f 10 10.001 10.002  89 89 89
+f 10 10 10  90 90 90
+f 11 10 10  90 90 90
+f 10 11 10  90 90 90  this is the problem one
+f 10 10 11  90 90 90
+end
+
+
+
+f 10 10.001 10.002  90.01 90.02 90.03
+f 10 10 10  90 90 90
+f 11 10 10  90 90 90
+f 10 11 10  90 90 90  this is the problem one
+f 10 10 11  90 90 90
+end
+
 
 f 10 10.001 10.002  90 90 90
 f 10 10 10  90 90 90
