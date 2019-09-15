@@ -45,8 +45,8 @@ public:
    friend std::ostream& operator<< ( std::ostream& o, const C3& v );
 
    MV_Pair() {}
-   MV_Pair( const S6& s, const MatS6& m ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ) {m_ms6 = ResetZeros(m_ms6);}
-   MV_Pair( const MatS6& m, const S6& s ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ) {m_ms6 = ResetZeros(m_ms6);}
+   MV_Pair( const S6& s, const MatS6& m ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ), m_mark(6,false) {m_ms6 = ResetZeros(m_ms6);}
+   MV_Pair( const MatS6& m, const S6& s ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ), m_mark(6,false) {m_ms6 = ResetZeros(m_ms6);}
    MV_Pair operator- ( const MV_Pair& mv ) const { MV_Pair mvp; mvp.m_s6 = m_s6 - mv.m_s6; return mvp; }
    MV_Pair operator- ( const S6& s ) const { MV_Pair mvp; mvp.m_s6 = m_s6 - s; return mvp; }
    double norm( const MV_Pair& mv ) const { return mv.m_s6.norm( ); }
@@ -55,20 +55,34 @@ public:
    MatS6 GetMatS6( void ) const { return m_ms6; }
    double GetSize( void ) const {return m_originalSize;}
    static MatS6 ResetZeros( const MatS6& m ) { MatS6 mt( m ); for (size_t i = 0; i < 6; ++i) if (m[i] == 0.0) mt[i] = 0.0; return mt; }
-
+   static MV_Pair CleanZeros( const MV_Pair& mv ) { 
+      MV_Pair t( mv ); 
+      for (size_t i=0; i<6; ++i ) 
+         t.m_s6[i] = (abs( mv.m_s6[i] ) < 1.0E-10) ?  0.0 : t.m_s6[i];
+      return t;
+   }
+   void SetMark( const int i ) { m_mark[i] = true; }
+   bool GetMark( const int i ) const { return m_mark[i]; }
+   bool ClearMarks( void ) { for (size_t i = 0; i < 6; ++i) m_mark[i] = false; }
+   std::vector<int> GetOpenIndeces( const MV_Pair& mvp ) const { 
+      std::vector<int> v;
+      for (size_t i = 0; i < 6; ++i) if (!m_mark[i]) v.push_back( i ); 
+      return v;
+   }
 public:
    S6 m_s6;
    MatS6 m_ms6;
    double m_originalSize;
+   std::vector<bool> m_mark;
 };
 
 std::ostream& operator<< ( std::ostream& o, const MV_Pair& v ) {
    o << "MV_Pair" << std::endl;
    o << "input S6 " << v.GetS6( ) << "  size " << v.m_originalSize << std::endl;
-   o << "---------------" << std::endl;
    MatS6 mtemp( v.m_ms6 );
-   o << mtemp << std::endl;
-   o << "---------------" << std::endl;
+   //o << "---------------" << std::endl;
+   //o << mtemp << std::endl;
+   //o << "---------------" << std::endl;
    o << "matrix times input " <<  mtemp * v.GetS6( ) << std::endl;
    o << "---------------" << std::endl;
 
@@ -122,16 +136,40 @@ std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLattice
    return v;
 }
 
+std::vector<S6>  GetReducedInput( ) {
+   const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
+   if (input.size( ) < 2) {
+      std::cout << "At least two input cells are required" << std::endl;
+      exit( 0 );
+   }
+   const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
+   return vLat;
+}
+
+void StoreMV_IfUnique( const S6& s, const MatS6& m ) {
+   MV_Pair scaled_MV( s, m );
+   scaled_MV = MV_Pair::CleanZeros( scaled_MV );
+   if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
+      mvtree.insert( scaled_MV );
+   }
+}
+
+void ExpandReflections_MV( const MV_Pair& mv ) {
+   static const std::vector<MatS6> refl = MatS6::GetReflections( );
+   const Scaler_MV scale( mv.GetS6() );
+   for (size_t i = 0; i < refl.size( ); ++i) {
+      //std::cout << "p  " << LRL_Cell_Degrees(refl[i] * s) << std::endl;
+      const S6 scaledS6 = scale.Scale( refl[i] * mv.GetS6() );
+      StoreMV_IfUnique( scaledS6, mv.GetMatS6() * Inverse( refl[i] ) );
+   }
+}
+
 void ExpandReflections_MV( const S6& s ) {
    static const std::vector<MatS6> refl = MatS6::GetReflections( );
    const Scaler_MV scale(s);
    for (size_t i = 0; i < refl.size( ); ++i) {
-      //std::cout << "p  " << LRL_Cell_Degrees(refl[i] * s) << std::endl;
-      const S6 scaled = scale.Scale( refl[i] * s);
-      const MV_Pair scaled_MV( scaled, Inverse(refl[i]) );
-      if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
-         mvtree.insert( scaled_MV );
-      }
+      const S6 scaledS6 = scale.Scale( refl[i] * s);
+      StoreMV_IfUnique( scaledS6, Inverse( refl[i] ) );
    }
 }
 
@@ -142,7 +180,7 @@ void ExpandBoundaries_MV( ) {
    std::vector<MatS6> m1;
    for (size_t i = 0; i < mvtree.size( ); ++i) {
       v1.push_back( mvtree[i].GetS6( ) );
-      m1.push_back( Inverse( mvtree[i].GetMatS6( ) ) );
+      m1.push_back( ( mvtree[i].GetMatS6( ) ) );
    }
 
    const Scaler_MV scale( v1[0] );
@@ -150,11 +188,21 @@ void ExpandBoundaries_MV( ) {
    for (size_t k = 0; k < v1.size( ); ++k) {
       for (size_t i = 0; i < redc.size( ); ++i) {
          const S6 scaledS6 = scale.Scale( redc[i].first * v1[k] );
+<<<<<<< HEAD
          const  MatS6 totalTransform = redc[i].first * m1[k];
-         const MV_Pair scaled_MV( scaledS6, Inverse( totalTransform ) );
+
+         StoreMV_IfUnique( scaledS6, Inverse( totalTransform ) );
+         //const MV_Pair scaled_MV( scaledS6, Inverse( totalTransform ) );
+         //if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
+         //   mvtree.insert( scaled_MV );
+         //}
+=======
+         const  MatS6 totalTransform = m1[k] * Inverse( redc[i].first );
+         const MV_Pair scaled_MV( scaledS6, totalTransform );
          if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
             mvtree.insert( scaled_MV );
          }
+>>>>>>> eb7b2280e095be86dfd2e9d60b33f75597cffa37
       }
    }
 }
@@ -165,14 +213,26 @@ void Expand( const S6& s ) {
    ExpandBoundaries_MV( );
 }
 
-std::vector<S6>  GetReducedInput() {
-   const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
-   if (input.size( ) < 2) {
-      std::cout << "At least two input cells are required" << std::endl;
-      exit( 0 );
+void Expand_MV_2( const std::string& label, const MV_Pair& mvp ) {
+   const S6 s6( mvp.GetS6( ) );
+   if (s6.IsValid( )) {
+      switch (s6.CountZeros( )) {
+      case 0:
+         ExpandReflections_MV( mvp );
+         break;
+      case 1:
+         OneBound( label, mvp );
+         break;
+      case 2:
+      case 3:
+         ProcessZeros( label, mvp );
+         break;
+      default:
+         throw "this should never happen";
+         break;
+      }
    }
-   const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
-   return vLat;
+   //store.ShowResults();
 }
 
 void ReportMultiMatch( const Scaler_MV& scaler, const double closestDistance, const S6& toFind, const std::vector<MV_Pair>& sphere ) {
@@ -181,7 +241,7 @@ void ReportMultiMatch( const Scaler_MV& scaler, const double closestDistance, co
    for ( size_t i=0; i<sphere.size(); ++i ) {
       std::cout << i << "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
       std::cout << sphere[i] << std::endl;
-      std::cout << "  " << closestDistance <<
+      std::cout << "  d=" << closestDistance <<
          "     " << sphere[i].GetMatS6( ) * toFind << "      " << LRL_Cell_Degrees( sphere[i].GetMatS6( ) * toFind ) << std::endl;
    }
 }
@@ -224,6 +284,23 @@ int main( int argc, char* argv[] )
 }
 
 /*
+
+f 10 10.001 10.002  89 89 89
+f 10 10 10  90 90 90
+f 11 10 10  90 90 90
+f 10 11 10  90 90 90  this is the problem one
+f 10 10 11  90 90 90
+end
+
+
+
+f 10 10.001 10.002  90.01 90.02 90.03
+f 10 10 10  90 90 90
+f 11 10 10  90 90 90
+f 10 11 10  90 90 90  this is the problem one
+f 10 10 11  90 90 90
+end
+
 
 f 10 10.001 10.002  90 90 90
 f 10 10 10  90 90 90
