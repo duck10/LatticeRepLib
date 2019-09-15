@@ -121,6 +121,25 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
    return v;
 }
 
+template<typename T>
+S6_Ordinals MultiplyUsingFunction( T refl, const S6_Ordinals& so )
+{
+   S6_Ordinals s1( so );
+   s1 = refl( s1 );
+   s1.m_ordinals = refl( s1.m_ordinals );
+   return s1;
+}
+
+void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinals& s1in, const MatS6& transformations ) {
+   std::vector< S6( *)(const S6&)> refl = S6::SetRelectionFunctions( );
+   S6_Ordinals s1( s1in );
+
+   for (size_t i = 0; i < refl.size( ); ++i) {
+      store.Store( label, MultiplyUsingFunction( refl[i], s1 ) );
+   }
+   //store.ShowResults();
+}
+
 void SellaBuild::Expand(const std::string& label, const MatS6& m, MatS6 transformations) {
    const S6_Ordinals s6 = MakeSampleType(m);
 
@@ -143,6 +162,36 @@ void SellaBuild::Expand(const std::string& label, const MatS6& m, MatS6 transfor
    }
    //store.ShowResults();
 }
+
+void SellaBuild::OneBound( const std::string& label, const S6_Ordinals& s1, MatS6 transformations ) {
+   static const std::vector< S6( *)(const S6&)> fnRedn = S6Dist::SetVCPFunctions( );
+
+   size_t nzero = 0;
+   for (size_t i = 0; i < 6; ++i) if (s1[i] == 0) nzero = i;
+   StoreAllReflections( label, s1, transformations );
+   const S6_Ordinals s6temp = MultiplyUsingFunction( fnRedn[nzero], s1 );
+   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! doesn't accumulate the transformation here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   StoreAllReflections( label, s6temp, transformations );
+}
+
+void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6, MatS6 transformations ) {
+   const std::vector<size_t> v = FindS6Zeros( s6 );
+   const size_t nzeros = v.size( );
+
+   if (nzeros == 0) {
+      return;
+   } else if (nzeros == 1) {
+      OneBound( label, s6, transformations );
+   } else {
+      for (size_t i = 0; i < v.size( ); ++i) {
+         S6_Ordinals temp( s6 );
+         temp[v[i]] = DBL_MIN;
+         ProcessZeros( label, temp, transformations );
+      }
+   }
+
+}
+
 
 bool SellaBuild::FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ordinals s6) {
    bool fail = false;
@@ -174,56 +223,6 @@ std::vector<size_t> SellaBuild::FindS6Zeros(const S6& s) {
    std::vector<size_t> v;
    for (size_t i = 0; i < 6; ++i) if (s[i] == 0.0) v.push_back(i);
    return v;
-}
-
-template<typename T>
-S6_Ordinals MultiplyUsingFunction(T refl, const S6_Ordinals& so )
-{
-   S6_Ordinals s1(so);
-   s1 = refl(s1);
-   s1.m_ordinals = refl(s1.m_ordinals);
-   return s1;
-}
-
-void SellaBuild::StoreAllReflections(const std::string& label, const S6_Ordinals& s1in, const MatS6& transformations) {
-   std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
-   S6_Ordinals s1(s1in);
-
-   for (size_t i = 0; i < refl.size(); ++i) {
-      store.Store(label, MultiplyUsingFunction(refl[i], s1));
-   }
-   //store.ShowResults();
-}
-
-void SellaBuild::OneBound(const std::string& label, const S6_Ordinals& s1, MatS6 transformations) {
-   static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
-
-   size_t nzero = 0;
-   for (size_t i = 0; i < 6; ++i) if (s1[i] == 0) nzero = i;
-   StoreAllReflections(label, s1, transformations);
-   const S6_Ordinals s6temp = MultiplyUsingFunction(fnRedn[nzero], s1);
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! doesn't accumulate the transformation here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   StoreAllReflections(label, s6temp, transformations);
-}
-
-void SellaBuild::ProcessZeros(const std::string& label, const S6_Ordinals& s6, MatS6 transformations) {
-   const std::vector<size_t> v = FindS6Zeros(s6);
-   const size_t nzeros = v.size();
-
-   if (nzeros == 0) {
-      return;
-   }
-   else if (nzeros == 1) {
-      OneBound(label, s6, transformations);
-   }
-   else {
-      for (size_t i = 0; i < v.size(); ++i) {
-         S6_Ordinals temp(s6);
-         temp[v[i]] = DBL_MIN;
-         ProcessZeros(label, temp, transformations);
-      }
-   }
-
 }
 
 void SellaBuild::TestPerps() {
