@@ -188,21 +188,18 @@ void ExpandBoundaries_MV( ) {
    for (size_t k = 0; k < v1.size( ); ++k) {
       for (size_t i = 0; i < redc.size( ); ++i) {
          const S6 scaledS6 = scale.Scale( redc[i].first * v1[k] );
-<<<<<<< HEAD
-         const  MatS6 totalTransform = redc[i].first * m1[k];
+         //const  MatS6 totalTransform = redc[i].first * m1[k];
 
-         StoreMV_IfUnique( scaledS6, Inverse( totalTransform ) );
+         //StoreMV_IfUnique( scaledS6, Inverse( totalTransform ) );
          //const MV_Pair scaled_MV( scaledS6, Inverse( totalTransform ) );
          //if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
          //   mvtree.insert( scaled_MV );
          //}
-=======
          const  MatS6 totalTransform = m1[k] * Inverse( redc[i].first );
          const MV_Pair scaled_MV( scaledS6, totalTransform );
          if (mvtree.NearestNeighbor( dcutoff, scaled_MV ) == mvtree.end( )) {
             mvtree.insert( scaled_MV );
          }
->>>>>>> eb7b2280e095be86dfd2e9d60b33f75597cffa37
       }
    }
 }
@@ -213,27 +210,50 @@ void Expand( const S6& s ) {
    ExpandBoundaries_MV( );
 }
 
-void Expand_MV_2( const std::string& label, const MV_Pair& mvp ) {
-   const S6 s6( mvp.GetS6( ) );
-   if (s6.IsValid( )) {
-      switch (s6.CountZeros( )) {
-      case 0:
-         ExpandReflections_MV( mvp );
-         break;
-      case 1:
-         OneBound( label, mvp );
-         break;
-      case 2:
-      case 3:
-         ProcessZeros( label, mvp );
-         break;
-      default:
-         throw "this should never happen";
-         break;
+
+   void DoThreeAxes( ) {
+      std::vector<int> out;
+      int count1 = 0;
+      int count2 = 0;
+      int count3 = 0;
+      for (size_t i = 0; i < 6; ++i) {
+         std::cout << i << std::endl;
+         ++count1;
+         for (size_t k = 0; k < 6; ++k) {
+            if (i == k) continue;
+            ++count2;
+            std::cout << i << k << std::endl;
+            for (size_t m = 0; m < 6; ++m) {
+               if (m == i || m == k) continue;
+               std::cout << i << k << m << std::endl;
+               ++count3;
+            }
+         }
       }
+      std::cout << "counts = " << count1 << "  " << count2 << "  " << count3 << std::endl;
    }
-   //store.ShowResults();
-}
+
+//void Expand_MV_2( const std::string& label, const MV_Pair& mvp ) {
+//   const S6 s6( mvp.GetS6( ) );
+//   if (s6.IsValid( )) {
+//      switch (s6.CountZeros( )) {
+//      case 0:
+//         ExpandReflections_MV( mvp );
+//         break;
+//      case 1:
+//         OneBound( label, mvp );
+//         break;
+//      case 2:
+//      case 3:
+//         ProcessZeros( label, mvp );
+//         break;
+//      default:
+//         throw "this should never happen";
+//         break;
+//      }
+//   }
+//   //store.ShowResults();
+//}
 
 void ReportMultiMatch( const Scaler_MV& scaler, const double closestDistance, const S6& toFind, const std::vector<MV_Pair>& sphere ) {
    static const MatS6 constMatS6 = MatS6( );
@@ -274,6 +294,7 @@ void DoAllMatches( const std::vector<S6>& vLat ) {
 
 int main( int argc, char* argv[] )
 {
+   DoThreeAxes( );
    const std::vector<S6> vLat =  GetReducedInput( );
 
    Expand( vLat[0] );
