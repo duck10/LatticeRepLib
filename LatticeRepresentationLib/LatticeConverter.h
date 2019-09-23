@@ -1,5 +1,5 @@
 #ifndef LATTICECONVERTER_H
-#define LATTICECONVERERT_H
+#define LATTICECONVERTER_H
 
 #include "LRL_Cell.h"
 
@@ -17,11 +17,18 @@ public:
    void SetOutputMaxima(void);
    void SetOutputText(void);
    void Output(const std::string& label, const std::string& lattice, const LRL_Cell& cell) const;
-   static LRL_Cell NiggliReduceCell(const std::string& lattice, const LRL_Cell& cell);
-   void NiggliReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell);
-   static LRL_Cell DeloneReduceCell(const std::string& lattice, const LRL_Cell& cell);
-   static LRL_Cell SellingReduceCell(const std::string& lattice, const LRL_Cell& cell);
-   void DeloneReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell);
-   static LRL_Cell MakePrimitiveCell(const std::string& lattice, const LRL_Cell& cell);
+   static LRL_Cell NiggliReduceCell( const std::string& lattice, const LRL_Cell& cell );
+   void NiggliReducedOutput( const std::string& label, const std::string& lattice, const LRL_Cell& cell );
+   static LRL_Cell DeloneReduceCell( const std::string& lattice, const LRL_Cell& cell );
+   static LRL_Cell SellingReduceCell( const std::string& lattice, const LRL_Cell& cell );
+   void DeloneReducedOutput( const std::string& label, const std::string& lattice, const LRL_Cell& cell );
+   static LRL_Cell MakePrimitiveCell( const std::string& lattice, const LRL_Cell& cell );
+
+   static LRL_Cell NiggliReduceCell ( const std::string& lattice, const LRL_Cell& cell, MatG6& mat );
+   static LRL_Cell DeloneReduceCell ( const std::string& lattice, const LRL_Cell& cell, MatD7& mat );
+   static LRL_Cell SellingReduceCell( const std::string& lattice, const LRL_Cell& cell, MatS6& mat );
+   static LRL_Cell MakePrimitiveCell( const std::string& lattice, const LRL_Cell& cell, MatG6& mat );
+   static LRL_Cell MakePrimitiveCell( const std::string& lattice, const LRL_Cell& cell, MatD7& mat );
+   static LRL_Cell MakePrimitiveCell( const std::string& lattice, const LRL_Cell& cell, MatS6& mat );
 };
 #endif //LATTICECONVERTER_H
