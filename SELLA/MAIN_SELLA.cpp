@@ -149,8 +149,13 @@ int main()
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
 
+  // for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+  //    std::cout << "input  " << input[lat].GetStrCell( ) << "    (" << vLat[lat] << ")" << std::endl;
+  //    const std::vector<std::tuple<double, S6, MatS6> >  v = deloneList.Fit( vLat[lat] );
+  //}
+
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      std::cout << "input  " << input[lat].GetStrCell() << "    (" << S6(input[lat].GetCell()) <<")" << std::endl;
+      std::cout << "input  " << input[lat].GetStrCell() << "    (" << (input[lat].GetCell()) <<")" << std::endl;
       //const std::vector<std::tuple<double, S6, MatS6> >  v = DeloneTypeList::Fit( "T", vLat[lat] );
       const std::vector<std::tuple<double, S6, MatS6> >  v = deloneList.Fit( vLat[lat] );
       ReportFit( lat, deloneList,  v );

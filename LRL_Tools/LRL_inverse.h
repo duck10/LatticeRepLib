@@ -1,4 +1,6 @@
 /* inverse.h  basic Gaussian elimination version */
+/* inverse.c  basic Gaussian elimination version */
+/* http://userpages.umbc.edu/~squire/f14-455/download/inverse.c */
 
 #ifndef LRL_INVERSE
 #define LRL_INVERSE
