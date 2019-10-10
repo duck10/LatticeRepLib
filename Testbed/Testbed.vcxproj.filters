@@ -18,12 +18,18 @@
     <ClCompile Include="MAIN_Testbed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LRL_LatticeMatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LRL_Tools\TNear.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\LRL_Tools\triple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_LatticeMatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

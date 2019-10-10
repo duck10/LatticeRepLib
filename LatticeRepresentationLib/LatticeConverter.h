@@ -2,6 +2,7 @@
 #define LATTICECONVERTER_H
 
 #include "LRL_Cell.h"
+#include "MatD7.h"
 
 class LatticeConverter {
    enum eOutputType { etext, emaxima };
