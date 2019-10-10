@@ -25,6 +25,9 @@ public:
    MatN( const MatN& m );
    virtual ~MatN( void ) {};
 
+   static MatN MatN::Inverse( const MatN& min );
+
+
    virtual MatN operator* ( const MatN& m2 ) const;
    virtual MatN operator*= ( const MatN& m2 );
    virtual MatN operator+ ( const MatN& m2 ) const;

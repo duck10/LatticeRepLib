@@ -268,3 +268,11 @@ double MatN::operator() (const size_t i) {
 double MatN::operator() (const size_t row, const size_t col) {
    return m_mat[LinearIndex(row, col, m_rowdim)];
 }
+
+MatN MatN::Inverse( const MatN& min ) {
+   MatN m( min );
+   std::vector<double> arout( m.GetDim() );
+   inverse( 6, min.GetVector( ).data( ), arout.data( ) );
+   m.SetVector( arout );
+   return m;
+}

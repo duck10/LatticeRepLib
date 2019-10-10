@@ -74,6 +74,20 @@ LRL_Cell LatticeConverter::NiggliReduceCell(const std::string& lattice, const LR
    }
 }
 
+LRL_Cell LatticeConverter::NiggliReduceCell( const std::string& lattice, const LRL_Cell& cell, MatG6& mat ) {
+   const MatG6 mLattice = LRL_Cell::LatSymMatG6( lattice, cell );
+   MatG6 m66;
+   G6 redVec;
+   const bool b = Niggli::Reduce( mLattice * G6( cell ), m66, redVec, 0.0);
+   if (b) {
+      mat = m66 * mLattice;
+      return LRL_Cell( redVec );
+   } else {
+      return LRL_Cell( );
+   }
+}
+
+
 void LatticeConverter::NiggliReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) {
    const LRL_Cell reducedCell = NiggliReduceCell(lattice, cell);
    Output(label, "P", reducedCell);
@@ -95,18 +109,30 @@ LRL_Cell LatticeConverter::DeloneReduceCell(const std::string& lattice, const LR
 }
 
 LRL_Cell LatticeConverter::SellingReduceCell(const std::string& lattice, const LRL_Cell& cell) {
-   const G6 g6 = G6(cell);
-   const S6 tempS6 = g6;
    const MatG6 mLattice = LRL_Cell::LatSymMatG6(lattice, cell);
    MatS6 m66;
    S6 redVec;
-   //const bool b = Delone::Reduce(S6(mLattice*g6), m66, redVec, 0.00000001);
-   const bool b = Selling::Reduce(S6(mLattice*g6), redVec);
+
+   const bool b = Selling::Reduce(S6(mLattice*G6( cell ) ), redVec);
    if (b) {
       return LRL_Cell(redVec);;
    }
    else {
       return LRL_Cell();
+   }
+}
+
+LRL_Cell LatticeConverter::SellingReduceCell( const std::string& lattice, const LRL_Cell& cell, MatS6& mat ) {
+   const MatG6 mLattice = LRL_Cell::LatSymMatG6( lattice, cell );
+   MatS6 m66;
+   S6 redVec;
+
+   const bool b = Selling::Reduce( S6( mLattice*G6( cell ) ), m66, redVec, 0.0 );
+   if (b) {
+      mat = m66 * mLattice;
+      return LRL_Cell( redVec );;
+   } else {
+      return LRL_Cell( );
    }
 }
 
