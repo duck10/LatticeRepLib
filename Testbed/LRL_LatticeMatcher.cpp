@@ -87,7 +87,7 @@ void LRL_LatticeMatcher::BuildReferenceTree( const S6& s) {
    Scaler_MV scale(s);
    for (size_t i = 0; i<m_matrixTree.size(); ++i ) {
       const S6 scaledMV = scale.Scale(m_matrixTree[i] * s);
-      const MV_Pair mv( scaledMV, Inverse( m_matrixTree[i] ) );
+      const MV_Pair mv( scaledMV, MatN::Inverse( m_matrixTree[i] ) );
       StoreMV_IfUnique( scaledMV, Inverse( m_matrixTree[i] ) );
    }
 }
@@ -100,7 +100,6 @@ void LRL_LatticeMatcher::ApplyReflections( const std::vector<MatS6>& t ) {
       }
    }
 }
-
 
 S6 LRL_LatticeMatcher::MatchReference( const S6& s ) const {
    MV_Pair closest;

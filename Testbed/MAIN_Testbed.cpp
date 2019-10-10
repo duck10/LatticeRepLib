@@ -34,9 +34,9 @@ std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLattice
    std::vector<S6> v;
    LatticeConverter converter;
 
-
+   MatS6 mat;
    for (size_t i = 0; i < input.size( ); ++i) {
-      const S6 s6 = converter.SellingReduceCell( input[i].GetLattice( ), input[i].GetCell( ) );
+      const S6 s6 = converter.SellingReduceCell( input[i].GetLattice( ), input[i].GetCell( ), mat );
       v.push_back( s6 );
    }
    return v;
