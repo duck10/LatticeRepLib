@@ -8,6 +8,7 @@
 #include "LRL_LatticeMatcher.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
+#include "MatN.h"
 #include "MatS6.h"
 #include "S6.h"
 
@@ -41,29 +42,25 @@ std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLattice
    }
    return v;
 }
-
-std::vector<S6>  GetReducedInput( ) {
-   const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
-   if (input.size( ) < 2) {
-      std::cout << "At least two input cells are required" << std::endl;
-      exit( 0 );
-   }
-   const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
-   return vLat;
-}
+//}
 
 int main( int argc, char* argv[] )
 {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
+   MatS6 mat_reference;
+   LRL_Cell cell_reference = LatticeConverter::SellingReduceCell( input[0].GetLattice(), input[0].GetCell(), mat_reference );
+   const MV_Pair mv_reference(S6( cell_reference ), MatN(mat_reference.GetMatrix()).inverse());
+
    const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
    if (vLat.size( ) > 0) {
       LRL_LatticeMatcher lm;
+      lm.SetReference( mv_reference );
       std::cout << "MV tree size = " << lm.size( ) << std::endl;
-      lm.SetReference( vLat[0] );
+
+      const std::vector<S6> vs6( lm.MatchReference( vLat ) );
 
       for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-         const S6 s1 = lm.MatchReference( vLat[lat] );
-         //std::cout << "=============================" << std::endl;
+         std::cout << LRL_Cell_Degrees(vs6[lat]) << std::endl;
       }
    }
 
@@ -117,12 +114,8 @@ f 10 10 10  90 90 90
 f 10 10 11  90 90 90
 end
 
-f 10 10 10  90 90 90
-f 10 10 10  90 90 90
-f 10 10 11  90 90 90
-end
-
 c 10 20 30 90 118 90
+p   27.14100  11.18034  26.80144     93.90767 158.64514  95.59396
 p   27.14100  11.18034  26.80144     93.90767 158.64514  95.59396
 p   27.14100  11.18034  26.80144     93.90767 158.64514  95.59396
 p   27.14100  11.18034  11.18034    126.86990  95.59396  95.59396
