@@ -65,12 +65,13 @@ void LRL_LatticeMatcher::BuildVectorTree( void ) {
    ApplyReflections( vMatS6 );
 }
 
-void LRL_LatticeMatcher::SetReference( const S6& s ) {
+void LRL_LatticeMatcher::SetReference( const MV_Pair& mvp ) {
    if (!m_MVtree.empty( ))
       m_MVtree.clear( );
-   m_reference = s;
-   std::cout << "reference " << s << std::endl << std::endl;
-   BuildReferenceTree( s );
+   m_reference = mvp.GetS6();
+   m_matReference = mvp.GetMatS6( );
+   std::cout << "reference " << m_reference << std::endl << std::endl;
+   BuildReferenceTree( m_reference );
 }
 
 static MatS6 Inverse( const MatS6& min ) {
@@ -83,11 +84,12 @@ static MatS6 Inverse( const MatS6& min ) {
 
 
 void LRL_LatticeMatcher::BuildReferenceTree( const S6& s) {
-   double normReference = m_reference.norm( );
-   Scaler_MV scale(s);
+   const double normReference = m_reference.norm( );
+   const Scaler_MV scale(s);
    for (size_t i = 0; i<m_matrixTree.size(); ++i ) {
       const S6 scaledMV = scale.Scale(m_matrixTree[i] * s);
-      const MV_Pair mv( scaledMV, MatN::Inverse( m_matrixTree[i] ) );
+      const MatN matntest(m_matrixTree[i].GetMatrix( ) );
+      const MV_Pair mv( scaledMV, MatS6(MatN(m_matrixTree[i].GetMatrix()).inverse()) );
       StoreMV_IfUnique( scaledMV, Inverse( m_matrixTree[i] ) );
    }
 }
@@ -102,6 +104,7 @@ void LRL_LatticeMatcher::ApplyReflections( const std::vector<MatS6>& t ) {
 }
 
 S6 LRL_LatticeMatcher::MatchReference( const S6& s ) const {
+   const static bool debug = false;
    MV_Pair closest;
    const bool b = m_MVtree.NearestNeighbor( DBL_MAX, closest, MV_Pair(s, MatS6()) );
    if (!b) throw;
@@ -109,41 +112,34 @@ S6 LRL_LatticeMatcher::MatchReference( const S6& s ) const {
    const double d = (closest.GetMatS6()*s - m_reference).norm( );
    const int i19191 = 19191;
    const S6 optimized = closest.GetMatS6( ) * s;
-   ////std::cout << "Reference " << m_reference << std::endl;
-   ////std::cout << "Input " << s << std::endl;
-   ////std::cout << "Difference " << (m_reference - optimized).norm( ) << std::endl;
-   ////std::cout << "Closest " << closest.GetS6() << std::endl;
-   //std::cout << "start next match probe to reference $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" << std::endl;
-   //std::cout << (m_reference - optimized).norm( ) << " Optimized INITIAL" << optimized << "  " << C3( optimized ) << "  " << LRL_Cell_Degrees( optimized ) << std::endl;
-   //std::cout << B4( optimized ) << std::endl;
-   ////std::cout << "matrix " << std::endl << closest.GetMatS6( ) << std::endl;
-   ////std::cout << "Check " << closest.GetMatS6( ) * closest.GetS6( ) << std::endl;
-   ////std::cout << std::endl;
 
    // now check for alternate solutions
    std::vector<MV_Pair> vClosest;
    S6 s6closest;
-   double dtest_G6;
    double dmin_G6 = DBL_MAX;
    const long n = m_MVtree.FindInSphere( 1.01 * d, vClosest, closest );
    if ( n >= 1 ) {
-      //std::cout << "multiple solutions  n=" << n << std::endl;
       for ( size_t i=0; i<n; ++i ) {
          const S6 s6test = vClosest[i].GetMatS6( ) * s;
          const LRL_Cell_Degrees thecell( s6test );
-         dtest_G6 = (G6(m_reference) - G6( s6test )).norm();
+         const double dtest_G6 = (G6(m_reference) - G6( s6test )).norm();
          if (dmin_G6 >= dtest_G6) {
             dmin_G6 = dtest_G6;
             s6closest = s6test;
          }
-
-         //std::cout << "##" << i << "  " << dtest_G6 << "   " << thecell << std::endl;
       }
    }
-   std::cout << dmin_G6 << " Optimized FINAL" << s6closest << "  " << C3( s6closest ) << "  " << LRL_Cell_Degrees( s6closest ) << std::endl;
-   //std::cout << "+++++++++++++++++" << "  " << dmin_G6 << "   " << LRL_Cell_Degrees( s6closest ) << std::endl;
+   if ( debug) std::cout << dmin_G6 << " Optimized FINAL" << s6closest << "  " << C3( s6closest ) << "  " << LRL_Cell_Degrees( s6closest ) << std::endl;
 
    return s6closest;
+}
+
+std::vector<S6> LRL_LatticeMatcher::MatchReference( const std::vector<S6>& vs ) const {
+   std::vector<S6> v;
+   for (size_t i = 0; i < vs.size( ); ++i) {
+      v.push_back( m_matReference * MatchReference( vs[i] ) );
+   }
+   return v;
 }
 
 void LRL_LatticeMatcher::StoreMV_IfUnique( const S6& s, const MatS6& m ) {

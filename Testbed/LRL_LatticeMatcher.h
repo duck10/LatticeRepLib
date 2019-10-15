@@ -46,9 +46,10 @@ public:
 class LRL_LatticeMatcher {
 public:
    LRL_LatticeMatcher( );
-   void SetReference( const S6& s );
+   void SetReference( const MV_Pair& mvp );
    S6 GetReference( ) const { return m_reference; };
    S6 MatchReference( const S6& s ) const;
+   std::vector<S6> MatchReference( const std::vector<S6>& vs ) const;
    void ApplyReflections( const std::vector<MatS6>& t ); // NOTE: this is NOT a reference; it is copy !!!!!!!!!!
    size_t size( ) const { return m_MVtree.size( ); }
 
@@ -65,6 +66,7 @@ protected: // member data
    CNearTree<MV_Pair> m_MVtree;
    CNearTree<MatS6> m_matrixTree;
    S6 m_reference;
+   MatS6 m_matReference;
    double dcutoff;
 };
 

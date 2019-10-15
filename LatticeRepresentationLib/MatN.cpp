@@ -231,7 +231,7 @@ inline size_t LinearIndex( const size_t row, const size_t col, const size_t size
 }
 
 MatN MatN::inverse( void ) const {
-   MatN I((*this).size()*(*this).size());
+   MatN I((*this).size());
 
    const size_t dim=I.GetDim( );
    const size_t rowdim = I.GetRowDim( );
@@ -269,10 +269,3 @@ double MatN::operator() (const size_t row, const size_t col) {
    return m_mat[LinearIndex(row, col, m_rowdim)];
 }
 
-MatN MatN::Inverse( const MatN& min ) {
-   MatN m( min );
-   std::vector<double> arout( m.GetDim() );
-   inverse( 6, min.GetVector( ).data( ), arout.data( ) );
-   m.SetVector( arout );
-   return m;
-}
