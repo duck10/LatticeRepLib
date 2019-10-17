@@ -44,6 +44,109 @@ std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLattice
 }
 //}
 
+S6 CenterOfMass(const std::vector<S6>& v) {
+   S6 sum("0 0 0 0 0 0 ");
+   for (size_t i = 0; i < 6; ++i)
+      sum += v[i];
+   return sum / double(v.size( ));
+}
+
+std::vector<S6> MoveToCenterOfMass(const std::vector<S6>& v) {
+   std::vector<S6> c;
+   const S6 cm = CenterOfMass(v);
+   for (size_t i = 0; i < v.size( ); ++i)
+      c.push_back(v[i] - cm);
+   return c;
+}
+
+S6 SumS6(const std::vector<S6>& v) {
+   S6 t;
+   for (size_t i = 0; i < v.size( ); ++i)
+      t += v[i];
+
+   //sums of squares
+   double x0 = 0.0;
+   double x1 = 0.0;
+   double x2 = 0.0;
+   double x3 = 0.0;
+   double x4 = 0.0;
+   double x5 = 0.0;
+
+   // sums of cross
+   double x0x1 = 0.0;
+   double x0x2 = 0.0;
+   double x0x3 = 0.0;
+   double x0x4 = 0.0;
+   double x0x5 = 0.0;
+
+   double x1x2 = 0.0;
+   double x1x3 = 0.0;
+   double x1x4 = 0.0;
+   double x1x5 = 0.0;
+
+   double x2x3 = 0.0;
+   double x2x4 = 0.0;
+   double x2x5 = 0.0;
+
+   double x3x4 = 0.0;
+   double x3x5 = 0.0;
+
+   double x4x5 = 0.0;
+
+   double x0 = 0.0;
+   double x1 = 0.0;
+   double x2 = 0.0;
+   double x3 = 0.0;
+   double x4 = 0.0;
+   double x5 = 0.0;
+
+   for (size_t i = 0; i < v.size( ); ++i) {
+      const double& s0 = v[i][0];
+      const double& s1 = v[i][1];
+      const double& s2 = v[i][2];
+      const double& s3 = v[i][3];
+      const double& s4 = v[i][4];
+      const double& s5 = v[i][5];
+
+      x0 += s0 * s0;
+      x1 += s1 * s1;
+      x2 += s2 * s2;
+      x3 += s3 * s3;
+      x4 += s4 * s4;
+      x5 += s5 * s5;
+
+
+      x0x1 += x0 * x1;
+      x0x2 += x0 * x2;
+      x0x3 += x0 * x3;
+      x0x4 += x0*x4;
+      x0x5 += x0*x5;
+                
+      x1x2 += x1*x2;
+      x1x3 += x1*x3;
+      x1x4 += x1*x4;
+      x1x5 += x1*x5;
+                
+      x2x3 += x2*x3;
+      x2x4 += x2*x4;
+      x2x5 += x2*x5;
+                
+      x3x4 += x3*x4;
+      x3x5 += x3*x5;
+                
+      x4x5 += x4*x5;
+
+   }
+
+   MatS6 m(MatS6( ).Zero( ));
+
+
+   return t;
+}
+
+MatS6 InertiaTensor(const std::vector<S6>& v) {
+ 
+}
 int main( int argc, char* argv[] )
 {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
