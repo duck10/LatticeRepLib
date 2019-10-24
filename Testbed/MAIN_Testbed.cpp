@@ -59,7 +59,7 @@ std::vector<S6> MoveToCenterOfMass(const std::vector<S6>& v) {
    return c;
 }
 
-S6 SumS6(const std::vector<S6>& v) {
+MatS6 SumS6(const std::vector<S6>& v) {
    S6 t;
    for (size_t i = 0; i < v.size( ); ++i)
       t += v[i];
@@ -93,13 +93,6 @@ S6 SumS6(const std::vector<S6>& v) {
 
    double x4x5 = 0.0;
 
-   double x0 = 0.0;
-   double x1 = 0.0;
-   double x2 = 0.0;
-   double x3 = 0.0;
-   double x4 = 0.0;
-   double x5 = 0.0;
-
    for (size_t i = 0; i < v.size( ); ++i) {
       const double& s0 = v[i][0];
       const double& s1 = v[i][1];
@@ -116,38 +109,94 @@ S6 SumS6(const std::vector<S6>& v) {
       x5 += s5 * s5;
 
 
-      x0x1 += x0 * x1;
-      x0x2 += x0 * x2;
-      x0x3 += x0 * x3;
-      x0x4 += x0*x4;
-      x0x5 += x0*x5;
+      x0x1 += s0 * s1;
+      x0x2 += s0 * s2;
+      x0x3 += s0 * s3;
+      x0x4 += s0*s4;
+      x0x5 += s0*s5;
                 
-      x1x2 += x1*x2;
-      x1x3 += x1*x3;
-      x1x4 += x1*x4;
-      x1x5 += x1*x5;
+      x1x2 += s1*s2;
+      x1x3 += s1*s3;
+      x1x4 += s1*s4;
+      x1x5 += s1*s5;
                 
-      x2x3 += x2*x3;
-      x2x4 += x2*x4;
-      x2x5 += x2*x5;
+      x2x3 += s2*s3;
+      x2x4 += s2*s4;
+      x2x5 += s2*s5;
                 
-      x3x4 += x3*x4;
-      x3x5 += x3*x5;
+      x3x4 += s3*s4;
+      x3x5 += s3*s5;
                 
-      x4x5 += x4*x5;
+      x4x5 += s4*s5;
 
    }
 
-   MatS6 m(MatS6( ).Zero( ));
+   const double sumsx2 = x0 + x1 + x2 + x3 + x4 + x5;
 
+   MatS6 m;
 
-   return t;
+   m[0] = sumsx2 - x0;
+   m[7] = sumsx2 - x1;
+   m[14] = sumsx2 - x2;
+   m[21] = sumsx2 - x3;
+   m[28] = sumsx2 - x4;
+   m[35] = sumsx2 - x5;
+
+   m[1] = -x0x1;
+   m[2] = -x0x2;
+   m[3] = -x0x3;
+   m[4] = -x0x4;
+   m[5] = -x0x5;
+
+   m[6] = m[1];
+   m[8] = -x1x2;
+   m[9] = -x1x3;
+   m[10] = -x1x4;
+   m[11] = -x1x5;
+
+   m[12] = m[2];
+   m[13] = m[8];
+   m[15] = -x2x3;
+   m[16] = -x2x4;
+   m[17] = -x2x5;
+
+   m[18] = m[3];
+   m[19] = m[9];
+   m[20] = m[15];
+   m[22] = -x3x4;
+   m[23] = -x3x5;
+
+   m[24] = m[4];
+   m[25] = m[10];
+   m[26] = m[16];
+   m[27] = m[22];
+   m[29] = -x4x5;
+
+   m[30] = m[5];
+   m[31] = m[11];
+   m[32] = m[17];
+   m[33] = m[23];
+   m[34] = m[29];
+
+   std::cout << m/1000.0 << std::endl << std::endl;
+
+   return m;
 }
 
-MatS6 InertiaTensor(const std::vector<S6>& v) {
- 
+MatS6 InertiaTensor( const S6& s ) {
+   static const std::vector<MatS6> refl = MatS6::GetReflections( );
+
+   std::vector<S6> vcm;
+   std::vector<S6> vx;
+   for (size_t i = 0; i < refl.size( ); ++i) vx.push_back( refl[i] * s );
+   const S6 cm = CenterOfMass( vx );
+   for (size_t i = 0; i < refl.size( ); ++i) vcm.push_back( vx[i] - cm );
+   SumS6( vcm );
+   return MatS6 ();
 }
+
 int main( int argc, char* argv[] )
+
 {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
    MatS6 mat_reference;
@@ -155,6 +204,10 @@ int main( int argc, char* argv[] )
    const MV_Pair mv_reference(S6( cell_reference ), MatN(mat_reference.GetMatrix()).inverse());
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
+
+   for (size_t i = 0; i < vLat.size( ); ++i) {
+      const MatS6 inertia = InertiaTensor( vLat[i] );
+   }
    if (vLat.size( ) > 0) {
       LRL_LatticeMatcher lm;
       lm.SetReference( mv_reference );
