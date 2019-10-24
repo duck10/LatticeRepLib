@@ -139,6 +139,49 @@ void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<s
       ReportFit2( i, types[i], fit[i] );
 }
 
+static double sq( const double d ) { return d * d; }
+
+S6 ErrorsFromE3( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
+   S6 s6errors;
+
+   const double& a = cell[0];
+   const double& b = cell[1];
+   const double& c = cell[2];
+   const double& al = cell[3];
+   const double& be = cell[4];
+   const double& ga = cell[5];
+
+   const double& da = errorsInRadians[0];
+   const double& db = errorsInRadians[1];
+   const double& dc = errorsInRadians[2];
+   const double& dal = errorsInRadians[3];
+   const double& dbe = errorsInRadians[4];
+   const double& dga = errorsInRadians[5];
+
+   const double cosal = cos( al );
+   const double cosbe = cos( be );
+   const double cosga = cos( ga );
+   const double sinal = sin( al );
+   const double sinbe = sin( be );
+   const double singa = sin( ga );
+
+   // s6errors[0] =  db*c*cosal + dc*b*cosal - dal*b*c*sinal;
+   // s6errors[1] =  da*c*cosbe + dc*a*cosbe - dbe*a*c*sinbe;
+   // s6errors[2] =  da*b*cosga + db*a*cosga - dga*a*c*singa;
+   // s6errors[3] = -da*b*cosga - db*a*cosga - da*c*cosbe - dc*a*cosbe + dga*a*c*singa + dbe*a*c*sinbe - da*2.0*a;
+   // s6errors[4] = -da*b*cosga - db*a*cosga - db*c*cosal - dc*b*cosal + dga*a*c*singa + dal*b*c*sinal - db*2.0*b;
+   // s6errors[5] = -da*c*cosbe - dc*a*cosbe - db*c*cosal - dc*b*cosal + dbe*a*c*sinbe + dal*b*c*sinal - dc*2.0*c;
+
+   s6errors[0] = sqrt( sq( db * c * cosal ) + sq( dc * b * cosal ) + sq( -dal * b * c * sinal ) );
+   s6errors[1] = sqrt( sq( da * c * cosbe ) + sq( dc * a * cosbe ) + sq( -dbe * a * c * sinbe ) );
+   s6errors[2] = sqrt( sq( da * b * cosga ) + sq( db * a * cosga ) + sq( -dga * a * c * singa ) );
+   s6errors[3] = sqrt( sq( -da * b * cosga ) + sq( -db * a * cosga ) + sq( -da * c * cosbe ) + sq( -dc * a * cosbe ) + sq( dga * a * c * singa ) + sq( dbe * a * c * sinbe ) + sq( -da * 2.0 * a ) );
+   s6errors[4] = sqrt( sq( -da * b * cosga ) + sq( -db * a * cosga ) + sq( -db * c * cosal ) + sq( -dc * b * cosal ) + sq( dga * a * c * singa ) + sq( dal * b * c * sinal ) + sq( -db * 2.0 * b ) );
+   s6errors[5] = sqrt( sq( -da * c * cosbe ) + sq( -dc * a * cosbe ) + sq( -db * c * cosal ) + sq( -dc * b * cosal ) + sq( dbe * a * c * sinbe ) + sq( dal * b * c * sinal ) + sq( -dc * 2.0 * c ) );
+
+   return s6errors;
+}
+
 int main()
 {
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
@@ -148,6 +191,21 @@ int main()
    static const DeloneTypeList deloneList;
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   std::vector<S6> errors;
+   for (size_t i = 0; i < vLat.size( ); ++i) {
+      const LRL_Cell currentCell = LRL_Cell( vLat[i] );
+      LRL_Cell cellErrors = 0.01 * currentCell;
+      cellErrors[3] = 0.01 * currentCell[3];
+      cellErrors[4] = 0.01 * currentCell[4];
+      cellErrors[5] = 0.01 * currentCell[5];
+      errors.push_back( ErrorsFromE3( input[i].GetCell( ), cellErrors ));
+      std::cout << "input cell::" << std::endl;
+      std::cout << input[i].GetStrCell( ) << std::endl;
+      std::cout << "input cell errors (A and radians)::" << std::endl;
+      std::cout << cellErrors << std::endl;
+      std::cout << "S6 and S6 errors::" << std::endl;
+      std::cout << vLat[i] << std::endl << errors[i] << std::endl << std::endl;
+   }
 
   // for (size_t lat = 0; lat < vLat.size( ); ++lat) {
   //    std::cout << "input  " << input[lat].GetStrCell( ) << "    (" << vLat[lat] << ")" << std::endl;
