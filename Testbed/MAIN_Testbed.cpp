@@ -205,9 +205,9 @@ int main( int argc, char* argv[] )
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
 
-   for (size_t i = 0; i < vLat.size( ); ++i) {
-      const MatS6 inertia = InertiaTensor( vLat[i] );
-   }
+   //for (size_t i = 0; i < vLat.size( ); ++i) {
+   //   const MatS6 inertia = InertiaTensor( vLat[i] );
+   //}
    if (vLat.size( ) > 0) {
       LRL_LatticeMatcher lm;
       lm.SetReference( mv_reference );
