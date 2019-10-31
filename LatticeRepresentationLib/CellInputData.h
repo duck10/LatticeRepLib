@@ -29,6 +29,7 @@ protected:
    std::string m_inputDataType;
    std::string m_strCell;
    LRL_Cell        m_cell;
+   LRL_Cell_Sigmas m_sigmas;
    std::pair<int, int> m_varietyRange;
 };
 

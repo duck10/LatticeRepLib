@@ -113,4 +113,13 @@ protected:
    bool m_valid;
 };
 
+class LRL_Cell_Sigmas : public LRL_Cell {
+public:
+   LRL_Cell_Sigmas( void );
+   LRL_Cell_Sigmas( const std::string& s ); // cell with angles in degrees from text
+   LRL_Cell_Sigmas( const double a, const double b, const double c,
+      const double alpha, const double beta, const double gamma );
+   std::vector<double> GetVector( );
+};
+
 #endif // LRL_CELL_H

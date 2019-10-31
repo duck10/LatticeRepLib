@@ -514,3 +514,18 @@ G6 LRL_Cell::GetPrimitiveV6Vector(const std::string& latsym, const LRL_Cell& c) 
    const MatG6 m66 = c.LatSymMatG6(latsym);
    return m66 * G6(c);
 }
+
+LRL_Cell_Sigmas::LRL_Cell_Sigmas( void ) { m_valid = false; }
+
+LRL_Cell_Sigmas::LRL_Cell_Sigmas( const std::string& s ) { // cell with angles in degrees from text
+   m_valid = true;
+   m_cell = LRL_Cell( s ).GetVector( );
+}
+
+LRL_Cell_Sigmas::LRL_Cell_Sigmas( const double a, const double b, const double c,
+   const double alpha, const double beta, const double gamma ) {
+   m_valid = true;
+   m_cell = LRL_Cell( a,b,c,alpha,beta,gamma ).GetVector( );
+}
+
+std::vector<double> LRL_Cell_Sigmas::GetVector( ) { return m_cell; }

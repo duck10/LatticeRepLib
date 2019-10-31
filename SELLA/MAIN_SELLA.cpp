@@ -204,7 +204,8 @@ int main()
       std::cout << "input cell errors (A and radians)::" << std::endl;
       std::cout << cellErrors << std::endl;
       std::cout << "S6 and S6 errors::" << std::endl;
-      std::cout << vLat[i] << std::endl << errors[i] << std::endl << std::endl;
+      std::cout << vLat[i] << std::endl << errors[i] << std::endl;
+      std::cout << "RATIO " << vLat[i].norm() / errors[i].norm() << std::endl << std::endl;
    }
 
   // for (size_t lat = 0; lat < vLat.size( ); ++lat) {

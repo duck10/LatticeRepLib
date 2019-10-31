@@ -3,6 +3,7 @@
 
 #include "LRL_CoordinateConversionMatrices.h"
 #include "C3.h"
+#include "LRL_inverse.h"
 #include "S6.h"
 #include "MatS6.h"
 #include "MatD7.h"
@@ -105,6 +106,14 @@ MatS6 MatS6::e3Tos6(const std::vector<double>& m) {
 
    for (size_t i = 0; i < 36; ++i) if (m6[i] == 0.0) m6[i] = -0.0;
 	return -m6;
+}
+
+MatS6 MatS6::Inverse( const MatS6& min ) {
+   MatS6 m( min );
+   std::vector<double> arout( 36 );
+   inverse( 6, min.GetVector( ).data( ), arout.data( ) );
+   m.SetVector( arout );
+   return m;
 }
 
 

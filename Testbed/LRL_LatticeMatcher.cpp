@@ -6,7 +6,6 @@
 #include "C3.h"
 #include "G6.h"
 #include "LRL_Cell_Degrees.h"
-#include "LRL_inverse.h"
 #include "S6.h"
 
 #include "Selling.h"
@@ -74,14 +73,6 @@ void LRL_LatticeMatcher::SetReference( const MV_Pair& mvp ) {
    BuildReferenceTree( m_reference );
 }
 
-static MatS6 Inverse( const MatS6& min ) {
-   MatS6 m( min );
-   std::vector<double> arout( 36 );
-   inverse( 6, min.GetVector( ).data( ), arout.data( ) );
-   m.SetVector( arout );
-   return m;
-}
-
 
 void LRL_LatticeMatcher::BuildReferenceTree( const S6& s) {
    const double normReference = m_reference.norm( );
@@ -90,7 +81,7 @@ void LRL_LatticeMatcher::BuildReferenceTree( const S6& s) {
       const S6 scaledMV = scale.Scale(m_matrixTree[i] * s);
       const MatN matntest(m_matrixTree[i].GetMatrix( ) );
       const MV_Pair mv( scaledMV, MatS6(MatN(m_matrixTree[i].GetMatrix()).inverse()) );
-      StoreMV_IfUnique( scaledMV, Inverse( m_matrixTree[i] ) );
+      StoreMV_IfUnique( scaledMV, MatS6::Inverse( m_matrixTree[i] ) );
    }
 }
 

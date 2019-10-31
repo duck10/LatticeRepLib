@@ -40,6 +40,7 @@ public:
    MatS6(const std::vector<double>& v);
 
 	static MatS6 e3Tos6(const std::vector<double>& m);
+   static MatS6 Inverse( const MatS6& min );
 
    MatS6& operator= (const MatB4& v);
    MatS6& operator= (const MatS6& v);

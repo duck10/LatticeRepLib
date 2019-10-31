@@ -51,14 +51,43 @@ bool LRL_ReadLatticeData::IsLatticeName(const std::vector<std::string>& nameList
    return std::find(nameList.begin(), nameList.end(), inputName) != nameList.end();
 }
 
+bool HasLatticeParams6(const std::string& s) {
+   std::istringstream iss( s );
+   std::vector<std::string> fields;
+   std::string onefield;
+   while (iss) {
+      iss >> onefield;
+      if (iss) fields.push_back( onefield );
+   }
+   return fields.size( ) == 6;
+}
+
+bool HasLatticeParams7( const std::string& s ) {
+   std::istringstream iss( s );
+   std::vector<std::string> fields;
+   std::string onefield;
+   while (iss) {
+      iss >> onefield;
+      if (iss) fields.push_back( onefield );
+   }
+   return fields.size( ) == 7;
+}
+
+
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
+   std::istringstream iss( s );
+   std::vector<std::string> fields;
+   std::string onefield;
+   while (iss) {
+      iss >> onefield;
+      if (iss) fields.push_back( onefield );
+   }
    bool valid = false;
    m_input = s;
    if ((LRL_StringTools::strToupper(s.substr(0, 3)) == std::string("END"))) {
       m_lattice = "EOF";
    }
    else {
-      std::istringstream iss(s);
       iss >> m_inputDataType;
       m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
       if (m_inputDataType == "RANDOM ") {
