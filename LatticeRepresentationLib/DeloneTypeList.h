@@ -27,8 +27,8 @@ public:
    DeloneType operator[] (const size_t n) const;
    size_t size() const { return m_deloneTypes.size(); }
    static std::vector<std::pair<std::string, std::vector<double> > > Make3dCenteringMatrices();
-   std::vector<std::tuple<double, S6, MatS6> > Fit( const std::string& type, const S6& s6 ) const;
-   std::vector<std::tuple<double, S6, MatS6> > Fit( const S6& s6 ) const;
+   std::vector<std::tuple<double, S6, MatS6> > Fit( const std::string& type, const S6& s6, const S6& sig, const MatS6& m ) const;
+   std::vector<std::tuple<double, S6, MatS6> > Fit( const S6& s6, const S6& sig, const MatS6& m ) const;
    static const std::vector<std::string> typelist;
 
 protected:

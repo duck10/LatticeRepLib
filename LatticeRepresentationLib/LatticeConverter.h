@@ -4,6 +4,8 @@
 #include "LRL_Cell.h"
 #include "MatD7.h"
 
+#include <vector>
+
 class LatticeConverter {
    enum eOutputType { etext, emaxima };
 private:

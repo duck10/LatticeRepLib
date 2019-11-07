@@ -11,7 +11,6 @@ DeloneType::DeloneType(const std::string& deloneType,
 {
 }
 
-
 DeloneType::DeloneType(
    const std::string& deloneType, 
    const std::string& bravaisType, 
@@ -30,14 +29,13 @@ DeloneType::DeloneType(
 
 std::tuple<double, S6, MatS6> DeloneType::GetFit(const S6& s6) const {
    size_t n = 0;
-   double best = DBL_MAX;
+   double bestFit = DBL_MAX;
    for ( size_t i=0; i< m_matrices.size(); ++i ) {
       const S6 testv = m_matrices.GetPerp(i) * s6;
-      const S6 bestv = m_matrices.GetPrj(i) * s6;
-      const double test = testv.norm();
-      if ( best > test){
+      const double rawFit = testv.norm();
+      if ( bestFit > rawFit){
          n = i;
-         best = test;
+         bestFit = rawFit;
 
 
          //std::cout << " representation   " << i << std::endl;
@@ -45,13 +43,15 @@ std::tuple<double, S6, MatS6> DeloneType::GetFit(const S6& s6) const {
          //std::cout << "projected  " << bestv << std::endl;
          //std::cout << "perp v " << testv << std::endl;
          //std::cout << "projected s6 " << bestv << std::endl;
-         //std::cout << "distance " << test << std::endl;
+         //std::cout << "distance " << rawFit << std::endl;
       }
    }
-   if (best < 1.0E-8) best = 0.0;
-   return std::make_tuple(sqrt(best/100.0), m_matrices.GetPrj(n)*s6, m_matrices.GetToCanon(n));
+   if (bestFit < 1.0E-8) bestFit = 0.0;
+   const S6 bestv = m_matrices.GetPrj(n) * s6;
+   const MatS6& toCanonicalDeloneType = m_matrices.GetToCanon(n);
+   //DeloneFitResults fitResults( bestFit, bestv, testv, zscore, toCanonicalDeloneType );
+   return std::make_tuple(sqrt(bestFit/100.0), m_matrices.GetPrj(n)*s6, m_matrices.GetToCanon(n));
 }
-
 
 std::ostream& operator<< (std::ostream& o, const DeloneType& m) {
    o << "Delone Type  " << m.m_deloneName << std::endl;

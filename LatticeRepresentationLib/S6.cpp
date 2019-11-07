@@ -173,7 +173,7 @@ S6::S6(const std::vector<double>& v)
    : S6()
 {
    m_dim = v.size();
-   if (m_dim != 6) throw "bad dimension in D7 from a string";
+   if (m_dim != 6) throw "bad dimension in S6 from a vector";
    m_vec = v;
 }
 

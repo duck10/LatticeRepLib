@@ -9,14 +9,24 @@ class LRL_ReadLatticeData : public CellInputData {
 public:
    LRL_ReadLatticeData( const int seed = 0);
    LRL_ReadLatticeData read();
-   void CellReader(const std::string& s);
+   void CellReader( const std::string& s );
    void CellReader(const std::string& lattice, const std::string& cell);
-   GenerateRandomLattice<S6> generator;
-   bool IsLatticeName(const std::string inputName, const std::vector<std::string>& nameList);
-   bool IsLatticeName(const std::vector<std::string>& nameList, const std::string inputName);
 
    static std::vector<CellInputData> ReadAllLatticeData(const int seed);
    static std::vector<CellInputData> ReadAllLatticeDataAndMakePrimitive(const int seed);
+
+protected:
+   GenerateRandomLattice<S6> generator;
+
+   bool SetRandomCell( const std::string& inputDataType );
+   bool SetG6Data( const std::string& inputDataType, std::vector<double>& fields );
+   bool SetD7Data( const std::string& inputDataType, std::vector<double>& fields );
+   bool SetS6Data( const std::string& inputDataType, std::vector<double>& fields );
+   bool SetC3Data( const std::string& inputDataType, std::vector<double>& fields );
+   bool SetUnitCellTypeData( const std::string& inputDataType, const std::pair<std::vector<double>, std::vector<double> >& params );
+   bool IsLatticeName(const std::string inputName, const std::vector<std::string>& nameList);
+   bool IsLatticeName(const std::vector<std::string>& nameList, const std::string inputName);
+
 };
 
 #endif // LRL_READLATTICEDATA_H

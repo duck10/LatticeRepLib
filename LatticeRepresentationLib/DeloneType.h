@@ -13,6 +13,17 @@
 #include "LabeledDeloneTypeMatrices.h"
 
 
+class DeloneFitResults {
+public:
+
+protected:
+   double m_rawFit;
+   double m_zscore;
+   S6 m_bestFit;
+   S6 m_difference;
+   MatS6 m_toCanonicalDeloneType;
+};
+
 class MatricesForOneDeloneType {
    typedef std::vector<MatS6> vmat;
 public:
