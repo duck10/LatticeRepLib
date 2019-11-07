@@ -306,7 +306,7 @@ DeloneType DeloneTypeList::operator[] (const std::string& s) const {
    return DeloneType();
 }
 
-std::vector<std::tuple<double, S6, MatS6> > DeloneTypeList::Fit( const std::string& type, const S6& s6 ) const {
+std::vector<std::tuple<double, S6, MatS6> > DeloneTypeList::Fit( const std::string& type, const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
    std::vector<std::tuple<double, S6, MatS6> > v;
    for (size_t i = 0; i < m_deloneTypes.size( ); ++i) {
       const std::string name = m_deloneTypes[i].GetName( );
@@ -318,7 +318,7 @@ std::vector<std::tuple<double, S6, MatS6> > DeloneTypeList::Fit( const std::stri
    return v;
 }
 
-std::vector<std::tuple<double, S6, MatS6> >  DeloneTypeList::Fit( const S6& s6 ) const {
-   return Fit( "", s6 );
+std::vector<std::tuple<double, S6, MatS6> >  DeloneTypeList::Fit( const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
+   return Fit( "", s6, sig, reductionMatrix );
 }
 

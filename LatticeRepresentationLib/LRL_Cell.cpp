@@ -66,6 +66,14 @@ LRL_Cell::LRL_Cell(const LRL_Cell& c)
 {
 }
 
+LRL_Cell::LRL_Cell( const std::vector<double>& v )
+   : m_cell( v )
+   , m_valid( (*this).m_valid )
+{
+   for (size_t i = 3; i < 6; ++i)
+      m_cell[i] *= 4.0 * atan( 1.0 ) / 180.0;
+}
+
 LRL_Cell::LRL_Cell(const std::string& s)
    : m_valid(true)
 {
@@ -78,14 +86,41 @@ LRL_Cell::LRL_Cell(const std::string& s)
 
 LRL_Cell::LRL_Cell(const S6& ds)
 {
-   static const double pi = 4.0*atan(1.0);
-   static const double twopi = 2.0*pi;
-   m_valid = true;
-   const G6 g6(ds);
-   *this = g6;
-   m_valid = m_valid && ds.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
-      && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3],m_cell[4],m_cell[5]) >= 0.0);
-} 
+   m_cell.resize( 6 );
+
+   const S6& s( ds );
+   double& a = (*this)[0];
+   double& b = (*this)[1];
+   double& c = (*this)[2];
+   double& al = (*this)[3];
+   double& be = (*this)[4];
+   double& ga = (*this)[5];
+
+   const double asq = -(s[3] + s[2] + s[1]);
+   const double bsq = -(s[4] + s[2] + s[0]);
+   const double csq = -(s[5] + s[1] + s[0]);
+   m_valid = ds.GetValid() && asq > 0.0 && bsq > 0.0 && csq > 0.0;
+   if ( m_valid){
+      a = sqrt( asq );
+      b = sqrt( bsq );
+      c = sqrt( csq );
+
+      const double cosal = s[0] / (b * c);
+      const double cosbe = s[1] / (a * c);
+      const double cosga = s[2] / (a * b);
+      m_valid = abs( cosal ) < 1.0 && abs( cosbe ) < 1.0 && abs( cosga ) < 1.0;
+      if (m_valid) {
+         al = acos( cosal );
+         be = acos( cosbe );
+         ga = acos( cosga );
+      }
+
+      static const double pi = 4.0 * atan( 1.0 );
+      static const double twopi = 2.0 * pi;
+
+      m_valid = (al + be + ga) < twopi;
+   }
+}
 
 LRL_Cell::LRL_Cell(const C3& c3)
 {
@@ -99,6 +134,7 @@ LRL_Cell::LRL_Cell(const C3& c3)
 LRL_Cell::LRL_Cell(const B4& dt)
 {
    (*this) = G6(dt);
+   m_valid = dt.GetValid( );
 }
 
 std::ostream& operator<< (std::ostream& o, const LRL_Cell& c) {
@@ -515,17 +551,3 @@ G6 LRL_Cell::GetPrimitiveV6Vector(const std::string& latsym, const LRL_Cell& c) 
    return m66 * G6(c);
 }
 
-LRL_Cell_Sigmas::LRL_Cell_Sigmas( void ) { m_valid = false; }
-
-LRL_Cell_Sigmas::LRL_Cell_Sigmas( const std::string& s ) { // cell with angles in degrees from text
-   m_valid = true;
-   m_cell = LRL_Cell( s ).GetVector( );
-}
-
-LRL_Cell_Sigmas::LRL_Cell_Sigmas( const double a, const double b, const double c,
-   const double alpha, const double beta, const double gamma ) {
-   m_valid = true;
-   m_cell = LRL_Cell( a,b,c,alpha,beta,gamma ).GetVector( );
-}
-
-std::vector<double> LRL_Cell_Sigmas::GetVector( ) { return m_cell; }

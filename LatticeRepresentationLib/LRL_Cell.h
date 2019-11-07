@@ -34,7 +34,8 @@ public:
    friend std::ostream& operator<< (std::ostream& o, const LRL_Cell& c);
    friend LRL_Cell operator* (const double d, const LRL_Cell& v);
    LRL_Cell(void);
-   LRL_Cell(const LRL_Cell& c);
+   LRL_Cell( const LRL_Cell& c );
+   LRL_Cell( const std::vector<double>& v );
    LRL_Cell(const std::string& s); // cell with angles in degrees from text
    LRL_Cell(const double a, const double b, const double c,
       const double alpha, const double beta, const double gamma);
@@ -78,6 +79,10 @@ public:
    std::vector<double> GetVector(void) const { return m_cell; }
    double* data() const { return const_cast<double*>(m_cell.data()); }
 
+   void SetSigmas( const LRL_Cell& s ) { m_sigmas = s.GetVector( ); }
+   void SetSigmas( const std::vector<double>& s ) { m_sigmas = s; }
+
+
    void SetVector(const std::vector<double>& v) { m_cell = v; }
    bool GetValid(void) const { return m_valid; }
    bool IsValid(void) const { return m_valid; }
@@ -110,16 +115,8 @@ public:
 
 protected:
    std::vector<double> m_cell;
+   std::vector<double> m_sigmas;
    bool m_valid;
-};
-
-class LRL_Cell_Sigmas : public LRL_Cell {
-public:
-   LRL_Cell_Sigmas( void );
-   LRL_Cell_Sigmas( const std::string& s ); // cell with angles in degrees from text
-   LRL_Cell_Sigmas( const double a, const double b, const double c,
-      const double alpha, const double beta, const double gamma );
-   std::vector<double> GetVector( );
 };
 
 #endif // LRL_CELL_H

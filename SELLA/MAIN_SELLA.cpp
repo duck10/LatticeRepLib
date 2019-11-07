@@ -36,14 +36,27 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    return cellDataList;
 }
 
-std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeData>& input) {
+std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLatticeData>& input ) {
    std::vector<S6> v;
    LatticeConverter converter;
 
+   for (size_t i = 0; i < input.size( ); ++i) {
+      const S6 s6 = converter.SellingReduceCell( input[i].GetLattice( ), input[i].GetCell( ) );
+      v.push_back( s6 );
+   }
+   return v;
+}
 
-   for ( size_t i=0; i<input.size(); ++i ) {
-      const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell());
-      v.push_back(s6);
+std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLatticeData>& input, std::vector<MatS6>& vmat ) {
+   std::vector<S6> v;
+   LatticeConverter converter;
+   MatS6 m;
+   vmat.clear( );
+
+   for (size_t i = 0; i < input.size( ); ++i) {
+      const S6 s6 = converter.SellingReduceCell( input[i].GetLattice( ), input[i].GetCell( ), m );
+      v.push_back( s6 );
+      vmat.push_back( m );
    }
    return v;
 }
@@ -189,8 +202,9 @@ int main()
    //AnalyzePDBCells( input );
    //exit( 0 );
    static const DeloneTypeList deloneList;
+   std::vector<MatS6> reductionMatrices;
 
-   const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+   const std::vector<S6> vLat = GetInputSellingReducedVectors(input, reductionMatrices);
    std::vector<S6> errors;
    for (size_t i = 0; i < vLat.size( ); ++i) {
       const LRL_Cell currentCell = LRL_Cell( vLat[i] );
@@ -216,7 +230,7 @@ int main()
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::cout << "input  " << input[lat].GetStrCell() << "    (" << (input[lat].GetCell()) <<")" << std::endl;
       //const std::vector<std::tuple<double, S6, MatS6> >  v = DeloneTypeList::Fit( "T", vLat[lat] );
-      const std::vector<std::tuple<double, S6, MatS6> >  v = deloneList.Fit( vLat[lat] );
+      const std::vector<std::tuple<double, S6, MatS6> >  v = deloneList.Fit( vLat[lat], errors[lat], reductionMatrices[lat] );
       ReportFit( lat, deloneList,  v );
       std::cout << "************************************" << std::endl;
    }
