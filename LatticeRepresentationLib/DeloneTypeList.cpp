@@ -143,6 +143,7 @@ DeloneTypeList::DeloneTypeList(const bool build)
    static const std::vector<std::pair<std::string, std::string> > e3matrices = CreateE3CenteringMatrixList( );
    static const std::vector<std::pair<std::string, std::string> > bravaisLatticeTypes = CreateBravaisTypeList( );
    static const std::vector<std::pair<std::string, MatS6> >       centeringMatrices = CreateListOfCenteringMatrices( );
+   static const std::vector<std::pair<std::string, int> > freeParams = CreateListOfFreeParams( );
 
    LabeledSellaMatrices lsm;
    static const std::vector<std::pair<std::string, std::vector<MatS6> > >   prj = CreateAllPrjs( );
@@ -170,6 +171,7 @@ DeloneTypeList::DeloneTypeList(const bool build)
          Getter( typelist[i], characters ),
          Getter( typelist[i], e3matrices ),
          Getter( typelist[i], centeringMatrices ),
+         Getter( typelist[i], freeParams ),
          Getter( typelist[i], matrices ) );
 
       m_deloneTypes.push_back( dt );
@@ -221,6 +223,36 @@ std::vector<double> DeloneTypeList::Make3dVector( const std::string& s) {
 std::pair<std::string, MatS6 > DeloneTypeList::CreateCenteringMatrix(const std::string& lattice, const std::string& threespaceMatrix) {
    return std::make_pair(lattice, MatS6::e3Tos6(Make3dVector(threespaceMatrix)));
 }
+
+std::vector<std::pair<std::string, int > > DeloneTypeList::CreateListOfFreeParams( ) {
+   std::vector<std::pair<std::string, int > > v;
+   v.push_back( std::make_pair( "C1", 1 ) );
+   v.push_back( std::make_pair( "C3", 1 ) );
+   v.push_back( std::make_pair( "C5", 1 ) );
+   v.push_back( std::make_pair( "R1", 2 ) );
+   v.push_back( std::make_pair( "R3", 2 ) );
+   v.push_back( std::make_pair( "T1", 2 ) );
+   v.push_back( std::make_pair( "T2", 2 ) );
+   v.push_back( std::make_pair( "T5", 2 ) );
+   v.push_back( std::make_pair( "O1A", 3 ) );
+   v.push_back( std::make_pair( "O1B", 3 ) );
+   v.push_back( std::make_pair( "O2", 3 ) );
+   v.push_back( std::make_pair( "O3", 3 ) );
+   v.push_back( std::make_pair( "O4", 3 ) );
+   v.push_back( std::make_pair( "O5", 3 ) );
+   v.push_back( std::make_pair( "M1A", 4 ) );
+   v.push_back( std::make_pair( "M1B", 4 ) );
+   v.push_back( std::make_pair( "M2A", 4 ) );
+   v.push_back( std::make_pair( "M2B", 4 ) );
+   v.push_back( std::make_pair( "M3", 4 ) );
+   v.push_back( std::make_pair( "M4", 4 ) );
+   v.push_back( std::make_pair( "A1", 5 ) );
+   v.push_back( std::make_pair( "A2", 5 ) );
+   v.push_back( std::make_pair( "A3", 5 ) );
+   v.push_back( std::make_pair( "H4", 2 ) );
+   return v;
+}
+
 
 std::vector<std::pair<std::string, MatS6> > DeloneTypeList::CreateListOfCenteringMatrices() {
    std::vector<std::pair<std::string, MatS6> > v;
@@ -306,19 +338,48 @@ DeloneType DeloneTypeList::operator[] (const std::string& s) const {
    return DeloneType();
 }
 
-std::vector<std::tuple<double, S6, MatS6> > DeloneTypeList::Fit( const std::string& type, const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
-   std::vector<std::tuple<double, S6, MatS6> > v;
+double Zscore( const S6& s6, const S6& sigmas, const MatS6& reductionMatrix )
+{
+   const S6 modSig( reductionMatrix * sigmas );
+   double zscoreSq = 0.0;
+   for (size_t i = 0; i < 6; ++i) {
+      zscoreSq += s6[i] / modSig[i] * s6[i] / modSig[i];
+      //std::cout << s6[i] << "   " << modSig[i] << std::endl;
+   }
+   std::cout << std::endl;
+   return sqrt( zscoreSq );
+}
+
+double DeloneTypeList::GetFreeParams(const std::string& s) {
+   static const std::vector<std::pair< std::string, int> > freeparams = CreateListOfFreeParams( );
+   size_t foundName = 0;
+   for ( size_t i=0; i<freeparams.size(); ++i ) {
+      if ( freeparams[i].first == s ) {
+         foundName = freeparams[i].second;
+         break;
+      }
+   }
+   return foundName;
+}
+
+std::vector<DeloneFitResults> DeloneTypeList::Fit( const std::string& type, const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
+   std::vector<DeloneFitResults> v;
    for (size_t i = 0; i < m_deloneTypes.size( ); ++i) {
       const std::string name = m_deloneTypes[i].GetName( );
       if (type.empty( ) || name.find( type ) != std::string::npos) {  // LCA make type UC
-         const std::tuple<double, S6, MatS6> fit = m_deloneTypes[i].GetFit( s6 );
+         DeloneFitResults fit = m_deloneTypes[i].GetFit( s6 );
+         
+         const double zscore = Zscore( s6-fit.GetBestFit(), sig, reductionMatrix ) * sqrt( GetFreeParams( name ) );
+         fit.SetZscore( zscore );
+         fit.SetLatticeType( name );
          v.push_back( fit );
+         //std::cout << fit << std::endl << std::endl;
       }
    }
    return v;
 }
 
-std::vector<std::tuple<double, S6, MatS6> >  DeloneTypeList::Fit( const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
+std::vector<DeloneFitResults>  DeloneTypeList::Fit( const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
    return Fit( "", s6, sig, reductionMatrix );
 }
 
