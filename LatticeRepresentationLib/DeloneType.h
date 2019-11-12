@@ -15,8 +15,19 @@
 
 class DeloneFitResults {
 public:
+   friend std::ostream& operator<< ( std::ostream&, const DeloneFitResults& );
 
+   DeloneFitResults( const double fit, const S6& bestApprox, const S6& perpv, const MatS6& toCanon );
+   void SetZscore( const double score ) { m_zscore = score; }
+   void SetLatticeType( const std::string& s ) { m_latticeType = s; }
+   double GetRawFit( void ) const { return m_rawFit; }
+   double GetZscore( void ) const { return m_zscore; }
+   S6 GetBestFit( void ) const { return m_bestFit; }
+   S6 GetDifference( void ) const { return m_difference; }
+   MatS6 GetToCanon( void ) const { return m_toCanonicalDeloneType; }
+   std::string GetLatticeType( void ) const { return m_latticeType; }
 protected:
+   std::string m_latticeType;
    double m_rawFit;
    double m_zscore;
    S6 m_bestFit;
@@ -26,6 +37,7 @@ protected:
 
 class MatricesForOneDeloneType {
    typedef std::vector<MatS6> vmat;
+
 public:
    MatricesForOneDeloneType() {}
    MatricesForOneDeloneType(const vmat& prj, const vmat& perp, const vmat& toCanon)
@@ -55,16 +67,17 @@ public:
    friend std::ostream& operator<< (std::ostream&, const DeloneType&);
 
    DeloneType() {}
-   DeloneType(const std::string& deloneType, const std::string& bravaisType, const std::string& character, const std::pair<std::string, MatS6 >&);
+   //DeloneType(const std::string& deloneType, const std::string& bravaisType, const std::string& character, const std::pair<std::string, MatS6 >&);
    DeloneType(
       const std::string& deloneType,
       const std::string& bravaisType,
       const std::string& character,
       const std::string& toCentered_E3,
       const MatS6& ToCentered,
+      const int m_freePsrams,
       const MatricesForOneDeloneType& vm);
 
-   std::tuple<double, S6, MatS6> GetFit(const S6& s6) const;
+   DeloneFitResults GetFit(const S6& s6) const;
 
    std::string GetName(void) const { return m_deloneName; }
    std::string GetBravaisType(void) const { return m_bravaisType; }
@@ -81,6 +94,7 @@ private:
    std::string m_character;
    std::string m_toCentered_E3;
    MatS6       m_toCentered_S6;
+   int m_freePsrams;
 
    MatricesForOneDeloneType m_matrices;
 

@@ -135,19 +135,11 @@ void ReportFit1( const size_t i, const DeloneType& type, const std::tuple<double
    std::cout << "centered cell  " << LRL_Cell_Degrees( type.GetToCentered( ) * std::get<MatS6>( fit ) * std::get<S6>( fit ) ) << std::endl << std::endl;
 }
 
-void ReportFit2( const size_t i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
-   std::cout << "  "
-      << type.GetName( )
-      << "  "
-      << std::get<double>( fit )
-      << "     "
-      << std::get<S6>( fit )
-      << "     "
-      << LRL_Cell_Degrees( std::get<S6>( fit ) )
-      << std::endl;
+void ReportFit2( const size_t i, const DeloneType& type, const DeloneFitResults& fit ) {
+   std::cout << type << "  " << fit << std::endl;
 }
 
-void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<std::tuple<double, S6, MatS6> >& fit ) {
+void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit ) {
    for ( size_t i=0; i<fit.size(); ++i )
       ReportFit2( i, types[i], fit[i] );
 }
@@ -160,7 +152,7 @@ S6 ErrorsFromE3( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
    const double& a = cell[0];
    const double& b = cell[1];
    const double& c = cell[2];
-   const double& al = cell[3];
+   const double& al = cell[3]; // should be radians !!!!!
    const double& be = cell[4];
    const double& ga = cell[5];
 
@@ -178,19 +170,13 @@ S6 ErrorsFromE3( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
    const double sinbe = sin( be );
    const double singa = sin( ga );
 
-   // s6errors[0] =  db*c*cosal + dc*b*cosal - dal*b*c*sinal;
-   // s6errors[1] =  da*c*cosbe + dc*a*cosbe - dbe*a*c*sinbe;
-   // s6errors[2] =  da*b*cosga + db*a*cosga - dga*a*c*singa;
-   // s6errors[3] = -da*b*cosga - db*a*cosga - da*c*cosbe - dc*a*cosbe + dga*a*c*singa + dbe*a*c*sinbe - da*2.0*a;
-   // s6errors[4] = -da*b*cosga - db*a*cosga - db*c*cosal - dc*b*cosal + dga*a*c*singa + dal*b*c*sinal - db*2.0*b;
-   // s6errors[5] = -da*c*cosbe - dc*a*cosbe - db*c*cosal - dc*b*cosal + dbe*a*c*sinbe + dal*b*c*sinal - dc*2.0*c;
-
    s6errors[0] = sqrt( sq( db * c * cosal ) + sq( dc * b * cosal ) + sq( -dal * b * c * sinal ) );
    s6errors[1] = sqrt( sq( da * c * cosbe ) + sq( dc * a * cosbe ) + sq( -dbe * a * c * sinbe ) );
-   s6errors[2] = sqrt( sq( da * b * cosga ) + sq( db * a * cosga ) + sq( -dga * a * c * singa ) );
-   s6errors[3] = sqrt( sq( -da * b * cosga ) + sq( -db * a * cosga ) + sq( -da * c * cosbe ) + sq( -dc * a * cosbe ) + sq( dga * a * c * singa ) + sq( dbe * a * c * sinbe ) + sq( -da * 2.0 * a ) );
-   s6errors[4] = sqrt( sq( -da * b * cosga ) + sq( -db * a * cosga ) + sq( -db * c * cosal ) + sq( -dc * b * cosal ) + sq( dga * a * c * singa ) + sq( dal * b * c * sinal ) + sq( -db * 2.0 * b ) );
-   s6errors[5] = sqrt( sq( -da * c * cosbe ) + sq( -dc * a * cosbe ) + sq( -db * c * cosal ) + sq( -dc * b * cosal ) + sq( dbe * a * c * sinbe ) + sq( dal * b * c * sinal ) + sq( -dc * 2.0 * c ) );
+   s6errors[2] = sqrt( sq( da * b * cosga ) + sq( db * a * cosga ) + sq( -dga * a * b * singa ) );
+
+   s6errors[3] = sqrt( sq( -2.0 * a * da ) + sq( -s6errors[2] ) + sq( -s6errors[1] ) );
+   s6errors[4] = sqrt( sq( -2.0 * b * db ) + sq( -s6errors[2] ) + sq( -s6errors[0] ) );
+   s6errors[5] = sqrt( sq( -2.0 * c * dc ) + sq( -s6errors[0] ) + sq( -s6errors[1] ) );
 
    return s6errors;
 }
@@ -228,11 +214,11 @@ int main()
   //}
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      std::cout << "input  " << input[lat].GetStrCell() << "    (" << (input[lat].GetCell()) <<")" << std::endl;
+      //std::cout << "input  " << input[lat].GetStrCell() << "    (" << (input[lat].GetCell()) <<")" << std::endl;
       //const std::vector<std::tuple<double, S6, MatS6> >  v = DeloneTypeList::Fit( "T", vLat[lat] );
-      const std::vector<std::tuple<double, S6, MatS6> >  v = deloneList.Fit( vLat[lat], errors[lat], reductionMatrices[lat] );
+      const std::vector<DeloneFitResults>  v = deloneList.Fit( vLat[lat], errors[lat], reductionMatrices[lat] );
       ReportFit( lat, deloneList,  v );
-      std::cout << "************************************" << std::endl;
+      //std::cout << "************************************" << std::endl;
    }
 
    const int  i19191 = 19191;
