@@ -146,7 +146,73 @@ void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<D
 
 static double sq( const double d ) { return d * d; }
 
-S6 ErrorsFromE3( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
+LRL_Cell CellErrorsFromS6(const S6& s, const S6& sig) {
+   LRL_Cell cer;
+   double& da = cer[0];
+   double& db = cer[1];
+   double& dc = cer[2];
+   double& dal = cer[3];
+   double& dbe = cer[4];
+   double& dga = cer[5];
+
+   const double& ds1 = sig[0];
+   const double& ds2 = sig[1];
+   const double& ds3 = sig[2];
+   const double& ds4 = sig[3];
+   const double& ds5 = sig[4];
+   const double& ds6 = sig[5];
+
+   const LRL_Cell cel(s);
+   const double a = cel[0];
+   const double b = cel[1];
+   const double c = cel[2];
+   const double al = cel[3];
+   const double be = cel[4];
+   const double ga = cel[5];
+
+   const double& s1 = s[0];
+   const double& s2 = s[1];
+   const double& s3 = s[2];
+   const double& s4 = s[3];
+   const double& s5 = s[4];
+   const double& s6 = s[5];
+
+   da = sqrt((sq(ds4) + sq(ds3) + sq(ds2)) / sq(2.0 * a));
+   db = sqrt((sq(ds5) + sq(ds3) + sq(ds1)) / sq(2.0 * b));
+   dc = sqrt((sq(ds6) + sq(ds2) + sq(ds1)) / sq(2.0 * c));
+
+   const double dax = -0.5 * (-ds4 - ds3 - ds2) / sqrt(-s4 - s3 - s2);
+    std::cout << "diff in da " << da - dax << std::endl;
+    std::cout << " da, dax " << da << "  " << dax << std::endl;
+
+    std::cout << "b * c * ds1 " << b * c * ds1 << std::endl;
+    std::cout << "a * c * ds2 " << a * c * ds2 << std::endl;
+    std::cout << "a * b * ds3 " << a * b * ds3 << std::endl;
+    std::cout << "s1 * db " << s1 * db << std::endl;
+    std::cout << "s2 * da " << s2 * da << std::endl;
+    std::cout << "s3 * da " << s3 * da << std::endl;
+    std::cout << "s1 * dc " << s1 * dc << std::endl;
+    std::cout << "s2 * dc " << s2 * dc << std::endl;
+    std::cout << "s3 * db " << s3 * db << std::endl;
+    std::cout << "sin(al) * (b * c) * (b * c) " << sin(al) * (b * c) * (b * c) << std::endl;
+    std::cout << "sin(be) * (a * c) * (a * c) " << sin(be) * (a * c) * (a * c) << std::endl;
+    std::cout << "sin(ga) * (a * b) * (a * b) " << sin(ga) * (a * b) * (a * b) << std::endl;
+
+
+
+   dal = (b * c * ds1 + s1 * db + s1 * dc) / (sin(al) * (b * c) * (b * c));
+   dbe = (a * c * ds2 + s2 * da + s2 * dc) / (sin(be) * (a * c) * (a * c));
+   dga = (a * b * ds3 + s3 * da * s3 * db) / (sin(ga) * (a * b) * (a * b));
+
+   std::cout << "input S6 " << s << std::endl;
+   std::cout << "input S6 sigmas " << sig << std::endl;
+   std::cout << "input cell " << LRL_Cell(s) << std::endl;
+   std::cout << "result cell sigs " << cer << std::endl;
+
+   return cer;
+}
+
+S6 S6ErrorsFromCell( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
    S6 s6errors;
 
    const double& a = cell[0];
@@ -163,12 +229,24 @@ S6 ErrorsFromE3( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
    const double& dbe = errorsInRadians[4];
    const double& dga = errorsInRadians[5];
 
-   const double cosal = cos( al );
-   const double cosbe = cos( be );
-   const double cosga = cos( ga );
-   const double sinal = sin( al );
-   const double sinbe = sin( be );
-   const double singa = sin( ga );
+   const double cosal = cos(al);
+   const double cosbe = cos(be);
+   const double cosga = cos(ga);
+   const double sinal = sin(al);
+   const double sinbe = sin(be);
+   const double singa = sin(ga);
+
+   std::cout << std::endl;
+   std::cout << "   db * c * cosal " << db * c * cosal << std::endl;
+   std::cout << "   da * c * cosbe " << da * c * cosbe << std::endl;
+   std::cout << "   da * b * cosga " << da * b * cosga << std::endl;
+   std::cout << "   dc * b * cosal  " << dc * b * cosal << std::endl;
+   std::cout << "   dc * a * cosbe  " << dc * a * cosbe << std::endl;
+   std::cout << "   db * a * cosga  " << db * a * cosga << std::endl;
+   std::cout << " -dal * b * c * sinal " << -dal * b * c * sinal << std::endl;
+   std::cout << " -dbe * a * c * sinbe " << -dbe * a * c * sinbe << std::endl;
+   std::cout << " -dga * a * b * singa " << -dga * a * b * singa << std::endl;
+   std::cout << std::endl;
 
    s6errors[0] = sqrt( sq( db * c * cosal ) + sq( dc * b * cosal ) + sq( -dal * b * c * sinal ) );
    s6errors[1] = sqrt( sq( da * c * cosbe ) + sq( dc * a * cosbe ) + sq( -dbe * a * c * sinbe ) );
@@ -181,8 +259,26 @@ S6 ErrorsFromE3( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
    return s6errors;
 }
 
+void TestSigmas( ) {
+   const LRL_Cell cell("10 10 10 90 90 90 ");
+   const LRL_Cell errors("  .1 .1 .1 .1 .1 .1");
+   std::cout << "input cell " << LRL_Cell(cell) << std::endl;
+   std::cout << "cell sigs " << errors << std::endl;
+   const S6 s6(cell);
+   const S6 s6er = S6ErrorsFromCell(cell, errors);
+   const LRL_Cell newCellErrors = CellErrorsFromS6(s6, s6er);
+   std::cout << "output cell sigs " << newCellErrors << std::endl;
+
+
+}
+
 int main()
 {
+   TestSigmas( );
+
+
+
+
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
    //std::cout << "input complete" << std::endl;
    //AnalyzePDBCells( input );
@@ -198,7 +294,7 @@ int main()
       cellErrors[3] = 0.01 * currentCell[3];
       cellErrors[4] = 0.01 * currentCell[4];
       cellErrors[5] = 0.01 * currentCell[5];
-      errors.push_back( ErrorsFromE3( input[i].GetCell( ), cellErrors ));
+      errors.push_back( S6ErrorsFromCell( input[i].GetCell( ), cellErrors ));
       std::cout << "input cell::" << std::endl;
       std::cout << input[i].GetStrCell( ) << std::endl;
       std::cout << "input cell errors (A and radians)::" << std::endl;
