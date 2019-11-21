@@ -162,14 +162,6 @@ LRL_Cell CellErrorsFromS6(const S6& s, const S6& sig) {
    const double& ds5 = sig[4];
    const double& ds6 = sig[5];
 
-   const LRL_Cell cel(s);
-   const double a = cel[0];
-   const double b = cel[1];
-   const double c = cel[2];
-   const double al = cel[3];
-   const double be = cel[4];
-   const double ga = cel[5];
-
    const double& s1 = s[0];
    const double& s2 = s[1];
    const double& s3 = s[2];
@@ -177,37 +169,75 @@ LRL_Cell CellErrorsFromS6(const S6& s, const S6& sig) {
    const double& s5 = s[4];
    const double& s6 = s[5];
 
-   da = sqrt((sq(ds4) + sq(ds3) + sq(ds2)) / sq(2.0 * a));
-   db = sqrt((sq(ds5) + sq(ds3) + sq(ds1)) / sq(2.0 * b));
-   dc = sqrt((sq(ds6) + sq(ds2) + sq(ds1)) / sq(2.0 * c));
+   da = sqrt( 0.25 * (sq( -ds4 ) - sq( ds3 ) - sq( ds2 )) / (-s4 - s3 - s2) );
+   db = sqrt( 0.25 * (sq( -ds5 ) - sq( ds3 ) - sq( ds1 )) / (-s5 - s3 - s1) );
+   dc = sqrt( 0.25 * (sq( -ds6 ) - sq( ds2 ) - sq( ds1 )) / (-s6 - s2 - s1) );
 
-   const double dax = -0.5 * (-ds4 - ds3 - ds2) / sqrt(-s4 - s3 - s2);
-    std::cout << "diff in da " << da - dax << std::endl;
-    std::cout << " da, dax " << da << "  " << dax << std::endl;
+   const double aas = -s4 - s3 - s2; // this is a^2
+   const double bas = -s5 - s3 - s1;
+   const double cas = -s6 - s2 - s1;
+   const double sqrta = sqrt( aas ); // this is just a
+   const double sqrtb = sqrt( bas ); // this is just b
+   const double sqrtc = sqrt( cas ); // this is just c
 
-    std::cout << "b * c * ds1 " << b * c * ds1 << std::endl;
-    std::cout << "a * c * ds2 " << a * c * ds2 << std::endl;
-    std::cout << "a * b * ds3 " << a * b * ds3 << std::endl;
-    std::cout << "s1 * db " << s1 * db << std::endl;
-    std::cout << "s2 * da " << s2 * da << std::endl;
-    std::cout << "s3 * da " << s3 * da << std::endl;
-    std::cout << "s1 * dc " << s1 * dc << std::endl;
-    std::cout << "s2 * dc " << s2 * dc << std::endl;
-    std::cout << "s3 * db " << s3 * db << std::endl;
-    std::cout << "sin(al) * (b * c) * (b * c) " << sin(al) * (b * c) * (b * c) << std::endl;
-    std::cout << "sin(be) * (a * c) * (a * c) " << sin(be) * (a * c) * (a * c) << std::endl;
-    std::cout << "sin(ga) * (a * b) * (a * b) " << sin(ga) * (a * b) * (a * b) << std::endl;
+   double dsqrta = -0.5 / (sqrta * sqrta * sqrta) * sqrt(sq( ds4 ) + sq( ds3 ) + sq( ds2 ));
+   double dsqrtb = -0.5 / (sqrtb * sqrtb * sqrtb) * sqrt(sq( ds5 ) + sq( ds3 ) + sq( ds1 ));
+   double dsqrtc = -0.5 / (sqrtc * sqrtc * sqrtc) * sqrt(sq( ds6 ) + sq( ds2 ) + sq( ds1 ));
+
+   /*
+   %i8) derivative(alp,s1);
+
+(%o8) -(1/sqrt(((-s5)-s3-s1)*((-s6)-s2-s1))
+ -(s1*(s6+s5+s3+s2+2*s1))/(2*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2)))/sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
+(%i9) derivative(alp,s2);
+
+(%o9) (s1*(s5+s3+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
+(%i10) derivative(alp,s3);
+
+(%o10) (s1*(s6+s2+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
+(%i11) derivative(alp,s5);
+
+(%o11) (s1*(s6+s2+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
+((%i12) derivative(alp,s6);
+
+(%o12) (s1*(s5+s3+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
+
+*/
 
 
+   double t1 = -(1 / sqrt( ((-s5) - s3 - s1) * ((-s6) - s2 - s1) )
+      - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow( (((-s5) - s3 - s1) * ((-s6) - s2 - s1)), 1.5 ))) / sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) );
+   double t2 = (s1 * (s5 + s3 + s1)) / (2 * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ) * pow( (((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5 ));
+   double t3 = (s1 * (s6 + s2 + s1)) / (2 * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ) * pow( (((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5 ));
+   double t4 = 0;
+   double t5 = (s1 * (s6 + s2 + s1)) / (2 * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ) * pow( (((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5 ));
+   double t6 = (s1 * (s5 + s3 + s1)) / (2 * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ) * pow( (((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5 ));
+   double varaltest = sqrt( sq( t1 * ds1 ) + sq( t2 * ds2 ) + sq( t3 * ds3 ) + sq( t4 * ds4 ) + sq( t5 * ds5 ) + sq( t6 * ds6 ) );
 
-   dal = (b * c * ds1 + s1 * db + s1 * dc) / (sin(al) * (b * c) * (b * c));
-   dbe = (a * c * ds2 + s2 * da + s2 * dc) / (sin(be) * (a * c) * (a * c));
-   dga = (a * b * ds3 + s3 * da * s3 * db) / (sin(ga) * (a * b) * (a * b));
 
-   std::cout << "input S6 " << s << std::endl;
-   std::cout << "input S6 sigmas " << sig << std::endl;
-   std::cout << "input cell " << LRL_Cell(s) << std::endl;
-   std::cout << "result cell sigs " << cer << std::endl;
+   double term1 = -(1 / sqrt( bas * cas ) ) / sqrt( 1 - s1 * s1 / (bas * cas) ) * ds1;
+   double term1A=  - (s1 * (-bas - cas)) / (2 * (bas * cas) * sqrtb * sqrtc) / sqrt( 1 - s1 * s1 / (bas * cas) ) * ds1;
+
+   double denom = (2 * sqrt( 1 - s1 * s1 / (bas * cas) ) * (bas * cas) * sqrtb * sqrtc);
+   double term2 = -(s1 * bas) / denom*ds2;
+   double term3 = -(s1 * cas) / denom*ds3;
+   double term4 = -(s1 * cas) / denom*ds5;
+   double term5 = -(s1 * bas) / denom*ds6;
+   double varalpha = sqrt( sq( term1A ) + sq( term1 ) + sq( term2 ) + sq( term3 ) + sq( term4 ) + sq( term5 ) );
+
+
+   double denomA = (2 * sqrt( 1 - s1 * s1 / ((-s5 - s3 - s1) * (-s6 - s2 - s1)) ) * pow( (-s5 - s3 - s1) * (-s6 - s2 - s1), 1.5 ));
+   double tx1 = -(1 / sqrt( (-s5 - s3 - s1) * (-s6 - s2 - s1) )
+      - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow( (-s5 - s3 - s1) * (-s6 - s2 - s1), 1.5 ))) / sqrt( 1 - s1 * s1 / ((-s5 - s3 - s1) * (-s6 - s2 - s1)) );
+   double tx1A = -(1 / sqrt( (-s5 - s3 - s1) * (-s6 - s2 - s1) )) / sqrt( 1 - s1 * s1 / ((-s5 - s3 - s1) * (-s6 - s2 - s1)) );
+     double tx1B = - ((s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow( (-s5 - s3 - s1) * (-s6 - s2 - s1), 1.5 ))) / sqrt( 1 - s1 * s1 / ((-s5 - s3 - s1) * (-s6 - s2 - s1)) );
+   double tx2 = (s1 * (s5 + s3 + s1)) / denomA;
+   double tx3 = (s1 * (s6 + s2 + s1)) / denomA;
+   double tx5 = (s1 * (s6 + s2 + s1)) / denomA;
+   double tx6 = (s1 * (s5 + s3 + s1)) / denomA;
+   double eralA = sqrt( sq( tx1 * ds1 ) + sq( tx2 * ds2 ) + sq( tx3 * ds3 ) + sq( tx5 * ds5 ) + sq(tx6 * ds6) );
+   double eralB = sqrt( sq( tx1A * ds1 ) + sq( tx1B * ds1 ) + sq( tx2 * ds2 ) + sq( tx3 * ds3 ) + sq( tx5 * ds5 ) + sq( tx6 * ds6 ) );
+
 
    return cer;
 }
@@ -260,12 +290,12 @@ S6 S6ErrorsFromCell( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
 }
 
 void TestSigmas( ) {
-   const LRL_Cell cell("10 10 10 90 90 90 ");
-   const LRL_Cell errors("  .1 .1 .1 .1 .1 .1");
+   const LRL_Cell cell("10 12 100  95 100 105 ");
+   const LRL_Cell cellErrors("1.51068   1.23847 10  5.3 5.3 5.3");
    std::cout << "input cell " << LRL_Cell(cell) << std::endl;
-   std::cout << "cell sigs " << errors << std::endl;
+   std::cout << "cell sigs " << cellErrors << std::endl;
    const S6 s6(cell);
-   const S6 s6er = S6ErrorsFromCell(cell, errors);
+   const S6 s6er = S6ErrorsFromCell(cell, cellErrors);
    const LRL_Cell newCellErrors = CellErrorsFromS6(s6, s6er);
    std::cout << "output cell sigs " << newCellErrors << std::endl;
 

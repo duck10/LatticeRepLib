@@ -29,7 +29,7 @@ MatS6 MatS6::e3Tos6(const std::vector<double>& m) {
 	/*
 	*************************************************************************
 	Note that the E3 matrix (m) is applied in the order 
-	shown in Burzlaff and Zimmermann, 1958. This is the
+	shown in Burzlaff and Zimmermann, 1985. This is the
 	transpose of the order shown in the International
 	Tables.
 
