@@ -221,6 +221,8 @@ std::vector<double> DeloneTypeList::Make3dVector( const std::string& s) {
 }
 
 std::pair<std::string, MatS6 > DeloneTypeList::CreateCenteringMatrix(const std::string& lattice, const std::string& threespaceMatrix) {
+   std::cout << threespaceMatrix << std::endl;
+   std::cout << std::endl << MatS6::e3Tos6( Make3dVector( threespaceMatrix ) ) << std::endl << std::endl;
    return std::make_pair(lattice, MatS6::e3Tos6(Make3dVector(threespaceMatrix)));
 }
 

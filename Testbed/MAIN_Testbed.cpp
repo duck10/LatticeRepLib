@@ -2,6 +2,7 @@
 //
 
 #include "CellInputData.h"
+#include "DeloneTypeList.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
@@ -11,6 +12,9 @@
 #include "MatN.h"
 #include "MatS6.h"
 #include "S6.h"
+
+#include <algorithm>
+#include <utility>
 
 std::string Letters( void ) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
@@ -42,162 +46,33 @@ std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLattice
    }
    return v;
 }
-//}
 
-S6 CenterOfMass(const std::vector<S6>& v) {
-   S6 sum("0 0 0 0 0 0 ");
-   for (size_t i = 0; i < 6; ++i)
-      sum += v[i];
-   return sum / double(v.size( ));
-}
+void Test_E3toS6() {
 
-std::vector<S6> MoveToCenterOfMass(const std::vector<S6>& v) {
-   std::vector<S6> c;
-   const S6 cm = CenterOfMass(v);
-   for (size_t i = 0; i < v.size( ); ++i)
-      c.push_back(v[i] - cm);
-   return c;
-}
+   // R1 is index 4  R3 is index 5
+   std::string lattice( "R" );
+   LRL_Cell cellacute( "10 10 10 65 65 65" );
+   LRL_Cell cellobtuse( "10 10 10  15 15 15" );
+   LatticeConverter lc;
+   const  std::vector<std::pair<std::string, std::vector<double> > > vM3d = DeloneTypeList::Make3dCenteringMatrices(  );
 
-MatS6 SumS6(const std::vector<S6>& v) {
-   S6 t;
-   for (size_t i = 0; i < v.size( ); ++i)
-      t += v[i];
+   for (size_t i = 0; i < vM3d.size( ); ++i) std::cout << i << " " << vM3d[i].first << std::endl;
 
-   //sums of squares
-   double x0 = 0.0;
-   double x1 = 0.0;
-   double x2 = 0.0;
-   double x3 = 0.0;
-   double x4 = 0.0;
-   double x5 = 0.0;
+   const MatS6 m6_R1( MatS6::e3Tos6( vM3d[4].second ) );
+   std::cout << "R1" << std::endl;
+   std::cout << LRL_Cell_Degrees( m6_R1 * S6(cellacute) ) << std::endl;
 
-   // sums of cross
-   double x0x1 = 0.0;
-   double x0x2 = 0.0;
-   double x0x3 = 0.0;
-   double x0x4 = 0.0;
-   double x0x5 = 0.0;
+   const MatS6 m6_R3( MatS6::e3Tos6( vM3d[4].second ) );
+   std::cout << "R3" << std::endl;
+   std::cout << LRL_Cell_Degrees( m6_R3 * cellobtuse ) << std::endl;
+   std::cout << LRL_Cell_Degrees( lc.DeloneReduceCell("P", m6_R3 * S6(cellobtuse)) ) << std::endl;
 
-   double x1x2 = 0.0;
-   double x1x3 = 0.0;
-   double x1x4 = 0.0;
-   double x1x5 = 0.0;
-
-   double x2x3 = 0.0;
-   double x2x4 = 0.0;
-   double x2x5 = 0.0;
-
-   double x3x4 = 0.0;
-   double x3x5 = 0.0;
-
-   double x4x5 = 0.0;
-
-   for (size_t i = 0; i < v.size( ); ++i) {
-      const double& s0 = v[i][0];
-      const double& s1 = v[i][1];
-      const double& s2 = v[i][2];
-      const double& s3 = v[i][3];
-      const double& s4 = v[i][4];
-      const double& s5 = v[i][5];
-
-      x0 += s0 * s0;
-      x1 += s1 * s1;
-      x2 += s2 * s2;
-      x3 += s3 * s3;
-      x4 += s4 * s4;
-      x5 += s5 * s5;
-
-
-      x0x1 += s0 * s1;
-      x0x2 += s0 * s2;
-      x0x3 += s0 * s3;
-      x0x4 += s0*s4;
-      x0x5 += s0*s5;
-                
-      x1x2 += s1*s2;
-      x1x3 += s1*s3;
-      x1x4 += s1*s4;
-      x1x5 += s1*s5;
-                
-      x2x3 += s2*s3;
-      x2x4 += s2*s4;
-      x2x5 += s2*s5;
-                
-      x3x4 += s3*s4;
-      x3x5 += s3*s5;
-                
-      x4x5 += s4*s5;
-
-   }
-
-   const double sumsx2 = x0 + x1 + x2 + x3 + x4 + x5;
-
-   MatS6 m;
-
-   m[0] = sumsx2 - x0;
-   m[7] = sumsx2 - x1;
-   m[14] = sumsx2 - x2;
-   m[21] = sumsx2 - x3;
-   m[28] = sumsx2 - x4;
-   m[35] = sumsx2 - x5;
-
-   m[1] = -x0x1;
-   m[2] = -x0x2;
-   m[3] = -x0x3;
-   m[4] = -x0x4;
-   m[5] = -x0x5;
-
-   m[6] = m[1];
-   m[8] = -x1x2;
-   m[9] = -x1x3;
-   m[10] = -x1x4;
-   m[11] = -x1x5;
-
-   m[12] = m[2];
-   m[13] = m[8];
-   m[15] = -x2x3;
-   m[16] = -x2x4;
-   m[17] = -x2x5;
-
-   m[18] = m[3];
-   m[19] = m[9];
-   m[20] = m[15];
-   m[22] = -x3x4;
-   m[23] = -x3x5;
-
-   m[24] = m[4];
-   m[25] = m[10];
-   m[26] = m[16];
-   m[27] = m[22];
-   m[29] = -x4x5;
-
-   m[30] = m[5];
-   m[31] = m[11];
-   m[32] = m[17];
-   m[33] = m[23];
-   m[34] = m[29];
-
-   std::cout << m/1000.0 << std::endl << std::endl;
-
-   return m;
-}
-
-MatS6 InertiaTensor( const S6& s ) {
-   static const std::vector<MatS6> refl = MatS6::GetReflections( );
-
-   std::vector<S6> vcm;
-   std::vector<S6> vx;
-   for (size_t i = 0; i < refl.size( ); ++i) vx.push_back( refl[i] * s );
-   const S6 cm = CenterOfMass( vx );
-   for (size_t i = 0; i < refl.size( ); ++i) vcm.push_back( vx[i] - cm );
-   SumS6( vcm );
-   return MatS6 ();
 }
 
 int main( int argc, char* argv[] )
-
 {
+   Test_E3toS6( );
+
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
    MatS6 mat_reference;
    LRL_Cell cell_reference = LatticeConverter::SellingReduceCell( input[0].GetLattice(), input[0].GetCell(), mat_reference );
