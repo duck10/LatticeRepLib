@@ -204,40 +204,40 @@ LRL_Cell CellErrorsFromS6(const S6& s, const S6& sig) {
 
 */
 
+   {
+      double denom = (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow(((-s5) - s3 - s1) * ((-s6) - s2 - s1),1.5     ) );
+      double t1 = - (1 / sqrt(((-s5) - s3 - s1) * ((-s6) - s2 - s1))
+         - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow(((-s5) - s3 - s1) * ((-s6) - s2 - s1),1.5       ) )) / sqrt(1 - s1*s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)));
+      double t2 = (s1 * (s5 + s3 + s1)) / denom;
+      double t3 = (s1 * (s6 + s2 + s1)) / denom;
+      double t4 = 0;
+      double t5 = (s1 * (s6 + s2 + s1)) / denom;
+      double t6 = (s1 * (s5 + s3 + s1)) / denom;
+      double deral = sqrt(sq(t1 * ds1) + sq(t2 * ds2) + sq(t3 * ds3) + sq(t4 * ds4) + sq(t5 * ds5) + sq(t6 * ds6));
+      const int i19191 = 19191;
+   }
 
-   double t1 = -(1 / sqrt( ((-s5) - s3 - s1) * ((-s6) - s2 - s1) )
-      - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow( (((-s5) - s3 - s1) * ((-s6) - s2 - s1)), 1.5 ))) / sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) );
-   double t2 = (s1 * (s5 + s3 + s1)) / (2 * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ) * pow( (((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5 ));
-   double t3 = (s1 * (s6 + s2 + s1)) / (2 * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ) * pow( (((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5 ));
-   double t4 = 0;
-   double t5 = (s1 * (s6 + s2 + s1)) / (2 * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ) * pow( (((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5 ));
-   double t6 = (s1 * (s5 + s3 + s1)) / (2 * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ) * pow( (((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5 ));
-   double varaltest = sqrt( sq( t1 * ds1 ) + sq( t2 * ds2 ) + sq( t3 * ds3 ) + sq( t4 * ds4 ) + sq( t5 * ds5 ) + sq( t6 * ds6 ) );
+   {
+      double t1 = -(1 / sqrt(((-s5) - s3 - s1) * ((-s6) - s2 - s1))
+         - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow((((-s5) - s3 - s1) * ((-s6) - s2 - s1)), 1.5))) / sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)));
+      double t2 = (s1 * (s5 + s3 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
+      double t3 = (s1 * (s6 + s2 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
+      double t4 = 0;
+      double t5 = (s1 * (s6 + s2 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
+      double t6 = (s1 * (s5 + s3 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
+      double varaltest = sqrt(sq(t1 * ds1) + sq(t2 * ds2) + sq(t3 * ds3) + sq(t4 * ds4) + sq(t5 * ds5) + sq(t6 * ds6));
+   }
+   {
+      double term1 = -(1 / sqrt(bas * cas)) / sqrt(1 - s1 * s1 / (bas * cas)) * ds1;
+      double term1A = -(s1 * (-bas - cas)) / (2 * (bas * cas) * sqrtb * sqrtc) / sqrt(1 - s1 * s1 / (bas * cas)) * ds1;
 
-
-   double term1 = -(1 / sqrt( bas * cas ) ) / sqrt( 1 - s1 * s1 / (bas * cas) ) * ds1;
-   double term1A=  - (s1 * (-bas - cas)) / (2 * (bas * cas) * sqrtb * sqrtc) / sqrt( 1 - s1 * s1 / (bas * cas) ) * ds1;
-
-   double denom = (2 * sqrt( 1 - s1 * s1 / (bas * cas) ) * (bas * cas) * sqrtb * sqrtc);
-   double term2 = -(s1 * bas) / denom*ds2;
-   double term3 = -(s1 * cas) / denom*ds3;
-   double term4 = -(s1 * cas) / denom*ds5;
-   double term5 = -(s1 * bas) / denom*ds6;
-   double varalpha = sqrt( sq( term1A ) + sq( term1 ) + sq( term2 ) + sq( term3 ) + sq( term4 ) + sq( term5 ) );
-
-
-   double denomA = (2 * sqrt( 1 - s1 * s1 / ((-s5 - s3 - s1) * (-s6 - s2 - s1)) ) * pow( (-s5 - s3 - s1) * (-s6 - s2 - s1), 1.5 ));
-   double tx1 = -(1 / sqrt( (-s5 - s3 - s1) * (-s6 - s2 - s1) )
-      - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow( (-s5 - s3 - s1) * (-s6 - s2 - s1), 1.5 ))) / sqrt( 1 - s1 * s1 / ((-s5 - s3 - s1) * (-s6 - s2 - s1)) );
-   double tx1A = -(1 / sqrt( (-s5 - s3 - s1) * (-s6 - s2 - s1) )) / sqrt( 1 - s1 * s1 / ((-s5 - s3 - s1) * (-s6 - s2 - s1)) );
-     double tx1B = - ((s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow( (-s5 - s3 - s1) * (-s6 - s2 - s1), 1.5 ))) / sqrt( 1 - s1 * s1 / ((-s5 - s3 - s1) * (-s6 - s2 - s1)) );
-   double tx2 = (s1 * (s5 + s3 + s1)) / denomA;
-   double tx3 = (s1 * (s6 + s2 + s1)) / denomA;
-   double tx5 = (s1 * (s6 + s2 + s1)) / denomA;
-   double tx6 = (s1 * (s5 + s3 + s1)) / denomA;
-   double eralA = sqrt( sq( tx1 * ds1 ) + sq( tx2 * ds2 ) + sq( tx3 * ds3 ) + sq( tx5 * ds5 ) + sq(tx6 * ds6) );
-   double eralB = sqrt( sq( tx1A * ds1 ) + sq( tx1B * ds1 ) + sq( tx2 * ds2 ) + sq( tx3 * ds3 ) + sq( tx5 * ds5 ) + sq( tx6 * ds6 ) );
-
+      double denom = (2 * sqrt(1 - s1 * s1 / (bas * cas)) * (bas * cas) * sqrtb * sqrtc);
+      double term2 = -(s1 * bas) / denom * ds2;
+      double term3 = -(s1 * cas) / denom * ds3;
+      double term4 = -(s1 * cas) / denom * ds5;
+      double term5 = -(s1 * bas) / denom * ds6;
+      double varalpha = sqrt(sq(term1A) + sq(term1) + sq(term2) + sq(term3) + sq(term4) + sq(term5));
+   }
 
    return cer;
 }
@@ -291,7 +291,7 @@ S6 S6ErrorsFromCell( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
 
 void TestSigmas( ) {
    const LRL_Cell cell("10 12 100  95 100 105 ");
-   const LRL_Cell cellErrors("1.51068   1.23847 10  5.3 5.3 5.3");
+   const LRL_Cell cellErrors(" 0 0  0 0 1 0 ");
    std::cout << "input cell " << LRL_Cell(cell) << std::endl;
    std::cout << "cell sigs " << cellErrors << std::endl;
    const S6 s6(cell);
