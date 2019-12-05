@@ -2,6 +2,8 @@
 //
 
 #include "CellInputData.h"
+#include "LRL_CreateFileName.h"
+#include "CS6Dist.h"
 #include "DeloneTypeList.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
@@ -12,6 +14,7 @@
 #include "MatN.h"
 #include "MatS6.h"
 #include "S6.h"
+#include "S6Dist.h"
 
 #include <algorithm>
 #include <utility>
@@ -71,12 +74,12 @@ void Test_E3toS6() {
 
 int main( int argc, char* argv[] )
 {
-   Test_E3toS6( );
+   //Test_E3toS6( );
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
    MatS6 mat_reference;
    LRL_Cell cell_reference = LatticeConverter::SellingReduceCell( input[0].GetLattice(), input[0].GetCell(), mat_reference );
-   const MV_Pair mv_reference(S6( cell_reference ), MatN(mat_reference.GetMatrix()).inverse());
+   const MV_Pair mv_reducedReference(S6( cell_reference ), MatN(mat_reference.GetMatrix()).inverse());
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
 
@@ -85,14 +88,48 @@ int main( int argc, char* argv[] )
    //}
    if (vLat.size( ) > 0) {
       LRL_LatticeMatcher lm;
-      lm.SetReference( mv_reference );
+      lm.SetReferenceLattice( mv_reducedReference );
       std::cout << "MV tree size = " << lm.size( ) << std::endl;
 
       const std::vector<S6> vs6( lm.MatchReference( vLat ) );
 
-      for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-         std::cout << LRL_Cell_Degrees(vs6[lat]) << std::endl;
-      }
+      S6Dist sd( 1 );
+      sd.SetDebug( false );
+
+
+
+
+      double dists6, distlm, distcs;
+      for (size_t lat = 1; lat < vLat.size( ); ++lat) {
+         distlm = (vs6[0] - vs6[lat]).norm( );
+         distcs = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
+         dists6 = sd.DistanceBetween( vLat[0], vLat[lat] );
+
+         std::cout << "lat match " << distlm << "  cs6dist " << distcs << "  s6dist " << dists6 << std::endl;
+   }
+
+
+
+
+
+
+
+
+
+      //double dist;
+      //std::cout << LRL_CreateFileName( ).Create("","") << std::endl;
+      //for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      //   dist =  (vs6[0] - vs6[lat]).norm( );
+      //}
+      //std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
+      //for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      //   dist = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
+      //}
+      //std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
+      //for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      //   dist = sd.DistanceBetween( vLat[0], vLat[lat] );
+      //}
+      //std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
    }
 
    return 0;

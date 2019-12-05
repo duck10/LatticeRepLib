@@ -8,6 +8,7 @@
 #include "DeloneTypeList.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LatticeConverter.h"
+#include "LRL_MinMaxTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
@@ -202,7 +203,193 @@ LRL_Cell CellErrorsFromS6(const S6& s, const S6& sig) {
 
 (%o12) (s1*(s5+s3+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
 
+
+==============================================================================================
+cell2s6(a,b,c,alpha,beta,gamma):=[b*c*cos(alpha),a*c*cos(beta),a*b*cos(gamma),-a*a-a*b*cos(gamma)-a*c*cos(beta),-a*b*cos(gamma)-b*b-b*c*cos(alpha),-a*c*cos(beta)-b*c*cos(alpha)-c*c];
+s6tocell(s1,s2,s3,s4,s5,s6):=[sqrt(-s4-s3-s2),sqrt(-s5-s3-s1),sqrt(-s6-s2-s1),acos(s1/(sqrt(-s5-s3-s1)*sqrt(-s6-s2-s1))),acos(s2/(sqrt(-s4-s3-s2)*sqrt(-s6-s2-s1))),acos(s3/(sqrt(-s4-s3-s2)*sqrt(-s5-s3-s1)))];
+
+[ds1*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s1),
+ds2*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s2),
+ds3*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s3),
+ds4*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s4),
+ds5*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s5),
+ds6*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s6)];
+
+produced:
+
+(%o16) [[0,-ds1/(2*sqrt((-s5)-s3-s1)),-ds1/(2*sqrt((-s6)-s2-s1)),
+         -(ds1*(1/(sqrt((-s5)-s3-s1)*sqrt((-s6)-s2-s1))
+               +s1/(2*((-s5)-s3-s1)^(3/2)*sqrt((-s6)-s2-s1))
+               +s1/(2*sqrt((-s5)-s3-s1)*((-s6)-s2-s1)^(3/2))))
+          /sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1))),
+         -(ds1*s2)/(2*sqrt((-s4)-s3-s2)
+                     *sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1)))
+                     *((-s6)-s2-s1)^(3/2)),
+         -(ds1*s3)/(2*sqrt((-s4)-s3-s2)
+                     *sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))
+                     *((-s5)-s3-s1)^(3/2))],
+        [-ds2/(2*sqrt((-s4)-s3-s2)),0,-ds2/(2*sqrt((-s6)-s2-s1)),
+         -(ds2*s1)/(2*sqrt((-s5)-s3-s1)
+                     *sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
+                     *((-s6)-s2-s1)^(3/2)),
+         -(ds2*(1/(sqrt((-s4)-s3-s2)*sqrt((-s6)-s2-s1))
+               +s2/(2*((-s4)-s3-s2)^(3/2)*sqrt((-s6)-s2-s1))
+               +s2/(2*sqrt((-s4)-s3-s2)*((-s6)-s2-s1)^(3/2))))
+          /sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1))),
+         -(ds2*s3)/(2*((-s4)-s3-s2)^(3/2)
+                     *sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))
+                     *sqrt((-s5)-s3-s1))],
+        [-ds3/(2*sqrt((-s4)-s3-s2)),-ds3/(2*sqrt((-s5)-s3-s1)),0,
+         -(ds3*s1)/(2*((-s5)-s3-s1)^(3/2)
+                     *sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
+                     *sqrt((-s6)-s2-s1)),
+         -(ds3*s2)/(2*((-s4)-s3-s2)^(3/2)
+                     *sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1)))
+                     *sqrt((-s6)-s2-s1)),
+         -(ds3*(1/(sqrt((-s4)-s3-s2)*sqrt((-s5)-s3-s1))
+               +s3/(2*((-s4)-s3-s2)^(3/2)*sqrt((-s5)-s3-s1))
+               +s3/(2*sqrt((-s4)-s3-s2)*((-s5)-s3-s1)^(3/2))))
+          /sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))],
+        [-ds4/(2*sqrt((-s4)-s3-s2)),0,0,0,
+         -(ds4*s2)/(2*((-s4)-s3-s2)^(3/2)
+                     *sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1)))
+                     *sqrt((-s6)-s2-s1)),
+         -(ds4*s3)/(2*((-s4)-s3-s2)^(3/2)
+                     *sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))
+                     *sqrt((-s5)-s3-s1))],
+        [0,-ds5/(2*sqrt((-s5)-s3-s1)),0,
+         -(ds5*s1)/(2*((-s5)-s3-s1)^(3/2)
+                     *sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
+                     *sqrt((-s6)-s2-s1)),0,
+         -(ds5*s3)/(2*sqrt((-s4)-s3-s2)
+                     *sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))
+                     *((-s5)-s3-s1)^(3/2))],
+        [0,0,-ds6/(2*sqrt((-s6)-s2-s1)),
+         -(ds6*s1)/(2*sqrt((-s5)-s3-s1)
+                     *sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
+                     *((-s6)-s2-s1)^(3/2)),
+         -(ds6*s2)/(2*sqrt((-s4)-s3-s2)
+                     *sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1)))
+                     *((-s6)-s2-s1)^(3/2)),0]]
 */
+
+   // ds1 ---------------------------------------------------------------------
+   double tds1[6] = {
+   0,
+   -ds1 / (2 * sqrt( (-s5) - s3 - s1 )),
+
+   -ds1 / (2 * sqrt( (-s6) - s2 - s1 )),
+
+   -(ds1 * (1 / (sqrt( (-s5) - s3 - s1 ) * sqrt( (-s6) - s2 - s1 ))
+      + s1 / (2 * pow( ((-s5) - s3 - s1) , 1.5 ) * sqrt( (-s6) - s2 - s1 ))
+      + s1 / (2 * sqrt( (-s5) - s3 - s1 ) * pow( ((-s6) - s2 - s1) , 1.5 ))))
+   / sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) ),
+
+   -(ds1 * s2) / (2 * sqrt( (-s4) - s3 - s2 )
+      * sqrt( 1 - s2 * s2 / (((-s4) - s3 - s2) * ((-s6) - s2 - s1)) )
+      * pow( ((-s6) - s2 - s1) , 1.5 )),
+
+
+   -(ds1 * s3) / (2 * sqrt( (-s4) - s3 - s2 )
+      * sqrt( 1 - s3 * s3 / (((-s4) - s3 - s2) * ((-s5) - s3 - s1)) )
+      * ((-s5) - s3 - s1) , 1.5) };
+
+
+
+   // ds2 ---------------------------------------------------------------------
+
+double tds2[6] = { 
+   -ds2 / (2 * sqrt( (-s4) - s3 - s2 )),
+
+   0,
+
+   -ds2 / (2 * sqrt( (-s6) - s2 - s1 )),
+
+   -(ds2 * s1) / (2 * sqrt( (-s5) - s3 - s1 )
+      * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) )
+      * pow( ((-s6) - s2 - s1) , 1.5 )),
+
+   -(ds2 * (1 / (sqrt( (-s4) - s3 - s2 ) * sqrt( (-s6) - s2 - s1 ))
+      + s2 / (2 * pow( ((-s4) - s3 - s2) , 1.5 ) * sqrt( (-s6) - s2 - s1 ))
+      + s2 / (2 * sqrt( (-s4) - s3 - s2 ) * pow( ((-s6) - s2 - s1) , 1.5 ))))
+    /sqrt( 1 - s2 * s2 / (((-s4) - s3 - s2) * ((-s6) - s2 - s1)) ),
+
+   -(ds2 * s3) / (2 * pow( ((-s4) - s3 - s2) , 1.5 )
+      * sqrt( 1 - s3 * s3 / (((-s4) - s3 - s2) * ((-s5) - s3 - s1)) )
+      * sqrt( (-s5) - s3 - s1 )) };
+// ds3 ---------------------------------------------------------------------
+
+double tds3[6] = {
+   -ds3 / (2 * sqrt( (-s4) - s3 - s2 )), 
+   -ds3 / (2 * sqrt( (-s5) - s3 - s1 )), 
+   0,
+   -(ds3 * s1) / (2 * pow( ((-s5) - s3 - s1) , 1.5 )
+      * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) )
+      * sqrt( (-s6) - s2 - s1 )),
+
+      -(ds3 * s2) / (2 * pow( ((-s4) - s3 - s2) , 1.5 )
+   * sqrt( 1 - s2 * s2 / (((-s4) - s3 - s2) * ((-s6) - s2 - s1)) )
+   * sqrt( (-s6) - s2 - s1 )),
+
+   -(ds3 * (1 / (sqrt( (-s4) - s3 - s2 ) * sqrt( (-s5) - s3 - s1 ))
+      + s3 / (2 * pow( ((-s4) - s3 - s2) , 1.5 ) * sqrt( (-s5) - s3 - s1 ))
+      + s3 / (2 * sqrt( (-s4) - s3 - s2 ) * pow( ((-s5) - s3 - s1) , 1.5 ))))
+      / sqrt( 1 - s3 * s3 / (((-s4) - s3 - s2) * ((-s5) - s3 - s1)) ) };
+
+      // ds4 ---------------------------------------------------------------------
+
+double tds4[6] = {
+ -ds4 / (2 * sqrt( (-s4) - s3 - s2 )), 
+ 0, 
+ 0, 
+ 0,
+
+   -(ds4 * s2) / (2 * pow( ((-s4) - s3 - s2) , 1.5)
+      * sqrt( 1 - s2 *s2 / (((-s4) - s3 - s2) * ((-s6) - s2 - s1)) )
+      * sqrt( (-s6) - s2 - s1 )),
+
+   -(ds4 * s3) / (2 * pow( ((-s4) - s3 - s2) , 1.5)
+      * sqrt( 1 - s3 *s3 / (((-s4) - s3 - s2) * ((-s5) - s3 - s1)) )
+      * sqrt( (-s5) - s3 - s1 ))};
+
+      // ds5 ---------------------------------------------------------------------
+
+double tds5[6] = {
+   0, 
+   -ds5 / (2 * sqrt( (-s5) - s3 - s1 )), 
+   0,
+   -(ds5 * s1) / (2 * pow( ((-s5) - s3 - s1) , 1.5)
+      * sqrt( 1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) )
+      * sqrt( (-s6) - s2 - s1 )),
+   0,
+   -(ds5 * s3) / (2 * sqrt( (-s4) - s3 - s2 )
+      * sqrt( 1 - s3 * s3 / (((-s4) - s3 - s2) * ((-s5) - s3 - s1)) )
+      * pow( ((-s5) - s3 - s1) , 1.5)) };
+
+      // ds6 ---------------------------------------------------------------------
+
+double tds6[6] = {
+   0, 
+   0, 
+   -ds6 / (2 * sqrt( (-s6) - s2 - s1 )),
+   -(ds6 * s1) / (2 * sqrt( (-s5) - s3 - s1 )
+      * sqrt( 1 - s1 *s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)) )
+      * pow( ((-s6) - s2 - s1) , 1.5)),
+   -(ds6 * s2) / (2 * sqrt( (-s4) - s3 - s2 )
+      * sqrt( 1 - s2 *s2 / (((-s4) - s3 - s2) * ((-s6) - s2 - s1)) )
+      * pow( ((-s6) - s2 - s1), 1.5 )), 
+   0};
+
+for (size_t i = 0; i < 6; ++i) {
+   cer[i] = sqrt( sq( tds1[i] ) + sq( tds2[i] ) + sq( tds3[i] ) + sq( tds4[i] ) + +sq( tds5[i] ) + sq( tds6[i] ) );
+}
+
+for (size_t i = 0; i < 6; ++i) {
+   std::cout << ( tds1[i] ) << "  " << ( tds2[i] ) << "  " << ( tds3[i] ) << "  " << ( tds4[i] ) << "  " <<  "  " << ( tds5[i] ) << "  " << ( tds6[i] ) << std::endl;;
+}
+
+
+
 
    {
       double denom = (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow(((-s5) - s3 - s1) * ((-s6) - s2 - s1),1.5     ) );
@@ -214,30 +401,34 @@ LRL_Cell CellErrorsFromS6(const S6& s, const S6& sig) {
       double t5 = (s1 * (s6 + s2 + s1)) / denom;
       double t6 = (s1 * (s5 + s3 + s1)) / denom;
       double deral = sqrt(sq(t1 * ds1) + sq(t2 * ds2) + sq(t3 * ds3) + sq(t4 * ds4) + sq(t5 * ds5) + sq(t6 * ds6));
+
+      double test = deral * 1.0 / sqrt( 6.0 );
+
+      std::cout << "deral " << deral << std::endl;
       const int i19191 = 19191;
    }
 
-   {
-      double t1 = -(1 / sqrt(((-s5) - s3 - s1) * ((-s6) - s2 - s1))
-         - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow((((-s5) - s3 - s1) * ((-s6) - s2 - s1)), 1.5))) / sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)));
-      double t2 = (s1 * (s5 + s3 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
-      double t3 = (s1 * (s6 + s2 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
-      double t4 = 0;
-      double t5 = (s1 * (s6 + s2 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
-      double t6 = (s1 * (s5 + s3 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
-      double varaltest = sqrt(sq(t1 * ds1) + sq(t2 * ds2) + sq(t3 * ds3) + sq(t4 * ds4) + sq(t5 * ds5) + sq(t6 * ds6));
-   }
-   {
-      double term1 = -(1 / sqrt(bas * cas)) / sqrt(1 - s1 * s1 / (bas * cas)) * ds1;
-      double term1A = -(s1 * (-bas - cas)) / (2 * (bas * cas) * sqrtb * sqrtc) / sqrt(1 - s1 * s1 / (bas * cas)) * ds1;
+   //{
+   //   double t1 = -(1 / sqrt(((-s5) - s3 - s1) * ((-s6) - s2 - s1))
+   //      - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow((((-s5) - s3 - s1) * ((-s6) - s2 - s1)), 1.5))) / sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)));
+   //   double t2 = (s1 * (s5 + s3 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
+   //   double t3 = (s1 * (s6 + s2 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
+   //   double t4 = 0;
+   //   double t5 = (s1 * (s6 + s2 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
+   //   double t6 = (s1 * (s5 + s3 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
+   //   double deraltest = sqrt(sq(t1 * ds1) + sq(t2 * ds2) + sq(t3 * ds3) + sq(t4 * ds4) + sq(t5 * ds5) + sq(t6 * ds6));
+   //}
+   //{
+   //   double term1 = -(1 / sqrt(bas * cas)) / sqrt(1 - s1 * s1 / (bas * cas)) * ds1;
+   //   double term1A = -(s1 * (-bas - cas)) / (2 * (bas * cas) * sqrtb * sqrtc) / sqrt(1 - s1 * s1 / (bas * cas)) * ds1;
 
-      double denom = (2 * sqrt(1 - s1 * s1 / (bas * cas)) * (bas * cas) * sqrtb * sqrtc);
-      double term2 = -(s1 * bas) / denom * ds2;
-      double term3 = -(s1 * cas) / denom * ds3;
-      double term4 = -(s1 * cas) / denom * ds5;
-      double term5 = -(s1 * bas) / denom * ds6;
-      double varalpha = sqrt(sq(term1A) + sq(term1) + sq(term2) + sq(term3) + sq(term4) + sq(term5));
-   }
+   //   double denom = (2 * sqrt(1 - s1 * s1 / (bas * cas)) * (bas * cas) * sqrtb * sqrtc);
+   //   double term2 = -(s1 * bas) / denom * ds2;
+   //   double term3 = -(s1 * cas) / denom * ds3;
+   //   double term4 = -(s1 * cas) / denom * ds5;
+   //   double term5 = -(s1 * bas) / denom * ds6;
+   //   double deralpha = sqrt(sq(term1A) + sq(term1) + sq(term2) + sq(term3) + sq(term4) + sq(term5));
+   //}
 
    return cer;
 }
@@ -286,18 +477,26 @@ S6 S6ErrorsFromCell( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
    s6errors[4] = sqrt( sq( -2.0 * b * db ) + sq( -s6errors[2] ) + sq( -s6errors[0] ) );
    s6errors[5] = sqrt( sq( -2.0 * c * dc ) + sq( -s6errors[0] ) + sq( -s6errors[1] ) );
 
-   return s6errors;
+   s6errors[0] = maxNC( abs( db * c * cosal ), abs( dc * b * cosal ), abs( -dal * b * c * sinal ) );
+   s6errors[1] = maxNC( abs( da * c * cosbe ), abs( dc * a * cosbe ), abs( -dbe * a * c * sinbe ) );
+   s6errors[2] = maxNC( abs( da * b * cosga ), abs( db * a * cosga ), abs( -dga * a * b * singa ) );
+
+   s6errors[3] = maxNC( abs( -2.0 * a * da ), abs( -s6errors[2] ), abs( -s6errors[1] ) );
+   s6errors[4] = maxNC( abs( -2.0 * b * db ), abs( -s6errors[2] ), abs( -s6errors[0] ) );
+   s6errors[5] = maxNC( abs( -2.0 * c * dc ), abs( -s6errors[0] ), abs( -s6errors[1] ) );
+
+   return s6errors/sqrt(6.0);
 }
 
 void TestSigmas( ) {
-   const LRL_Cell cell("10 12 100  95 100 105 ");
-   const LRL_Cell cellErrors(" 0 0  0 0 1 0 ");
+   const LRL_Cell cell("10 12 15  95 100 105 ");
+   const LRL_Cell cellErrors(" .01 .01 .01 .001 .002 .003");
    std::cout << "input cell " << LRL_Cell(cell) << std::endl;
    std::cout << "cell sigs " << cellErrors << std::endl;
    const S6 s6(cell);
    const S6 s6er = S6ErrorsFromCell(cell, cellErrors);
    const LRL_Cell newCellErrors = CellErrorsFromS6(s6, s6er);
-   std::cout << "output cell sigs " << newCellErrors << std::endl;
+   std::cout << std::endl << "output cell sigs " << newCellErrors << std::endl;
 
 
 }
