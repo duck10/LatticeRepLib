@@ -89,7 +89,7 @@ LRL_Cell LatticeConverter::NiggliReduceCell( const std::string& lattice, const L
 
 
 void LatticeConverter::NiggliReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) {
-   const LRL_Cell reducedCell = NiggliReduceCell(lattice, cell);
+   const LRL_Cell_Degrees reducedCell = NiggliReduceCell(lattice, cell);
    Output(label, "P", reducedCell);
 }
 
@@ -137,6 +137,6 @@ LRL_Cell LatticeConverter::SellingReduceCell( const std::string& lattice, const 
 }
 
 void LatticeConverter::DeloneReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) {
-   const LRL_Cell reducedCell = DeloneReduceCell(lattice, cell);
+   const LRL_Cell_Degrees reducedCell = DeloneReduceCell(lattice, cell);
    Output(label, "P", reducedCell);
 }

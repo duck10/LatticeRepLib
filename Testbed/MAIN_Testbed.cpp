@@ -82,6 +82,9 @@ int main( int argc, char* argv[] )
    const MV_Pair mv_reducedReference(S6( cell_reference ), MatN(mat_reference.GetMatrix()).inverse());
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
+   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      std::cout << LRL_Cell_Degrees(vLat[lat]) << std::endl;
+   }
 
    //for (size_t i = 0; i < vLat.size( ); ++i) {
    //   const MatS6 inertia = InertiaTensor( vLat[i] );
