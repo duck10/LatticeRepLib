@@ -19,7 +19,7 @@ LRL_LatticeMatcher::LRL_LatticeMatcher()
    , m_reducedReference(S6())
    , dcutoff(0.01)
 {
-   BuildVectorTree( );
+   BuildMatrixTree( );
 }
 
 void LRL_LatticeMatcher::FillReflections( ) {
@@ -56,12 +56,15 @@ std::vector<MatS6> LRL_LatticeMatcher::DoThreeAxes( ) {
    return vmp;
 }
 
-void LRL_LatticeMatcher::BuildVectorTree( void ) {
+void LRL_LatticeMatcher::BuildMatrixTree( void ) {
    if (m_matrixTree.empty( )) {
       FillReflections( );
       static const std::vector<MatS6> vMatS6 = DoThreeAxes( );
       m_matrixTree.insert( vMatS6 );
       ApplyReflections( vMatS6 );
+      //static const std::vector<MatS6> vMatS6A = DoThreeAxes( );
+      //m_matrixTree.insert( vMatS6A );
+      //ApplyReflections( vMatS6A );
    }
 }
 
@@ -70,7 +73,6 @@ void LRL_LatticeMatcher::SetReferenceLattice( const MV_Pair& mpReducedReference 
       m_MVtree.clear( );
    m_reducedReference = mpReducedReference.GetS6();
    m_matReference = mpReducedReference.GetMatS6( );
-   std::cout << "reference " << m_reducedReference << std::endl << std::endl;
    BuildReferenceTree( m_reducedReference );
 }
 
@@ -94,6 +96,11 @@ void LRL_LatticeMatcher::ApplyReflections( const std::vector<MatS6>& t ) {
       }
    }
 }
+
+double LRL_LatticeMatcher::DistanceBetween( const S6& s1, const S6& s2 ) {
+   return DBL_MAX;
+}
+
 
 S6 LRL_LatticeMatcher::MatchReference( const S6& s ) const {
    const static bool debug = false;
@@ -170,3 +177,18 @@ std::ostream& operator<< ( std::ostream& o, const MV_Pair& v ) {
    return o;
 }
 
+LMDist::LMDist( const S6& s ) {
+   const bool b = Selling::Reduce( s, m_reducedReference );
+   SetReferenceLattice( MV_Pair( m_reducedReference, MatS6( ).unit( ) ) );
+   m_MVtree.clear( );
+   BuildMatrixTree( );
+   BuildReferenceTree( m_reducedReference );
+}
+
+double LMDist::DistanceBetween( const S6& s2 ) {
+   S6 sRed;
+   m_matReference = m_matReference.unit( );
+   bool b = Selling::Reduce( s2, sRed );
+   const S6 matched = MatchReference( sRed );
+   return (m_reducedReference - matched).norm( );
+}

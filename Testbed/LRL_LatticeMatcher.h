@@ -1,6 +1,7 @@
 #ifndef LRL_LATTICEMATCHER_H
 #define LRL_LATTICEMATCHER_H
 
+#include "MatS6.h"
 #include "S6.h"
 #include "TNear.h"
 
@@ -52,10 +53,11 @@ public:
    std::vector<S6> MatchReference( const std::vector<S6>& vs ) const;
    void ApplyReflections( const std::vector<MatS6>& t ); // NOTE: this is NOT a reference; it is copy !!!!!!!!!!
    size_t size( ) const { return m_MVtree.size( ); }
+   double DistanceBetween( const S6& s1, const S6& s2 );
+   void BuildMatrixTree( );
 
 
 protected: // functions
-   void BuildVectorTree( );
    void BuildReferenceTree( const S6& s );
    std::vector<MatS6> LRL_LatticeMatcher::DoThreeAxes( );
    void StoreMV_IfUnique( const S6& s, const MatS6& m );
@@ -70,5 +72,12 @@ protected: // member data
    double dcutoff;
 };
 
+
+class LMDist : public LRL_LatticeMatcher {
+public:
+   LMDist() {}
+   LMDist( const S6& s );
+   double DistanceBetween( const S6& s2 );
+};
 
 #endif  //  LRL_LATTICEMATCHER_H
