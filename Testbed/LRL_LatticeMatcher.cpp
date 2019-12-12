@@ -187,7 +187,6 @@ LMDist::LMDist( const S6& s ) {
 
 double LMDist::DistanceBetween( const S6& s2 ) {
    S6 sRed;
-   m_matReference = m_matReference.unit( );
    bool b = Selling::Reduce( s2, sRed );
    const S6 matched = MatchReference( sRed );
    return (m_reducedReference - matched).norm( );
