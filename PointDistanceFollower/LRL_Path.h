@@ -10,22 +10,20 @@ template<typename T>
 class LRL_Path {
 public:
    LRL_Path() {}
-   LRL_Path(const std::vector<std::pair<T, T> >& path, const std::vector<std::pair<T, T> >& secondPath) 
-      :m_path(path),
-      m_secondPath(secondPath)
+   LRL_Path(const std::vector<std::pair<T, T> >& path) 
+      :m_path(path)
    {
    }
-
-   bool HasSecondPath(void) const { return !m_secondPath.empty(); }
 
    size_t size() const { return m_path.size(); }
 
    bool empty(void) const { return m_path.empty(); }
 
    std::vector<std::pair<T, T> > GetPath(void) const { return m_path; }
-   std::vector<std::pair<T, T> > GetSecondPath(void) const { return m_secondPath; }
 
-   std::vector<double> GetDistances(void) const { return m_distances; }
+   std::vector<double> GetDistances(void) const { 
+      return m_distances; 
+   }
 
    void SetDistances(const std::vector<double>& v) { m_distances = v; }
 
@@ -51,7 +49,6 @@ public:
 
 private:
    std::vector<std::pair<T, T> > m_path;
-   std::vector<std::pair<T, T> > m_secondPath;
    std::clock_t m_ComputeStartTime;
    double m_seconds2ComputerFrame;
    std::vector<double> m_distances;

@@ -323,12 +323,14 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
       std::list<std::string> svgG6 = DrawOneDistanceLine(multiFollow.GetG6().GetDistances(), lines.GetLineWidth("G6"), minimumDistance, xscale, yscale, lines.GetColor("G6"), lines.GetDashMode("G6"));
       std::list<std::string> svgD7 = DrawOneDistanceLine(multiFollow.GetD7().GetDistances(), lines.GetLineWidth("D7"), minimumDistance, xscale, yscale, lines.GetColor("D7"), lines.GetDashMode("D7"));
       std::list<std::string> svgCS = DrawOneDistanceLine(multiFollow.GetCS().GetDistances(), lines.GetLineWidth("CS"), minimumDistance, xscale, yscale, lines.GetColor("CS"), lines.GetDashMode("CS"));
-      std::list<std::string> svgV7 = DrawOneDistanceLine(multiFollow.GetV7().GetDistances(), lines.GetLineWidth("V7"), minimumDistance, xscale, yscale, lines.GetColor("V7"), lines.GetDashMode("V7"));
+      std::list<std::string> svgV7 = DrawOneDistanceLine( multiFollow.GetV7( ).GetDistances( ), lines.GetLineWidth( "V7" ), minimumDistance, xscale, yscale, lines.GetColor( "V7" ), lines.GetDashMode( "V7" ) );
+      std::list<std::string> svgLM = DrawOneDistanceLine( multiFollow.GetLM( ).GetDistances( ), lines.GetLineWidth( "LM" ), minimumDistance, xscale, yscale, lines.GetColor( "LM" ), lines.GetDashMode( "LM" ) );
       svg.splice(svg.end(), svgS6);
       svg.splice(svg.end(), svgG6);
       svg.splice(svg.end(), svgD7);
       svg.splice(svg.end(), svgCS);
-      svg.splice(svg.end(), svgV7);
+      svg.splice( svg.end( ), svgV7 );
+      svg.splice( svg.end( ), svgLM );
       return svg;
    }
 
@@ -344,26 +346,30 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
       const LRL_Path<G6> pathG6 = multiFollow.GetG6();
       const LRL_Path<D7> pathD7 = multiFollow.GetD7();
       const LRL_Path<S6> pathCS = multiFollow.GetCS();
-      const LRL_Path<G6> pathV7 = multiFollow.GetV7();
+      const LRL_Path<G6> pathV7 = multiFollow.GetV7( );
+      const LRL_Path<S6> pathLM = multiFollow.GetLM( );
 
       const std::set<size_t> glitchesS6 = pathS6.GetGlitches();
       const std::set<size_t> glitchesG6 = pathG6.GetGlitches();
       const std::set<size_t> glitchesD7 = pathD7.GetGlitches();
       const std::set<size_t> glitchesCS = pathCS.GetGlitches();
-      const std::set<size_t> glitchesV7 = pathV7.GetGlitches();
+      const std::set<size_t> glitchesV7 = pathV7.GetGlitches( );
+      const std::set<size_t> glitchesLM = pathLM.GetGlitches( );
 
       std::list<std::string> svgS6 = DrawOneDistanceGlitches(multiFollow.GetS6().GetDistances(), glitchesS6, minimumDistance, xscale, yscale, lines.GetColor("S6"));
       std::list<std::string> svgG6 = DrawOneDistanceGlitches(multiFollow.GetG6().GetDistances(), glitchesG6, minimumDistance, xscale, yscale, lines.GetColor("G6"));
       std::list<std::string> svgD7 = DrawOneDistanceGlitches(multiFollow.GetD7().GetDistances(), glitchesD7, minimumDistance, xscale, yscale, lines.GetColor("D7"));
       std::list<std::string> svgCS = DrawOneDistanceGlitches(multiFollow.GetCS().GetDistances(), glitchesCS, minimumDistance, xscale, yscale, lines.GetColor("CS"));
-      std::list<std::string> svgV7 = DrawOneDistanceGlitches(multiFollow.GetV7().GetDistances(), glitchesCS, minimumDistance, xscale, yscale, lines.GetColor("V7"));
+      std::list<std::string> svgV7 = DrawOneDistanceGlitches( multiFollow.GetV7( ).GetDistances( ), glitchesV7, minimumDistance, xscale, yscale, lines.GetColor( "V7" ) );
+      std::list<std::string> svgLM = DrawOneDistanceGlitches( multiFollow.GetLM( ).GetDistances( ), glitchesLM, minimumDistance, xscale, yscale, lines.GetColor( "LM" ) );
 
       std::list<std::string> svg;
       svg.splice(svg.end(), svgS6);
       svg.splice(svg.end(), svgG6);
       svg.splice(svg.end(), svgD7);
       svg.splice(svg.end(), svgCS);
-      svg.splice(svg.end(), svgV7);
+      svg.splice( svg.end( ), svgV7 );
+      svg.splice( svg.end( ), svgLM );
       return svg;
    }
 

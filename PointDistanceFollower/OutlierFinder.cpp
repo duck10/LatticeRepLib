@@ -30,14 +30,14 @@ std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransition
    std::vector<std::pair<double, double> > biggiesL;
    double prevDataDiff = 0.0;
    double prevData = m_data[0];
-   const size_t endMask = std::max(size_t(3), (size_t)(0.03*(double)(m_data.size())));
-   const size_t endpt = FindLastNonzeroDistance(m_data);
-   for (size_t i = endMask; i < endpt - 1 - endMask; ++i) {
+   const int endMask = std::max(int(3), (int)(0.03*(double)(m_data.size())));
+   const int endpt = FindLastNonzeroDistance(m_data);
+   for (int i = endMask; i < endpt - 1 - endMask; ++i) {
       const double& mdatai = m_data[i];
       if (mdatai < 0.0) continue;
       const double& mdataim1 = m_data[i - 1];
       if (mdataim1 < 0.0) continue;
-      const double& mdataip1 = m_data[std::min(i,(size_t)(m_data.size())-1UL) + 1];
+      const double& mdataip1 = m_data[std::min(i,(int)(m_data.size())-1) + 1];
       if (mdataip1 < 0.0) continue;
       const double percentDelta2Diff = 50.0 * std::abs(mdataim1 - mdataip1) / (mdataim1 + mdataip1);
       const double absDataDiff = std::abs(100.0*std::abs(mdatai - mdataip1) / std::max(mdatai, mdataip1));
