@@ -72,15 +72,18 @@ private:
 
    std::string WriteOneLineDescription( const std::string& name, const int height ) {
       std::string svg;
-      if (FollowerConstants::IsEnabled(name))
+
+      if (FollowerConstants::IsEnabled( name )) {
+         const std::string colorForName = m_lineDescriptions.GetColor( name );
+         const std::string nameForType = m_lineDescriptions.GetName( name );
          svg += "<text x=\"300\" y=\"" +
-         LRL_ToString(height) + 
-         "\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" +
-         m_lineDescriptions.GetColor(name) + "\">" +
-         m_lineDescriptions.GetName(name) + "  " +
-         m_lineDescriptions.GetColor(name) + "     msec  " +
-         LRL_ToString( m_lineDescriptions.GetComputeTime(name)) +
-         "</text>\n";
+            LRL_ToString( height ) +
+            "\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" +
+            colorForName + "\">  " +
+            nameForType + "  " +
+            LRL_ToString( m_lineDescriptions.GetComputeTime( name ) ) +
+             " msec </text>\n";
+      }
       return svg;
    }
 
@@ -95,9 +98,12 @@ private:
       const std::string svgd7 = WriteOneLineDescription("D7", y_pos);
       if (!svgd7.empty()) y_pos += y_delta;
       const std::string svgcs = WriteOneLineDescription("CS", y_pos);
-      if (!svgcs.empty()) y_pos += y_delta;
-      const std::string svgv7 = WriteOneLineDescription("V7", y_pos);
-      return svgs6 + svgg6 + svgd7 + svgcs + svgv7;
+      if (!svgcs.empty( )) y_pos += y_delta;
+      const std::string svgv7 = WriteOneLineDescription( "V7", y_pos );
+      if (!svgv7.empty( )) y_pos += y_delta;
+      const std::string svglm = WriteOneLineDescription( "LM", y_pos );
+      if (!svglm.empty( )) y_pos += y_delta;
+      return svgs6 + svgg6 + svgd7 + svgcs + svgv7 + svglm;
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

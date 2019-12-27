@@ -15,12 +15,13 @@
 #include "S6Dist.h"
 #include "V7Dist.h"
 
-MultiFollower::MultiFollower(const std::vector<std::pair<S6, S6> > & inputPath, const std::vector<std::pair<S6, S6> >& secondPath)
-   : m_s6path(inputPath, secondPath)
-   , m_g6path(Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(inputPath), Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(secondPath))
-   , m_d7path(Converter<D7, std::vector<std::pair<D7, D7> >, Delone>(inputPath), Converter<D7, std::vector<std::pair<D7, D7> >, Delone>(secondPath))
-   , m_cspath(inputPath, secondPath)
-   , m_v7path(Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(inputPath), Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(secondPath))
+MultiFollower::MultiFollower(const std::vector<std::pair<S6, S6> > & inputPath)
+   : m_s6path(inputPath)
+   , m_g6path(Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>(inputPath))
+   , m_d7path(Converter<D7, std::vector<std::pair<D7, D7> >, Delone>(inputPath))
+   , m_cspath(inputPath)
+   , m_v7path( Converter<G6, std::vector<std::pair<G6, G6> >, Niggli>( inputPath ))
+   , m_lmpath( inputPath )
 
 {
 }
@@ -41,8 +42,12 @@ LRL_Path<S6> MultiFollower::GetCS(void) const {
    return m_cspath;
 }
 
-LRL_Path<G6> MultiFollower::GetV7(void) const {
+LRL_Path<G6> MultiFollower::GetV7( void ) const {
    return m_v7path;
+}
+
+LRL_Path<S6> MultiFollower::GetLM( void ) const {
+   return m_lmpath;
 }
 
 MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const {
@@ -50,31 +55,16 @@ MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const
    S6 out;
    std::vector<double> vdist;
    const std::vector<std::pair<S6, S6> > path(mf.GetS6().GetPath());
-   const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
-   S6Dist s6dist(1);
-   if (! S6::IsInvalidPair(path[0])) {
-      if (mf.GetS6().HasSecondPath()) {
-         double distance;
-         for (size_t i = 0; i < path.size(); ++i) {
-            if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
-               distance = -1.0;
-            else
-               distance = s6dist.DistanceBetween(path[0].second, secondPath[i].second);
-            vdist.push_back(distance);
-         }
-      }
-      else
-      {
-         if (!S6::IsInvalidPair(path[0])) {
-            for (size_t i = 0; i < path.size(); ++i) {
-               double distance = s6dist.DistanceBetween(path[0].second, path[i].second);
-               if (S6::IsInvalidPair(path[i])) distance = -1.0;
-               vdist.push_back(distance);
-            }
-         }
+   //const std::vector<std::pair<S6, S6> > secondPath(mf.GetS6().GetSecondPath());
+   S6Dist s6dist( 1 );
+   if (!S6::IsInvalidPair( path[0] )) {
+      for (size_t i = 0; i < path.size( ); ++i) {
+         double distance = s6dist.DistanceBetween( path[0].second, path[i].second );
+         if (S6::IsInvalidPair( path[i] )) distance = -1.0;
+         vdist.push_back( distance );
       }
    }
-   m.SetDistancesS6(vdist);
+   m.SetDistancesS6( vdist );
    return m;
 }
 
@@ -83,64 +73,27 @@ MultiFollower MultiFollower::CalculateDistancesG6(const MultiFollower& mf) const
    G6 out;
 
    std::vector<double> vdist;
-   const std::vector<std::pair<G6, G6> > path(mf.GetG6().GetPath());
-   const std::vector<std::pair<G6, G6> > secondPath(mf.GetG6().GetSecondPath());
-   /*if (!S6::IsInvalidPair(path[0]))*/ {
-      if (mf.GetG6().HasSecondPath()) {
-         double distance;
-         for (size_t i = 0; i < path.size(); ++i) {
-            if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
-               distance = -1.0;
-            else
-               distance = NCDist(path[0].second.data(), secondPath[i].second.data());
-            vdist.push_back(distance);
-         }
-      }
-      else
-      {
-
-         /*if (path[0].second.IsValid())*/ {
-            for (size_t i = 0; i < path.size(); ++i) {
-               double distance = NCDist(path[0].second.data(), path[i].second.data());
-               if (S6::IsInvalidPair(path[i])) distance = -1.0;
-               vdist.push_back(distance);
-            }
-         }
-      }
+   const std::vector<std::pair<G6, G6> > path( mf.GetG6( ).GetPath( ) );
+   for (size_t i = 0; i < path.size( ); ++i) {
+      double distance = NCDist( path[0].second.data( ), path[i].second.data( ) );
+      if (S6::IsInvalidPair( path[i] )) distance = -1.0;
+      vdist.push_back( distance );
    }
-   m.SetDistancesG6(vdist);
+   m.SetDistancesG6( vdist );
    return m;
 }
 
 MultiFollower MultiFollower::CalculateDistancesV7(const MultiFollower& mf) const {
-   MultiFollower m(mf);
+   MultiFollower m( mf );
    G6 out;
    std::vector<double> vdist;
-   const std::vector<std::pair<G6, G6> > path(mf.GetG6().GetPath());
-   const std::vector<std::pair<G6, G6> > secondPath(mf.GetG6().GetSecondPath());
-   if (!S6::IsInvalidPair(path[0])) {
-      if (mf.GetG6().HasSecondPath()) {
-         double distance;
-         for (size_t i = 0; i < path.size(); ++i) {
-            if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
-               distance = -1.0;
-            else
-               distance = V7Dist(path[0].second, secondPath[i].second);
-            vdist.push_back(distance);
-         }
-      }
-      else
-      {
-         if (path[0].second.IsValid()) {
-            for (size_t i = 0; i < path.size(); ++i) {
-               double distance = V7Dist(path[0].second, path[i].second);
-               if (S6::IsInvalidPair(path[i])) distance = -1.0;
-               vdist.push_back(distance);
-            }
-         }
-      }
+   const std::vector<std::pair<G6, G6> > path( mf.GetG6( ).GetPath( ) );
+   for (size_t i = 0; i < path.size( ); ++i) {
+      double distance = V7Dist( path[0].second, path[i].second );
+      if (S6::IsInvalidPair( path[i] )) distance = -1.0;
+      vdist.push_back( distance );
    }
-   m.SetDistancesV7(vdist);
+   m.SetDistancesV7( vdist );
    return m;
 }
 
@@ -148,63 +101,43 @@ MultiFollower MultiFollower::CalculateDistancesD7(const MultiFollower& mf) const
    MultiFollower m(mf);
    D7 out;
    std::vector<double> vdist;
-   const std::vector<std::pair<D7, D7> > path(mf.GetD7().GetPath());
-   const std::vector<std::pair<D7, D7> > secondPath(mf.GetD7().GetSecondPath());
-   if (!S6::IsInvalidPair(path[0])) {
-      if (mf.GetD7().HasSecondPath()) {
-         double distance;
-         for (size_t i = 0; i < path.size(); ++i) {
-            if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i]))
-               distance = -1.0;
-            else
-               distance = D7Dist(path[0].second.data(), secondPath[i].second.data());
-            vdist.push_back(distance);
-         }
-      }
-      else
-      {
-         if (path[0].second.IsValid()) {
-            for (size_t i = 0; i < path.size(); ++i) {
-               double distance = D7Dist(path[0].second.data(), path[i].second.data());
-               if (S6::IsInvalidPair(path[i])) distance = -1.0;
-               vdist.push_back(distance);
-            }
-         }
-      }
+   const std::vector<std::pair<D7, D7> > path( mf.GetD7( ).GetPath( ) );
+   for (size_t i = 0; i < path.size( ); ++i) {
+      double distance = D7Dist( path[0].second.data( ), path[i].second.data( ) );
+      if (S6::IsInvalidPair( path[i] )) distance = -1.0;
+      vdist.push_back( distance );
    }
-   m.SetDistancesD7(vdist);
+   m.SetDistancesD7( vdist );
    return m;
 }
 
-MultiFollower MultiFollower::CalculateDistancesCS( const MultiFollower& mf) const  {
-   MultiFollower m(mf);
+MultiFollower MultiFollower::CalculateDistancesCS( const MultiFollower& mf ) const {
+   MultiFollower m( mf );
    S6 out;
    std::vector<double> vdist;
-   const std::vector<std::pair<S6, S6> > path(mf.GetCS().GetPath());
-   const std::vector<std::pair<S6, S6> > secondPath(mf.GetCS().GetSecondPath());
-   if (!S6::IsInvalidPair(path[0])) {
-      if (mf.GetS6().HasSecondPath()) {
-         double distance;
-         for (size_t i = 0; i < path.size(); ++i) {
-            if (S6::IsInvalidPair(path[i]) || S6::IsInvalidPair(secondPath[i])) 
-               distance = -1.0;
-            else
-               distance = CS6Dist(path[0].second.data(), secondPath[i].second.data());
-            vdist.push_back(distance);
-         }
-      }
-      else
-      {
-         if (path[0].second.IsValid()) {
-            for (size_t i = 0; i < path.size(); ++i) {
-               double distance = CS6Dist(path[0].second.data(), path[i].second.data());
-               if (S6::IsInvalidPair(path[i])) distance = -1.0;
-               vdist.push_back(distance);
-            }
-         }
-      }
+   const std::vector<std::pair<S6, S6> > path( mf.GetCS( ).GetPath( ) );
+   for (size_t i = 0; i < path.size( ); ++i) {
+      double distance = CS6Dist( path[0].second.data( ), path[i].second.data( ) );
+      if (S6::IsInvalidPair( path[i] )) distance = -1.0;
+      vdist.push_back( distance );
    }
-   m.SetDistancesCS(vdist);
+   m.SetDistancesCS( vdist );
+   return m;
+}
+
+MultiFollower MultiFollower::CalculateDistancesLM( const MultiFollower& mf ) const {
+   MultiFollower m( mf );
+   S6 out;
+   LM lm;
+   std::vector<double> vdist;
+   const std::vector<std::pair<S6, S6> > path( mf.GetS6( ).GetPath( ) );
+   S6Dist s6dist( 1 );
+   for (size_t i = 0; i < path.size( ); ++i) {
+      double distance = lm.DistanceBetween( path[0].second, path[i].second );
+      if (S6::IsInvalidPair( path[i] )) distance = -1.0;
+      vdist.push_back( distance );
+   }
+   m.SetDistancesLM( vdist );
    return m;
 }
 
@@ -214,46 +147,53 @@ MultiFollower MultiFollower::GenerateAllDistances(void) {
    {
       m.m_v7path.SetComputeStartTime();
       if (FollowerConstants::IsEnabled("V7")) m = CalculateDistancesV7(m);
-      const double computetimev7 = std::clock() - m.m_v7path.GetComputeStartTime();
-      m.m_v7path.SetTime2ComputeFrame(computetimev7);
-      m.SetComputeTime("V7", computetimev7);
+      const double computetime = std::clock() - m.m_v7path.GetComputeStartTime();
+      m.m_v7path.SetTime2ComputeFrame(computetime);
+      m.SetComputeTime("V7", computetime);
    }
    {
-      //m.ComputeAndTimeOnePath(m.m_cspath, "CS", &MultiFollower::CalculateDistancesCS);
       m.m_cspath.SetComputeStartTime();
       if (FollowerConstants::IsEnabled("CS")) m = CalculateDistancesCS(m);
-      const double computetimecs = std::clock() - m.m_cspath.GetComputeStartTime();
-      m.m_cspath.SetTime2ComputeFrame(computetimecs);
-      m.SetComputeTime("CS", computetimecs);
+      const double computetime = std::clock() - m.m_cspath.GetComputeStartTime();
+      m.m_cspath.SetTime2ComputeFrame(computetime);
+      m.SetComputeTime("CS", computetime);
    }
    {
       m.m_s6path.SetComputeStartTime();
       if (FollowerConstants::IsEnabled("S6")) m = CalculateDistancesS6(m);
-      const double computetimes6 = std::clock() - m.m_s6path.GetComputeStartTime();
-      m.m_s6path.SetTime2ComputeFrame(computetimes6);
-      m.SetComputeTime("S6", computetimes6);
+      const double computetime = std::clock() - m.m_s6path.GetComputeStartTime();
+      m.m_s6path.SetTime2ComputeFrame(computetime);
+      m.SetComputeTime("S6", computetime);
    }
    {
       m.m_g6path.SetComputeStartTime();
       if (FollowerConstants::IsEnabled("G6")) m = CalculateDistancesG6(m);
-      const double computetimeg6 = std::clock() - m.m_g6path.GetComputeStartTime();
-      m.m_g6path.SetTime2ComputeFrame(computetimeg6);
-      m.SetComputeTime("G6", computetimeg6);
+      const double computetime = std::clock() - m.m_g6path.GetComputeStartTime();
+      m.m_g6path.SetTime2ComputeFrame(computetime);
+      m.SetComputeTime("G6", computetime);
    }
    {
-      m.m_d7path.SetComputeStartTime();
-      if (FollowerConstants::IsEnabled("D7")) m = CalculateDistancesD7(m);
-      const double computetimed7 = std::clock() - m.m_d7path.GetComputeStartTime();
-      m.m_d7path.SetTime2ComputeFrame(computetimed7);
-      m.SetComputeTime("D7", computetimed7);
+      m.m_d7path.SetComputeStartTime( );
+      if (FollowerConstants::IsEnabled( "D7" )) m = CalculateDistancesD7( m );
+      const double computetime = std::clock( ) - m.m_d7path.GetComputeStartTime( );
+      m.m_d7path.SetTime2ComputeFrame( computetime );
+      m.SetComputeTime( "D7", computetime );
+   }
+   {
+      m.m_lmpath.SetComputeStartTime( );
+      if (FollowerConstants::IsEnabled( "LM" )) m = CalculateDistancesLM( m );
+      const double computetime = std::clock( ) - m.m_lmpath.GetComputeStartTime( );
+      m.m_lmpath.SetTime2ComputeFrame( computetime );
+      m.SetComputeTime( "LM", computetime );
    }
    m.SetTime2ComputeFrame(std::clock() - m.GetComputeStartTime());
 
-   m.GetPathS6().SetGlitches(m.DetermineOutliers(m.GetPathS6().GetDistances()));
-   m.GetPathG6().SetGlitches(m.DetermineOutliers(m.GetPathG6().GetDistances()));
-   m.GetPathD7().SetGlitches(m.DetermineOutliers(m.GetPathD7().GetDistances()));
-   m.GetPathCS().SetGlitches(m.DetermineOutliers(m.GetPathCS().GetDistances()));
-   m.GetPathV7().SetGlitches(m.DetermineOutliers(m.GetPathV7().GetDistances()));
+   m.GetPathS6( ).SetGlitches( m.DetermineOutliers( m.GetPathS6( ).GetDistances( ) ) );
+   m.GetPathG6( ).SetGlitches( m.DetermineOutliers( m.GetPathG6( ).GetDistances( ) ) );
+   m.GetPathD7( ).SetGlitches( m.DetermineOutliers( m.GetPathD7( ).GetDistances( ) ) );
+   m.GetPathCS( ).SetGlitches( m.DetermineOutliers( m.GetPathCS( ).GetDistances( ) ) );
+   m.GetPathV7( ).SetGlitches( m.DetermineOutliers( m.GetPathV7( ).GetDistances( ) ) );
+   m.GetPathLM( ).SetGlitches( m.DetermineOutliers( m.GetPathLM( ).GetDistances( ) ) );
 
    return m;
 }
@@ -278,7 +218,7 @@ std::set<size_t> MultiFollower::DetermineOutliers(const std::vector<double> dist
    std::vector<std::pair<double, double> > steps = of.FindDiscontinuities(FollowerConstants::globalPercentChangeToDetect);
 
    for (size_t i = 0; i < steps.size(); ++i) {
-      glitches.insert(steps[i].first + 1UL);
+      glitches.insert(size_t(steps[i].first) + 1UL);
    }
    return glitches;
 }
@@ -286,9 +226,10 @@ std::set<size_t> MultiFollower::DetermineOutliers(const std::vector<double> dist
 template<typename T>
 std::pair<double, double> GetPathMinMax(const LRL_Path<T>& path) {
    std::pair<double, double> p(std::make_pair(DBL_MAX, 0));
+   const std::vector<double> pdist = path.GetDistances( );
    if (!path.GetDistances().empty()) {
       p = std::make_pair(path.GetMin(), path.GetMax());
-      if (p.first < 0.0) {
+      if (p.first >= 0.0) {
          const std::vector<double> distances = path.GetDistances();
          double distmin = DBL_MAX;
          for (size_t i = 0; i < distances.size(); ++i) {
@@ -307,10 +248,11 @@ std::pair<double, double> MultiFollower::GetMinMax(void) const {
    const std::pair<double, double> pG6 = GetPathMinMax(m_g6path);
    const std::pair<double, double> pD7 = GetPathMinMax(m_d7path);
    const std::pair<double, double> pCS = GetPathMinMax(m_cspath);
-   const std::pair<double, double> pV7 = GetPathMinMax(m_v7path);
+   const std::pair<double, double> pV7 = GetPathMinMax( m_v7path );
+   const std::pair<double, double> pLM = GetPathMinMax( m_lmpath );
 
-   const double minp = minNC(pS6.first, pG6.first, pD7.first, pCS.first, pV7.first);
-   const double maxp = maxNC(pS6.second, pG6.second, pD7.second, pCS.second, pV7.second);
+   const double minp = minNC(pS6.first, pG6.first, pD7.first, pCS.first, pV7.first, pLM.first);
+   const double maxp = maxNC(pS6.second, pG6.second, pD7.second, pCS.second, pV7.second, pLM.second);
    return std::make_pair(minp, maxp);
 }
 
@@ -325,7 +267,7 @@ void MultiFollower::SetTime2ComputeFrame(const double computeTime) {
 }
 
 bool MultiFollower::HasGlitches(void) const {
-   return m_cspath.HasGlitches() || m_d7path.HasGlitches() || m_s6path.HasGlitches() || m_g6path.HasGlitches();
+   return m_cspath.HasGlitches() || m_d7path.HasGlitches() || m_s6path.HasGlitches() || m_g6path.HasGlitches() || m_lmpath.HasGlitches();
 }
 
 void MultiFollower::SetComputeTime(const std::string& name, const double time) {

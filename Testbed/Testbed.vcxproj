@@ -147,7 +147,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LRL_LatticeMatcher.cpp" />
     <ClCompile Include="MAIN_Testbed.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -158,7 +157,6 @@
   <ItemGroup>
     <ClInclude Include="..\LRL_Tools\TNear.h" />
     <ClInclude Include="..\LRL_Tools\triple.h" />
-    <ClInclude Include="LRL_LatticeMatcher.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

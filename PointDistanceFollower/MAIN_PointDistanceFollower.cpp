@@ -62,7 +62,7 @@ S6 InvalidPoint( void ) {
    return s6;
 }
 
-std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > GenerateS6LineFromStartToCell3ForModeLine3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
    const S6 probe1 = cell1.GetCell();
    const S6 probe2 = cell2.GetCell();
    const S6 focus3 = cell3.GetCell();
@@ -70,7 +70,6 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
    const S6 delta1 = probe1 - midpoint;
    const S6 delta2 = probe2 - midpoint;
    std::vector<std::pair<S6, S6> > points1;
-   std::vector<std::pair<S6, S6> > points2;
    S6 reduced1;
    S6 reduced2;
 
@@ -90,24 +89,20 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
       const bool b2s = next2.IsValid();
       const bool b2r = reduced2.IsValid();
 
-
-
       if (!b2 || !reduced2.IsAllMinus() || !reduced2.IsValid()) reduced2 = InvalidPoint();
-      points2.push_back(std::make_pair(next2, reduced2));
 
    }
-   return std::make_pair(points1, points2);
+   return points1;
 }
 
-std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > GenerateS6LineFromStartToCell3ForModeTriangle(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeTriangle(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
    const S6 probe1 = cell1.GetCell();
    const S6 probe2 = cell2.GetCell();
    const S6 focus3 = cell3.GetCell();
 
-   const S6 delta1 = (probe1 - focus3)/FollowerConstants::globalStepsPerFrame;
-   const S6 delta2 = (probe2 - focus3)/FollowerConstants::globalStepsPerFrame;
+   const S6 delta1 = (probe1 - focus3)/double(FollowerConstants::globalStepsPerFrame);
+   const S6 delta2 = (probe2 - focus3)/double(FollowerConstants::globalStepsPerFrame);
    std::vector<std::pair<S6, S6> > points1;
-   std::vector<std::pair<S6, S6> > points2;
    S6 reduced1;
    S6 reduced2;
    S6 reducedFocus;
@@ -127,10 +122,9 @@ std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> > > Gen
 
       const bool b2 = Selling::Reduce(next2, reduced2);
       if (!b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 = InvalidPoint();
-      points2.push_back(std::make_pair(next2, reduced2));
 
    }
-   return std::make_pair(points1, points2);
+   return points1;
 }
 
 std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputData& cell) {
@@ -144,6 +138,7 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
          const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
          S6 next = (1.0 - t)*probe + t * reducedProbe;
          if (!next.IsValid()) next = InvalidPoint();
+         const bool b2 = Selling::Reduce( next, reduced );
          if (!reduced.IsValid()) reduced = InvalidPoint();
          points.push_back(std::make_pair(next, reduced));
       }
@@ -151,33 +146,25 @@ std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputDa
    return points;
 }
 
-MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plotCounter, const CellInputData& cell,
+MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plotCounter, const CellInputData& cell1,
    const CellInputData& cell2, const CellInputData& cell3) {
    const std::string baseFileName = NameOneFileForOneLattice(inputCellOrdinal) + LRL_ToString(plotCounter);
 
    std::vector<std::pair<S6, S6> > points1;
-   std::vector<std::pair<S6, S6> > points2;   
 
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) {
-         const std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> >> p = GenerateS6LineFromStartToCell3ForModeTriangle(cell, cell2, cell3);
-         points1 = p.first;
-         points2 = p.second;
-      }
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) {
+      points1 = GenerateS6LineFromStartToCell3ForModeTriangle( cell1, cell2, cell3 );
+   }
 
    else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
-      const std::pair<std::vector<std::pair<S6, S6> >, std::vector<std::pair<S6, S6> >> p = GenerateS6LineFromStartToCell3ForModeLine3(cell, cell2, cell3);
-      points1 = p.first;
-      points2 = p.second;
+      points1 = GenerateS6LineFromStartToCell3ForModeLine3(cell1, cell2, cell3);
    }
    else
    {
-      points1 = GenerateS6LineFromStartToFinish(cell);
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
-         points2 = GenerateS6LineFromStartToFinish(cell2);
-      }
+      points1 = GenerateS6LineFromStartToFinish(cell1);
    }
 
-   MultiFollower mf(points1, points2);
+   MultiFollower mf(points1);
    mf = mf.GenerateAllDistances();
    mf.SetTime2ComputeFrame(double(std::clock() - mf.GetComputeStartTime()));
 

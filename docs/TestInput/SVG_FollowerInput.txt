@@ -1,5 +1,6 @@
 # TF_2018-02-09.12_07_13.260d.svg
 circleplot false
+enable LM
 trials 20
 stepsperframe 100
 randomseed 21
@@ -12,6 +13,12 @@ end
 
 # 1/15/2018 SVG_Follower input
 circleplot false
+FollowerMode LINE
+enable S6
+disable g6
+enable CS
+disable V7
+enable LM
 trials 1
 stepsperframe 100
 randomseed 21
@@ -23,10 +30,16 @@ random
 random
 random
 random
+random
+random
+random
+random
+random
 end
 
 circleplot false
 randomseed 19
+enable LM
 trials 1
 stepsperframe 100
 fixrandomseed true
