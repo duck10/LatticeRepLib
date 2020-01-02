@@ -65,6 +65,9 @@ void LRL_LatticeMatcher::BuildMatrixTree( void ) {
       //static const std::vector<MatS6> vMatS6A = DoThreeAxes( );
       //m_matrixTree.insert( vMatS6A );
       //ApplyReflections( vMatS6A );
+      //static const std::vector<MatS6> vMatS6B = DoThreeAxes( );
+      //m_matrixTree.insert( vMatS6B );
+      //ApplyReflections( vMatS6B );
    }
 }
 
@@ -86,8 +89,6 @@ void LRL_LatticeMatcher::BuildReferenceTree( const S6& s) {
    const Scaler_MV scale(s);
    for (size_t i = 0; i<m_matrixTree.size(); ++i ) {
       const S6 scaledMV = scale.Scale(m_matrixTree[i] * s);
-      const MatN matntest(m_matrixTree[i].GetMatrix( ) );
-      const MV_Pair mv( scaledMV, MatS6(MatN(m_matrixTree[i].GetMatrix()).inverse()) );
       StoreMV_IfUnique( scaledMV, MatS6::Inverse( m_matrixTree[i] ) );
    }
 }
@@ -109,8 +110,9 @@ double LRL_LatticeMatcher::DistanceBetween( const S6& s1, const S6& s2 ) {
 S6 LRL_LatticeMatcher::MatchReference( const S6& s ) const {
    const static bool debug = false;
    MV_Pair closest;
-   Scaler_MV scale( m_reducedReference );
-   const bool b = m_MVtree.NearestNeighbor( DBL_MAX, closest, MV_Pair(scale.Scale(s), MatS6()) );
+   const Scaler_MV scale( m_reducedReference );
+   const S6 scaled_s = scale.Scale(s);
+   const bool b = m_MVtree.NearestNeighbor( DBL_MAX, closest, MV_Pair( scaled_s, MatS6()) );
    if (!b) throw;
 
    const double d = (closest.GetMatS6()*s - m_reducedReference).norm( );
@@ -122,13 +124,12 @@ S6 LRL_LatticeMatcher::MatchReference( const S6& s ) const {
    S6 s6closest;
    double dmin_G6 = DBL_MAX;
    const long n = m_MVtree.FindInSphere( 1.0 * d +0.1, vClosest, closest );
-   std::cout << "m_MV_Tree vClosest.size() " << vClosest.size( ) << std::endl;
    if ( n >= 1 ) {
       for ( size_t i=0; i<n; ++i ) {
          const S6 s6test = vClosest[i].GetMatS6( ) * s;
          const double d2 = (s6test - m_reducedReference).norm( );
          double dtest_G6 = (G6(m_reducedReference) - G6( s6test )).norm();
-         dtest_G6 = d2;
+         dtest_G6 = d2;  // NOTE: IGNORING g6
 
          if (dmin_G6 >= dtest_G6) {
             dmin_G6 = dtest_G6;
@@ -136,6 +137,11 @@ S6 LRL_LatticeMatcher::MatchReference( const S6& s ) const {
          }
       }
    }
+   std::cout << "closest found distance = " << d << "  dmin " 
+      << dmin_G6 << "    m_MV_Tree vClosest.size() " 
+      << vClosest.size( ) 
+      << "  closest  " << closest.GetS6()
+      << std::endl;
 
    return s6closest;
 }

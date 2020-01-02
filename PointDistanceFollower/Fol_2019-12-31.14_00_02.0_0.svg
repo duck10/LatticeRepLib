@@ -2,14 +2,14 @@
 <!-- the width and height set the total pixel output of the image in the browser -->
 <!-- whatever is within the viewbox will be remapped to show in this size -->
 <svg width="1000" height="1000" viewBox="1 0  1200 1200"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <desc>ID (and file name) = Fol_2019-12-24.15_43_44.0_0.svg  mode = Line </desc> 
+ <desc>ID (and file name) = Fol_2019-12-31.14_00_02.0_0.svg  mode = Line </desc> 
 <g transform = "scale(1 1)">
 
-<text x = "-850" y="50" transform="rotate(-90)"  font-family="sans-serif" font-size="40" stroke ="lightgray" fill="none"> PointDistanceFollower   Dec 21 2019</text>
- <text x="200"  y="30"  font-family="sans-serif" font-size="20" >Fol_2019-12-24.15_43_44.0_0.svg  &#160;&#160;&#160;&#160;&#160; Wall time passed: 170 msec.</text>
+<text x = "-850" y="50" transform="rotate(-90)"  font-family="sans-serif" font-size="40" stroke ="lightgray" fill="none"> PointDistanceFollower   Dec 28 2019</text>
+ <text x="200"  y="30"  font-family="sans-serif" font-size="20" >Fol_2019-12-31.14_00_02.0_0.svg  &#160;&#160;&#160;&#160;&#160; Wall time passed: 567 msec.</text>
 <text x="300" y="60"   font-family="sans-serif" font-size="20" fill="lightblue">  S6  43 msec </text>
 <text x="300" y="85"   font-family="sans-serif" font-size="20" fill="olive">  CS6Dist  1 msec </text>
-<text x="300" y="110"   font-family="sans-serif" font-size="20" fill="black">  LM  126 msec </text>
+<text x="300" y="110"   font-family="sans-serif" font-size="20" fill="black">  LM  523 msec </text>
 
 
 

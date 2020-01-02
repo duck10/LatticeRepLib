@@ -52,7 +52,7 @@ public:
    S6 GetReference( ) const { return m_reducedReference; };
    S6 MatchReference( const S6& s ) const;
    std::vector<S6> MatchReference( const std::vector<S6>& vs ) const;
-   void ApplyReflections( const std::vector<MatS6>& t ); // NOTE: this is NOT a reference; it is copy !!!!!!!!!!
+   void ApplyReflections( const std::vector<MatS6>& t );
    size_t size( ) const { return m_MVtree.size( ); }
    double DistanceBetween( const S6& s1, const S6& s2 );
    void BuildMatrixTree( );

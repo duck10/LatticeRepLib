@@ -1,8 +1,8 @@
-PointDistanceFollower   Dec 21 2019   mode =  Line 
-Fol_2019-12-25.16_12_41.0_0.txt      Output is S6 probe cell, C3 reduced cell,  S6Dist CS6Dist LMDist  distance between 
-Compute times (msec)     S6Dist   48   CS6Dist  1   LMDist   726
-PointDistanceFollower  Dec 21 2019  mode = Line
-Fol_2019-12-25.16_12_41.0_0.txt     Output is S6 probe cell, C3 reduced cell, S6Dist CS6Dist LMDist distance between
+PointDistanceFollower   Dec 28 2019   mode =  Line 
+Fol_2019-12-31.14_00_02.0_0.txt      Output is S6 probe cell, C3 reduced cell,  S6Dist CS6Dist LMDist  distance between 
+Compute times (msec)     S6Dist   43   CS6Dist  1   LMDist   523
+PointDistanceFollower  Dec 28 2019  mode = Line
+Fol_2019-12-31.14_00_02.0_0.txt     Output is S6 probe cell, C3 reduced cell, S6Dist CS6Dist LMDist distance between
 0    -23.09628 -15.89245 -15.26953  -9.59662   7.48227  -5.89434     (-21.787,-0.526) (-6.199,-5.894) (-17.202,-1.588)      0  0  0  
 1    -23.08306 -15.79454 -15.28904  -9.50500   7.34716  -5.85084     (-21.645,-0.662) (-6.446,-5.851) (-17.232,-1.496)      0.331809  0.331809  0.331809  
 2    -23.06983 -15.69663 -15.30856  -9.41338   7.21204  -5.80735     (-21.504,-0.797) (-6.692,-5.807) (-17.262,-1.405)      0.663618  0.663618  0.663618  

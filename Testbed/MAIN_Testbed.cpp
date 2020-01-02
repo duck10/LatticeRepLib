@@ -16,6 +16,7 @@
 #include "MatS6.h"
 #include "S6.h"
 #include "S6Dist.h"
+#include "TNear.h"
 
 #include <algorithm>
 #include <utility>
@@ -73,8 +74,18 @@ void Test_E3toS6() {
 
 }
 
+class xxxxx {
+   double DistanceBetween( const double x, const double xx ) { return 19191; }
+};
+
 int main( int argc, char* argv[] )
 {
+   xxxxx test;
+   CNearTree< xxxxx> nt;
+   nt.NearestNeighbor( 0, test );
+   CNearTree<double> dnt;
+   dnt.insert( 1. );
+   dnt.NearestNeighbor( 0., 0. );
    //Test_E3toS6( );
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
