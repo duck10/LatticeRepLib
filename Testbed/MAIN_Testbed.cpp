@@ -80,12 +80,6 @@ class xxxxx {
 
 int main( int argc, char* argv[] )
 {
-   xxxxx test;
-   CNearTree< xxxxx> nt;
-   nt.NearestNeighbor( 0, test );
-   CNearTree<double> dnt;
-   dnt.insert( 1. );
-   dnt.NearestNeighbor( 0., 0. );
    //Test_E3toS6( );
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
