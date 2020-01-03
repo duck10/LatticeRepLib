@@ -59,8 +59,9 @@ end
 timestamp false
 circleplot false
 randomseed 18
+enable LM
 trials 1
-stepsperframe 1000
+stepsperframe 100
 fixrandomseed true
 end
 random
