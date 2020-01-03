@@ -47,7 +47,8 @@ std::vector<MatS6> LRL_LatticeMatcher::DoThreeAxes( ) {
             StoreMatS6IfUnique( mk );
             for (size_t m = 0; m < 6; ++m) {
                if (m == k) continue;
-               StoreMatS6IfUnique( redc[m].first );
+               const MatS6 mm = redc[m].first * mk;
+               StoreMatS6IfUnique(mm);
             }
          }
       }
