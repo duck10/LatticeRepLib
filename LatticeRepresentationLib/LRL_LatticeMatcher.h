@@ -60,6 +60,7 @@ public:
 
 protected: // functions
    void BuildReferenceTree( const S6& s );
+   void ExpandMatrices( const int n, const MatS6& m );
    std::vector<MatS6> DoThreeAxes( );
    void StoreMV_IfUnique( const S6& s, const MatS6& m );
    void FillReflections( );

@@ -74,13 +74,43 @@ void Test_E3toS6() {
 
 }
 
-class xxxxx {
-   double DistanceBetween( const double x, const double xx ) { return 19191; }
+class AngularS6 {
+public:
+   AngularS6( ) : m_isValid(false) {}
+   AngularS6( const S6& s, const MatS6& m );
+   double AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const;
+
+   AngularS6 operator-( const AngularS6& s ) const;
+   double norm( ) const { return (*this).m_S6[0]; }
+
+   bool m_isValid;
+   S6 m_S6;
+   MatS6 m_matS6;
+
 };
+
+double AngularS6::AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const {
+   double sum = 0.0;
+   for (size_t i = 0; i < 6; ++i) sum += s1.m_S6[i] * s2.m_S6[i];
+   return acos(sum/(s1.m_S6.norm()*s2.m_S6.norm()));
+}
+
+AngularS6 AngularS6::operator- ( const AngularS6&a ) const {
+   AngularS6 as6;
+   as6.m_S6[0] = AngleBetween( (*this), a );
+   return as6;
+}
 
 int main( int argc, char* argv[] )
 {
+   CNearTree< AngularS6> ant;
+   ant.NearestNeighbor( 1.0, AngularS6( ) );
    //Test_E3toS6( );
+   S6 s1, s2;
+   CNearTree<S6> snt;
+   snt.insert( s1 );
+   snt.insert( s2 );
+   snt.NearestNeighbor( 0.0, s2 );
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
    MatS6 mat_reference;
@@ -119,19 +149,21 @@ int main( int argc, char* argv[] )
       srlm.SetTitle( LRL_ToString( "reference ", vLat[0] ) );
       double dists6, distlm, distcs, disttest;
       for (size_t lat = 1; lat < vLat.size( ); ++lat) {
-         //std::cout << vs6[0] << "   " << vs6[lat] << std::endl << std::endl;
-         //distlm = (vLat[0] - vs6[lat]).norm( );
+         std::cout << vs6[0] << "   " << vs6[lat] << std::endl << std::endl;
+         distlm = (vLat[0] - vs6[lat]).norm( );
+         std::cout << "distlm A " << distlm << std::endl;
          distlm = lmd.DistanceBetween(vLat[lat]);
-         //disttest = lm.DistanceBetween( vLat[0], vLat[lat] );
-         //std::cout << "disttest " << disttest << std::endl;
+         std::cout << "distlm B " << distlm << std::endl;
+         disttest = lm.DistanceBetween( vLat[0], vLat[lat] );
+         std::cout << "disttest " << disttest << std::endl;
          distcs = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
          dists6 = sd.DistanceBetween( vLat[0], vLat[lat] );
 
          //std::cout << "lat match " << distlm << "  cs6dist " << distcs << "  s6dist " << dists6 << std::endl;
          double diff = (distlm - dists6) / dists6 * 100.0;
-         srlm.Store( int( diff ), LRL_ToString("# ", lat, "   ", vLat[lat] ) );
+         //srlm.Store( int( diff ), LRL_ToString("# ", lat, "   ", vLat[lat] ) );
       }
-      srlm.ShowResultsByKeyAscending( );
+      //srlm.ShowResultsByKeyAscending( );
       //std::cout << std::endl;
 
       //std::cout << "vLat list" << std::endl;

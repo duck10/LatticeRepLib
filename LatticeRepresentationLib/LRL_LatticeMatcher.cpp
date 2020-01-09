@@ -33,11 +33,40 @@ void LRL_LatticeMatcher::StoreMatS6IfUnique( const MatS6& m) {
       m_matrixTree.insert( m );
 }
 
+std::vector<std::pair<MatS6, MatS6> > CreateReductionMatrices() {
+   std::vector<std::pair<MatS6, MatS6> > m( 1, std::make_pair( MatS6( ).unit( ), MatS6( ).unit( ) ) );
+   static const std::vector<std::pair<MatS6, MatS6> > redc = S6::SetUnreductionMatrices( );
+   m.insert( m.end( ), redc.begin( ), redc.end( ) );
+   return m;
+}
+
+static const std::vector<std::pair<MatS6, MatS6> > redc( CreateReductionMatrices( ) );
+static const std::vector<MatS6> refl_one = MatS6::GetReflections( );
+
+void LRL_LatticeMatcher::ExpandMatrices( const int n, const MatS6& m ) {
+
+   for (size_t i = 0; i < refl_one.size( ); ++i) {
+      const MatS6 mi = refl_one[i] * m;
+      StoreMatS6IfUnique( mi );
+      if (n > 1) ExpandMatrices( n - 1, mi );
+   }
+
+   for (size_t i = 0; i < redc.size( ); ++i) {
+      const MatS6 mi = redc[i].first * m;
+      StoreMatS6IfUnique( mi );
+      if (n > 1) ExpandMatrices( n - 1, mi );
+   }
+}
+
 std::vector<MatS6> LRL_LatticeMatcher::DoThreeAxes( ) {
+
+   ExpandMatrices( 3, MatS6( ).unit( ) );
+   return m_matrixTree.GetObjectStore( );
+
+
+
    static std::vector<MatS6> vmp;
    if (vmp.empty( )) {
-      static const std::vector<std::pair<MatS6, MatS6> > redc = S6::SetUnreductionMatrices( );
-
       for (size_t i = 0; i < 6; ++i) {
          const MatS6 mi = redc[i].first;
          StoreMatS6IfUnique( mi );
@@ -48,12 +77,12 @@ std::vector<MatS6> LRL_LatticeMatcher::DoThreeAxes( ) {
             for (size_t m = 0; m < 6; ++m) {
                if (m == k) continue;
                const MatS6 mm = redc[m].first * mk;
-               StoreMatS6IfUnique(mm);
+               StoreMatS6IfUnique( mm );
             }
          }
       }
+      for (size_t i = 0; i < m_matrixTree.size( ); ++i) vmp.push_back( m_matrixTree[i] );
    }
-   for (size_t i = 0; i < m_matrixTree.size( ); ++i) vmp.push_back( m_matrixTree[i]);
    return vmp;
 }
 
