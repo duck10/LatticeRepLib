@@ -74,37 +74,15 @@ void Test_E3toS6() {
 
 }
 
-class AngularS6 {
-public:
-   AngularS6( ) : m_isValid(false) {}
-   AngularS6( const S6& s, const MatS6& m );
-   double AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const;
-
-   AngularS6 operator-( const AngularS6& s ) const;
-   double norm( ) const { return (*this).m_S6[0]; }
-
-   bool m_isValid;
-   S6 m_S6;
-   MatS6 m_matS6;
-
-};
-
-double AngularS6::AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const {
-   double sum = 0.0;
-   for (size_t i = 0; i < 6; ++i) sum += s1.m_S6[i] * s2.m_S6[i];
-   return acos(sum/(s1.m_S6.norm()*s2.m_S6.norm()));
-}
-
-AngularS6 AngularS6::operator- ( const AngularS6&a ) const {
-   AngularS6 as6;
-   as6.m_S6[0] = AngleBetween( (*this), a );
-   return as6;
-}
-
 int main( int argc, char* argv[] )
 {
    CNearTree< AngularS6> ant;
-   ant.NearestNeighbor( 1.0, AngularS6( ) );
+   ant.insert(AngularS6(LRL_Cell("10 10 10  90 90 90")));
+   ant.insert(AngularS6(LRL_Cell("20 10 10  90 90 90")));
+   AngularS6 a1(LRL_Cell("35 10 10  90 90 90"));
+   AngularS6 aclose;
+   const bool ba = ant.NearestNeighbor(1.0, aclose, a1);
+   std::cout << aclose.m_S6 << std::endl;
    //Test_E3toS6( );
    S6 s1, s2;
    CNearTree<S6> snt;
