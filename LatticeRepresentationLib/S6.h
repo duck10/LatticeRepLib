@@ -160,5 +160,21 @@ private:
    bool m_valid;
 };
 
+class AngularS6 {
+public:
+   AngularS6( ) : m_isValid(false) {}
+   AngularS6(const S6& s, const MatS6& m) : m_isValid(true), m_S6(s), m_matS6(m) {}
+   AngularS6(const S6& s) : m_isValid(true), m_S6(s), m_matS6(MatS6( ).unit( )) {}
+   double AngleBetween(const AngularS6& s1, const AngularS6& s2) const;
+
+   AngularS6 operator-(const AngularS6& s) const;
+   double norm( ) const { return (*this).m_S6[0]; }
+
+   bool m_isValid;
+   S6 m_S6;
+   MatS6 m_matS6;
+
+};
+
 
 #endif

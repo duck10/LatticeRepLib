@@ -1568,3 +1568,15 @@ S6 S6::Relection24(const S6& din) {
    return d;
 }
 
+
+double AngularS6::AngleBetween(const AngularS6& s1, const AngularS6& s2) const {
+   double sum = 0.0;
+   for (size_t i = 0; i < 6; ++i) sum += s1.m_S6[i] * s2.m_S6[i];
+   return acos(sum / (s1.m_S6.norm( ) * s2.m_S6.norm( )));
+}
+
+AngularS6 AngularS6::operator- (const AngularS6& a) const {
+   AngularS6 as6;
+   as6.m_S6[0] = AngleBetween((*this), a);
+   return as6;
+}
