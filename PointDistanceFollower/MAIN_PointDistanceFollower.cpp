@@ -249,13 +249,13 @@ int main(int argc, char* argv[]) {
 
       // are we done with input?
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine &&
-         i + 1UL >= celldata.size()) {
+         i + size_t(1) >= celldata.size()) {
          std::cout << "FOLLOWERMODE LINE requires at least two cells input" << std::endl;
          break;
       }
 
       if ((FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 || FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) &&
-         i + 2UL >= celldata.size()) {
+         i + size_t(2) >= celldata.size()) {
          std::cout << "FOLLOWERMODE TRIANGLE requires at least three cells input" << std::endl;
          break;
       }
@@ -278,6 +278,7 @@ int main(int argc, char* argv[]) {
          ++i;
       }
    }
+   LRL_LatticeMatcher::record.ShowResults( );
 
    return 0;
 

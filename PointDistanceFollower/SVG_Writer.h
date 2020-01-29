@@ -73,6 +73,10 @@ private:
    std::string WriteOneLineDescription( const std::string& name, const int height ) {
       std::string svg;
 
+      const std::string timestamp = (GLOBAL_Files::globalShouldTimeStamp ?
+         LRL_ToString( m_lineDescriptions.GetComputeTime( name ) ) +
+         " msec " : "") + "</text>\n";
+
       if (FollowerConstants::IsEnabled( name )) {
          const std::string colorForName = m_lineDescriptions.GetColor( name );
          const std::string nameForType = m_lineDescriptions.GetName( name );
@@ -80,9 +84,7 @@ private:
             LRL_ToString( height ) +
             "\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" +
             colorForName + "\">  " +
-            nameForType + "  " +
-            LRL_ToString( m_lineDescriptions.GetComputeTime( name ) ) +
-             " msec </text>\n";
+            nameForType + "  " + timestamp;
       }
       return svg;
    }
@@ -111,10 +113,14 @@ private:
       m_svg.push_back( "<?xml version=\"1.0\" standalone=\"no\"?>" );
       SVG_HeaderBoilerplate( sFileName );
 
+      
+      const std::string timestamp = (GLOBAL_Files::globalShouldTimeStamp ? 
+      "  &#160;&#160;&#160;&#160;&#160; Wall time passed: "
+         + LRL_ToString( m_computeTime )
+         + " msec." : "" ) + "</text>";
+
        m_svg.push_back(" <text x=\"200\"  y=\"30\"  font-family=\"sans-serif\" font-size=\"20\" >" + sFileName +
-       "  &#160;&#160;&#160;&#160;&#160; Wall time passed: "
-          + LRL_ToString(m_computeTime)
-          + " msec.</text>");
+       timestamp);
 
      m_svg.push_back(WriteLineDescriptions());
    }
