@@ -225,9 +225,17 @@ size_t S6::CountZeros(void) const {
 }
 
 double S6::DistanceBetween( const S6& v1, const S6& v2 ) {
-   double sum = 0.0;
-   for( size_t i=0; i<6; ++i )  sum += (v1[i]-v2[i])*(v1[i]-v2[i]);
-   return sqrt( sum );
+   return (v1-v2).norm();
+}
+
+double S6::AngleBetween( const S6& v1, const S6& v2 ) {
+   const double norm1 = v1.norm( );
+   const double norm2 = v2.norm( );
+   const double dotproduct = VecN( v1.GetVector( ) ).dot( VecN( v2.GetVector( )));
+   const double cosangle = dotproduct /norm1 / norm2;
+   if (abs( cosangle ) > 1.0 && abs( cosangle ) - 1.0 < 1.0E-7) return cosangle > 0.0 ? acos( 1.0 ) : acos( -1.0 );
+   const double returnvalue = acos( cosangle );
+   return returnvalue;
 }
 
 S6& S6::operator= ( const S6& v ) {
@@ -1572,7 +1580,12 @@ S6 S6::Relection24(const S6& din) {
 double AngularS6::AngleBetween(const AngularS6& s1, const AngularS6& s2) const {
    double sum = 0.0;
    for (size_t i = 0; i < 6; ++i) sum += s1.m_S6[i] * s2.m_S6[i];
-   return acos(sum / (s1.m_S6.norm( ) * s2.m_S6.norm( )));
+   const double cosine = sum;
+   const double sine = sqrt( abs(1.0 - sum*sum ));
+
+   const double angleInRadians = atan2( sine, cosine );
+   const double angleInDegrees = angleInRadians * 180.0 / (4.0 * atan( 1.0 ));
+   return angleInRadians;
 }
 
 AngularS6 AngularS6::operator- (const AngularS6& a) const {

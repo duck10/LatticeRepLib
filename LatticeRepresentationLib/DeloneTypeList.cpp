@@ -361,7 +361,7 @@ double DeloneTypeList::GetFreeParams(const std::string& s) {
          break;
       }
    }
-   return foundName;
+   return double(foundName);
 }
 
 std::vector<DeloneFitResults> DeloneTypeList::Fit( const std::string& type, const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
