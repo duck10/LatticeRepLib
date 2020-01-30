@@ -1577,19 +1577,19 @@ S6 S6::Relection24(const S6& din) {
 }
 
 
-double AngularS6::AngleBetween(const AngularS6& s1, const AngularS6& s2) const {
-   double sum = 0.0;
-   for (size_t i = 0; i < 6; ++i) sum += s1.m_S6[i] * s2.m_S6[i];
-   const double cosine = sum;
-   const double sine = sqrt( abs(1.0 - sum*sum ));
-
-   const double angleInRadians = atan2( sine, cosine );
-   const double angleInDegrees = angleInRadians * 180.0 / (4.0 * atan( 1.0 ));
-   return angleInRadians;
-}
-
-AngularS6 AngularS6::operator- (const AngularS6& a) const {
-   AngularS6 as6;
-   as6.m_S6[0] = AngleBetween((*this), a);
-   return as6;
-}
+//double AngularS6::AngleBetween(const AngularS6& s1, const AngularS6& s2) const {
+//   double sum = 0.0;
+//   for (size_t i = 0; i < 6; ++i) sum += s1.m_S6[i] * s2.m_S6[i];
+//   const double cosine = sum;
+//   const double sine = sqrt( abs(1.0 - sum*sum ));
+//
+//   const double angleInRadians = atan2( sine, cosine );
+//   const double angleInDegrees = angleInRadians * 180.0 / (4.0 * atan( 1.0 ));
+//   return angleInRadians;
+//}
+//
+//AngularS6 AngularS6::operator- (const AngularS6& a) const {
+//   AngularS6 as6;
+//   as6.m_S6[0] = AngleBetween((*this), a);
+//   return as6;
+//}

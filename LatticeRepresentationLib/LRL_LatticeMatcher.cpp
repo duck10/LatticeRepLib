@@ -15,7 +15,7 @@
 
 
 LRL_LatticeMatcher::LRL_LatticeMatcher()
-   : m_MVtree_Angular()
+   : m_MVtree()
    , m_matrixTree()
    , m_reducedReference(S6())
    , dcutoff(0.01)
@@ -108,7 +108,7 @@ void LRL_LatticeMatcher::BuildMatrixTree( void ) {
 
 void LRL_LatticeMatcher::SetReferenceLattice( const MV_Pair& mpReducedReference ) {
    if ((m_reducedReference - mpReducedReference.GetS6()).norm( ) < 1.0E-4) return;
-   m_MVtree_Angular.clear( );
+   m_MVtree.clear( );
    m_reducedReference = mpReducedReference.GetS6();
    m_matReference = mpReducedReference.GetMatS6( );
    BuildReferenceTree( m_reducedReference );
@@ -137,46 +137,46 @@ void LRL_LatticeMatcher::ApplyReflections( const std::vector<MatS6>& t ) {
    }
 }
 
-std::pair<double, AngularS6> LRL_LatticeMatcher::MatchOneFromTheSphere( const AngularS6& s, const std::vector<AngularS6>& vClosest ) const
+std::pair<double, MV_Pair> LRL_LatticeMatcher::MatchOneFromTheSphere( const S6& s, const std::vector<MV_Pair>& vClosest ) const
 {
    double dmin_S6 = DBL_MAX;
-   AngularS6 s6closest;
+   MV_Pair s6closest;
    for (size_t i = 0; i < vClosest.size(); ++i) {
-      const S6 s6test = vClosest[i].GetMatS6( ) * s.GetOriginalS6( );
-      const double d2 = (s6test - s.GetOriginalS6( )).norm( );
-      const double d_G6 = (G6( s6test ) - G6( s.GetOriginalS6( ) )).norm( );
+      const S6 s6test = vClosest[i].GetMatS6( ) * s;
+      const double d2 = (s6test - s).norm( );
+      //const double d_G6 = (G6( s6test ) - G6( s)).norm( );
       const double dtest_S6 = d2;
 
       if (dmin_S6 >= dtest_S6) {
          dmin_S6 = dtest_S6;
-         s6closest = s6test;
+         s6closest = MV_Pair(s6test, vClosest[i].GetMatS6());
       }
    }
    return std::make_pair( dmin_S6, s6closest );
 }
 
-AngularS6 LRL_LatticeMatcher::SelectAlternateImageOfReference( const AngularS6& s, const AngularS6& closest ) const {
+MV_Pair LRL_LatticeMatcher::SelectAlternateImageOfReference( const S6& s, const S6& closest ) const {
    // now check for alternate solutions
-   const double angle1 = closest.AngleBetween( closest, AngularS6( s.GetS6( ), MatS6( ) ) );
-   record.Store(int( angle1*180./(4.0*atan(1.0))), "");
+   const double dist1 = m_MVtree.DistanceBetween( closest, s );
 
-   std::vector<AngularS6> vClosest;
-   const long n = m_MVtree_Angular.FindInSphere( 1.01 * angle1 + 0.05, vClosest, closest );
+   std::vector<MV_Pair> vClosest;
+   const long n = m_MVtree.FindInSphere( 1.01 * dist1 + 0.05, vClosest, MV_Pair(closest, MatS6() ) );
 
-   std::pair<double, AngularS6> best( std::make_pair( DBL_MAX, S6( ) ) );
-   return MatchOneFromTheSphere( s, vClosest ).second;
+   const std::pair<double, MV_Pair> best = MatchOneFromTheSphere(s, vClosest);
+   return best.second;
 }
 
-AngularS6 LRL_LatticeMatcher::FindClosest( const S6& s ) const {
-   AngularS6 closest;
-   const bool b = m_MVtree_Angular.NearestNeighbor( DBL_MAX, closest, AngularS6( s, MatS6( ) ) );
+MV_Pair LRL_LatticeMatcher::FindClosest( const S6& s ) const {
+   MV_Pair closest;
+   const bool b = m_MVtree.NearestNeighbor( DBL_MAX, closest, MV_Pair( s, MatS6( ) ) );
    if (!b) throw;
    return closest;
 }
 
 S6 LRL_LatticeMatcher::MatchReference( const S6& s ) const {
    const static bool debug = false;
-   const AngularS6 revisedClosest = SelectAlternateImageOfReference( s, FindClosest( s ) );
+   const MV_Pair closest = FindClosest( s );
+   const MV_Pair revisedClosest = SelectAlternateImageOfReference( s, closest.GetS6());
    return revisedClosest.GetMatS6( ) * s;
 }
 
@@ -188,10 +188,10 @@ std::vector<S6> LRL_LatticeMatcher::MatchReference( const std::vector<S6>& vs ) 
 }
 
 void LRL_LatticeMatcher::StoreMV_IfUnique( const S6& s, const MatS6& m ) {
-   AngularS6 scaled_MV( s, m );
+   MV_Pair scaled_MV( s, m );
    //scaled_MV = MV_Pair::CleanZeros( scaled_MV );
    /*if (m_MVtree_Angular.NearestNeighbor( dcutoff, scaled_MV ) == m_MVtree_Angular.end( ))*/ {
-      m_MVtree_Angular.insert( scaled_MV );
+      m_MVtree.insert( scaled_MV );
    }
 }
 
@@ -224,7 +224,7 @@ std::ostream& operator<< ( std::ostream& o, const MV_Pair& v ) {
 
 LMDist::LMDist( const S6& s ) {
    SetReferenceLattice( MV_Pair( s, MatS6( ).unit( ) ) );
-   m_MVtree_Angular.clear( );
+   m_MVtree.clear( );
    BuildMatrixTree( );
    BuildReferenceTree( m_reducedReference );
 }

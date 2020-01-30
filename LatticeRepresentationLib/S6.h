@@ -161,36 +161,36 @@ private:
    bool m_valid;
 };
 
-class AngularS6Dist : public LRL_LatticeMatcher {
-public:
-   AngularS6Dist( ) {}
-   AngularS6Dist( const S6& s );
-   double DistanceBetween( const S6& s2 );
-   double DistanceBetween( const S6& s1, const S6& s2 );
-   double AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const;
-};
-
-class AngularS6 {
-public:
-   AngularS6( ) : m_isValid(false) {}
-   AngularS6( const bool b) : m_isValid(b) {}
-   AngularS6(const S6& s, const MatS6& m) : m_isValid(true), m_S6(s/s.norm()), m_originalS6(s), m_matS6(m) {}
-   AngularS6(const S6& s) : m_isValid(true), m_S6(s/s.norm()), m_originalS6(s), m_matS6(MatS6( ).unit( )) {}
-   double AngleBetween(const AngularS6& s1, const AngularS6& s2) const;
-
-   AngularS6 operator-(const AngularS6& s) const;
-   double norm( ) const { return (*this).m_S6[0]; }
-   MatS6 GetMatS6( ) const { return m_matS6; }
-   S6 GetS6( ) const { return m_S6; }
-   S6 GetOriginalS6( ) const { return m_originalS6; }
-   static std::string GetName( void ) { return "AS"; }
-
-   bool m_isValid;
-   S6 m_S6;
-   S6 m_originalS6;
-   MatS6 m_matS6;
-
-};
-
+//class AngularS6Dist : public LRL_LatticeMatcher {
+//public:
+//   AngularS6Dist( ) {}
+//   AngularS6Dist( const S6& s );
+//   double DistanceBetween( const S6& s2 );
+//   double DistanceBetween( const S6& s1, const S6& s2 );
+//   double AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const;
+//};
+//
+//class AngularS6 {
+//public:
+//   AngularS6( ) : m_isValid(false) {}
+//   AngularS6( const bool b) : m_isValid(b) {}
+//   AngularS6(const S6& s, const MatS6& m) : m_isValid(true), m_S6(s/s.norm()), m_originalS6(s), m_matS6(m) {}
+//   AngularS6(const S6& s) : m_isValid(true), m_S6(s/s.norm()), m_originalS6(s), m_matS6(MatS6( ).unit( )) {}
+//   double AngleBetween(const AngularS6& s1, const AngularS6& s2) const;
+//
+//   AngularS6 operator-(const AngularS6& s) const;
+//   double norm( ) const { return (*this).m_S6[0]; }
+//   MatS6 GetMatS6( ) const { return m_matS6; }
+//   S6 GetS6( ) const { return m_S6; }
+//   S6 GetOriginalS6( ) const { return m_originalS6; }
+//   static std::string GetName( void ) { return "AS"; }
+//
+//   bool m_isValid;
+//   S6 m_S6;
+//   S6 m_originalS6;
+//   MatS6 m_matS6;
+//
+//};
+//
 
 #endif
