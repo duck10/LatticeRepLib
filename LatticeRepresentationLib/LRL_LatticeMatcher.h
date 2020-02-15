@@ -3,8 +3,6 @@
 
 #include "MatS6.h"
 #include "S6.h"
-#include "StoreResults.h"
-#include <string>
 #include "TNear.h"
 
 class Scaler_MV {
@@ -52,15 +50,14 @@ public:
    void SetReferenceLattice( const MV_Pair& mvp );
    void SetReferenceLattice( const S6& s ); // for distance calculation
    S6 GetReference( ) const { return m_reducedReference; };
-   S6 MatchReference( const S6& s ) const;
-   MV_Pair FindClosest( const S6& s ) const;
-   MV_Pair SelectAlternateImageOfReference( const S6& s, const S6& closest ) const;
-   std::pair<double, MV_Pair> MatchOneFromTheSphere( const S6& s, const std::vector<MV_Pair>& vClosest ) const;
-
+   std::vector<MV_Pair> FindNearToClosest(const double d, const MV_Pair& closest) const;
+   S6 FindBestAmongMany(const std::vector<MV_Pair>& vClosest, const S6& closest) const;
+   S6 MatchReference(const S6& s) const;
    std::vector<S6> MatchReference( const std::vector<S6>& vs ) const;
+   MV_Pair FindClosest(const S6& s) const;
    void ApplyReflections( const std::vector<MatS6>& t );
    size_t size( ) const { return m_MVtree.size( ); }
-   double DistanceBetween( const S6& s1, const S6& s2 ) const;
+   double DistanceBetween( const S6& s1, const S6& s2 );
    void BuildMatrixTree( );
 
 
@@ -74,14 +71,10 @@ protected: // functions
 
 protected: // member data
    CNearTree<MV_Pair> m_MVtree;
-   //CNearTree<AngularS6> m_MVtree_Angular;
    CNearTree<MatS6> m_matrixTree;
    S6 m_reducedReference;
    MatS6 m_matReference;
    double dcutoff;
-
-public:
-   static StoreResults<int, std::string> record;
 };
 
 
