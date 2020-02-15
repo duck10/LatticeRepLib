@@ -74,48 +74,74 @@ void Test_E3toS6() {
 
 }
 
+class AngularS6 {
+public:
+   AngularS6( ) : m_isValid(false) {}
+   AngularS6( const S6& s, const MatS6& m );
+   double AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const;
+
+   AngularS6 operator-( const AngularS6& s ) const;
+   double norm( ) const { return (*this).m_S6[0]; }
+
+   bool m_isValid;
+   S6 m_S6;
+   MatS6 m_matS6;
+
+};
+
+double AngularS6::AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const {
+   double sum = 0.0;
+   for (size_t i = 0; i < 6; ++i) sum += s1.m_S6[i] * s2.m_S6[i];
+   return acos(sum/(s1.m_S6.norm()*s2.m_S6.norm()));
+}
+
+AngularS6 AngularS6::operator- ( const AngularS6&a ) const {
+   AngularS6 as6;
+   as6.m_S6[0] = AngleBetween( (*this), a );
+   return as6;
+}
+
 int main( int argc, char* argv[] )
 {
-   CNearTree< AngularS6> ant;
-   ant.insert(AngularS6(LRL_Cell("10 10 10  90 90 90")));
-   ant.insert(AngularS6(LRL_Cell("20 10 10  90 90 90")));
-   AngularS6 a1(LRL_Cell("35 10 10  90 90 90"));
-   AngularS6 aclose;
-   const bool ba = ant.NearestNeighbor(1.0, aclose, a1);
-   std::cout << aclose.m_S6 << std::endl;
-   //Test_E3toS6( );
-   S6 s1, s2;
-   CNearTree<S6> snt;
-   snt.insert( s1 );
-   snt.insert( s2 );
-   snt.NearestNeighbor( 0.0, s2 );
+   //CNearTree< AngularS6> ant;
+   //ant.NearestNeighbor( 1.0, AngularS6( ) );
+   ////Test_E3toS6( );
+   //S6 s1, s2;
+   //CNearTree<S6> snt;
+   //snt.insert( s1 );
+   //snt.insert( s2 );
+   //snt.NearestNeighbor( 0.0, s2 );
 
+   std::cout << " text input" << std::endl;
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
+   std::cout << "the first cell will be the REFERENCE" << std::endl;
    MatS6 mat_reference;
    LRL_Cell cell_reference = LatticeConverter::SellingReduceCell( input[0].GetLattice(), input[0].GetCell(), mat_reference );
    const MV_Pair mv_reducedReference(S6( cell_reference ), MatN(mat_reference.GetMatrix()).inverse());
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
-   //std::cout << "Reduced input cells " << std::endl;
-   //for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-   //   std::cout << LRL_Cell_Degrees( vLat[lat] ) << std::endl;
-   //   std::cout <<                 ( vLat[lat] ) << std::endl;
-   //}
-   //std::cout << std::endl;
+   std::cout << std::endl << "Reduced input cells " << std::endl;
+   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      std::cout << LRL_Cell_Degrees( vLat[lat] ) << std::endl;
+   }
+   std::cout << std::endl;
 
-   //for (size_t i = 0; i < vLat.size( ); ++i) {
-   //   const MatS6 inertia = InertiaTensor( vLat[i] );
-   //}
    if (vLat.size( ) > 0) {
       LRL_LatticeMatcher lm;
       lm.SetReferenceLattice( mv_reducedReference );
       //lm.SetReferenceLattice( MV_Pair( cell_reference, MatS6().unit() ));
       std::cout << "MV tree size = " << lm.size( ) << std::endl;
-      std::cout << "before lattice match " << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
+      //std::cout << "before lattice match " << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
 
       const std::vector<S6> vs6( lm.MatchReference( vLat ) );
-      std::cout << "after lattice match " << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
+      //std::cout << "after lattice match " << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
 
+      std::cout << "matched cells including reference" << std::endl;
+      for (size_t lat =0; lat < vLat.size(); ++lat) {
+         std::cout<< LRL_Cell_Degrees(  vs6[lat]) << std::endl;
+         //if (!vs6[lat].IsValid()) throw;
+      }
+      exit(0);
       S6Dist sd( 1 );
       sd.SetDebug( false );
 

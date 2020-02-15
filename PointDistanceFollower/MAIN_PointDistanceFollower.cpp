@@ -278,7 +278,7 @@ int main(int argc, char* argv[]) {
          ++i;
       }
    }
-   LRL_LatticeMatcher::record.ShowResults( );
+   //LRL_LatticeMatcher::record.ShowResults( );
 
    return 0;
 

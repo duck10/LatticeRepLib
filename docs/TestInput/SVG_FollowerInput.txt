@@ -10,7 +10,6 @@ c3 -173.877 -90.668    -133.484 -142.412    -0.627 -0.013
 end
 
 
-
 # 1/15/2018 SVG_Follower input
 circleplot false
 FollowerMode LINE
@@ -21,6 +20,7 @@ disable V7
 enable LM
 trials 1
 stepsperframe 100
+timestamp false
 randomseed 21
 end
 random
@@ -57,6 +57,7 @@ random
 end
 
 timestamp false
+FollowerMode LINE3
 circleplot false
 randomseed 18
 enable LM
