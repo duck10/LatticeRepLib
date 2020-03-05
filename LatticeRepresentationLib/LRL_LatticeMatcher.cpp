@@ -96,11 +96,11 @@ void LRL_LatticeMatcher::SetReferenceLattice( const S6& newReference) {
    SetReferenceLattice( MV_Pair( newReference, MatS6( ).unit( ) ) );
 }
 
-void LRL_LatticeMatcher::BuildReferenceTree( const S6& s) {
+void LRL_LatticeMatcher::BuildReferenceTree( const S6& reference) {
    const double normReference = m_reducedReference.norm( );
-   const Scaler_MV scale(s);
+   const Scaler_MV scale(reference);
    for (size_t i = 0; i<m_matrixTree.size(); ++i ) {
-      const S6 scaledMV = scale.Scale(m_matrixTree[i] * s);
+      const S6 scaledMV = scale.Scale(m_matrixTree[i] * reference);
       StoreMV_IfUnique( scaledMV, MatS6::Inverse( m_matrixTree[i] ) );
    }
 }
@@ -118,27 +118,28 @@ double LRL_LatticeMatcher::DistanceBetween( const S6& s1, const S6& s2 ) {
    return DBL_MAX;
 }
 
-MV_Pair LRL_LatticeMatcher::FindClosest(const S6& reference) const {
+std::pair<double, MV_Pair> LRL_LatticeMatcher::FindClosest(const S6& sample) const {
    MV_Pair closest;
    const Scaler_MV scale(m_reducedReference);
-   const S6 scaled_s = scale.Scale(reference);
-   if (!scaled_s.IsValid()) throw;
+   const S6 scaled_s = scale.Scale(sample);
+   //if (!scaled_s.IsValid()) throw;
    const bool b = m_MVtree.NearestNeighbor(DBL_MAX, closest, MV_Pair(scaled_s, MatS6()));
+   const double dist = (scaled_s - closest.GetS6()).norm();
    if (!b) throw;
-   return closest;
+   return std::make_pair(dist, closest);
 }
 
 std::vector<MV_Pair> LRL_LatticeMatcher::FindNearToClosest(const double d, const MV_Pair& sample) const {
    std::vector<MV_Pair> vClosest;
-   const long n = m_MVtree.FindInSphere(1.01 * d + 0.1, vClosest, sample);
+   const long n = m_MVtree.FindInSphere(2. * d + 0.1, vClosest, sample);
    return vClosest;
 }
 
-S6 LRL_LatticeMatcher::FindBestAmongMany(const std::vector<MV_Pair>& vClosest, const S6& reference) const {
+S6 LRL_LatticeMatcher::FindBestAmongMany(const std::vector<MV_Pair>& vClosest, const S6& sample) const {
    S6 s6closest;
    double dmin_G6 = DBL_MAX;
    for (size_t i = 0; i < vClosest.size(); ++i) {
-      const S6 s6test = vClosest[i].GetMatS6() * reference;
+      const S6 s6test = vClosest[i].GetMatS6() * sample;
       if (!s6test.IsValid()) throw;
       const double d2 = (s6test - m_reducedReference).norm();
       double dtest_G6 = (G6(m_reducedReference) - G6(s6test)).norm();
@@ -155,11 +156,12 @@ S6 LRL_LatticeMatcher::FindBestAmongMany(const std::vector<MV_Pair>& vClosest, c
 
 S6 LRL_LatticeMatcher::MatchReference( const S6& sample ) const {
    const static bool debug = false;
-   MV_Pair closest = FindClosest(sample);
+   std::pair<double, MV_Pair> closest = FindClosest(sample);
 
-   const double d = (closest.GetMatS6()*sample - m_reducedReference).norm( );  //LCA IS THE MATRIX RIGHT ??????????????????????
-
-   const std::vector<MV_Pair> vClosest = FindNearToClosest(d, MV_Pair(sample,MatS6()));
+   const double d = closest.first;
+   const Scaler_MV scale(m_reducedReference);
+   const S6 scaled_s = scale.Scale(sample);
+   const std::vector<MV_Pair> vClosest = FindNearToClosest(d, MV_Pair(scaled_s, MatS6()));
    //if (vClosest.empty()) throw;
 
    for (size_t i = 0; i < vClosest.size(); ++i) if (!vClosest[i].GetS6().IsValid()) throw;
@@ -170,7 +172,7 @@ std::vector<S6> LRL_LatticeMatcher::MatchReference( const std::vector<S6>& vSamp
    std::vector<S6> v;
    for (size_t i = 0; i < vSamples.size(); ++i) {
       if (!vSamples[i].IsValid()) throw;
-      const S6 intermediate = MatchReference(vSamples[i]);
+      //const S6 intermediate = MatchReference(vSamples[i]);
       //if (!intermediate.IsValid()) throw;
       const S6 result = m_matReference * MatchReference(vSamples[i]);
       v.push_back(result);

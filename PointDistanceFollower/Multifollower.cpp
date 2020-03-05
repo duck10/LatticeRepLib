@@ -133,8 +133,8 @@ MultiFollower MultiFollower::CalculateDistancesLM( const MultiFollower& mf ) con
    const std::vector<std::pair<S6, S6> > path( mf.GetS6( ).GetPath( ) );
    S6Dist s6dist( 1 );
    for (size_t i = 0; i < path.size( ); ++i) {
-      double distance = lm.DistanceBetween( path[0].second, path[i].second );
-      if (S6::IsInvalidPair( path[i] )) distance = -1.0;
+      const double distance = (S6::IsInvalidPair( path[i] ) || !path[i].second.IsValid()) ? -1.0 :
+      lm.DistanceBetween( path[0].second, path[i].second );
       vdist.push_back( distance );
    }
    m.SetDistancesLM( vdist );

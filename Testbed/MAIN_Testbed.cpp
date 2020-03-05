@@ -116,7 +116,7 @@ int main( int argc, char* argv[] )
    const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
    std::cout << "the first cell will be the REFERENCE" << std::endl;
    MatS6 mat_reference;
-   LRL_Cell cell_reference = LatticeConverter::SellingReduceCell( input[0].GetLattice(), input[0].GetCell(), mat_reference );
+   const LRL_Cell cell_reference = LatticeConverter::SellingReduceCell( input[0].GetLattice(), input[0].GetCell(), mat_reference );
    const MV_Pair mv_reducedReference(S6( cell_reference ), MatN(mat_reference.GetMatrix()).inverse());
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors( input );

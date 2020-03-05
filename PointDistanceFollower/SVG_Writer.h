@@ -168,6 +168,7 @@ private:
 
       if (fileout.is_open( ))
       {
+         fileout.seekp(0);
          for (std::list<std::string>::const_iterator it = m_svg.begin( ); it != m_svg.end( ); ++it)
             fileout << (*it) << std::endl;
       }
