@@ -54,7 +54,7 @@ public:
    S6 FindBestAmongMany(const std::vector<MV_Pair>& vClosest, const S6& closest) const;
    S6 MatchReference(const S6& s) const;
    std::vector<S6> MatchReference( const std::vector<S6>& vs ) const;
-   MV_Pair FindClosest(const S6& s) const;
+   std::pair<double, MV_Pair> FindClosest(const S6& s) const;
    void ApplyReflections( const std::vector<MatS6>& t );
    size_t size( ) const { return m_MVtree.size( ); }
    double DistanceBetween( const S6& s1, const S6& s2 );
