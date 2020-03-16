@@ -563,12 +563,13 @@ C3 C3::Reduce6(const C3& c) {
 std::vector<C3(*)(const C3&)> C3::SetReduceFunctions()
 {
    if (m_reductionFunctions.empty()) {
-      m_reductionFunctions.push_back(C3::Reduce1);
-      m_reductionFunctions.push_back(C3::Reduce2);
-      m_reductionFunctions.push_back(C3::Reduce3);
-      m_reductionFunctions.push_back(C3::Reduce4);
-      m_reductionFunctions.push_back(C3::Reduce5);
-      m_reductionFunctions.push_back(C3::Reduce6);
+      m_reductionFunctions.resize(6);
+      m_reductionFunctions[0] = C3::Reduce1;
+      m_reductionFunctions[1] = C3::Reduce2;
+      m_reductionFunctions[2] = C3::Reduce3;
+      m_reductionFunctions[3] = C3::Reduce4;
+      m_reductionFunctions[4] = C3::Reduce5;
+      m_reductionFunctions[5] = C3::Reduce6;
    }
    return m_reductionFunctions;
 }

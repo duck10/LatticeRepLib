@@ -7,7 +7,6 @@
 #ifndef USE_LOCAL_HEADERS
 //#include <rhrand.h>
 #else
-#include "rhrand.h"
 #endif
 
 #include "BasisBase.h"

@@ -17,6 +17,7 @@
 #include "MatS6.h"
 #include "MatD7.h"
 #include "MatG6.h"
+#include "rhrand.h"
 #include "S6.h"
 #include "Selling.h"
 #include "LRL_StringTools.h"

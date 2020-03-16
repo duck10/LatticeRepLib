@@ -57,48 +57,17 @@ public:
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   void Add(const TVEC& probe, const TVEC& reduced, const TVEC& bestmatch) {
-      m_bestMatchList.push_back(bestmatch);
-      Add(probe, reduced);
-   }
-
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   void Add(const TVEC& probe, const TVEC& reduced) {
-      if (m_probeList.empty())
-      {
-         staticXprev = DBL_MAX;
-         staticYprev = DBL_MAX;
-      }
-
-      m_probeList.push_back(probe);
-      m_reducedList.push_back(reduced);
-
-      const double x = reduced[m_whichComponentsToPlot.first];
-      const double y = reduced[m_whichComponentsToPlot.second];
-
-      double slope = std::atan2(y - staticYprev, x - staticXprev);
-      if (std::fabs(slope) < 1.0E-8 || std::fabs(std::fabs(slope) - 2.0*4.0*std::atan(1.0)) < 0.001) slope = 0.0; // test slope for zero or 2 pi
-
-      const triple<double, double, double> slopeData(slope, x, y);
-      m_slopeData.push_back(slopeData);
-      staticXprev = x;
-      staticYprev = y;
-
-      std::string G6Boundary = G6::GetName() + G6::IdentifyNearbyBoundaries(G6(reduced), 0.01).second;
-      std::string D7Boundary = D7::GetName() + D7::IdentifyNearbyBoundaries(D7(reduced), 0.01).second;
-      m_G6Boundaries.push_back(G6Boundary);
-      m_D7Boundaries.push_back(D7Boundary);
-   }
-   /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    void AddBoundaryString(const std::string& s)
       /*-------------------------------------------------------------------------------------*/
    {
    }
+
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    void AddRunData(const long runOrdinal, const long runCount)
       /*-------------------------------------------------------------------------------------*/
    {
    }
+
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    void AddSlopeData(const std::list<triple<double, double, double> >& slopeAndPoints) {
       std::copy(slopeAndPoints.begin(), slopeAndPoints.end(), m_slopeData.begin());

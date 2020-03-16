@@ -150,7 +150,7 @@ std::pair<double, size_t> S6Dist::MinForListOfS6(const std::vector<S6>& v1, cons
 
    {
       dmin = DBL_MAX;
-      for (long iouter = 0; iouter < v1.size(); ++iouter) {
+      for (size_t iouter = 0; iouter < v1.size(); ++iouter) {
          if (v1[iouter].IsValid()) {
             ptemp = MinForListOfS6(v1[iouter], v2);
             g_bestVectors.Store(dmin, std::make_pair(v1[iouter], v2[ptemp.second]));
@@ -289,7 +289,7 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
    //voutside = Insert(voutside, ((Generate24Reflections((CreateSecondBoundary_VCP_s(s2))))));
    const std::pair<double, size_t> p = MinForListOfS6(vinside, voutside);
    m_dmin = std::min(m_dmin, p.first);
-
+   m_bestFit = voutside[p.second];
 }
 
 void S6Dist::TwoBoundaryDistance(const S6& s1, const S6& s2) {
@@ -303,6 +303,7 @@ void S6Dist::TwoBoundaryDistance(const S6& s1, const S6& s2) {
    //voutside = Insert(voutside, ((Generate24Reflections((CreateSecondBoundary_VCP_s(s2))))));
    const std::pair<double, size_t> p = MinForListOfS6(vinside, voutside);
    m_dmin = std::min(m_dmin, p.first);
+   S6 bestFit = voutside[p.second];
 }
 
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
@@ -311,6 +312,7 @@ double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
    g_bestVectors.clear();
 
    m_dmin = ( s1.IsValid() && s2.IsValid() ) ? (s1 - s2).norm() : DBL_MAX;
+   m_bestFit = s2;
    g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
    if (m_s6Debug) {
       const std::string item = LRL_ToString(s1) + std::string("\n ") + LRL_ToString(s2);

@@ -104,24 +104,22 @@ public:
       distancesLM = pathLM.GetDistances( );
    }
 
+   template <typename T>
+   std::string GetComputeTime(const LRL_Path<T>& path, const std::string name) {
+      return path.GetDistances().empty() ? "" : LRL_ToString(name, path.GetTime2ComputeFrame());
+   }
+
    std::string Header( ) {
       std::string txt;
       txt += LRL_ToString( "PointDistanceFollower  ", __DATE__, "  mode = ", ReadGlobalData::GetFollowerMode(), "\n");
       txt += LRL_ToString(sFileName, "     Output is S6 probe cell, C3 reduced cell, ",
          ConstructListOfNamesOfOutputDistances(), "distance between", "\n");
-      txt += LRL_ToString("Compute times (msec)  ");
-
-      const LRL_Path<S6> pathS6 = m_multiFollow.GetS6();
-      const LRL_Path<G6> pathG6 = m_multiFollow.GetG6();
-      const LRL_Path<D7> pathD7 = m_multiFollow.GetD7();
-      const LRL_Path<S6> pathCS = m_multiFollow.GetCS( );
-      const LRL_Path<S6> pathLM = m_multiFollow.GetLM( );
-
-      txt += pathS6.GetDistances( ).empty( ) ? "" : LRL_ToString( "   S6Dist  ", pathS6.GetTime2ComputeFrame( ) );
-      txt += pathG6.GetDistances( ).empty( ) ? "" : LRL_ToString( "   NCDist  ", pathG6.GetTime2ComputeFrame( ) );
-      txt += pathD7.GetDistances( ).empty( ) ? "" : LRL_ToString( "   D7Dist  ", pathD7.GetTime2ComputeFrame( ) );
-      txt += pathCS.GetDistances( ).empty( ) ? "" : LRL_ToString( "   CS6Dist ", pathCS.GetTime2ComputeFrame( ) );
-      txt += pathLM.GetDistances( ).empty( ) ? "" : LRL_ToString( "   LMDist  ", pathLM.GetTime2ComputeFrame( ) );
+      txt += LRL_ToString("Compute times (msec)  ")
+         + GetComputeTime(m_multiFollow.GetS6(), "   S6Dist  ")
+         + GetComputeTime(m_multiFollow.GetG6(), "   NCDist  ")
+         + GetComputeTime(m_multiFollow.GetD7(), "   D7Dist  ")
+         + GetComputeTime(m_multiFollow.GetCS(), "   CS6Dist ")
+         + GetComputeTime(m_multiFollow.GetLM(), "   LMDist  ");
 
       return txt;
    }

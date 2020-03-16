@@ -26,9 +26,14 @@ public:
    }
 
    void SetDistances(const std::vector<double>& v) { m_distances = v; }
+   void SetBestFit(const T& lattice) { m_bestFit = lattice; }
 
    double GetMin(void) const {
-      return *std::min_element(m_distances.begin(), m_distances.end());
+      // be aware -- negative distance means invalid lattice !!!!!!!!!!!!!!
+      double mindist = m_distances[0];
+      for (size_t i = 1; i < m_distances.size(); ++i)
+         if (m_distances[i] >= 0.0) mindist = std::min(mindist, m_distances[i]);
+      return mindist;
    }
 
    double GetMax(void) const {
@@ -49,6 +54,7 @@ public:
 
 private:
    std::vector<std::pair<T, T> > m_path;
+   T m_bestFit;
    std::clock_t m_ComputeStartTime;
    double m_seconds2ComputerFrame;
    std::vector<double> m_distances;
