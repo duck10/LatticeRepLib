@@ -44,7 +44,6 @@ static const std::vector<std::pair<MatS6, MatS6> > redc( CreateReductionMatrices
 static const std::vector<MatS6> refl_one = MatS6::GetReflections( );
 
 void LRL_LatticeMatcher::ExpandMatrices( const int n, const MatS6& m ) {
-
    for (size_t i = 0; i < refl_one.size( ); ++i) {
       const MatS6 mi = refl_one[i] * m;
       StoreMatS6IfUnique( mi );
@@ -59,8 +58,9 @@ void LRL_LatticeMatcher::ExpandMatrices( const int n, const MatS6& m ) {
 }
 
 std::vector<MatS6> LRL_LatticeMatcher::DoThreeAxes( ) {
-
-   ExpandMatrices( 2, MatS6( ).unit( ) );
+   const int recursionDepth = 2;
+   ExpandMatrices(recursionDepth, MatS6( ).unit( ) );
+   std::cout << " in DoThreeAxes, matrix tree size = " << m_matrixTree.size() << "  recursionDepth = " << recursionDepth << std::endl;
    return m_matrixTree.GetObjectStore( );
 }
 
@@ -131,7 +131,7 @@ std::pair<double, MV_Pair> LRL_LatticeMatcher::FindClosest(const S6& sample) con
 
 std::vector<MV_Pair> LRL_LatticeMatcher::FindNearToClosest(const double d, const MV_Pair& sample) const {
    std::vector<MV_Pair> vClosest;
-   const long n = m_MVtree.FindInSphere(2. * d + 0.1, vClosest, sample);
+   const long n = m_MVtree.FindInSphere(3.0 * d + 0.02*sample.GetS6().norm(), vClosest, sample);
    return vClosest;
 }
 

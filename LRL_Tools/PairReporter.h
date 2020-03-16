@@ -39,6 +39,11 @@ public:
       return o;
    }
 
+   bool operator<(const PairReporter b2) const {
+      if (m_pair.first < b2.m_pair.first) return true;
+      return m_pair.second < b2.m_pair.second;
+   }
+
    T1 GetFirst(void)  const {return m_pair.first; }
    T2 GetSecond(void) const {return m_pair.second; }
 

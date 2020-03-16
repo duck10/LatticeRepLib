@@ -229,11 +229,11 @@ std::pair<double, double> GetPathMinMax(const LRL_Path<T>& path) {
    const std::vector<double> pdist = path.GetDistances( );
    if (!path.GetDistances().empty()) {
       p = std::make_pair(path.GetMin(), path.GetMax());
-      if (p.first >= 0.0) {
+      if (p.first > 0.0) {
          const std::vector<double> distances = path.GetDistances();
          double distmin = DBL_MAX;
          for (size_t i = 0; i < distances.size(); ++i) {
-            if (distances[i] > 0.0)
+            if (distances[i] >= 0.0)
                distmin = std::min(distmin, distances[i]);
          }
          p.first = distmin;

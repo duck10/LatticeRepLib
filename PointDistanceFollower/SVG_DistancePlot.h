@@ -377,6 +377,7 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    std::list<std::string>  DrawDistancePlot( const MultiFollower& multiFollow ) {
       std::list<std::string> svg = DistancePlotHeader( ); // keep g++ happy
+      LRL_Path s6path = multiFollow.GetS6();
 
       std::pair<double,double> ylimits = multiFollow.GetMinMax();
       // compute the limits and increments along the x and y axes

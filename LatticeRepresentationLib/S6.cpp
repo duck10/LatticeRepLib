@@ -205,17 +205,23 @@ bool S6::IsValid(void) const {
    const double& t = (*this)[4];
    const double& u = (*this)[5];
 
-   double g1 = -s - r - q;
-   double g2 = -t - r - p;
-   double g3 = -u - q - p;
-   double g4 = 2.0*p;
-   double g5 = 2.0*q;
-   double g6 = 2.0*r;
+   const double g1 = -s - r - q;
+   const double g2 = -t - r - p;
+   const double g3 = -u - q - p;
+   const double g4 = 2.0*p;
+   const double g5 = 2.0*q;
+   const double g6 = 2.0*r;
 
-   return g1 > 0.001 && g2 > 0.001 && g3 > 0.001 &&
+   const double d_squared = -s -t -u;
+   const double theta_a_squared = s * s / g1 / d_squared; // angle between d and a cosine squared
+   const double theta_b_squared = t * t / g2 / d_squared;
+   const double theta_c_squared = u * u / g3 / d_squared;
+
+   return g1 > 0.001 && g2 > 0.001 && g3 > 0.001 && d_squared > 0.001 &&
       std::abs(g4*g4 / g2 / g3) <= 4.0 &&
       std::abs(g5*g5 / g1 / g3) <= 4.0 &&
-      std::abs(g6*g6 / g1 / g2) <= 4.0;
+      std::abs(g6*g6 / g1 / g2) <= 4.0 &&
+      (theta_a_squared <= 1.0) && (theta_b_squared <= 1.0) && (theta_c_squared <= 1.0);
 }
 
 size_t S6::CountZeros(void) const {

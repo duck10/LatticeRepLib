@@ -1,0 +1,3 @@
+ in DoThreeAxes, matrix tree size = 192  recursionDepth = 2
+ in DoThreeAxes, matrix tree size = 830  recursionDepth = 3
+   in DoThreeAxes, matrix tree size = 3030  recursionDepth = 4

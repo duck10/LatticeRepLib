@@ -169,3 +169,18 @@ end
 
 
 
+FollowerMode LINE3
+randomseed 18
+enable LM
+trials 1
+stepsperframe 6
+fixrandomseed true
+end
+random
+random
+random
+random
+random
+random
+end
+

@@ -435,15 +435,18 @@ D7_Boundary D7_BoundaryList::Case9() {
 D7_BoundaryList::D7_BoundaryList()
 {
    //ConstructPrimaryBoundaryList();
-   m_boundaries.push_back(Case1());
-   m_boundaries.push_back(Case2());
-   m_boundaries.push_back(Case3());
-   m_boundaries.push_back(Case4());
-   m_boundaries.push_back(Case5());
-   m_boundaries.push_back(Case6());
-   m_boundaries.push_back(Case7());
-   m_boundaries.push_back(Case8());
-   m_boundaries.push_back(Case9());
+   if (m_boundaries.empty()) {
+      m_boundaries.resize(9);
+      m_boundaries[0] = Case1();
+      m_boundaries[1] = Case2();
+      m_boundaries[2] = Case3();
+      m_boundaries[3] = Case4();
+      m_boundaries[4] = Case5();
+      m_boundaries[5] = Case6();
+      m_boundaries[6] = Case7();
+      m_boundaries[7] = Case8();
+      m_boundaries[8] = Case9();
+   }
 
 
    //std::cout << "Outward Pointing Normals" << std::endl;
