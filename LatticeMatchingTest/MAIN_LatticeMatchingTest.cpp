@@ -74,16 +74,17 @@ int main()
 
    // do some tests
    LRL_LatticeMatcher lm;
-   for (size_t i = 0; i < 5; ++i) {
-      int i1 = rhrand.urand()*input.size();
-      int i2 = rhrand.urand()*input.size();
+   for (size_t i1 = 0; i1 < input.size(); ++i1) {
+      for (size_t i2 = 0; i2 < input.size(); ++i2) {
+         if (i1 == i2) continue;
+         lm.SetReferenceLattice(vLat[i1]);
+         const S6 s6match = lm.MatchReference(vLat[i2]);
 
-      lm.SetReferenceLattice(vLat[i1]);
-      const S6 s6match = lm.MatchReference(vLat[i2]);
-
-      std::cout << i1 << "    " << LRL_Cell_Degrees(vLat[i1]) << std::endl;
-      std::cout << i2 << "    " << LRL_Cell_Degrees(s6match) << std::endl;
-      std::cout << std::endl;
+         std::cout << i1 << "    " << (vLat[i1]) << std::endl;
+         std::cout << i2 << "    " << (s6match) << std::endl;
+         std::cout << (vLat[i1] - s6match).norm() << std::endl;
+         std::cout << std::endl;
+      }
    }
 
    //if (vLat.size() > 0) {

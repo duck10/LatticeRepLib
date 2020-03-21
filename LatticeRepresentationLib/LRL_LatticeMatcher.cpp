@@ -43,17 +43,20 @@ std::vector<std::pair<MatS6, MatS6> > CreateReductionMatrices() {
 static const std::vector<std::pair<MatS6, MatS6> > redc( CreateReductionMatrices( ) );
 static const std::vector<MatS6> refl_one = MatS6::GetReflections( );
 
+
+void LRL_LatticeMatcher::MultiplyAndExpand(const int n, const MatS6& transform, const MatS6& m) {
+      const MatS6 mi = transform * m;
+      StoreMatS6IfUnique(mi);
+      if (n > 1) ExpandMatrices(n - 1, mi);
+}
+
 void LRL_LatticeMatcher::ExpandMatrices( const int n, const MatS6& m ) {
    for (size_t i = 0; i < refl_one.size( ); ++i) {
-      const MatS6 mi = refl_one[i] * m;
-      StoreMatS6IfUnique( mi );
-      if (n > 1) ExpandMatrices( n - 1, mi );
+      MultiplyAndExpand(n, refl_one[i], m);
    }
 
-   for (size_t i = 0; i < redc.size( ); ++i) {
-      const MatS6 mi = redc[i].first * m;
-      StoreMatS6IfUnique( mi );
-      if (n > 1) ExpandMatrices( n - 1, mi );
+   for (size_t i = 0; i < redc.size(); ++i) {
+      MultiplyAndExpand(n, redc[i].first, m);
    }
 }
 
@@ -154,7 +157,24 @@ S6 LRL_LatticeMatcher::FindBestAmongMany(const std::vector<MV_Pair>& vClosest, c
    return s6closest;
 }
 
-S6 LRL_LatticeMatcher::MatchReference( const S6& sample ) const {
+S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
+   std::vector<S6> expandedSample;
+   for (size_t i = 0; i < redc.size(); ++i)
+      expandedSample.push_back(redc[i].first * sample);
+   const std::vector<S6> matches = MatchReference(expandedSample);
+   double best = DBL_MAX;
+   S6 bestS6;
+   for (size_t i = 0; i < matches.size(); ++i) {
+      const double dist = ((*this).GetReference() - matches[i]).norm();
+      if (dist < best) {
+         best = dist;
+         bestS6 = matches[i];
+      }
+   }
+   return bestS6;
+}
+
+S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) const {
    const static bool debug = false;
    std::pair<double, MV_Pair> closest = FindClosest(sample);
 
@@ -172,11 +192,8 @@ std::vector<S6> LRL_LatticeMatcher::MatchReference( const std::vector<S6>& vSamp
    std::vector<S6> v;
    for (size_t i = 0; i < vSamples.size(); ++i) {
       if (!vSamples[i].IsValid()) throw;
-      //const S6 intermediate = MatchReference(vSamples[i]);
-      //if (!intermediate.IsValid()) throw;
-      const S6 result = m_matReference * MatchReference(vSamples[i]);
+      const S6 result = m_matReference * InternalMatchReference(vSamples[i]);
       v.push_back(result);
-      //if (!result.IsValid()) throw;
    }
    return v;
 }

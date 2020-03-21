@@ -54,6 +54,7 @@ public:
    S6 FindBestAmongMany(const std::vector<MV_Pair>& vClosest, const S6& closest) const;
    S6 MatchReference(const S6& s) const;
    std::vector<S6> MatchReference( const std::vector<S6>& vs ) const;
+   S6 InternalMatchReference(const S6& s) const;
    std::pair<double, MV_Pair> FindClosest(const S6& s) const;
    void ApplyReflections( const std::vector<MatS6>& t );
    size_t size( ) const { return m_MVtree.size( ); }
@@ -63,11 +64,13 @@ public:
 
 protected: // functions
    void BuildReferenceTree( const S6& s );
+   void MultiplyAndExpand(const int n, const MatS6& transform, const MatS6& m);
    void ExpandMatrices( const int n, const MatS6& m );
    std::vector<MatS6> DoThreeAxes( );
    void StoreMV_IfUnique( const S6& s, const MatS6& m );
    void FillReflections( );
    void StoreMatS6IfUnique( const MatS6& m );
+
 
 protected: // member data
    CNearTree<MV_Pair> m_MVtree;
