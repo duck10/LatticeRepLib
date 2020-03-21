@@ -218,9 +218,9 @@ bool S6::IsValid(void) const {
    const double theta_c_squared = u * u / g3 / d_squared;
 
    return g1 > 0.001 && g2 > 0.001 && g3 > 0.001 && d_squared > 0.001 &&
-      std::abs(g4*g4 / g2 / g3) <= 4.0 &&
-      std::abs(g5*g5 / g1 / g3) <= 4.0 &&
-      std::abs(g6*g6 / g1 / g2) <= 4.0 &&
+      g4*g4 / g2 / g3 <= 4.0 &&
+      g5*g5 / g1 / g3 <= 4.0 &&
+      g6*g6 / g1 / g2 <= 4.0 &&
       (theta_a_squared <= 1.0) && (theta_b_squared <= 1.0) && (theta_c_squared <= 1.0);
 }
 

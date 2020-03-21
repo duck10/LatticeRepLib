@@ -1,6 +1,8 @@
 #ifndef LRL_MinMaxTools_H
 #define LRL_MinMaxTools_H
 
+#include <algorithm>
+
 template<typename T>
 T maxNC(const T& t1, const T& t2) {
    return (std::max(t1, t2));

@@ -77,7 +77,6 @@ public:
    static std::string ReportS6Best(const S6Dist& s6dist);
 
    double GetMin(void)const { return m_dmin; }
-   S6 GetBestFit(void) const { return m_bestFit; }
 
 private:
    static std::vector<MatB4> vB4_Refl;
@@ -86,7 +85,6 @@ private:
 
    double m_nearzero;
    double m_dmin;
-   S6 m_bestFit;
    bool m_s6Debug;
 
    static std::vector< S6(*)(const S6&)> m_reductionFunctions;

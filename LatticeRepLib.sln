@@ -17,8 +17,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestSuperCell", "TestSuperC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestRandom", "TestRandom\TestRandom.vcxproj", "{14DB5FDB-F3AE-466E-89CD-91C1073D04A4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MultiMetricDists", "MultiMetricDists\BasesLib.vcxproj", "{4497FB39-4912-494B-B630-04B682797CCC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{F04B16EA-D8B9-4434-8051-829B5FE3F5A6}"
 	ProjectSection(SolutionItems) = preProject
 		docs\LatticeRepLib.aux = docs\LatticeRepLib.aux
@@ -64,6 +62,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Yamada", "Yamada\Yamada.vcxproj", "{76806A99-163C-40D5-9437-DC61EFCC7FF4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LatticeMatchingTest", "LatticeMatchingTest\LatticeMatchingTest.vcxproj", "{16B4348A-BE91-4679-B6EC-F8C05F091A45}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MultiMetricDists", "MultiMetricDists\MultiMetricDists.vcxproj", "{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,14 +129,6 @@ Global
 		{14DB5FDB-F3AE-466E-89CD-91C1073D04A4}.Release|x64.Build.0 = Release|x64
 		{14DB5FDB-F3AE-466E-89CD-91C1073D04A4}.Release|x86.ActiveCfg = Release|Win32
 		{14DB5FDB-F3AE-466E-89CD-91C1073D04A4}.Release|x86.Build.0 = Release|Win32
-		{4497FB39-4912-494B-B630-04B682797CCC}.Debug|x64.ActiveCfg = Debug|x64
-		{4497FB39-4912-494B-B630-04B682797CCC}.Debug|x64.Build.0 = Debug|x64
-		{4497FB39-4912-494B-B630-04B682797CCC}.Debug|x86.ActiveCfg = Debug|Win32
-		{4497FB39-4912-494B-B630-04B682797CCC}.Debug|x86.Build.0 = Debug|Win32
-		{4497FB39-4912-494B-B630-04B682797CCC}.Release|x64.ActiveCfg = Release|x64
-		{4497FB39-4912-494B-B630-04B682797CCC}.Release|x64.Build.0 = Release|x64
-		{4497FB39-4912-494B-B630-04B682797CCC}.Release|x86.ActiveCfg = Release|Win32
-		{4497FB39-4912-494B-B630-04B682797CCC}.Release|x86.Build.0 = Release|Win32
 		{36AA3C95-65AE-4AE0-9BD3-BAAB8FA738EE}.Debug|x64.ActiveCfg = Debug|x64
 		{36AA3C95-65AE-4AE0-9BD3-BAAB8FA738EE}.Debug|x64.Build.0 = Debug|x64
 		{36AA3C95-65AE-4AE0-9BD3-BAAB8FA738EE}.Debug|x86.ActiveCfg = Debug|Win32
@@ -233,6 +225,14 @@ Global
 		{16B4348A-BE91-4679-B6EC-F8C05F091A45}.Release|x64.Build.0 = Release|x64
 		{16B4348A-BE91-4679-B6EC-F8C05F091A45}.Release|x86.ActiveCfg = Release|Win32
 		{16B4348A-BE91-4679-B6EC-F8C05F091A45}.Release|x86.Build.0 = Release|Win32
+		{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}.Debug|x64.ActiveCfg = Debug|x64
+		{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}.Debug|x64.Build.0 = Debug|x64
+		{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}.Debug|x86.ActiveCfg = Debug|Win32
+		{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}.Debug|x86.Build.0 = Debug|Win32
+		{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}.Release|x64.ActiveCfg = Release|x64
+		{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}.Release|x64.Build.0 = Release|x64
+		{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}.Release|x86.ActiveCfg = Release|Win32
+		{B40AD1E3-4331-4C08-8E71-E7A58FA74C35}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
