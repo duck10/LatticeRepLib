@@ -11,5 +11,6 @@ double LM::DistanceBetween( const S6& s ) {
    return m_lmdist.DistanceBetween( s );
 }
 double LM::DistanceBetween( const S6& s1, const S6& s2 ) {
+   m_bestFit = m_lmdist.GetBestMatch();
    return m_lmdist.DistanceBetween( s1, s2 );
 }

@@ -56,7 +56,7 @@ public:
    operator S6() const;
 
    double DistanceBetween(const C3& v1, const C3& v2);
-   size_t size(void) const { return m_c.size(); }
+   size_t size(void) const { return (size_t)(m_c.size()); }
    double norm(void) const;
    double norm(const C3& c3) const;
    double Norm() const { return norm(); }

@@ -1,3 +1,6 @@
+#if _MSC_VER
+#pragma once
+#endif // _MSC_VER
 
 #ifndef GLITCH_H
 #define GLITCH_H

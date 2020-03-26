@@ -135,6 +135,7 @@ MultiFollower MultiFollower::CalculateDistancesLM( const MultiFollower& mf ) con
    for (size_t i = 0; i < path.size( ); ++i) {
       const double distance = (S6::IsInvalidPair( path[i] ) || !path[i].second.IsValid()) ? -1.0 :
       lm.DistanceBetween( path[0].second, path[i].second );
+      std::cout << i << "  " << lm.GetBestMatch() << std::endl;
       vdist.push_back( distance );
    }
    m.SetDistancesLM( vdist );

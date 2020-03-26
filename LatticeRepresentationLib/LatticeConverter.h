@@ -1,6 +1,8 @@
 #ifndef LATTICECONVERTER_H
 #define LATTICECONVERTER_H
 
+#include <string>
+
 #include "LRL_Cell.h"
 #include "MatD7.h"
 

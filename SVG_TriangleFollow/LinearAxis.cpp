@@ -155,14 +155,13 @@ StepSizeList StepSizeList::operator<< ( double d )
 size_t StepSizeList::sort( )
 {
    std::sort( m_vStepSizes.begin( ), m_vStepSizes.end( ) );
-   return m_vStepSizes.size( );
+   return ( m_vStepSizes.size( ) );
 }
 
 //-----------------------------------------------------------------------------size StepSizeList
 size_t StepSizeList::size( ) const
 {
-   const size_t n = m_vStepSizes.size();
-   return n;
+   return ( m_vStepSizes.size( ) );
 }
 
 //-----------------------------------------------------------------------------operator[] StepSizeList

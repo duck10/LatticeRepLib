@@ -53,7 +53,7 @@ public:
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    // Set the number of steps from the perturbed vector to the reduced one
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-   Follow& SetStepCount(const unsigned long count) {
+   Follow& SetStepCount(const size_t count) {
       assert(count > 4);
       this->m_steps = count;
       return(*this);
@@ -168,7 +168,7 @@ public:
    std::vector<long> IdentifyRunsOfAngle(const std::vector<triple<double, double, double> >& angles)
       /*-------------------------------------------------------------------------------------*/
    {
-      const unsigned long numAngles = (unsigned long)(angles.size());
+      const size_t numAngles = angles.size();
       std::vector<long> runs(1L, 1);
 
       const std::vector<long> newruns = AssignRunOrdinalToEachPoint(angles);
@@ -178,13 +178,13 @@ public:
 
       // this is slow but easy to code
       // For each run of same slope, store the number of points in that run.
-      for (unsigned long iangle = 1; iangle < numAngles; ++iangle)
+      for (size_t iangle = 1; iangle < numAngles; ++iangle)
          ++numberOfPointsInRun[runs[iangle]];
       std::vector<long> countOfItemsInThisRun;
 
       // Enumerate for each circle, how many total circles there are in its run.
       // If there is only one, then we will need to draw a line and add labels.
-      for (unsigned long i = 0; i < angles.size(); ++i)
+      for (size_t i = 0; i < angles.size(); ++i)
          countOfItemsInThisRun.push_back(numberOfPointsInRun[runs[i]]);
 
       return(countOfItemsInThisRun);
@@ -276,7 +276,7 @@ private:
 
 
 
-   unsigned long m_steps;
+   size_t m_steps;
    Rn_Path<TVEC> m_rnPath;
    std::pair<int, int> m_whichComponentsToPlot;
    double m_seconds2ComputerFrame;
