@@ -25,7 +25,6 @@ public:
    MatN( const MatN& m );
    virtual ~MatN( void ) {};
 
-
    virtual MatN operator* ( const MatN& m2 ) const;
    virtual MatN operator*= ( const MatN& m2 );
    virtual MatN operator+ ( const MatN& m2 ) const;

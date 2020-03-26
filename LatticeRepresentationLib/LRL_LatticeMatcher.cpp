@@ -245,12 +245,12 @@ double LMDist::DistanceBetween( const S6& s2 ) {
 
 double LMDist::DistanceBetween( const S6& s1, const S6& s2 ) {
    SetReferenceLattice( s1 );
-   const S6 matched = MatchReference( s2 );
-   const double dist = (m_reducedReference - matched).norm( );
+   m_bestFit = MatchReference( s2 );
+   const double dist = (m_reducedReference - m_bestFit).norm( );
    //std::cout << "in LMDist::DistanceBetween " << dist << std::endl 
    //   << " " << C3(s1) << std::endl
    //   << " " << C3(s2) << std::endl
    //   << " " << C3(m_reducedReference) << std::endl
-   //   << " " << C3(matched) << std::endl << std::endl;
+   //   << " " << C3(m_bestFit) << std::endl << std::endl;
    return dist;
 }

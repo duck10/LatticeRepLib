@@ -64,7 +64,8 @@ int main()
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
    std::cout << std::endl << "Reduced input cells " << std::endl;
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      std::cout << LRL_Cell_Degrees(vLat[lat]) << std::endl;
+      std::cout << lat << "   " << LRL_Cell_Degrees(vLat[lat]) << std::endl;
+      std::cout << lat << "   " << (vLat[lat]) << std::endl;
    }
    std::cout << std::endl;
    std::cout << std::endl;

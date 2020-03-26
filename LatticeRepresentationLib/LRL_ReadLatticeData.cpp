@@ -147,7 +147,6 @@ bool LRL_ReadLatticeData::SetUnitCellTypeData( const std::string& inputDataType,
 
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
    std::istringstream iss( s );
-   m_input = s;
    if ((LRL_StringTools::strToupper(s.substr(0, 3)) == std::string("END"))) {
       m_lattice = "EOF";
    }

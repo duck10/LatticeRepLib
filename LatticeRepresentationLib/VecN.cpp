@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <cfloat>
+#include <iomanip>
 #include <sstream>
 
 #include "VecN.h"
@@ -11,9 +12,6 @@
 #include "MatN.h"
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
-
-#include <iomanip>
-
 
 #pragma warning( disable : 4100) //  unreferenced formal parameter
 #pragma warning( disable : 4702) //  unreachable code
@@ -71,7 +69,7 @@ VecN::VecN( const std::string& s ) {
 
 VecN::VecN( const std::vector<double>& v ) {
    m_vec = v;
-   m_dim = m_vec.size();
+   m_dim = (size_t)m_vec.size();
    m_valid = true;
 }
 

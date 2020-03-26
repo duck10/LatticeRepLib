@@ -11,9 +11,11 @@ public:
    double DistanceBetween( const S6& s );
    double DistanceBetween( const S6& s1, const S6& s2 );
    static std::string GetName( void ) { return "LM"; }
+   S6 GetBestMatch(void) const { return m_bestFit; }
 
 protected:
    LMDist m_lmdist;
+   S6 m_bestFit;
 };
 
 

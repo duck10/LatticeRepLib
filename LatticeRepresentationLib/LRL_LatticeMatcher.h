@@ -60,6 +60,7 @@ public:
    size_t size( ) const { return m_MVtree.size( ); }
    double DistanceBetween( const S6& s1, const S6& s2 );
    void BuildMatrixTree( );
+   S6 GetBestMatch(void) const { return m_bestFit; }
 
 
 protected: // functions
@@ -78,6 +79,7 @@ protected: // member data
    S6 m_reducedReference;
    MatS6 m_matReference;
    double dcutoff;
+   S6 m_bestFit;
 };
 
 
