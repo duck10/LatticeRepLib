@@ -137,6 +137,8 @@ std::pair<double, size_t> S6Dist::MinForListOfS6(const std::vector<S6>& v1, cons
          }
       }
    }
+   g_bestVectors.Store(dmin, std::make_pair(v1[0], s6min));
+
    if (m_s6Debug) g_debug.ShowResultsByKeyDescending();
    return p;
 }
@@ -284,11 +286,18 @@ void S6Dist::OneBoundaryDistance(const S6& s1, const S6& s2) {
 
    std::vector<S6> voutside(Generate24Reflections(s2));
    voutside.push_back(s2);
-   vinside = Insert(vinside, (/*Create_VCP_s*/(s1)));
-   voutside = Insert(voutside, ((Generate24Reflections((Create_VCP_s(s2))))));
+   //vinside = Insert(vinside, (/*Create_VCP_s*/(s1)));
+   voutside = Insert(voutside, ((((Create_VCP_s(s2))))));
    //voutside = Insert(voutside, ((Generate24Reflections((CreateSecondBoundary_VCP_s(s2))))));
    const std::pair<double, size_t> p = MinForListOfS6(vinside, voutside);
    m_dmin = std::min(m_dmin, p.first);
+   if (m_dmin < p.first) {
+      m_dmin = std::min(m_dmin, p.first);
+      g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
+   }
+   else {
+      m_dmin = p.first;
+   }
 }
 
 void S6Dist::TwoBoundaryDistance(const S6& s1, const S6& s2) {
@@ -301,7 +310,13 @@ void S6Dist::TwoBoundaryDistance(const S6& s1, const S6& s2) {
    voutside = Insert(voutside, ((Generate24Reflections((Create_VCP_s(s2))))));
    //voutside = Insert(voutside, ((Generate24Reflections((CreateSecondBoundary_VCP_s(s2))))));
    const std::pair<double, size_t> p = MinForListOfS6(vinside, voutside);
-   m_dmin = std::min(m_dmin, p.first);
+   if (m_dmin < p.first) {
+      m_dmin = std::min(m_dmin, p.first);
+      g_bestVectors.Store(m_dmin, std::make_pair(s1, s2));
+   }
+   else {
+      m_dmin = p.first;
+   }
 }
 
 double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {

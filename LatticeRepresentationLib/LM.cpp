@@ -1,11 +1,17 @@
 #include "LM.h"
-
+#include "LRL_LatticeMatcher.h"
 
 LM::LM() {}
 
 LM::LM( const S6& s) {
    m_lmdist.SetReferenceLattice( s );
 }
+
+LM::LM(const int recursionDepth, const double sphereEnlargement, const bool useOLD_Algorith)
+   : m_lmdist(recursionDepth, sphereEnlargement, useOLD_Algorith)
+{
+}
+
 
 double LM::DistanceBetween( const S6& s ) {
    return m_lmdist.DistanceBetween( s );

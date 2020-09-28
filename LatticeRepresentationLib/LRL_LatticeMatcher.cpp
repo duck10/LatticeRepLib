@@ -13,14 +13,88 @@
 #include "TNear.h"
 
 
+std::vector<std::pair<MatS6, MatS6> > CreateReductionMatrices() {
+   std::vector<std::pair<MatS6, MatS6> > m(1, std::make_pair(MatS6().unit(), MatS6().unit()));
+   static const std::vector<std::pair<MatS6, MatS6> > redc = S6::SetUnreductionMatrices();
+   m.insert(m.end(), redc.begin(), redc.end());
+   return m;
+}
+
+void PrintMatrices(const std::vector<MatS6>& mv) {
+   for (size_t i = 0; i < mv.size(); ++i)
+      std::cout << std::endl << std::endl << mv[i] << std::endl;
+}
+
+std::vector<MatS6> LRL_LatticeMatcher::BuildMatrixBase() {
+   static const std::vector<std::pair<MatS6, MatS6> > redc(CreateReductionMatrices());
+   static const std::vector<MatS6> refl_one = MatS6::GetReflections();
+
+   m_matrixTree.clear();
+
+   // Create the seed sequence
+   m_matrixTree.insert(redc[0].first);
+
+   // Expand the seed sequence 
+   std::vector<MatS6> base;
+   for (size_t i = 0; i < redc.size(); ++i) {
+      const size_t msize = m_matrixTree.size();
+      for (size_t m = 0; m < msize; ++m) {
+         base.push_back(redc[i].first * m_matrixTree[m]);
+      }
+   }
+
+   m_matrixTree.clear();
+   m_matrixTree.insert(base);
+   m_matrixTree.insert(refl_one);
+   std::cout << "LRL_LatticeMatcher before loops " << "  matrix tree size = " << m_matrixTree.size() << std::endl;
+   std::cout << "LRL_LatticeMatcher before loops " << "  base size = " << base.size() << std::endl;
+
+   for (size_t k = 0; k < m_matrixGenerationRecursionDepth; ++k) {
+      for (size_t i = 0; i < base.size(); ++i) {
+         const size_t msize = m_matrixTree.size();
+         for (size_t m = 0; m < msize; ++m) {
+            const MatS6 temp = base[i] * m_matrixTree[m];
+            const bool returnvalue = StoreMatS6IfUnique(temp);
+         }
+      }
+      std::cout << "LRL_LatticeMatcher k = " << k << "  matrix tree size = " << m_matrixTree.size() << std::endl;
+   }
+   //exit(0);
+   return base;
+}
+
 LRL_LatticeMatcher::LRL_LatticeMatcher()
    : m_MVtree()
    , m_matrixTree()
    , m_reducedReference(S6())
    , dcutoff(0.01)
+   , m_matrixGenerationRecursionDepth(2)
+   , m_sphereSearchEnlargementfactor(2.0)
+   , m_useOLD_Algorithm(false)
 {
-   BuildMatrixTree( );
+
+   BuildMatrixBase();
+
+   //BuildMatrixTree();
 }
+
+LRL_LatticeMatcher::LRL_LatticeMatcher(const int matrixGenerationRecursionDepth,
+   const double sphereSearchEnlargementfactor,
+   const bool m_useOLD_Algorithm
+)
+   : m_MVtree()
+   , m_matrixTree()
+   , m_reducedReference(S6())
+   , dcutoff(0.01)
+   , m_matrixGenerationRecursionDepth(matrixGenerationRecursionDepth)
+   , m_sphereSearchEnlargementfactor(sphereSearchEnlargementfactor)
+   , m_useOLD_Algorithm(m_useOLD_Algorithm)
+{
+   BuildMatrixBase();
+
+   //BuildMatrixTree();
+}
+
 
 void LRL_LatticeMatcher::FillReflections( ) {
    static const std::vector<MatS6> refl = MatS6::GetReflections( );
@@ -28,30 +102,63 @@ void LRL_LatticeMatcher::FillReflections( ) {
       m_matrixTree.insert( refl );
 }
 
-void LRL_LatticeMatcher::StoreMatS6IfUnique( const MatS6& m) {
-   if (m_matrixTree.NearestNeighbor( dcutoff, m ) == m_matrixTree.end( ))
-      m_matrixTree.insert( m );
-}
-
-std::vector<std::pair<MatS6, MatS6> > CreateReductionMatrices() {
-   std::vector<std::pair<MatS6, MatS6> > m( 1, std::make_pair( MatS6( ).unit( ), MatS6( ).unit( ) ) );
-   static const std::vector<std::pair<MatS6, MatS6> > redc = S6::SetUnreductionMatrices( );
-   m.insert( m.end( ), redc.begin( ), redc.end( ) );
-   return m;
+bool LRL_LatticeMatcher::StoreMatS6IfUnique( const MatS6& m) {
+   if (m_matrixTree.NearestNeighbor(dcutoff, m) == m_matrixTree.end()) {
+      m_matrixTree.insert(m);
+      return true;
+   }
+   return false;
 }
 
 static const std::vector<std::pair<MatS6, MatS6> > redc( CreateReductionMatrices( ) );
 static const std::vector<MatS6> refl_one = MatS6::GetReflections( );
 
 
+void LRL_LatticeMatcher::ExpandReflections(const MatS6& m) {
+   StoreMatS6IfUnique(m);
+      const size_t currentMatrixTreeSize = m_matrixTree.size();
+   for (size_t i = 0; i < refl_one.size(); ++i) {
+      for (size_t k = 0; k < currentMatrixTreeSize; ++k) {
+         const MatS6 mi = refl_one[i] * m_matrixTree[k];
+         StoreMatS6IfUnique(mi);
+      }
+   }
+}
+
+void LRL_LatticeMatcher::ExpandBoundaries(const MatS6& m) {
+   StoreMatS6IfUnique(m);
+      const size_t currentMatrixTreeSize = m_matrixTree.size();
+   for (size_t i = 0; i < redc.size(); ++i) {
+      for (size_t k = 0; k < currentMatrixTreeSize; ++k) {
+         const MatS6 mi = redc[i].first * m_matrixTree[k];
+         StoreMatS6IfUnique(mi);
+      }
+   }
+}
+
 void LRL_LatticeMatcher::MultiplyAndExpand(const int n, const MatS6& transform, const MatS6& m) {
-      const MatS6 mi = transform * m;
-      StoreMatS6IfUnique(mi);
-      if (n > 1) ExpandMatrices(n - 1, mi);
+   const MatS6 mi = transform * m;
+   StoreMatS6IfUnique(mi);
+   if (n > 1) ExpandMatrices_OLD(n - 1, mi);
+}
+
+void LRL_LatticeMatcher::MultiplyAndExpand_OLD(const int n, const MatS6& transform, const MatS6& m) {
+   const MatS6 mi = transform * m;
+   StoreMatS6IfUnique(mi);
+   if (n > 1) ExpandMatrices_OLD(n - 1, mi);
 }
 
 void LRL_LatticeMatcher::ExpandMatrices( const int n, const MatS6& m ) {
-   for (size_t i = 0; i < refl_one.size( ); ++i) {
+   m_matrixTree.insert(m);
+
+   for (size_t i = 0; i < n; ++i) {
+      ExpandBoundaries( m);
+      ExpandReflections( m);
+   }
+}
+
+void LRL_LatticeMatcher::ExpandMatrices_OLD(const int n, const MatS6& m) {
+   for (size_t i = 0; i < refl_one.size(); ++i) {
       MultiplyAndExpand(n, refl_one[i], m);
    }
 
@@ -61,18 +168,22 @@ void LRL_LatticeMatcher::ExpandMatrices( const int n, const MatS6& m ) {
 }
 
 std::vector<MatS6> LRL_LatticeMatcher::DoThreeAxes( ) {
-   const int recursionDepth = 2;
-   ExpandMatrices(recursionDepth, MatS6( ).unit( ) );
-   std::cout << " in DoThreeAxes, matrix tree size = " << m_matrixTree.size() << "  recursionDepth = " << recursionDepth << std::endl;
-   return m_matrixTree.GetObjectStore( );
+   std::cout << " in DoThreeAxesA, matrix tree size = " << m_matrixTree.size() << "  recursionDepth = " << m_matrixGenerationRecursionDepth << std::endl;
+ 
+   if (m_useOLD_Algorithm)
+      ExpandMatrices_OLD(m_matrixGenerationRecursionDepth, MatS6().unit());
+   else
+      ExpandMatrices(m_matrixGenerationRecursionDepth, MatS6().unit());
+
+   return m_matrixTree.GetObjectStore();
 }
 
 void LRL_LatticeMatcher::BuildMatrixTree( void ) {
+   //m_matrixTree.clear();
    if (m_matrixTree.empty( )) {
       FillReflections( );
-      static const std::vector<MatS6> vMatS6 = DoThreeAxes( );
-      m_matrixTree.insert( vMatS6 );
-      ApplyReflections( vMatS6 );
+      DoThreeAxes( );
+      std::cout << " finishing BuildMatrixTree, matrix tree size = " << m_matrixTree.size() << "  recursionDepth = " << m_matrixGenerationRecursionDepth << std::endl;
 
       // TO GO ONE LEVEL DEEPER
       //static const std::vector<MatS6> vMatS6A = DoThreeAxes( );
@@ -134,7 +245,7 @@ std::pair<double, MV_Pair> LRL_LatticeMatcher::FindClosest(const S6& sample) con
 
 std::vector<MV_Pair> LRL_LatticeMatcher::FindNearToClosest(const double d, const MV_Pair& sample) const {
    std::vector<MV_Pair> vClosest;
-   const long n = m_MVtree.FindInSphere(3.0 * d + 0.02*sample.GetS6().norm(), vClosest, sample);
+   const long n = m_MVtree.FindInSphere(m_sphereSearchEnlargementfactor * d + 0.02*sample.GetS6().norm(), vClosest, sample);
    return vClosest;
 }
 
@@ -157,10 +268,23 @@ S6 LRL_LatticeMatcher::FindBestAmongMany(const std::vector<MV_Pair>& vClosest, c
    return s6closest;
 }
 
-S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
+std::vector<S6> ExpandVectorByReflections(const S6& sample) {  // should check for duplicates
+   std::vector<S6> expandedSample;
+   for (size_t i = 0; i < refl_one.size(); ++i)
+      expandedSample.push_back(refl_one[i] * sample);
+   return expandedSample;
+}
+
+std::vector<S6> ExpandVectorByBoundaries(const std::vector<S6>& sampleList) {  // should check for duplicates
    std::vector<S6> expandedSample;
    for (size_t i = 0; i < redc.size(); ++i)
-      expandedSample.push_back(redc[i].first * sample);
+      for (size_t k = 0; k < sampleList.size(); ++k)
+         expandedSample.push_back(redc[i].first * sampleList[k]);
+   return expandedSample;
+}
+
+S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
+   const std::vector<S6> expandedSample = ExpandVectorByBoundaries(ExpandVectorByReflections(sample));
    const std::vector<S6> matches = MatchReference(expandedSample);
    double best = DBL_MAX;
    S6 bestS6;
@@ -231,13 +355,28 @@ std::ostream& operator<< ( std::ostream& o, const MV_Pair& v ) {
    return o;
 }
 
-LMDist::LMDist( const S6& s ) {
-   SetReferenceLattice( MV_Pair( s, MatS6( ).unit( ) ) );
-   m_MVtree.clear( );
-   BuildMatrixTree( );
-   BuildReferenceTree( m_reducedReference );
+LMDist::LMDist(const int recursionDepth, const double sphereEnlargement, const bool m_useOLD_Algorithm) 
+: LRL_LatticeMatcher(recursionDepth, sphereEnlargement, m_useOLD_Algorithm)
+{
+   m_MVtree.clear();
+   BuildMatrixTree();
+   BuildReferenceTree(m_reducedReference);
+   SetRecursionDepth(recursionDepth);
+   SetSphereEnlargementFactor(sphereEnlargement);
 }
 
+LMDist::LMDist() {}
+
+//LMDist::LMDist(const S6& s) {
+//   SetReferenceLattice(MV_Pair(s, MatS6().unit()));
+//   m_MVtree.clear();
+//   BuildMatrixTree();
+//   BuildReferenceTree(m_reducedReference);
+//   SetRecursionDepth(3);
+//   SetSphereEnlargementFactor(4.0);
+//
+//}
+//
 double LMDist::DistanceBetween( const S6& s2 ) {
    const S6 matched = MatchReference( s2 );
    return (m_reducedReference - matched).norm( );

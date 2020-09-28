@@ -122,6 +122,8 @@ public:
    size_t CountPositive(void) const;
 
 
+   S6 FindBestMatchAmongReflections(const S6& s2) const;
+
    static double NegativeSumOfScalars(const S6& s) {
       return -(s[0] + s[1] + s[2] + s[3] + s[4] + s[5]);
    }

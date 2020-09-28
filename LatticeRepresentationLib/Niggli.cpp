@@ -598,7 +598,7 @@ bool Niggli::Reduce(const G6& vi, G6& vout, const bool sellingFirst) {
    }
    else {
       MatG6 m;
-      return Niggli::Reduce(vout, m, vout, 0.0);
+      return Niggli::Reduce(vi, m, vout, 0.0);
    }
 }
 

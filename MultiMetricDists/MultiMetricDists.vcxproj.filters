@@ -30,6 +30,12 @@
     <ClCompile Include="Triangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.c">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D7_BoundaryTests.h">
@@ -39,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
