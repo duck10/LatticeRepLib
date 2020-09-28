@@ -52,7 +52,8 @@ const std::string LRL_MaximaTools::Retrieve_One_Matrix_Row( const size_t rowLeng
 std::string LRL_MaximaTools::MaximaFromString( const size_t rowLength, const std::string& s ) {
    size_t pos = 0;
    std::string sFrag;
-   while ( pos < s.length( ) ) {
+   const size_t s_length = s.length();
+   while ( pos < s.length( )-1 ) {
       const std::string nextFrag = Retrieve_One_Matrix_Row( rowLength, s.substr( pos, s.length( ) ) );
       if (nextFrag != "\n" && nextFrag != " \n") sFrag += MaximaFromString( nextFrag );
       pos += nextFrag.length( );

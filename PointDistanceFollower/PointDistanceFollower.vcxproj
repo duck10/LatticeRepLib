@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.cpp" />
     <ClCompile Include="FileOperations.cpp" />
     <ClCompile Include="FollowerConstants.cpp" />
     <ClCompile Include="FollowerIO.cpp" />
@@ -37,6 +38,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h" />
     <ClInclude Include="DistanceLineDescriptions.h" />
     <ClInclude Include="FileOperations.h" />
     <ClInclude Include="FileWriter.h" />

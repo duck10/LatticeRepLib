@@ -151,11 +151,13 @@ void OutputCellData(LatticeConverter& converter, const std::vector<LRL_ReadLatti
 	  if (letters.find(LRL_StringTools::strToupper(lattice)) == std::string::npos) continue;
       std::cout << std::endl;
       std::cout << "LRL_Cell # " << i1 << "  *******************************" << std::endl;
-      converter.Output("Input Data", lattice, LRL_Cell_Degrees(rcd.GetCell()));
+      converter.Output("Input Data", lattice, rcd.GetCell());
       std::cout << std::endl;
       converter.NiggliReducedOutput("Niggli Reduced", lattice, rcd.GetCell());
       std::cout << std::endl;
-      converter.DeloneReducedOutput("Delone Reduced", lattice, rcd.GetCell());
+      converter.DeloneReducedOutput("Delone (D7) Reduced", lattice, rcd.GetCell());
+      std::cout << std::endl;
+      converter.SellingReducedOutput("Selling Reduced", lattice, rcd.GetCell());
       std::cout << std::endl;
       double f1, f2, f3, f4;
       const LRL_Cell reducedCell = converter.DeloneReduceCell(lattice, rcd.GetCell());

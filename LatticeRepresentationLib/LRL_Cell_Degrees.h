@@ -8,6 +8,7 @@ public:
    friend std::ostream& operator<< (std::ostream& o, const LRL_Cell_Degrees& c);
 
    LRL_Cell_Degrees(const LRL_Cell& cell);
+   LRL_Cell_Degrees(void) {}
 
    LRL_Cell_Degrees& operator= (const LRL_Cell& c) {
       m_cell = c.GetVector();

@@ -39,6 +39,7 @@ public:
    MultiFollower CalculateDistancesV7( const MultiFollower& mf ) const;
    MultiFollower CalculateDistancesLM( const MultiFollower& mf ) const;
    MultiFollower GenerateAllDistances(void);
+   void SetLatticePointChoiceForDistanceCalculation();
 
    void SetDistancesS6( const std::vector<double>& v ) { m_s6path.SetDistances( v ); }
    void SetDistancesG6( const std::vector<double>& v ) { m_g6path.SetDistances( v ); }
@@ -76,6 +77,8 @@ private:
    LRL_Path<G6> m_v7path;
    LRL_Path<S6> m_lmpath;
 
+   enum m_enumLatticePointChoiceForDistanceCalculation {versusFirstPoint, versusCorrespondingPoint};
+   m_enumLatticePointChoiceForDistanceCalculation m_latticePointChoiceForDistanceCalculation;
    std::clock_t m_ComputeStartTime;
    double m_seconds2ComputerFrame;
    std::set<size_t> m_glitches;
