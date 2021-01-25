@@ -2,6 +2,7 @@
 //
 
 #include "CellInputData.h"
+#include <complex>
 #include "LRL_CreateFileName.h"
 #include "CS6Dist.h"
 #include "DeloneTypeList.h"
@@ -9,6 +10,7 @@
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_LatticeMatcher.h"
+#include "LRL_MaximaTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
@@ -101,8 +103,81 @@ AngularS6 AngularS6::operator- ( const AngularS6&a ) const {
    return as6;
 }
 
+void ComplexCell(const S6& s)
+{
+   const double asq = -(s[3] + s[2] + s[1]);
+   const double bsq = -(s[4] + s[2] + s[0]);
+   const double csq = -(s[5] + s[1] + s[0]);
+   const std::complex<double> a = std::sqrt(std::complex<double>(asq, 0.0));
+   const std::complex<double> b = std::sqrt(std::complex<double>(bsq, 0.0));
+   const std::complex<double> c = std::sqrt(std::complex<double>(csq,0.0));
+
+   const std::complex<double> cosal = s[0] / (b * c);
+   const std::complex<double> cosbe = s[1] / (a * c);
+   const std::complex<double> cosga = s[2] / (a * b);
+   static const double pi = 4.0 * atan(1.0);
+   const std::complex<double> al = std::acos(cosal) * 180.0 / pi;
+   const std::complex<double >be = std::acos(cosbe) * 180.0 / pi;
+   const std::complex<double> ga = std::acos(cosga) * 180.0 / pi;
+
+   std::cout << std::endl;
+   std::cout << "input S6 " << s << std::endl;
+   std::cout << "as cell  " << a << " " << b << " " << c << "    " << al << " " << be << " " << ga << std::endl;
+   std::cout << "G6    " << G6(s) << std::endl;
+}
+
+
+static std::vector<std::pair<MatS6, MatS6> > CreateReductionMatrices() {
+   std::vector<std::pair<MatS6, MatS6> > m(1, std::make_pair(MatS6().unit(), MatS6().unit()));
+   static const std::vector<std::pair<MatS6, MatS6> > redc = S6::SetUnreductionMatrices();
+   m.insert(m.end(), redc.begin(), redc.end());
+   return m;
+}
+
+void MakeBoundaryTransforms() {
+   static const std::vector<MatS6> refl = MatS6::GetReflections();
+   static const std::vector<std::pair<MatS6, MatS6> > redc(CreateReductionMatrices());
+   for (size_t i = 0; i < refl.size(); ++i) {
+      const MatS6 m = refl[i] * redc[1].first;
+      std::cout << LRL_MaximaTools::MaximaFromMat(m) << std::endl;
+   }
+   exit(0);
+}
+
+void TestDistance(const S6& s1, const S6& s2) {
+   const double d1 = CS6Dist(s1.data(), s2.data());
+   static const std::vector<std::pair<MatS6, MatS6> > redc(CreateReductionMatrices());
+
+   const double d2 = CS6Dist((redc[1].first*s1).data(), (redc[1].first*s2).data());
+
+   const double d3 = (s1 - s2).norm();
+   const double d4 = (redc[1].first * s1 - redc[1].first * s2).norm();
+   const double d5 = (redc[1].first * (s1 - s2)).norm();
+   const int i19191 = 19191;
+}
+
 int main( int argc, char* argv[] )
 {
+   const S6 s1 = C3("-10 -11- -90 -1190 -190 -190");
+   const S6 s2 = C3("-10 -100 -200 -100 -200-200");
+   TestDistance(s1.data(), s2.data());
+   MakeBoundaryTransforms();
+   //ComplexCell(S6(" 0 0 0 200  0 100"));
+   //ComplexCell(S6(" 0 0 0 100 100 100"));
+   //ComplexCell(S6(" 0 0 0 0 100 100"));
+   //ComplexCell(S6(" 0 0 0 0 0 100"));
+   //ComplexCell(S6(" 0 0 0 0 0 0"));
+   ComplexCell(S6("100 100 100 -1 0 0"));
+   ComplexCell(S6("100 100 100 1 0 0"));
+   ComplexCell(S6("100 100 100 0 0 0"));
+   ComplexCell(S6("-100 -100 -100 0 0 0"));
+   ComplexCell(S6("-100 -100 -100 -1 0 0"));
+   ComplexCell(S6("-100 -100 -100 1 0 0"));
+
+   ComplexCell(S6("-100 -100 -100 -30 -20 -10"));
+   ComplexCell(S6("100 100 100 30 20 10"));
+   exit(0);
+
    //CNearTree< AngularS6> ant;
    //ant.NearestNeighbor( 1.0, AngularS6( ) );
    ////Test_E3toS6( );
