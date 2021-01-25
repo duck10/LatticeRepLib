@@ -5,6 +5,10 @@
 #if !defined(LINEARAXIS_H)
 #define LINEARAXIS_H
 
+#if _MSC_VER
+#pragma once
+#endif
+
 #include <cfloat>
 #include <climits>
 #include <cmath>
@@ -24,8 +28,8 @@ public:
                    const double maxDataValue  = DBL_MAX, 
                    const double minDataValue  = DBL_MAX, 
                    const double upperLimit    = DBL_MAX,
-                   const size_t& numSteps      = ULONG_MAX,
-                   const size_t& objectScaleFactor = ULONG_MAX);
+                   const size_t& numSteps      = size_t(INT_MAX),
+                   const size_t& objectScaleFactor = size_t(INT_MAX) );
    AxisLimits& operator=( const AxisLimits& ) const; // no assignment operator allowed
 
 public:

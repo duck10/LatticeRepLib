@@ -26,7 +26,7 @@ D7_Boundary D7_BoundaryList::GetBoundary(const std::string& name) {
 
 int D7_BoundaryList::GetBoundaryIndex(const std::string& nameIn) {
    int nreturn = -1;
-   const size_t found = nameIn.find('.');
+   const size_t found = (size_t)(nameIn.find('.'));
    const std::string name = (found == std::string::npos) ? nameIn : nameIn.substr(0, found);
    if (nameIn.find("."))
       for (unsigned int i = 0; i < D7_BoundaryList::size(); ++i) {

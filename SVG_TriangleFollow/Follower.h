@@ -1,5 +1,8 @@
 #ifndef FOLLOWER_H
 #define FOLLOWER_H
+#ifdef _MSC_VER
+#pragma once
+#endif
 
 template<typename T1, typename T2> 
 class Follower {

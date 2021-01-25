@@ -3,7 +3,7 @@
 
 #include <cmath>
 #include <string>
-
+#include <vector>
 #include "MatN.h"
 
 class MatN;
@@ -54,7 +54,7 @@ public:
    void SetValid( const bool b ) { m_valid = b; }
    bool GetValid( void ) const { return m_valid; }
 
-   virtual size_t size( void ) const { return m_vec.size( ); }
+   virtual size_t size( void ) const { return (size_t)(m_vec.size( )); }
    virtual void clear( void ) { m_vec.clear( ); }
    virtual double norm( void ) const;
    virtual double Norm( void ) const;

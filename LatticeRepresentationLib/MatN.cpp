@@ -35,7 +35,7 @@ MatN::MatN( const std::string& s ) {
    }
 
    m_mat = v;
-   m_dim = m_mat.size( );
+   m_dim = (size_t)(m_mat.size( ));
    m_rowdim = int( sqrt( double( m_dim ) ) );
 
    if ( m_dim != m_rowdim*m_rowdim ) throw "bad dimension in constructor";

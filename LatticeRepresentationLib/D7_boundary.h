@@ -44,7 +44,7 @@ public:
       return thesize;
    }
 
-   size_t size( void ) const { return m_vSubBounds.size( ); }
+   size_t size( void ) const { return (size_t)(m_vSubBounds.size( )); }
 
 private:
    const D7 ComputeExternalNormalUnitVector(void) const;

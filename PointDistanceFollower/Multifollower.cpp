@@ -89,7 +89,11 @@ MultiFollower MultiFollower::CalculateDistancesV7(const MultiFollower& mf) const
    std::vector<double> vdist;
    const std::vector<std::pair<G6, G6> > path( mf.GetG6( ).GetPath( ) );
    for (size_t i = 0; i < path.size( ); ++i) {
-      double distance = V7Dist( path[0].second, path[i].second );
+
+      const G6 firstPoint = (m_latticePointChoiceForDistanceCalculation == versusFirstPoint) ?
+         path[0].second : path[i].first;
+
+      double distance = V7Dist( firstPoint, path[i].second );
       if (S6::IsInvalidPair( path[i] )) distance = -1.0;
       vdist.push_back( distance );
    }
@@ -125,24 +129,70 @@ MultiFollower MultiFollower::CalculateDistancesCS( const MultiFollower& mf ) con
    return m;
 }
 
+void CheckTrees( const CNearTree<MatS6>& treea, const CNearTree<MatS6>& treeb) {
+   std::cout << "in CheckTrees tree sizes " << treea.size() << "  " << treeb.size() << std::endl;
+   if (treea.size() != treeb.size()) throw;
+   for (size_t i = 0; i < treea.size(); ++i)
+      if (treeb.NearestNeighbor(0.1, treea[i]) == treeb.end()) throw;
+}
+
 MultiFollower MultiFollower::CalculateDistancesLM( const MultiFollower& mf ) const {
    MultiFollower m( mf );
    S6 out;
-   LM lm;
+
+   LM lm(1, 3.1);
+   {
+      //LM lm_OLD(3, 3.1, true);
+      //const CNearTree<MV_Pair> MVtreeNEW = lm.GetMatrixTree();
+      //const CNearTree<MV_Pair> MVtreeOLD = lm_OLD.GetMatrixTree();
+
+
+      //CNearTree<MatS6> treeNEW;
+      //for (size_t i = 0; i < MVtreeNEW.size(); ++i) {
+      //   treeNEW.insert(MVtreeNEW[i].GetMatS6());
+      //}
+
+      //CNearTree<MatS6> treeOLD;
+      //for (size_t i = 0; i < MVtreeOLD.size(); ++i) {
+      //   treeOLD.insert(MVtreeOLD[i].GetMatS6());
+      //}
+
+      //std::cout << "NEW " << treeNEW.size() << "  " << lm.GetRecursionDepth() << std::endl;
+      //std::cout << "OLD " << treeOLD.size() << "  " << lm_OLD.GetRecursionDepth() << std::endl;
+
+      //CheckTrees(treeNEW, treeOLD);
+      //CheckTrees(treeOLD, treeNEW);
+   }
+
    std::vector<double> vdist;
    const std::vector<std::pair<S6, S6> > path( mf.GetS6( ).GetPath( ) );
    S6Dist s6dist( 1 );
    for (size_t i = 0; i < path.size( ); ++i) {
-      const double distance = (S6::IsInvalidPair( path[i] ) || !path[i].second.IsValid()) ? -1.0 :
-      lm.DistanceBetween( path[0].second, path[i].second );
-      vdist.push_back( distance );
+      const double distance1 = (S6::IsInvalidPair(path[i]) || !path[i].second.IsValid()) ? -1.0 :
+         lm.DistanceBetween(path[0].second, path[i].second);
+      //const double distance2 = (S6::IsInvalidPair(path[i]) || !path[i].second.IsValid()) ? -1.0 :
+      //   lm.DistanceBetween(path[i].second, path[0].second);
+      ////std::cout << i << " CalculateDistancesLM " << lm.GetBestMatch() << std::endl;
+      //vdist.push_back(std::min(distance1, distance2));
+      vdist.push_back(distance1);
    }
    m.SetDistancesLM( vdist );
    return m;
 }
 
+void MultiFollower::SetLatticePointChoiceForDistanceCalculation() {
+   m_latticePointChoiceForDistanceCalculation = (
+      FollowerConstants::globalFollowerMode == FollowerConstants::globalLine ||
+      FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) ?
+      versusFirstPoint : versusCorrespondingPoint;
+}
+
 MultiFollower MultiFollower::GenerateAllDistances(void) {
    MultiFollower m(*this);
+
+   SetLatticePointChoiceForDistanceCalculation();
+   m.SetLatticePointChoiceForDistanceCalculation();
+
    m.SetComputeStartTime();
    {
       m.m_v7path.SetComputeStartTime();
@@ -173,15 +223,15 @@ MultiFollower MultiFollower::GenerateAllDistances(void) {
       m.SetComputeTime("G6", computetime);
    }
    {
-      m.m_d7path.SetComputeStartTime( );
-      if (FollowerConstants::IsEnabled( "D7" )) m = CalculateDistancesD7( m );
-      const double computetime = std::clock( ) - m.m_d7path.GetComputeStartTime( );
-      m.m_d7path.SetTime2ComputeFrame( computetime );
-      m.SetComputeTime( "D7", computetime );
+      m.m_d7path.SetComputeStartTime();
+      if (FollowerConstants::IsEnabled("D7")) m = CalculateDistancesD7(m);
+      const double computetime = std::clock() - m.m_d7path.GetComputeStartTime();
+      m.m_d7path.SetTime2ComputeFrame(computetime);
+      m.SetComputeTime("D7", computetime);
    }
    {
-      m.m_lmpath.SetComputeStartTime( );
-      if (FollowerConstants::IsEnabled( "LM" )) m = CalculateDistancesLM( m );
+      m.m_lmpath.SetComputeStartTime();
+      if (FollowerConstants::IsEnabled("LM")) m = CalculateDistancesLM(m);
       const double computetime = std::clock( ) - m.m_lmpath.GetComputeStartTime( );
       m.m_lmpath.SetTime2ComputeFrame( computetime );
       m.SetComputeTime( "LM", computetime );

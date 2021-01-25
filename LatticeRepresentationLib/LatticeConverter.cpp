@@ -22,10 +22,10 @@
 void LatticeConverter::TextOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) const {
    std::cout << label << std::endl;
    std::cout << "lattice " << lattice << std::endl;
-   std::cout << "LRL_Cell  " << LRL_ToString(cell) << std::endl;
+   std::cout << "LRL_Cell_Degrees  " << LRL_ToString(LRL_Cell_Degrees(cell)) << std::endl;
    std::cout << "G6 " << LRL_ToString(G6(cell)) << std::endl;
    std::cout << "D7  " << LRL_ToString(D7(G6(cell))) << std::endl;
-   std::cout << "Scalars " << LRL_ToString(S6(cell)) << std::endl;
+   std::cout << "S6 " << LRL_ToString(S6(cell)) << std::endl;
    std::cout << "C3 " << LRL_ToString(C3(cell)) << std::endl;
 }
 
@@ -35,7 +35,7 @@ void LatticeConverter::MaximaOutput(const std::string& label, const std::string&
    std::cout << "LRL_Cell  " << LRL_MaximaTools::MaximaFromString(LRL_ToString(cell)) << std::endl;
    std::cout << "G6 " << LRL_MaximaTools::MaximaFromString(LRL_ToString(G6(cell))) << std::endl;
    std::cout << "D7  " << LRL_MaximaTools::MaximaFromString(LRL_ToString(D7(G6(cell)))) << std::endl;
-   std::cout << "Scalars " << LRL_MaximaTools::MaximaFromString(LRL_ToString(S6(cell))) << std::endl;
+   std::cout << "S6 " << LRL_MaximaTools::MaximaFromString(LRL_ToString(S6(cell))) << std::endl;
    std::cout << "C3 " << LRL_MaximaTools::MaximaFromString(LRL_ToString(C3(cell))) << std::endl;
 }
 
@@ -89,7 +89,7 @@ LRL_Cell LatticeConverter::NiggliReduceCell( const std::string& lattice, const L
 
 
 void LatticeConverter::NiggliReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) {
-   const LRL_Cell_Degrees reducedCell = NiggliReduceCell(lattice, cell);
+   const LRL_Cell reducedCell = NiggliReduceCell(lattice, cell);
    Output(label, "P", reducedCell);
 }
 
@@ -137,6 +137,11 @@ LRL_Cell LatticeConverter::SellingReduceCell( const std::string& lattice, const 
 }
 
 void LatticeConverter::DeloneReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) {
-   const LRL_Cell_Degrees reducedCell = DeloneReduceCell(lattice, cell);
+   const LRL_Cell reducedCell = DeloneReduceCell(lattice, cell);
+   Output(label, "P", reducedCell);
+}
+
+void LatticeConverter::SellingReducedOutput(const std::string& label, const std::string& lattice, const LRL_Cell& cell) {
+   const LRL_Cell reducedCell = SellingReduceCell(lattice, cell);
    Output(label, "P", reducedCell);
 }

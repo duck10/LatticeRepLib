@@ -19,14 +19,14 @@ MatMN::MatMN( const MatMN& m )
 MatMN::MatMN( const size_t rowCount, const size_t colCount )
 : m_mat( colCount*rowCount )
 , m_rowCount( rowCount )
-, m_dim( m_mat.size( ) )
+, m_dim( (size_t)m_mat.size( ) )
 , m_colCount( colCount ) {
 }
 
 MatMN::MatMN(const MatS6& m6)
    : m_mat(m6.GetVector())
    , m_rowCount(m6.GetRowDim())
-   , m_dim(m_mat.size())
+   , m_dim((size_t)m_mat.size())
    , m_colCount(m6.GetRowDim())
 {
 }
@@ -34,7 +34,7 @@ MatMN::MatMN(const MatS6& m6)
 MatMN::MatMN(const MatD7& m7)
    : m_mat(m7.GetVector())
    , m_rowCount(m7.GetRowDim())
-   , m_dim(m_mat.size())
+   , m_dim((size_t)m_mat.size())
    , m_colCount(m7.GetRowDim())
 {
 }
@@ -42,7 +42,7 @@ MatMN::MatMN(const MatD7& m7)
 MatMN::MatMN(const MatG6& m6)
    : m_mat(m6.GetVector())
    , m_rowCount(m6.GetRowDim())
-   , m_dim(m_mat.size())
+   , m_dim((size_t)m_mat.size())
    , m_colCount(m6.GetRowDim())
 {
 }

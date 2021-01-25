@@ -47,6 +47,11 @@ public:
 class LRL_LatticeMatcher {
 public:
    LRL_LatticeMatcher( );
+   LRL_LatticeMatcher(const int matrixGenerationRecursionDepth,
+      const double sphereSearchEnlargementfactor,
+      const bool m_useOLD_Algorithm=false);
+   std::vector<MatS6> BuildMatrixBase();
+
    void SetReferenceLattice( const MV_Pair& mvp );
    void SetReferenceLattice( const S6& s ); // for distance calculation
    S6 GetReference( ) const { return m_reducedReference; };
@@ -60,16 +65,25 @@ public:
    size_t size( ) const { return m_MVtree.size( ); }
    double DistanceBetween( const S6& s1, const S6& s2 );
    void BuildMatrixTree( );
-
+   S6 GetBestMatch(void) const { return m_bestFit; }
+   void SetRecursionDepth(const int i) { m_matrixGenerationRecursionDepth = i; }
+   void SetSphereEnlargementFactor(const double d) { m_sphereSearchEnlargementfactor = d; }
+   void SetUseOldAlgorithm(const bool b) { m_useOLD_Algorithm = b; }
+   CNearTree<MV_Pair> GetMatrixTree() const { return m_MVtree; };
+   int GetRecursionDepth() const { return m_matrixGenerationRecursionDepth; }
 
 protected: // functions
    void BuildReferenceTree( const S6& s );
    void MultiplyAndExpand(const int n, const MatS6& transform, const MatS6& m);
-   void ExpandMatrices( const int n, const MatS6& m );
+   void MultiplyAndExpand_OLD(const int n, const MatS6& transform, const MatS6& m);
+   void ExpandMatrices(const int n, const MatS6& m);
+   void ExpandMatrices_OLD(const int n, const MatS6& m);
    std::vector<MatS6> DoThreeAxes( );
    void StoreMV_IfUnique( const S6& s, const MatS6& m );
    void FillReflections( );
-   void StoreMatS6IfUnique( const MatS6& m );
+   bool StoreMatS6IfUnique( const MatS6& m );
+   void ExpandReflections(const MatS6& m);
+   void ExpandBoundaries(const MatS6& m);
 
 
 protected: // member data
@@ -78,13 +92,18 @@ protected: // member data
    S6 m_reducedReference;
    MatS6 m_matReference;
    double dcutoff;
+   S6 m_bestFit;
+
+   int m_matrixGenerationRecursionDepth;
+   double m_sphereSearchEnlargementfactor;
+   bool m_useOLD_Algorithm;
 };
 
 
 class LMDist : public LRL_LatticeMatcher {
 public:
-   LMDist() {}
-   LMDist( const S6& s );
+   LMDist();
+   LMDist(const int recursionDepth, const double sphereEnlargement, const bool b_UseOLD_Algorthm = false);
    double DistanceBetween( const S6& s2 );
    double DistanceBetween( const S6& s1, const S6& s2 );
 };
