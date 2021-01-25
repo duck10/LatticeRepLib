@@ -236,6 +236,7 @@ void ProcessTrialsForOneLattice(const std::vector<CellInputData>& inputCellList,
 }
 
 int main(int argc, char* argv[]) {
+   //LRL_LatticeMatcher junk;
    ReadGlobalData();
 
    std::vector<CellInputData> celldata = ReadAllLatticeData();;
@@ -246,7 +247,6 @@ int main(int argc, char* argv[]) {
    CellInputData cell2;
    CellInputData cell3;
    for (size_t i = 0; i < celldata.size(); ++i) {
-
       // are we done with input?
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine &&
          i + size_t(1) >= celldata.size()) {

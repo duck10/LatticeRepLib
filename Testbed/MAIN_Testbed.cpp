@@ -2,26 +2,32 @@
 //
 
 #include "CellInputData.h"
-#include <complex>
+#include "CS6Dist.h"
+#include "Delone.h"
 #include "LRL_CreateFileName.h"
 #include "CS6Dist.h"
+#include "CS6Dist.c"
 #include "DeloneTypeList.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_LatticeMatcher.h"
-#include "LRL_MaximaTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "MatN.h"
 #include "MatS6.h"
+#include "NCDist.h"
+#include "PairReporter.h"
 #include "S6.h"
 #include "S6Dist.h"
 #include "TNear.h"
 
 #include <algorithm>
 #include <utility>
+#include <complex>
+#include <cstdlib>
+#include <cstdio>
 
 std::string Letters( void ) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
@@ -126,58 +132,8 @@ void ComplexCell(const S6& s)
    std::cout << "G6    " << G6(s) << std::endl;
 }
 
-
-static std::vector<std::pair<MatS6, MatS6> > CreateReductionMatrices() {
-   std::vector<std::pair<MatS6, MatS6> > m(1, std::make_pair(MatS6().unit(), MatS6().unit()));
-   static const std::vector<std::pair<MatS6, MatS6> > redc = S6::SetUnreductionMatrices();
-   m.insert(m.end(), redc.begin(), redc.end());
-   return m;
-}
-
-void MakeBoundaryTransforms() {
-   static const std::vector<MatS6> refl = MatS6::GetReflections();
-   static const std::vector<std::pair<MatS6, MatS6> > redc(CreateReductionMatrices());
-   for (size_t i = 0; i < refl.size(); ++i) {
-      const MatS6 m = refl[i] * redc[1].first;
-      std::cout << LRL_MaximaTools::MaximaFromMat(m) << std::endl;
-   }
-   exit(0);
-}
-
-void TestDistance(const S6& s1, const S6& s2) {
-   const double d1 = CS6Dist(s1.data(), s2.data());
-   static const std::vector<std::pair<MatS6, MatS6> > redc(CreateReductionMatrices());
-
-   const double d2 = CS6Dist((redc[1].first*s1).data(), (redc[1].first*s2).data());
-
-   const double d3 = (s1 - s2).norm();
-   const double d4 = (redc[1].first * s1 - redc[1].first * s2).norm();
-   const double d5 = (redc[1].first * (s1 - s2)).norm();
-   const int i19191 = 19191;
-}
-
 int main( int argc, char* argv[] )
 {
-   const S6 s1 = C3("-10 -11- -90 -1190 -190 -190");
-   const S6 s2 = C3("-10 -100 -200 -100 -200-200");
-   TestDistance(s1.data(), s2.data());
-   MakeBoundaryTransforms();
-   //ComplexCell(S6(" 0 0 0 200  0 100"));
-   //ComplexCell(S6(" 0 0 0 100 100 100"));
-   //ComplexCell(S6(" 0 0 0 0 100 100"));
-   //ComplexCell(S6(" 0 0 0 0 0 100"));
-   //ComplexCell(S6(" 0 0 0 0 0 0"));
-   ComplexCell(S6("100 100 100 -1 0 0"));
-   ComplexCell(S6("100 100 100 1 0 0"));
-   ComplexCell(S6("100 100 100 0 0 0"));
-   ComplexCell(S6("-100 -100 -100 0 0 0"));
-   ComplexCell(S6("-100 -100 -100 -1 0 0"));
-   ComplexCell(S6("-100 -100 -100 1 0 0"));
-
-   ComplexCell(S6("-100 -100 -100 -30 -20 -10"));
-   ComplexCell(S6("100 100 100 30 20 10"));
-   exit(0);
-
    //CNearTree< AngularS6> ant;
    //ant.NearestNeighbor( 1.0, AngularS6( ) );
    ////Test_E3toS6( );
@@ -188,7 +144,7 @@ int main( int argc, char* argv[] )
    //snt.NearestNeighbor( 0.0, s2 );
 
    std::cout << " text input" << std::endl;
-   const std::vector<LRL_ReadLatticeData> input = GetInputCells( );
+   const std::vector<LRL_ReadLatticeData> input = GetInputCells();
    std::cout << "the first cell will be the REFERENCE" << std::endl;
    MatS6 mat_reference;
    const LRL_Cell cell_reference = LatticeConverter::SellingReduceCell( input[0].GetLattice(), input[0].GetCell(), mat_reference );
@@ -221,27 +177,27 @@ int main( int argc, char* argv[] )
       sd.SetDebug( false );
 
 
-      LMDist lmd( vLat[0] );
+      //LMDist lmd( vLat[0] );
       //double ddddd = lmd.DistanceBetween( vLat[1] );
 
       StoreResults<int, std::string> srlm(5);
       srlm.SetTitle( LRL_ToString( "reference ", vLat[0] ) );
       double dists6, distlm, distcs, disttest;
-      for (size_t lat = 1; lat < vLat.size( ); ++lat) {
-         std::cout << vs6[0] << "   " << vs6[lat] << std::endl << std::endl;
-         distlm = (vLat[0] - vs6[lat]).norm( );
-         std::cout << "distlm A " << distlm << std::endl;
-         distlm = lmd.DistanceBetween(vLat[lat]);
-         std::cout << "distlm B " << distlm << std::endl;
-         disttest = lm.DistanceBetween( vLat[0], vLat[lat] );
-         std::cout << "disttest " << disttest << std::endl;
-         distcs = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
-         dists6 = sd.DistanceBetween( vLat[0], vLat[lat] );
+      //for (size_t lat = 1; lat < vLat.size( ); ++lat) {
+      //   std::cout << vs6[0] << "   " << vs6[lat] << std::endl << std::endl;
+      //   distlm = (vLat[0] - vs6[lat]).norm( );
+      //   std::cout << "distlm A " << distlm << std::endl;
+      //   distlm = lmd.DistanceBetween(vLat[lat]);
+      //   std::cout << "distlm B " << distlm << std::endl;
+      //   disttest = lm.DistanceBetween( vLat[0], vLat[lat] );
+      //   std::cout << "disttest " << disttest << std::endl;
+      //   distcs = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
+      //   dists6 = sd.DistanceBetween( vLat[0], vLat[lat] );
 
-         //std::cout << "lat match " << distlm << "  cs6dist " << distcs << "  s6dist " << dists6 << std::endl;
-         double diff = (distlm - dists6) / dists6 * 100.0;
-         //srlm.Store( int( diff ), LRL_ToString("# ", lat, "   ", vLat[lat] ) );
-      }
+      //   //std::cout << "lat match " << distlm << "  cs6dist " << distcs << "  s6dist " << dists6 << std::endl;
+      //   double diff = (distlm - dists6) / dists6 * 100.0;
+      //   //srlm.Store( int( diff ), LRL_ToString("# ", lat, "   ", vLat[lat] ) );
+      //}
       //srlm.ShowResultsByKeyAscending( );
       //std::cout << std::endl;
 
@@ -269,32 +225,32 @@ int main( int argc, char* argv[] )
 
 
 
-      double dist;
-      lmd.SetReferenceLattice( MV_Pair(vLat[0], MatS6()) );
-      std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
-      for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-         dist = lmd.DistanceBetween(vs6[lat]);
-      }
-      std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
-      for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-         dist = (vs6[0] - vs6[lat]).norm( );
-      }
-      std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
-      for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-         dist = (vs6[0] - vs6[lat]).norm( );
-      }
-      std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
-      for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-         dist = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
-      }
-      std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
-      for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-         dist = sd.DistanceBetween( vLat[0], vLat[lat] );
-      }
-      std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
+   //   double dist;
+   //   lmd.SetReferenceLattice( MV_Pair(vLat[0], MatS6()) );
+   //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
+   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+   //      dist = lmd.DistanceBetween(vs6[lat]);
+   //   }
+   //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
+   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+   //      dist = (vs6[0] - vs6[lat]).norm( );
+   //   }
+   //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
+   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+   //      dist = (vs6[0] - vs6[lat]).norm( );
+   //   }
+   //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
+   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+   //      dist = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
+   //   }
+   //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
+   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+   //      dist = sd.DistanceBetween( vLat[0], vLat[lat] );
+   //   }
+   //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
    }
 
-   return 0;
+   //return 0;
 }
 
 /*

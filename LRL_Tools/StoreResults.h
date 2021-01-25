@@ -313,7 +313,7 @@ private:
       for (size_t i = 0; i < keylist.size(); ++i) {
          if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
          it = m_tree.find(keylist[i]);
-         std::cout << "item " << i << "  " << m_keyName << "= " << keylist[i] << "  count=" << (*it).second.GetCount() << std::endl;
+         std::cout << "item " << i << "  " << m_keyName << "= " << (*it).first << "  count=" << (*it).second.GetCount() << std::endl;
 
          if (m_nmax > 0) {
             for (size_t k = 0; k < (*it).second.m_sampleData.size(); ++k) {

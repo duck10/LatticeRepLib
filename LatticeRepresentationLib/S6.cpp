@@ -433,6 +433,21 @@ size_t S6::CountPositive(void) const {
    return CountPositive(*this);
 }
 
+S6 S6::FindBestMatchAmongReflections(const S6& s2) const {
+   static const std::vector<MatS6> refl_one = MatS6::GetReflections();
+   double bestDistance = DBL_MAX;
+   S6 best;
+   for (size_t i = 0; i < refl_one.size(); ++i) {
+      const S6 testS6 = refl_one[i] * s2;
+      const double test = (*this - testS6).norm();
+      if (test < bestDistance) {
+         best = testS6;
+         bestDistance = test;
+      }
+   }
+   return best;
+}
+
 S6 S6::RandomUnreduceOne(const S6& s6) {
    const double choice = 12.0*rhrandS6.urand();
 

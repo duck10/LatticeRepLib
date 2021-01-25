@@ -20,7 +20,6 @@ public:
    PairReporter& operator=(const std::pair<T1, T2>& p) {
       m_pair.first = p.first;
       m_pair.second = p.second;
-      m_separator = "";
       return *this;
    }
 
