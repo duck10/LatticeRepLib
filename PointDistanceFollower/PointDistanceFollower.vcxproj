@@ -20,10 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.cpp" />
-    <ClCompile Include="FileOperations.cpp" />
+    <ClCompile Include="..\LRL_Tools\FileOperations.cpp" />
     <ClCompile Include="FollowerConstants.cpp" />
     <ClCompile Include="FollowerIO.cpp" />
-    <ClCompile Include="LinearAxis.cpp" />
     <ClCompile Include="MAIN_PointDistanceFollower.cpp" />
     <ClCompile Include="Multifollower.cpp" />
     <ClCompile Include="OutlierFinder.cpp" />
@@ -39,12 +38,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h" />
+    <ClInclude Include="..\LRL_Tools\FileOperations.h" />
     <ClInclude Include="DistanceLineDescriptions.h" />
-    <ClInclude Include="FileOperations.h" />
     <ClInclude Include="FileWriter.h" />
     <ClInclude Include="FollowerConstants.h" />
     <ClInclude Include="FollowerIO.h" />
-    <ClInclude Include="LinearAxis.h" />
     <ClInclude Include="LRL_Path.h" />
     <ClInclude Include="MultiFollower.h" />
     <ClInclude Include="OutlierFinder.h" />
