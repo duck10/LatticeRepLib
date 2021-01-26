@@ -37,6 +37,7 @@ static double TriangleAreaFromSides(const double a, const double b, const double
    const double sign = (trialValue >= 0.0) ? 1.0 : -1.0;
    return sign * std::sqrt(std::abs(trialValue));
 }
+
 static double SqrtTriangleAreaFromSides(const double a, const double b, const double c)
 {
    const double trialValue = TriangleAreaFromSides(a, b, c); // Heron's formula

@@ -228,9 +228,14 @@ Vector_3 ( const Vector_3& o )
         return( Vector_3( -v[0], -v[1], -v[2] ) );
     }
 
-    inline double Norm ( void ) const
+    inline double norm(void) const
     {
-        return( sqrt( v[0]*v[0] + v[1]*v[1] + v[2]*v[2] ) );
+       return(sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
+    }
+
+    inline double Norm(void) const
+    {
+       return(sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
     }
 
     inline double SquaredLength ( void ) const

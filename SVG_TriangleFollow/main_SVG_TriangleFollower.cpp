@@ -20,6 +20,7 @@
 #include "G6.h"
 #include "FollowerTools.h"
 #include "GenerateRandomLattice.h"
+#include "LinearAxis.h"
 #include "LRL_MaximaTools.h"
 #include "ProcessTriangle.h"
 #include "ProgressData.h"

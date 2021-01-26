@@ -138,7 +138,7 @@ Vector_3 Vector_3::MV( const Matrix_3x3& m ) const
 // Description: multiply two matrices
 //
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-inline Matrix_3x3 Matrix_3x3::operator* ( const Matrix_3x3& o ) const
+ Matrix_3x3 Matrix_3x3::operator* ( const Matrix_3x3& o ) const
 //-------------------------------------------------------------------------------------
 {
     return(Matrix_3x3(  m[0]*o.m[0] + m[1]*o.m[3] + m[2]*o.m[6],

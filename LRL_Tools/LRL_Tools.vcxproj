@@ -149,6 +149,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ConstSingleton_T.h" />
+    <ClInclude Include="FileOperations.h" />
+    <ClInclude Include="LinearAxis.h" />
+    <ClInclude Include="LRL_CreateFileName.h" />
     <ClInclude Include="LRL_DataStreamToString.h" />
     <ClInclude Include="LRL_DataToSVG.h" />
     <ClInclude Include="LRL_inverse.h" />
@@ -163,11 +166,16 @@
     <ClInclude Include="spline_under_tension.hpp" />
     <ClInclude Include="StoreResults.h" />
     <ClInclude Include="SuperFastHash.h" />
+    <ClInclude Include="SVG_Tools.h" />
     <ClInclude Include="Theta.h" />
     <ClInclude Include="TNear.h" />
+    <ClInclude Include="TriangleAreaFromSides.h" />
     <ClInclude Include="triple.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileOperations.cpp" />
+    <ClCompile Include="LinearAxis.cpp" />
+    <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="LRL_inverse.cpp" />
     <ClCompile Include="LRL_MaximaTools.cpp" />
     <ClCompile Include="LRL_RandTools.cpp" />
@@ -175,6 +183,8 @@
     <ClCompile Include="LRL_Vector3.cpp" />
     <ClCompile Include="spline_under_tension.cpp" />
     <ClCompile Include="SuperFastHash.cpp" />
+    <ClCompile Include="SVG_Tools.cpp" />
+    <ClCompile Include="TriangleAreaFromSides.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

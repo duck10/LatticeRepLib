@@ -124,7 +124,7 @@ C3::C3(const std::vector<double>& v)
       m_c.resize(3);
       m_valid = true;
       for (size_t i = 0; i < C3::size(); ++i)
-         m_c[i] = std::complex<double>(v[i], v[i + 3]);
+         m_c[i] = std::complex<double>(v[2*i], v[2*i + 1]);
    }
 }
 

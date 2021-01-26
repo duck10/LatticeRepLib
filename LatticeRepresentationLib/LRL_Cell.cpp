@@ -429,7 +429,11 @@ LRL_Cell LRL_Cell::randDeloneUnreduced(const double d) {//LRL_Cell::randomLattic
    return d*randDeloneUnreduced()/ randomLatticeNormalizationConstant;
 }
 
-
+Matrix_3x3 LRL_Cell::Cart() const {
+   static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
+   return Matrix_3x3::Cart(m_cell[0], m_cell[1], m_cell[2], 
+      degreesPerRad*m_cell[3], degreesPerRad*m_cell[4], degreesPerRad*m_cell[5]);
+}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 // Name: vvtorow(const double m,

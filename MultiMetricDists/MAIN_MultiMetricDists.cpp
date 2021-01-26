@@ -20,6 +20,7 @@
 #include "LRL_ToString.h"
 #include "Selling.h"
 #include "Triangle.h"
+#include "TriangleAreaFromSides.h"
 
 
 void Header(void) {
@@ -92,12 +93,6 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    return cellDataList;
 }
 
-static double TriangleAreaFromSides(const double a, const double b, const double c) {
-   const double s = (a + b + c) / 2.0; // s is half the perimeter
-   const double trialValue = 0.5 * (s * (s - a)*(s - b)*(s - c)); // Heron's formula
-   const double sign = (trialValue >= 0.0) ? 1.0 : -1.0;
-   return sign * std::sqrt(std::abs(trialValue));
-}
 
 static double SqrtTriangleAreaFromSides(const double a, const double b, const double c)
 {

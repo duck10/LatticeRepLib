@@ -243,8 +243,20 @@ bool ReadGlobalData::GetDataFromCIN( const std::vector<ReadGlobalData::ParseData
    }
 }
 
+template<typename T> 
+ReadGlobalData::ParseData  ParseDataA(const std::string& commandName, const std::string& dataType, const T& t ) {
+   return ReadGlobalData::ParseData(commandName, dataType, (void*)&t);
+}
+
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-const std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure( void ) {
+std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure( void ) {
+
+
+   const auto parseDataA = ParseDataA(LRL_StringTools::strToupper("PrintDistanceData"), "bool", FollowerConstants::globalPrintAllDistanceData);
+   const auto parseDataB = ParseDataA(LRL_StringTools::strToupper("PerturbBy"), "double", FollowerConstants::globalFractionalAmountToPerturb);
+
+
+
    std::vector<ParseData> v;
 
    v.push_back( ParseData( LRL_StringTools::strToupper( "PrintDistanceData" ), "bool", (void*)&FollowerConstants::globalPrintAllDistanceData ) );

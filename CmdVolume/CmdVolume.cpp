@@ -1,0 +1,15 @@
+
+#include <iostream>
+
+#include "LRL_ReadLatticeData.h"
+
+
+int main()
+{
+   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   for (size_t i = 0; i < inputList.size(); ++i) {
+      const LRL_Cell cell(inputList[i].GetCell());
+      const double volume = cell.Volume();
+      std::cout << "input cell " << cell << "  Volume " << volume << std::endl;
+   }
+}

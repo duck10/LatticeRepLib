@@ -12,6 +12,7 @@
 
 #include "BasisBase.h"
 #include "C3.h"
+#include "LRL_Vector3.h"
 #include "VecN.h"
 
 #include <string>
@@ -112,6 +113,8 @@ public:
    static std::string GetName(void) { return "LRL_Cell, unit cell"; }
 
    static double GetNormalization(void) { return randomLatticeNormalizationConstant; }
+
+   Matrix_3x3 Cart() const;
 
 protected:
    std::vector<double> m_cell;

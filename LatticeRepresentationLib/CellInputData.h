@@ -25,6 +25,7 @@ public:
    void SetStrCell(const std::string& s) { m_strCell = s; }
    void SetCell(const LRL_Cell& c) { m_cell = c; }
    void SetVarietyRange(const std::pair<int, int>& p) { m_varietyRange = p; }
+   bool IsValid() const { return m_cell.IsValid(); }
 
 protected:
    std::string m_lattice;
