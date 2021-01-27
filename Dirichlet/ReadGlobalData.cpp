@@ -6,6 +6,7 @@
 #include "LRL_RandTools.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
+#include "ParseData.h"
 #include "Theta.h"
 
 #include <algorithm>
@@ -82,23 +83,25 @@ const std::pair<int,int> Get2IntData( const std::vector<std::string>& s ) {
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 void SetGlobalValue( const std::string& dataType, 
                      const std::vector<std::string>& value, 
+                     const std::string& wholeLine,
                      void* pData ) {
-   if (value.size() > 2) {}
+   //if (value.size() > 2) {}
+   if (false) {}
    else if ( dataType == "bool" ) {
       *(bool*)pData = GetBoolData( value[1] );
    } else if ( dataType == "int" ) {
       *(int*)pData = GetIntData( value[1] );
    } else if ( dataType == "double" ) {
       *(double*)pData = GetDoubleData( value[1] );
-   } else if ( dataType == "2doubles" ) {
-      const std::pair<int,int> plotSpec = Get2IntData( value );
-      *(std::pair<int,int>*)pData = plotSpec;
-   } else if ( dataType == "string" ) {
+   }
+   else if (dataType == "string") {
       *(std::string*)pData = value[1];
-   } else if (dataType == "fixRandomSeed") {
-      *(bool*)pData = GetBoolData(value[1]);
-   } else if (dataType == "FollowerMode") {
-   //   if (LRL_StringTools::strToupper(value[1]) == "LINE") {
+   }
+   else if (dataType == "vector") {
+      (*(std::vector<std::string>*)pData).push_back(wholeLine);
+
+
+      //   if (LRL_StringTools::strToupper(value[1]) == "LINE") {
    //      FollowerConstants::globalFollowerMode = FollowerConstants::globalLine;
    //   }
    //   else if (LRL_StringTools::strToupper(value[1]) == "LINE3") {
@@ -175,7 +178,7 @@ std::string TranslateGlobalValue( const std::string& dataType, void* pData ) {
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 const std::pair<std::string, void*> FindBestTextMatch( const std::string& stringToMatch,
-                                                       const std::vector<ReadGlobalData::ParseData>& parseData,
+                                                       const std::vector<ParseData>& parseData,
                                                        const ThetaMatch<std::string>& tMatch ) {
    size_t bestMatchIndex = 0;
    double bestMatch = DBL_MAX;
@@ -196,7 +199,7 @@ const std::pair<std::string, void*> FindBestTextMatch( const std::string& string
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-bool ReadGlobalData::GetDataFromCIN( const std::vector<ReadGlobalData::ParseData>& parseData  ) {
+bool ReadGlobalData::GetDataFromCIN( const std::vector<ParseData>& parseData  ) {
    ThetaMatch<std::string> tMatch;
    char buffer[200];
 
@@ -215,41 +218,9 @@ bool ReadGlobalData::GetDataFromCIN( const std::vector<ReadGlobalData::ParseData
       const std::vector<std::string> vStr = SplitBetweenBlanks( s );
       if ( vStr.empty( ) || vStr[0].empty( ) || bestMatch.first.empty( ) )
          return( true );
-      SetGlobalValue( bestMatch.first, vStr, bestMatch.second );
+      SetGlobalValue( bestMatch.first, vStr, s, bestMatch.second );
       return( true );
    }
-}
-
-std::string Type(const int i) { return "int"; }
-std::string Type(const double i) { return "double"; }
-std::string Type(const std::string& i) { return "string"; }
-
-template<typename T> 
-ReadGlobalData::ParseData  ParseDataT(const std::string& commandName,const T& t ) {
-   return ReadGlobalData::ParseData(LRL_StringTools::strToupper(commandName), Type(t), (void*)&t);
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure( void ) {
-
-   std::vector<ParseData> v;
-
-   v.push_back( ParseDataT("LatticeMax",  DirichletConstants::latticeLimit));
-   v.push_back( ParseDataT("images",      DirichletConstants::numberOfImages));
-   v.push_back(ParseDataT("xsize", DirichletConstants::canvas_x_size));
-   v.push_back(ParseDataT("ysize", DirichletConstants::canvas_y_size));
-   v.push_back(ParseDataT("ImageHeight", DirichletConstants::imageHeightPx));
-   v.push_back(ParseDataT("showHidden", DirichletConstants::showHiddenLines));
-   v.push_back(ParseDataT("xrotate", DirichletConstants::rotateX));
-   v.push_back(ParseDataT("yrotate", DirichletConstants::rotateY));
-   v.push_back( ParseDataT("zrotate",     DirichletConstants::rotateZ));
-   v.push_back( ParseDataT("scale",       DirichletConstants::scale));
-   v.push_back( ParseDataT("hiddencolor", DirichletConstants::hiddenLineColor));
-   v.push_back( ParseDataT("note",        DirichletConstants::note));
-
-   const int i19191 = 19191;
-
-   return( v );
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -269,7 +240,7 @@ std::string ReadGlobalData::FormatGlobalDataAsString( const std::vector<ParseDat
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 ReadGlobalData::ReadGlobalData( ) {
    std::cout << "Input Global Data, end with \"end\"" << std::endl;
-   const std::vector<ParseData> inputLabels = BuildParseStructure( );
+   const std::vector<ParseData> inputLabels = DirichletConstants::BuildParseStructure( );
 
    while( std::cin && GetDataFromCIN( inputLabels ) ) { }
 

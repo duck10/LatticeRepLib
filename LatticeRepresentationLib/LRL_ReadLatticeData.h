@@ -9,8 +9,9 @@ class LRL_ReadLatticeData : public CellInputData {
 public:
    LRL_ReadLatticeData( const int seed = 0);
    LRL_ReadLatticeData read();
+   LRL_ReadLatticeData CreateLatticeData(const std::string& s);
    std::vector<LRL_ReadLatticeData> ReadLatticeData();
-      void CellReader( const std::string& s );
+   void CellReader( const std::string& s );
    void CellReader(const std::string& lattice, const std::string& cell);
 
    static std::vector<CellInputData> ReadAllLatticeData(const int seed);
