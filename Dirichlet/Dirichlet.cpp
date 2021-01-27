@@ -12,8 +12,8 @@ static const std::string letters( "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H");
 
 LRL_Cell Dirichlet::ReadAndReduceCell() {
    std::string lattice;
-   LRL_ReadLatticeData rcd;
-   rcd.read();
+   LRL_ReadLatticeData rcdA;
+   const LRL_ReadLatticeData rcd = rcdA.read();
    lattice = rcd.GetLattice();
    if ((!lattice.empty()) && (static_cast<char>(letters.find(toupper(lattice[0]))) != std::string::npos)) {
       LRL_Cell cell = LatticeConverter::SellingReduceCell(lattice, rcd.GetCell());

@@ -172,6 +172,7 @@
     <ClInclude Include="Dirichlet.h" />
     <ClInclude Include="DirichletConstants.h" />
     <ClInclude Include="Faces.h" />
+    <ClInclude Include="ParseData.h" />
     <ClInclude Include="ReadGlobalData.h" />
     <ClInclude Include="SVG_Tools.h" />
   </ItemGroup>

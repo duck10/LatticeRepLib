@@ -514,12 +514,12 @@ std::string OutputSVG(const std::string& s, const Cell_Faces& cell, const std::s
    std::vector<std::string> scell;
    scell.push_back(stringCell);
    scell.push_back(addedInfo);
+   scell.push_back(DirichletConstants::note);
 
 
 
    const std::string header = ImageHeader(DirichletConstants::canvas_x_size, DirichletConstants::canvas_y_size) + "\n";
    std::vector<std::string> footer = ImageFooter(scell);
-   footer.push_back(DirichletConstants::note);
 
    std::string output(header);
    output += s;
@@ -555,13 +555,13 @@ std::vector<std::string> MadeStereo(const std::vector<std::string>& vsin) {
    return vsout;
 }
 
-const int maxLatticeLimit = 2;
+const int maxLatticeLimit = 1;
 
 std::vector<Vector_3> CreateVectorOfLatticePoints(const Matrix_3x3& m) {
    std::vector<Vector_3> v;
-   for (int face = -maxLatticeLimit + 1; face < maxLatticeLimit; ++face) {
-      for (int j = -maxLatticeLimit + 1; j < maxLatticeLimit; ++j) {
-         for (int k = -maxLatticeLimit + 1; k < maxLatticeLimit; ++k) {
+   for (int face = -maxLatticeLimit; face <= maxLatticeLimit; ++face) {
+      for (int j = -maxLatticeLimit; j <= maxLatticeLimit; ++j) {
+         for (int k = -maxLatticeLimit; k <= maxLatticeLimit; ++k) {
             double di = face;
             double dj = j;
             double dk = k;
@@ -726,7 +726,14 @@ void PrintFaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>& 
 }
 
 int main() {
+
+   LRL_ReadLatticeData rld;
+   rld.CellReader("p 10 10 10  90 90 90");
    ReadGlobalData();
+
+
+   const std::vector<std::string> constants = DirichletConstants::cellData;
+
    Dirichlet dc(Dirichlet::ReadAndReduceCell());
    const std::vector<Dirichlet_Intersections> filteredIntersections = dc.GenerateIntersectionList();
    const Dirichlet_Faces faces(filteredIntersections);
@@ -761,19 +768,4 @@ int main() {
    const std::string svg = OutputSVG(ConcatanateStrings(stereoImages), cell, records);
 
    exit(0); 
-
-   /*
-   PROPOSED CONTROL PARAMETERS
-   latticelimit (fix the off by one current value)
-   ROTATE (to be applied before stereo or plotting, may be multiples)
-   number of images
-   scale
-   Delone Type (as opposed to cells) (where does this go: header or cell section?)
-   unit cells
-   ?? canvas size ??
-   hide/show hidden lines
-
-   */
-
-
 }
