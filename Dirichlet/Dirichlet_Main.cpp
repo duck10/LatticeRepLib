@@ -10,6 +10,7 @@
 #include "DirichletConstants.h"
 #include "Faces.h"
 #include "FileOperations.h"
+#include "LatticeConverter.h"
 #include "LRL_DataStreamToString.h"
 #include "LRL_DataToSVG.h"
 #include "LRL_ReadLatticeData.h"
@@ -738,34 +739,45 @@ int main() {
    const std::vector<Dirichlet_Intersections> filteredIntersections = dc.GenerateIntersectionList();
    const Dirichlet_Faces faces(filteredIntersections);
    const Dirichlet_Faces filteredFaces(faces);
-   dc.GetCell();
+   std::vector<std::string> strCells;
+   const std::vector<std::string> cellText = DirichletConstants::cellData;
+   for (size_t i = 0; i < cellText.size(); ++i) {
+      const std::string s = cellText[i].substr(5);
+      strCells.push_back(s);
+   }
 
-   //=========================================================================================================
+   for ( size_t whichCell =0; whichCell<strCells.size(); ++whichCell)
+   {
+      //=========================================================================================================
+      static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
 
-   static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
+      const std::string lattice(1, strCells[whichCell][0]);
+      const std::string theCell = strCells[whichCell].substr(2);
+      LatticeConverter lc;
+      const LRL_Cell primitiveCell = lc.MakePrimitiveCell(lattice, theCell);
+      const LRL_Cell reducedCell = lc.SellingReduceCell(lattice, theCell);
 
-   const LRL_Cell reducedCell = dc.GetCell();
-   const Matrix_3x3 cart(reducedCell.Cart());
-   const Cell_Faces cell(reducedCell, cart);
-   const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(cart);
+      const Matrix_3x3 cart(reducedCell.Cart());
+      const Cell_Faces cellFaces(reducedCell, cart);
+      const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(cart);
 
-   std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
-   const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(dirichletFaces, tree);
-   //PrintRawIntersection(v_Intersections);
-   const ANGLESFORFACES vvPoints = AssignPointsToFaceList(v_Intersections);
+      std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
+      const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(dirichletFaces, tree);
+      //PrintRawIntersection(v_Intersections);
+      const ANGLESFORFACES vvPoints = AssignPointsToFaceList(v_Intersections);
 
-   const ANGLESFORFACES ringed = MakeRings(vvPoints, v_Intersections.second);
+      const ANGLESFORFACES ringed = MakeRings(vvPoints, v_Intersections.second);
 
-   const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(DirichletConstants::rotateX / degreesPerRad);
-   const Matrix_3x3 m2 = Vector_3(0, 1, 0).Rotmat(DirichletConstants::rotateY / degreesPerRad);
-   std::vector<ANGLESFORFACES> rings = CreateSeriesOfImages(ringed, DirichletConstants::numberOfImages, m1, m2);
+      const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(DirichletConstants::rotateX / degreesPerRad);
+      const Matrix_3x3 m2 = Vector_3(0, 1, 0).Rotmat(DirichletConstants::rotateY / degreesPerRad);
+      std::vector<ANGLESFORFACES> rings = CreateSeriesOfImages(ringed, DirichletConstants::numberOfImages, m1, m2);
 
-   const std::vector<std::string> series = DrawSeriesOfObjects(rings);
-   const std::vector<std::string> stereoImages = MadeStereo(series);
+      const std::vector<std::string> series = DrawSeriesOfObjects(rings);
+      const std::vector<std::string> stereoImages = MadeStereo(series);
 
-   const std::vector<Vector_3> indices = RecoverIndicesOfFaces(cart, ringed);
-   const std::string records = FaceRecords(ringed, indices);
-   const std::string svg = OutputSVG(ConcatanateStrings(stereoImages), cell, records);
-
+      const std::vector<Vector_3> indices = RecoverIndicesOfFaces(cart, ringed);
+      const std::string records = FaceRecords(ringed, indices);
+      const std::string svg = OutputSVG(ConcatanateStrings(stereoImages), cellFaces, records);
+   }
    exit(0); 
 }
