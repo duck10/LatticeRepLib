@@ -21,6 +21,7 @@
 #include <string>
 #include <utility>
 
+std::string ReadGlobalData::m_constantData = "";
 //std::string       FollowerConstants::globalDistanceDisable;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -82,47 +83,21 @@ const std::pair<int,int> Get2IntData( const std::vector<std::string>& s ) {
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 void SetGlobalValue( const std::string& dataType, 
-                     const std::vector<std::string>& value, 
+                     const std::vector<std::string>& values, 
                      const std::string& wholeLine,
                      void* pData ) {
-   //if (value.size() > 2) {}
-   if (false) {}
-   else if ( dataType == "bool" ) {
-      *(bool*)pData = GetBoolData( value[1] );
+   if ( dataType == "bool" ) {
+      *(bool*)pData = GetBoolData( values[1] );
    } else if ( dataType == "int" ) {
-      *(int*)pData = GetIntData( value[1] );
+      *(int*)pData = GetIntData( values[1] );
    } else if ( dataType == "double" ) {
-      *(double*)pData = GetDoubleData( value[1] );
+      *(double*)pData = GetDoubleData( values[1] );
    }
    else if (dataType == "string") {
-      *(std::string*)pData = value[1];
+      *(std::string*)pData = values[1];
    }
-   else if (dataType == "vector") {
+   else if (dataType == "vectorStr") {
       (*(std::vector<std::string>*)pData).push_back(wholeLine);
-
-
-      //   if (LRL_StringTools::strToupper(value[1]) == "LINE") {
-   //      FollowerConstants::globalFollowerMode = FollowerConstants::globalLine;
-   //   }
-   //   else if (LRL_StringTools::strToupper(value[1]) == "LINE3") {
-   //      FollowerConstants::globalFollowerMode = FollowerConstants::globalLine3;
-   //   }
-   //   else if (LRL_StringTools::strToupper(value[1]) == "TRIANGLE") {
-   //      FollowerConstants::globalFollowerMode = FollowerConstants::globaltriangle;
-   //   }
-   //   else {
-   //      FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
-   //   }
-   //}
-   //else if (dataType == "DistanceEnableString") {
-   //   FollowerConstants::globalDistanceEnableList.push_back( value[1]);
-   //}
-   //else if (dataType == "DistanceDisableString") {
-   //   std::vector<std::string>& thelist(FollowerConstants::globalDistanceEnableList);
-   //   const std::vector<std::string>::iterator it = std::find(thelist.begin(), thelist.end(),  value[1]) ;
-   //   if (thelist.end() != it) thelist.erase(it);
-   //}
-   //else {
    }
 }
 
@@ -147,36 +122,6 @@ G6 ReadGlobalData::GeneratePerturbation(const G6& v) {
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-std::string TranslateGlobalValue( const std::string& dataType, void* pData ) {
-   std::string s;
-
-   if ( dataType == "bool" )
-      s = *(bool*)pData ? "true" : "false";
-   else if ( dataType == "int" )
-      s = LRL_ToString(*(int*)pData);
-   else if ( dataType == "double" )
-      s = LRL_ToString(*(double*)pData);
-   else if ( dataType == "2doubles" )
-      s = LRL_ToString( (*(std::pair<int,int>*)pData).first ) + " " + LRL_ToString( (*(std::pair<int,int>*)pData).second );
-   else if ( dataType == "string" )
-      s = *(std::string*)pData;
-   //else if ( dataType == "fixRandomSeed" ) {
-   //   s = *(bool*)pData ? "true" : "false";
-	  //SetSeed(std::abs(GLOBAL_RunInputVector::globalConstantRandomSeed ? GLOBAL_RunInputVector::globalInputRandomSeed : (int)(time(0)%32767)) );
-   //}
-   //else if ( dataType == "FollowerMode" ) { //globalFollow, globalMovie, globalWeb
-   //   if ( (*(FollowerConstants::enumFollowerMode*)pData) == FollowerConstants::globalSinglePoint)
-   //      s = "point";
-   //   else
-   //      s = "line";
-   //}
- else {
-   }
-
-   return( s );
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 const std::pair<std::string, void*> FindBestTextMatch( const std::string& stringToMatch,
                                                        const std::vector<ParseData>& parseData,
                                                        const ThetaMatch<std::string>& tMatch ) {
@@ -185,7 +130,7 @@ const std::pair<std::string, void*> FindBestTextMatch( const std::string& string
    const std::string commandToMatch = SplitBetweenBlanks(stringToMatch)[0];
 
    for( size_t i=0; i!=parseData.size( ); ++i ) {
-      const double match = tMatch.theta(LRL_StringTools::strToupper(commandToMatch), parseData[i].m_label);
+      const double match = tMatch.theta(LRL_StringTools::strToupper(commandToMatch), parseData[i].GetLabel());
       if ( match < bestMatch ) {
          bestMatch = match;
          bestMatchIndex = i;
@@ -195,7 +140,28 @@ const std::pair<std::string, void*> FindBestTextMatch( const std::string& string
    if ( bestMatch > 0.9 )
       return( std::make_pair( "", (void*)0 ) );
    else
-      return(std::make_pair(parseData[bestMatchIndex].m_dataTypeToRead, parseData[bestMatchIndex].m_dataLocation));
+      return(std::make_pair(parseData[bestMatchIndex].GetDataType(), parseData[bestMatchIndex].GetLocation()));
+}
+
+std::string OutputConstants(const std::vector<ParseData>& v) {
+
+   std::string s;
+   for (size_t i = 0; i < v.size(); ++i) {
+      if (v[i].GetDataType() == "int")
+         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((int*)v[i].GetLocation())) + "\n";
+      if (v[i].GetDataType() == "double")
+         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((double*)v[i].GetLocation())) + "\n";
+      if (v[i].GetDataType() == "int")
+         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((int*)v[i].GetLocation())) + "\n";
+      if (v[i].GetDataType() == "string")
+         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((std::string*)v[i].GetLocation())) + "\n";
+      if (v[i].GetDataType() == "vectorStr")
+         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((std::vector<std::string>*)(v[i].GetLocation()))) + "\n";
+      const int i19191 = 19191;
+   }
+
+   std::cout << s << std::endl;
+   return s;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -211,30 +177,21 @@ bool ReadGlobalData::GetDataFromCIN( const std::vector<ParseData>& parseData  ) 
       vStrTest = SplitBetweenBlanks( s );
    } while ( (! std::cin) || s.empty( ) || vStrTest.empty( ) || vStrTest[0].empty( ) );
 
+   bool returnValue = false;
    if ( ! std::cin || s.substr(0,3)==std::string( "END" ) ) {
-      return( false );
+      returnValue = false;
    } else {
       const std::pair<std::string, void*> bestMatch = FindBestTextMatch( std::string(buffer), parseData, tMatch );
       const std::vector<std::string> vStr = SplitBetweenBlanks( s );
       if ( vStr.empty( ) || vStr[0].empty( ) || bestMatch.first.empty( ) )
-         return( true );
+         returnValue = true;
       SetGlobalValue( bestMatch.first, vStr, s, bestMatch.second );
-      return( true );
-   }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-std::string ReadGlobalData::FormatGlobalDataAsString( const std::vector<ParseData>& parseData ) {   
-   std::string s;
-   for( size_t i=0; i<parseData.size(); ++i )
-   {
-      const ParseData& pd = parseData[i];
-      s += pd.m_label + " " + pd.m_dataTypeToRead + " " + TranslateGlobalValue(pd.m_dataTypeToRead, pd.m_dataLocation) + "\n";
+      returnValue = true;
    }
 
-   s += "\n";
+   //OutputConstants(parseData);
 
-   return( s );
+   return returnValue;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -244,5 +201,6 @@ ReadGlobalData::ReadGlobalData( ) {
 
    while( std::cin && GetDataFromCIN( inputLabels ) ) { }
 
+   m_constantData = OutputConstants(inputLabels);
    //GLOBAL_Report::globalDataReport = FormatGlobalDataAsString( inputLabels );
 }

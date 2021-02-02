@@ -99,6 +99,7 @@ bool LRL_ReadLatticeData::SetD7Data( const std::string& inputDataType, std::vect
    const bool test = IsLatticeName( m_inputDataType, vD7_names );
    if (test) {
       m_cell = LRL_Cell( D7( fields ) );
+      m_lattice = "P";
    }
    return test;
 }
@@ -107,7 +108,7 @@ bool LRL_ReadLatticeData::SetG6Data( const std::string& inputDataType, std::vect
    const bool test = IsLatticeName( m_inputDataType, vG6_names );
    if (test) {
       m_cell = LRL_Cell( G6( fields ) );
-      const LRL_Cell_Degrees celd = m_cell;
+      m_lattice = "P";
    }
    return test;
 }
@@ -116,6 +117,7 @@ bool LRL_ReadLatticeData::SetC3Data( const std::string& inputDataType, std::vect
    const bool test = IsLatticeName( m_inputDataType, vC3_names );
    if (test) {
       m_cell = LRL_Cell( C3( fields ) );
+      m_lattice = "P";
    }
    return test;
 }
@@ -124,7 +126,7 @@ bool LRL_ReadLatticeData::SetS6Data( const std::string& inputDataType, std::vect
    const bool test = IsLatticeName( m_inputDataType, vS6_names );
    if (test) {
       m_cell = LRL_Cell( S6( fields ) );
-      const LRL_Cell_Degrees celd = m_cell;
+      m_lattice = "P";
    }
    return test;
 }
