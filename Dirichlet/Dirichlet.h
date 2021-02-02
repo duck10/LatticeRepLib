@@ -114,6 +114,8 @@ public:
 
 
    static LRL_Cell ReadAndReduceCell();
+   static LRL_Cell ParseAndReduceStringCellWithLattice(const std::string& strCell);
+   static LRL_Cell ParseAndReduceCell(const std::string& lattice, const std::string& strCell);
    std::vector<Vector_3> CreateVectorOfLatticePoints();
    std::vector<Dirichlet_Intersections> GenerateIntersectionList();
    std::vector<Dirichlet_Intersections> CleanIntersectionList(const std::vector<Dirichlet_Intersections>& vInter);
