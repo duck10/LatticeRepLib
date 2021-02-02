@@ -219,7 +219,7 @@ ANGLELIST RemoveDuplicatesFromOneAngleList(const ANGLELIST& anglelist) {
    for (size_t face = 1; face < anglelist.size(); ++face) {
       const double angle1 = anglelist[face - 1].first;
       const double angle2 = anglelist[face].first;
-      if (abs(angle2 - angle1) > 1.0E-3 && angle2 < 360.0+ initialAngle - 1.0E-3) {  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!  still need to handle -180 != 180
+      if (abs(angle2 - angle1) > 1.0E-3 && angle2 < 360.0 + initialAngle - 1.0E-3) {  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!  still need to handle -180 != 180
          intermediateOutput.push_back(anglelist[face]);
       }
    }
@@ -231,6 +231,9 @@ ANGLELIST RemoveDuplicatesFromOneAngleList(const ANGLELIST& anglelist) {
    if ((centerOfMass - intermediateOutput[0].second).Norm() < 1.0E-4) return ANGLELIST();
    const int i1919 = 19191;
    const size_t nio = intermediateOutput.size();
+   if (intermediateOutput.size() != anglelist.size()) {
+      int i19191 = 19191;
+   }
    return intermediateOutput;
 }
 
@@ -721,22 +724,22 @@ std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>
    ostr << std::endl;
    return ostr.str();
 }
-
-void ComputeCellFacesForOneCell(const LRL_Cell& cell) {
-
-   Dirichlet dc(cell);
-   const std::vector<Dirichlet_Intersections> filteredIntersections = dc.GenerateIntersectionList();
-   const Dirichlet_Faces faces(filteredIntersections);
-   const Dirichlet_Faces filteredFaces(faces);
-
-
-   std::vector<std::string> strCells;
-   const std::vector<std::string> cellText = DirichletConstants::cellData;
-   for (size_t i = 0; i < cellText.size(); ++i) {
-      const std::string s = cellText[i];
-      strCells.push_back(s);
-   }
-}
+//
+//void ComputeCellFacesForOneCell(const LRL_Cell& cell) {
+//
+//   Dirichlet dc(cell);
+//   const std::vector<Dirichlet_Intersections> filteredIntersections = dc.GenerateIntersectionList();
+//   const Dirichlet_Faces faces(filteredIntersections);
+//   const Dirichlet_Faces filteredFaces(faces);
+//
+//
+//   std::vector<std::string> strCells;
+//   const std::vector<std::string> cellText = DirichletConstants::cellData;
+//   for (size_t i = 0; i < cellText.size(); ++i) {
+//      const std::string s = cellText[i];
+//      strCells.push_back(s);
+//   }
+//}
 
 void PrintFaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>& indices) {
    std::cout << FaceRecords(rings, indices) << std::endl;
@@ -762,7 +765,7 @@ std::string HandleOneCell( const std::string& strCell) {
    const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(DirichletConstants::rotateX / degreesPerRad);
    const Matrix_3x3 m2 = Vector_3(0, 1, 0).Rotmat(DirichletConstants::rotateStereo / degreesPerRad);
 
-   std::vector<ANGLESFORFACES> rings = CreateSeriesOfImages(ringed, DirichletConstants::numberOfImages, m1, m2);
+   const std::vector<ANGLESFORFACES> rings = CreateSeriesOfImages(ringed, DirichletConstants::numberOfImages, m1, m2);
    const std::vector<std::string> series = DrawSeriesOfObjects(rings);
    const std::vector<std::string> stereoImages = MadeStereo(series);
 

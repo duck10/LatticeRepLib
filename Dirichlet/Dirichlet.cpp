@@ -16,10 +16,11 @@ LRL_Cell Dirichlet::ParseAndReduceStringCellWithLattice(const std::string& strCe
 }
 
 LRL_Cell Dirichlet::ParseAndReduceCell(const std::string& lattice, const std::string& strCell) {
+   LRL_Cell cell;
    if ((!lattice.empty()) && (static_cast<char>(letters.find(toupper(lattice[0]))) != std::string::npos)) {
-      LRL_Cell cell = LatticeConverter::SellingReduceCell(lattice, LRL_Cell(strCell));
-      return cell;
+      cell = LatticeConverter::SellingReduceCell(lattice, LRL_Cell(strCell));
    }
+   return cell;
 }
 
 LRL_Cell Dirichlet::ReadAndReduceCell() {
@@ -146,29 +147,29 @@ std::vector<Dirichlet_Intersections> Dirichlet::CreateAllIntersections(const std
    return vout;
 }
 
-std::vector<Dirichlet_Intersections> Dirichlet::CleanIntersectionList(const std::vector<Dirichlet_Intersections>& vInter) {
-   CNearTree<Vector_3> tree = Dirichlet::CreateTreeOfLatticePoints();
-   tree.insert(Vector_3(0, 0, 0));
-   const auto it_Origin = tree.NearestNeighbor(0.0001, Vector_3(0., 0., 0.));  // origin
+//std::vector<Dirichlet_Intersections> Dirichlet::CleanIntersectionList(const std::vector<Dirichlet_Intersections>& vInter) {
+//   CNearTree<Vector_3> tree = Dirichlet::CreateTreeOfLatticePoints();
+//   tree.insert(Vector_3(0, 0, 0));
+//   const auto it_Origin = tree.NearestNeighbor(0.0001, Vector_3(0., 0., 0.));  // origin
+//
+//   std::vector<Dirichlet_Intersections> vout;
+//   for (size_t i = 0; i < vInter.size(); ++i) {
+//      const auto it = tree.NearestNeighbor(DBL_MAX, vInter[i].GetCoordinates());
+//      if (it == it_Origin) {
+//         vout.push_back(vInter[i]);
+//      }
+//   }
+//   return vInter;
+//}
 
-   std::vector<Dirichlet_Intersections> vout;
-   for (size_t i = 0; i < vInter.size(); ++i) {
-      const auto it = tree.NearestNeighbor(DBL_MAX, vInter[i].GetCoordinates());
-      if (it == it_Origin) {
-         vout.push_back(vInter[i]);
-      }
-   }
-   return vout;
-}
-
-std::vector<Dirichlet_Intersections> Dirichlet::GenerateIntersectionList() {
-   const std::vector<Vector_3> vLattice = CreateVectorOfLatticePoints();
-   const std::vector<Dirichlet_Intersections> vInter = CreateAllIntersections(vLattice);
- 
-   const std::vector<Dirichlet_Intersections> vout = CleanIntersectionList(vInter);
-
-   return vout;
-}
+//std::vector<Dirichlet_Intersections> Dirichlet::GenerateIntersectionList() {
+//   const std::vector<Vector_3> vLattice = CreateVectorOfLatticePoints();
+//   const std::vector<Dirichlet_Intersections> vInter = CreateAllIntersections(vLattice);
+// 
+//   const std::vector<Dirichlet_Intersections> vout = CleanIntersectionList(vInter);
+//
+//   return vout;
+//}
 
 Dirichlet_Intersections::Dirichlet_Intersections(const Vector_3& v, const std::vector<size_t>& planes)
    : m_IsValid(true)
