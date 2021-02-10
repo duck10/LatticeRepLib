@@ -1,8 +1,10 @@
 #include "Dirichlet.h"
 
+#include "DirichletConstants.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
+#include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "TriangleAreaFromSides.h"
 
@@ -18,7 +20,11 @@ LRL_Cell Dirichlet::ParseAndReduceStringCellWithLattice(const std::string& strCe
 LRL_Cell Dirichlet::ParseAndReduceCell(const std::string& lattice, const std::string& strCell) {
    LRL_Cell cell;
    if ((!lattice.empty()) && (static_cast<char>(letters.find(toupper(lattice[0]))) != std::string::npos)) {
-      cell = LatticeConverter::SellingReduceCell(lattice, LRL_Cell(strCell));
+
+      if (DirichletConstants::sellingNiggli == "SELLING")
+         cell = LatticeConverter().SellingReduceCell(lattice, LRL_Cell(strCell));
+      else
+         cell = LatticeConverter().NiggliReduceCell(lattice, LRL_Cell(strCell));
    }
    return cell;
 }
@@ -29,7 +35,11 @@ LRL_Cell Dirichlet::ReadAndReduceCell() {
    const LRL_ReadLatticeData rcd = rcdA.read();
    lattice = rcd.GetLattice();
    if ((!lattice.empty()) && (static_cast<char>(letters.find(toupper(lattice[0]))) != std::string::npos)) {
-      LRL_Cell cell = LatticeConverter::SellingReduceCell(lattice, rcd.GetCell());
+      LRL_Cell cell = LatticeConverter::NiggliReduceCell(lattice, rcd.GetCell());
+      if (DirichletConstants::sellingNiggli == "SELLING")
+         cell = LatticeConverter().SellingReduceCell(lattice, rcd.GetCell());
+      else
+         cell = LatticeConverter().NiggliReduceCell(lattice, rcd.GetCell());
       return cell;
    }
    else {
@@ -46,10 +56,11 @@ double FixZero(const double d) {
 std::vector<Vector_3> Dirichlet::CreateVectorOfLatticePoints() {
    std::vector<Vector_3> v;
    std::vector<std::vector<size_t> > indexList;
-   static const int latticeLimit = 2;
-   for (int i = -latticeLimit + 1; i < latticeLimit; ++i) {
-      for (int j = -latticeLimit + 1; j < latticeLimit; ++j) {
-         for (int k = -latticeLimit + 1; k < latticeLimit; ++k) {
+
+   const int limit = DirichletConstants::latticeLimit;
+   for (int i = -limit + 1; i < limit; ++i) {
+      for (int j = -limit + 1; j < limit; ++j) {
+         for (int k = -limit + 1; k < limit; ++k) {
             std::vector<size_t> indices(3);
             indices[0] = i;
             indices[1] = j;

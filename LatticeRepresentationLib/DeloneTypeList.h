@@ -30,6 +30,12 @@ public:
    std::vector<DeloneFitResults> Fit( const std::string& type, const S6& s6, const S6& sig, const MatS6& m ) const;
    std::vector<DeloneFitResults> Fit( const S6& s6, const S6& sig, const MatS6& m ) const;
    static const std::vector<std::string> typelist;
+   static std::vector<std::pair<std::string, std::vector<MatS6> > > CreateAllPrjs();
+   static std::vector<std::pair<std::string, std::vector<MatS6> > > CreateAllPerps();
+   static std::vector<std::pair<std::string, std::vector<MatS6> > > CreateAllToCanon();
+   static std::vector<std::pair<std::string, std::string> > CreateE3CenteringMatrixList();
+   static std::vector<std::pair<std::string, std::string> > CreateCharacterList();
+   static std::vector<std::pair<std::string, std::string> > CreateBravaisTypeList();
 
 protected:
    static double GetFreeParams( const std::string& s );

@@ -22,18 +22,21 @@ hide/show hidden lines
 namespace DirichletConstants {
    extern int    numberOfImages; //ok
    extern int    imageHeightPx; //ok
+   extern int    latticeLimit; //ok
    extern int    canvas_x_size; //ok
    extern int    canvas_y_size; //ok
    extern double rotateX; //ok
    extern double rotateStereo; //ok
    extern double rotateZ;
    extern double scale; //ok
-   extern std::string note; //ok
+   extern std::vector<std::string> note; //ok
    extern std::string hiddenLineColor; //ok
+   extern std::string sellingNiggli; //ok
    extern std::string faceColor; //ok
-   extern std::string fileNamePrefix;
+   extern std::string fileNamePrefix; //ok
 
    extern std::vector<std::string> cellData; //ok
+   extern std::vector<std::string> inputErrors; //ok
 
    extern std::string S6; //ok
    extern std::string G6;
@@ -52,8 +55,8 @@ namespace DirichletConstants {
    extern std::string V;
    extern std::string RANDOM; //ok
 
-   extern std::vector<ParseData> BuildParseStructure(void);
-   extern std::string OutputConstants ();
+   std::vector<ParseData> BuildParseStructure(void);
+   std::string OutputConstants(void);
 
 
 }

@@ -12,7 +12,7 @@
 
 const std::vector<std::string> DeloneTypeList::typelist{ "C1","C3","C5","R1","R3","T1","T2","T5","O1A","O1B","O2",/*"O3",*/"O4","O5","M1A","M1B","M2A"/*,"M2B"*//*,"M3"*/,"M4"/*,"A1","A2","A3"*/,"H4" };
 
-std::vector<std::pair<std::string, std::string> > CreateBravaisTypeList() {
+std::vector<std::pair<std::string, std::string> > DeloneTypeList::CreateBravaisTypeList() {
    std::vector<std::pair<std::string, std::string> > v;
    v.push_back(std::make_pair("C1", "cI"));
    v.push_back(std::make_pair("C3", "cF"));
@@ -41,7 +41,7 @@ std::vector<std::pair<std::string, std::string> > CreateBravaisTypeList() {
    return v;
 }
 
-std::vector<std::pair<std::string, std::string> > CreateCharacterList() {
+std::vector<std::pair<std::string, std::string> > DeloneTypeList::CreateCharacterList() {
    std::vector<std::pair<std::string, std::string> > v;
    v.push_back(std::make_pair("C1", "rrr rrr"));
    v.push_back(std::make_pair("C3", "rr0 rr0"));
@@ -70,7 +70,7 @@ std::vector<std::pair<std::string, std::string> > CreateCharacterList() {
    return v;
 }
 
-std::vector<std::pair<std::string, std::string> > CreateE3CenteringMatrixList() {
+std::vector<std::pair<std::string, std::string> > DeloneTypeList::CreateE3CenteringMatrixList() {
    std::vector<std::pair<std::string, std::string> > v;
    v.push_back(std::make_pair("C1", "0 1 1  1 0 1  1 1 0"));
    v.push_back(std::make_pair("C3", "1 1 0 -1 1 0  1 1 2"));
@@ -107,7 +107,7 @@ std::vector<std::pair<std::string, std::string> > CreateE3CenteringMatrixList() 
    return v;
 }
 
-std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPrjs() {
+std::vector<std::pair< std::string, std::vector<MatS6> > > DeloneTypeList::CreateAllPrjs() {
    LabeledSellaMatrices lsm;
    std::vector<LabeledSellaMatrices> vprj = lsm.GetPrjs();
    std::vector<std::pair< std::string, std::vector<MatS6> > > v;
@@ -117,7 +117,7 @@ std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPrjs() {
    return v;
 }
 
-std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPerps() {
+std::vector<std::pair< std::string, std::vector<MatS6> > > DeloneTypeList::CreateAllPerps() {
    LabeledSellaMatrices lsm;
    std::vector<LabeledSellaMatrices> vperp = lsm.GetPerps();
    std::vector<std::pair< std::string, std::vector<MatS6> > > v;
@@ -127,7 +127,7 @@ std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllPerps() {
    return v;
 }
 
-std::vector<std::pair< std::string, std::vector<MatS6> > > CreateAllToCanon() {
+std::vector<std::pair< std::string, std::vector<MatS6> > > DeloneTypeList::CreateAllToCanon() {
    LabeledSellaMatrices lsm;
    std::vector<LabeledSellaMatrices> vToCanon = lsm.GetToCanons( );
    std::vector<std::pair< std::string, std::vector<MatS6> > > v;
@@ -145,7 +145,6 @@ DeloneTypeList::DeloneTypeList(const bool build)
    static const std::vector<std::pair<std::string, MatS6> >       centeringMatrices = CreateListOfCenteringMatrices( );
    static const std::vector<std::pair<std::string, int> > freeParams = CreateListOfFreeParams( );
 
-   LabeledSellaMatrices lsm;
    static const std::vector<std::pair<std::string, std::vector<MatS6> > >   prj = CreateAllPrjs( );
    static const std::vector<std::pair<std::string, std::vector<MatS6> > >   perp = CreateAllPerps( );
    static const std::vector<std::pair<std::string, std::vector<MatS6> > >   toCanon = CreateAllToCanon( );

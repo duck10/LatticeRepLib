@@ -1,0 +1,95 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="2000" height ="2000" viewBox = "0 0 2000 2000" 
+version = "1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Creation date and time _2021-02-09.14_13_38.-->
+<g transform="translate(50,300) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="91.3081, 4.99488  91.3081, 106.825  91.3081, 55.0051  91.3081, -46.825  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="80.6214, 115.7  80.6214, 63.8802  91.3081, 55.0051  91.3081, 106.825  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-31.3081, 106.825  -31.3081, 55.0051  80.6214, 63.8802  80.6214, 115.7  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-31.3081, -46.825  -20.6214, -55.7001  91.3081, -46.825  91.3081, 55.0051  80.6214, 63.8802  -31.3081, 55.0051  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-31.3081, 4.99488  -31.3081, 106.825  80.6214, 115.7  91.3081, 106.825  91.3081, 4.99488  -20.6214, -3.88019  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-20.6214, -3.88019  91.3081, 4.99488  91.3081, -46.825  -20.6214, -55.7001  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-31.3081, 4.99488  -20.6214, -3.88019  -20.6214, -55.7001  -31.3081, -46.825  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-31.3081, 4.99488  -31.3081, -46.825  -31.3081, 55.0051  -31.3081, 106.825  " />
+</g>
+<!--
+
+Reduced Cell 
+  10.00000  10.00000  10.00000  90.00000  90.00000  95.00000  
+  S6     0.00000   0.00000  -8.71557 -91.28443 -91.28443 -100.00000  
+  G6     100.000   100.000   100.000     0.000     0.000   -17.431  
+  D7     100.000   100.000   100.000   282.569   200.000   200.000   182.569  
+
+FACE  1 vertex count= 4   area= 11.8213    index -1 -1 0  Center of mass -4.56422 -4.98097 0
+   Edge lengths 1.18213 10 1.18213 10 
+FACE  8 vertex count= 4   area= 11.8213    index 1 1 0  Center of mass 4.56422 4.98097 0
+   Edge lengths 10 1.18213 10 1.18213 
+
+FACE  2 vertex count= 4   area= 91.6331    index -1 0 0  Center of mass -5 0 0
+   Edge lengths 10 9.16331 10 9.16331 
+FACE  7 vertex count= 4   area= 91.6331    index 1 0 0  Center of mass 5 0 0
+   Edge lengths 9.16331 10 9.16331 10 
+
+FACE  3 vertex count= 4   area= 91.6331    index 0 -1 0  Center of mass 0.435779 -4.98097 0
+   Edge lengths 9.16331 10 9.16331 10 
+FACE  6 vertex count= 4   area= 91.6331    index 0 1 0  Center of mass -0.435779 4.98097 0
+   Edge lengths 10 9.16331 10 9.16331 
+
+FACE  4 vertex count= 6   area= 99.6195    index 0 0 -1  Center of mass 0 0 -5
+   Edge lengths 9.16331 9.16331 1.18213 9.16331 9.16331 1.18213 
+FACE  5 vertex count= 6   area= 99.6195    index 0 0 1  Center of mass 0 0 5
+   Edge lengths 1.18213 9.16331 9.16331 1.18213 9.16331 9.16331 
+
+
+
+Global Constants
+IMAGES int 1
+XSIZE int 2000
+YSIZE int 2000
+LATTICELIMIT int 1
+IMAGEHEIGHT int 90
+XROTATE double 25
+YROTATE double 15
+ZROTATE double 0
+SCALE double 1
+HIDDENCOLOR string LIGHTGRAY
+FACECOLOR string NONE
+NOTE vectorStr
+FILEPREFIX string DC
+INPUTERRORS vectorStr
+SELLING string SELLING
+CELL INPUT  vectorStr P 10 10 10 90 90 90
+	P 10 10 10 90 90 91
+	P 10 10 10 90 90 92
+	P 10 10 10 90 90 93
+	P 10 10 10 90 90 94
+	P 10 10 10 90 90 95
+	P 10 10 10 90 90 96
+	P 10 10 10 90 90 97
+	P 10 10 10 90 90 98
+	P 10 10 10 90 90 99
+	P 10 10 10 90 90 100
+	P 10 10 10 90 90 101
+	P 10 10 10 90 90 102
+	P 10 10 10 90 90 103
+	P 10 10 10 90 90 104
+	P 10 10 10 90 90 105
+	P 10 10 10 90 90 106
+	P 10 10 10 90 90 107
+	P 10 10 10 90 90 108
+	P 10 10 10 90 90 109
+	P 10 10 10 90 90 110
+	P 10 10 10 90 90 111
+	P 10 10 10 90 90 112
+	P 10 10 10 90 90 113
+	P 10 10 10 90 90 114
+	P 10 10 10 90 90 115
+	P 10 10 10 90 90 116
+	P 10 10 10 90 90 117
+	P 10 10 10 90 90 118
+	P 10 10 10 90 90 119
+	P 10 10 10 90 90 120
+	
+IMAGES int 1
+XSIZE int 2000
+--><!-- Run Constants--></svg>
