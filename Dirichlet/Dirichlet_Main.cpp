@@ -6,15 +6,18 @@
 #include <string>
 #include <utility>
 
+#include "D7.h"
 #include "Dirichlet.h"
 #include "DirichletConstants.h"
 #include "Faces.h"
 #include "FileOperations.h"
+#include "G6.h"
 #include "LatticeConverter.h"
 #include "LRL_CreateFileName.h"
 #include "LRL_DataStreamToString.h"
 #include "LRL_DataToSVG.h"
 #include "LRL_ReadLatticeData.h"
+#include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "LRL_Vector3.h"
 #include "ReadGlobalData.h"
@@ -58,18 +61,17 @@ std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections( std::vec
    const long n0 = it0.get_position();
    //
    //
-   for (size_t i1 = 0; i1 < n; ++i1) {
-      for (size_t i2 = 0; i2 < n; ++i2) {
-         for (size_t i3 = 0; i3 < n; ++i3) {
-            if (i1 == i2 || i1 == i3 || i2 == i3) continue;
+   for (size_t i1 = 0; i1 < n-1; ++i1) {
+      for (size_t i2 = i1+1; i2 < n-1; ++i2) {
+         if (i1 == i2) continue;
+         for (size_t i3 = i2+1; i3 < n; ++i3) {
+            if (i1 == i3 || i2 == i3) continue;
             Intersection intersection = Intersection::FindIntersectionForThreeFaces(vdf[i1], vdf[i2], vdf[i3]);
 
             const double d = intersection.GetCoord()[0];
             const bool b1 = !(intersection.GetCoord()[0] <= 0.0);
             const bool b2 = !(intersection.GetCoord()[0] > 0.0);
-            const bool b_both = b1 && b2;
-
-
+            const bool b_both = b1 && b2; // for test for indefinite value
 
             if (intersection.GetCoord()[0] != DBL_MAX && (!b_both) ) {
                const auto it = tree.NearestNeighbor(DBL_MAX, intersection.GetCoord());
@@ -77,24 +79,14 @@ std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections( std::vec
 
                double distanceFromOrigin = DBL_MAX;
                double nearestFoundDistance = DBL_MAX;
-               double size = DBL_MAX;
-               double difference = DBL_MAX;
                if (it != tree.end()) {
                   const size_t pos = it.get_position();
                   distanceFromOrigin = (intersection.GetCoord() - (*it0)).Norm();
                   nearestFoundDistance = (intersection.GetCoord() - (*it)).Norm();
-                  size = intersection.GetCoord().Norm();
-                  difference = distanceFromOrigin - nearestFoundDistance;
-                  const int i19191 = 19191;
                }
-
-               const long n = (it).get_position();
-               if (n == n0) {
-                  int i19191 = 19191;
-               }
-
+               //if (intersection.IsValid() ) {
                if (intersection.IsValid() && (bFindOrigin || abs(distanceFromOrigin - nearestFoundDistance < 1.0E-4))) {
-                  intersection.SetPlaneList(i1, i2, i3);
+                     intersection.SetPlaneList(i1, i2, i3);
                   vvindex.push_back({ i1, i2, i3 });
                   vIntersections.push_back(intersection);
                   vdf[i1].SetIndicesOfIntersection(i1,i2,i3);
@@ -217,24 +209,22 @@ ANGLELIST RemoveDuplicatesFromOneAngleList(const ANGLELIST& anglelist) {
    const double initialAngle = anglelist[0].first;
    intermediateOutput.push_back(anglelist[0]);
    for (size_t face = 1; face < anglelist.size(); ++face) {
-      const double angle1 = anglelist[face - 1].first;
-      const double angle2 = anglelist[face].first;
+      const double& angle1 = anglelist[face - 1].first;
+      const double& angle2 = anglelist[face].first;
       if (abs(angle2 - angle1) > 1.0E-3 && angle2 < 360.0 + initialAngle - 1.0E-3) {  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!  still need to handle -180 != 180
          intermediateOutput.push_back(anglelist[face]);
       }
    }
 
    const Vector_3 centerOfMass = CenterOfMassForOneFace(intermediateOutput);
-   ANGLELIST output;
-
    const double distanceFromOrigin = (centerOfMass - intermediateOutput[0].second).Norm();
-   if ((centerOfMass - intermediateOutput[0].second).Norm() < 1.0E-4) return ANGLELIST();
-   const int i1919 = 19191;
+   //if (distanceFromOrigin < 1.0E-4) return ANGLELIST();
+
    const size_t nio = intermediateOutput.size();
    if (intermediateOutput.size() != anglelist.size()) {
       int i19191 = 19191;
    }
-   return intermediateOutput;
+   return (intermediateOutput.size()>3) ? intermediateOutput : ANGLELIST();
 }
 
 ANGLELIST MoveOneFaceToCenterOfMass(const ANGLELIST& list) {
@@ -300,16 +290,6 @@ ANGLESFORFACES MakeRings(const ANGLESFORFACES& faces_in, const std::vector<Inter
    if (cm.Norm() > 1.0E-4) {
       const int i19191 = 19191;
    }
-
-   /*
-   Here, the center of mass is NO LONGER in the middle of the figure!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   
-   */
-
-
-
-
-
    return restored_faces_out;
 }
 
@@ -496,7 +476,7 @@ std::vector<std::string> DrawDirichletRings( const ANGLESFORFACES& newRinged) {
       }
    }
 
-   const double scale = DirichletConstants::imageHeightPx / maxCoord;
+   const double scale = DirichletConstants::imageHeightPx * DirichletConstants::scale / maxCoord;
    for (size_t cycle = 0; cycle < 1; ++cycle) {
       const ANGLESFORFACES faces(RotateAllFaces(m, sorted));
       m = m2 * m;
@@ -515,11 +495,12 @@ std::vector<std::string> DrawDirichletRings( const ANGLESFORFACES& newRinged) {
 
 std::string OutputSVG(const std::string& s, const Cell_Faces& cell, const std::string& addedInfo) {
    const std::string stringCell = 
-      LRL_ToString( "\nReduced Cell ", LRL_Cell_Degrees(cell.GetCell()), "\n  S6  ", S6(cell.GetCell()), "\n");
+      LRL_ToString( "\nReduced Cell \n", LRL_Cell_Degrees(cell.GetCell()), "\n  S6  ", S6(cell.GetCell()), "\n  G6  "
+         , G6(cell.GetCell()), "\n  D7  ", D7(cell.GetCell()), "\n\n");
    std::vector<std::string> scell;
    scell.push_back(stringCell);
    scell.push_back(addedInfo);
-   scell.push_back(DirichletConstants::note);
+   scell.insert(scell.end(), DirichletConstants::note.begin(), DirichletConstants::note.end());
 
 
 
@@ -559,10 +540,9 @@ std::vector<std::string> MadeStereo(const std::vector<std::string>& vsin) {
    return vsout;
 }
 
-const int maxLatticeLimit = 1;
-
 std::vector<Vector_3> CreateVectorOfLatticePoints(const Matrix_3x3& m) {
    std::vector<Vector_3> v;
+   const int maxLatticeLimit = DirichletConstants::latticeLimit;
    for (int face = -maxLatticeLimit; face <= maxLatticeLimit; ++face) {
       for (int j = -maxLatticeLimit; j <= maxLatticeLimit; ++j) {
          for (int k = -maxLatticeLimit; k <= maxLatticeLimit; ++k) {
@@ -745,11 +725,22 @@ void PrintFaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>& 
    std::cout << FaceRecords(rings, indices) << std::endl;
 }
 
+
 std::string HandleOneCell( const std::string& strCell) {
    LRL_ReadLatticeData rdc;
    rdc.CellReader(strCell);
 
-   const LRL_Cell reducedCell = LatticeConverter().SellingReduceCell(rdc.GetLattice(), rdc.GetCell());
+   if (! rdc.IsValid()) return "";
+
+   LRL_Cell reducedCell;
+
+   if (DirichletConstants::sellingNiggli == "SELLING")
+      reducedCell = LatticeConverter().SellingReduceCell(rdc.GetLattice(), rdc.GetCell());
+   else
+      reducedCell = LatticeConverter().NiggliReduceCell(rdc.GetLattice(), rdc.GetCell());
+
+
+
    const Matrix_3x3 cart(reducedCell.Cart());
    const Cell_Faces cellFaces(reducedCell, cart);
 
@@ -779,41 +770,28 @@ std::string HandleOneCell( const std::string& strCell) {
    return svg;
 }
 
-int main() {
-   //LRL_Cell testCellA = Dirichlet::ReadAndReduceCell();
-
-   ReadGlobalData();
-
+std::vector<std::string> RetrieveCellsAsStrings() {
    std::vector<std::string> strCells;
-   const std::vector<std::string> cellText = DirichletConstants::cellData;
+   const std::vector<std::string>& cellText = DirichletConstants::cellData;
    for (size_t i = 0; i < cellText.size(); ++i) {
       const std::string s = cellText[i];
       strCells.push_back(s);
    }
+   return strCells;
+}
+
+int main() {
+   ReadGlobalData();
+
+   std::vector<std::string> strCells = RetrieveCellsAsStrings();
 
    const std::string filePrefix =
       LRL_ToString(LRL_CreateFileName::Create(DirichletConstants::fileNamePrefix, "", true));
+
    for ( size_t whichCell =0; whichCell<strCells.size(); ++whichCell) {
       const std::string svg = HandleOneCell(strCells[whichCell]);
-      std::cout << svg << std::endl;
-
       const std::string fileName = filePrefix + LRL_ToString(whichCell) + ".svg";
-
-      //const std::string filename =
-      //   LRL_ToString(LRL_CreateFileName::Create(DirichletConstants::fileNamePrefix, LRL_ToString(whichCell) + "_",
-      //   true));
-
-
-
-
-      FileOperations::Write(fileName, svg);
+      if ( ! svg.empty()) FileOperations::Write(fileName, svg);
    }
-
-   /*
-   static bool OpenOutputFile( std::ofstream& fileout, const std::string& sFileName );
-   static void WriteFile( std::ofstream& fileout, const std::string& svg );
-   static bool CloseFile(std::ofstream& fileout) { fileout.close(); return true; }
-   static void Write( const std::string& sFileName, const std::string& svg );
-*/
    exit(0); 
 }

@@ -86,19 +86,24 @@ void SetGlobalValue( const std::string& dataType,
                      const std::vector<std::string>& values, 
                      const std::string& wholeLine,
                      void* pData ) {
-   if ( dataType == "bool" ) {
-      *(bool*)pData = GetBoolData( values[1] );
-   } else if ( dataType == "int" ) {
-      *(int*)pData = GetIntData( values[1] );
-   } else if ( dataType == "double" ) {
-      *(double*)pData = GetDoubleData( values[1] );
+   if (dataType == "bool") {
+      *(bool*)pData = GetBoolData(values[1]);
+   }
+   else if (dataType == "int") {
+      *(int*)pData = GetIntData(values[1]);
+   }
+   else if (dataType == "double") {
+      *(double*)pData = GetDoubleData(values[1]);
    }
    else if (dataType == "string") {
       *(std::string*)pData = values[1];
    }
    else if (dataType == "vectorStr") {
-      (*(std::vector<std::string>*)pData).push_back(wholeLine);
+      (*(std::vector<std::string>*)pData).push_back( wholeLine + "\n");
    }
+   else // data type unknown -- probably input error
+      //(*(std::vector<std::string>*)pData).push_back(wholeLine);
+      throw "unknown data type";
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -125,7 +130,7 @@ G6 ReadGlobalData::GeneratePerturbation(const G6& v) {
 const std::pair<std::string, void*> FindBestTextMatch( const std::string& stringToMatch,
                                                        const std::vector<ParseData>& parseData,
                                                        const ThetaMatch<std::string>& tMatch ) {
-   size_t bestMatchIndex = 0;
+   int bestMatchIndex = -1;
    double bestMatch = DBL_MAX;
    const std::string commandToMatch = SplitBetweenBlanks(stringToMatch)[0];
 
@@ -137,31 +142,13 @@ const std::pair<std::string, void*> FindBestTextMatch( const std::string& string
       }
    }
 
-   if ( bestMatch > 0.9 )
-      return( std::make_pair( "", (void*)0 ) );
-   else
-      return(std::make_pair(parseData[bestMatchIndex].GetDataType(), parseData[bestMatchIndex].GetLocation()));
-}
-
-std::string OutputConstants(const std::vector<ParseData>& v) {
-
-   std::string s;
-   for (size_t i = 0; i < v.size(); ++i) {
-      if (v[i].GetDataType() == "int")
-         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((int*)v[i].GetLocation())) + "\n";
-      if (v[i].GetDataType() == "double")
-         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((double*)v[i].GetLocation())) + "\n";
-      if (v[i].GetDataType() == "int")
-         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((int*)v[i].GetLocation())) + "\n";
-      if (v[i].GetDataType() == "string")
-         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((std::string*)v[i].GetLocation())) + "\n";
-      if (v[i].GetDataType() == "vectorStr")
-         s += v[i].GetLabel() + " " + v[i].GetDataType() + " " + LRL_ToString(*((std::vector<std::string>*)(v[i].GetLocation()))) + "\n";
-      const int i19191 = 19191;
+   if (bestMatch > 0.6) {
+      bestMatchIndex = 13;
+      return(std::make_pair("vectorStr", parseData[bestMatchIndex].GetLocation()));
    }
-
-   std::cout << s << std::endl;
-   return s;
+   else {
+      return(std::make_pair(parseData[bestMatchIndex].GetDataType(), parseData[bestMatchIndex].GetLocation()));
+   }
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -201,6 +188,6 @@ ReadGlobalData::ReadGlobalData( ) {
 
    while( std::cin && GetDataFromCIN( inputLabels ) ) { }
 
-   m_constantData = OutputConstants(inputLabels);
+   m_constantData = DirichletConstants::OutputConstants();
    //GLOBAL_Report::globalDataReport = FormatGlobalDataAsString( inputLabels );
 }
