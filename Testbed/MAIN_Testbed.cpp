@@ -607,9 +607,77 @@ void TestDistance(const S6& s1, const S6& s2) {
    const int i19191 = 19191;
 }
 
+const double r = -10;
+const double s = -30;
+const double t = -60;
+const double u = -80;
+const double v = -150;
+const double w = -220;
+const double zero = 0;
+
+std::string ConvertS6ToCharacter(const S6& s6) {
+   std::string sret;
+   for (size_t i = 0; i < 6; ++i) {
+      if (s6[i] == r) sret += 'r';
+      if (s6[i] == s) sret += 's';
+      if (s6[i] == t) sret += 't';
+      if (s6[i] == u) sret += 'u';
+      if (s6[i] == v) sret += 'v';
+      if (s6[i] == w) sret += 'w';
+      if (s6[i] == 0) sret += '0';
+      if (i == 2) sret += ' ';
+   }
+   return sret;
+}
+
+void ConvertCellsToC3_Assym() {
+   std::vector<std::pair<std::string, std::string> > chars = DeloneTypeList::CreateCharacterList();
+   for (size_t ch = 0; ch < chars.size(); ++ch) {
+      const std::string& name = chars[ch].first;
+      const std::string& character = chars[ch].second;
+      S6 s6;
+      size_t counter = 0;
+      for (size_t i = 0; i < character.length(); ++i) {
+         if (character[i] == ' ') continue;
+         if (character[i] == 'r') s6[counter] = r;
+         if (character[i] == 's') s6[counter] = s;
+         if (character[i] == 't') s6[counter] = t;
+         if (character[i] == 'u') s6[counter] = u;
+         if (character[i] == 'v') s6[counter] = v;
+         if (character[i] == 'w') s6[counter] = w;
+         if (character[i] == '0') s6[counter] = 0;
+         ++counter;
+      }
+      const C3 c3 = C3::ConvertToFundamentalUnit(s6);
+      std::cout << name << "  " << ConvertS6ToCharacter(s6) << "   " << ConvertS6ToCharacter(S6(c3)) << std::endl;
+   }
+   exit(0);
+}
+
+void CountCycles() {
+   Selling sell;
+   StoreResults<size_t, std::string> sr(5);
+   for (size_t i = 0; i < 10000000; ++i) {
+      S6 s6in = S6::rand();
+      s6in[0] = 0.1;
+      s6in[1] = 0.1;
+      if (Selling::IsReduced(s6in)) continue;
+      S6 vout;
+      Selling::Reduce(s6in, vout);
+      const size_t cycles = sell.GetCycles();
+      if (cycles <10) continue;
+      const size_t key = (cycles == 0 ) ? 0 : log10(cycles);
+      sr.Store(key, LRL_ToString( cycles, "  " , s6in));
+   }
+   sr.ShowResults();
+   exit(0);
+}
 
 int main(int argc, char* argv[])
 {
+   CountCycles();
+   ConvertCellsToC3_Assym();
+
    const S6 s1 = C3("-10 -11- -90 -1190 -190 -190");
    const S6 s2 = C3("-10 -100 -200 -100 -200-200");
    TestDistance(s1.data(), s2.data());
