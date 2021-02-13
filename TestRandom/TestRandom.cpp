@@ -82,7 +82,7 @@ int main()
    //exit(0);
    TestRand();
    TestRandDelone();
-   //TestRandUndelone();
+   TestRandUndelone();
    return 0;
 }
 

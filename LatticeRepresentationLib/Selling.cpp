@@ -12,6 +12,8 @@
 #include "MatS6.h"
 #include "S6Dist.h"
 
+const int limitReductionCycles = 10000;
+
 bool Selling::m_debugInstrument = false;
 size_t Selling::m_ReductionCycleCount = 0;
 
@@ -72,7 +74,7 @@ bool Selling::Reduce(const S6& in, S6& out) {
       //ListSteps(out);
 
       ++m_ReductionCycleCount;
-      if (m_ReductionCycleCount > 1000 || S6::NegativeSumOfScalars(out) < 0.0 ) return false;
+      if (m_ReductionCycleCount > limitReductionCycles || S6::NegativeSumOfScalars(out) < 0.0 ) return false;
    }
    return true;
 }
@@ -102,7 +104,7 @@ bool Selling::Reduce(const S6& in, S6& out) {
                maxScalar = out[i];
             }
          }
-         if (countPositive > 1000) return false;
+         if (countPositive > limitReductionCycles) return false;
          if (maxScalar > 0.0 && maxScalar > prevMaxScalar) ++countPositive;
          if (maxScalar <= 0.0) return true;
          S6 ddx = vm[maxIndex] * out;
