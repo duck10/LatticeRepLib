@@ -163,15 +163,15 @@ public:
    }
 
    void ShowResultsByKeyAscending(void) const {
-      std::vector<TKEY> v(GetKeys());
-      std::sort(v.begin(), v.end());
-      ShowResultsBySortedKey(v);
+      std::vector<TKEY> vv(GetKeys());
+      std::sort(vv.begin(), vv.end());
+      ShowResultsBySortedKey(vv);
    }
 
    void ShowResultsByKeyDescending(void) const {
-      std::vector<TKEY> v(GetKeys());
-      std::reverse(v.begin(), v.end());
-      ShowResultsBySortedKey(v);
+      std::vector<TKEY> vv(GetKeys());
+      std::reverse(vv.begin(), vv.end());
+      ShowResultsBySortedKey(vv);
    }
 
    void ShowResults(void) const {

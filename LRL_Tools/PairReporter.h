@@ -30,7 +30,7 @@ public:
       return *this;
    }
 
-   void SetSeparator(const std::string& s) { m_separator = s; }
+   void SetSeparator(const std::string& ss) { m_separator = ss; }
 
    friend std::ostream& operator<< (std::ostream& o, const PairReporter& pr)
    {

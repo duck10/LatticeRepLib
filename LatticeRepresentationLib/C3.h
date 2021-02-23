@@ -2,6 +2,8 @@
 #define C3_H
 
 #include "BasisBase.h"
+#include "S6.h"
+#include "Selling.h"
 
 class LRL_Cell;
 class B4;
@@ -13,6 +15,32 @@ class G6;
 #include <ostream>
 #include <string>
 #include <vector>
+
+
+/*
+std::vector< S6(*)(const S6&)> FillReduceFunctionArray() {
+   static std::vector< S6(*)(const S6&)> vf;
+   if (vf.empty()) {
+      // THESE ARE TRANSFORMATIONS IN S6 (I THINK), NOT NOT NOT IN G6 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      vf.push_back(&S6Dist::Reduce11);  // g or p
+      vf.push_back(&S6Dist::Reduce21);  // h or q
+      vf.push_back(&S6Dist::Reduce31);  // k or r
+      vf.push_back(&S6Dist::Reduce41);  // l or s
+      vf.push_back(&S6Dist::Reduce51);  // m or t
+      vf.push_back(&S6Dist::Reduce61);  // n or u
+   }
+   return vf;
+
+    static const std::vector< S6(*)(const S6&)>
+
+   static S6 Reduce11(const S6& din);
+
+S6 S6Dist::Reduce11(const S6& din) {
+   return S6::Reduce11(din);
+}
+
+}
+*/
 
 class C3 : private BasisBase<C3, std::complex<double> > {
 public:
@@ -121,7 +149,23 @@ public:
    bool IsAllMinus() const;
    static std::string GetName(void) { return "C3, Selling as complex"; }
    static void ComplexInvertSwap(std::complex<double>& a1, std::complex<double>& a2);
-   static C3 ConvertToFundamentalUnit(const C3& c3in);
+
+   template<typename T>
+   static C3 ConvertToFundamentalUnit(const T& tin) {
+      C3 c3(tin);
+      for (size_t i = 0; i < 3; ++i) {
+         if (std::abs(c3[0].real()) > std::abs(c3[0].imag())) C3::ComplexInvertSwap(c3[0], c3[1]);
+         if (std::abs(c3[1].real()) > std::abs(c3[1].imag())) C3::ComplexInvertSwap(c3[1], c3[2]);
+      }
+      return SortC3(c3);
+   }
+
+   template<typename T>
+   static C3 ReduceToFundamentalUnit(const T& tin) {
+      S6 vout;
+      const S6 s6 = Selling::Reduce(S6(tin), vout);
+      return ConvertToFundamentalUnit(C3(vout));
+   }
 
 private:
    static C3 SortC3(const C3& c3in);
@@ -133,6 +177,112 @@ public:
 private:
    std::vector<std::complex<double> > m_c;
    bool m_valid;
+};
+
+
+class C3Matrices {
+public:
+   //std::vector< S6(*)(const S6&)> FillReduceFunctionArray() {
+   std::vector<std::complex<double>(*)(const std::complex<double>&) > ms1r;
+   const std::vector<std::complex<double>(*)(const std::complex<double>&) > ms1rX = { &Mr, &Zero };
+   C3Matrices()
+   {
+      ms1r.push_back(&Mr);
+      ms1r.push_back(&Zero);
+      ms1r.push_back(&Zero);
+      ms1r.push_back(Pr);
+      ms1r.push_back(&iR);
+      ms1r.push_back(&R);
+      ms1r.push_back(&Pr);
+      ms1r.push_back(&iI);
+      ms1r.push_back(&I);
+
+      const S6 in("1 -20 -30 -100 -110 -120");
+      S6 out;
+      const C3 c3in(in);
+      C3 c3out;
+
+      size_t count = 0;
+      for (size_t i = 0; i < ms1r.size(); i += 3) {
+         c3out[count] = ms1r[i](c3in[0]) + ms1r[i + 1](c3in[1]) + ms1r[i + 2](c3in[2]);
+         ++count;
+      }
+      const S6 sxxx = C3::ReduceToFundamentalUnit(in);
+      const C3 cxxx = C3::ReduceToFundamentalUnit(c3out);
+      std::cout << in << std::endl << std::endl;
+      std::cout << S6(c3out) << std::endl << std::endl;
+      std::cout << "the next two should be reduced to the C3 fundamental unit" << std::endl;
+      std::cout << sxxx << std::endl;
+      std::cout << S6(cxxx) << std::endl;
+      std::cout << C3(sxxx) << std::endl;
+      std::cout << (cxxx) << std::endl;
+
+      //typedef std::complex<double>(*)(const std::complex<double>&) C3BoundaryTransform;
+      {
+         const std::vector <std::vector < std::vector < std::complex<double>(*)(const std::complex<double>&) > > >
+            xx =
+         {
+            // For the boundary at s1: (the real component of c1).
+            {
+               { &Mr, &Zero, &Zero, &Pr, &iR, &R, &Pr, &iI, &I }, 
+               { &Mr, &Zero, &Zero, &Pr, &iI, &I, &Pr, &iR, &R }, 
+               { &Mr, &Zero, &Zero, &Pr, &R, &iR, &Pr, &I, &iI }, 
+               { &Mr, &Zero, &Zero, &Pr, &I, &iI, &Pr, &R, &iR }
+            },
+            // For the boundary at s4: (the imaginary component of c1).
+            {
+               { &Mi, &Zero, &Zero, &Pi, &iR, &R, &Pi, &iI, &I }, 
+               { &Mi, &Zero, &Zero, &Pi, &iI, &I, &Pi, &iR, &R }, 
+               { &Mi, &Zero, &Zero, &Pi, &R, &iR, &Pi, &I, &iI }, 
+               { &Mi, &Zero, &Zero, &Pi, &I, &iI, &Pi, &R, &iR }
+            },
+            // For the boundary at s2 (the real component of c2):
+            {
+               { &iR, &Pr, &R, &Zero, &Mr, &Zero, &iI, &Pr, &I }, 
+               { &iI, &Pr, &I, &Zero, &Mr, &Zero, &iR, &Pr, &R }, 
+               { &R, &Pr, &iR, &Zero, &Mr, &Zero, &I, &Pr, &iI }, 
+               { &I, &Pr, &iI, &Zero, &Mr, &Zero, &R, &Pr, &iR }
+            },
+            // For the boundary at s5: (the imaginary component of c2).
+            {
+               { &iR, &Pi, &R, &Zero, &Mi, &Zero, &iI, &Pi, &I }, 
+               { &iI, &Pi, &I, &Zero, &Mi, &Zero, &iR, &Pi, &R }, 
+               { &R, &Pi, &iR, &Zero, &Mi, &Zero, &I, &Pi, &iI }, 
+               { &I, &Pi, &iI, &Zero, &Mi, &Zero, &R, &Pi, &iR }
+            },
+            // For the boundary at s3 (the real component of c3):
+            {
+               { &iR, &R, &Pr, &iI, &I, &Pr, &Zero, &Zero, &Mr }, 
+               { &iI, &I, &Pr, &iR, &R, &Pr, &Zero, &Zero, &Mr }, 
+               { &R, &iR, &Pr, &I, &iI, &Pr, &Zero, &Zero, &Mr }, 
+               { &I, &iI, &Pr, &R, &iR, &Pr, &Zero, &Zero, &Mr }
+            },
+            // For the boundary at s6 (the imaginary component of c3):
+            {
+               { &iR, &R, &Pi, &iI, &I, &Pi, &Zero, &Zero, &Mi }, 
+               { &iI, &I, &Pi, &iR, &R, &Pi, &Zero, &Zero, &Mi }, 
+               { &R, &iR, &Pi, &I, &iI, &Pi, &Zero, &Zero, &Mi }, 
+               { &I, &iI, &Pi, &R, &iR, &Pi, &Zero, &Zero, &Mi }
+            }
+         };
+      }
+      exit(0);
+   }
+
+private:
+   static std::complex<double> R(const std::complex<double>& in);
+   static std::complex<double> I(const std::complex<double>& in);
+   static std::complex<double> iR(const std::complex<double>& in);
+   static std::complex<double> iI(const std::complex<double>& in);
+   static std::complex<double> Mr(const std::complex<double>& in);
+   static std::complex<double> Mi(const std::complex<double>& in);
+   static std::complex<double> Pr(const std::complex<double>& in);
+   static std::complex<double> Pi(const std::complex<double>& in);
+   static std::complex<double> Zero(const std::complex<double>& in);
+};
+
+class MatC3 : public LRL_MatrixBase<D7, MatC3> {
+
 };
 
 #endif // C3_H

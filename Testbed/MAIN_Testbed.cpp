@@ -675,6 +675,7 @@ void CountCycles() {
 
 int main(int argc, char* argv[])
 {
+   C3Matrices xxxxxxxx;
    CountCycles();
    ConvertCellsToC3_Assym();
 
