@@ -26,8 +26,6 @@ public:
       }
    }
 
-
-
 private:
    const double m_radiusOfConfusion;
    CNearTree<S6> m_tree;

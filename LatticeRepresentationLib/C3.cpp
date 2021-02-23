@@ -475,6 +475,46 @@ C3 C3::Refl24(const C3& c) {
    return c3;
 }
 
+std::complex<double> C3Matrices::R(const std::complex<double>& in) {
+   std::cout << "R" << in << std::endl;
+   return std::complex<double>(real(in), 0);
+}
+std::complex<double> C3Matrices::I(const std::complex<double>& in) {
+   std::cout << "I" << in << std::endl;
+   return std::complex<double>(imag(in), 0);
+}
+
+std::complex<double> C3Matrices::iR(const std::complex<double>& in) {
+   std::cout << "iR" << in << std::endl;
+   return std::complex<double>(0, 1) * std::complex<double>(real(in), 0);
+}
+std::complex<double> C3Matrices::iI(const std::complex<double>& in) {
+   std::cout << "iI" << in << std::endl;
+   return std::complex<double>(0, 1) * std::complex<double>(imag(in), 0);
+}
+
+std::complex<double> C3Matrices::Mr(const std::complex<double>& in) {
+   std::cout << "Mr" << in << std::endl;
+   return std::complex<double>(-real(in), -real(in) + imag(in));
+}
+std::complex<double> C3Matrices::Mi(const std::complex<double>& in) {
+   std::cout << "mI" << in << std::endl;
+   return std::complex<double>(-real(in), -real(in)+imag(in));
+}
+std::complex<double> C3Matrices::Pr(const std::complex<double>& in) {
+   std::cout << "Pr" << in << std::endl;
+   return std::complex<double>(real(in), real(in));
+}
+std::complex<double> C3Matrices::Pi(const std::complex<double>& in) {
+   std::cout << "Pi" << in << std::endl;
+   return std::complex<double>(0,1) * std::complex<double>(real(in), real(in));
+}
+
+std::complex<double> C3Matrices::Zero(const std::complex<double>& in) {
+   std::cout << "Zero" << in << std::endl;
+   return std::complex<double>(0, 0);
+}
+
 
 std::vector< C3(*)(const C3&)> C3::SetReflections() {
    std::vector<C3(*)(const C3&)> v;
@@ -588,26 +628,12 @@ C3 C3::SortC3(const C3& c3in) {
       again = false;
       if (abs(c3[0]) > abs(c3[1])) {
          again = true;
-         std::complex<double> temp = c3[0];
-         c3[0] = c3[1];
-         c3[1] = temp;
+         std::swap(c3[1], c3[0]);
       }
       if (abs(c3[1]) > abs(c3[2])) {
          again = true;
-         std::complex<double> temp = c3[1];
-         c3[1] = c3[2];
-         c3[2] = temp;
+         std::swap(c3[1], c3[2]);
       }
-   }
-   return c3;
-}
-
-C3 C3::ConvertToFundamentalUnit(const C3& c3in) {
-   C3 c3(c3in);
-   for (size_t i = 0; i < 3; ++i) {
-      c3 = SortC3(c3);
-      if (std::abs(c3[0].real()) > std::abs(c3[0].imag())) C3::ComplexInvertSwap(c3[0], c3[1]);
-      if (std::abs(c3[1].real()) > std::abs(c3[1].imag())) C3::ComplexInvertSwap(c3[1], c3[2]);
    }
    return c3;
 }
