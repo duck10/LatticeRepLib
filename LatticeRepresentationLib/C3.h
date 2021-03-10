@@ -163,7 +163,7 @@ public:
    template<typename T>
    static C3 ReduceToFundamentalUnit(const T& tin) {
       S6 vout;
-      const S6 s6 = Selling::Reduce(S6(tin), vout);
+      const bool b = Selling::Reduce(S6(tin), vout);
       return ConvertToFundamentalUnit(C3(vout));
    }
 
@@ -207,8 +207,8 @@ public:
          c3out[count] = ms1r[i](c3in[0]) + ms1r[i + 1](c3in[1]) + ms1r[i + 2](c3in[2]);
          ++count;
       }
-      const S6 sxxx = C3::ReduceToFundamentalUnit(in);
-      const C3 cxxx = C3::ReduceToFundamentalUnit(c3out);
+      const S6 sxxx = S6(C3::ReduceToFundamentalUnit(in));
+      const C3 cxxx = S6(C3::ReduceToFundamentalUnit(c3out));
       std::cout << in << std::endl << std::endl;
       std::cout << S6(c3out) << std::endl << std::endl;
       std::cout << "the next two should be reduced to the C3 fundamental unit" << std::endl;

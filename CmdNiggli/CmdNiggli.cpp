@@ -10,6 +10,7 @@ int main()
 {
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
+   std::cout << "; Niggli reduced" << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
       //std::cout << pCell << std::endl;

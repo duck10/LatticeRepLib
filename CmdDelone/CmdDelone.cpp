@@ -8,9 +8,10 @@
 int main()
 {
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   std::cout << "; Delone/Selling reduced" << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       S6 s;
       const bool b = Selling::Reduce(inputList[i].GetCell(), s);
-      std::cout << "Selling reduced" << s << std::endl;
+      std::cout << "S  " << s << std::endl;
    }
 }

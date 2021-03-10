@@ -8,6 +8,7 @@
 
    int    DirichletConstants::numberOfImages = 12;
    int    DirichletConstants::imageHeightPx = 90;
+   int    DirichletConstants::yposition = 90;
    int    DirichletConstants::latticeLimit = 1;
    int    DirichletConstants::canvas_x_size = 2000;
    int    DirichletConstants::canvas_y_size = 2000;
@@ -16,10 +17,12 @@
    double DirichletConstants::rotateZ = 0;
    double DirichletConstants::scale = 1;
 
+   bool DirichletConstants::timestamp = true;
+
    std::string DirichletConstants::hiddenLineColor = LRL_StringTools::strToupper( "lightgray" );
    std::string DirichletConstants::faceColor       = LRL_StringTools::strToupper( "none" );
    std::string DirichletConstants::fileNamePrefix  = LRL_StringTools::strToupper( "DC" );
-   std::string DirichletConstants::sellingNiggli   = LRL_StringTools::strToupper( "selling" );
+   std::string DirichletConstants::sellingNiggli   = LRL_StringTools::strToupper( "NIGGLI" );
 
    std::vector<std::string> DirichletConstants::note;
    std::vector<std::string> DirichletConstants::cellData = std::vector<std::string>();
@@ -47,6 +50,7 @@
 
 
    std::string Type(const int i) { return "int"; }
+   std::string Type(const bool i) { return "bool"; }
    std::string Type(const double i) { return "double"; }
    std::string Type(const std::string& i) { return "string"; }
    std::string Type(const std::vector<std::string>& i) { return "vectorStr"; }
@@ -75,6 +79,8 @@
       v.push_back(ParseDataT("note", DirichletConstants::note));
       v.push_back(ParseDataT("FilePrefix", DirichletConstants::fileNamePrefix));
       v.push_back(ParseDataT("InputErrors", DirichletConstants::inputErrors));
+      v.push_back(ParseDataT("TIMESTAMP", DirichletConstants::timestamp));
+      v.push_back(ParseDataT("yposition", DirichletConstants::yposition));
 
       v.push_back(ParseDataT("selling", DirichletConstants::sellingNiggli));
       v.push_back(ParseDataT("S6", DirichletConstants::cellData));
@@ -111,7 +117,6 @@
 
       //std::cout << s << std::endl;
 
-      v.push_back(ParseDataT("images", DirichletConstants::numberOfImages));
       v.push_back(ParseDataT("xsize", DirichletConstants::canvas_x_size));
       return(v);
    }
@@ -132,6 +137,8 @@
          }
          else if (dataType == "int")
             s += label + " " + dataType + " " + LRL_ToString(*((int*)location)) + "\n";
+         else if (dataType == "bool")
+            s += label + " " + dataType + " " + LRL_ToString(*((bool*)location)) + "\n";
          else if (dataType == "double")
             s += label + " " + dataType + " " + LRL_ToString(*((double*)location)) + "\n";
          else if (dataType == "string")

@@ -673,8 +673,23 @@ void CountCycles() {
    exit(0);
 }
 
+void LookAtS6BoundaryCrossings() {
+   for (size_t i = 0; i < 20; ++i) {
+      S6 start = S6::randDeloneReduced();
+      start[0] = 0.01;
+      S6 end;
+      const bool b = Selling::Reduce(start, end);
+      //std::cout << start << "    " << end << std::endl;
+      std::cout << S6(C3::ConvertToFundamentalUnit(start)) << "    " << S6(C3::ConvertToFundamentalUnit(end)) << std::endl;
+      //std::cout << C3::ConvertToFundamentalUnit(start) << "    " << C3::ConvertToFundamentalUnit(end) << std::endl;
+      //std::cout << LRL_Cell_Degrees(start) << "    " << LRL_Cell_Degrees(end) << std::endl;
+   }
+   exit(0);
+}
+
 int main(int argc, char* argv[])
 {
+   LookAtS6BoundaryCrossings();
    C3Matrices xxxxxxxx;
    CountCycles();
    ConvertCellsToC3_Assym();
