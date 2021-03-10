@@ -25,10 +25,12 @@ namespace DirichletConstants {
    extern int    latticeLimit; //ok
    extern int    canvas_x_size; //ok
    extern int    canvas_y_size; //ok
+   extern int    yposition; //ok
    extern double rotateX; //ok
    extern double rotateStereo; //ok
    extern double rotateZ;
    extern double scale; //ok
+   extern bool timestamp; //ok
    extern std::vector<std::string> note; //ok
    extern std::string hiddenLineColor; //ok
    extern std::string sellingNiggli; //ok

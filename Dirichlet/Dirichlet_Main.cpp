@@ -51,9 +51,9 @@ Vector_3 CenterOfMassForOneFace(const ANGLELIST& list) {
    return centerOfMass / double(list.size());
 }
 
-std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections( std::vector<DirichletFace>& vdf,
-   const CNearTree<Vector_3>& tree) {
-   const size_t n = vdf.size();
+std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections( const CNearTree<Vector_3>& tree) {
+   std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
+   const size_t n = dirichletFaces .size();
    POINT_LIST vvindex;
    std::vector<Intersection> vIntersections;
 
@@ -61,12 +61,12 @@ std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections( std::vec
    const long n0 = it0.get_position();
    //
    //
-   for (size_t i1 = 0; i1 < n-1; ++i1) {
+   for (size_t i1 = 0; i1 < n-2; ++i1) {
       for (size_t i2 = i1+1; i2 < n-1; ++i2) {
          if (i1 == i2) continue;
          for (size_t i3 = i2+1; i3 < n; ++i3) {
             if (i1 == i3 || i2 == i3) continue;
-            Intersection intersection = Intersection::FindIntersectionForThreeFaces(vdf[i1], vdf[i2], vdf[i3]);
+            Intersection intersection = Intersection::FindIntersectionForThreeFaces(dirichletFaces [i1], dirichletFaces [i2], dirichletFaces [i3]);
 
             const double d = intersection.GetCoord()[0];
             const bool b1 = !(intersection.GetCoord()[0] <= 0.0);
@@ -89,7 +89,7 @@ std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections( std::vec
                      intersection.SetPlaneList(i1, i2, i3);
                   vvindex.push_back({ i1, i2, i3 });
                   vIntersections.push_back(intersection);
-                  vdf[i1].SetIndicesOfIntersection(i1,i2,i3);
+                  dirichletFaces [i1].SetIndicesOfIntersection(i1,i2,i3);
                   const int i19191 = 19191;
                }
             }
@@ -529,9 +529,9 @@ std::vector<std::string> DrawSeriesOfObjects(const std::vector<ANGLESFORFACES>& 
 std::vector<std::string> MadeStereo(const std::vector<std::string>& vsin) {
    int xplace = 50;
    int xdelta = 200;
-   const int yPlace = 300;
 
    std::vector<std::string> vsout;
+   const int yPlace = DirichletConstants::yposition;
    for (size_t face = 0; face < vsin.size(); ++face) {
       const std::vector<std::string> vs = PlaceSubPicture(xplace, yPlace, vsin[face]); // origin shift
       vsout.push_back(ConcatanateStrings(vs));
@@ -688,7 +688,7 @@ std::string OutputOneFace(const size_t index, const size_t vertices, const std::
 
 std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>& indices) {
    std::ostringstream ostr;
-   for (size_t faceIndex = 0; faceIndex < rings.size()/2; ++faceIndex) {
+   for (size_t faceIndex = 0; faceIndex < rings.size() / 2; ++faceIndex) {
       const ANGLELIST face1 = rings[faceIndex];
       const ANGLELIST face2 = rings[rings.size() - faceIndex - 1];
       const size_t vertexCount1 = face1.size();
@@ -696,11 +696,22 @@ std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>
       const std::string record1 = OneFaceRecord(face1, indices[faceIndex]);
       const std::string record2 = OneFaceRecord(face2, indices[rings.size() - faceIndex - 1]);
       const std::string testString1 = OutputOneFace(faceIndex, vertexCount1, record1);
-      const std::string testString2 = OutputOneFace(rings.size() - faceIndex-1, vertexCount2, record2);
+      const std::string testString2 = OutputOneFace(rings.size() - faceIndex - 1, vertexCount2, record2);
       ostr << testString1.c_str();
       ostr << testString2.c_str();
       ostr << std::endl;
    }
+
+   size_t count = 0;
+   for (size_t faceIndex = 0; faceIndex < rings.size(); ++faceIndex) {
+      double area = AreaOfOneFace(rings[faceIndex]);
+      if (area > 1.0E-4) {
+         ++count;
+         std::cout << count << "  " << area << "  " << indices[faceIndex];
+      }
+   }
+   std::cout << std::endl;
+
    ostr << std::endl;
    return ostr.str();
 }
@@ -708,7 +719,7 @@ std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>
 //void ComputeCellFacesForOneCell(const LRL_Cell& cell) {
 //
 //   Dirichlet dc(cell);
-//   const std::vector<Dirichlet_Intersections> filteredIntersections = dc.GenerateIntersectionList();
+//   const std::vector<Dirichlet_Intersection> filteredIntersections = dc.GenerateIntersectionList();
 //   const Dirichlet_Faces faces(filteredIntersections);
 //   const Dirichlet_Faces filteredFaces(faces);
 //
@@ -725,44 +736,116 @@ void PrintFaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>& 
    std::cout << FaceRecords(rings, indices) << std::endl;
 }
 
+class DirichletCell {
+public:
+   DirichletCell(const std::string& strCell);
 
-std::string HandleOneCell( const std::string& strCell) {
+   std::string GetStrCell() const { return m_strCell; }
+   LRL_Cell GetCell() const { return m_cell; }
+   LRL_Cell GetReducedCell() const { return m_reducedCell; }
+   std::vector<std::string> GetStrIndices() const { return m_strIndices; }
+   std::vector<std::vector<size_t> > GetIndices() const { return m_indices; }
+   Cell_Faces GetCellFaces() const { return m_cellFaces; }
+   Matrix_3x3 GetCartesianMatric() const { return m_cart; }
+   ANGLESFORFACES GetAnglesForFaces() const { return m_facesWithVertices; }
+
+private:
+   std::string m_strCell;
+   LRL_Cell m_cell;
+   LRL_Cell m_reducedCell;
+   std::vector<std::string> m_strIndices;
+   std::vector<std::vector<size_t> > m_indices;
+   Cell_Faces m_cellFaces;
+   Matrix_3x3 m_cart;
+   ANGLESFORFACES m_facesWithVertices;
+   //const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(cart);
+   //std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
+};
+
+DirichletCell::DirichletCell(const std::string& strCell)
+   : m_strCell(strCell)
+{
+   //-------------decode unit cell
    LRL_ReadLatticeData rdc;
    rdc.CellReader(strCell);
 
-   if (! rdc.IsValid()) return "";
-
-   LRL_Cell reducedCell;
-
+   ////-------------reduce cell
    if (DirichletConstants::sellingNiggli == "SELLING")
-      reducedCell = LatticeConverter().SellingReduceCell(rdc.GetLattice(), rdc.GetCell());
+      m_reducedCell = LatticeConverter().SellingReduceCell(rdc.GetLattice(), rdc.GetCell());
    else
-      reducedCell = LatticeConverter().NiggliReduceCell(rdc.GetLattice(), rdc.GetCell());
+      m_reducedCell = LatticeConverter().NiggliReduceCell(rdc.GetLattice(), rdc.GetCell());
 
+   ////-------------cell create faces
+   m_cart = m_reducedCell.Cart();
+   m_cellFaces = Cell_Faces(m_reducedCell, m_cart);
 
-
-   const Matrix_3x3 cart(reducedCell.Cart());
-   const Cell_Faces cellFaces(reducedCell, cart);
-
-   const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(cart);
+   //-------------create Dirichlet faces
+   const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(m_cart);
    std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
-   const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(dirichletFaces, tree);
-   //PrintRawIntersection(v_Intersections);
+   const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(tree);
    const ANGLESFORFACES vvPoints = AssignPointsToFaceList(v_Intersections);
 
-   const ANGLESFORFACES ringed = MakeRings(vvPoints, v_Intersections.second);
+   m_facesWithVertices = MakeRings(vvPoints, v_Intersections.second);
+}
 
+std::string HandleOneCell(const std::string& strCell) {
+
+   //-------------decode unit cell
+   //LRL_ReadLatticeData rdc;
+   //rdc.CellReader(strCell);
+
+   DirichletCell dc(strCell);
+
+   //if (! rdc.IsValid()) return "";
+
+
+   ////-------------reduce cell
+   //LRL_Cell reducedCell;
+
+   //if (DirichletConstants::sellingNiggli == "SELLING")
+   //   reducedCell = LatticeConverter().SellingReduceCell(rdc.GetLattice(), rdc.GetCell());
+   //else
+   //   reducedCell = LatticeConverter().NiggliReduceCell(rdc.GetLattice(), rdc.GetCell());
+
+   ////-------------create faces
+   //const Matrix_3x3 cart(reducedCell.Cart());
+   //const Cell_Faces cellFaces(reducedCell, cart);
+
+   //-------------create Dirichlet faces
+   //const Matrix_3x3 cart = dc.GetCartesianMatric();
+   //const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(cart);
+   //std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
+   //const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(tree);
+   ////PrintRawIntersection(v_Intersections);
+   //const ANGLESFORFACES vvPoints = AssignPointsToFaceList(v_Intersections);
+
+
+   //-------------
+   //-------------dirichlet cell construction completed
+   //-------------
+
+   //------------- create rotated image
    static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
    const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(DirichletConstants::rotateX / degreesPerRad);
    const Matrix_3x3 m2 = Vector_3(0, 1, 0).Rotmat(DirichletConstants::rotateStereo / degreesPerRad);
 
+
+   //-------------create series of images
+   const ANGLESFORFACES ringed = dc.GetAnglesForFaces();;
    const std::vector<ANGLESFORFACES> rings = CreateSeriesOfImages(ringed, DirichletConstants::numberOfImages, m1, m2);
    const std::vector<std::string> series = DrawSeriesOfObjects(rings);
    const std::vector<std::string> stereoImages = MadeStereo(series);
 
-   const std::vector<Vector_3> indices = RecoverIndicesOfFaces(cart, ringed);
+
+   //-------------get some info such as indices
+   const std::vector<Vector_3> indices = RecoverIndicesOfFaces(dc.GetCartesianMatric(), ringed);
    const std::string records = FaceRecords(ringed, indices);
+
+
+
+   //-------------build the svg file, using (in part) the info collected
    const std::string constants = ReadGlobalData::GetConstantsAsString();
+   const Cell_Faces cellFaces = dc.GetCellFaces();
    const std::string svg = OutputSVG(ConcatanateStrings(stereoImages), cellFaces, records
    + "\nGlobal Constants\n" + constants);
 
@@ -781,12 +864,19 @@ std::vector<std::string> RetrieveCellsAsStrings() {
 }
 
 int main() {
+
+   //Dirichlet dirichlet(S6("0 0 0 -100 -100 -100")); // has cell and cartesian and areas init to zero
+   //const std::vector<Vector_3> vertices = dirichlet.CreateVectorOfLatticePoints();
+   //const std::vector<Dirichlet_Intersection>  inters = dirichlet.CreateAllIntersections(vertices);
+   //dirichlet.CreateFaceList( vertices, inters);
+   //dirichlet.ProcessFaces(inters);
    ReadGlobalData();
 
    std::vector<std::string> strCells = RetrieveCellsAsStrings();
 
    const std::string filePrefix =
-      LRL_ToString(LRL_CreateFileName::Create(DirichletConstants::fileNamePrefix, "", true));
+      LRL_ToString(LRL_CreateFileName::Create(DirichletConstants::fileNamePrefix, "", 
+         DirichletConstants::timestamp));
 
    for ( size_t whichCell =0; whichCell<strCells.size(); ++whichCell) {
       const std::string svg = HandleOneCell(strCells[whichCell]);

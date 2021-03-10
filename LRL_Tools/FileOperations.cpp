@@ -8,7 +8,7 @@ bool FileOperations::OpenOutputFile( std::ofstream& fileout, const std::string& 
       std::cout << "Did not create the file" << std::endl;
    }
    else {
-      fileout.open( sFileName.c_str( ), std::ios::out | std::ios::app | std::ios::ate );
+      fileout.open( sFileName.c_str( ), std::ios::out | std::ios::ate );
       int count = 0;
       fileout.seekp(0);
 

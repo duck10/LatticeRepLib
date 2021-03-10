@@ -162,6 +162,7 @@
     <ClCompile Include="ColorTables.cpp" />
     <ClCompile Include="CS6Dist.c" />
     <ClCompile Include="CS6Dist.cpp" />
+    <ClCompile Include="D13.cpp" />
     <ClCompile Include="LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="LabeledSellaMatrices.cpp" />
     <ClCompile Include="DeloneTypeList.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="C3.h" />
     <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />
+    <ClInclude Include="D13.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
     <ClInclude Include="LabeledDeloneTypeMatrices.h" />

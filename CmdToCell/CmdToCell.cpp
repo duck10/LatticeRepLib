@@ -9,6 +9,7 @@ int main()
    const std::string latticeTypes("aAbBcCiIfFpPhHrR");
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
+   std::cout << "; To Cell" << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       const size_t n = latticeTypes.find(inputList[i].GetLattice());
       const std::string inputDataType = inputList[i].GetInputDataType();
