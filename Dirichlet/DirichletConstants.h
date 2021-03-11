@@ -27,8 +27,9 @@ namespace DirichletConstants {
    extern int    canvas_y_size; //ok
    extern int    yposition; //ok
    extern double rotateX; //ok
-   extern double rotateStereo; //ok
+   extern double rotateY;
    extern double rotateZ;
+   extern double rotateStereo; //ok
    extern double scale; //ok
    extern bool timestamp; //ok
    extern std::vector<std::string> note; //ok

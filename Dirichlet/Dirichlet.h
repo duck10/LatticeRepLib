@@ -1,6 +1,7 @@
 #ifndef DIRICHLET_H
 #define DIRICHLET_H
 
+#include "Faces.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_Vector3.h"
@@ -9,135 +10,51 @@
 #include <map>
 #include <vector>
 
-class Dirichlet_Intersection {
+
+typedef std::pair<double, Vector_3 > ANGLE_COORDS;
+typedef std::vector< ANGLE_COORDS > ANGLELIST;
+typedef std::vector<ANGLELIST> ANGLESFORFACES;
+
+class DirichletCell {
 public:
-   Dirichlet_Intersection() : m_IsValid(false) {}
-   Dirichlet_Intersection(const Vector_3& v, const std::vector<size_t>& planes);
-   Dirichlet_Intersection(const std::vector<size_t>& planes, const Vector_3& v);
-   void SetIsValid(const bool b) { m_IsValid = b; }
-   void SetCoordinates(const Vector_3& v) { m_coord = v; }
-   void SetFacesIndices(const std::vector<size_t>& v) { m_faces = v; }
-   bool IsValid() const { return m_IsValid; }
-   Vector_3 GetCoordinates() const { return m_coord; }
-   std::vector<size_t> GetFaceIndices() const { return m_faces; }
-   size_t size() const { return m_faces.size(); }
-   size_t operator[] (const size_t n) const { return m_faces[n]; }
-   void resize(const size_t n) { m_faces.resize(n); }
+   DirichletCell(const std::string& strCell);
 
-private:
-   bool m_IsValid;
-   Vector_3 m_coord;
-   std::vector<size_t> m_faces;
-};
-
-class Dirichlet_Vertex {
-public:
-   Dirichlet_Vertex();
-   Dirichlet_Vertex(const Dirichlet_Intersection& di);
-private:
-   Vector_3 m_coord;
-   double m_faceAngleForSorting;
-   double m_zSort;
-   std::vector<double> m_indicesOfFaces;
-};
-
-class Dirichlet_Face {
-public:
-   Dirichlet_Face() {}
-   Dirichlet_Face(const Dirichlet_Intersection& inter);
-   Vector_3 GetCenterOfMass() const { return   m_centerOfMass; }
-   Vector_3 GeCoord        () const { return   m_coord; }
-   Vector_3 GetNormal      () const { return   m_normal; }
-   double   GetDistance    () const { return   m_distance; }
-   std::vector<Dirichlet_Vertex> GetVertexList() const { return m_vertexList; }
-   std::vector<size_t> GetVertexIndexList() const { return m_VerticesInThisFace; }
-
-   void SetCenterOfMass(const Vector_3& v) { m_centerOfMass = v; }
-   void SetCoord        (const Vector_3& v) { m_coord = v; }
-   void SetNormal      (const Vector_3& v) { m_normal = v; }
-   void SetDistance    (const double d   ) { m_distance = d; }
-   void SetVertexIndexList(const std::vector<size_t>& v) { m_VerticesInThisFace = v; }
-   size_t size() const {
-      return m_VerticesInThisFace.size(); 
-   }
-   void AddVertex(const size_t n);
-
-private:
-   Vector_3 m_centerOfMass;
-   Vector_3 m_coord;
-   Vector_3 m_normal;
-   double m_distance;
-   std::vector<Dirichlet_Vertex> m_vertexList; // ARE THESE THE SAME THING??????????????
-   std::vector<size_t> m_VerticesInThisFace;;
-};
-
-class Dirichlet_Faces {
-public:
-   Dirichlet_Faces() {}
-   Dirichlet_Faces(const std::vector<Dirichlet_Intersection>& intersections);
-   Dirichlet_Faces FilteredFaces(const Dirichlet_Faces& inFaces) const;
-   size_t size() const { return m_faces.size(); }
-   void Add(const Dirichlet_Face& face);
-
-   std::vector<double> ComputeAnglesForOneFace(const std::vector<size_t>& vi) const;
-   std::pair<std::vector<double>, std::vector<size_t> > SortByAngle(const std::pair<std::vector<double>, std::vector<size_t> >& input) const;
-   std::vector<size_t> GetAngleSortedAndMergedIndices(const std::vector<size_t>& indices) const;
-   std::vector<size_t> GetAngleMergedIndices(const std::pair<std::vector<double>, std::vector<size_t> >& input) const;
-   double GetAreaOfOneFace(const size_t n) const;
-   std::vector<double> GetFaceAreas() const;
-
-   std::vector<size_t> GetVectorOfIndicesForOneFace(const size_t n) const { return m_faces[n]; }
-   Vector_3 CenterOfMassForOneFace(const std::vector<size_t>& list) const;
-private:
-   const std::vector<Dirichlet_Intersection> m_intersections;
-   std::vector< std::vector<size_t> > m_faces;
-};
-
-class Dirichlet {
-public:
-   template<typename T>
-   Dirichlet(const T& cell)
-      : m_cell(cell)
-      , m_cellDegrees(m_cell)
-      , m_cartesianMatrix(Matrix_3x3::Cart(
-         m_cellDegrees[0], m_cellDegrees[1], m_cellDegrees[2], 
-         m_cellDegrees[3], m_cellDegrees[4], m_cellDegrees[5]))
-      , m_faces()
-      , m_Areas(13)
-      , m_maxDiameter(0)
-   {
-   }
-
-   Matrix_3x3 GetMatrix() const { return m_cartesianMatrix; }
+   std::string GetStrCell() const { return m_strCell; }
    LRL_Cell GetCell() const { return m_cell; }
-   LRL_Cell_Degrees GetCellDegrees() const { return m_cellDegrees; }
-   std::vector<Dirichlet_Face> GetFaceList() const { return m_faces; }
-   void CreateFaceList(const std::vector<Vector_3>& vertices, const std::vector<Dirichlet_Intersection>& tree);
-   double GetMaxDiameter() const { return m_maxDiameter; }
-   std::vector<Dirichlet_Intersection> CreateAllIntersections(const std::vector<Vector_3>& vLattice);
-   Dirichlet_Intersection CalculateOneIntersection(const size_t i, const size_t j, const size_t k, const std::vector<Vector_3>& vLattice);
-   CNearTree<Vector_3> CreateTreeOfLatticePoints();
-   void ProcessFaces(const std::vector<Dirichlet_Intersection>& inters);
-   void ProcessOneFace(const Dirichlet_Face& face, const std::vector<Dirichlet_Intersection>& inters);
-   std::vector<double> GetAreas();
+   LRL_Cell GetReducedCell() const { return m_reducedCell; }
+   std::vector<std::string> GetStrIndices() const { return m_strIndices; }
+   std::vector<std::vector<int> > GetIndices() const { return m_indices; }
+   std::vector<double> GetAreas() const { return m_areas; }
+   Cell_Faces GetCellFaces() const { return m_cellFaces; }
+   Matrix_3x3 GetCartesianMatrix() const { return m_cart; }
+   ANGLESFORFACES GetAnglesForFaces() const { return m_facesWithVertices; }
 
-   std::vector<Vector_3> CreateVectorOfLatticePoints();
+   std::vector<std::vector<int> > ConvertAllVectorIndicesToInt(const std::vector<Vector_3>& v);
+   std::vector<std::string> ConvertAllVectorIndicesToString(const std::vector<Vector_3>& vin);
+   std::string ConvertVectorIndicesToString(const Vector_3& vin);
+   std::vector<int> ConvertVectorIndicesToInt(const Vector_3& vin);
 
-   static LRL_Cell ReadAndReduceCell();
-   static LRL_Cell ParseAndReduceStringCellWithLattice(const std::string& strCell);
-   static LRL_Cell ParseAndReduceCell(const std::string& lattice, const std::string& strCell);
-   //std::vector<Dirichlet_Intersection> GenerateIntersectionList();
-   //std::vector<Dirichlet_Intersection> CleanIntersectionList(const std::vector<Dirichlet_Intersection>& vInter);
 private:
-
-   void InsertFaceIndices(const Dirichlet_Intersection& d, const size_t ni);
-
+   std::string m_strCell;
    LRL_Cell m_cell;
-   LRL_Cell_Degrees m_cellDegrees;
-   Matrix_3x3 m_cartesianMatrix;
-   std::vector<Dirichlet_Face> m_faces;
-   std::vector<double> m_Areas;
-   double m_maxDiameter;
+   LRL_Cell m_reducedCell;
+   std::vector<std::string> m_strIndices;
+   std::vector<std::vector<int> > m_indices;
+   std::vector<double> m_areas;
+   Cell_Faces m_cellFaces;
+   Matrix_3x3 m_cart;
+   ANGLESFORFACES m_facesWithVertices;
+   //const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(cart);
+   //std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
+};
+
+class DirichletSVG {
+public:
+   DirichletSVG(const DirichletCell& dc);
+   std::string OutputSVG(const std::vector<std::string>& stereoImages,
+      const Cell_Faces& faceRecords, const std::string& extra) const;
+private:
+   const DirichletCell m_dirCell;
 };
 
 #endif  // DIRICHLET

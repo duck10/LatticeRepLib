@@ -13,8 +13,9 @@
    int    DirichletConstants::canvas_x_size = 2000;
    int    DirichletConstants::canvas_y_size = 2000;
    double DirichletConstants::rotateX = 25;
-   double DirichletConstants::rotateStereo = 15;
+   double DirichletConstants::rotateY = 0;
    double DirichletConstants::rotateZ = 0;
+   double DirichletConstants::rotateStereo = 15;
    double DirichletConstants::scale = 1;
 
    bool DirichletConstants::timestamp = true;
@@ -71,8 +72,9 @@
       v.push_back(ParseDataT("latticeLimit", DirichletConstants::latticeLimit));
       v.push_back(ParseDataT("ImageHeight", DirichletConstants::imageHeightPx));
       v.push_back(ParseDataT("xrotate", DirichletConstants::rotateX));
-      v.push_back(ParseDataT("yrotate", DirichletConstants::rotateStereo));
+      v.push_back(ParseDataT("Yrotate", DirichletConstants::rotateY));
       v.push_back(ParseDataT("zrotate", DirichletConstants::rotateZ));
+      v.push_back(ParseDataT("rotateStereo", DirichletConstants::rotateStereo));
       v.push_back(ParseDataT("scale", DirichletConstants::scale));
       v.push_back(ParseDataT("hiddencolor", DirichletConstants::hiddenLineColor));
       v.push_back(ParseDataT("facecolor", DirichletConstants::faceColor));

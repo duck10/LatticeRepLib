@@ -138,7 +138,7 @@ const std::pair<std::string, void*> FindBestTextMatch( const std::string& string
       const double match = tMatch.theta(LRL_StringTools::strToupper(commandToMatch), parseData[i].GetLabel());
       if ( match < bestMatch ) {
          bestMatch = match;
-         bestMatchIndex = i;
+         bestMatchIndex = int(i);
       }
    }
 

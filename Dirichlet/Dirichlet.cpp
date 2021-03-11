@@ -1,136 +1,262 @@
 #include "Dirichlet.h"
 
 #include "DirichletConstants.h"
+#include "D7.h"
+#include "Faces.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
+#include "SVG_Tools.h"
 #include "TriangleAreaFromSides.h"
 
 #include <cmath>
 
-static const std::string letters( "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H");
+DirichletSVG::DirichletSVG(const DirichletCell& dc)
+   : m_dirCell(dc)
+{ }
 
+std::string DirichletSVG::OutputSVG(const std::vector<std::string>& stereoImages,
+   const Cell_Faces& faceRecords, const std::string& extra) const {
+   const std::string stringCell =
+      LRL_ToString("\nReduced Cell \n", LRL_Cell_Degrees(m_dirCell.GetCell()), "\n  S6  ", S6(m_dirCell.GetCell()), "\n  G6  "
+         , G6(m_dirCell.GetCell()), "\n  D7  ", D7(m_dirCell.GetCell()), "\n\n");
 
-LRL_Cell Dirichlet::ParseAndReduceStringCellWithLattice(const std::string& strCell) {
-   return ParseAndReduceCell(std::string(1, strCell[0]), strCell.substr(2));
+   std::vector<std::string> scell;
+
+   scell.push_back(stringCell);
+   scell.push_back(extra);
+   scell.insert(scell.end(), DirichletConstants::note.begin(), DirichletConstants::note.end());
+
+   const std::string header = ImageHeader(DirichletConstants::canvas_x_size, DirichletConstants::canvas_y_size) + "\n";
+   std::vector<std::string> footer = ImageFooter(scell);
+
+   const std::string output = header +
+      LRL_StringTools::ConcatanateStrings(stereoImages) + LRL_StringTools::ConcatanateStrings(footer);
+   return output;
 }
 
-LRL_Cell Dirichlet::ParseAndReduceCell(const std::string& lattice, const std::string& strCell) {
-   LRL_Cell cell;
-   if ((!lattice.empty()) && (static_cast<char>(letters.find(toupper(lattice[0]))) != std::string::npos)) {
+static ANGLELIST ComputeAnglesForOneFace(const ANGLELIST& list, const Vector_3& cm) {
+   static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
+   // So here we will take the first point and compute a unit vector 
+   // (the points are already at the center of mass.) The second basis
+   // vector is the plane normal. The third will be the cross product
+   // of those two vectors. The vector from the origin to the center
+   // of mass is the plane normal.
+   if (false || list.empty() || ((list[0].second - cm).Norm() < 1.0E-5)) return ANGLELIST();
+   const Vector_3 firstVectorInList = list[0].second;
+   const Vector_3 basis1 = firstVectorInList / firstVectorInList.Norm();
+   const Vector_3 basis2 = cm / cm.Norm();
+   const Vector_3 basis3 = basis1.Cross(basis2);
+   const double angleZero = degreesPerRad * atan2(list[0].second.Dot(basis1), list[0].second.Dot(basis3));;
+   ANGLELIST restoredWithAngles;
 
-      if (DirichletConstants::sellingNiggli == "SELLING")
-         cell = LatticeConverter().SellingReduceCell(lattice, LRL_Cell(strCell));
-      else
-         cell = LatticeConverter().NiggliReduceCell(lattice, LRL_Cell(strCell));
+   for (size_t face = 0; face < list.size(); ++face) {
+      double angle = degreesPerRad * atan2(list[face].second.Dot(basis1), list[face].second.Dot(basis3));
+      angle = std::fmod(angle - angleZero + 3.0 * 360.0, 360.0);
+      const ANGLE_COORDS ac = ANGLE_COORDS(angle, list[face].second + cm);
+      restoredWithAngles.push_back(ac);
    }
-   return cell;
+   return restoredWithAngles;
+
 }
 
-LRL_Cell Dirichlet::ReadAndReduceCell() {
-   std::string lattice;
-   LRL_ReadLatticeData rcdA;
-   const LRL_ReadLatticeData rcd = rcdA.read();
-   lattice = rcd.GetLattice();
-   if ((!lattice.empty()) && (static_cast<char>(letters.find(toupper(lattice[0]))) != std::string::npos)) {
-      LRL_Cell cell = LatticeConverter::NiggliReduceCell(lattice, rcd.GetCell());
-      if (DirichletConstants::sellingNiggli == "SELLING")
-         cell = LatticeConverter().SellingReduceCell(lattice, rcd.GetCell());
-      else
-         cell = LatticeConverter().NiggliReduceCell(lattice, rcd.GetCell());
-      return cell;
+static Vector_3 CenterOfMassForOneFace(const ANGLELIST& list) { // LCA duplicate!!!!!!!!!!!!!!!!!!!
+   Vector_3 centerOfMass(0.0, 0.0, 0.0);
+   if (list.size() == 1) return list[0].second;
+   if (list.empty()) return centerOfMass;
+   for (int face = 0; face < list.size(); ++face) {
+      const Vector_3& point = list[face].second;
+      centerOfMass += point;
    }
-   else {
-      throw;
+   return centerOfMass / double(list.size());
+}
+
+
+static ANGLELIST MoveOneFaceToCenterOfMass(const ANGLELIST& list) {
+   const Vector_3 centerOfMass = CenterOfMassForOneFace(list);
+   ANGLELIST coordsAtCenterOfMass;
+   const Vector_3 cm = CenterOfMassForOneFace(list);
+
+   for (size_t face = 0; face < list.size(); ++face) {
+      coordsAtCenterOfMass.push_back(ANGLE_COORDS(-19192.0, list[face].second - cm));
    }
+   return coordsAtCenterOfMass;
 }
 
-//    static LRL_Cell SellingReduceCell( const std::string& lattice, const LRL_Cell& cell, MatS6& mat );
-
-double FixZero(const double d) {
-   return (abs(d) < 1.0E-8) ? 0.0 : d;
-}
-
-CNearTree<Vector_3> Dirichlet::CreateTreeOfLatticePoints() {
-   return CreateVectorOfLatticePoints();
-}
-
-Dirichlet_Intersection Dirichlet::CalculateOneIntersection(const size_t i, const size_t j, const size_t k, const std::vector<Vector_3>& vLattice)
-{
-   const Vector_3& v1 = vLattice[i];
-   const Vector_3& v2 = vLattice[j];
-   const Vector_3& v3 = vLattice[k];
-
-   const double norm1 = v1.Norm();
-   const double norm2 = v2.Norm();
-   const double norm3 = v3.Norm();
-
-   if ( norm1<1.0E-6 || norm2 < 1.0E-6 || norm3 < 1.0E-6) return Dirichlet_Intersection();
-
-   const Vector_3 a = v1 / v1.Norm();
-   const Vector_3 b = v2 / v2.Norm();
-   const Vector_3 c = v3 / v3.Norm();
-    // prelude
-      const double cos1 = abs(a.Dot(b));
-      const double cos2 = abs(a.Dot(c));
-      const double cos3 = abs(b.Dot(c));
-
-      // is some pair of planes parallel?
-      if ((abs(cos1) > 0.99999) || (abs(cos2) > 0.99999) || (abs(cos3) > 0.99999)) {
-         return Dirichlet_Intersection();
+static ANGLELIST SortAnglesForOneFace(const ANGLELIST& toSort) {
+   //   // bubble sort the result since Vector_3 does not have operator<
+   ANGLELIST temp(toSort);
+   for (size_t face = 0; face < temp.size(); ++face) {
+      for (size_t k = 0; k < temp.size(); ++k) {
+         if (temp[face].first < temp[k].first) std::swap(temp[face], temp[k]);
       }
-   
-
-   const Matrix_3x3 const_m(Matrix_3x3(
-      a[0], a[1], a[2],
-      b[0], b[1], b[2],
-      c[0], c[1], c[2]));
-   const double constDet = const_m.Det();
-
-   if (abs(constDet) < 1.0E-4) {
-      return Dirichlet_Intersection();
    }
+   return temp;
+}
 
-   Vector_3 v;
-   Dirichlet_Intersection intersection;
-   { // the real calcularions
-      Matrix_3x3 m;
-      intersection.SetIsValid(true);
-      // Cramer's rule
-      for (int i = 0; i < 3; ++i) {
-         m = const_m;
-         m[i] = v1.Norm() / 2;
-         m[i + 3] = v2.Norm() / 2;
-         m[i + 6] = v3.Norm() / 2;
-
-         const double det = m.Det();
-         v[i] = det / constDet;
+static ANGLELIST RemoveDuplicatesFromOneAngleList(const ANGLELIST& anglelist) {
+   if (anglelist.empty()) return ANGLELIST();
+   ANGLELIST intermediateOutput;
+   const double initialAngle = anglelist[0].first;
+   intermediateOutput.push_back(anglelist[0]);
+   for (size_t face = 1; face < anglelist.size(); ++face) {
+      const double& angle1 = anglelist[face - 1].first;
+      const double& angle2 = anglelist[face].first;
+      if (abs(angle2 - angle1) > 1.0E-3 && angle2 < 360.0 + initialAngle - 1.0E-3) {  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!  still need to handle -180 != 180
+         intermediateOutput.push_back(anglelist[face]);
       }
    }
 
-   if (!(v[0] > -DBL_MAX)) {
+   const Vector_3 centerOfMass = CenterOfMassForOneFace(intermediateOutput);
+   const double distanceFromOrigin = (centerOfMass - intermediateOutput[0].second).Norm();
+   //if (distanceFromOrigin < 1.0E-4) return ANGLELIST();
+
+   const size_t nio = intermediateOutput.size();
+   if (intermediateOutput.size() != anglelist.size()) {
+      int i19191 = 19191;
+   }
+   return (intermediateOutput.size() > 3) ? intermediateOutput : ANGLELIST();
+}
+
+Vector_3 CenterOfMassForObject(const ANGLESFORFACES& list) {
+   Vector_3 cm(0, 0, 0);
+   for (size_t face = 0; face < list.size(); ++face) {
+      cm += CenterOfMassForOneFace(list[face]);
+   }
+   return cm / double(list.size());
+}
+
+static ANGLESFORFACES MakeRings(const ANGLESFORFACES& faces_in, const std::vector<Intersection>& vIntersections) {
+   ANGLESFORFACES restored_faces_out;
+   //
+   // THIS SHOULD BE SIMPLIFIED
+   //
+   for (size_t face = 0; face < faces_in.size(); ++face) {
+      const ANGLELIST moved = MoveOneFaceToCenterOfMass(faces_in[face]);
+      const ANGLELIST restoredWithAngles = ComputeAnglesForOneFace(moved, CenterOfMassForOneFace(faces_in[face]));
+      const ANGLELIST sorted = SortAnglesForOneFace(restoredWithAngles);
+      const ANGLELIST cleaned = RemoveDuplicatesFromOneAngleList(sorted);
+      if (cleaned.size() > 2) restored_faces_out.push_back(cleaned);
+   }
+
+   Vector_3 cm = CenterOfMassForObject(restored_faces_out);
+
+   if (cm.Norm() > 1.0E-4) {
+      const int i19191 = 19191;
+   }
+   return restored_faces_out;
+}
+
+static int CountFaces(const POINT_LIST& p) {
+   int max = -INT_MAX;
+
+   for (int face = 0; face < p.size(); ++face) {
+      max = std::max(max, int(p[face][0]));
+      max = std::max(max, int(p[face][1]));
+      max = std::max(max, int(p[face][2]));
+   }
+   return max + 1;
+}
+
+static ANGLESFORFACES AssignPointsToFaceList(const std::pair<POINT_LIST, std::vector<Intersection> >& input) {
+   ANGLESFORFACES output;
+
+   const POINT_LIST& inputIndices = input.first;
+   const std::vector<Intersection>& angleCoords = input.second;
+   // make list of faces with points
+
+   const int nFaces = CountFaces(inputIndices);
+   ANGLESFORFACES anglesForFaces(nFaces);
+   for (int face = 0; face < inputIndices.size(); ++face) {
+      const std::vector<size_t>& v_index = inputIndices[face];
+      const size_t& i1 = v_index[0];
+      const size_t& i2 = v_index[1];
+      const size_t& i3 = v_index[2];
+      const Vector_3& v_Coords_out1 = angleCoords[face].GetCoord();
+      const int i19191 = 19191;
+      const ANGLE_COORDS anglec(-19191.0, v_Coords_out1);
+      anglesForFaces[i1].push_back(anglec);
+      anglesForFaces[i2].push_back(anglec);
+      anglesForFaces[i3].push_back(anglec);
+   }
+
+   const Vector_3 cm1 = CenterOfMassForObject(anglesForFaces);
+
+   for (size_t face = 0; face < anglesForFaces.size(); ++face) {
+      if (anglesForFaces[face].size() > 2) output.push_back(anglesForFaces[face]);
+      if (anglesForFaces[face].size() == 1) output.push_back(anglesForFaces[face]);
+   }
+
+   const Vector_3 cm = CenterOfMassForObject(output);
+
+   if (cm.Norm() > 1.0E-4) {
       const int i19191 = 19191;
    }
 
-   intersection.SetCoordinates(v);
-   intersection.SetFacesIndices({ i,j,k });
-   return intersection;
+   return output;
 }
 
+static std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections(const CNearTree<Vector_3>& tree) {
+   std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
+   const size_t n = dirichletFaces.size();
+   POINT_LIST vvindex;
+   std::vector<Intersection> vIntersections;
 
-std::vector<Vector_3> Dirichlet::CreateVectorOfLatticePoints() {
+   const auto it0 = tree.NearestNeighbor(0.0001, Vector_3(0., 0., 0.));  // origin
+   const long n0 = it0.get_position();
+   //
+   //
+   for (size_t i1 = 0; i1 < n - 2; ++i1) {
+      for (size_t i2 = i1 + 1; i2 < n - 1; ++i2) {
+         if (i1 == i2) continue;
+         for (size_t i3 = i2 + 1; i3 < n; ++i3) {
+            if (i1 == i3 || i2 == i3) continue;
+            Intersection intersection = Intersection::FindIntersectionForThreeFaces(dirichletFaces[i1], dirichletFaces[i2], dirichletFaces[i3]);
+
+            const double d = intersection.GetCoord()[0];
+            const bool b1 = !(intersection.GetCoord()[0] <= 0.0);
+            const bool b2 = !(intersection.GetCoord()[0] > 0.0);
+            const bool b_both = b1 && b2; // for test for indefinite value
+
+            if (intersection.GetCoord()[0] != DBL_MAX && (!b_both)) {
+               const auto it = tree.NearestNeighbor(DBL_MAX, intersection.GetCoord());
+               const bool bFindOrigin = it == it0;
+
+               double distanceFromOrigin = DBL_MAX;
+               double nearestFoundDistance = DBL_MAX;
+               if (it != tree.end()) {
+                  const size_t pos = it.get_position();
+                  distanceFromOrigin = (intersection.GetCoord() - (*it0)).Norm();
+                  nearestFoundDistance = (intersection.GetCoord() - (*it)).Norm();
+               }
+               //if (intersection.IsValid() ) {
+               if (intersection.IsValid() && (bFindOrigin || abs(distanceFromOrigin - nearestFoundDistance < 1.0E-4))) {
+                  intersection.SetPlaneList(i1, i2, i3);
+                  vvindex.push_back({ i1, i2, i3 });
+                  vIntersections.push_back(intersection);
+                  dirichletFaces[i1].SetIndicesOfIntersection(i1, i2, i3);
+                  const int i19191 = 19191;
+               }
+            }
+         }
+      }
+   }
+   std::cout << "intersection count " << vvindex.size() << std::endl;
+   return std::make_pair(vvindex, vIntersections);
+}
+
+static std::vector<Vector_3> CreateVectorOfLatticePoints(const Matrix_3x3& m) {
    std::vector<Vector_3> v;
    const int maxLatticeLimit = DirichletConstants::latticeLimit;
    for (int face = -maxLatticeLimit; face <= maxLatticeLimit; ++face) {
       for (int j = -maxLatticeLimit; j <= maxLatticeLimit; ++j) {
          for (int k = -maxLatticeLimit; k <= maxLatticeLimit; ++k) {
-            const double& di = face;
-            const double& dj = j;
-            const double& dk = k;
-            if (di == 0 && dj == 0 && dk == 0) continue;
-            Vector_3 v3 = m_cartesianMatrix * Vector_3(di, dj, dk);
+            double di = face;
+            double dj = j;
+            double dk = k;
+            Vector_3 v3 = m * Vector_3(di, dj, dk);
             for (size_t face = 0; face < 3; ++face)
                if (abs(v3[face]) < 1.0E-8) v3[face] = 0.0;
             v.push_back(v3);
@@ -140,352 +266,79 @@ std::vector<Vector_3> Dirichlet::CreateVectorOfLatticePoints() {
    return v;
 }
 
-
-/*   std::vector<Dirichlet_Vertex> m_vertexList; // ARE THESE THE SAME THING??????????????
-   std::vector<size_t> m_VerticesInThisFace;;
-*/
-
-void Dirichlet::InsertFaceIndices( const Dirichlet_Intersection& di, const size_t n) {
-   const std::vector<size_t> v = di.GetFaceIndices();
-   //const size_t nmax = std::max(std::max(v[0],v[1]), std::max(v[2], m_faces.size()))+1;
-   //if (nmax > m_faces.size()) m_faces.resize(nmax);
-   m_faces[v[0]].AddVertex(n);
-   m_faces[v[1]].AddVertex(n);
-   m_faces[v[2]].AddVertex(n);
+static CNearTree<Vector_3> CreateTreeOfLatticePoints(const Matrix_3x3& m) {
+   const std::vector<Vector_3> v = CreateVectorOfLatticePoints(m);
+   return v;
 }
 
-void Dirichlet::CreateFaceList(const std::vector<Vector_3>& vertices, const std::vector<Dirichlet_Intersection>& v) {
-   int count = 0;
-   m_faces.resize(vertices.size());
-   for (size_t i = 0; i < v.size(); ++i) {
-      Dirichlet_Face face;
-      const double normFace = v[i].GetCoordinates().Norm();
-      face.SetNormal(v[i].GetCoordinates() / normFace);
-      face.SetDistance(normFace);
-      InsertFaceIndices(v[i], i);
-      face.SetVertexIndexList(v[i].GetFaceIndices());
-      if (face.size() > 3) m_faces[i] = face;
-      if (face.size() > 3) ++count;
-   }
-
-   count = 0;
-   int minVertices = INT_MAX;
-   int maxVertices = 0;
-   for (size_t i = 0; i < m_faces.size(); ++i) {
-      if (m_faces[i].size() > 3) ++count;
-      if (maxVertices < m_faces[i].size()) maxVertices = m_faces[i].size();
-      if (minVertices > m_faces[i].size()) minVertices = m_faces[i].size();
-   }
-   count;
-   const int i19191 = 19191;
+static Vector_3 RecoverIndicesOfOneFace(const Matrix_3x3& minv, const ANGLELIST& list) {
+   const Vector_3 cm = CenterOfMassForOneFace(list);; // LCA duplicate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   return minv * cm;
 }
 
-/*               double distanceFromOrigin = DBL_MAX;
-               double nearestFoundDistance = DBL_MAX;
-               if (it != tree.end()) {
-                  const size_t pos = it.get_position();
-                  distanceFromOrigin = (intersection.GetCoord() - (*it0)).Norm();
-                  nearestFoundDistance = (intersection.GetCoord() - (*it)).Norm();
-               }
-               //if (intersection.IsValid() ) {
-               if (intersection.IsValid() && (bFindOrigin || abs(distanceFromOrigin - nearestFoundDistance < 1.0E-4))) {
-                     intersection.SetPlaneList(i1, i2, i3);
-                  vvindex.push_back({ i1, i2, i3 });
-                  vIntersections.push_back(intersection);
-                  vdf[i1].SetIndicesOfIntersection(i1,i2,i3);
-                  const int i19191 = 19191;
-               }
-*/
-std::vector<Dirichlet_Intersection> Dirichlet::CreateAllIntersections(const std::vector<Vector_3>& vLattice) {
-   std::vector<Dirichlet_Intersection> vout;
-   const CNearTree<Vector_3> tree(vLattice);
-   const auto it0 = tree.NearestNeighbor(DBL_MAX, vLattice[0]);
-
-   for (size_t i = 0; i < vLattice.size()-2; ++i) {
-      for (size_t j = i+1; j < vLattice.size()-1; ++j) {
-         if (i == j) continue;
-         for (size_t k = j+1; k < vLattice.size(); ++k) {
-            if (i == k || j == k) continue;
-            Dirichlet_Intersection inter = CalculateOneIntersection(i, j, k, vLattice);
-
-            double distanceFromOrigin = DBL_MAX;
-            double nearestFoundDistance = DBL_MAX;
-               const auto itX = tree.NearestNeighbor(DBL_MAX, inter.GetCoordinates());
-            if (itX != tree.end()) {
-               distanceFromOrigin = (inter.GetCoordinates() - (*it0)).Norm();
-               nearestFoundDistance = (inter.GetCoordinates() - (*itX)).Norm();
-            }
-            if (inter.IsValid()) {
-
-               if ((it0 == itX) || (abs(distanceFromOrigin - nearestFoundDistance < 1.0E-4))) {
-                  inter.SetFacesIndices(std::vector<size_t>({ i,j,k }));
-                  vout.push_back(inter);
-               }
-            }
-         }
-      }
+static std::vector<Vector_3> RecoverIndicesOfFaces(const Matrix_3x3& m_cart, const ANGLESFORFACES& newRinged) {
+   const Matrix_3x3 minv(m_cart.Inver()); // LCA duplicate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   std::vector<Vector_3> vout;
+   for (size_t i = 0; i < newRinged.size(); ++i) {
+      Vector_3 v = (2.0 * RecoverIndicesOfOneFace(minv, newRinged[i]));
+      for (size_t i = 0; i < 3; ++i) v[i] = (abs(v[i]) < 1.0e-6) ? 0.0 : v[i];
+      for (size_t i = 0; i < 3; ++i) v[i] = (abs(abs(v[i]) - 1) < 1.0e-6) ? round(v[i]) : v[i];
+      vout.push_back(v);
    }
    return vout;
 }
 
-std::vector<std::pair<double, size_t> > RemoveDuplicatefaceAngles( const std::vector<std::pair<double, size_t> >  angleWithIndex ) {
-   std::vector<std::pair<double, size_t> > out;
-   out.push_back(angleWithIndex[0]);
-   for (size_t i = 1; i < angleWithIndex.size() - 1; ++i) {
-      if (abs(angleWithIndex[i].first - angleWithIndex[i + 1].first) > 1.0E-4) out.push_back(angleWithIndex[i + 1]);
-   }
-   return out;
-}
-
-void Dirichlet::ProcessOneFace(const Dirichlet_Face& face, const std::vector<Dirichlet_Intersection>& intersIn) {
-   Vector_3 cm(0, 0, 0);
-   std::vector<Dirichlet_Intersection> inters(intersIn);
-   std::vector<size_t> vin = face.GetVertexIndexList();
-   for (size_t i = 0; i < vin.size(); ++i) {
-      cm += inters[vin[i]].GetCoordinates();
-   }
-   cm = cm / double(vin.size());
-
-   vin.push_back(vin[0]);
-   //inters.push_back(inters[0]);
-   std::vector<std::pair<double, size_t> >  angleWithIndex;
-   static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
-   for (size_t i = 0; i < vin.size()-1; ++i) {
-      const Vector_3 inter1 = inters[vin[i]].GetCoordinates();
-      const Vector_3 inter2 = inters[vin[i+1]].GetCoordinates();
-      double angle = degreesPerRad * Vector_3::Angle(inter1, cm, inter2);
-      if (angle < 1.0E-4) angle = 0;
-      angleWithIndex.push_back(std::make_pair(angle, i));
-   }
-
-
-   std::sort(angleWithIndex.begin(), angleWithIndex.end());
-
-   std::vector<std::pair<double, size_t> > out = RemoveDuplicatefaceAngles(angleWithIndex);
-   std::cout << std::endl;
-
-   for (size_t i = 0; i < out.size()-1; ++i) {
-      std::cout << out[i].first << "  " << out[i].second << std::endl;
-   }
-   const int i19191 = 19191;
-}
-
-void Dirichlet::ProcessFaces(const std::vector<Dirichlet_Intersection>& inters) {
-   for (size_t i = 0; i < m_faces.size(); ++i) {
-      if ( m_faces[i].size() > 0) ProcessOneFace(m_faces[i], inters);
-   }
-}
-
-//std::vector<Dirichlet_Intersection> Dirichlet::CleanIntersectionList(const std::vector<Dirichlet_Intersection>& vInter) {
-//   CNearTree<Vector_3> tree = Dirichlet::CreateTreeOfLatticePoints();
-//   tree.insert(Vector_3(0, 0, 0));
-//   const auto it_Origin = tree.NearestNeighbor(0.0001, Vector_3(0., 0., 0.));  // origin
-//
-//   std::vector<Dirichlet_Intersection> vout;
-//   for (size_t i = 0; i < vInter.size(); ++i) {
-//      const auto it = tree.NearestNeighbor(DBL_MAX, vInter[i].GetCoordinates());
-//      if (it == it_Origin) {
-//         vout.push_back(vInter[i]);
-//      }
-//   }
-//   return vInter;
-//}
-
-//std::vector<Dirichlet_Intersection> Dirichlet::GenerateIntersectionList() {
-//   const std::vector<Vector_3> vLattice = CreateVectorOfLatticePoints();
-//   const std::vector<Dirichlet_Intersection> vInter = CreateAllIntersections(vLattice);
-// 
-//   const std::vector<Dirichlet_Intersection> vout = CleanIntersectionList(vInter);
-//
-//   return vout;
-//}
-
-Dirichlet_Intersection::Dirichlet_Intersection(const Vector_3& v, const std::vector<size_t>& planes)
-   : m_IsValid(true)
-   , m_coord(v)
-   , m_faces(planes)
-{
-}
-
-Dirichlet_Intersection::Dirichlet_Intersection(const std::vector<size_t>& planes, const Vector_3& v)
-   : m_IsValid(true)
-   , m_coord(v)
-   , m_faces(planes)
-{
-}
-
-Dirichlet_Faces::Dirichlet_Faces(const std::vector<Dirichlet_Intersection>& intersections)
-   : m_intersections(intersections)
-{
-   std::vector< std::vector<size_t> > faces;
-
-   for (size_t ith_Intersection = 0; ith_Intersection < intersections.size(); ++ith_Intersection) {
-      const size_t n0 = intersections[ith_Intersection][0];
-      const size_t n1 = intersections[ith_Intersection][1];
-      const size_t n2 = intersections[ith_Intersection][2];
-      const size_t maxIndex = std::max(std::max(n0, n1), n2);
-      if (maxIndex+1 > faces.size()) faces.resize(maxIndex + 1);
-     faces[n0].push_back(ith_Intersection);
-     faces[n1].push_back(ith_Intersection);
-     faces[n2].push_back(ith_Intersection);
-   }
-
-   for (size_t i = 0; i < faces.size(); ++i) {
-      const std::vector<size_t> merged = GetAngleSortedAndMergedIndices(faces[i]);
-         //if (vAngles.size() > 2) m_faces.push_back(faces[i]);
-      if ( merged.size() > 2 ) m_faces.push_back(merged);
-   }
-   const std::vector<double> vAreas = GetFaceAreas();
-   std::cout << LRL_ToString(vAreas) << std::endl;
-}
-
-Vector_3 Dirichlet_Faces::CenterOfMassForOneFace(const std::vector<size_t>& list) const {
-   Vector_3 centerOfMass(0.0, 0.0, 0.0);
-
-   for (int face = 0; face < list.size(); ++face) {
-      const Vector_3& point = m_intersections[list[face]].GetCoordinates();
-      centerOfMass += point;
-   }
-   return centerOfMass / double(list.size());
-}
-
-std::vector<double> Dirichlet_Faces::ComputeAnglesForOneFace(const std::vector<size_t>& vi) const {
-   static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
-   // So here we will take the first point and compute a unit vector 
-   // (the points are already at the center of mass.) The second basis
-   // vector is the plane normal. The third will be the cross product
-   // of those two vectors. The vector from the origin to the center
-   // of mass is the plane normal.
-   std::vector<double> angleList;
-   if (vi.size() < 3 ) return angleList;
-   const Vector_3 cm = CenterOfMassForOneFace(vi);
-   const double distanceFromCenterOfMass = (m_intersections[vi[0]].GetCoordinates() - cm).Norm();
-   if (distanceFromCenterOfMass < 1.0E-5) return angleList;
-
-   const Vector_3 firstVectorInList = m_intersections[ vi[0]].GetCoordinates();
-   const Vector_3 basis1 = firstVectorInList / firstVectorInList.Norm();
-   const Vector_3 basis2 = cm / cm.Norm();
-   const Vector_3 basis3 = basis1.Cross(basis2);
-   const double angleZero = degreesPerRad * 
-      atan2(m_intersections[vi[0]].GetCoordinates().Dot(basis1), m_intersections[vi[0]].GetCoordinates().Dot(basis3));;
-
-   for (size_t face = 0; face < vi.size(); ++face) {
-      double angle = degreesPerRad * 
-         atan2(m_intersections[vi[face]].GetCoordinates().Dot(basis1), m_intersections[vi[face]].GetCoordinates().Dot(basis3));
-      if ( face==0 || angle < 1.0E-5) angle = std::fmod(angle - angleZero + 3.0 * 360.0, 360.0);
-      angleList.push_back(angle);
-   }
-   return angleList;
-}
-
-std::vector<double> Dirichlet_Faces::GetFaceAreas() const {
-   std::vector<double> output;
-
-   for (size_t i = 0; i < m_faces.size(); ++i) {
-      const double area = GetAreaOfOneFace(i);
-      output.push_back(area);
-   }
-   return output;
-}
-
-double Dirichlet_Faces::GetAreaOfOneFace(const size_t n) const {
-   const std::vector<size_t> intersections( m_faces[n]);
-   const Vector_3 cm = CenterOfMassForOneFace(m_faces[0]);
+static double AreaOfOneFace(const ANGLELIST& face) {
+   const Vector_3 cm = CenterOfMassForOneFace(face);
 
    double totalArea = 0.0;
-   for (size_t i = 0; i < intersections.size(); ++i) {
-
-      const Vector_3 v1 = m_intersections[intersections[i]].GetCoordinates();
-      const Vector_3 v2 = (i==intersections.size()-1) ? 
-      m_intersections[intersections[0]].GetCoordinates():
-      m_intersections[intersections[i + 1]].GetCoordinates();
-      const Vector_3 v3 = v1-v2;
+   for (size_t i = 0; i < face.size(); ++i)
+   {
+      const Vector_3 v1 = face[i].second;
+      const Vector_3 v2 = (i == face.size() - 1) ? face[0].second : face[i + 1].second;
+      const Vector_3 v3 = v2 - v1;
 
       const double side1 = (v1 - cm).norm();
       const double side2 = (v2 - cm).norm();
       const double side3 = v3.Norm();
 
-      const double area = TriangleAreaFromSides(side1, side2,side3); // Heron's formula for 3 sides
+      const double area = TriangleAreaFromSides(side1, side2, side3); // Heron's formula for 3 sides
       totalArea += area;
    }
    return totalArea;
 }
 
-std::pair<std::vector<double>, std::vector<size_t> > Dirichlet_Faces::SortByAngle(const std::pair<std::vector<double>, std::vector<size_t> >& input) const {
-   std::pair<std::vector<double>, std::vector<size_t> > sorted(input);
-   for (size_t i = 1; i < sorted.second.size(); ++i) {
-      for (size_t i = 1; i < sorted.second.size(); ++i) {
-         if (sorted.first[i] < sorted.first[i - 1]) std::swap(sorted.first[i], sorted.first[i - 1]);
-      }
-   }
-   return sorted;
-}
-
-std::vector<size_t> Dirichlet_Faces::GetAngleMergedIndices(const std::pair<std::vector<double>, std::vector<size_t> >& input) const {
-   std::vector<size_t> output;
-   output.push_back(input.second[0]);
-   const std::vector<double>& angles(input.first);
-
-   for (size_t i = 0; i < angles.size()-1; ++i) {
-      const double d1 = angles[i];
-      const size_t kk = i + 1;
-      const double d2 = angles[kk];
-      const double diff = abs(d1-d2);
-      if (diff > 1.0e-4) {
-         output.push_back(input.second[kk]);
-      }
-   }
-   return (output.size()>2) ? output : std::vector<size_t>();
-}
-
-std::vector<size_t> Dirichlet_Faces::GetAngleSortedAndMergedIndices(const std::vector<size_t>& input) const {
-   const std::vector<double> angles = ComputeAnglesForOneFace(input);
-   const size_t angleCount = angles.size();
-   if (angleCount < 3) return std::vector<size_t>();
-   const std::pair<std::vector<double>, std::vector<size_t> > paired(angles, input);
-   const std::pair<std::vector<double>, std::vector<size_t> > sorted = SortByAngle(paired);
-   const std::vector<size_t> merged = GetAngleMergedIndices(sorted);
-   return merged;
-}
-
-Dirichlet_Vertex::Dirichlet_Vertex::Dirichlet_Vertex()
-   : m_coord()
-   , m_faceAngleForSorting(-DBL_MAX)
-   , m_zSort()
-   , m_indicesOfFaces()
-{}
-
-Dirichlet_Vertex::Dirichlet_Vertex(const Dirichlet_Intersection& di)
-   : m_coord()
-   , m_faceAngleForSorting(-DBL_MAX)
-   , m_zSort()
-   , m_indicesOfFaces()
-{}
-
-
-Dirichlet_Face::Dirichlet_Face(const Dirichlet_Intersection& inter) 
-   : m_VerticesInThisFace(3)
+DirichletCell::DirichletCell(const std::string& strCell)
+   : m_strCell(strCell)
 {
-   const size_t currentFaceCount = m_VerticesInThisFace.size();
-   const size_t maxIndex = std::max(std::max(inter[0], inter[1]), inter[2]);
-   if (maxIndex > m_VerticesInThisFace.size() - 1) m_VerticesInThisFace.resize(maxIndex + 1);
+   //-------------decode unit cell
+   LRL_ReadLatticeData rdc;
+   rdc.CellReader(strCell);
+   m_cell = rdc.GetCell();
 
-   for (size_t i = 0; i < inter.size(); ++i) {
+   ////-------------reduce cell
+   if (DirichletConstants::sellingNiggli == "SELLING")
+      m_reducedCell = LatticeConverter().SellingReduceCell(rdc.GetLattice(), rdc.GetCell());
+   else
+      m_reducedCell = LatticeConverter().NiggliReduceCell(rdc.GetLattice(), rdc.GetCell());
+
+   ////-------------cell create faces
+   m_cart = m_reducedCell.Cart();
+   m_cellFaces = Cell_Faces(m_reducedCell, m_cart);
+
+   //-------------create Dirichlet faces
+   const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(m_cart);
+   std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
+   const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(tree);
+   const ANGLESFORFACES vvPoints = AssignPointsToFaceList(v_Intersections);
+
+   m_facesWithVertices = MakeRings(vvPoints, v_Intersections.second);
+   const std::vector<Vector_3> indices = RecoverIndicesOfFaces(GetCartesianMatrix(), m_facesWithVertices);
+   m_indices = ConvertAllVectorIndicesToInt(indices);
+   m_strIndices = ConvertAllVectorIndicesToString(indices);
+
+   for (size_t faceIndex = 0; faceIndex < m_facesWithVertices.size(); ++faceIndex) {
+      double area = AreaOfOneFace(m_facesWithVertices[faceIndex]);
+      m_areas.push_back((area < 1.0E-4) ? 0 : area);
    }
-   const Vector_3 coord(inter.GetCoordinates());
-   SetCoord(coord);
-   SetNormal(coord / coord.Norm());
-   SetDistance(coord.Norm());
-   SetVertexIndexList(inter.GetFaceIndices());
-}
-
-void Dirichlet_Face::AddVertex(const size_t n) {
-   m_VerticesInThisFace.push_back(n);
-}
-
-
-std::vector<double> GetAreas() {
-   //return DiricheltFaces::GetFaceAreas();
-   throw;
-   return std::vector<double>();
 }

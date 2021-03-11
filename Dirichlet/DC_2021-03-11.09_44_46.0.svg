@@ -1,0 +1,264 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="2000" height ="2000" viewBox = "0 0 2000 2000" 
+version = "1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Creation date and time _2021-03-11.09_44_47.-->
+<g transform="translate(50,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="102.346, -3.88144  102.346, 54.9643  102.346, 88.8457  102.346, 63.8814  102.346, 5.03573  102.346, -28.8457  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="54.1154, 119.755  54.1154, 94.7905  102.346, 63.8814  102.346, 88.8457  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-42.3463, 88.8457  -42.3463, 63.8814  5.88457, 66.8538  54.1154, 94.7905  54.1154, 119.755  5.88457, 116.782  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="54.1154, -56.7824  102.346, -28.8457  102.346, 5.03573  54.1154, -22.9009  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-42.3463, -28.8457  5.88457, -59.7548  54.1154, -56.7824  54.1154, -22.9009  5.88457, 8.00812  -42.3463, 5.03573  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-42.3463, 5.03573  5.88457, 8.00812  5.88457, 66.8538  -42.3463, 63.8814  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="5.88457, 8.00812  54.1154, -22.9009  102.346, 5.03573  102.346, 63.8814  54.1154, 94.7905  5.88457, 66.8538  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-42.3463, -3.88144  -42.3463, 54.9643  5.88457, 82.9009  54.1154, 51.9919  54.1154, -6.85383  5.88457, -34.7905  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="54.1154, -6.85383  54.1154, 51.9919  102.346, 54.9643  102.346, -3.88144  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="5.88457, 82.9009  5.88457, 116.782  54.1154, 119.755  102.346, 88.8457  102.346, 54.9643  54.1154, 51.9919  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-42.3463, 54.9643  -42.3463, 88.8457  5.88457, 116.782  5.88457, 82.9009  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="5.88457, -34.7905  54.1154, -6.85383  102.346, -3.88144  102.346, -28.8457  54.1154, -56.7824  5.88457, -59.7548  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-42.3463, -3.88144  5.88457, -34.7905  5.88457, -59.7548  -42.3463, -28.8457  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-42.3463, -3.88144  -42.3463, -28.8457  -42.3463, 5.03573  -42.3463, 63.8814  -42.3463, 88.8457  -42.3463, 54.9643  " />
+</g>
+<g transform="translate(250,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="54.8021, 116.647  68.1785, 92.5472  109.552, 62.7083  96.1752, 86.8082  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-49.5516, -2.70832  -36.1752, -26.8082  -24.0852, 5.9001  -25.3715, 62.7083  -38.7479, 86.8082  -50.838, 54.0999  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="58.6611, -53.7776  98.7479, -26.8082  110.838, 5.9001  70.7512, -21.0693  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-38.7479, 86.8082  -25.3715, 62.7083  28.0917, 65.5778  68.1785, 92.5472  54.8021, 116.647  1.33888, 113.778  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-36.1752, -26.8082  5.19793, -56.6471  58.6611, -53.7776  70.7512, -21.0693  29.378, 8.76957  -24.0852, 5.9001  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="29.378, 8.76957  70.7512, -21.0693  110.838, 5.9001  109.552, 62.7083  68.1785, 92.5472  28.0917, 65.5778  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-24.0852, 5.9001  29.378, 8.76957  28.0917, 65.5778  -25.3715, 62.7083  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="31.9083, -5.5778  30.622, 51.2304  84.0852, 54.0999  85.3715, -2.70832  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-49.5516, -2.70832  -50.838, 54.0999  -10.7512, 81.0693  30.622, 51.2304  31.9083, -5.5778  -8.17846, -32.5472  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-10.7512, 81.0693  1.33888, 113.778  54.8021, 116.647  96.1752, 86.8082  84.0852, 54.0999  30.622, 51.2304  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-8.17846, -32.5472  31.9083, -5.5778  85.3715, -2.70832  98.7479, -26.8082  58.6611, -53.7776  5.19793, -56.6471  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-50.838, 54.0999  -38.7479, 86.8082  1.33888, 113.778  -10.7512, 81.0693  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="85.3715, -2.70832  84.0852, 54.0999  96.1752, 86.8082  109.552, 62.7083  110.838, 5.9001  98.7479, -26.8082  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-49.5516, -2.70832  -8.17846, -32.5472  5.19793, -56.6471  -36.1752, -26.8082  " />
+</g>
+<g transform="translate(450,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="55.2472, 118.806  81.7323, 94.1056  115.93, 63.5233  89.4445, 88.2237  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="62.8881, -55.865  94.5384, -28.2237  118.476, 5.29963  86.8262, -22.3417  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-55.9295, -3.52328  -29.4445, -28.2237  -5.50635, 5.29963  -8.0533, 63.5233  -34.5384, 88.2237  -58.4765, 54.7004  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-34.5384, 88.2237  -8.0533, 63.5233  50.082, 66.4643  81.7323, 94.1056  55.2472, 118.806  -2.8881, 115.865  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-29.4445, -28.2237  4.75277, -58.806  62.8881, -55.865  86.8262, -22.3417  52.629, 8.2406  -5.50635, 5.29963  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="52.629, 8.2406  86.8262, -22.3417  118.476, 5.29963  115.93, 63.5233  81.7323, 94.1056  50.082, 66.4643  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-5.50635, 5.29963  52.629, 8.2406  50.082, 66.4643  -8.0533, 63.5233  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="9.91798, -6.46425  7.37102, 51.7594  65.5063, 54.7004  68.0533, -3.52328  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-55.9295, -3.52328  -58.4765, 54.7004  -26.8262, 82.3417  7.37102, 51.7594  9.91798, -6.46425  -21.7323, -34.1056  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-26.8262, 82.3417  -2.8881, 115.865  55.2472, 118.806  89.4445, 88.2237  65.5063, 54.7004  7.37102, 51.7594  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-21.7323, -34.1056  9.91798, -6.46425  68.0533, -3.52328  94.5384, -28.2237  62.8881, -55.865  4.75277, -58.806  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="68.0533, -3.52328  65.5063, 54.7004  89.4445, 88.2237  115.93, 63.5233  118.476, 5.29963  94.5384, -28.2237  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-58.4765, 54.7004  -34.5384, 88.2237  -2.8881, 115.865  -26.8262, 82.3417  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-55.9295, -3.52328  -21.7323, -34.1056  4.75277, -58.806  -29.4445, -28.2237  " />
+</g>
+<g transform="translate(650,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-57.2561, 54.4717  -23.7158, 87.6847  -3.84348, 115.07  -37.3837, 81.8572  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-53.6875, -3.21297  -30.2465, -33.5122  6.86231, -57.9839  -16.5786, -27.6847  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="73.9428, 8.44202  97.3837, -21.8572  117.256, 5.52827  113.687, 63.213  90.2465, 93.5122  70.3742, 66.1267  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-23.7158, 87.6847  13.393, 63.213  70.3742, 66.1267  90.2465, 93.5122  53.1377, 117.984  -3.84348, 115.07  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-16.5786, -27.6847  6.86231, -57.9839  63.8435, -55.0702  97.3837, -21.8572  73.9428, 8.44202  16.9616, 5.52827  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-53.6875, -3.21297  -16.5786, -27.6847  16.9616, 5.52827  13.393, 63.213  -23.7158, 87.6847  -57.2561, 54.4717  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="16.9616, 5.52827  73.9428, 8.44202  70.3742, 66.1267  13.393, 63.213  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-10.3742, -6.12672  -13.9428, 51.558  43.0384, 54.4717  46.607, -3.21297  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="46.607, -3.21297  43.0384, 54.4717  76.5786, 87.6847  113.687, 63.213  117.256, 5.52827  83.7158, -27.6847  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-37.3837, 81.8572  -3.84348, 115.07  53.1377, 117.984  76.5786, 87.6847  43.0384, 54.4717  -13.9428, 51.558  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-30.2465, -33.5122  -10.3742, -6.12672  46.607, -3.21297  83.7158, -27.6847  63.8435, -55.0702  6.86231, -57.9839  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-53.6875, -3.21297  -57.2561, 54.4717  -37.3837, 81.8572  -13.9428, 51.558  -10.3742, -6.12672  -30.2465, -33.5122  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="53.1377, 117.984  90.2465, 93.5122  113.687, 63.213  76.5786, 87.6847  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="63.8435, -55.0702  83.7158, -27.6847  117.256, 5.52827  97.3837, -21.8572  " />
+</g>
+<g transform="translate(850,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="91.5418, 8.76279  102.776, -21.0856  109.704, 5.8924  105.399, 62.7188  94.1647, 92.5672  87.2362, 65.5892  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-49.7044, 54.1076  -9.23742, 86.8264  -2.30892, 113.804  -42.7759, 81.0856  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-45.3988, -2.71878  -34.1647, -32.5672  10.6078, -56.6748  -0.626247, -26.8264  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-9.23742, 86.8264  35.5352, 62.7188  87.2362, 65.5892  94.1647, 92.5672  49.3922, 116.675  -2.30892, 113.804  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-0.626247, -26.8264  10.6078, -56.6748  62.3089, -53.8044  102.776, -21.0856  91.5418, 8.76279  39.8407, 5.8924  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-45.3988, -2.71878  -0.626247, -26.8264  39.8407, 5.8924  35.5352, 62.7188  -9.23742, 86.8264  -49.7044, 54.1076  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="39.8407, 5.8924  91.5418, 8.76279  87.2362, 65.5892  35.5352, 62.7188  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-27.2362, -5.58917  -31.5418, 51.2372  20.1593, 54.1076  24.4648, -2.71878  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="24.4648, -2.71878  20.1593, 54.1076  60.6262, 86.8264  105.399, 62.7188  109.704, 5.8924  69.2374, -26.8264  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-42.7759, 81.0856  -2.30892, 113.804  49.3922, 116.675  60.6262, 86.8264  20.1593, 54.1076  -31.5418, 51.2372  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-34.1647, -32.5672  -27.2362, -5.58917  24.4648, -2.71878  69.2374, -26.8264  62.3089, -53.8044  10.6078, -56.6748  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="49.3922, 116.675  94.1647, 92.5672  105.399, 62.7188  60.6262, 86.8264  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="62.3089, -53.8044  69.2374, -26.8264  109.704, 5.8924  102.776, -21.0856  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-45.3988, -2.71878  -49.7044, 54.1076  -42.7759, 81.0856  -31.5418, 51.2372  -27.2362, -5.58917  -34.1647, -32.5672  " />
+</g>
+<g transform="translate(1050,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-34.3983, -3.33013  -39.2903, 54.5581  -45.5978, 82.0401  -47.0134, 51.634  -42.1214, -6.25416  -35.8139, -33.7362  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="6.6881, 87.8882  57.5585, 63.3301  102.121, 66.2542  95.8139, 93.7362  44.9435, 118.294  0.380571, 115.37  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-39.2903, 54.5581  6.6881, 87.8882  0.380571, 115.37  -45.5978, 82.0401  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="16.4721, -27.8882  15.0565, -58.2943  59.6194, -55.3703  105.598, -22.0401  107.013, 8.36597  62.4505, 5.44194  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-34.3983, -3.33013  -35.8139, -33.7362  15.0565, -58.2943  16.4721, -27.8882  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="62.4505, 5.44194  107.013, 8.36597  102.121, 66.2542  57.5585, 63.3301  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-34.3983, -3.33013  16.4721, -27.8882  62.4505, 5.44194  57.5585, 63.3301  6.6881, 87.8882  -39.2903, 54.5581  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="2.44149, -3.33013  -2.4505, 54.5581  43.5279, 87.8882  94.3983, 63.3301  99.2903, 5.44194  53.3119, -27.8882  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-42.1214, -6.25416  -47.0134, 51.634  -2.4505, 54.5581  2.44149, -3.33013  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="44.9435, 118.294  95.8139, 93.7362  94.3983, 63.3301  43.5279, 87.8882  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-45.5978, 82.0401  0.380571, 115.37  44.9435, 118.294  43.5279, 87.8882  -2.4505, 54.5581  -47.0134, 51.634  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="59.6194, -55.3703  53.3119, -27.8882  99.2903, 5.44194  105.598, -22.0401  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-35.8139, -33.7362  -42.1214, -6.25416  2.44149, -3.33013  53.3119, -27.8882  59.6194, -55.3703  15.0565, -58.2943  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="107.013, 8.36597  105.598, -22.0401  99.2903, 5.44194  94.3983, 63.3301  95.8139, 93.7362  102.121, 66.2542  " />
+</g>
+<g transform="translate(1250,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-17.0343, -2.93374  -22.0386, 54.266  -41.0529, 81.4212  -55.0629, 51.3767  -50.0585, -5.82299  -31.0442, -32.9782  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="35.0043, -27.1997  20.9944, -57.2442  54.0186, -54.355  101.053, -21.4212  115.063, 8.62326  82.0386, 5.73401  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="24.9957, 87.1997  77.0343, 62.9337  110.059, 65.823  91.0442, 92.9782  39.0056, 117.244  5.98137, 114.355  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-22.0386, 54.266  24.9957, 87.1997  5.98137, 114.355  -41.0529, 81.4212  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-17.0343, -2.93374  -31.0442, -32.9782  20.9944, -57.2442  35.0043, -27.1997  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="82.0386, 5.73401  115.063, 8.62326  110.059, 65.823  77.0343, 62.9337  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-17.0343, -2.93374  35.0043, -27.1997  82.0386, 5.73401  77.0343, 62.9337  24.9957, 87.1997  -22.0386, 54.266  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-17.0343, -2.93374  -22.0386, 54.266  24.9957, 87.1997  77.0343, 62.9337  82.0386, 5.73401  35.0043, -27.1997  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-50.0585, -5.82299  -55.0629, 51.3767  -22.0386, 54.266  -17.0343, -2.93374  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="54.0186, -54.355  35.0043, -27.1997  82.0386, 5.73401  101.053, -21.4212  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="39.0056, 117.244  91.0442, 92.9782  77.0343, 62.9337  24.9957, 87.1997  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-41.0529, 81.4212  5.98137, 114.355  39.0056, 117.244  24.9957, 87.1997  -22.0386, 54.266  -55.0629, 51.3767  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-31.0442, -32.9782  -50.0585, -5.82299  -17.0343, -2.93374  35.0043, -27.1997  54.0186, -54.355  20.9944, -57.2442  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="115.063, 8.62326  101.053, -21.4212  82.0386, 5.73401  77.0343, 62.9337  91.0442, 92.9782  110.059, 65.823  " />
+</g>
+<g transform="translate(1450,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="52.9013, -26.8686  27.3834, -56.7392  47.0341, -53.8667  92.2027, -21.1236  117.721, 8.747  98.0699, 5.87448  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="43.2897, 86.8686  93.2641, 62.7431  112.915, 65.6156  82.591, 92.6137  32.6166, 116.739  12.9659, 113.867  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="98.0699, 5.87448  117.721, 8.747  112.915, 65.6156  93.2641, 62.7431  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="2.92688, -2.7431  -1.87895, 54.1255  -32.2027, 81.1236  -57.7206, 51.253  -52.9148, -5.61562  -22.591, -32.6137  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="2.92688, -2.7431  -22.591, -32.6137  27.3834, -56.7392  52.9013, -26.8686  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-1.87895, 54.1255  43.2897, 86.8686  12.9659, 113.867  -32.2027, 81.1236  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="2.92688, -2.7431  52.9013, -26.8686  98.0699, 5.87448  93.2641, 62.7431  43.2897, 86.8686  -1.87895, 54.1255  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-33.2641, -2.7431  -38.0699, 54.1255  7.09868, 86.8686  57.0731, 62.7431  61.879, 5.87448  16.7103, -26.8686  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="47.0341, -53.8667  16.7103, -26.8686  61.879, 5.87448  92.2027, -21.1236  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="32.6166, 116.739  82.591, 92.6137  57.0731, 62.7431  7.09868, 86.8686  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="117.721, 8.747  92.2027, -21.1236  61.879, 5.87448  57.0731, 62.7431  82.591, 92.6137  112.915, 65.6156  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-52.9148, -5.61562  -57.7206, 51.253  -38.0699, 54.1255  -33.2641, -2.7431  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-22.591, -32.6137  -52.9148, -5.61562  -33.2641, -2.7431  16.7103, -26.8686  47.0341, -53.8667  27.3834, -56.7392  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-32.2027, 81.1236  12.9659, 113.867  32.6166, 116.739  7.09868, 86.8686  -38.0699, 54.1255  -57.7206, 51.253  " />
+</g>
+<g transform="translate(1650,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="69.2918, -26.9051  33.9011, -56.7949  39.0335, -53.9205  79.5566, -21.1564  114.947, 8.73336  109.815, 5.85899  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="60.6687, 86.9051  105.503, 62.7641  110.636, 65.6385  70.9335, 92.6539  26.0989, 116.795  20.9665, 113.92  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="109.815, 5.85899  114.947, 8.73336  110.636, 65.6385  105.503, 62.7641  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="24.4572, -2.76411  -10.9335, -32.6539  33.9011, -56.7949  69.2918, -26.9051  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="20.1456, 54.141  60.6687, 86.9051  20.9665, 113.92  -19.5566, 81.1564  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="24.4572, -2.76411  20.1456, 54.141  -19.5566, 81.1564  -54.9473, 51.2666  -50.6357, -5.63848  -10.9335, -32.6539  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="24.4572, -2.76411  69.2918, -26.9051  109.815, 5.85899  105.503, 62.7641  60.6687, 86.9051  20.1456, 54.141  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-45.5033, -2.76411  -49.8148, 54.141  -9.29179, 86.9051  35.5428, 62.7641  39.8544, 5.85899  -0.668682, -26.9051  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="114.947, 8.73336  79.5566, -21.1564  39.8544, 5.85899  35.5428, 62.7641  70.9335, 92.6539  110.636, 65.6385  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="39.0335, -53.9205  -0.668682, -26.9051  39.8544, 5.85899  79.5566, -21.1564  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="26.0989, 116.795  70.9335, 92.6539  35.5428, 62.7641  -9.29179, 86.9051  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-50.6357, -5.63848  -54.9473, 51.2666  -49.8148, 54.141  -45.5033, -2.76411  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-10.9335, -32.6539  -50.6357, -5.63848  -45.5033, -2.76411  -0.668682, -26.9051  39.0335, -53.9205  33.9011, -56.7949  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-19.5566, 81.1564  20.9665, 113.92  26.0989, 116.795  -9.29179, 86.9051  -49.8148, 54.141  -54.9473, 51.2666  " />
+</g>
+<g transform="translate(1850,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="3.36004, -33.0976  -43.3238, -5.89087  -53.1411, -2.99615  -16.2746, -27.3081  30.4093, -54.5148  40.2266, -57.4095  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-3.73056, 81.5187  29.5907, 114.515  19.7734, 117.41  -23.3652, 87.3081  -56.6864, 54.312  -46.8691, 51.4172  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-43.3238, -5.89087  -46.8691, 51.4172  -56.6864, 54.312  -53.1411, -2.99615  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="46.4986, -2.99615  3.36004, -33.0976  40.2266, -57.4095  83.3652, -27.3081  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="46.4986, -2.99615  83.3652, -27.3081  116.686, 5.68803  113.141, 62.9961  76.2746, 87.3081  42.9533, 54.312  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="42.9533, 54.312  76.2746, 87.3081  29.5907, 114.515  -3.73056, 81.5187  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="46.4986, -2.99615  42.9533, 54.312  -3.73056, 81.5187  -46.8691, 51.4172  -43.3238, -5.89087  3.36004, -33.0976  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="106.869, 8.58275  63.7306, -21.5187  17.0467, 5.68803  13.5014, 62.9961  56.64, 93.0976  103.324, 65.8909  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="30.4093, -54.5148  -16.2746, -27.3081  17.0467, 5.68803  63.7306, -21.5187  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-53.1411, -2.99615  -56.6864, 54.312  -23.3652, 87.3081  13.5014, 62.9961  17.0467, 5.68803  -16.2746, -27.3081  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="19.7734, 117.41  56.64, 93.0976  13.5014, 62.9961  -23.3652, 87.3081  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="116.686, 5.68803  106.869, 8.58275  103.324, 65.8909  113.141, 62.9961  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="83.3652, -27.3081  40.2266, -57.4095  30.4093, -54.5148  63.7306, -21.5187  106.869, 8.58275  116.686, 5.68803  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="76.2746, 87.3081  113.141, 62.9961  103.324, 65.8909  56.64, 93.0976  19.7734, 117.41  29.5907, 114.515  " />
+</g>
+<g transform="translate(2050,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="19.6237, -33.9309  -31.2423, -6.36489  -55.6954, -3.43194  -29.2825, -28.065  21.5835, -55.631  46.0366, -58.564  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="14.5436, 82.1991  38.4165, 115.631  13.9634, 118.564  -34.3625, 88.065  -58.2354, 54.6331  -33.7823, 51.7001  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-31.2423, -6.36489  -33.7823, 51.7001  -58.2354, 54.6331  -55.6954, -3.43194  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="67.9496, -3.43194  94.3625, -28.065  118.235, 5.36693  115.695, 63.4319  89.2825, 88.065  65.4096, 54.6331  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="67.9496, -3.43194  19.6237, -33.9309  46.0366, -58.564  94.3625, -28.065  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="65.4096, 54.6331  89.2825, 88.065  38.4165, 115.631  14.5436, 82.1991  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="67.9496, -3.43194  65.4096, 54.6331  14.5436, 82.1991  -33.7823, 51.7001  -31.2423, -6.36489  19.6237, -33.9309  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="93.7823, 8.29989  45.4564, -22.1991  -5.4096, 5.36693  -7.94961, 63.4319  40.3763, 93.9309  91.2423, 66.3649  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="21.5835, -55.631  -29.2825, -28.065  -5.4096, 5.36693  45.4564, -22.1991  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="13.9634, 118.564  40.3763, 93.9309  -7.94961, 63.4319  -34.3625, 88.065  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-55.6954, -3.43194  -58.2354, 54.6331  -34.3625, 88.065  -7.94961, 63.4319  -5.4096, 5.36693  -29.2825, -28.065  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="118.235, 5.36693  93.7823, 8.29989  91.2423, 66.3649  115.695, 63.4319  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="94.3625, -28.065  46.0366, -58.564  21.5835, -55.631  45.4564, -22.1991  93.7823, 8.29989  118.235, 5.36693  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="89.2825, 88.065  115.695, 63.4319  91.2423, 66.3649  40.3763, 93.9309  13.9634, 118.564  38.4165, 115.631  " />
+</g>
+<g transform="translate(2250,90) scale(1 1)" >
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="87.1625, -3.76627  100.972, -28.6457  113.453, 5.12059  112.125, 63.7663  98.3157, 88.6457  85.8346, 54.8794  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="37.0157, -34.5703  -14.459, -6.72856  -52.1247, -3.76627  -38.3157, -28.6457  13.1591, -56.4874  50.8248, -59.4497  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="34.3598, 82.7211  46.8409, 116.487  9.17522, 119.45  -40.9716, 88.6457  -53.4527, 54.8794  -15.787, 51.9171  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="87.1625, -3.76627  37.0157, -34.5703  50.8248, -59.4497  100.972, -28.6457  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="85.8346, 54.8794  98.3157, 88.6457  46.8409, 116.487  34.3598, 82.7211  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="-14.459, -6.72856  -15.787, 51.9171  -53.4527, 54.8794  -52.1247, -3.76627  " />
+  <polygon fill="NONE " stroke="LIGHTGRAY" stroke-width="1" points="87.1625, -3.76627  85.8346, 54.8794  34.3598, 82.7211  -15.787, 51.9171  -14.459, -6.72856  37.0157, -34.5703  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="75.787, 8.08288  25.6402, -22.7211  -25.8346, 5.12059  -27.1625, 63.7663  22.9843, 94.5703  74.459, 66.7286  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="113.453, 5.12059  75.787, 8.08288  74.459, 66.7286  112.125, 63.7663  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="13.1591, -56.4874  -38.3157, -28.6457  -25.8346, 5.12059  25.6402, -22.7211  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="9.17522, 119.45  22.9843, 94.5703  -27.1625, 63.7663  -40.9716, 88.6457  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="100.972, -28.6457  50.8248, -59.4497  13.1591, -56.4874  25.6402, -22.7211  75.787, 8.08288  113.453, 5.12059  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="98.3157, 88.6457  112.125, 63.7663  74.459, 66.7286  22.9843, 94.5703  9.17522, 119.45  46.8409, 116.487  " />
+  <polygon fill="NONE " stroke="black" stroke-width="2" points="-52.1247, -3.76627  -53.4527, 54.8794  -40.9716, 88.6457  -27.1625, 63.7663  -25.8346, 5.12059  -38.3157, -28.6457  " />
+</g>
+<!--
+
+Reduced Cell 
+  10.00000  10.00000  10.00000  90.00000  90.00000  90.00000  
+  S6     0.00000   0.00000   0.00000 -100.00000 -100.00000 -100.00000  
+  G6     100.000   100.000   100.000     0.000     0.000     0.000  
+  D7     100.000   100.000   100.000   300.000   200.000   200.000   200.000  
+
+FACE  1 vertex count= 6   area= 32.476    index -1 -1 -1  Center of mass -1.44338 -2.04124 -3.53553
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 3.53553 3.53553 
+FACE  14 vertex count= 6   area= 32.476    index 1 1 1  Center of mass 1.44338 2.04124 3.53553
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 3.53553 3.53553 
+
+FACE  2 vertex count= 4   area= 12.5    index -1 -1 0  Center of mass -2.88675 -4.08248 0
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 
+FACE  13 vertex count= 4   area= 12.5    index 1 1 0  Center of mass 2.88675 4.08248 0
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 
+
+FACE  3 vertex count= 4   area= 12.5    index -1 0 -1  Center of mass -2.88675 2.04124 -3.53553
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 
+FACE  12 vertex count= 4   area= 12.5    index 1 0 1  Center of mass 2.88675 -2.04124 3.53553
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 
+
+FACE  4 vertex count= 6   area= 32.476    index -1 0 0  Center of mass -4.33013 0 0
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 3.53553 3.53553 
+FACE  11 vertex count= 6   area= 32.476    index 1 0 0  Center of mass 4.33013 0 0
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 3.53553 3.53553 
+
+FACE  5 vertex count= 4   area= 12.5    index 0 -1 -1  Center of mass 2.88675 -2.04124 -3.53553
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 
+FACE  10 vertex count= 4   area= 12.5    index 0 1 1  Center of mass -2.88675 2.04124 3.53553
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 
+
+FACE  6 vertex count= 6   area= 32.476    index 0 -1 0  Center of mass 1.44338 -4.08248 0
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 3.53553 3.53553 
+FACE  9 vertex count= 6   area= 32.476    index 0 1 0  Center of mass -1.44338 4.08248 0
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 3.53553 3.53553 
+
+FACE  7 vertex count= 6   area= 32.476    index 0 0 -1  Center of mass 1.44338 2.04124 -3.53553
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 3.53553 3.53553 
+FACE  8 vertex count= 6   area= 32.476    index 0 0 1  Center of mass -1.44338 -2.04124 3.53553
+   Edge lengths 3.53553 3.53553 3.53553 3.53553 3.53553 3.53553 
+
+
+
+Global Constants
+IMAGES int 12
+XSIZE int 2000
+YSIZE int 2000
+LATTICELIMIT int 1
+IMAGEHEIGHT int 90
+XROTATE double 25
+YROTATE double 0
+ZROTATE double 0
+ROTATESTEREO double 15
+SCALE double 1
+HIDDENCOLOR string LIGHTGRAY
+FACECOLOR string NONE
+NOTE vectorStr
+FILEPREFIX string DC
+INPUTERRORS vectorStr
+TIMESTAMP bool 1
+YPOSITION int 90
+SELLING string NIGGLI
+CELL INPUT  vectorStr I 10 10 10  90 90 90
+	
+XSIZE int 2000
+--><!-- Run Constants--></svg>
