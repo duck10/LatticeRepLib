@@ -33,3 +33,10 @@ std::vector<double> LRL_StringTools::FromString(const std::string& s) {
    return t;
 }
 
+
+std::string LRL_StringTools::ConcatanateStrings(const std::vector<std::string>& sinput) {
+   std::string s;
+   for (size_t face = 0; face < sinput.size(); ++face)
+      s += sinput[face];
+   return s;
+}

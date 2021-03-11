@@ -10,6 +10,8 @@ public:
    static std::string strToupper(const std::string& s);
    static std::vector<double> FromString(const std::string& s);
 
+   static std::string ConcatanateStrings(const std::vector<std::string>& sinput);
+
 
 };
 

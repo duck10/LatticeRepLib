@@ -12,10 +12,6 @@ typedef std::vector<size_t> POINT;
 typedef std::vector<POINT> POINT_LIST; 
 typedef std::vector< std::vector<POINT>> FACES;
 
-typedef std::pair<double, Vector_3 > ANGLE_COORDS;
-typedef std::vector< ANGLE_COORDS > ANGLELIST;
-typedef std::vector<ANGLELIST> ANGLESFORFACES;
-
 class DirichletFace;
 
 class Intersection {
