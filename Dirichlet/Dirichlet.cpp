@@ -86,7 +86,7 @@ static ANGLELIST MoveOneFaceToCenterOfMass(const ANGLELIST& list) {
 }
 
 static ANGLELIST SortAnglesForOneFace(const ANGLELIST& toSort) {
-   //   // bubble sort the result since Vector_3 does not have operator<
+   // bubble sort the result since Vector_3 does not have operator<
    ANGLELIST temp(toSort);
    for (size_t face = 0; face < temp.size(); ++face) {
       for (size_t k = 0; k < temp.size(); ++k) {
@@ -341,4 +341,20 @@ DirichletCell::DirichletCell(const std::string& strCell)
       double area = AreaOfOneFace(m_facesWithVertices[faceIndex]);
       m_areas.push_back((area < 1.0E-4) ? 0 : area);
    }
+}
+
+std::vector<int> DirichletCell::ConvertVectorIndicesToInt(const Vector_3& v) {
+   return{ int(v[0]), int(v[1]), int(v[2]) };
+}
+
+std::vector<std::string> DirichletCell::ConvertAllVectorIndicesToString(const std::vector<Vector_3>& v) {
+   std::vector<std::string> vout;
+   for (size_t i = 0; i < v.size(); ++i) {
+      vout.push_back(ConvertVectorIndicesToString(v[i]));
+   }
+   return vout;
+}
+
+std::string DirichletCell::ConvertVectorIndicesToString(const Vector_3& v) {
+   return LRL_ToString(v);
 }
