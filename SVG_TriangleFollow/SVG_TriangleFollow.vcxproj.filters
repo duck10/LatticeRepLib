@@ -11,9 +11,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileOperations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Follower.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FileOperations.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FollowerTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

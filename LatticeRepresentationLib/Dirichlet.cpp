@@ -2,7 +2,7 @@
 
 #include "DirichletConstants.h"
 #include "D7.h"
-#include "Faces.h"
+#include "DirichletCellFaces.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
@@ -62,7 +62,7 @@ static ANGLELIST ComputeAnglesForOneFace(const ANGLELIST& list, const Vector_3& 
 
 }
 
-static Vector_3 CenterOfMassForOneFace(const ANGLELIST& list) { // LCA duplicate!!!!!!!!!!!!!!!!!!!
+Vector_3 DirichletCell::CenterOfMassForOneFace(const ANGLELIST& list) {
    Vector_3 centerOfMass(0.0, 0.0, 0.0);
    if (list.size() == 1) return list[0].second;
    if (list.empty()) return centerOfMass;
@@ -75,9 +75,9 @@ static Vector_3 CenterOfMassForOneFace(const ANGLELIST& list) { // LCA duplicate
 
 
 static ANGLELIST MoveOneFaceToCenterOfMass(const ANGLELIST& list) {
-   const Vector_3 centerOfMass = CenterOfMassForOneFace(list);
+   const Vector_3 centerOfMass = DirichletCell::CenterOfMassForOneFace(list);
    ANGLELIST coordsAtCenterOfMass;
-   const Vector_3 cm = CenterOfMassForOneFace(list);
+   const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(list);
 
    for (size_t face = 0; face < list.size(); ++face) {
       coordsAtCenterOfMass.push_back(ANGLE_COORDS(-19192.0, list[face].second - cm));
@@ -104,26 +104,23 @@ static ANGLELIST RemoveDuplicatesFromOneAngleList(const ANGLELIST& anglelist) {
    for (size_t face = 1; face < anglelist.size(); ++face) {
       const double& angle1 = anglelist[face - 1].first;
       const double& angle2 = anglelist[face].first;
-      if (abs(angle2 - angle1) > 1.0E-3 && angle2 < 360.0 + initialAngle - 1.0E-3) {  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!  still need to handle -180 != 180
+      const Vector_3& pos1 = anglelist[face - 1].second;
+      const Vector_3& pos2 = anglelist[face].second;
+      if ((pos1 - pos2).Norm() < 1.0E-4) continue;
+      if (abs(angle2 - angle1) > 1.0E-3 && angle2 < 360.0 + initialAngle - 1.0E-3) {
          intermediateOutput.push_back(anglelist[face]);
       }
    }
 
-   const Vector_3 centerOfMass = CenterOfMassForOneFace(intermediateOutput);
+   const Vector_3 centerOfMass = DirichletCell::CenterOfMassForOneFace(intermediateOutput);
    const double distanceFromOrigin = (centerOfMass - intermediateOutput[0].second).Norm();
-   //if (distanceFromOrigin < 1.0E-4) return ANGLELIST();
-
-   const size_t nio = intermediateOutput.size();
-   if (intermediateOutput.size() != anglelist.size()) {
-      int i19191 = 19191;
-   }
    return (intermediateOutput.size() > 3) ? intermediateOutput : ANGLELIST();
 }
 
 Vector_3 CenterOfMassForObject(const ANGLESFORFACES& list) {
    Vector_3 cm(0, 0, 0);
    for (size_t face = 0; face < list.size(); ++face) {
-      cm += CenterOfMassForOneFace(list[face]);
+      cm += DirichletCell::CenterOfMassForOneFace(list[face]);
    }
    return cm / double(list.size());
 }
@@ -135,7 +132,8 @@ static ANGLESFORFACES MakeRings(const ANGLESFORFACES& faces_in, const std::vecto
    //
    for (size_t face = 0; face < faces_in.size(); ++face) {
       const ANGLELIST moved = MoveOneFaceToCenterOfMass(faces_in[face]);
-      const ANGLELIST restoredWithAngles = ComputeAnglesForOneFace(moved, CenterOfMassForOneFace(faces_in[face]));
+      const ANGLELIST restoredWithAngles = ComputeAnglesForOneFace(moved, 
+         DirichletCell::CenterOfMassForOneFace(faces_in[face]));
       const ANGLELIST sorted = SortAnglesForOneFace(restoredWithAngles);
       const ANGLELIST cleaned = RemoveDuplicatesFromOneAngleList(sorted);
       if (cleaned.size() > 2) restored_faces_out.push_back(cleaned);
@@ -257,8 +255,8 @@ static std::vector<Vector_3> CreateVectorOfLatticePoints(const Matrix_3x3& m) {
             double dj = j;
             double dk = k;
             Vector_3 v3 = m * Vector_3(di, dj, dk);
-            for (size_t face = 0; face < 3; ++face)
-               if (abs(v3[face]) < 1.0E-8) v3[face] = 0.0;
+            for (size_t pos = 0; pos < 3; ++pos)
+               if (abs(v3[pos]) < 1.0E-8) v3[pos] = 0.0;
             v.push_back(v3);
          }
       }
@@ -271,16 +269,16 @@ static CNearTree<Vector_3> CreateTreeOfLatticePoints(const Matrix_3x3& m) {
    return v;
 }
 
-static Vector_3 RecoverIndicesOfOneFace(const Matrix_3x3& minv, const ANGLELIST& list) {
-   const Vector_3 cm = CenterOfMassForOneFace(list);; // LCA duplicate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Vector_3 DirichletCell::RecoverIndicesOfOneFace(const Matrix_3x3& minv, const ANGLELIST& list) {
+   const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(list);;
    return minv * cm;
 }
 
-static std::vector<Vector_3> RecoverIndicesOfFaces(const Matrix_3x3& m_cart, const ANGLESFORFACES& newRinged) {
-   const Matrix_3x3 minv(m_cart.Inver()); // LCA duplicate !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+std::vector<Vector_3> DirichletCell::RecoverIndicesOfFaces(const Matrix_3x3& m_cart, const ANGLESFORFACES& newRinged) {
+   const Matrix_3x3 minv(m_cart.Inver());
    std::vector<Vector_3> vout;
-   for (size_t i = 0; i < newRinged.size(); ++i) {
-      Vector_3 v = (2.0 * RecoverIndicesOfOneFace(minv, newRinged[i]));
+   for (size_t ring = 0; ring < newRinged.size(); ++ring) {
+      Vector_3 v = (2.0 * DirichletCell::RecoverIndicesOfOneFace(minv, newRinged[ring]));
       for (size_t i = 0; i < 3; ++i) v[i] = (abs(v[i]) < 1.0e-6) ? 0.0 : v[i];
       for (size_t i = 0; i < 3; ++i) v[i] = (abs(abs(v[i]) - 1) < 1.0e-6) ? round(v[i]) : v[i];
       vout.push_back(v);
@@ -288,8 +286,8 @@ static std::vector<Vector_3> RecoverIndicesOfFaces(const Matrix_3x3& m_cart, con
    return vout;
 }
 
-static double AreaOfOneFace(const ANGLELIST& face) {
-   const Vector_3 cm = CenterOfMassForOneFace(face);
+double DirichletCell::AreaOfOneFace(const ANGLELIST& face) {
+   const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(face);
 
    double totalArea = 0.0;
    for (size_t i = 0; i < face.size(); ++i)
@@ -308,20 +306,28 @@ static double AreaOfOneFace(const ANGLELIST& face) {
    return totalArea;
 }
 
-DirichletCell::DirichletCell(const std::string& strCell)
-   : m_strCell(strCell)
+DirichletCell::DirichletCell(const std::string& strCellAndLattice)
+   : m_strCell(strCellAndLattice)
 {
-   //-------------decode unit cell
    LRL_ReadLatticeData rdc;
-   rdc.CellReader(strCell);
-   m_cell = rdc.GetCell();
+   rdc.CellReader(strCellAndLattice);
+   ProcessInputCell(rdc.GetLattice(), rdc.GetCell());
+}
 
+DirichletCell::DirichletCell(const std::string& lattice, const LRL_Cell& cell)
+   : m_cell(cell)
+{
+   if (m_strCell.empty()) m_strCell = LRL_ToString(lattice, LRL_Cell_Degrees(cell));
    ////-------------reduce cell
    if (DirichletConstants::sellingNiggli == "SELLING")
-      m_reducedCell = LatticeConverter().SellingReduceCell(rdc.GetLattice(), rdc.GetCell());
+      m_reducedCell = LatticeConverter().SellingReduceCell(lattice, cell);
    else
-      m_reducedCell = LatticeConverter().NiggliReduceCell(rdc.GetLattice(), rdc.GetCell());
+      m_reducedCell = LatticeConverter().NiggliReduceCell(lattice, cell);
+   ProcessInputCell(lattice, m_reducedCell);
+}
 
+void DirichletCell::ProcessInputCell(const std::string lattice, const LRL_Cell& reducedCell) {
+   m_reducedCell = reducedCell;
    ////-------------cell create faces
    m_cart = m_reducedCell.Cart();
    m_cellFaces = Cell_Faces(m_reducedCell, m_cart);
@@ -356,5 +362,13 @@ std::vector<std::string> DirichletCell::ConvertAllVectorIndicesToString(const st
 }
 
 std::string DirichletCell::ConvertVectorIndicesToString(const Vector_3& v) {
-   return LRL_ToString(v);
+   std::string s = LRL_ToString(v[0], v[1], v[2]);
+   return s;
+}
+
+std::vector<std::vector<int> > DirichletCell::ConvertAllVectorIndicesToInt(const std::vector<Vector_3>& v) {
+   std::vector<std::vector<int> > vout;
+   for (size_t i = 0; i < v.size(); ++i)
+      vout.push_back(ConvertVectorIndicesToInt(v[i]));
+   return vout;
 }

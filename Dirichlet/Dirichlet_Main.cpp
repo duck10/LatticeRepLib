@@ -9,7 +9,7 @@
 #include "D7.h"
 #include "Dirichlet.h"
 #include "DirichletConstants.h"
-#include "Faces.h"
+#include "DirichletCellFaces.h"
 #include "FileOperations.h"
 #include "G6.h"
 #include "LatticeConverter.h"
@@ -20,7 +20,7 @@
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "LRL_Vector3.h"
-#include "ReadGlobalData.h"
+#include "ReadDirichletGlobalData.h"
 #include "SVG_Tools.h"
 #include "TNear.h"
 #include "TriangleAreaFromSides.h"
@@ -31,17 +31,6 @@ std::vector<T> CircularizeVector(const std::vector<T>& vin) {
    std::vector<T> v(vin);
    v.push_back(vin[0]);
    return v;
-}
-
-Vector_3 CenterOfMassForOneFace(const ANGLELIST& list) {
-   Vector_3 centerOfMass(0.0, 0.0, 0.0);
-   if (list.size() == 1) return list[0].second;
-   if (list.empty()) return centerOfMass;
-   for (int face = 0; face < list.size(); ++face) {
-      const Vector_3& point = list[face].second;
-      centerOfMass += point;
-   }
-   return centerOfMass / double(list.size());
 }
 
 template<typename T>
@@ -57,90 +46,13 @@ Vector_3 round(const Vector_3& vin) {
    vout[2] = roundNo(vin[2]);
    return vout;
 }
-//
-//void PrintIndices(const ANGLESFORFACES& ringed, const Matrix_3x3& cart)
-//{
-//   const Matrix_3x3 inverseCart = cart.Inver();
-//
-//   std::cout << std::endl;
-//   std::cout << "INDICES FOR ALL FACES " << std::endl;
-//   for (size_t face = 0; face < ringed.size(); ++face) {
-//      std::cout << "\nFACE " << face << "   points on face " << ringed[face].size() << std::endl;
-//      const ANGLELIST v = ringed[face];
-//      for (size_t k = 0; k < ringed[face].size(); ++k) {
-//
-//         const Vector_3 cm = CenterOfMassForOneFace(ringed[face]) / double(ringed.size());;
-//         const Vector_3 facexxx0 = 2.0 * inverseCart * ringed[face][0].second;
-//         const Vector_3 facexxx1 = 2.0 * inverseCart * ringed[face][1].second;
-//         const Vector_3 facexxx2 = 2.0 * inverseCart * ringed[face][2].second;
-//         const Vector_3 faceByIndex0 = round(facexxx0);
-//         const Vector_3 faceByIndex1 = round(facexxx1);
-//         const Vector_3 faceByIndex2 = round(facexxx2);
-//         std::cout << v[k].first << "     " << faceByIndex0 << "  " << faceByIndex1 << "  " << faceByIndex2 << std::endl;
-//      }
-//   }
-//}
-
-void PrintIntersections(const ANGLESFORFACES& vin) {
-   std::cout << std::endl;
-   std::cout << "ALL INTERSECTIONS" << std::endl;
-   for (size_t face = 0; face < vin.size(); ++face) {
-      std::cout << "FACE " << face << ", angle count " << vin[face].size() << std::endl;
-      for (size_t face = 0; face < vin[face].size(); ++face) {
-         const double angle = vin[face][face].first;
-         const Vector_3 v = vin[face][face].second;
-         std::cout << "  angle  " << angle << "     " << v;
-      }
-   }
-   std::cout << std::endl;
-}
-
-void PrintRawIntersection(const std::pair<POINT_LIST, std::vector<Intersection> >& v_Intersections) {
-   std::cout << std::endl;
-   std::cout << "RAW INTERSECTIONS " << std::endl;
-   for (size_t face = 0; face < v_Intersections.first.size(); ++face) {
-      std::cout
-         << v_Intersections.first[face][0] << "  "
-         << v_Intersections.first[face][1] << "  "
-         << v_Intersections.first[face][2] << "    "
-
-         << v_Intersections.second[face].GetPlaneIndices()[0] << " "
-         << v_Intersections.second[face].GetPlaneIndices()[1] << " "
-         << v_Intersections.second[face].GetPlaneIndices()[2] << "   "
-
-         << v_Intersections.second[face].GetCoord()[0] << " "
-         << v_Intersections.second[face].GetCoord()[1] << " "
-         << v_Intersections.second[face].GetCoord()[2] << std::endl;
-
-   }
-}
-
-//void PrintDirichletFaces(const std::vector<DirichletFace>& dirichletFaces) {
-//   for (size_t face = 0; face < dirichletFaces.size(); ++face) {
-//      const std::vector<size_t> indices = dirichletFaces[face].GetIndicesOfIntersection();
-//      std::cout << "face " << face << "      " << indices[0] << " " << indices[1] << " " << indices[2] << std::endl;
-//   }
-//}
-
-//bool Z_DepthTest(const Vector_3& v) {
-//   return v[0] > 0 && v[1] > 0 && v[2] > 0;
-//}
-//
-//bool Z_DepthTest(const ANGLELIST& ring) {
-//   for (size_t face = 0; face < ring.size(); ++face) {
-//      if (Z_DepthTest(ring[face].second)) return true;
-//   }
-//   return false;
-//}
 
 std::string DrawOneDirichletRing(const double scale, const ANGLELIST& ring, const size_t nColor) {
-   static const std::vector<std::string> colors = { "aqua", "blue", "orange", "darkgray", "lightblue", "yellow", "purple", "teal", "indigo", "violet", "maroon", "yellowgreen" };
-
    const double xshift = 30;
    const double yshift = 30;
    ANGLELIST colorTest;
    std::string s;
-   const Vector_3 cm = CenterOfMassForOneFace(ring);
+   const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(ring);
 
    const double dotToZAxis = cm.Dot(Vector_3(0,0,1));
 
@@ -186,7 +98,7 @@ std::vector<Vector_3> CentersOfMassForAllFaces(const ANGLESFORFACES& list) {
    std::vector<Vector_3> vcm;
    if (list.size() > 3) {
       for (size_t face = 0; face < list.size(); ++face)
-         vcm.push_back(CenterOfMassForOneFace(list[face]));
+         vcm.push_back(DirichletCell::CenterOfMassForOneFace(list[face]));
    }
    return vcm;
 }
@@ -225,10 +137,10 @@ ANGLESFORFACES RotateObject(const Matrix_3x3& m, const ANGLESFORFACES& ring) {
    return list;
 }
 
-std::vector<ANGLESFORFACES> CreateSeriesOfImages(const ANGLESFORFACES& inputRingsOgFace, 
+std::vector<ANGLESFORFACES> CreateSeriesOfImages(const ANGLESFORFACES& inputRingsOfFace, 
    const size_t nImages, const Matrix_3x3& initialRotation, const Matrix_3x3& rotationBetween) {
    std::vector<ANGLESFORFACES> vout;
-   const ANGLESFORFACES oneImage(RotateObject(initialRotation, inputRingsOgFace));
+   const ANGLESFORFACES oneImage(RotateObject(initialRotation, inputRingsOfFace));
    Matrix_3x3 m2(1,0,0,  0,1,0,  0,0,1);
    for (size_t face = 0; face < nImages; ++face) {
       vout.push_back(RotateObject(m2, oneImage));
@@ -266,7 +178,7 @@ std::vector<std::string> DrawDirichletRings( const ANGLESFORFACES& newRinged) {
       for (size_t pass = 0; pass < 2; ++pass) {
 
          for (size_t face = 0; face < faces.size(); ++face) {
-            const Vector_3 cm = CenterOfMassForOneFace(faces[face]);
+            const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(faces[face]);
             const double dotToZAxis = cm.Dot(Vector_3(0, 0, 1));
             if ((pass == 0 && dotToZAxis > 0.0) ||( pass == 1 && dotToZAxis <= 0.0))
                vs.push_back(DrawOneDirichletRing(scale, faces[face], face));
@@ -300,52 +212,6 @@ std::vector<std::string> MadeStereo(const std::vector<std::string>& vsin) {
    return vsout;
 }
 
-Vector_3 RecoverIndicesOfOneFace(const Matrix_3x3& minv, const ANGLELIST& list) {
-   const Vector_3 cm = CenterOfMassForOneFace(list);
-   return minv * cm;
-}
-
-std::vector<Vector_3> RecoverIndicesOfFaces(const Matrix_3x3& m_cart, const ANGLESFORFACES& newRinged) {
-   const Matrix_3x3 minv(m_cart.Inver());
-   std::vector<Vector_3> vout;
-   for (size_t i = 0; i < newRinged.size(); ++i) {
-      Vector_3 v = (2.0 * RecoverIndicesOfOneFace(minv, newRinged[i]));
-      for (size_t i = 0; i < 3; ++i) v[i] = (abs(v[i]) < 1.0e-6) ? 0.0 : v[i];
-      for (size_t i = 0; i < 3; ++i) v[i] = (abs(abs(v[i])-1) < 1.0e-6) ? round(v[i]) : v[i];
-      vout.push_back(v);
-   }
-   return vout;
-}
-
-std::string IndicesAsString(const std::vector<Vector_3>& v) {
-   std::string s;
-   for (size_t i = 0; i < v.size(); ++i) {
-      s += "Face # " + LRL_ToString(i + 1) + "    " +
-         LRL_ToString(v[i][0]) + " " + LRL_ToString(v[i][1]) + " " + LRL_ToString(v[i][2]) + "\n";
-   }
-   return s;
-}
-
-double AreaOfOneFace(const ANGLELIST& face) {
-   const Vector_3 cm = CenterOfMassForOneFace(face);
-
-   double totalArea = 0.0;
-   for (size_t i = 0; i < face.size(); ++i)
-   {
-      const Vector_3 v1 = face[i].second;
-      const Vector_3 v2 = (i==face.size()-1) ? face[0].second : face[i + 1].second;
-      const Vector_3 v3 = v2-v1;
-
-      const double side1 = (v1 - cm).norm();
-      const double side2 = (v2 - cm).norm();
-      const double side3 = v3.Norm();
-
-      const double area = TriangleAreaFromSides(side1, side2, side3); // Heron's formula for 3 sides
-      totalArea += area;
-   }
-   return totalArea;
-}
-
 std::string EdgeLengths(const ANGLELIST& list) {
    std::vector<Vector_3> vin;
    for (size_t i = 0; i < list.size(); ++i) {
@@ -365,8 +231,8 @@ double CleanNearZero(const double d) {
 }
 
 std::string OneFaceRecord(const ANGLELIST& face, const Vector_3& index) {
-   const double area = AreaOfOneFace(face);
-   const Vector_3 cm = CenterOfMassForOneFace(face);
+   const double area = DirichletCell::AreaOfOneFace(face);
+   const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(face);
    std::ostringstream ostr;
 //ostr << std::setw(2) << std::setfill('0') << std::hex << r << g << b;
 ostr << "area= " << area << "   " << " index " << index[0] << " " << index[1] << " " << index[2] <<
@@ -404,7 +270,7 @@ std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>
 
    size_t count = 0;
    for (size_t faceIndex = 0; faceIndex < rings.size(); ++faceIndex) {
-      double area = AreaOfOneFace(rings[faceIndex]);
+      double area = DirichletCell::AreaOfOneFace(rings[faceIndex]);
       if (area > 1.0E-4) {
          ++count;
          std::cout << count << "  " << area << "  " << indices[faceIndex];
@@ -416,37 +282,7 @@ std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>
    return ostr.str();
 }
 
-void PrintFaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>& indices) {
-   std::cout << FaceRecords(rings, indices) << std::endl;
-}
-
-std::vector<std::vector<int> > DirichletCell::ConvertAllVectorIndicesToInt(const std::vector<Vector_3>& v) {
-   std::vector<std::vector<int> > vout;
-   for (size_t i = 0; i < v.size(); ++i)
-      vout.push_back(ConvertVectorIndicesToInt(v[i]));
-   return vout;
-}
-//
-//std::vector<int> DirichletCell::ConvertVectorIndicesToInt(const Vector_3& v) {
-//   return{ int(v[0]), int(v[1]), int(v[2]) };
-//}
-//
-//std::vector<std::string> DirichletCell::ConvertAllVectorIndicesToString(const std::vector<Vector_3>& v) {
-//   std::vector<std::string> vout;
-//   for (size_t i = 0; i < v.size(); ++i) {
-//      vout.push_back(ConvertVectorIndicesToString(v[i]));
-//   }
-//   return vout;
-//}
-//
-//std::string DirichletCell::ConvertVectorIndicesToString(const Vector_3& v) {
-//   return LRL_ToString(v);
-//}
-
-std::string HandleOneCell(const std::string& strCell) {
-
-   DirichletCell dc(strCell);
-
+std::string CreateStereoSVGText(const DirichletCell& dc) {
    //------------- create rotated image
    static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
    const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(DirichletConstants::rotateX / degreesPerRad);
@@ -459,17 +295,23 @@ std::string HandleOneCell(const std::string& strCell) {
    const std::vector<std::string> series = DrawSeriesOfObjects(rings);
    const std::vector<std::string> stereoImages = MadeStereo(series);
 
-   const std::vector<Vector_3> indices = RecoverIndicesOfFaces(dc.GetCartesianMatrix(), ringed);
+   const std::vector<Vector_3> indices = DirichletCell::RecoverIndicesOfFaces(dc.GetCartesianMatrix(), ringed);
    const std::string records = FaceRecords(ringed, indices);
    const std::string constants = ReadGlobalData::GetConstantsAsString();
    const Cell_Faces cellFaces = dc.GetCellFaces();
 
-   std::cout << LRL_ToString(indices) << std::endl;
-   std::cout << LRL_ToString(dc.GetAreas()) << std::endl;
+   //std::cout << LRL_ToString(indices) << std::endl;
+   //std::cout << LRL_ToString(dc.GetAreas()) << std::endl;
 
    const DirichletSVG dsvg(dc);
    const std::string svg = dsvg.OutputSVG(stereoImages, cellFaces,
       records + "\nGlobal Constants\n" + constants);
+   return svg;
+}
+
+std::string HandleOneCell(const std::string& strCell) {
+   DirichletCell dc(strCell);
+   std::string svg = CreateStereoSVGText(dc);
    return svg;
 }
 
@@ -488,13 +330,13 @@ int main() {
 
    std::vector<std::string> strCells = RetrieveCellsAsStringsFromDirichletConstants();
 
-   const std::string filePrefix =
+   const std::string basicFilePrefix =
       LRL_ToString(LRL_CreateFileName::Create(DirichletConstants::fileNamePrefix, "", 
          DirichletConstants::timestamp));
 
    for ( size_t whichCell =0; whichCell<strCells.size(); ++whichCell) {
       const std::string svg = HandleOneCell(strCells[whichCell]);
-      const std::string fileName = filePrefix + LRL_ToString(whichCell) + ".svg";
+      const std::string fileName = basicFilePrefix + LRL_ToString(whichCell) + ".svg";
       if ( ! svg.empty()) FileOperations::Write(fileName, svg);
    }
    exit(0); 
