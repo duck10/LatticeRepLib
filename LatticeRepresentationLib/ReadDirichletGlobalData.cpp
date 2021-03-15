@@ -1,5 +1,5 @@
 
-#include "ReadGlobalData.h"
+#include "ReadDirichletGlobalData.h"
 
 #include "G6.h"
 #include "DirichletConstants.h"

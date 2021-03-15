@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DetermineOutliers.h" />
-    <ClInclude Include="FileOperations.h" />
     <ClInclude Include="Follower.h" />
     <ClInclude Include="FollowerTools.h" />
     <ClInclude Include="Glitch.h" />
@@ -48,7 +47,6 @@
     <ClInclude Include="triple.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FileOperations.cpp" />
     <ClCompile Include="FollowerTools.cpp" />
     <ClCompile Include="GlobalTriangleFollowerConstants.cpp" />
     <ClCompile Include="haar.cpp" />

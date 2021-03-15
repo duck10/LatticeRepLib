@@ -1,7 +1,7 @@
 #ifndef DIRICHLET_H
 #define DIRICHLET_H
 
-#include "Faces.h"
+#include "DirichletCellFaces.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_Vector3.h"
@@ -17,7 +17,10 @@ typedef std::vector<ANGLELIST> ANGLESFORFACES;
 
 class DirichletCell {
 public:
-   DirichletCell(const std::string& strCell);
+   DirichletCell() {}
+   DirichletCell(const std::string& strCellAndLattice);
+   DirichletCell(const std::string& lattice, const LRL_Cell& cell);
+   void ProcessInputCell(const std::string lattice, const LRL_Cell& cell);
 
    std::string GetStrCell() const { return m_strCell; }
    LRL_Cell GetCell() const { return m_cell; }
@@ -28,7 +31,10 @@ public:
    Cell_Faces GetCellFaces() const { return m_cellFaces; }
    Matrix_3x3 GetCartesianMatrix() const { return m_cart; }
    ANGLESFORFACES GetAnglesForFaces() const { return m_facesWithVertices; }
-
+   static double AreaOfOneFace(const ANGLELIST& face);
+   static Vector_3 CenterOfMassForOneFace(const ANGLELIST& list);
+   static Vector_3 RecoverIndicesOfOneFace(const Matrix_3x3& minv, const ANGLELIST& list);
+   static std::vector<Vector_3> RecoverIndicesOfFaces(const Matrix_3x3& m_cart, const ANGLESFORFACES& newRinged);
    std::vector<std::vector<int> > ConvertAllVectorIndicesToInt(const std::vector<Vector_3>& v);
    std::vector<std::string> ConvertAllVectorIndicesToString(const std::vector<Vector_3>& vin);
    std::string ConvertVectorIndicesToString(const Vector_3& vin);

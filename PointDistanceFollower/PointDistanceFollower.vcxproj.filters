@@ -32,9 +32,6 @@
     <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\LRL_Tools\FileOperations.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FollowerConstants.h">
@@ -68,9 +65,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\LRL_Tools\FileOperations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
