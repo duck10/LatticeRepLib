@@ -78,7 +78,7 @@ public:
    static B4 rand(const double d);
    static B4 randDeloneReduced(const double d);
    static B4 randDeloneUnreduced(const double d);
-   static std::string GetName(void) { return "B4, Delone Tetrahedron"; }
+   std::string GetName(void) const { return "B4, Delone Tetrahedron"; }
 
 protected:
    std::vector<Vector_3> m_vec;

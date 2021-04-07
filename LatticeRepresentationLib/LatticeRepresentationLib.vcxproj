@@ -163,6 +163,7 @@
     <ClCompile Include="CS6Dist.c" />
     <ClCompile Include="CS6Dist.cpp" />
     <ClCompile Include="D13.cpp" />
+    <ClCompile Include="DC.cpp" />
     <ClCompile Include="Dirichlet.cpp" />
     <ClCompile Include="DirichletCellFaces.cpp" />
     <ClCompile Include="DirichletConstants.cpp" />
@@ -178,6 +179,7 @@
     <ClCompile Include="LRL_CoordinateConversionMatrices.cpp" />
     <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
+    <ClCompile Include="MatD13.cpp" />
     <ClCompile Include="ReadDirichletGlobalData.cpp" />
     <ClCompile Include="S6.cpp" />
     <ClCompile Include="S6Dist.cpp" />
@@ -211,6 +213,7 @@
     <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="D13.h" />
+    <ClInclude Include="DC.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
     <ClInclude Include="Dirichlet.h" />
     <ClInclude Include="DirichletCellFaces.h" />
@@ -229,6 +232,7 @@
     <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
     <ClInclude Include="LRL_LatticeMatcher.h" />
+    <ClInclude Include="MatD13.h" />
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="ParseData.h" />

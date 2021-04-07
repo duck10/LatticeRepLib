@@ -49,11 +49,13 @@ G6::G6(const double v[6])
    m_vec[3] = v[3];
    m_vec[4] = v[4];
    m_vec[5] = v[5];
+   m_dim = 6;
 }
 
 G6::G6(const LRL_Cell& c) {
    static const double pi = 4.0*atan(1.0);
    static const double twopi = 2.0*pi;
+   m_dim = 6;
 
    m_vec.resize(6);
    m_valid = c.GetValid();
@@ -103,7 +105,8 @@ G6::G6(const S6& ds)
       std::abs(g6*g6 / g1 / g2) <= 4.0 &&
       ds.GetValid();
    m_vec.SetValid(m_valid);
- 
+   m_dim = 6;
+
 }
 
 G6::G6(const C3& c3) {

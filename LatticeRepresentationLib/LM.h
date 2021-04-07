@@ -11,7 +11,7 @@ public:
    LM( const S6& s );
    double DistanceBetween( const S6& s );
    double DistanceBetween( const S6& s1, const S6& s2 );
-   static std::string GetName( void ) { return "LM"; }
+   std::string GetName( void ) const { return "LM"; }
    S6 GetBestMatch(void) const { return m_bestFit; }
    CNearTree<MV_Pair> GetMatrixTree() const { return m_lmdist.GetMatrixTree(); };
    int GetRecursionDepth() const { return m_lmdist.GetRecursionDepth(); }
