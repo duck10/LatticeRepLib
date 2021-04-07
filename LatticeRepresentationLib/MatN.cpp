@@ -199,6 +199,9 @@ MatN& MatN::operator= ( const MatN& m2 ) {
 }
 
 void MatN::zeros( ) {
+   double test = m_dim;
+   double test2 = int(sqrt(test));
+   double test3 = test2 * test2;
    for ( size_t i=0; i<m_dim; ++i ) m_mat[i] = 0.0;
 }
 

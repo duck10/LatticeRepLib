@@ -8,7 +8,7 @@
 #include "LRL_Vector3.h"
 
 
-typedef std::vector<size_t> POINT;
+typedef std::vector<int> POINT;
 typedef std::vector<POINT> POINT_LIST; 
 typedef std::vector< std::vector<POINT>> FACES;
 

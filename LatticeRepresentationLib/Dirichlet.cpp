@@ -12,6 +12,7 @@
 #include "TriangleAreaFromSides.h"
 
 #include <cmath>
+#include <iomanip>
 
 DirichletSVG::DirichletSVG(const DirichletCell& dc)
    : m_dirCell(dc)
@@ -168,7 +169,7 @@ static ANGLESFORFACES AssignPointsToFaceList(const std::pair<POINT_LIST, std::ve
    const int nFaces = CountFaces(inputIndices);
    ANGLESFORFACES anglesForFaces(nFaces);
    for (int face = 0; face < inputIndices.size(); ++face) {
-      const std::vector<size_t>& v_index = inputIndices[face];
+      const std::vector<int>& v_index = inputIndices[face];
       const size_t& i1 = v_index[0];
       const size_t& i2 = v_index[1];
       const size_t& i3 = v_index[2];
@@ -206,10 +207,10 @@ static std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections(co
    const long n0 = it0.get_position();
    //
    //
-   for (size_t i1 = 0; i1 < n - 2; ++i1) {
-      for (size_t i2 = i1 + 1; i2 < n - 1; ++i2) {
+   for (int i1 = 0; i1 < n - 2; ++i1) {
+      for (int i2 = i1 + 1; i2 < n - 1; ++i2) {
          if (i1 == i2) continue;
-         for (size_t i3 = i2 + 1; i3 < n; ++i3) {
+         for (int i3 = i2 + 1; i3 < n; ++i3) {
             if (i1 == i3 || i2 == i3) continue;
             Intersection intersection = Intersection::FindIntersectionForThreeFaces(dirichletFaces[i1], dirichletFaces[i2], dirichletFaces[i3]);
 
@@ -241,7 +242,7 @@ static std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections(co
          }
       }
    }
-   std::cout << "intersection count " << vvindex.size() << std::endl;
+   //std::cout << "intersection count " << vvindex.size() << std::endl;
    return std::make_pair(vvindex, vIntersections);
 }
 
@@ -309,9 +310,9 @@ double DirichletCell::AreaOfOneFace(const ANGLELIST& face) {
 DirichletCell::DirichletCell(const std::string& strCellAndLattice)
    : m_strCell(strCellAndLattice)
 {
-   LRL_ReadLatticeData rdc;
-   rdc.CellReader(strCellAndLattice);
-   ProcessInputCell(rdc.GetLattice(), rdc.GetCell());
+   LRL_ReadLatticeData rcd;
+   rcd.CellReader(strCellAndLattice);
+   ProcessInputCell(rcd.GetLattice(), rcd.GetCell());
 }
 
 DirichletCell::DirichletCell(const std::string& lattice, const LRL_Cell& cell)
@@ -323,7 +324,17 @@ DirichletCell::DirichletCell(const std::string& lattice, const LRL_Cell& cell)
       m_reducedCell = LatticeConverter().SellingReduceCell(lattice, cell);
    else
       m_reducedCell = LatticeConverter().NiggliReduceCell(lattice, cell);
-   ProcessInputCell(lattice, m_reducedCell);
+   if (m_reducedCell.IsValid()) {
+      ProcessInputCell(lattice, m_reducedCell);
+   }
+   else {
+      std::cout << "In DirichletCell, LatticeConverter().NiggliReducedCell returned " <<
+         m_reducedCell << std::endl;
+      std::cout << "input cell was   " << cell << std::endl;
+      std::cout << "In DirichletCell, LatticeConverter().NiggliReducedCell returned " <<
+         LRL_Cell_Degrees(m_reducedCell) << std::endl;
+      std::cout << std::setw(11) << std::setprecision(6) << "input cell was   " << LRL_Cell_Degrees(cell) << std::endl;
+   }
 }
 
 void DirichletCell::ProcessInputCell(const std::string lattice, const LRL_Cell& reducedCell) {

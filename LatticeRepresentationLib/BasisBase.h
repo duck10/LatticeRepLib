@@ -8,6 +8,7 @@ class LRL_Cell;
 class C3;
 class S6;
 class D7;
+class D13;
 class B4;
 class G6;
 class VecN;
@@ -26,6 +27,7 @@ public:
    virtual T& operator= (const LRL_Cell& v) = 0;
    virtual T& operator= (const G6& v) = 0;
    virtual T& operator= (const C3& v) = 0;
+   //virtual T& operator= (const D13& v) = 0;
 
    virtual T& operator/= (const double d) = 0;
    virtual T& operator*= (const double d) = 0;
@@ -41,7 +43,7 @@ public:
 
    virtual TELEMENT operator[](const size_t n) const = 0;
    virtual TELEMENT& operator[](const size_t n) = 0;
-   virtual double DistanceBetween(const T& v1, const T& v2) = 0;
+   //virtual double DistanceBetween(const T& v1, const T& v2) = 0; // this needs to be a friend
    virtual size_t size(void) const = 0;
    virtual double norm() const = 0;
    virtual double norm(const T& t) const = 0;

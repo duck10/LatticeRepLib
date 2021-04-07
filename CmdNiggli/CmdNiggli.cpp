@@ -16,6 +16,7 @@ int main()
       //std::cout << pCell << std::endl;
       G6 g;
       const bool b = Niggli::Reduce(G6(pCell), g);
+      //std::cout << "cycles " << Niggli::GetCycles() << std::endl;
       std::cout << "G6 " << g << std::endl;
    }
 }

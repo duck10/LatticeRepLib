@@ -110,7 +110,7 @@ public:
    static LRL_Cell randDeloneReduced(const double d);
    static LRL_Cell randDeloneUnreduced(const double d);
 
-   static std::string GetName(void) { return "LRL_Cell, unit cell"; }
+   std::string GetName(void) const { return "LRL_Cell, unit cell"; }
 
    static double GetNormalization(void) { return randomLatticeNormalizationConstant; }
 

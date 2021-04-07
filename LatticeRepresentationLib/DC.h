@@ -1,5 +1,5 @@
-#ifndef D13_H
-#define D13_H
+#ifndef DC_H
+#define DC_H
 
 #include <vector>
 
@@ -11,43 +11,43 @@
 #include "LRL_ToString.h"
 #include "LRL_Vector3.h"
 
-class D13 : private BasisBase<D13, double> {
+class DC : private BasisBase<DC, double> {
 public:
    const static std::vector<Vector_3> vertices;
 public:
-   friend std::ostream& operator<< (std::ostream&, const D13&);
+   friend std::ostream& operator<< (std::ostream&, const DC&);
 
-   D13() {}
+   DC() {}
 
-   D13(const LRL_Cell& cell);
-   D13(const std::string& t);
-   D13& operator= (const D13& v);
-   D13& operator= (const std::string& s) { throw; D13 d13;  return d13; }
-   D13& operator= (const G6& v);
-   D13& operator= (const S6& v);
-   D13& operator= (const C3& c3);
-   D13& operator= (const D7& v);
-   D13& operator= (const B4& v);
-   D13& operator= (const LRL_Cell& v);
-   D13& operator/= (const double d);
-   D13& operator*= (const double d);
-   D13 operator+ (const D13& ds) const;
-   D13 operator- (const D13& ds) const;
-   D13& operator+= (const D13& ds);
-   D13& operator-= (const D13& ds);
-   D13 operator* (const double d) const;
-   D13 operator/ (const double d) const;
-   D13 operator- (void) const; // unary
-   bool operator== (const D13& d13) const;
-   bool operator!= (const D13& d13) const;
+   DC(const LRL_Cell& cell);
+   DC(const std::string& t);
+   DC& operator= (const DC& v);
+   DC& operator= (const std::string& s) { throw; DC DC;  return DC; }
+   DC& operator= (const G6& v);
+   DC& operator= (const S6& v);
+   DC& operator= (const C3& c3);
+   DC& operator= (const D7& v);
+   DC& operator= (const B4& v);
+   DC& operator= (const LRL_Cell& v);
+   DC& operator/= (const double d);
+   DC& operator*= (const double d);
+   DC operator+ (const DC& ds) const;
+   DC operator- (const DC& ds) const;
+   DC& operator+= (const DC& ds);
+   DC& operator-= (const DC& ds);
+   DC operator* (const double d) const;
+   DC operator/ (const double d) const;
+   DC operator- (void) const; // unary
+   bool operator== (const DC& DC) const;
+   bool operator!= (const DC& DC) const;
 
    double operator[](const size_t n) const { return m_vec[n]; }
    double& operator[](const size_t n) { return m_vec[n]; }
-   friend double DistanceBetween( const D13& v1, const D13& v2 );
+   friend double DistanceBetween(const DC& v1, const DC& v2);
    double norm() const { return m_vec.norm(); }
-   double norm(const D13& d13) const { return norm(d13); }
+   double norm(const DC& DC) const { return norm(DC); }
    double Norm() const { return m_vec.norm(); }
-   double Norm(const D13& d13) const { return norm(d13); }
+   double Norm(const DC& DC) const { return norm(DC); }
 
    std::vector<double> GetVector(void) const { return m_vec.GetVector(); }
    double* data() const { return const_cast<double*>(m_vec.data()); }
@@ -55,14 +55,14 @@ public:
    bool GetValid(void) const { return m_cellIsValid; }
    void SetValid(const bool b) { m_cellIsValid = b; }
    bool IsValid(void) const { return m_cellIsValid; }
-   bool IsValid(const D13& d13) const { return d13.m_cellIsValid; }
+   bool IsValid(const DC& DC) const { return DC.m_cellIsValid; }
 
    std::vector<std::vector<int> > GetIndices() const {
-      return m_dc.GetIndices(); 
+      return m_dc.GetIndices();
    }
    std::vector<double> GetAreas() const;
    std::vector<std::string> GetStringIndices() const { return m_dc.GetStrIndices(); }
-   std::string GetName() const { return "D13"; }
+   std::string GetName() const { return "DC"; }
    size_t size() const { return m_vec.size(); }
 
 private:
@@ -85,4 +85,4 @@ private:
    std::vector<int> HashIndices(const std::vector<std::vector<int> >& vin) const;
 };
 
-#endif  // D13_h
+#endif  // DC_h

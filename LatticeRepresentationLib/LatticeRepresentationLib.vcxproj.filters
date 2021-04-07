@@ -149,6 +149,12 @@
     <ClCompile Include="DirichletCellFaces.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MatD13.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -314,6 +320,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirichletCellFaces.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatD13.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

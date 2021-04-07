@@ -1,4 +1,4 @@
-#include "D13.h"
+#include "DC.h"
 #include "S6.h"
 
 #include <algorithm>
@@ -6,13 +6,13 @@
 #include <iostream>
 #include <utility>
 
-const std::vector<Vector_3> D13::vertices =
+const std::vector<Vector_3> DC::vertices =
 { Vector_3(0,1,0), Vector_3(1,1,0), Vector_3(1,0,0), Vector_3(1,-1,0),
   Vector_3(-1,1,1), Vector_3(0,1,1), Vector_3(1,1,1), Vector_3(1,0,1),
   Vector_3(1,-1,1), Vector_3(0,-1,1), Vector_3(-1,-1,1), Vector_3(-1,0,1),
   Vector_3(0,0,1) };
 
-std::ostream& operator<< (std::ostream& o, const D13& v) {
+std::ostream& operator<< (std::ostream& o, const DC& v) {
    std::streamsize oldPrecision = o.precision();
    o << std::fixed << std::setprecision(3);
    for (size_t i = 0; i < v.size(); ++i)
@@ -28,7 +28,7 @@ double HashV3(const T& v) {
    return hash;
 }
 
-D13::D13(const LRL_Cell& cell)
+DC::DC(const LRL_Cell& cell)
    : m_cell(cell)
    , m_lattice("P")
    , m_cellIsValid(cell.IsValid())
@@ -42,7 +42,7 @@ D13::D13(const LRL_Cell& cell)
    CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
 }
 
-D13::D13(const std::string& t)
+DC::DC(const std::string& t)
 {
    const std::string strInput = t;
    if ((strInput[0] >= 'a' && strInput[0] <= 'z') ||
@@ -61,7 +61,7 @@ D13::D13(const std::string& t)
    CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
 }
 
-std::vector<int> D13::HashIndices(const std::vector<std::vector<int> >& vin) const {
+std::vector<int> DC::HashIndices(const std::vector<std::vector<int> >& vin) const {
    std::vector<int> v;
    const std::vector<std::vector<int> >& indices = vin;
    for (size_t i = 0; i < indices.size(); ++i) {
@@ -73,11 +73,11 @@ std::vector<int> D13::HashIndices(const std::vector<std::vector<int> >& vin) con
    return v;
 }
 
-std::vector<int> D13::HashIndices() const {
+std::vector<int> DC::HashIndices() const {
    return HashIndices(m_dc.GetIndices());
 }
 
-void D13::ConstructHashedAreaList() {
+void DC::ConstructHashedAreaList() {
    const std::vector<std::vector<int> > indList = m_dc.GetIndices();
    const std::vector<double> areas = m_dc.GetAreas();
    const std::vector<std::vector<int> > indicesOfAreas = m_dc.GetIndices();
@@ -105,28 +105,28 @@ void D13::ConstructHashedAreaList() {
 
 }
 
-VecN D13::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
+VecN DC::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
    const std::vector<std::vector<int> >& dcIndices,
    const std::vector<double>& dcAreas)
 {
-   std::vector<int> hashed13(13);
+   std::vector<int> hasheDC(13);
 
    for (size_t i = 0; i < allIndices.size(); ++i) {
-      hashed13[i] = HashV3(allIndices[i]);
-      //std::cout << "hash13 " << i << "  " << hashed13[i] << std::endl;
+      hasheDC[i] = HashV3(allIndices[i]);
+      //std::cout << "hash13 " << i << "  " << hasheDC[i] << std::endl;
    }
    //std::cout << std::endl;
 
    for (size_t i = 0; i < dcIndices.size(); ++i) {
       const int hash = HashV3(dcIndices[i]);
       //std::cout << " hash  " << i << "  " << hash << std::endl;
-      auto place = std::find(hashed13.begin(), hashed13.end(), hash);
-      //if ( place != hashed13.end())
+      auto place = std::find(hasheDC.begin(), hasheDC.end(), hash);
+      //if ( place != hasheDC.end())
          //std::cout << i << "  " << hash << " " <<  std::endl;
 
       m_vec.resize(13);
-      if (place != hashed13.end()) {
-         const int xxxx = place - hashed13.begin();
+      if (place != hasheDC.end()) {
+         const int xxxx = place - hasheDC.begin();
          //m_dirCellAreas[xxxx] = dcAreas[i];
          m_vec[xxxx] = dcAreas[i];
       }
@@ -136,14 +136,14 @@ VecN D13::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
    return m_vec;
 }
 
-D13& D13::operator= (const LRL_Cell& v) {
-   *this = D13(v);
+DC& DC::operator= (const LRL_Cell& v) {
+   *this = DC(v);
    m_cellIsValid = v.IsValid();
    return *this;
 }
 
 
-D13& D13::operator= (const D13& v) {
+DC& DC::operator= (const DC& v) {
    m_dirCellAreas = v.m_dirCellAreas;
    m_dim = v.m_dim;
    m_cellIsValid = v.m_cellIsValid;
@@ -155,67 +155,67 @@ D13& D13::operator= (const D13& v) {
    return *this;
 }
 
-D13 D13::operator- (void) const {
-   D13 d13;
-   d13.m_cellIsValid = false;
-   for (size_t i = 0; i < d13.size(); ++i)
-      d13[i] = -m_vec[i];
-   return d13; // unary
+DC DC::operator- (void) const {
+   DC DC;
+   DC.m_cellIsValid = false;
+   for (size_t i = 0; i < DC.size(); ++i)
+      DC[i] = -m_vec[i];
+   return DC; // unary
 }
 
-D13& D13::operator+= (const D13& d13) {
-   for (size_t i = 0; i < d13.size(); ++i)
-      m_vec[i] += d13.m_vec[i];
+DC& DC::operator+= (const DC& DC) {
+   for (size_t i = 0; i < DC.size(); ++i)
+      m_vec[i] += DC.m_vec[i];
    return *this;
 }
 
-D13& D13::operator-= (const D13& D13) {
-   for (size_t i = 0; i < D13.size(); ++i)
-      m_vec[i] -= D13.m_vec[i];
+DC& DC::operator-= (const DC& DC) {
+   for (size_t i = 0; i < DC.size(); ++i)
+      m_vec[i] -= DC.m_vec[i];
    return *this;
 }
 
-bool D13::operator== (const D13& d13) const {
-   return m_vec == d13.m_vec;
+bool DC::operator== (const DC& DC) const {
+   return m_vec == DC.m_vec;
 }
 
-bool D13::operator!= (const D13& d13) const {
-   return !((*this) == d13);
+bool DC::operator!= (const DC& DC) const {
+   return !((*this) == DC);
 }
 
-D13& D13::operator/= (const double d) {
+DC& DC::operator/= (const double d) {
    (*this).m_vec /= d;
    return *this;
 }
 
-D13& D13::operator*= (const double d) {
+DC& DC::operator*= (const double d) {
    (*this).m_vec *= d;
    return *this;
 }
 
-D13 D13::operator* (const double d) const {
-   D13 dt(*this);
+DC DC::operator* (const double d) const {
+   DC dt(*this);
    for (size_t i = 0; i < dt.size(); ++i)
       dt[i] *= d;
    return dt;
 }
 
-D13 D13::operator/ (const double d) const {
-   D13 dt(*this);
+DC DC::operator/ (const double d) const {
+   DC dt(*this);
    for (size_t i = 0; i < dt.size(); ++i)
       dt[i] /= d;
    return dt;
 }
 
-D13 D13::operator+ (const D13& ds) const {
-   D13 v;
+DC DC::operator+ (const DC& ds) const {
+   DC v;
    for (size_t i = 0; i < ds.size(); ++i)
       v[i] = (*this)[i] + ds[i];
    return v;
 }
 
-D13 D13::operator- (const D13& v) const {
-   D13 d(v);
+DC DC::operator- (const DC& v) const {
+   DC d(v);
    if ((*this).m_cellIsValid && v.m_cellIsValid) {
       d.m_vec = m_vec - v.m_vec;
    }
@@ -225,26 +225,26 @@ D13 D13::operator- (const D13& v) const {
    return d;
 }
 
-D13& D13::operator= (const G6& v) {
-   return D13(LRL_Cell(v));
+DC& DC::operator= (const G6& v) {
+   return DC(LRL_Cell(v));
 }
 
-D13& D13::operator= (const S6& v) {
-   return D13(LRL_Cell(v));
+DC& DC::operator= (const S6& v) {
+   return DC(LRL_Cell(v));
 }
 
-D13& D13::operator= (const C3& v) {
-   return D13(LRL_Cell(v));
+DC& DC::operator= (const C3& v) {
+   return DC(LRL_Cell(v));
 }
 
-D13& D13::operator= (const D7& v) {
-   return D13(LRL_Cell(v));
+DC& DC::operator= (const D7& v) {
+   return DC(LRL_Cell(v));
 }
 
-D13& D13::operator= (const B4& v) {
-   return D13(LRL_Cell(v));
+DC& DC::operator= (const B4& v) {
+   return DC(LRL_Cell(v));
 }
 
-double DistanceBetween(const D13& v1, const D13& v2) {
+double DistanceBetween(const DC& v1, const DC& v2) {
    return (v1 - v2).Norm();
 }
