@@ -26,7 +26,8 @@ int main()
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    for (size_t i = 0; i < inputList.size(); ++i) {
       const DC dc(inputList[i].GetStrCell());
-      std::cout << "DC " << LRL_ToString(dc.GetAreas()) << std::endl;
+      //std::cout << "DC " << LRL_ToString(dc.GetAreas()) << std::endl;
       std::cout << " " << LRL_ToString(dc.GetStringIndices()) << std::endl;
+      std::cout << " " << LRL_ToString(dc.GetVector()) << std::endl;
    }
 }
