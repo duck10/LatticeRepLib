@@ -43,13 +43,13 @@ public:
 
    double operator[](const size_t n) const { return m_vec[n]; }
    double& operator[](const size_t n) { return m_vec[n]; }
-   friend double DistanceBetween(const DC& v1, const DC& v2);
+   static double DistanceBetween(const DC& v1, const DC& v2);
    double norm() const { return m_vec.norm(); }
    double norm(const DC& DC) const { return norm(DC); }
    double Norm() const { return m_vec.norm(); }
    double Norm(const DC& DC) const { return norm(DC); }
 
-   std::vector<double> GetVector(void) const { return m_vec.GetVector(); }
+   std::vector<double> GetVector(void) const { return GetVector(); }
    double* data() const { return const_cast<double*>(m_vec.data()); }
    void SetVector(const std::vector<double>& v) { m_vec = v; }
    bool GetValid(void) const { return m_cellIsValid; }
@@ -60,7 +60,7 @@ public:
    std::vector<std::vector<int> > GetIndices() const {
       return m_dc.GetIndices();
    }
-   std::vector<double> GetAreas() const;
+   //std::vector<double> GetAreas() const;
    std::vector<std::string> GetStringIndices() const { return m_dc.GetStrIndices(); }
    std::string GetName() const { return "DC"; }
    size_t size() const { return m_vec.size(); }

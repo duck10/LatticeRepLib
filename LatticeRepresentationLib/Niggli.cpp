@@ -651,7 +651,7 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
    bool again = true;
    const bool debug = true;
 
-   const int maxCycle = 260;
+   const int maxCycle = 1000;
 
    vin = vi;
    G6 voutPrev(vin);
@@ -848,7 +848,10 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
       }
 
       // probably don't need to do this group of code when again==false !!!!!!!!!!!!!!
-      MKnormWithoutMatrices(vout, vin, delta);
+      if (again) {
+         MKnormWithoutMatrices(vout, vin, delta);
+         vout = vin;
+      }
       for (size_t i = 3; i < 6; ++i)
          if (std::fabs(vin[i]) < 1.0E-10) vin[i] = 0.0;
 

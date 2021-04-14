@@ -14,6 +14,8 @@
 #include "S6.h"
 #include "G6.h"
 #include "D7.h"
+#include "DC.h"
+#include "D13.h"
 #include "B4.h"
 //#include "FileWriter.h"
 //#include "Follow.h"
@@ -170,7 +172,7 @@ MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plot
 
    if (!mf.HasGlitches() && FollowerConstants::globalOutputGlitchesOnly) return mf;
    SVG_DistancePlot<S6> distanceplot(mf, baseFileName);
-   std::cout << baseFileName << std::endl;
+   std::cout << "#  " << baseFileName << std::endl;
 
    return mf;
 }

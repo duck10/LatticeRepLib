@@ -103,9 +103,13 @@ private:
       if (!svgcs.empty( )) y_pos += y_delta;
       const std::string svgv7 = WriteOneLineDescription( "V7", y_pos );
       if (!svgv7.empty( )) y_pos += y_delta;
-      const std::string svglm = WriteOneLineDescription( "LM", y_pos );
-      if (!svglm.empty( )) y_pos += y_delta;
-      return svgs6 + svgg6 + svgd7 + svgcs + svgv7 + svglm;
+      const std::string svglm = WriteOneLineDescription("LM", y_pos);
+      if (!svglm.empty()) y_pos += y_delta;
+      const std::string svgdc = WriteOneLineDescription("DC", y_pos);
+      if (!svgdc.empty()) y_pos += y_delta;
+      const std::string svgd13 = WriteOneLineDescription("D13", y_pos);
+      if (!svgd13.empty()) y_pos += y_delta;
+      return svgs6 + svgg6 + svgd7 + svgcs + svgv7 + svglm + svgdc + svgd13;
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

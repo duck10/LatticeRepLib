@@ -1,4 +1,5 @@
 #include "DC.h"
+#include "Niggli.h"
 #include "S6.h"
 
 #include <algorithm>
@@ -245,6 +246,55 @@ DC& DC::operator= (const B4& v) {
    return DC(LRL_Cell(v));
 }
 
-double DistanceBetween(const DC& v1, const DC& v2) {
-   return (v1 - v2).Norm();
+static std::vector<double> G6_to_V13(const G6& gin) {
+   std::vector<double> g(13, 0.0);
+
+   const double& g1 = gin[0];
+   const double& g2 = gin[1];
+   const double& g3 = gin[2];
+   const double& g4 = gin[3];
+   const double& g5 = gin[4];
+   const double& g6 = gin[5];
+
+   g[0] = g1;
+   g[1] = g2;
+   g[2] = g1 + g2 + g6;
+   g[3] = g1 + g2 - g6;
+   g[4] = g3;
+   g[5] = g2 + g3 + g4;
+   g[6] = g2 + g3 - g4;
+   g[7] = g1 + g3 + g5;
+   g[8] = g1 + g3 - g5;
+   g[9] = g1 + g2 + g3 + g4 + g5 + g6;
+   g[10] = g1 + g2 + g3 - g4 - g5 + g6;
+   g[11] = g1 + g2 + g3 - g4 + g5 - g6;
+   g[12] = g1 + g2 + g3 + g4 - g5 - g6;
+
+   const bool sorted = true;
+   if (sorted)
+      std::sort(g.begin(), g.end());
+
+   return g;
+}
+
+double DC::DistanceBetween(const DC& v1, const DC& v2) {
+
+   G6 g1;
+   const bool b1 = Niggli::Reduce(G6(v1.m_cell), g1);
+   G6 g2;
+   const bool b2 = Niggli::Reduce(G6(v2.m_cell), g2);
+   std::cout << "  g1  " << g1 << std::endl;
+   std::cout << "  g2  " << g2 << std::endl;
+
+   std::vector<double> lengths1 = G6_to_V13(g1);
+   std::vector<double> lengths2 = G6_to_V13(g2);
+
+   std::cout << " DC  " << LRL_ToString(lengths1) << std::endl;
+   std::cout << " DC  " << LRL_ToString(lengths2) << std::endl;
+
+   double sum = 0.0;
+   for (size_t i = 0; i < lengths1.size(); ++i)
+      sum += (lengths1[i] - lengths2[i]) * (lengths1[i] - lengths2[i]);
+   std::cout << " distance   " << sqrt(sum) << std::endl;
+   return sqrt(sum);
 }
