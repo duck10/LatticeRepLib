@@ -256,19 +256,19 @@ static std::vector<double> G6_to_V13(const G6& gin) {
    const double& g5 = gin[4];
    const double& g6 = gin[5];
 
-   g[0] = g1;
-   g[1] = g2;
-   g[2] = g1 + g2 + g6;
-   g[3] = g1 + g2 - g6;
-   g[4] = g3;
-   g[5] = g2 + g3 + g4;
-   g[6] = g2 + g3 - g4;
-   g[7] = g1 + g3 + g5;
-   g[8] = g1 + g3 - g5;
-   g[9] = g1 + g2 + g3 + g4 + g5 + g6;
-   g[10] = g1 + g2 + g3 - g4 - g5 + g6;
-   g[11] = g1 + g2 + g3 - g4 + g5 - g6;
-   g[12] = g1 + g2 + g3 + g4 - g5 - g6;
+   g[0] = 1.0/(g1);
+   g[1] = 1.0/(g2);
+   g[2] = 1.0/(g1 + g2 + g6);
+   g[3] = 1.0/(g1 + g2 - g6);
+   g[4] = 1.0/(g3);
+   g[5] = 1.0/(g2 + g3 + g4);
+   g[6] = 1.0/(g2 + g3 - g4);
+   g[7] = 1.0/(g1 + g3 + g5);
+   g[8] = 1.0/(g1 + g3 - g5);
+   g[9] = 1.0/(g1 + g2 + g3 + g4 + g5 + g6);
+   g[10] = 1.0/(g1 + g2 + g3 - g4 - g5 + g6);
+   g[11] = 1.0/(g1 + g2 + g3 - g4 + g5 - g6);
+   g[12] = 1.0/(g1 + g2 + g3 + g4 - g5 - g6);
 
    const bool sorted = true;
    if (sorted)
@@ -294,7 +294,8 @@ double DC::DistanceBetween(const DC& v1, const DC& v2) {
 
    double sum = 0.0;
    for (size_t i = 0; i < lengths1.size(); ++i)
-      sum += (lengths1[i] - lengths2[i]) * (lengths1[i] - lengths2[i]);
-   std::cout << " distance   " << sqrt(sum) << std::endl;
-   return sqrt(sum);
+      if ( lengths1[i] != lengths2[i])
+      sum += ((lengths1[i] - lengths2[i]) * (lengths1[i] - lengths2[i]));
+   std::cout << " distance   " << 1.0/sqrt(sum) << std::endl;
+   return sqrt(1.0/sum);
 }
