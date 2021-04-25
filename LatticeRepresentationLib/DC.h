@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "BasisBase.h"
-#include "Dirichlet.h"
 
 #include "LRL_Cell.h"
 #include "LRL_ReadLatticeData.h"
@@ -57,31 +56,29 @@ public:
    bool IsValid(void) const { return m_cellIsValid; }
    bool IsValid(const DC& DC) const { return DC.m_cellIsValid; }
 
-   std::vector<std::vector<int> > GetIndices() const {
-      return m_dc.GetIndices();
-   }
+   //std::vector<std::vector<int> > GetIndices() const {
+   //   return m_dc.GetIndices();
+   //}
    //std::vector<double> GetAreas() const;
-   std::vector<std::string> GetStringIndices() const { return m_dc.GetStrIndices(); }
+   //std::vector<std::string> GetStringIndices() const { return m_dc.GetStrIndices(); }
    std::string GetName() const { return "DC"; }
    size_t size() const { return m_vec.size(); }
+   static std::vector<double> G6_to_V13(const G6& gin);
+   static std::vector<std::pair<double, Vector_3> > Cell_to_V13(const LRL_Cell& c);
 
 private:
    LRL_Cell m_cell;
    std::string m_lattice;
    bool m_cellIsValid;
-   DirichletCell m_dc;
-   VecN m_dirCellAreas;
    size_t m_dim;
    std::vector<std::pair<int, std::pair<std::vector<int>, double> > > m_hashedAreaList;
    VecN m_vec;
 
 private:
-   void ConstructHashedAreaList();
 
    VecN CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
       const std::vector<std::vector<int> >& dcIndices,
       const std::vector<double>& dcAreas);
-   std::vector<int> HashIndices() const;
    std::vector<int> HashIndices(const std::vector<std::vector<int> >& vin) const;
 };
 

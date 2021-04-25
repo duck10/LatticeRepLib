@@ -33,14 +33,14 @@ DC::DC(const LRL_Cell& cell)
    : m_cell(cell)
    , m_lattice("P")
    , m_cellIsValid(cell.IsValid())
-   , m_dc(m_lattice, cell)
+   //, m_dc(m_lattice, cell)
 {
-   m_dirCellAreas = m_dc.GetAreas();
+   //m_dirCellAreas = m_dc.GetAreas();
    m_vec.resize(13);
    m_dim = 13;
    m_cellIsValid = m_cell.IsValid();
-   m_dc = DirichletCell(m_lattice, m_cell);
-   CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
+   //m_dc = DirichletCell(m_lattice, m_cell);
+   //CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
 }
 
 DC::DC(const std::string& t)
@@ -58,8 +58,8 @@ DC::DC(const std::string& t)
       m_lattice = "P";
    }
    m_cellIsValid = m_cell.IsValid();
-   m_dc = DirichletCell(m_lattice, m_cell);
-   CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
+   //m_dc = DirichletCell(m_lattice, m_cell);
+   //CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
 }
 
 std::vector<int> DC::HashIndices(const std::vector<std::vector<int> >& vin) const {
@@ -74,37 +74,37 @@ std::vector<int> DC::HashIndices(const std::vector<std::vector<int> >& vin) cons
    return v;
 }
 
-std::vector<int> DC::HashIndices() const {
-   return HashIndices(m_dc.GetIndices());
-}
-
-void DC::ConstructHashedAreaList() {
-   const std::vector<std::vector<int> > indList = m_dc.GetIndices();
-   const std::vector<double> areas = m_dc.GetAreas();
-   const std::vector<std::vector<int> > indicesOfAreas = m_dc.GetIndices();
-   std::vector<std::pair<int, std::pair<std::vector<int>, double> > > theList;
-   const std::vector<int> hashedIndices = HashIndices(indList);
-   for (size_t i = 0; i < indList.size(); ++i) {
-      theList.push_back(std::make_pair(hashedIndices[i], std::make_pair(indicesOfAreas[i], areas[i])));
-   }
-
-   const std::vector<Vector_3>& v = vertices;
-   std::vector<int> hashTotalIndexList;
-   std::vector < std::pair<int, double> > hashAndArea;
-   for (size_t i = 0; i < vertices.size(); ++i) {
-      hashTotalIndexList.push_back(HashV3(vertices[i]));
-   }
-
-   for (size_t i = 0; i < vertices.size(); ++i) {
-      hashAndArea.push_back(std::make_pair(HashV3(vertices[i]), 0.0));
-   }
-
-   // now fill in the non-zero areas
-   for (size_t i = 0; i < theList.size(); ++i) {
-      hashAndArea.push_back(std::make_pair(HashV3(vertices[i]), 0.0));
-   }
-
-}
+//std::vector<int> DC::HashIndices() const {
+//   return HashIndices(m_dc.GetIndices());
+//}
+//
+//void DC::ConstructHashedAreaList() {
+//   //const std::vector<std::vector<int> > indList = m_dc.GetIndices();
+//   //const std::vector<double> areas = m_dc.GetAreas();
+//   //const std::vector<std::vector<int> > indicesOfAreas = m_dc.GetIndices();
+//   std::vector<std::pair<int, std::pair<std::vector<int>, double> > > theList;
+//   //const std::vector<int> hashedIndices = HashIndices(indList);
+//   for (size_t i = 0; i < indList.size(); ++i) {
+//      theList.push_back(std::make_pair(hashedIndices[i], std::make_pair(indicesOfAreas[i], areas[i])));
+//   }
+//
+//   const std::vector<Vector_3>& v = vertices;
+//   std::vector<int> hashTotalIndexList;
+//   std::vector < std::pair<int, double> > hashAndArea;
+//   for (size_t i = 0; i < vertices.size(); ++i) {
+//      hashTotalIndexList.push_back(HashV3(vertices[i]));
+//   }
+//
+//   for (size_t i = 0; i < vertices.size(); ++i) {
+//      hashAndArea.push_back(std::make_pair(HashV3(vertices[i]), 0.0));
+//   }
+//
+//   // now fill in the non-zero areas
+//   for (size_t i = 0; i < theList.size(); ++i) {
+//      hashAndArea.push_back(std::make_pair(HashV3(vertices[i]), 0.0));
+//   }
+//
+//}
 
 VecN DC::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
    const std::vector<std::vector<int> >& dcIndices,
@@ -145,12 +145,11 @@ DC& DC::operator= (const LRL_Cell& v) {
 
 
 DC& DC::operator= (const DC& v) {
-   m_dirCellAreas = v.m_dirCellAreas;
    m_dim = v.m_dim;
    m_cellIsValid = v.m_cellIsValid;
    m_cell = v.m_cell;
    m_lattice = v.m_lattice;
-   m_dc = v.m_dc;
+   //m_dc = v.m_dc;
    m_hashedAreaList = v.m_hashedAreaList;
    m_vec = v.m_vec;
    return *this;
@@ -246,8 +245,26 @@ DC& DC::operator= (const B4& v) {
    return DC(LRL_Cell(v));
 }
 
-static std::vector<double> G6_to_V13(const G6& gin) {
-   std::vector<double> g(13, 0.0);
+std::vector<std::pair<double, Vector_3> > DC::Cell_to_V13(const LRL_Cell& c) {
+   std::vector<std::pair<double, Vector_3> > g(13);
+   const Matrix_3x3 cart = c.Cart();
+   for (size_t i = 0; i < 13; ++i) {
+      const double d = (cart * vertices[i]).Norm();
+      g[i] = std::make_pair(d, vertices[i]);
+   }
+
+   const bool sorted = true;
+   if (sorted)
+      for (size_t k = 0; k < 13; ++k) {
+         for (size_t i = 0; i < 12; ++i) {
+            if (g[i].first > g[i + 1].first) std::swap(g[i], g[i + 1]);
+         }
+      }
+   return g;
+}
+
+std::vector<double> DC::G6_to_V13(const G6& gin) {
+   std::vector<double> g(13);
 
    const double& g1 = gin[0];
    const double& g2 = gin[1];
@@ -283,18 +300,21 @@ double DC::DistanceBetween(const DC& v1, const DC& v2) {
    const bool b1 = Niggli::Reduce(G6(v1.m_cell), g1);
    G6 g2;
    const bool b2 = Niggli::Reduce(G6(v2.m_cell), g2);
-   std::cout << "  g1  " << g1 << std::endl;
-   std::cout << "  g2  " << g2 << std::endl;
 
-   std::vector<double> lengths1 = G6_to_V13(g1);
-   std::vector<double> lengths2 = G6_to_V13(g2);
-
-   std::cout << " DC  " << LRL_ToString(lengths1) << std::endl;
-   std::cout << " DC  " << LRL_ToString(lengths2) << std::endl;
+   const std::vector<double> lengths1 = G6_to_V13(g1);
+   const std::vector<double> lengths2 = G6_to_V13(g2);
 
    double sum = 0.0;
-   for (size_t i = 0; i < lengths1.size(); ++i)
-      sum += (lengths1[i] - lengths2[i]) * (lengths1[i] - lengths2[i]);
-   std::cout << " distance   " << sqrt(sum) << std::endl;
-   return sqrt(sum);
+   //for (size_t i = 0; i < 7; ++i)
+   //   sum += (lengths1[i] - lengths2[i]) * (lengths1[i] - lengths2[i]);
+   return sqrt(
+      (lengths1[0] - lengths2[0]) * (lengths1[0] - lengths2[0]) +
+      (lengths1[1] - lengths2[1]) * (lengths1[1] - lengths2[1]) +
+      (lengths1[2] - lengths2[2]) * (lengths1[2] - lengths2[2]) +
+      (lengths1[3] - lengths2[3]) * (lengths1[3] - lengths2[3]) +
+      (lengths1[4] - lengths2[4]) * (lengths1[4] - lengths2[4]) +
+      (lengths1[5] - lengths2[5]) * (lengths1[5] - lengths2[5]) +
+      (lengths1[6] - lengths2[6]) * (lengths1[6] - lengths2[6]));
+
+   //return sqrt(sum);
 }

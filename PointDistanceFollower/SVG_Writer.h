@@ -177,7 +177,7 @@ private:
             fileout << (*it) << std::endl;
       }
       else
-         std::cout << "Could not open file " << sFileName << " for write" << std::endl;
+         std::cout << "Could not open file " << sFileName << " for write in SVGWriter.h" << std::endl;
 
       fileout.close( );
    }
