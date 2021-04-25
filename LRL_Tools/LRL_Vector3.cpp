@@ -164,7 +164,7 @@ Vector_3 Vector_3::MV( const Matrix_3x3& m ) const
 std::ostream& operator<< ( std::ostream& o, const Vector_3& v )
 //-------------------------------------------------------------------------------------
 {
-    o<<v.v[0]<<" "<<v.v[1]<<" "<<v.v[2]<<std::endl;
+    o<<v.v[0]<<" "<<v.v[1]<<" "<<v.v[2];
     return o;
 }
 

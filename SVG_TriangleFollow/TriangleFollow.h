@@ -89,7 +89,7 @@ public:
       folOut.open(sFileName.c_str(), std::ios::out);
 
       if (!folOut.is_open()) {
-         std::cout << "Could not open file " << sFileName << " for write" << std::endl;
+         std::cout << "Could not open file " << sFileName << " for write in TriangleFollow.h " << std::endl;
       }
 #endif
       std::string svgTriangles;

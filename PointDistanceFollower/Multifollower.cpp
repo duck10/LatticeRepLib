@@ -179,7 +179,7 @@ MultiFollower MultiFollower::CalculateDistancesDC(const MultiFollower& mf) const
    S6Dist s6dist(1);
    if (!S6::IsInvalidPair(path[0])) {
       for (size_t i = 0; i < path.size(); ++i) {
-         std::cout << "##  point " << i << std::endl;
+         //std::cout << "##  point " << i << std::endl;
          double distance = DC().DistanceBetween(DC(path[0].second), DC(path[i].second));
          vdist.push_back(distance);
       }

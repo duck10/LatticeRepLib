@@ -64,6 +64,9 @@ S6 InvalidPoint( void ) {
    return s6;
 }
 
+std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+}
+
 std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
    const S6 probe1 = cell1.GetCell();
    const S6 probe2 = cell2.GetCell();
@@ -161,7 +164,10 @@ MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plot
    else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
       points1 = GenerateS6LineFromStartToCell3ForModeLine3(cell1, cell2, cell3);
    }
-   else
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
+      //points1 = GenerateS6LineFromStartToCell3ForModeLine3(cell1, cell2, cell3);
+   }
+   else // globalSinglePoint
    {
       points1 = GenerateS6LineFromStartToFinish(cell1);
    }

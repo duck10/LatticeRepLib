@@ -139,6 +139,9 @@ public:
          + GetComputeTime(m_multiFollow.GetDC(), "   LMDist  ")
          + GetComputeTime(m_multiFollow.GetD13(), "   LMDist  ");
 
+      std::cout << txt << std::endl;
+
+
       return txt;
    }
 
@@ -236,7 +239,7 @@ public:
 
 
             folOut << "\n\n# ";
-            folOut << counter << "#========" << sFileName << "==================================================" << std::endl;
+            folOut << counter << "#========" << sFileName << "=== in Filewriter.h =====Follower input==========================================" << std::endl;
             folOut << "#Cell 1  " << LRL_Cell_Degrees(pointsS6[0].second) << std::endl;
             folOut << "#G6  " << G6(pointsS6[0].second) << std::endl;
             folOut << "#S6  " << S6(pointsS6[0].second) << std::endl;
@@ -248,7 +251,7 @@ public:
          }
       } else
       {
-         std::cout << "Could not open file " << sFileName << " for write" << std::endl;
+         std::cout << "Could not open file " << sFileName << " for write in Filewriter.h " << std::endl;
       }
    }
 private:
