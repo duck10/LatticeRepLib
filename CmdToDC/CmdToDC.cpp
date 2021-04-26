@@ -6,23 +6,38 @@
 #include <vector>
 
 #include "BasisBase.h"
+#include "Delone.h"
 #include "DC.h"
 #include "LRL_CreateFileName.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
 #include "LRL_Vector3.h"
+#include "StoreResults.h"
 
 void  Test1() {
-   for (size_t kk = 0; kk < 10; ++kk) {
-      const S6 r(S6::rand());
+   StoreResults<std::string, std::string> store(3);
+   //static std::vector<std::pair<std::string, MatS6> > LoadLabeledLatticeTypeProjectors();
+   std::vector<std::pair<std::string, MatS6> > proj = Delone::LoadLabeledLatticeTypeProjectors();
+   for (size_t kk = 0; kk < 100000; ++kk) {
+      S6 r(S6::rand());
+      r = proj[2].second * r;
       std::vector<std::pair<double, Vector_3> > v(DC::Cell_to_V13(LRL_Cell(r)));
 
-      for (size_t i = 0; i < 13; ++i) {
-         std::cout << v[i].first * v[i].first << " " << v[i].second << "  ";
+      std::ostringstream f;
+      std::ostringstream s;
+      std::ostringstream t;
+      for (size_t i = 0; i < 7; ++i) {
+         f << v[i].second << "  ";
       }
-      std::cout << std::endl;
-      //std::cout << LRL_ToString(DC::G6_to_V13(r)) << std::endl;
+      for (size_t i = 7; i < 13; ++i) {
+         s << v[i].second << "  ";
+      }
+      for (size_t i = 0; i < 13; ++i) {
+         t << v[i].first << "  ";
+      }
+      store.Store(f.str(), s.str() + "   " + t.str());
    }
+   store.ShowResults();
 
    exit(0);
 }
