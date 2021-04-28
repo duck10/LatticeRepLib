@@ -171,6 +171,23 @@ MultiFollower MultiFollower::CalculateDistancesLM( const MultiFollower& mf ) con
    return m;
 }
 
+template <typename T>
+std::vector<std::pair<S6, S6> > GetTwoPoints(const std::vector<std::pair<S6, S6> >& path,  const size_t n) {
+   const size_t npath = path.size();
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) {
+      return T().DistanceBetween(T(path[n].first), T(path[n].second));
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
+      return T().DistanceBetween(T(path[0].second), T(path[n].second));
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
+      //const S6 startMidPoint = path
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) {
+
+   };
+}
+
 MultiFollower MultiFollower::CalculateDistancesDC(const MultiFollower& mf) const {
    MultiFollower m(mf);
    S6 out;
@@ -179,8 +196,11 @@ MultiFollower MultiFollower::CalculateDistancesDC(const MultiFollower& mf) const
    S6Dist s6dist(1);
    if (!S6::IsInvalidPair(path[0])) {
       for (size_t i = 0; i < path.size(); ++i) {
-         //std::cout << "##  point " << i << std::endl;
-         double distance = DC().DistanceBetween(DC(path[0].second), DC(path[i].second));
+         double distance = -19191.0;
+         if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) distance = DC().DistanceBetween(DC(path[0].second), DC(path[i].second));
+         if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) distance = DC().DistanceBetween(DC(path[i].first), DC(path[i].second));
+         //if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) distance = DC().DistanceBetween(DC(path[i].first), DC(path[i].second));
+         //if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) distance = DC().DistanceBetween(DC(path[i].first), DC(path[i].second));
          vdist.push_back(distance);
       }
    }

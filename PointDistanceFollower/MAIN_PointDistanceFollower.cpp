@@ -64,7 +64,33 @@ S6 InvalidPoint( void ) {
    return s6;
 }
 
+std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToFinish(const CellInputData& cell) {
+   std::vector<std::pair<S6, S6> > points;
+   const S6 probe = cell.GetCell();
+   S6 reducedProbe;
+   S6 reduced;
+   const bool b = Selling::Reduce(probe, reducedProbe);
+   if (b) {
+      for (size_t step = 0; step < FollowerConstants::globalStepsPerFrame; ++step) {
+         const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
+         S6 next = (1.0 - t) * probe + t * reducedProbe;
+         if (!next.IsValid()) next = InvalidPoint();
+         const bool b2 = Selling::Reduce(next, reduced);
+         if (!reduced.IsValid()) reduced = InvalidPoint();
+         points.push_back(std::make_pair(next, reduced));
+      }
+   }
+   return points;
+}
+
 std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+   const std::vector<std::pair<S6, S6> > v1 = GenerateS6LineFromStartToFinish(cell1);
+   const std::vector<std::pair<S6, S6> > v2 = GenerateS6LineFromStartToFinish(cell2);
+   std::vector<std::pair<S6, S6> > vout;
+   for (size_t i = 0; i < v1.size(); ++i) {
+      vout.push_back(std::make_pair(v1[i].first, v2[i].first));
+   }
+   return vout;
 }
 
 std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
@@ -85,17 +111,10 @@ std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine3(const
       const S6 next2 = nextMid + delta2;
 
       const bool b1 = Selling::Reduce(next1, reduced1);
-      if (!b1 || !reduced1.IsAllMinus() || !reduced1.IsValid()) reduced1 = InvalidPoint();
-      points1.push_back(std::make_pair(next1, reduced1));
-
       const bool b2 = Selling::Reduce(next2, reduced2);
-      const bool b1s = next1.IsValid();
-      const bool b1r = reduced1.IsValid();
-      const bool b2s = next2.IsValid();
-      const bool b2r = reduced2.IsValid();
-
+      if (!b1 || !reduced1.IsAllMinus() || !reduced1.IsValid()) reduced1 = InvalidPoint();
       if (!b2 || !reduced2.IsAllMinus() || !reduced2.IsValid()) reduced2 = InvalidPoint();
-
+      points1.push_back(std::make_pair(next1, reduced1));
    }
    return points1;
 }
@@ -132,25 +151,6 @@ std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeTriangle(co
    return points1;
 }
 
-std::vector<std::pair<S6,S6> > GenerateS6LineFromStartToFinish(const CellInputData& cell) {
-   std::vector<std::pair<S6, S6> > points;
-   const S6 probe = cell.GetCell();
-   S6 reducedProbe;
-   S6 reduced;
-   const bool b = Selling::Reduce(probe, reducedProbe);
-   if (b) {
-      for (size_t step = 0; step < FollowerConstants::globalStepsPerFrame; ++step) {
-         const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
-         S6 next = (1.0 - t)*probe + t * reducedProbe;
-         if (!next.IsValid()) next = InvalidPoint();
-         const bool b2 = Selling::Reduce( next, reduced );
-         if (!reduced.IsValid()) reduced = InvalidPoint();
-         points.push_back(std::make_pair(next, reduced));
-      }
-   }
-   return points;
-}
-
 MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plotCounter, const CellInputData& cell1,
    const CellInputData& cell2, const CellInputData& cell3) {
    const std::string baseFileName = NameOneFileForOneLattice(inputCellOrdinal) + LRL_ToString(plotCounter);
@@ -165,7 +165,7 @@ MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plot
       points1 = GenerateS6LineFromStartToCell3ForModeLine3(cell1, cell2, cell3);
    }
    else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
-      //points1 = GenerateS6LineFromStartToCell3ForModeLine3(cell1, cell2, cell3);
+      points1 = GenerateS6LineFromStartToCell3ForModeLine(cell1, cell2, cell3);
    }
    else // globalSinglePoint
    {
