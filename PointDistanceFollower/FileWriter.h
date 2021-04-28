@@ -136,8 +136,8 @@ public:
          + GetComputeTime(m_multiFollow.GetD7(), "   D7Dist  ")
          + GetComputeTime(m_multiFollow.GetCS(), "   CS6Dist ")
          + GetComputeTime(m_multiFollow.GetLM(), "   LMDist  ")
-         + GetComputeTime(m_multiFollow.GetDC(), "   LMDist  ")
-         + GetComputeTime(m_multiFollow.GetD13(), "   LMDist  ");
+         + GetComputeTime(m_multiFollow.GetDC(), "   DCDist  ")
+         + GetComputeTime(m_multiFollow.GetD13(), "   D13Dist  ");
 
       std::cout << txt << std::endl;
 

@@ -244,8 +244,9 @@ LRL_ReadLatticeData LRL_ReadLatticeData::CreateLatticeData(const std::string& s)
 
 LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
    std::getline(std::cin, m_strCell);
-   if (std::cin && (LRL_StringTools::strToupper(m_strCell.substr(0, 3)) != std::string("END")))
+   if (std::cin && (LRL_StringTools::strToupper(m_strCell.substr(0, 3)) != std::string("END"))) {
       CellReader(m_strCell);
+   }
    else {
       m_lattice = "EOF";
       m_cell.SetValid(false);

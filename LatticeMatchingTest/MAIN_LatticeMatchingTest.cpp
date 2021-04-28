@@ -8,6 +8,7 @@
 #include "CellInputData.h"
 #include "LRL_CreateFileName.h"
 #include "CS6Dist.h"
+#include "DC.h"
 #include "DeloneTypeList.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
@@ -64,29 +65,36 @@ int main()
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
    std::cout << std::endl << "Reduced input cells " << std::endl;
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      std::cout << lat << "   " << LRL_Cell_Degrees(vLat[lat]) << std::endl;
-      std::cout << lat << "   " << (vLat[lat]) << std::endl;
+      std::cout << lat << "   " << LRL_Cell_Degrees(vLat[lat]) << "   " << (vLat[lat]) << std::endl;
    }
    std::cout << std::endl;
    std::cout << std::endl;
-   std::cout << std::endl;
 
-   RHrand rhrand(s6RandomSeed);
+   //RHrand rhrand(s6RandomSeed);
 
    // do some tests
    LRL_LatticeMatcher lm;
-   for (size_t i1 = 0; i1 < input.size(); ++i1) {
+   for (size_t i1 = 0; i1 < 1; ++i1) {
+      lm.SetReferenceLattice(vLat[i1]);
+      std::cout << LRL_Cell_Degrees(vLat[0]) << "  REFERENCE   "  << vLat[0] << std::endl << std::endl;
       for (size_t i2 = 0; i2 < input.size(); ++i2) {
-         if (i1 == i2) continue;
-         lm.SetReferenceLattice(vLat[i1]);
          const S6 s6match = lm.MatchReference(vLat[i2]);
 
-         std::cout << i1 << "    " << (vLat[i1]) << std::endl;
-         std::cout << i2 << "    " << (s6match) << std::endl;
-         std::cout << (vLat[i1] - s6match).norm() << std::endl;
+         //std::cout << i1 << "    " << (vLat[i1]) << std::endl;
+         //std::cout << i2 << "    " << (s6match) << std::endl;
+         //std::cout << (vLat[i1] - s6match).norm() << std::endl;
+         //std::cout << std::endl;
+
+         const double distDC = DC::DistanceBetween(DC(vLat[0]), DC(vLat[i2]));
+
+         std::cout << " " << i2 << "  " << LRL_Cell_Degrees(s6match) << " DC_delta " << distDC
+            << "  S6_reduced " << LRL_Cell_Degrees(vLat[i2]);
+         if (i2 == 0) std::cout << "   REFERENCE";
          std::cout << std::endl;
       }
    }
+
+
 
    //if (vLat.size() > 0) {
    //   LRL_LatticeMatcher lm;
