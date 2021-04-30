@@ -61,33 +61,34 @@ int main()
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
    MatS6 mat_reference;
    const LRL_Cell cell_reference = LatticeConverter::SellingReduceCell(input[0].GetLattice(), input[0].GetCell(), mat_reference);
-
+   mat_reference = MatS6::Inverse(mat_reference);
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
+
    std::cout << std::endl << "Reduced input cells " << std::endl;
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::cout << lat << "   " << LRL_Cell_Degrees(vLat[lat]) << "   " << (vLat[lat]) << std::endl;
    }
-   std::cout << std::endl;
-   std::cout << std::endl;
+   std::cout << "=============================" << std::endl;
 
-   //RHrand rhrand(s6RandomSeed);
-
-   // do some tests
    LRL_LatticeMatcher lm;
+   lm.SetReferenceLattice(vLat[0]);
    for (size_t i1 = 0; i1 < 1; ++i1) {
-      lm.SetReferenceLattice(vLat[i1]);
       std::cout << LRL_Cell_Degrees(vLat[0]) << "  REFERENCE   "  << vLat[0] << std::endl << std::endl;
+
+      std::vector<S6> vs;
+
+
       for (size_t i2 = 0; i2 < input.size(); ++i2) {
          const S6 s6match = lm.MatchReference(vLat[i2]);
+         vs.push_back(mat_reference*s6match);
+      }
 
-         //std::cout << i1 << "    " << (vLat[i1]) << std::endl;
-         //std::cout << i2 << "    " << (s6match) << std::endl;
-         //std::cout << (vLat[i1] - s6match).norm() << std::endl;
-         //std::cout << std::endl;
+      const std::vector<S6> vmatches = lm.MatchReference(vs);
 
+      for (size_t i2 = 0; i2 < vs.size(); ++i2 ) {
          const double distDC = DC::DistanceBetween(DC(vLat[0]), DC(vLat[i2]));
 
-         std::cout << " " << i2 << "  " << LRL_Cell_Degrees(s6match) << " DC_delta " << distDC
+         std::cout << " " << i2 << "  " << LRL_Cell_Degrees(vs[i2]) << " DC_delta " << distDC
             << "  S6_reduced " << LRL_Cell_Degrees(vLat[i2]);
          if (i2 == 0) std::cout << "   REFERENCE";
          std::cout << std::endl;

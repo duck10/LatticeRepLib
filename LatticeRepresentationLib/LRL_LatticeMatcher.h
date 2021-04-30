@@ -55,6 +55,7 @@ public:
    void SetReferenceLattice( const MV_Pair& mvp );
    void SetReferenceLattice( const S6& s ); // for distance calculation
    S6 GetReference( ) const { return m_reducedReference; };
+   MatS6 GetReferenceMatrix() const { return m_matReference; }
    std::vector<MV_Pair> FindNearToClosest(const double d, const MV_Pair& closest) const;
    S6 FindBestAmongMany(const std::vector<MV_Pair>& vClosest, const S6& closest) const;
    S6 MatchReference(const S6& s) const;
