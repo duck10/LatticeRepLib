@@ -72,6 +72,8 @@ public:
    void SetUseOldAlgorithm(const bool b) { m_useOLD_Algorithm = b; }
    CNearTree<MV_Pair> GetMatrixTree() const { return m_MVtree; };
    int GetRecursionDepth() const { return m_matrixGenerationRecursionDepth; }
+   void PrintMVtree() const;
+   double GetMaxRadius() const;
 
 protected: // functions
    void BuildReferenceTree( const S6& s );
