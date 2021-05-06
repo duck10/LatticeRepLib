@@ -93,6 +93,9 @@ int main()
          if (i2 == 0) std::cout << "   REFERENCE";
          std::cout << std::endl;
       }
+      //lm.PrintMVtree();
+      const double maxradius = lm.GetMaxRadius();
+      std::cout << "Maximum Radius " << maxradius << std::endl;
    }
 
 

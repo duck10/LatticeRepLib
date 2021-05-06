@@ -6,12 +6,19 @@
 #include "C3.h"
 #include "G6.h"
 #include "LRL_Cell_Degrees.h"
+#include "LRL_ToString.h"
 #include "S6.h"
 
 #include "Selling.h"
 #include "StoreResults.h"
 #include "TNear.h"
 
+
+void LRL_LatticeMatcher::PrintMVtree() const {
+   for (size_t i = 0; i < m_MVtree.size(); ++i) {
+      std::cout << " " << LRL_ToString(m_MVtree[i].GetS6()) << std::endl;
+   }
+}
 
 std::vector<std::pair<MatS6, MatS6> > CreateReductionMatrices() {
    std::vector<std::pair<MatS6, MatS6> > m(1, std::make_pair(MatS6().unit(), MatS6().unit()));
@@ -342,6 +349,14 @@ std::vector<int> MV_Pair::GetOpenIndices( const MV_Pair& mvp ) const {
    return v;
 }
 
+double LRL_LatticeMatcher::GetMaxRadius() const {
+   const S6 s("0 0 0 0 0 0");
+   MV_Pair mvout;
+   const MV_Pair mv(s, MatS6());
+   const bool b = m_MVtree.FarthestNeighbor( mvout, mv);
+   std::cout << "b " << b << mvout.GetS6() << std::endl;
+   return mvout.GetS6().Norm();
+}
 
 std::ostream& operator<< ( std::ostream& o, const MV_Pair& v ) {
    o << "MV_Pair" << std::endl;
