@@ -18,10 +18,31 @@
 #include "NCDist.h"
 #include "Niggli.h"
 #include "StoreResults.h"
+void test2() {
+   const LRL_Cell cell1("10 20 40 95 110 118");
+   const LRL_Cell targetCell("10 20 40 66 77 88");
+   const LRL_Cell_Degrees targetCelld(targetCell);
+   const S6 targetS6 = targetCell;
+   S6 red2;
+   Selling::Reduce(targetS6, red2);
+
+   const const int cycles = 100;
+   const int start = 0;
+   for (int i = -20; i < cycles+1; ++i) {
+      const S6 cellX = (double(i) * S6(targetCell) + double(cycles - i) * S6(cell1))/double(cycles-start);
+      S6 redX;
+      Selling::Reduce(cellX, redX);
+      const double dcDistance = DC::DistanceBetween(DC(cellX), DC(targetS6));
+      const double csDistance = CS6Dist(redX.data(), red2.data());
+      std::cout << dcDistance << "  " << csDistance << "  " << LRL_Cell_Degrees(cellX) << std::endl;
+   }
+   std::cout << "target cell " << LRL_Cell_Degrees(targetS6) << std::endl;
+
+   exit(0);
+}
 
 void  Test1() {
    StoreResults<std::string, std::string> store(3);
-   //static std::vector<std::pair<std::string, MatS6> > LoadLabeledLatticeTypeProjectors();
    std::vector<std::pair<std::string, MatS6> > proj = Delone::LoadLabeledLatticeTypeProjectors();
    for (size_t kk = 0; kk < 100000; ++kk) {
       S6 r(S6::rand());
@@ -50,7 +71,8 @@ void  Test1() {
 int main()
 {
    std::cout << "; To DC" << std::endl;
-   //Test1();
+   test2();
+   Test1();
    //DC a("10 10 10  90 90 90");
    //DC b("P 10 10 10  90 90 90");
    //DirichletCell testDC("i 10 10 10  90 90 90");

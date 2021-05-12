@@ -83,7 +83,7 @@ std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToFinish(const CellInputD
    return points;
 }
 
-std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell2ForModeLine(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
    const std::vector<std::pair<S6, S6> > v1 = GenerateS6LineFromStartToFinish(cell1);
    const std::vector<std::pair<S6, S6> > v2 = GenerateS6LineFromStartToFinish(cell2);
    std::vector<std::pair<S6, S6> > vout;
@@ -114,7 +114,7 @@ std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine3(const
       const bool b2 = Selling::Reduce(next2, reduced2);
       if (!b1 || !reduced1.IsAllMinus() || !reduced1.IsValid()) reduced1 = InvalidPoint();
       if (!b2 || !reduced2.IsAllMinus() || !reduced2.IsValid()) reduced2 = InvalidPoint();
-      points1.push_back(std::make_pair(next1, reduced1));
+      points1.push_back(std::make_pair(reduced1, reduced2));
    }
    return points1;
 }
@@ -165,7 +165,7 @@ MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plot
       points1 = GenerateS6LineFromStartToCell3ForModeLine3(cell1, cell2, cell3);
    }
    else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
-      points1 = GenerateS6LineFromStartToCell3ForModeLine(cell1, cell2, cell3);
+      points1 = GenerateS6LineFromStartToCell2ForModeLine(cell1, cell2, cell3);
    }
    else // globalSinglePoint
    {
