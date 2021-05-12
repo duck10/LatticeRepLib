@@ -153,7 +153,7 @@ public:
    static S6 Relection22(const S6& din);
    static S6 Relection23(const S6& din);
    static S6 Relection24(const S6& din);
-private:
+protected:
    static S6 RandomUnreduceOne(const S6& s6);
    static S6 RandomUnreduceTwo(const S6& s6);
    static S6 RandomUnreduceThree(const S6& s6);

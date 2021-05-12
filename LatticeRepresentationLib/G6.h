@@ -92,7 +92,7 @@ public:
 
    static std::pair<int, std::string> IdentifyNearbyBoundaries(const G6& v, const double cutoff);
 
-private:
+protected:
    VecN m_vec;
    size_t m_dim;
    bool m_valid;
