@@ -20,8 +20,8 @@ public:
    friend std::ostream& operator<< ( std::ostream& o, const C3& v );
 
    MV_Pair( ) {}
-   MV_Pair( const S6& s, const MatS6& m ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ), m_mark( 6, false ) { m_ms6 = ResetZeros( m_ms6 ); }
-   MV_Pair( const MatS6& m, const S6& s ) : m_s6( s ), m_ms6( m ), m_originalSize( s.norm( ) ), m_mark( 6, false ) { m_ms6 = ResetZeros( m_ms6 ); }
+   MV_Pair( const S6& s, const MatS6& m ) : m_s6( s/s.Norm() ), m_ms6( m ), m_originalSize( s.norm( ) ), m_mark( 6, false ) { m_ms6 = ResetZeros( m_ms6 ); }
+   MV_Pair( const MatS6& m, const S6& s ) : m_s6( s/s.Norm() ), m_ms6( m ), m_originalSize( s.norm( ) ), m_mark( 6, false ) { m_ms6 = ResetZeros( m_ms6 ); }
    ~MV_Pair( ) { m_mark.clear( ); }
    MV_Pair operator- ( const MV_Pair& mv ) const { MV_Pair mvp; mvp.m_s6 = m_s6 - mv.m_s6; return mvp; }
    MV_Pair operator- ( const S6& s ) const { MV_Pair mvp; mvp.m_s6 = m_s6 - s; return mvp; }
