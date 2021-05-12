@@ -164,10 +164,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
       }
 
       bool valid = true;
-      if ( fields.size() != 6 && m_inputDataType != "RANDOM") {
-         valid = false;
-      }
-      else {
+      {
          const std::pair<std::vector<double>, std::vector<double> > params = SplitFields(6, fields);
          m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
 
@@ -184,11 +181,6 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
 
          if (valid && params.second.size() >= 6) // ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
             m_cell.SetSigmas(params.second);
-         //else {
-         //   std::vector<double> s( 6 );
-         //   for (size_t i = 0; i < 6; ++i) s[i] = 0.01 * m_cell[i];
-         //   m_cell.SetSigmas( s );
-         //}
       }
       if (!valid || !m_cell.GetValid( )) {
 
