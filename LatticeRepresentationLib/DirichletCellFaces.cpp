@@ -64,7 +64,7 @@ std::vector<DirichletFace> Cell_Faces::CreateFaces(const CNearTree<Vector_3>& tr
    for (size_t i = 0; i < tree.size(); ++i) {
       DirichletFace face;
       const double normFace = tree[i].Norm();
-      if (abs(normFace) > 1.0E-4) {
+      if (std::abs(normFace) > 1.0E-4) {
          face.SetNormal(tree[i] / normFace);
          face.SetDistance(normFace);
          vFaces.push_back(face);
@@ -91,7 +91,7 @@ std::vector< DirichletFace> DirichletFace::ReadFaces() {
 //DO 1000 I = 1, 3
 //CALL MAT(AMAT, A, B, C)
 //DD = DET(AMAT)
-//IF(ABS(DD).LT. 1.E-4) GO TO 9000
+//IF(std::abs(DD).LT. 1.E-4) GO TO 9000
 //AMAT(I) = A(4)
 //AMAT(I + 3) = B(4)
 //AMAT(I + 6) = C(4)
@@ -105,12 +105,12 @@ std::vector< DirichletFace> DirichletFace::ReadFaces() {
 Intersection Intersection::FindIntersectionForThreeFaces(const DirichletFace& a, const DirichletFace& b, const DirichletFace& c)
 {
    { // prelude
-      const double cos1 = abs(a.GetNormal().Dot(b.GetNormal()));
-      const double cos2 = abs(a.GetNormal().Dot(c.GetNormal()));
-      const double cos3 = abs(b.GetNormal().Dot(c.GetNormal()));
+      const double cos1 = std::abs(a.GetNormal().Dot(b.GetNormal()));
+      const double cos2 = std::abs(a.GetNormal().Dot(c.GetNormal()));
+      const double cos3 = std::abs(b.GetNormal().Dot(c.GetNormal()));
 
       // is some pair of planes parallel?
-      if ((abs(cos1) > 0.99999) || (abs(cos2) > 0.99999) || (abs(cos3) > 0.99999)) {
+      if ((std::abs(cos1) > 0.99999) || (std::abs(cos2) > 0.99999) || (std::abs(cos3) > 0.99999)) {
          return Intersection();
       }
    }
@@ -121,7 +121,7 @@ Intersection Intersection::FindIntersectionForThreeFaces(const DirichletFace& a,
       c.GetNormal()[0], c.GetNormal()[1], c.GetNormal()[2]));
    const double constDet = const_m.Det();
 
-   if (abs(constDet) < 1.0E-4) {
+   if (std::abs(constDet) < 1.0E-4) {
       return Intersection();
    }
 
@@ -155,7 +155,7 @@ DirichletFace DirichletFace::FindIntersectionForThreeFaces(const DirichletFace& 
       a.m_normal[1], b.m_normal[1], c.m_normal[1],
       a.m_normal[2], b.m_normal[2], c.m_normal[2]));
    const double det = const_m.Det();
-   if (abs(det) < 1.0E-4) {
+   if (std::abs(det) < 1.0E-4) {
       return DirichletFace(Vector_3(DBL_MAX, DBL_MAX, DBL_MAX), DBL_MAX);
    }
 
@@ -168,11 +168,11 @@ DirichletFace DirichletFace::FindIntersectionForThreeFaces(const DirichletFace& 
       m[i + 6] = c.m_distance;
 
 
-      const double dot1 = abs(a.GetNormal().Dot(b.GetNormal()));
-      const double dot2 = abs(a.GetNormal().Dot(c.GetNormal()));
-      const double dot3 = abs(b.GetNormal().Dot(c.GetNormal()));
+      const double dot1 = std::abs(a.GetNormal().Dot(b.GetNormal()));
+      const double dot2 = std::abs(a.GetNormal().Dot(c.GetNormal()));
+      const double dot3 = std::abs(b.GetNormal().Dot(c.GetNormal()));
 
-      if (abs(m.Det()) < 1.0E-4) {
+      if (std::abs(m.Det()) < 1.0E-4) {
          return DirichletFace(Vector_3(DBL_MAX, DBL_MAX, DBL_MAX), DBL_MAX);
       }
 
