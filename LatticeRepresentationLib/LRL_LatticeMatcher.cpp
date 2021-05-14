@@ -288,19 +288,23 @@ std::vector<S6> ExpandVectorByBoundaries(const std::vector<S6>& sampleList) {  /
 
 S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
 
-   const std::vector<S6> expandedSample = ExpandVectorByBoundaries(ExpandVectorByReflections(sample));
+   //const std::vector<S6> expandedSample = ExpandVectorByBoundaries(ExpandVectorByReflections(sample));
+   const std::vector<S6> expandedSample(1, sample);
 
    const std::vector<S6> matches = MatchReference(expandedSample);
+   std::cout << matches.size() << std::endl;
 
    double best = DBL_MAX;
    S6 bestS6;
    for (size_t i = 0; i < matches.size(); ++i) {
-      const double dist = ((*this).GetReference() - matches[i]).norm();
+      const double dist = (G6((*this).GetReference()) - G6(matches[i])).norm();
+      std::cout << "   " << dist << "  " << G6(matches[i]) << "     " << G6((*this).GetReference())  << std::endl;
       if (dist < best) {
          best = dist;
          bestS6 = matches[i];
       }
    }
+   std::cout << "  result in MatchReference " << best << "     " << bestS6 << std::endl;
 
    return bestS6;
 }

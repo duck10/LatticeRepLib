@@ -83,7 +83,7 @@ public:
    static S6 randDeloneUnreduced(const double d=1.0);
 
    bool IsAllMinus() const;
-   static std::string GetName(void) { return "S6, Selling scalars"; }
+   static std::string GetName(void) { return "S6"; }
    static S6 InvertCoord(const size_t n, const S6& din);
    S6 InvertCoord(const size_t n) const;
    static std::string Signature(const S6& s6);

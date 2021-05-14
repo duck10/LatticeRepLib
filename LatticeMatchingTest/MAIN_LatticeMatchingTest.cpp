@@ -85,9 +85,9 @@ int main()
       const std::vector<S6> vmatches = lm.MatchReference(vs);
 
       for (size_t i2 = 0; i2 < vs.size(); ++i2 ) {
-         const double dist = (vmatches[0] - vmatches[i2]).Norm();
+         const double dist = (G6(vmatches[0]) - G6(vmatches[i2])).Norm();
 
-         std::cout << " " << i2 << "  " << LRL_Cell_Degrees(vs[i2]) << " DC_delta " << dist
+         std::cout << " " << i2 << "  " << LRL_Cell_Degrees(vs[i2]) << vmatches[0].GetName() + " delta " << dist
             << "  S6_reduced " << LRL_Cell_Degrees(vLat[i2]);
          if (i2 == 0) std::cout << "   REFERENCE";
          std::cout << std::endl;
