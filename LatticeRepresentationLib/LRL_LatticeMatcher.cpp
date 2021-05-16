@@ -64,7 +64,6 @@ std::vector<MatS6> LRL_LatticeMatcher::BuildMatrixBase() {
       }
       std::cout << "LRL_LatticeMatcher k = " << k << "  matrix tree size = " << m_matrixTree.size() << std::endl;
    }
-   //exit(0);
    return base;
 }
 
@@ -204,11 +203,16 @@ void LRL_LatticeMatcher::SetReferenceLattice(const MV_Pair& mpReducedReference) 
    if ((m_reducedReference - mpReducedReference.GetS6()).norm() < 1.0E-4) return;
    m_MVtree.clear();
    m_reducedReference = mpReducedReference.GetS6();
+   std::cout << "in SetRefLat S6 " << m_reducedReference << "  G6 " << G6(m_reducedReference) << std::endl;
+   std::cout << "in SetRefLat S6 " << m_originalReducedReference << "  G6 " << G6(m_originalReducedReference) << std::endl;
    m_matReference = mpReducedReference.GetMatS6();
    BuildReferenceTree(m_reducedReference);
 }
 
 void LRL_LatticeMatcher::SetReferenceLattice(const S6& newReference) {
+   m_originalReducedReference = newReference;;
+   m_originalReducedReferenceNorm = newReference.Norm();
+
    if ((newReference - m_reducedReference).norm() < 1.0E-4) return;
    SetReferenceLattice(MV_Pair(newReference, MatS6().unit()));
 }
@@ -273,8 +277,11 @@ S6 LRL_LatticeMatcher::FindBestAmongMany(const std::vector<MV_Pair>& vClosest, c
 
 std::vector<S6> ExpandVectorByReflections(const S6& sample) {  // should check for duplicates
    std::vector<S6> expandedSample;
-   for (size_t i = 0; i < refl_one.size(); ++i)
+   for (size_t i = 0; i < refl_one.size(); ++i) {
       expandedSample.push_back(refl_one[i] * sample);
+      std::cout << refl_one[i] * sample << refl_one[i] * sample << std::endl;
+   }
+   exit(0);
    return expandedSample;
 }
 
@@ -289,7 +296,7 @@ std::vector<S6> ExpandVectorByBoundaries(const std::vector<S6>& sampleList) {  /
 S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
 
    //const std::vector<S6> expandedSample = ExpandVectorByBoundaries(ExpandVectorByReflections(sample));
-   const std::vector<S6> expandedSample(1, sample);
+   const std::vector<S6> expandedSample(ExpandVectorByReflections(sample));
 
    const std::vector<S6> matches = MatchReference(expandedSample);
    std::cout << matches.size() << std::endl;
@@ -297,8 +304,18 @@ S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
    double best = DBL_MAX;
    S6 bestS6;
    for (size_t i = 0; i < matches.size(); ++i) {
-      const double dist = (G6((*this).GetReference()) - G6(matches[i])).norm();
-      std::cout << "   " << dist << "  " << G6(matches[i]) << "     " << G6((*this).GetReference())  << std::endl;
+      const double dist = (G6(m_originalReducedReferenceNorm * (*this).GetReference()) - G6(matches[i])).norm();
+      std::cout << "   " << dist << " G6 match, G6 reference  " << G6(matches[i]) << "     " << G6(GetReference()) << std::endl;
+      if (dist < best) {
+         best = dist;
+         bestS6 = matches[i];
+      }
+   }
+
+   best = DBL_MAX;
+   for (size_t i = 0; i < matches.size(); ++i) {
+      const double dist = (G6(m_originalReducedReferenceNorm * (*this).GetReference()) - G6(matches[i])).norm();
+      std::cout << " reduced norm, G6 red.Ref  " << m_originalReducedReferenceNorm * m_reducedReference.norm() << "  " << G6(m_originalReducedReferenceNorm * m_reducedReference) << std::endl;
       if (dist < best) {
          best = dist;
          bestS6 = matches[i];

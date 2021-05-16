@@ -93,6 +93,8 @@ protected: // member data
    CNearTree<MV_Pair> m_MVtree;
    CNearTree<MatS6> m_matrixTree;
    S6 m_reducedReference;
+   S6 m_originalReducedReference;
+   double m_originalReducedReferenceNorm;
    MatS6 m_matReference;
    double dcutoff;
    S6 m_bestFit;
