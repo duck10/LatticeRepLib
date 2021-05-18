@@ -44,21 +44,22 @@ std::vector<MatS6> LRL_LatticeMatcher::BuildMatrixBase() {
    // Expand the seed sequence 
    std::vector<MatS6> base;
    for (size_t i = 0; i < redc.size(); ++i) {
-      const size_t msize = m_matrixTree.size();
-      for (size_t m = 0; m < msize; ++m) {
-         base.push_back(redc[i].first * m_matrixTree[m]);
+      for (auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+         base.push_back(redc[i].first * (*k));
       }
    }
 
    m_matrixTree.clear();
-   m_matrixTree.insert(base);
-   m_matrixTree.insert(refl_one);
+   for ( size_t i=0; i<base.size(); ++i)
+      m_matrixTree.insert(base[i]);
+   for (size_t i = 0; i < refl_one.size(); ++i)
+      m_matrixTree.insert(refl_one[i]);
 
    for (size_t k = 0; k < m_matrixGenerationRecursionDepth; ++k) {
       for (size_t i = 0; i < base.size(); ++i) {
          const size_t msize = m_matrixTree.size();
-         for (size_t m = 0; m < msize; ++m) {
-            const MatS6 temp = base[i] * m_matrixTree[m];
+         for (auto m= m_matrixTree.begin(); m!= m_matrixTree.end(); ++m) {
+            const MatS6 temp = base[i] * (*m);
             const bool returnvalue = StoreMatS6IfUnique(temp);
          }
       }
@@ -102,17 +103,14 @@ LRL_LatticeMatcher::LRL_LatticeMatcher(const int matrixGenerationRecursionDepth,
 
 void LRL_LatticeMatcher::FillReflections() {
    static const std::vector<MatS6> refl = MatS6::GetReflections();
-   if (m_matrixTree.empty())
-      m_matrixTree.insert(refl);
+   for ( size_t i=0; i<refl.size(); ++i)
+      m_matrixTree.insert(refl[i]);
 }
 
 bool LRL_LatticeMatcher::StoreMatS6IfUnique(const MatS6& m) {
-   if (m_matrixTree.NearestNeighbor(dcutoff, m) == m_matrixTree.end()) {
-      m_matrixTree.insert(m);
-      if ((m_matrixTree.size() % 3000) == 0) std::cout << " tree size " << m_matrixTree.size() << std::endl;
-      return true;
-   }
-   return false;
+   m_matrixTree.insert(m);
+   if ((m_matrixTree.size() % 3000) == 0) std::cout << " tree size " << m_matrixTree.size() << std::endl;
+   return true;
 }
 
 static const std::vector<std::pair<MatS6, MatS6> > redc(CreateReductionMatrices());
@@ -123,8 +121,8 @@ void LRL_LatticeMatcher::ExpandReflections(const MatS6& m) {
    StoreMatS6IfUnique(m);
    const size_t currentMatrixTreeSize = m_matrixTree.size();
    for (size_t i = 0; i < refl_one.size(); ++i) {
-      for (size_t k = 0; k < currentMatrixTreeSize; ++k) {
-         const MatS6 mi = refl_one[i] * m_matrixTree[k];
+      for (auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+         const MatS6 mi = refl_one[i] * (*k);
          StoreMatS6IfUnique(mi);
       }
    }
@@ -134,8 +132,8 @@ void LRL_LatticeMatcher::ExpandBoundaries(const MatS6& m) {
    StoreMatS6IfUnique(m);
    const size_t currentMatrixTreeSize = m_matrixTree.size();
    for (size_t i = 0; i < redc.size(); ++i) {
-      for (size_t k = 0; k < currentMatrixTreeSize; ++k) {
-         const MatS6 mi = redc[i].first * m_matrixTree[k];
+      for (auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+         const MatS6 mi = redc[i].first * (*k);
          StoreMatS6IfUnique(mi);
       }
    }
@@ -172,13 +170,13 @@ void LRL_LatticeMatcher::ExpandMatrices_OLD(const int n, const MatS6& m) {
    }
 }
 
-std::vector<MatS6> LRL_LatticeMatcher::DoThreeAxes() {
+std::set<MatS6> LRL_LatticeMatcher::DoThreeAxes() {
    if (m_useOLD_Algorithm)
       ExpandMatrices_OLD(m_matrixGenerationRecursionDepth, MatS6().unit());
    else
       ExpandMatrices(m_matrixGenerationRecursionDepth, MatS6().unit());
 
-   return m_matrixTree.GetObjectStore();
+   return m_matrixTree;
 }
 
 void LRL_LatticeMatcher::BuildMatrixTree(void) {
@@ -220,9 +218,9 @@ void LRL_LatticeMatcher::SetReferenceLattice(const S6& newReference) {
 void LRL_LatticeMatcher::BuildReferenceTree(const S6& reference) {
    const double normReference = m_reducedReference.norm();
    const Scaler_MV scale(reference);
-   for (size_t i = 0; i < m_matrixTree.size(); ++i) {
-      const S6 scaledMV = scale.Scale(m_matrixTree[i] * reference);
-      StoreMV_IfUnique(scaledMV, MatS6::Inverse(m_matrixTree[i]));
+   for (auto i = m_matrixTree.begin(); i != m_matrixTree.end(); ++i ) {
+      const S6 scaledMV = scale.Scale(*i * reference);
+      StoreMV_IfUnique(scaledMV, MatS6::Inverse(*i));
    }
 }
 

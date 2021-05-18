@@ -311,6 +311,14 @@ MatS6 MatS6::operator/ (const double d) const {
    return m;
 }
 
+bool MatS6::operator< (const MatS6& m) const {
+   for (int i = 0; i < m_mat.size(); ++i) {
+      if (m_mat[i] < m.m_mat[i]) return true;
+      if (m_mat[i] > m.m_mat[i]) return false;
+   }
+   return false;
+}
+
 MatS6 operator*(const double d, const MatS6& m) {
    return m*d;
 }
