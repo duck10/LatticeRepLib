@@ -62,6 +62,9 @@ public:
    MatS6 operator* (const double d) const;
    MatS6 operator/ (const double d) const;
 
+   // dummy operator<
+   bool operator< (const MatS6& m) const;
+
    S6 operator* (const S6& v) const;
 
    double operator[] (const size_t n) const;

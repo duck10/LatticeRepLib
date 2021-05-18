@@ -5,6 +5,8 @@
 #include "S6.h"
 #include "TNear.h"
 
+#include <set>
+
 class Scaler_MV {
 public:
    Scaler_MV( const S6& s ) :base( s ), dbase( base.norm( ) ) {}
@@ -81,7 +83,7 @@ protected: // functions
    void MultiplyAndExpand_OLD(const int n, const MatS6& transform, const MatS6& m);
    void ExpandMatrices(const int n, const MatS6& m);
    void ExpandMatrices_OLD(const int n, const MatS6& m);
-   std::vector<MatS6> DoThreeAxes( );
+   std::set<MatS6> DoThreeAxes( );
    void StoreMV_IfUnique( const S6& s, const MatS6& m );
    void FillReflections( );
    bool StoreMatS6IfUnique( const MatS6& m );
@@ -91,7 +93,7 @@ protected: // functions
 
 protected: // member data
    CNearTree<MV_Pair> m_MVtree;
-   CNearTree<MatS6> m_matrixTree;
+   std::set<MatS6> m_matrixTree;
    S6 m_reducedReference;
    S6 m_originalReducedReference;
    double m_originalReducedReferenceNorm;
