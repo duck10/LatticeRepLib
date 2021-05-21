@@ -109,7 +109,6 @@ void LRL_LatticeMatcher::FillReflections() {
 
 bool LRL_LatticeMatcher::StoreMatS6IfUnique(const MatS6& m) {
    m_matrixTree.insert(m);
-   if ((m_matrixTree.size() % 3000) == 0) std::cout << " tree size " << m_matrixTree.size() << std::endl;
    return true;
 }
 
@@ -201,8 +200,8 @@ void LRL_LatticeMatcher::SetReferenceLattice(const MV_Pair& mpReducedReference) 
    if ((m_reducedReference - mpReducedReference.GetS6()).norm() < 1.0E-4) return;
    m_MVtree.clear();
    m_reducedReference = mpReducedReference.GetS6();
-   std::cout << "in SetRefLat S6 " << m_reducedReference << "  G6 " << G6(m_reducedReference) << std::endl;
-   std::cout << "in SetRefLat S6 " << m_originalReducedReference << "  G6 " << G6(m_originalReducedReference) << std::endl;
+   //std::cout << "in SetRefLat S6 " << m_reducedReference << "  G6 " << G6(m_reducedReference) << std::endl;
+   //std::cout << "in SetRefLat S6 " << m_originalReducedReference << "  G6 " << G6(m_originalReducedReference) << std::endl;
    m_matReference = mpReducedReference.GetMatS6();
    BuildReferenceTree(m_reducedReference);
 }
@@ -277,9 +276,8 @@ std::vector<S6> ExpandVectorByReflections(const S6& sample) {  // should check f
    std::vector<S6> expandedSample;
    for (size_t i = 0; i < refl_one.size(); ++i) {
       expandedSample.push_back(refl_one[i] * sample);
-      std::cout << refl_one[i] * sample << refl_one[i] * sample << std::endl;
+      //std::cout << refl_one[i] * sample << refl_one[i] * sample << std::endl;
    }
-   exit(0);
    return expandedSample;
 }
 
@@ -294,32 +292,24 @@ std::vector<S6> ExpandVectorByBoundaries(const std::vector<S6>& sampleList) {  /
 S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
 
    //const std::vector<S6> expandedSample = ExpandVectorByBoundaries(ExpandVectorByReflections(sample));
-   const std::vector<S6> expandedSample(ExpandVectorByReflections(sample));
+   //const std::vector<S6> expandedSample(ExpandVectorByReflections(sample));
+   const std::vector<S6> expandedSample(std::vector<S6>(1,sample));
 
    const std::vector<S6> matches = MatchReference(expandedSample);
-   std::cout << matches.size() << std::endl;
+   //std::cout << matches.size() << std::endl;
 
    double best = DBL_MAX;
    S6 bestS6;
    for (size_t i = 0; i < matches.size(); ++i) {
       const double dist = (G6(m_originalReducedReferenceNorm * (*this).GetReference()) - G6(matches[i])).norm();
-      std::cout << "   " << dist << " G6 match, G6 reference  " << G6(matches[i]) << "     " << G6(GetReference()) << std::endl;
+      //std::cout << "   " << dist << " G6 match, G6 reference  " << G6(matches[i]) << "     " << G6(GetReference()) << std::endl;
       if (dist < best) {
          best = dist;
          bestS6 = matches[i];
       }
    }
 
-   best = DBL_MAX;
-   for (size_t i = 0; i < matches.size(); ++i) {
-      const double dist = (G6(m_originalReducedReferenceNorm * (*this).GetReference()) - G6(matches[i])).norm();
-      std::cout << " reduced norm, G6 red.Ref  " << m_originalReducedReferenceNorm * m_reducedReference.norm() << "  " << G6(m_originalReducedReferenceNorm * m_reducedReference) << std::endl;
-      if (dist < best) {
-         best = dist;
-         bestS6 = matches[i];
-      }
-   }
-   std::cout << "  result in MatchReference " << best << "     " << bestS6 << std::endl;
+   //std::cout << "  result in MatchReference " << best << "     " << bestS6 << std::endl;
 
    return bestS6;
 }
