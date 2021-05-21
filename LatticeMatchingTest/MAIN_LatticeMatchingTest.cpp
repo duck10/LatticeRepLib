@@ -1,8 +1,9 @@
 // LatticeMatchingTest.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
 #include <algorithm>
+#include <iomanip>
+#include <iostream>
 #include <utility>
 
 #include "CellInputData.h"
@@ -92,10 +93,10 @@ int main()
 
    std::vector<S6> vmatout;
    const double searchRadius = 1500.0;
-   std::cout << std::endl << "How many points are near to each data point (in S6), with radius: searchRadius" << std::endl;
+   std::cout << std::endl << "How many points are near to each data point (in S6), with radius: " <<searchRadius << std::endl;
    for (size_t i = 0; i < vs.size(); ++i) {
       const long n = matched.FindInSphere(searchRadius, vmatout, vs[i]);
-      std::cout << " " << LRL_Cell_Degrees(vs[i]) << "   " << (vs[0] - vs[i]).Norm() << "      " << n - 1 << std::endl;
+      std::cout << "  " << std::setw(5) << std::right << n - 1 << "   " << LRL_Cell_Degrees(vs[i]) << std::endl;
    }
 
    //const double maxradius = lm.GetMaxRadius();
