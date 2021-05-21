@@ -58,50 +58,47 @@ int main()
 {
    std::cout << " text input" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = GetInputCells();
-   MatS6 mat_reference;
-   const LRL_Cell cell_reference = LatticeConverter::SellingReduceCell(inputList[0].GetLattice(), inputList[0].GetCell(), mat_reference);
-   mat_reference = MatS6::Inverse(mat_reference);
+   MatS6 mat_primitive_reduced;
+   const std::string referenceLattice = inputList[0].GetLattice();
+   const LRL_Cell cell_reference = LatticeConverter::SellingReduceCell(referenceLattice, inputList[0].GetCell(), mat_primitive_reduced);
+   const MatS6 mat_reference = MatS6::Inverse(mat_primitive_reduced);
    const std::vector<S6> vLat = GetInputSellingReducedVectors(inputList);
 
-   std::cout << std::endl << "Reduced input cells " << std::endl;
-   for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      std::cout << lat << "   " << LRL_Cell_Degrees(vLat[lat]) << "   " << (vLat[lat]) << std::endl;
-   }
-   std::cout << "=============================" << std::endl;
+   std::cout << std::endl;
 
    LRL_LatticeMatcher lm;
    lm.SetReferenceLattice(vLat[0]);
-   for (size_t i1 = 0; i1 < 1; ++i1) {
-      std::cout << LRL_Cell_Degrees(vLat[0]) << "  REFERENCE   "  << vLat[0] << std::endl << std::endl;
 
-      std::vector<S6> vs;
+   //std::cout << LRL_Cell_Degrees(vLat[0]) << "  REFERENCE   " << vLat[0] << std::endl << std::endl;
 
+   std::vector<S6> vs = lm.MatchReference(vLat, mat_reference);
 
-      for (size_t i2 = 0; i2 < inputList.size(); ++i2) {
-         const S6 s6match = lm.MatchReference(vLat[i2]);
-         vs.push_back(mat_reference*s6match);
-      }
+   for (size_t i2 = 0; i2 < vs.size(); ++i2) {
+      const double dist = (G6(vs[0]) - G6(vs[i2])).Norm();
 
-      const std::vector<S6> vmatches = lm.MatchReference(vs);
-
-      for (size_t i2 = 0; i2 < vs.size(); ++i2 ) {
-         const double dist = (G6(vmatches[0]) - G6(vmatches[i2])).Norm();
-
-         std::cout << " +++ " << i2 << "  " << LRL_Cell_Degrees(vs[i2]) << vmatches[0].GetName() + " delta " << dist
-            << "  S6_reduced " << LRL_Cell_Degrees(vLat[i2]);
-         if (i2 == 0) std::cout << "   REFERENCE";
-         std::cout << std::endl;
-      }
-
-      CNearTree<S6> matched(vmatches);
-
-      std::vector<S6> vmatout;
-      for (size_t i = 0; i < vmatches.size(); ++i) {
-         const long n = matched.FindInSphere(1500., vmatout, vmatches[i]);
-         std::cout << " " << LRL_Cell_Degrees(vmatches[i]) << "   " << (vmatches[0]-vmatches[i]).Norm() << "      " << n-1 << std::endl;
-      }
-      //lm.PrintMVtree();
-      const double maxradius = lm.GetMaxRadius();
-      std::cout << "Maximum Radius " << maxradius << std::endl;
+      std::cout << referenceLattice + "  "
+         << LRL_Cell_Degrees(vs[i2]) ;
+      if (i2 == 0) std::cout << "   REFERENCE";
+      std::cout << std::endl;
    }
+
+   //
+   // Find how many points are near to each of the input points
+   // in the lattice matched results. The search radius will need
+   // to be changed for each example. See variable searchRadius.
+   // The search is done in space S6.
+   //
+   CNearTree<S6> matched(vs);
+
+   std::vector<S6> vmatout;
+   const double searchRadius = 1500.0;
+   std::cout << std::endl << "How many points are near to each data point (in S6), with radius: searchRadius" << std::endl;
+   for (size_t i = 0; i < vs.size(); ++i) {
+      const long n = matched.FindInSphere(searchRadius, vmatout, vs[i]);
+      std::cout << " " << LRL_Cell_Degrees(vs[i]) << "   " << (vs[0] - vs[i]).Norm() << "      " << n - 1 << std::endl;
+   }
+
+   //const double maxradius = lm.GetMaxRadius();
+   //std::cout << "Maximum Radius " << maxradius << std::endl;
+
 }

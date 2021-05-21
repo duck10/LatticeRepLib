@@ -289,13 +289,22 @@ std::vector<S6> ExpandVectorByBoundaries(const std::vector<S6>& sampleList) {  /
    return expandedSample;
 }
 
+std::vector<S6> LRL_LatticeMatcher::MatchReference(const std::vector<S6>& samples, const MatS6& mat_reference) const {
+   std::vector<S6> out;
+   for (size_t i2 = 0; i2 < samples.size(); ++i2) {
+      const S6 s6match = MatchReference(samples[i2]);
+      out.push_back(mat_reference * s6match);
+   }
+   return out;
+}
+
 S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
 
    //const std::vector<S6> expandedSample = ExpandVectorByBoundaries(ExpandVectorByReflections(sample));
    //const std::vector<S6> expandedSample(ExpandVectorByReflections(sample));
    const std::vector<S6> expandedSample(std::vector<S6>(1,sample));
 
-   const std::vector<S6> matches = MatchReference(expandedSample);
+   const std::vector<S6> matches = MatchReferenceForExpandedSample(expandedSample);
    //std::cout << matches.size() << std::endl;
 
    double best = DBL_MAX;
@@ -334,7 +343,7 @@ S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) const {
    return FindBestAmongMany(vClosest, sample);
 }
 
-std::vector<S6> LRL_LatticeMatcher::MatchReference(const std::vector<S6>& vSamples) const {
+std::vector<S6> LRL_LatticeMatcher::MatchReferenceForExpandedSample(const std::vector<S6>& vSamples) const {
    std::vector<S6> v;
    for (size_t i = 0; i < vSamples.size(); ++i) {
       if (!vSamples[i].IsValid()) std::cout << "invalid in MatchReference " << LRL_ToString(vSamples[i].GetVector()) << std::endl;
