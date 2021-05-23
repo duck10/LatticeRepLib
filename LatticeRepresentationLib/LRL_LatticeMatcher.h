@@ -61,7 +61,7 @@ public:
    std::vector<MV_Pair> FindNearToClosest(const double d, const MV_Pair& closest) const;
    S6 FindBestAmongMany(const std::vector<MV_Pair>& vClosest, const S6& closest) const;
    S6 MatchReference(const S6& s) const;
-   std::vector<S6> LRL_LatticeMatcher::MatchReference(const std::vector<S6>& samples, const MatS6& mat_reference) const;
+   std::vector<S6> MatchReference(const std::vector<S6>& samples, const MatS6& mat_reference) const;
    std::vector<S6> MatchReferenceForExpandedSample( const std::vector<S6>& vs ) const;
    S6 InternalMatchReference(const S6& s) const;
    std::pair<double, MV_Pair> FindClosest(const S6& s) const;

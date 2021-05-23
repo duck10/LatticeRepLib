@@ -72,7 +72,7 @@ int main()
 
    //std::cout << LRL_Cell_Degrees(vLat[0]) << "  REFERENCE   " << vLat[0] << std::endl << std::endl;
 
-   std::vector<S6> vs = lm.MatchReference(vLat, mat_reference);
+   const std::vector<S6> vs = lm.MatchReference(vLat, mat_reference);
 
    for (size_t i2 = 0; i2 < vs.size(); ++i2) {
       const double dist = (G6(vs[0]) - G6(vs[i2])).Norm();
