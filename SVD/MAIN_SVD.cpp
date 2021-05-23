@@ -1,18 +1,15 @@
 // SVD.cpp : Defines the entry point for the console application.
 //
+#include <iomanip>
 #include <vector>
 
-#include "CellInputData.h"
-#include "Delone.h"
-#include "GenerateRandomLattice.h"
 #include "LRL_ToString.h"
 #include "LRL_ReadLatticeData.h"
-#include "MatS6.h"
+#include "LRL_ToString.h"
 #include "svd.h"
 #include "S6.h"
-#include "S6Dist.h"
 
-int seed = 19191;
+//int seed = 19191;
 
 //S6 Creator( const S6&s ) {
 //   S6 sout;
@@ -37,29 +34,26 @@ int seed = 19191;
 
 int main()
 {
-   const std::vector<CellInputData> cellData = LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(seed);  // read the data
+   std::cout << "; SVD" << std::endl;
+   const std::vector<LRL_ReadLatticeData> cellData = LRL_ReadLatticeData().ReadLatticeData();
 
-   std::vector<std::vector<double> > a;
-   std::vector<std::vector<double> > v;
-   std::vector<double> w;
+   std::vector<std::vector<double> > a(cellData.size());
    for (size_t n = 0; n < cellData.size(); ++n) {
       const S6& s = cellData[n].GetCell();
       //std::cout << s << std::endl;
-      a.push_back(s.GetVector());
+      a[n] = s.GetVector();  // get the data into the data matrix
    }
-   std::cout << "; SVD" << std::endl;
 
-   w.resize(a[0].size());
-   v.resize(a.size());
+   std::vector<std::vector<double> > v(a[0].size());
+   std::vector<double> w(a.size());
 
    svdcmp(a, w, v);
 
-   for (size_t i = 0; i<v.size(); ++i) {
-      std::cout << w[i] << "      " << LRL_ToString(v[i]) << std::endl;
+   for (size_t i = 0; i < v.size(); ++i) {
+      std::cout << std::setw(5) << std::right << w[i] << "      " << LRL_ToString(v[i]) << std::endl;
    }
-   //std::cout << std::endl;
 
    //TestCreator();
-      return 0;
+   return 0;
 }
 
