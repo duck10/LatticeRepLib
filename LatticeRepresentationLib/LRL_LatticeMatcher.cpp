@@ -63,7 +63,7 @@ std::vector<MatS6> LRL_LatticeMatcher::BuildMatrixBase() {
             const bool returnvalue = StoreMatS6IfUnique(temp);
          }
       }
-      std::cout << "LRL_LatticeMatcher k = " << k << "  matrix tree size = " << m_matrixTree.size() << std::endl;
+      //std::cout << "LRL_LatticeMatcher k = " << k << "  matrix tree size = " << m_matrixTree.size() << std::endl;
    }
    return base;
 }
