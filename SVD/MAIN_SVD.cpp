@@ -37,15 +37,16 @@ int main()
    std::cout << "; SVD" << std::endl;
    const std::vector<LRL_ReadLatticeData> cellData = LRL_ReadLatticeData().ReadLatticeData();
 
-   std::vector<std::vector<double> > a(cellData.size());
+   std::vector<std::vector<double> > a;
+   std::vector<std::vector<double> > v;
+   std::vector<double> w;
    for (size_t n = 0; n < cellData.size(); ++n) {
       const S6& s = cellData[n].GetCell();
-      //std::cout << s << std::endl;
-      a[n] = s.GetVector();  // get the data into the data matrix
+      a.push_back(s.GetVector());  // get the data into the data matrix
    }
 
-   std::vector<std::vector<double> > v(a[0].size());
-   std::vector<double> w(a.size());
+   w.resize(a[0].size());
+   v.resize(a.size());
 
    svdcmp(a, w, v);
 
