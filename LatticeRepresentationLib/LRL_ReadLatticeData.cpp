@@ -184,7 +184,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
       }
       if (!valid || !m_cell.GetValid( )) {
 
-         std::cout << "input line rejected, invalid cell" << std::endl;
+         if (m_lattice != ";" )std::cout << "input line rejected, invalid cell" << std::endl;
          m_lattice = "";
       }
    }
