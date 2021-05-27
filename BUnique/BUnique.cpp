@@ -13,6 +13,7 @@ int main()
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    for (size_t i = 0; i < inputList.size(); ++i) {
       const std::string lattice = inputList[i].GetLattice();
+      if (lattice.empty()) continue;
       const S6 s1 = inputList[i].GetCell();
       if (s1[1] != 0.0) {
          std::cout << lattice << " " << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl; //beta already unique
