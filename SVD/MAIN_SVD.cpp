@@ -32,6 +32,12 @@
 //   exit(0);
 //}
 
+double DotS6(const S6& s1, const S6& s2) {
+   const double d = s1[0] * s2[0] + s1[1] * s2[1] + s1[2] * s2[2] + s1[3] * s2[3] +
+      s1[4] * s2[4] + s1[5] * s2[5];
+   return d;
+}
+
 int main()
 {
    std::cout << "; SVD" << std::endl;
@@ -52,6 +58,23 @@ int main()
 
    for (size_t i = 0; i < v.size(); ++i) {
       std::cout << std::setw(5) << std::right << w[i] << "      " << LRL_ToString(v[i]) << std::endl;
+   }
+   std::cout << std::endl;
+
+   std::vector<S6> s(6);
+   s[0] = S6(v[0]);
+   s[1] = S6(v[1]);
+   s[2] = S6(v[2]);
+   s[3] = S6(v[3]);
+   s[4] = S6(v[4]);
+   s[5] = S6(v[5]);
+
+
+   for (size_t i = 0; i < cellData.size(); ++i) {
+      for (size_t n = 0; n < 6; ++n) {
+         std::cout << DotS6(s[n], cellData[i].GetCell()) << "  " ;
+      }
+      std::cout << std::endl;
    }
 
    //TestCreator();
