@@ -366,6 +366,8 @@ Matrix_3x3( const double a, const double b, const double c,
     m[8] = i;
 }
 
+size_t GetRowDim() const { return 3; }
+
 //-----------------------------------------------------------------------------
 // Name: Matrix_3x3()
 // Description: copy constructor

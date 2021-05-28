@@ -687,13 +687,65 @@ void LookAtS6BoundaryCrossings() {
    exit(0);
 }
 
+void MakeRow_a(const size_t n,Matrix_3x3& m) {
+   m[3 * n + 0] = 1;
+   m[3 * n + 1] = 0;
+   m[3 * n + 2] = 0;
+}
+
+void MakeRow_b(const size_t n, Matrix_3x3& m) {
+   m[3 * n + 0] = 0;
+   m[3 * n + 1] = 1;
+   m[3 * n + 2] = 0;
+}
+
+void MakeRow_c(const size_t n, Matrix_3x3& m) {
+   m[3 * n + 0] = 0;
+   m[3 * n + 1] = 0;
+   m[3 * n + 2] = 1;
+}
+
+Matrix_3x3 MakeMatrix(const LRL_Cell_Degrees& reference, const LRL_Cell_Degrees& cell) {
+   Matrix_3x3 m;
+
+   for (size_t i = 0; i < 3; ++i) {
+      if (abs(cell[i] - reference[0]) < 1.0E-4) {
+         MakeRow_a(i, m);
+      }
+      else if (abs(cell[i] - reference[1]) < 1.0E-4) {
+         MakeRow_b(i, m);
+      }
+      else if (abs(cell[i] - reference[2]) < 1.0E-4) {
+         MakeRow_c(i, m);
+      }
+      else {
+         m[0] = -19191;
+         return m;
+      } {
+      }
+   }
+   return m;
+}
+
 void Matrices() {
    const std::vector<MatS6>  vm = MatS6::GetReflections();
    const LRL_Cell cell("1 7 20 66 77 88:");
 
    for (size_t i = 0; i < vm.size(); ++i) {
       const LRL_Cell_Degrees cd = vm[i] * S6(cell);
-      std::cout << cd << std::endl;
+      const Matrix_3x3 m = MakeMatrix(cell, cd);
+      const double d = m[0] + 19191;
+      const bool b = m[0] == -19191;
+      if (m[0] != -19191) {
+         std::cout << cd << std::endl;
+         std::cout << vm[i] << std::endl;
+         std::cout << m << std::endl;
+         const std::string s = LRL_MaximaTools::MaximaFromMat(m);
+         //std::cout << LRL_MaximaTools::MaximaFromMat(m) << std::endl;
+      }
+      else {
+         const int i19191 = 19191;
+      }
    }
    exit(0);
 }
