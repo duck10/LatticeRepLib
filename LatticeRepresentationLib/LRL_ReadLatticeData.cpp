@@ -149,6 +149,7 @@ bool LRL_ReadLatticeData::SetUnitCellTypeData( const std::string& inputDataType,
 
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
    std::istringstream iss( s );
+   m_inputDataType.clear();
    if ((LRL_StringTools::strToupper(s.substr(0, 3)) == std::string("END"))) {
       m_lattice = "EOF";
    }
@@ -163,7 +164,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          if (iss) fields.push_back( onefield );
       }
 
-      bool valid = true;
+      bool valid = (iss)? true : false;
       {
          const std::pair<std::vector<double>, std::vector<double> > params = SplitFields(6, fields);
          m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
@@ -186,6 +187,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
 
          if (m_lattice != ";" )std::cout << "input line rejected, invalid cell" << std::endl;
          m_lattice = "";
+         m_cell.SetValid(false);
       }
    }
 }
