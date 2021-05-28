@@ -687,8 +687,20 @@ void LookAtS6BoundaryCrossings() {
    exit(0);
 }
 
+void Matrices() {
+   const std::vector<MatS6>  vm = MatS6::GetReflections();
+   const LRL_Cell cell("1 7 20 66 77 88:");
+
+   for (size_t i = 0; i < vm.size(); ++i) {
+      const LRL_Cell_Degrees cd = vm[i] * S6(cell);
+      std::cout << cd << std::endl;
+   }
+   exit(0);
+}
+
 int main(int argc, char* argv[])
 {
+   Matrices();
    LookAtS6BoundaryCrossings();
    C3Matrices xxxxxxxx;
    CountCycles();
@@ -728,85 +740,6 @@ int main(int argc, char* argv[])
    //snt.insert( s2 );
    //snt.NearestNeighbor( 0.0, s2 );
 
-   std::cout << " text input" << std::endl;
-   const std::vector<LRL_ReadLatticeData> input = GetInputCells();
-   std::cout << "the first cell will be the REFERENCE" << std::endl;
-   MatS6 mat_reference;
-   const LRL_Cell cell_reference = LatticeConverter::SellingReduceCell( input[0].GetLattice(), input[0].GetCell(), mat_reference );
-   const MV_Pair mv_reducedReference(S6( cell_reference ), MatN(mat_reference.GetMatrix()).inverse());
-
-   const std::vector<S6> vLat = GetInputSellingReducedVectors( input );
-   std::cout << std::endl << "Reduced input cells " << std::endl;
-   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-      std::cout << LRL_Cell_Degrees( vLat[lat] ) << std::endl;
-   }
-   std::cout << std::endl;
-
-   if (vLat.size( ) > 0) {
-      LRL_LatticeMatcher lm;
-      lm.SetReferenceLattice( mv_reducedReference );
-      //lm.SetReferenceLattice( MV_Pair( cell_reference, MatS6().unit() ));
-      std::cout << "MV tree size = " << lm.size( ) << std::endl;
-      //std::cout << "before lattice match " << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
-
-      const std::vector<S6> vs6( lm.MatchReference( vLat ) );
-      //std::cout << "after lattice match " << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
-
-      std::cout << "matched cells including reference" << std::endl;
-      for (size_t lat =0; lat < vLat.size(); ++lat) {
-         std::cout<< LRL_Cell_Degrees(  vs6[lat]) << std::endl;
-         //if (!vs6[lat].IsValid()) throw;
-      }
-      exit(0);
-      S6Dist sd( 1 );
-      sd.SetDebug( false );
-
-
-      //LMDist lmd( vLat[0] );
-      //double ddddd = lmd.DistanceBetween( vLat[1] );
-
-      StoreResults<int, std::string> srlm(5);
-      srlm.SetTitle( LRL_ToString( "reference ", vLat[0] ) );
-      double dists6, distlm, distcs, disttest;
-      //for (size_t lat = 1; lat < vLat.size( ); ++lat) {
-      //   std::cout << vs6[0] << "   " << vs6[lat] << std::endl << std::endl;
-      //   distlm = (vLat[0] - vs6[lat]).norm( );
-      //   std::cout << "distlm A " << distlm << std::endl;
-      //   distlm = lmd.DistanceBetween(vLat[lat]);
-      //   std::cout << "distlm B " << distlm << std::endl;
-      //   disttest = lm.DistanceBetween( vLat[0], vLat[lat] );
-      //   std::cout << "disttest " << disttest << std::endl;
-      //   distcs = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
-      //   dists6 = sd.DistanceBetween( vLat[0], vLat[lat] );
-
-      //   //std::cout << "lat match " << distlm << "  cs6dist " << distcs << "  s6dist " << dists6 << std::endl;
-      //   double diff = (distlm - dists6) / dists6 * 100.0;
-      //   //srlm.Store( int( diff ), LRL_ToString("# ", lat, "   ", vLat[lat] ) );
-      //}
-      //srlm.ShowResultsByKeyAscending( );
-      //std::cout << std::endl;
-
-      //std::cout << "vLat list" << std::endl;
-      //for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-      //   std::cout << vLat[lat] << std::endl;
-      //}
-      //std::cout << std::endl;
-
-      //std::cout << "vs6 list" << std::endl;
-      //for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-      //   std::cout << ( vs6[lat] ) << std::endl;
-      //}
-      //std::cout << std::endl;
-      //std::cout << "vs6 list" << std::endl;
-      //for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-      //   std::cout << LRL_Cell_Degrees( vs6[lat] ) << std::endl;
-      //}
-      //std::cout << std::endl;
-
-
-
-
-
 
 
 
@@ -836,7 +769,7 @@ int main(int argc, char* argv[])
    }
 
    //return 0;
-}
+
 
 /*
 p 2 4 4 60 79.2 75.5
