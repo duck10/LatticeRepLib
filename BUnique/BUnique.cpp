@@ -15,7 +15,7 @@ std::vector<Matrix_3x3> Create3x3Matrices() {
    vm.push_back(Matrix_3x3( 1, 0, 0,   0, 1, 0,   0, 0, 1));  // identity
    vm.push_back(Matrix_3x3( 1, 0, 0,   0, 0, 1,   0, 1, 0));  // exchange b/c
    vm.push_back(Matrix_3x3( 0, 1, 0,   1, 0, 0,   0, 0, 1));  // exchange a/b
-   vm.push_back(Matrix_3x3( 0, 0, 1,   1, 0, 0,   0, 1, 0));  // rotate  a/b/c => c'/a'/b/
+   vm.push_back(Matrix_3x3( 0, 0, 1,   1, 0, 0,   0, 1, 0));  // rotate a/b/c => c'/a'/b/
    vm.push_back(Matrix_3x3( 0, 1, 0,   0, 0, 1,   1, 0, 0));  // rotate a/b/c -> b'/c'/a'
    vm.push_back(Matrix_3x3( 0, 0, 1,   0, 1, 0,   1, 0, 0));  // exchange a/c
    return vm;
@@ -24,9 +24,9 @@ std::vector<Matrix_3x3> Create3x3Matrices() {
 bool HasTwoRightAngles(const LRL_Cell& cell) {
    int count = 0;
    const double rad = 90.0 / 180.0 * (4.0 * atan(1.0));
-   count += (abs(cell[3] - rad) < 1.0E-6) ? 1. : 0.;
-   count += (abs(cell[4] - rad) < 1.0E-6) ? 1. : 0.;
-   count += (abs(cell[5] - rad) < 1.0E-6) ? 1. : 0.;
+   count += (abs(cell[3] - rad) < 1.0E-6) ? 1 : 0;
+   count += (abs(cell[4] - rad) < 1.0E-6) ? 1 : 0;
+   count += (abs(cell[5] - rad) < 1.0E-6) ? 1 : 0;
    return count == 2;
 }
 
@@ -62,7 +62,7 @@ int main()
    for (size_t i = 0; i < cells.size(); ++i) {
       if (cells[i].first[0] > cells[i].first[2]) {
          const LRL_Cell& thisCell = cells[i].first;
-         const Matrix_3x3 m3 = vm3x3[5] * cells[i].second;
+         const Matrix_3x3& m3 = vm3x3[5] * cells[i].second;
          C3 c(thisCell);
          std::swap(c[0], c[2]);
          cells[i] = std::make_pair(c, m3);
