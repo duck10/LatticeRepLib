@@ -10,7 +10,8 @@ bool not_space( const char c ) ;
 
 bool space( const char c );
 
-bool newline( const char c );
+bool newline(const char c);
+bool not_newline(const char c);
 
 std::string MaximaFromString( const std::string& s );
 

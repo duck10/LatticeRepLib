@@ -9,6 +9,14 @@
 
 #include "LRL_MaximaTools.h"
 
+bool whitespace(const char c) {
+   return c == ' ' || c == '\n' || c == '\t' || c == '\0' || c ==',';
+}
+
+bool not_whitespace(const char c) {
+   return !whitespace(c);
+}
+
 bool LRL_MaximaTools::not_space( const char c ) {
    return c != ' ';
 }
@@ -17,8 +25,12 @@ bool LRL_MaximaTools::space( const char c ) {
    return c == ' ';
 }
 
-bool LRL_MaximaTools::newline( const char c ) {
+bool LRL_MaximaTools::newline(const char c) {
    return c == '\n';
+}
+
+bool LRL_MaximaTools::not_newline(const char c) {
+   return c != '\n';
 }
 
 std::string LRL_MaximaTools::MaximaFromString( const std::string& s ) {
@@ -27,12 +39,12 @@ std::string LRL_MaximaTools::MaximaFromString( const std::string& s ) {
    std::string::const_iterator it = s.begin( );
    while ( it != s.end( ) ) {
       // ignore leading blanks
-      it = std::find_if( it, s.end( ), not_space );
+      it = std::find_if( it, s.end( ), not_whitespace);
       // find next end of word
-      const std::string::const_iterator j = std::find_if( it, s.end( ), space );
+      const std::string::const_iterator j = std::find_if( it, s.end( ), whitespace);
       s_out += std::string( it, j );
       it = j;
-      if ( std::find_if( it, s.end( ), not_space ) != s.end( ) ) s_out += ",";
+      if ( std::find_if( it, s.end( ), not_whitespace) != s.end( ) ) s_out += ",";
    }
    return "[" + s_out + "]";
 }
@@ -43,7 +55,7 @@ const std::string LRL_MaximaTools::Retrieve_One_Matrix_Row( const size_t rowLeng
    std::string::const_iterator it = s.begin();
    while ( it != s.end( ) && count < rowLength ) {
       // ignore leading blanks and then find next end of word
-      it = find_if( find_if( it, s.end( ), not_space ), s.end( ), space );
+      it = find_if( find_if( it, s.end( ), not_whitespace), s.end( ), whitespace);
       ++count;
    }
    return std::string( s.begin( ), it );

@@ -8,14 +8,7 @@
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_Vector3.h"
-
-std::vector<Matrix_3x3> vm3;
-std::vector<MatS6> vs6;
-
-
-void ProcessReference(const LRL_ReadLatticeData& cell) {
-
-}
+#include "LRL_MaximaTools.h"
 
 std::vector<Matrix_3x3> Create3x3Matrices() {
    std::vector<Matrix_3x3> vm;
@@ -28,6 +21,15 @@ std::vector<Matrix_3x3> Create3x3Matrices() {
    return vm;
 }
 
+bool HasTwoRightAngles(const LRL_Cell& cell) {
+   int count = 0;
+   const double rad = 90.0 / 180.0 * (4.0 * atan(1.0));
+   count += (abs(cell[3] - rad) < 1.0E-6) ? 1. : 0.;
+   count += (abs(cell[4] - rad) < 1.0E-6) ? 1. : 0.;
+   count += (abs(cell[5] - rad) < 1.0E-6) ? 1. : 0.;
+   return count == 2;
+}
+
 int main()
 {
    std::vector<Matrix_3x3> vm3x3 = Create3x3Matrices();
@@ -38,11 +40,15 @@ int main()
    for (size_t i = 0; i < inputList.size(); ++i) {
       const std::string lattice = inputList[i].GetLattice();
       const S6 s1 = inputList[i].GetCell();
-      if (s1[1] != 0.0) { //beta already unique
+
+      if (!HasTwoRightAngles(inputList[i].GetCell())) {
+         std::cout << "input cell does not have two 90 degree angles" << std::endl;
+      }
+      else if (s1[1] != 0.0) { //beta already unique
          cells.push_back(std::make_pair(inputList[i].GetCell(), vm3x3[0]));
       }
       else if (s1[0] == 0.0) { // gamma is unique
-         C3 c(s1);
+         C3 c(s1); 
          std::swap(c[1], c[2]);
          cells.push_back(std::make_pair(c, vm3x3[1]));;
       }
@@ -50,9 +56,6 @@ int main()
          C3 c(s1);
          std::swap(c[0], c[1]);
          cells.push_back(std::make_pair(c, vm3x3[2]));;
-      }
-      else {
-         std::cout << "input cell does not have two 90 degree angles" << std::endl;
       }
    }
 
@@ -67,8 +70,8 @@ int main()
    }
 
    for (size_t i = 0; i < cells.size(); ++i) {
-      std::cout << LRL_Cell_Degrees(cells[i].first) << std::endl
-         << cells[i].second << std::endl << std::endl;
+      std::cout << LRL_Cell_Degrees(cells[i].first) << "  "
+         << LRL_MaximaTools::MaximaFromMat(cells[i].second) << std::endl;
+      //std::cout << cells[i].second << std::endl << std::endl;
    }
-
 }
