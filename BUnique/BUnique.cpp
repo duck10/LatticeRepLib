@@ -13,11 +13,11 @@
 std::vector<Matrix_3x3> Create3x3Matrices() {
    std::vector<Matrix_3x3> vm;
    vm.push_back(Matrix_3x3( 1, 0, 0,   0, 1, 0,   0, 0, 1));  // identity
-   vm.push_back(Matrix_3x3( 1, 0, 0,   0, 0, 1,   0, 1, 0));  // exchange b/c
-   vm.push_back(Matrix_3x3( 0, 1, 0,   1, 0, 0,   0, 0, 1));  // exchange a/b
+   vm.push_back(Matrix_3x3( -1, 0, 0,   0, 0, 1,   0, 1, 0));  // exchange b/c
+   vm.push_back(Matrix_3x3( 0, 1, 0,   1, 0, 0,   0, 0, -1));  // exchange a/b
    vm.push_back(Matrix_3x3( 0, 0, 1,   1, 0, 0,   0, 1, 0));  // rotate a/b/c => c'/a'/b/
    vm.push_back(Matrix_3x3( 0, 1, 0,   0, 0, 1,   1, 0, 0));  // rotate a/b/c -> b'/c'/a'
-   vm.push_back(Matrix_3x3( 0, 0, 1,   0, 1, 0,   1, 0, 0));  // exchange a/c
+   vm.push_back(Matrix_3x3( 0, 0, 1,   0, -1, 0,   1, 0, 0));  // exchange a/c
    return vm;
 }
 
@@ -32,8 +32,9 @@ bool HasTwoRightAngles(const LRL_Cell& cell) {
 
 int main()
 {
-   std::vector<Matrix_3x3> vm3x3 = Create3x3Matrices();
+   const std::vector<Matrix_3x3> vm3x3 = Create3x3Matrices();
 
+   // read the input
    std::cout << "; To B Unique" << std::endl;
    std::vector<std::pair<LRL_Cell,Matrix_3x3> > cells;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
@@ -41,6 +42,7 @@ int main()
       const std::string lattice = inputList[i].GetLattice();
       const S6 s1 = inputList[i].GetCell();
 
+      // if the cell is has 2 right angles, make sure beta is unique
       if (!HasTwoRightAngles(inputList[i].GetCell())) {
          std::cout << "input cell does not have two 90 degree angles" << std::endl;
       }
@@ -50,15 +52,16 @@ int main()
       else if (s1[0] == 0.0) { // gamma is unique
          C3 c(s1); 
          std::swap(c[1], c[2]);
-         cells.push_back(std::make_pair(c, vm3x3[1]));;
+         cells.push_back(std::make_pair(c, vm3x3[3]));;
       }
       else if (s1[2] == 0.0) { // alpha is unique
          C3 c(s1);
          std::swap(c[0], c[1]);
-         cells.push_back(std::make_pair(c, vm3x3[2]));;
+         cells.push_back(std::make_pair(c, vm3x3[4]));;
       }
    }
 
+   // if necessary, swap a and c
    for (size_t i = 0; i < cells.size(); ++i) {
       if (cells[i].first[0] > cells[i].first[2]) {
          const LRL_Cell& thisCell = cells[i].first;
@@ -69,9 +72,10 @@ int main()
       }
    }
 
+   // output the modified cells
    for (size_t i = 0; i < cells.size(); ++i) {
       std::cout << LRL_Cell_Degrees(cells[i].first) << "  "
          << LRL_MaximaTools::MaximaFromMat(cells[i].second) << std::endl;
-      //std::cout << cells[i].second << std::endl << std::endl;
+      std::cout << cells[i].second << std::endl << std::endl;
    }
 }
