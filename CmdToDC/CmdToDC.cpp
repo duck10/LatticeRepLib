@@ -110,15 +110,8 @@ int main()
    std::vector<double> vd;
    for (size_t i = 0; i < inputList.size(); ++i)
    {
-      const std::vector<std::pair<double, Vector_3> >  dc = DC::Cell_to_V13(inputList[i].GetCell());
-      for (size_t k = 0; k < dc.size(); ++k) {
-         vd.push_back(dc[k].first);
-      }
-      std::sort(vd.begin(), vd.end());
-      for (size_t k = 0; k < 13; ++k) {
-         std::cout << vd[k] << " ";
-      }
-      std::cout << std::endl;
+      const DC dcA(inputList[i].GetCell());
+      std::cout << dcA << std::endl;
    }
 
    //std::clock_t start = std::clock();

@@ -35,10 +35,13 @@ DC::DC(const LRL_Cell& cell)
    , m_cellIsValid(cell.IsValid())
    //, m_dc(m_lattice, cell)
 {
+   G6 out;
+   const bool b = Niggli::Reduce(G6(cell), out);
+   m_cell = out;
    //m_dirCellAreas = m_dc.GetAreas();
-   m_vec.resize(13);
    m_dim = 13;
-   m_cellIsValid = m_cell.IsValid();
+   m_vec = G6_to_V13(out);
+
    //m_dc = DirichletCell(m_lattice, m_cell);
    //CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
 }
@@ -50,11 +53,17 @@ DC::DC(const std::string& t)
       (strInput[0] >= 'A' && strInput[0] <= 'Z')) {
       LRL_ReadLatticeData rcd;
       rcd.CellReader(t);
+      G6 out;
+      const bool b = Niggli::Reduce(G6(rcd.GetCell()), out);
+      m_cell = out;
       m_cell = rcd.GetCell();
       m_lattice = rcd.GetLattice();
    }
    else {
       m_cell = LRL_Cell(std::string(t)); // cast to string is necessary for some reason
+      G6 out;
+      const bool b = Niggli::Reduce(G6(m_cell), out);
+      m_cell = out;
       m_lattice = "P";
    }
    m_cellIsValid = m_cell.IsValid();
