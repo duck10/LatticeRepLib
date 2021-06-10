@@ -3,7 +3,7 @@
 #include <utility>
 #include <vector>
 
-#include "GlobalTriangleFollowerConstants.h"
+#include "globalTriangleFollowerConstants.h"
 #include <cfloat>
 
 namespace {

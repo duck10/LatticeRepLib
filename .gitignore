@@ -260,3 +260,8 @@ paket-files/
 __pycache__/
 *.pyc
 /LatticeRepresentationLib/B4.o
+
+
+# Follower output files
+*.svg
+FOL*.txt

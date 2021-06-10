@@ -117,11 +117,14 @@ void SetGlobalValue( const std::string& dataType,
       if (LRL_StringTools::strToupper(value[1]) == "LINE") {
          FollowerConstants::globalFollowerMode = FollowerConstants::globalLine;
       }
-      else if (LRL_StringTools::strToupper(value[1]) == "LINE3") {
-         FollowerConstants::globalFollowerMode = FollowerConstants::globalLine3;
+      else if (LRL_StringTools::strToupper(value[1]) == "CHORD") {
+         FollowerConstants::globalFollowerMode = FollowerConstants::globalChord;
+      }
+      else if (LRL_StringTools::strToupper(value[1]) == "CHORD3") {
+         FollowerConstants::globalFollowerMode = FollowerConstants::globalChord3;
       }
       else if (LRL_StringTools::strToupper(value[1]) == "TRIANGLE") {
-         FollowerConstants::globalFollowerMode = FollowerConstants::globaltriangle;
+         FollowerConstants::globalFollowerMode = FollowerConstants::globalTriangle;
       }
       else {
          FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
@@ -142,8 +145,9 @@ void SetGlobalValue( const std::string& dataType,
 std::string ReadGlobalData::GetFollowerMode(void) {
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) return "Single Point";
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) return "Line";
-   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) return "LINE3";
-   if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) return "TRIANGLE";
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) return "Chord";
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) return "CHORD3";
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) return "TRIANGLE";
    return "UNKNOWN FOLLOWER MODE";
 }
 

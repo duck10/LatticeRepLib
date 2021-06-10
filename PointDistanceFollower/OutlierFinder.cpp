@@ -32,7 +32,7 @@ std::vector<std::pair<double, double> > OutlierFinder::SelectCandidateTransition
    double prevData = m_data[0];
    const int endMask = std::max(int(3), (int)(0.03*(double)(m_data.size())));
    const size_t endpt = FindLastNonzeroDistance(m_data);
-   for (int i = endMask; i < endpt - 1 - endMask; ++i) {
+   for (int i = endMask; i < std::min(endpt - 1 - endMask,m_data.size()); ++i) {
       const double& mdatai = m_data[i];
       if (mdatai < 0.0) continue;
       const double& mdataim1 = m_data[i - 1];

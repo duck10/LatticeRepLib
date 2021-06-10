@@ -8,6 +8,7 @@
 #include "CS6Dist.h"
 #include "CS6Dist.c"
 #include "DeloneTypeList.h"
+#include "FollowerPathGenerator.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
@@ -740,7 +741,7 @@ void Matrices() {
          std::cout << cd << std::endl;
          std::cout << vm[i] << std::endl;
          std::cout << m << std::endl;
-         const std::string s = LRL_MaximaTools::MaximaFromMat(m);
+         const std::string st = LRL_MaximaTools::MaximaFromMat(m);
          //std::cout << LRL_MaximaTools::MaximaFromMat(m) << std::endl;
       }
       else {
@@ -750,8 +751,22 @@ void Matrices() {
    exit(0);
 }
 
+void GenerateFollowerPath() {
+   std::vector<std::pair<S6, S6> > result;
+
+   std::unique_ptr<FollowerPathGenerator> fpg( new FollowerPoint(5, S6::randDeloneUnreduced()));
+   std::cout << (*fpg) << std::endl;
+
+   std::cout << FollowerLine (5, S6::randDeloneUnreduced(), S6::randDeloneUnreduced()) << std::endl;
+   std::cout << FollowerChord(5, S6("0 0 2 -100 -100 -100"), S6("0 0 4 -110 -110 -110")) << std::endl;
+   std::cout << FollowerChord3(5, S6("0 0 0 -95 -95 -95"), S6("0 0 0 -105 -105 -105"), S6("0 0 0 -200 -200 -200")) << std::endl;
+   std::cout << FollowerTriangle(5, S6("0 0 0 -95 -95 -95"), S6("0 0 0 -105 -105 -105"), S6( "0 0 0 -200 -200 -200")) << std::endl;
+   exit(0);
+}
+
 int main(int argc, char* argv[])
 {
+   GenerateFollowerPath();
    Matrices();
    LookAtS6BoundaryCrossings();
    C3Matrices xxxxxxxx;

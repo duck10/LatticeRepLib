@@ -52,12 +52,12 @@ int main()
       else if (s1[0] == 0.0) { // gamma is unique
          C3 c(s1); 
          std::swap(c[1], c[2]);
-         cells.push_back(std::make_pair(c, vm3x3[3]));;
+         cells.push_back(std::make_pair(c, vm3x3[3]));
       }
       else if (s1[2] == 0.0) { // alpha is unique
          C3 c(s1);
          std::swap(c[0], c[1]);
-         cells.push_back(std::make_pair(c, vm3x3[4]));;
+         cells.push_back(std::make_pair(c, vm3x3[4]));
       }
    }
 

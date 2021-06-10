@@ -71,8 +71,8 @@ void  Test1() {
 int main()
 {
    std::cout << "; To DC" << std::endl;
-   test2();
-   Test1();
+   //test2();
+   //Test1();
    //DC a("10 10 10  90 90 90");
    //DC b("P 10 10 10  90 90 90");
    //DirichletCell testDC("i 10 10 10  90 90 90");
@@ -85,27 +85,41 @@ int main()
 
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
-   for (size_t i = 0; i < inputList.size()-1; ++i) {
-      S6 sred1;
-      S6 sred2;
+   //for (size_t i = 0; i < inputList.size()-1; ++i) {
+   //   S6 sred1;
+   //   S6 sred2;
 
-      const bool b1 = Selling::Reduce(inputList[i].GetCell(), sred1);
-      const bool b2 = Selling::Reduce(inputList[i + 1].GetCell(), sred2);
+   //   const bool b1 = Selling::Reduce(inputList[i].GetCell(), sred1);
+   //   const bool b2 = Selling::Reduce(inputList[i + 1].GetCell(), sred2);
 
-      sred1 *= double(i + 1);
-      G6 gred1;
-      const bool b3 = Niggli::Reduce(sred1, gred1);
-      G6 gred2;
-      const bool b4 = Niggli::Reduce(sred2, gred2);
-      const double d1 = (NCDist(gred1.GetVector().data(), gred2.GetVector().data())) / 1.0;
-      const double d2 = (D7Dist(D7(sred1).data(), D7(sred2).data())) / 1.0;
-      std::cout << "NCDist,D7Dist,DCdist " << d1 << "  " << d2 << "  " << DC::DistanceBetween(DC(sred1),DC(sred2)) << std::endl;
+   //   sred1 *= double(i + 1);
+   //   G6 gred1;
+   //   const bool b3 = Niggli::Reduce(sred1, gred1);
+   //   G6 gred2;
+   //   const bool b4 = Niggli::Reduce(sred2, gred2);
+   //   const double d1 = (NCDist(gred1.GetVector().data(), gred2.GetVector().data())) / 1.0;
+   //   const double d2 = (D7Dist(D7(sred1).data(), D7(sred2).data())) / 1.0;
+   //   std::cout << "NCDist,D7Dist,DCdist " << d1 << "  " << d2 << "  " << DC::DistanceBetween(DC(sred1),DC(sred2)) << std::endl;
+   //}
+
+   std::vector<DC> vds(inputList.size());
+   for (size_t i = 0; i < inputList.size(); ++i) {
+      vds[i] = inputList[i].GetCell();
    }
 
-   //std::vector<DC> vds(inputList.size());
-   //for (size_t i = 0; i < inputList.size(); ++i) {
-   //   vds[i] = inputList[i].GetCell();
-   //}
+   std::vector<double> vd;
+   for (size_t i = 0; i < inputList.size(); ++i)
+   {
+      const std::vector<std::pair<double, Vector_3> >  dc = DC::Cell_to_V13(inputList[i].GetCell());
+      for (size_t k = 0; k < dc.size(); ++k) {
+         vd.push_back(dc[k].first);
+      }
+      std::sort(vd.begin(), vd.end());
+      for (size_t k = 0; k < 13; ++k) {
+         std::cout << vd[k] << " ";
+      }
+      std::cout << std::endl;
+   }
 
    //std::clock_t start = std::clock();
    //for (size_t i = 0; i < inputList.size(); ++i) {

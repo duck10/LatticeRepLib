@@ -4,7 +4,7 @@
 
 #include "MapBoundaryStrings2Colors.h"
 
-#include "GlobalTriangleFollowerConstants.h"
+#include "globalTriangleFollowerConstants.h"
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 MapBoundaryStrings2Colors::MapBoundaryStrings2Colors(void)

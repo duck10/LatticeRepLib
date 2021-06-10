@@ -76,13 +76,13 @@ std::vector<std::pair<S6, S6> > CreatePath(const std::vector<LRL_ReadLatticeData
       const S6 target = G6_Reduced(G6(cells[n1].GetCell()));
       path = MakeS6SinglePointPath(cells[n1].GetCell(),target);
    }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) {
       path = MakeS6LinePath(cells[n1].GetCell(), cells[n1 + 1].GetCell());
    }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
       path = MakeS6Line3Path(cells[n1].GetCell(), cells[n1 + 1].GetCell(), cells[n1 + 2].GetCell());
    }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) {
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
    };
    return path;
 }
@@ -90,15 +90,15 @@ std::vector<std::pair<S6, S6> > CreatePath(const std::vector<LRL_ReadLatticeData
 int main()
 { 
    FollowerConstants::globalStepsPerFrame = 20;
-   FollowerConstants::globalFollowerMode = FollowerConstants::globalLine3;
+   FollowerConstants::globalFollowerMode = FollowerConstants::globalChord3;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    std::vector<std::pair<S6, S6> > path;
    std::cout << "; Path generator" << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       path = CreatePath(inputList, i);
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) ++i;
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) ++i, ++i;
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) ++i, ++i;
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) ++i;
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) ++i, ++i;
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) ++i, ++i;
    }
 
 

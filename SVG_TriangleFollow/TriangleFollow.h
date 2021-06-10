@@ -15,7 +15,7 @@
 #include "D7Dist.h"
 #include "DetermineOutliers.h"
 #include "Glitch.h"
-#include "GlobalTriangleFollowerConstants.h"
+#include "globalTriangleFollowerConstants.h"
 #include "LRL_CreateFileName.h"
 #include "NCDist.h"
 #include "S6Dist.h"

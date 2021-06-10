@@ -15,7 +15,7 @@
 
 #include "LRL_Cell.h"
 #include "CellInputData.h"
-#include "GlobalTriangleFollowerConstants.h"
+#include "globalTriangleFollowerConstants.h"
 #include "D7.h"
 #include "G6.h"
 #include "FollowerTools.h"
