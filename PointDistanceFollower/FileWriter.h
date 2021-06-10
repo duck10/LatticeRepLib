@@ -138,6 +138,8 @@ public:
          + GetComputeTime(m_multiFollow.GetLM(), "   LMDist  ")
          + GetComputeTime(m_multiFollow.GetDC(), "   DCDist  ")
          + GetComputeTime(m_multiFollow.GetD13(), "   D13Dist  ");
+      txt += LRL_ToString("\nINPUT (in S6) FollowerMode ", FollowerConstants::globalFollowerMode, ":\n", m_multiFollow.GetInputVectors(), "\n\n");
+
 
       std::cout << txt << std::endl;
 
@@ -220,8 +222,9 @@ public:
             const std::string strG6 = (distancesG6.empty( )) ? "" : LRL_ToString( distancesG6[counter], " " );
             const std::string strD7 = (distancesD7.empty( )) ? "" : LRL_ToString( distancesD7[counter], " " );
             const std::string strCS = (distancesCS.empty( )) ? "" : LRL_ToString( distancesCS[counter], " " );
-            const std::string strLM = (distancesLM.empty( )) ? "" : LRL_ToString( distancesLM[counter], " " );
-            std::string strDists = strS6 + strG6 + strD7 + strCS + strLM;
+            const std::string strLM = (distancesLM.empty()) ? "" : LRL_ToString(distancesLM[counter], " ");
+            const std::string strDC = (distancesDC.empty()) ? "" : LRL_ToString(distancesDC[counter], " ");
+            std::string strDists = strS6 + strG6 + strD7 + strCS + strLM + strDC;
             const std::string strpoint = (pointsS6[counter].first.CountZeros( ) > 4) ? "   invalid   " : LRL_ToString( pointsS6[counter].first );
             const std::string strpointRed = (pointsS6[counter].second.CountZeros( ) > 4) ? "   invalid   " : LRL_ToString( C3( pointsS6[counter].second ) );
             if (strpoint == "   invalid   " || strpointRed == "   invalid   ") {

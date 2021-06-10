@@ -3,7 +3,7 @@
 #include "LRL_CreateFileName.h"
 #include "FileOperations.h"
 //#include "FollowerTools.h"
-//#include "GlobalTriangleFollowerConstants.h"
+//#include "globalTriangleFollowerConstants.h"
 #include "LRL_ToString.h"
 #include "SVG_Tools.h"
 

@@ -12,7 +12,7 @@ end
 
 # 1/15/2018 SVG_Follower input
 circleplot false
-FollowerMode LINE
+FollowerMode CHORD
 enable S6
 disable g6
 enable CS
@@ -57,7 +57,7 @@ random
 end
 
 timestamp false
-FollowerMode LINE3
+FollowerMode CHORD3
 circleplot false
 randomseed 18
 enable LM
@@ -169,7 +169,7 @@ end
 
 
 
-FollowerMode LINE3
+FollowerMode CHORD3
 randomseed 18
 enable LM
 trials 1

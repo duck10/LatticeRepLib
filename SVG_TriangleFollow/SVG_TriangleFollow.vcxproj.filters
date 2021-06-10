@@ -23,7 +23,7 @@
     <ClInclude Include="GlitchElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalTriangleFollowerConstants.h">
+    <ClInclude Include="globalTriangleFollowerConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="haar.hpp">
@@ -70,7 +70,7 @@
     <ClCompile Include="FollowerTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GlobalTriangleFollowerConstants.cpp">
+    <ClCompile Include="globalTriangleFollowerConstants.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="haar.cpp">

@@ -78,6 +78,14 @@ public:
    const std::set<size_t> DetermineIfSomeDeltaIsTooLarge(const std::vector<double>& distances) const;
    bool HasGlitches(void) const;
    void SetComputeTime(const std::string& name, const double time);
+   void SetNiggliPath(const std::vector<std::pair<G6, G6> >& v) { m_NiggiReducedPath = v; }
+   void SetSellingPath(const std::vector<std::pair<S6, S6> >& v) { m_SellingReducedPath = v; }
+   void SetDCPath(const std::vector<std::pair<DC, DC> >& v) { m_DCPath = v; }
+   std::vector<std::pair<G6, G6> > GetNiggliPath() const { return m_NiggiReducedPath; }
+   std::vector<std::pair<S6, S6> > GeSellingPath() const { return m_SellingReducedPath; }
+   std::vector<std::pair<DC, DC> > GetDCPath( ) const { return m_DCPath; }
+   void SetInputVectors(const std::vector<S6>& v);
+   std::string GetInputVectors() const { return m_inputVectors; }
 
 private:
    LRL_Path<S6> m_s6path;
@@ -87,7 +95,12 @@ private:
    LRL_Path<G6> m_v7path;
    LRL_Path<S6> m_lmpath;
    LRL_Path<DC> m_dcpath;
-   LRL_Path<D13> m_d13path;
+   ; LRL_Path<D13> m_d13path;
+
+   std::vector<std::pair<S6, S6> > m_SellingReducedPath;
+   std::vector<std::pair<G6, G6> >m_NiggiReducedPath;
+   std::vector<std::pair<DC, DC> >m_DCPath;
+   std::string m_inputVectors;
 
    enum m_enumLatticePointChoiceForDistanceCalculation {versusFirstPoint, versusCorrespondingPoint};
    m_enumLatticePointChoiceForDistanceCalculation m_latticePointChoiceForDistanceCalculation;

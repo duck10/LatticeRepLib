@@ -5,6 +5,7 @@
 #include <ctime>
 #include <map>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <set>
 #include <utility>
@@ -21,6 +22,7 @@
 //#include "Follow.h"
 //#include "Follower.h"
 #include "FollowerConstants.h"
+#include "FollowerPathGenerator.h"
 #include "GenerateRandomLattice.h"
 //#include "MapBoundaryStrings2Colors.h"
 #include "MatG6.h"
@@ -76,7 +78,6 @@ std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToFinish(const CellInputD
          S6 next = (1.0 - t) * probe + t * reducedProbe;
          if (!next.IsValid()) next = InvalidPoint();
          const bool b2 = Selling::Reduce(next, reduced);
-         if (!reduced.IsValid()) reduced = InvalidPoint();
          points.push_back(std::make_pair(next, reduced));
       }
    }
@@ -151,28 +152,64 @@ std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeTriangle(co
    return points1;
 }
 
+template<typename Tin, typename Tout, typename R>
+std::vector<std::pair<Tout, Tout> > ReducePath(const std::vector<std::pair<Tin, Tin> >& pin) {
+   std::vector<std::pair<Tout, Tout> > out;
+   Tin tout1;
+   Tin tout2;
+   for (size_t i = 0; i < pin.size(); ++i) {
+      const bool b1 = R::Reduce(pin[i].first, tout1);
+      const bool b2 = R::Reduce(pin[i].second, tout2);
+      out.push_back(std::make_pair(Tout(tout1), Tout(tout2)));
+   }
+   return out;
+}
+
 MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plotCounter, const CellInputData& cell1,
    const CellInputData& cell2, const CellInputData& cell3) {
    const std::string baseFileName = NameOneFileForOneLattice(inputCellOrdinal) + LRL_ToString(plotCounter);
 
-   std::vector<std::pair<S6, S6> > points1;
-
-   if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) {
-      points1 = GenerateS6LineFromStartToCell3ForModeTriangle( cell1, cell2, cell3 );
+   const size_t npoints = FollowerConstants::globalStepsPerFrame;
+   std::unique_ptr<FollowerPathGenerator> fpg;
+   //std::unique_ptr<FollowerPathGenerator> fpg(new FollowerPoint(5, S6::randDeloneUnreduced()));
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
+      std::unique_ptr<FollowerPathGenerator> fpgT(new FollowerTriangle(npoints, cell1.GetCell(), cell2.GetCell(), cell3.GetCell()));
+      fpg = std::move(fpgT);
    }
-
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
-      points1 = GenerateS6LineFromStartToCell3ForModeLine3(cell1, cell2, cell3);
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
+      std::unique_ptr<FollowerPathGenerator> fpgC3(new FollowerChord3(npoints, cell1.GetCell(), cell2.GetCell(), cell3.GetCell()));
+      fpg = std::move(fpgC3);
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) {
+      std::unique_ptr<FollowerPathGenerator> fpgC(new FollowerChord(npoints, cell1.GetCell(), cell2.GetCell()));
+      fpg = std::move(fpgC);
    }
    else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
-      points1 = GenerateS6LineFromStartToCell2ForModeLine(cell1, cell2, cell3);
+      std::unique_ptr<FollowerPathGenerator> fpgL(new FollowerLine(npoints, cell1.GetCell(), cell2.GetCell()));
+      fpg = std::move(fpgL);
    }
-   else // globalSinglePoint
-   {
-      points1 = GenerateS6LineFromStartToFinish(cell1);
+   else {// globalSinglePoint
+      std::unique_ptr<FollowerPathGenerator> fpgP(new FollowerPoint(npoints, cell1.GetCell()));
+      fpg = std::move(fpgP);
    }
 
-   MultiFollower mf(points1);
+   const std::vector<std::pair<S6, S6> > points1 = fpg->GetPath();
+
+   const std::vector<std::pair<S6, S6> > sellingReducedPath = ReducePath<S6, S6, Selling>(points1);
+   const std::vector<std::pair<G6, G6> > niggliReducedPath = ReducePath<S6, G6, Niggli>(sellingReducedPath);
+
+   std::vector<std::pair<DC, DC> > DCpath;
+   if (FollowerConstants::IsEnabled("DC")) {
+      for (size_t i = 0; i < niggliReducedPath.size(); ++i)
+         DCpath.push_back(std::make_pair(DC(niggliReducedPath[i].first), DC(niggliReducedPath[i].second)));
+   }
+
+   MultiFollower mf;
+   mf.SetNiggliPath(niggliReducedPath);
+   mf.SetSellingPath(sellingReducedPath);
+   mf.SetDCPath(DCpath);
+   mf.SetInputVectors(fpg->GetInput());
+
    mf = mf.GenerateAllDistances();
    mf.SetTime2ComputeFrame(double(std::clock() - mf.GetComputeStartTime()));
 
@@ -256,13 +293,13 @@ int main(int argc, char* argv[]) {
    CellInputData cell3;
    for (size_t i = 0; i < celldata.size(); ++i) {
       // are we done with input?
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine &&
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord &&
          i + size_t(1) >= celldata.size()) {
-         std::cout << "FOLLOWERMODE LINE requires at least two cells input" << std::endl;
+         std::cout << "FOLLOWERMODE CHORD requires at least two cells input" << std::endl;
          break;
       }
 
-      if ((FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3 || FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) &&
+      if ((FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3 || FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) &&
          i + size_t(2) >= celldata.size()) {
          std::cout << "FOLLOWERMODE TRIANGLE requires at least three cells input" << std::endl;
          break;
@@ -277,11 +314,15 @@ int main(int argc, char* argv[]) {
       {
          ++i;
       }
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine3) {
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord)
+      {
+         ++i;
+      }
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
          ++i;
          ++i;
       }
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globaltriangle) {
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
          ++i;
          ++i;
       }

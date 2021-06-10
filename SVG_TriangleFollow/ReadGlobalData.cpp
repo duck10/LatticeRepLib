@@ -1,7 +1,7 @@
 
 #include "ReadGlobalData.h"
 
-#include "GlobalTriangleFollowerConstants.h"
+#include "globalTriangleFollowerConstants.h"
 #include "LRL_RandTools.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"

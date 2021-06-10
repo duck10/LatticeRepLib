@@ -32,7 +32,7 @@ public:
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    SVG_Writer(const std::string& sFileName, std::list<std::string> svgDistancePlot,
-      const DistanceLineDescriptions& lineDescriptions, double timeToComputeFrame)
+      const DistanceLineDescriptions& lineDescriptions, const double timeToComputeFrame)
       : m_computeTime(timeToComputeFrame)
       , m_lineDescriptions(lineDescriptions)
    {
@@ -80,11 +80,21 @@ private:
       if (FollowerConstants::IsEnabled( name )) {
          const std::string colorForName = m_lineDescriptions.GetColor( name );
          const std::string nameForType = m_lineDescriptions.GetName( name );
+
+
+          const std::string dashmode = m_lineDescriptions.GetDashMode(name);
+          const std::string lineWidth = LRL_ToString(m_lineDescriptions.GetLineWidth(name));
+
+
+         const std::string yheight = LRL_ToString(height);
          svg += "<text x=\"300\" y=\"" +
-            LRL_ToString( height ) +
+            yheight +
             "\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" +
             colorForName + "\">  " +
             nameForType + "  " + timestamp;
+         svg += LRL_ToString("\n   <line  x1=\"600\"   y1=\"", yheight, "\" x2 = \"900\" y2=\"", yheight);
+         svg += LRL_ToString("\" fill=\"none\" stroke=\"", colorForName, "\" stroke-");
+         svg+=   LRL_ToString("width=\"", lineWidth, "\" stroke-dasharray = \"", dashmode, "\"></line> \\n");
       }
       return svg;
    }

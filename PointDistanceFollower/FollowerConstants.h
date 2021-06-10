@@ -14,7 +14,7 @@
 
 namespace FollowerConstants {
 
-   enum enumFollowerMode{ globalSinglePoint, globalLine, globalLine3, globaltriangle
+   enum enumFollowerMode{ globalSinglePoint, globalLine, globalChord, globalChord3, globalTriangle
    };
 
    extern enumFollowerMode   globalFollowerMode;
