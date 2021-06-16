@@ -165,37 +165,81 @@ std::vector<std::pair<Tout, Tout> > ReducePath(const std::vector<std::pair<Tin, 
    return out;
 }
 
+std::pair<std::string, std::string> GetLineEnds(const std::vector<std::pair<S6, S6> > v) {
+   const size_t n = v.size();
+   const S6& s1f = v[0].first;
+   const S6& s2f = v[0].second;
+   const S6& s1s = v[n - 1].first;
+   const S6& s2s = v[n - 1].second;
+   const std::string s1 = "start, line1 " + LRL_ToString(LRL_Cell_Degrees(s1s), "\n  end, line1, ", LRL_Cell_Degrees(s1f), "\n");
+   const std::string s2 = "start, line2 " + LRL_ToString(LRL_Cell_Degrees(s2s), "\n  end, line2, ", LRL_Cell_Degrees(s2f), "\n");
+   return std::make_pair(s1, s2);
+}
+
 MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plotCounter, const CellInputData& cell1,
    const CellInputData& cell2, const CellInputData& cell3) {
    const std::string baseFileName = NameOneFileForOneLattice(inputCellOrdinal) + LRL_ToString(plotCounter);
 
    const size_t npoints = FollowerConstants::globalStepsPerFrame;
    std::unique_ptr<FollowerPathGenerator> fpg;
-   //std::unique_ptr<FollowerPathGenerator> fpg(new FollowerPoint(5, S6::randDeloneUnreduced()));
+   std::string inputCells;
    if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
       std::unique_ptr<FollowerPathGenerator> fpgT(new FollowerTriangle(npoints, cell1.GetCell(), cell2.GetCell(), cell3.GetCell()));
       fpg = std::move(fpgT);
+      inputCells += cell2.GetStrCell() + "\n";
+      inputCells += cell3.GetStrCell() + "\n";
    }
    else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
       std::unique_ptr<FollowerPathGenerator> fpgC3(new FollowerChord3(npoints, cell1.GetCell(), cell2.GetCell(), cell3.GetCell()));
       fpg = std::move(fpgC3);
+      inputCells += cell2.GetStrCell() + "\n";
+      inputCells += cell3.GetStrCell() + "\n";
    }
    else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) {
       std::unique_ptr<FollowerPathGenerator> fpgC(new FollowerChord(npoints, cell1.GetCell(), cell2.GetCell()));
       fpg = std::move(fpgC);
+      inputCells += cell2.GetStrCell() + "\n";
    }
    else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
       std::unique_ptr<FollowerPathGenerator> fpgL(new FollowerLine(npoints, cell1.GetCell(), cell2.GetCell()));
       fpg = std::move(fpgL);
+      inputCells += cell2.GetStrCell() + "\n";
    }
    else {// globalSinglePoint
       std::unique_ptr<FollowerPathGenerator> fpgP(new FollowerPoint(npoints, cell1.GetCell()));
       fpg = std::move(fpgP);
    }
 
-   const std::vector<std::pair<S6, S6> > points1 = fpg->GetPath();
+   std::string firstAndLastPoints;
+   const std::vector<std::pair<S6, S6> > path = fpg->GetPath();
+   std::pair<std::string, std::string> sp = GetLineEnds(path);
+   const size_t n = path.size();
+   const std::pair < std::string, std::string> pathExtremes = GetLineEnds(path);
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
+      firstAndLastPoints = pathExtremes.first + pathExtremes.second;
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
+      firstAndLastPoints = pathExtremes.first + pathExtremes.second;
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) {
+      firstAndLastPoints = pathExtremes.first + pathExtremes.second;
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
+      firstAndLastPoints = pathExtremes.first;
+   }
+   else {// globalSinglePoint
+      firstAndLastPoints = pathExtremes.first;
+   }
 
-   const std::vector<std::pair<S6, S6> > sellingReducedPath = ReducePath<S6, S6, Selling>(points1);
+
+   const std::string name = fpg->GetName();
+   GLOBAL_Report::globalDataReport +=
+      "\nINPUT   " + baseFileName + "   " + fpg->GetName() +
+      "\n" + cell1.GetStrCell() + "\n" + inputCells +
+      "  Path starts and ends \n" + firstAndLastPoints;
+
+
+   const std::vector<std::pair<S6, S6> > sellingReducedPath = ReducePath<S6, S6, Selling>(path);
    const std::vector<std::pair<G6, G6> > niggliReducedPath = ReducePath<S6, G6, Niggli>(sellingReducedPath);
 
    std::vector<std::pair<DC, DC> > DCpath;
@@ -268,9 +312,9 @@ void ProcessTrialsForOneLattice(const std::vector<CellInputData>& inputCellList,
 
    GetCellsForChosenMode(inputCellList, nextCell, mode, cell1, cell2, cell3);
 
-   CellInputData cell1Perturbed;
-   CellInputData cell2Perturbed;
-   CellInputData cell3Perturbed;
+   CellInputData cell1Perturbed(cell1);
+   CellInputData cell2Perturbed(cell2);
+   CellInputData cell3Perturbed(cell3);
 
    for (size_t trialNo = 0; trialNo < std::max(size_t(1), FollowerConstants::globalNumberOfTrialsToAttempt); ++trialNo) {
       cell1Perturbed.SetCell(ReadGlobalData::GeneratePerturbation(G6(cell1.GetCell())));

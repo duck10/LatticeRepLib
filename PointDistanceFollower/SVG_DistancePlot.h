@@ -69,7 +69,8 @@ private:
          const std::vector<double>::const_iterator firstNegative = std::find_if(distances.begin(), distances.end(), IsNegative);
          const size_t lastPositiveIndex = (size_t)((firstNegative == distances.end()) ? xmax : firstNegative - distances.begin());
 
-         std::string s = LRL_ToString("   <polyline fill=\"none\" stroke=\"", color, "\" stroke-width=\"", lineWidth, "\" stroke-dasharray = \"", dashMode, "\" points=\" ");
+         const std::string strokeWidth = "\" stroke-width=\"" + LRL_ToString(lineWidth) + "\"";
+         std::string s = LRL_ToString("   <polyline fill=\"none\" stroke=\"", color,  strokeWidth, " stroke-dasharray = \"", dashMode, "\" points=\" ");
 
          std::vector<double>::const_iterator it = distances.begin();
          for (size_t i = 1; i <= lastPositiveIndex; ++i, ++it)
@@ -421,10 +422,11 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
    std::string DrawSingleLineSegment(const std::string& color, const int lineWidth, const double x1, const double y1, const double x2, const double y2)
       /*-------------------------------------------------------------------------------------*/
    {
+      const std::string strokeWidth = " stroke-width=\"" + LRL_ToString(lineWidth) + "\"";
       const std::string svg =
          LRL_DataToSVG("<line fill=\"none\"")
          + LRL_DataToSVG(" stroke=\"", color, "\"")
-         + LRL_DataToSVG(" stroke-width=\"", lineWidth, "\"")
+         + strokeWidth //inkscape cannot handle blanks around the width
          + LRL_DataToSVG(" x1=\"", x1, "\"")
          + LRL_DataToSVG(" y1=\"", y1, "\"")
          + LRL_DataToSVG(" x2=\"", x2, "\"")
@@ -437,11 +439,12 @@ std::string BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
    std::string DrawInvalidLineSegment(const std::string& color, const int lineWidth, const double x1, const double y, const double x2)
       /*-------------------------------------------------------------------------------------*/
    {
+      const std::string strokeWidth = " stroke-width=\"" + LRL_ToString(lineWidth) + "\"";
       const std::string svg =
          LRL_DataToSVG("<line fill=\"none\"")
          + LRL_DataToSVG(" stroke-dasharray = \"10, 10\" ")
          + LRL_DataToSVG(" stroke=\"", color, "\"")
-         + LRL_DataToSVG(" stroke-width=\"", lineWidth, "\"")
+         + strokeWidth //inkscape needs no blanks
          + LRL_DataToSVG(" x1=\"", x1, "\"")
          + LRL_DataToSVG(" y1=\"", y, "\"")
          + LRL_DataToSVG(" x2=\"", x2, "\"")
