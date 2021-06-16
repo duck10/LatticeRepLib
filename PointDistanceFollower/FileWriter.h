@@ -138,7 +138,7 @@ public:
          + GetComputeTime(m_multiFollow.GetLM(), "   LMDist  ")
          + GetComputeTime(m_multiFollow.GetDC(), "   DCDist  ")
          + GetComputeTime(m_multiFollow.GetD13(), "   D13Dist  ");
-      txt += LRL_ToString("\nINPUT (in S6) FollowerMode ", FollowerConstants::globalFollowerMode, ":\n", m_multiFollow.GetInputVectors(), "\n\n");
+      txt += LRL_ToString("\nINPUT (in S6) FollowerMode ", FollowerConstants::globalFollowerMode, ":\n INPUT ", m_multiFollow.GetInputVectors(), "\n\n");
 
 
       std::cout << txt << std::endl;

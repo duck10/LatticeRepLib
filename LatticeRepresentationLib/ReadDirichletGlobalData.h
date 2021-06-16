@@ -19,11 +19,11 @@ public:
    static G6 GeneratePerturbation(const G6& v);
    static std::string GetFollowerMode(void);
    static std::string GetConstantsAsString() { return m_constantData; }
+   static std::string FormatGlobalDataAsString( const std::vector<ParseData>& parseData );
 
 
 private:
    static bool GetDataFromCIN( const std::vector<ParseData>& );
-   static std::string FormatGlobalDataAsString( const std::vector<ParseData>& parseData );
 
    static std::string m_constantData;
 };

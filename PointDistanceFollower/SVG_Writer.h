@@ -84,7 +84,7 @@ private:
 
           const std::string dashmode = m_lineDescriptions.GetDashMode(name);
           const std::string lineWidth = LRL_ToString(m_lineDescriptions.GetLineWidth(name));
-
+          const std::string strokeWidth = " stroke-width=" + ToQuotedString(lineWidth) + "";
 
          const std::string yheight = LRL_ToString(height);
          svg += "<text x=\"300\" y=\"" +
@@ -92,9 +92,9 @@ private:
             "\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" +
             colorForName + "\">  " +
             nameForType + "  " + timestamp;
-         svg += LRL_ToString("\n   <line  x1=\"600\"   y1=\"", yheight, "\" x2 = \"900\" y2=\"", yheight);
-         svg += LRL_ToString("\" fill=\"none\" stroke=\"", colorForName, "\" stroke-");
-         svg+=   LRL_ToString("width=\"", lineWidth, "\" stroke-dasharray = \"", dashmode, "\"></line> \\n");
+         svg += LRL_ToString("\n   <line  x1=\"600\"   y1=", ToQuotedString(yheight), " x2 = \"900\" y2=", ToQuotedString(yheight));
+         svg += LRL_ToString(" fill=\"none\" stroke=\"", colorForName, "\"");
+         svg += LRL_ToString(strokeWidth, " stroke-dasharray = \"", dashmode, "\"></line> \\n");
       }
       return svg;
    }
