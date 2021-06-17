@@ -11,7 +11,10 @@ public:
    static std::vector<double> FromString(const std::string& s);
 
    static std::string ConcatanateStrings(const std::vector<std::string>& sinput);
+   static std::vector<std::string> SplitBetweenBlanks(const std::string& s);
 
+   static bool not_space(const char c);
+   static bool space(const char c);
 
 };
 

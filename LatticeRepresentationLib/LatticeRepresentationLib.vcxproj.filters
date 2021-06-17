@@ -137,16 +137,7 @@
     <ClCompile Include="D13.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReadDirichletGlobalData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Dirichlet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirichletConstants.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirichletCellFaces.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MatD13.cpp">
@@ -310,19 +301,10 @@
     <ClInclude Include="D13.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ReadDirichletGlobalData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Dirichlet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirichletConstants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ParseData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirichletCellFaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MatD13.h">

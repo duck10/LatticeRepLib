@@ -17,6 +17,9 @@
     <ClCompile Include="Dirichlet_Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DirichletCellFaces.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="faces.for">
@@ -31,6 +34,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParseData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirichletCellFaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

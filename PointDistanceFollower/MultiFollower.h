@@ -8,9 +8,7 @@
 #include <utility>
 #include <vector>
 
-#include "CS6Dist.h"
 #include "DC.h"
-#include "D13.h"
 #include "DistanceLineDescriptions.h"
 #include "FollowerConstants.h"
 #include "G6.h"

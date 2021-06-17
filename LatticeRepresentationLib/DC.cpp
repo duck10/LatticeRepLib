@@ -235,23 +235,28 @@ DC DC::operator- (const DC& v) const {
 }
 
 DC& DC::operator= (const G6& v) {
-   return DC(LRL_Cell(v));
+   *this = DC(LRL_Cell(v));
+   return *this;
 }
 
 DC& DC::operator= (const S6& v) {
-   return DC(LRL_Cell(v));
+   *this = DC(LRL_Cell(v));
+   return *this;
 }
 
 DC& DC::operator= (const C3& v) {
-   return DC(LRL_Cell(v));
+   *this = DC(LRL_Cell(v));
+   return *this;
 }
 
 DC& DC::operator= (const D7& v) {
-   return DC(LRL_Cell(v));
+   *this = DC(LRL_Cell(v));
+   return *this;
 }
 
 DC& DC::operator= (const B4& v) {
-   return DC(LRL_Cell(v));
+   *this = DC(LRL_Cell(v));
+   return *this;
 }
 
 std::vector<std::pair<double, Vector_3> > DC::Cell_to_V13(const LRL_Cell& c) {

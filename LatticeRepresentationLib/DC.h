@@ -21,7 +21,7 @@ public:
    DC(const LRL_Cell& cell);
    DC(const std::string& t);
    DC& operator= (const DC& v);
-   DC& operator= (const std::string& s) { throw; DC DC;  return DC; }
+   DC& operator= (const std::string& s) { throw; return *this; }
    DC& operator= (const G6& v);
    DC& operator= (const S6& v);
    DC& operator= (const C3& c3);

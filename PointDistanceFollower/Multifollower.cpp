@@ -1,7 +1,9 @@
 #include "MultiFollower.h"
 
+#include <cmath>
 #include <vector>
 
+#include "CS6Dist.h"
 #include "D7Dist.h"
 #include "Delone.h"
 #include "LRL_MinMaxTools.h"

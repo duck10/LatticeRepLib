@@ -1,7 +1,6 @@
 #include "DirichletConstants.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
-#include "ReadDirichletGlobalData.h"
 #include "ParseData.h"
 #include <set>
 

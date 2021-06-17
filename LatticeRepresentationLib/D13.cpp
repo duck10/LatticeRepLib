@@ -226,23 +226,28 @@ D13 D13::operator- (const D13& v) const {
 }
 
 D13& D13::operator= (const G6& v) {
-   return D13(LRL_Cell(v));
+   *this = D13(LRL_Cell(v));
+   return *this;
 }
 
 D13& D13::operator= (const S6& v) {
-   return D13(LRL_Cell(v));
+   *this = D13(LRL_Cell(v));
+   return *this;
 }
 
 D13& D13::operator= (const C3& v) {
-   return D13(LRL_Cell(v));
+   *this = D13(LRL_Cell(v));
+   return *this;
 }
 
 D13& D13::operator= (const D7& v) {
-   return D13(LRL_Cell(v));
+   *this = D13(LRL_Cell(v));
+   return *this;
 }
 
 D13& D13::operator= (const B4& v) {
-   return D13(LRL_Cell(v));
+   *this = D13(LRL_Cell(v));
+   return *this;
 }
 
 double DistanceBetween(const D13& v1, const D13& v2) {

@@ -165,8 +165,6 @@
     <ClCompile Include="D13.cpp" />
     <ClCompile Include="DC.cpp" />
     <ClCompile Include="Dirichlet.cpp" />
-    <ClCompile Include="DirichletCellFaces.cpp" />
-    <ClCompile Include="DirichletConstants.cpp" />
     <ClCompile Include="FollowerPathGenerator.cpp" />
     <ClCompile Include="LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="LabeledSellaMatrices.cpp" />
@@ -181,7 +179,6 @@
     <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
     <ClCompile Include="MatD13.cpp" />
-    <ClCompile Include="ReadDirichletGlobalData.cpp" />
     <ClCompile Include="S6.cpp" />
     <ClCompile Include="S6Dist.cpp" />
     <ClCompile Include="D7.cpp" />
@@ -217,8 +214,6 @@
     <ClInclude Include="DC.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
     <ClInclude Include="Dirichlet.h" />
-    <ClInclude Include="DirichletCellFaces.h" />
-    <ClInclude Include="DirichletConstants.h" />
     <ClInclude Include="FollowerPathGenerator.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
     <ClInclude Include="LabeledDeloneTypeMatrices.h" />
@@ -238,7 +233,6 @@
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="ParseData.h" />
-    <ClInclude Include="ReadDirichletGlobalData.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6Dist.h" />
     <ClInclude Include="D7.h" />

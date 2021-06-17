@@ -150,6 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\LRL_Tools\FileOperations.cpp" />
+    <ClCompile Include="DirichletCellFaces.cpp" />
     <ClCompile Include="Dirichlet_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LRL_Tools\FileOperations.h" />
+    <ClInclude Include="DirichletCellFaces.h" />
     <ClInclude Include="ParseData.h" />
     <ClInclude Include="SVG_Tools.h" />
   </ItemGroup>

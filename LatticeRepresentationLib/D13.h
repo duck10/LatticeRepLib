@@ -22,7 +22,7 @@ public:
    D13(const LRL_Cell& cell);
    D13(const std::string& t);
    D13& operator= (const D13& v);
-   D13& operator= (const std::string& s) { throw; D13 d13;  return d13; }
+   D13& operator= (const std::string& s) { throw; return *this; }
    D13& operator= (const G6& v);
    D13& operator= (const S6& v);
    D13& operator= (const C3& c3);
