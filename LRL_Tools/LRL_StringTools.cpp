@@ -10,6 +10,16 @@
 #include <sstream>
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+bool LRL_StringTools::not_space(const char c) {
+   return(c != ' ');
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+bool LRL_StringTools::space(const char c) {
+   return(c == ' ');
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 std::string LRL_StringTools::strToupper(const std::string& s) {
    std::string ss(s);
    for (size_t i = 0; i < ss.length(); ++i)
@@ -39,4 +49,21 @@ std::string LRL_StringTools::ConcatanateStrings(const std::vector<std::string>& 
    for (size_t face = 0; face < sinput.size(); ++face)
       s += sinput[face];
    return s;
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+std::vector<std::string> LRL_StringTools::SplitBetweenBlanks(const std::string& s) {
+   std::vector<std::string> str;
+   std::string::const_iterator i = s.begin();
+
+   while (i != s.end())
+   {
+      //look for the next non-blank
+      i = std::find_if(i, s.end(), not_space);
+      const std::string::const_iterator i2 = std::find_if(i, s.end(), space);
+      str.push_back(std::string(i, i2));
+      i = i2;
+   }
+
+   return(str);
 }

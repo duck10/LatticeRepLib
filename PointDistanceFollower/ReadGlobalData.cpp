@@ -7,6 +7,7 @@
 #include "LRL_RandTools.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
+#include "ParseData.h"
 #include "Theta.h"
 
 #include <algorithm>
@@ -22,37 +23,9 @@
 #include <utility>
 
 std::string       FollowerConstants::globalDistanceDisable;
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-bool not_space( const char c ) {
-   return( c != ' ' );
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-bool space( const char c ) {
-   return( c == ' ' );
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-const std::vector<std::string> SplitBetweenBlanks( const std::string& s ) {
-   std::vector<std::string> str;
-   std::string::const_iterator i = s.begin( );
-
-   while ( i != s.end( ) )
-   {
-      //look for the next non-blank
-      i = std::find_if( i, s.end(), not_space );
-      const std::string::const_iterator i2 = std::find_if( i, s.end( ), space );
-      str.push_back( std::string( i, i2 ) );
-      i = i2;
-   }
-
-   return( str );
-}
-
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 const std::string GetDataString( const std::string& s, const size_t n ) {
-   std::vector<std::string> vstr = SplitBetweenBlanks(s);
+   std::vector<std::string> vstr = LRL_StringTools::SplitBetweenBlanks(s);
    if ( vstr.size( ) < n+1 ) vstr.resize( n+1, "0" );
    return( vstr[n] );
 }
@@ -202,14 +175,14 @@ std::string TranslateGlobalValue( const std::string& dataType, void* pData ) {
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 const std::pair<std::string, void*> FindBestTextMatch( const std::string& stringToMatch,
-                                                       const std::vector<ReadGlobalData::ParseData>& parseData,
+                                                       const std::vector<ParseData>& parseData,
                                                        const ThetaMatch<std::string>& tMatch ) {
    size_t bestMatchIndex = 0;
    double bestMatch = DBL_MAX;
-   const std::string commandToMatch = SplitBetweenBlanks(stringToMatch)[0];
+   const std::string commandToMatch = LRL_StringTools::SplitBetweenBlanks(stringToMatch)[0];
 
    for( size_t i=0; i!=parseData.size( ); ++i ) {
-      const double match = tMatch.theta(LRL_StringTools::strToupper(commandToMatch), parseData[i].m_label);
+      const double match = tMatch.theta(LRL_StringTools::strToupper(commandToMatch), parseData[i].GetLabel());
       if ( match < bestMatch ) {
          bestMatch = match;
          bestMatchIndex = i;
@@ -219,11 +192,11 @@ const std::pair<std::string, void*> FindBestTextMatch( const std::string& string
    if ( bestMatch > 0.9 )
       return( std::make_pair( "", (void*)0 ) );
    else
-      return(std::make_pair(parseData[bestMatchIndex].m_dataTypeToRead, parseData[bestMatchIndex].m_dataLocation));
+      return(std::make_pair(parseData[bestMatchIndex].GetDataType(), parseData[bestMatchIndex].GetLocation()));
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-bool ReadGlobalData::GetDataFromCIN( const std::vector<ReadGlobalData::ParseData>& parseData  ) {
+bool ReadGlobalData::GetDataFromCIN( const std::vector<ParseData>& parseData  ) {
    ThetaMatch<std::string> tMatch;
    char buffer[200];
 
@@ -232,14 +205,14 @@ bool ReadGlobalData::GetDataFromCIN( const std::vector<ReadGlobalData::ParseData
    do {
       if ( std::cin.getline( buffer, sizeof(buffer)/sizeof(buffer[0]) ).eof( ) ) break;
       s = LRL_StringTools::strToupper( buffer );
-      vStrTest = SplitBetweenBlanks( s );
+      vStrTest = LRL_StringTools::SplitBetweenBlanks( s );
    } while ( (! std::cin) || s.empty( ) || vStrTest.empty( ) || vStrTest[0].empty( ) );
 
    if ( ! std::cin || s.substr(0,3)==std::string( "END" ) ) {
       return( false );
    } else {
       const std::pair<std::string, void*> bestMatch = FindBestTextMatch( std::string(buffer), parseData, tMatch );
-      const std::vector<std::string> vStr = SplitBetweenBlanks( s );
+      const std::vector<std::string> vStr = LRL_StringTools::SplitBetweenBlanks( s );
       if ( vStr.empty( ) || vStr[0].empty( ) || bestMatch.first.empty( ) )
          return( true );
       SetGlobalValue( bestMatch.first, vStr, bestMatch.second );
@@ -248,12 +221,12 @@ bool ReadGlobalData::GetDataFromCIN( const std::vector<ReadGlobalData::ParseData
 }
 
 template<typename T> 
-ReadGlobalData::ParseData  ParseDataA(const std::string& commandName, const std::string& dataType, const T& t ) {
-   return ReadGlobalData::ParseData(commandName, dataType, (void*)&t);
+ParseData  ParseDataA(const std::string& commandName, const std::string& dataType, const T& t ) {
+   return ParseData(commandName, dataType, (void*)&t);
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-std::vector<ReadGlobalData::ParseData> ReadGlobalData::BuildParseStructure( void ) {
+std::vector<ParseData> ReadGlobalData::BuildParseStructure( void ) {
 
 
    const auto parseDataA = ParseDataA(LRL_StringTools::strToupper("PrintDistanceData"), "bool", FollowerConstants::globalPrintAllDistanceData);
@@ -313,7 +286,7 @@ std::string ReadGlobalData::FormatGlobalDataAsString( const std::vector<ParseDat
    for( size_t i=0; i<parseData.size(); ++i )
    {
       const ParseData& pd = parseData[i];
-      s += pd.m_label + " " + pd.m_dataTypeToRead + " " + TranslateGlobalValue(pd.m_dataTypeToRead, pd.m_dataLocation) + "\n";
+      s += pd.GetLabel() + " " + pd.GetDataType() + " " + TranslateGlobalValue(pd.GetDataType(), pd.GetLocation()) + "\n";
    }
 
    s += "\n";

@@ -19,15 +19,6 @@
 #include <string>
 #include <utility>
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-bool not_space( const char c ) {
-   return( c != ' ' );
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-bool space( const char c ) {
-   return( c == ' ' );
-}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 const std::vector<std::string> SplitBetweenBlanks( const std::string& s ) {
@@ -37,8 +28,8 @@ const std::vector<std::string> SplitBetweenBlanks( const std::string& s ) {
    while ( i != s.end( ) )
    {
       //look for the next non-blank
-      i = std::find_if( i, s.end(), not_space );
-      const std::string::const_iterator i2 = std::find_if( i, s.end( ), space );
+      i = std::find_if( i, s.end(), LRL_StringTools::not_space );
+      const std::string::const_iterator i2 = std::find_if( i, s.end( ), LRL_StringTools::space );
       str.push_back( std::string( i, i2 ) );
       i = i2;
    }

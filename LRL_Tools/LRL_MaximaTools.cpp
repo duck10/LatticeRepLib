@@ -9,11 +9,11 @@
 
 #include "LRL_MaximaTools.h"
 
-bool whitespace(const char c) {
+static bool whitespace(const char c) {
    return c == ' ' || c == '\n' || c == '\t' || c == '\0' || c ==',';
 }
 
-bool not_whitespace(const char c) {
+static bool not_whitespace(const char c) {
    return !whitespace(c);
 }
 

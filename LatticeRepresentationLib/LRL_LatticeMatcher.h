@@ -36,7 +36,7 @@ public:
    static MV_Pair CleanZeros( const MV_Pair& mv );
    void SetMark( const int i ) { m_mark[i] = true; }
    bool GetMark( const int i ) const { return m_mark[i]; }
-   bool ClearMarks( void ) { for (size_t i = 0; i < 6; ++i) m_mark[i] = false; }
+   void ClearMarks( void ) { for (size_t i = 0; i < 6; ++i) m_mark[i] = false; }
    std::vector<int> GetOpenIndices( const MV_Pair& mvp ) const;
 
 public:
