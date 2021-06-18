@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "BasisBase.h"
-#include "Dirichlet.h"
 
 #include "LRL_Cell.h"
 #include "LRL_ReadLatticeData.h"
@@ -57,11 +56,12 @@ public:
    bool IsValid(void) const { return m_cellIsValid; }
    bool IsValid(const D13& d13) const { return d13.m_cellIsValid; }
 
-   std::vector<std::vector<int> > GetIndices() const {
-      return m_dc.GetIndices(); 
+   std::vector<Vector_3 > GetIndices() const {
+      return vertices; 
    }
+
    std::vector<double> GetAreas() const;
-   std::vector<std::string> GetStringIndices() const { return m_dc.GetStrIndices(); }
+   std::vector<std::string> GetStringIndices();
    std::string GetName() const { return "D13"; }
    size_t size() const { return m_vec.size(); }
 
@@ -69,7 +69,6 @@ private:
    LRL_Cell m_cell;
    std::string m_lattice;
    bool m_cellIsValid;
-   DirichletCell m_dc;
    VecN m_dirCellAreas;
    size_t m_dim;
    std::vector<std::pair<int, std::pair<std::vector<int>, double> > > m_hashedAreaList;

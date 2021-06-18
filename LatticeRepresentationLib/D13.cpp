@@ -6,6 +6,7 @@
 #include <iostream>
 #include <utility>
 
+
 const std::vector<Vector_3> D13::vertices =
 { Vector_3(0,1,0), Vector_3(1,1,0), Vector_3(1,0,0), Vector_3(1,-1,0),
   Vector_3(-1,1,1), Vector_3(0,1,1), Vector_3(1,1,1), Vector_3(1,0,1),
@@ -32,14 +33,10 @@ D13::D13(const LRL_Cell& cell)
    : m_cell(cell)
    , m_lattice("P")
    , m_cellIsValid(cell.IsValid())
-   , m_dc(m_lattice, cell)
 {
-   m_dirCellAreas = m_dc.GetAreas();
    m_vec.resize(13);
    m_dim = 13;
    m_cellIsValid = m_cell.IsValid();
-   m_dc = DirichletCell(m_lattice, m_cell);
-   CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
 }
 
 D13::D13(const std::string& t)
@@ -57,8 +54,6 @@ D13::D13(const std::string& t)
       m_lattice = "P";
    }
    m_cellIsValid = m_cell.IsValid();
-   m_dc = DirichletCell(m_lattice, m_cell);
-   CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
 }
 
 std::vector<int> D13::HashIndices(const std::vector<std::vector<int> >& vin) const {
@@ -73,37 +68,37 @@ std::vector<int> D13::HashIndices(const std::vector<std::vector<int> >& vin) con
    return v;
 }
 
-std::vector<int> D13::HashIndices() const {
-   return HashIndices(m_dc.GetIndices());
-}
+//std::vector<int> D13::HashIndices() const {
+//   return HashIndices(m_dc.GetIndices());
+//}
 
-void D13::ConstructHashedAreaList() {
-   const std::vector<std::vector<int> > indList = m_dc.GetIndices();
-   const std::vector<double> areas = m_dc.GetAreas();
-   const std::vector<std::vector<int> > indicesOfAreas = m_dc.GetIndices();
-   std::vector<std::pair<int, std::pair<std::vector<int>, double> > > theList;
-   const std::vector<int> hashedIndices = HashIndices(indList);
-   for (size_t i = 0; i < indList.size(); ++i) {
-      theList.push_back(std::make_pair(hashedIndices[i], std::make_pair(indicesOfAreas[i], areas[i])));
-   }
-
-   const std::vector<Vector_3>& v = vertices;
-   std::vector<int> hashTotalIndexList;
-   std::vector < std::pair<int, double> > hashAndArea;
-   for (size_t i = 0; i < vertices.size(); ++i) {
-      hashTotalIndexList.push_back(HashV3(vertices[i]));
-   }
-
-   for (size_t i = 0; i < vertices.size(); ++i) {
-      hashAndArea.push_back(std::make_pair(HashV3(vertices[i]), 0.0));
-   }
-
-   // now fill in the non-zero areas
-   for (size_t i = 0; i < theList.size(); ++i) {
-      hashAndArea.push_back(std::make_pair(HashV3(vertices[i]), 0.0));
-   }
-
-}
+//void D13::ConstructHashedAreaList() {
+//   const std::vector<std::vector<int> > indList = m_dc.GetIndices();
+//   const std::vector<double> areas = m_dc.GetAreas();
+//   const std::vector<std::vector<int> > indicesOfAreas = m_dc.GetIndices();
+//   std::vector<std::pair<int, std::pair<std::vector<int>, double> > > theList;
+//   const std::vector<int> hashedIndices = HashIndices(indList);
+//   for (size_t i = 0; i < indList.size(); ++i) {
+//      theList.push_back(std::make_pair(hashedIndices[i], std::make_pair(indicesOfAreas[i], areas[i])));
+//   }
+//
+//   const std::vector<Vector_3>& v = vertices;
+//   std::vector<int> hashTotalIndexList;
+//   std::vector < std::pair<int, double> > hashAndArea;
+//   for (size_t i = 0; i < vertices.size(); ++i) {
+//      hashTotalIndexList.push_back(HashV3(vertices[i]));
+//   }
+//
+//   for (size_t i = 0; i < vertices.size(); ++i) {
+//      hashAndArea.push_back(std::make_pair(HashV3(vertices[i]), 0.0));
+//   }
+//
+//   // now fill in the non-zero areas
+//   for (size_t i = 0; i < theList.size(); ++i) {
+//      hashAndArea.push_back(std::make_pair(HashV3(vertices[i]), 0.0));
+//   }
+//
+//}
 
 VecN D13::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
    const std::vector<std::vector<int> >& dcIndices,
@@ -149,7 +144,6 @@ D13& D13::operator= (const D13& v) {
    m_cellIsValid = v.m_cellIsValid;
    m_cell = v.m_cell;
    m_lattice = v.m_lattice;
-   m_dc = v.m_dc;
    m_hashedAreaList = v.m_hashedAreaList;
    m_vec = v.m_vec;
    return *this;
@@ -252,4 +246,12 @@ D13& D13::operator= (const B4& v) {
 
 double DistanceBetween(const D13& v1, const D13& v2) {
    return (v1 - v2).Norm();
+}
+
+std::vector<std::string> D13::GetStringIndices() {
+   std::vector<std::string> s;
+   for (size_t i = 0; i < vertices.size(); ++i) {
+      s.push_back(LRL_ToString(vertices[i], " "));
+   }
+   return s;
 }
