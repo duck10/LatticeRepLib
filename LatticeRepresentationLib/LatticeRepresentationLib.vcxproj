@@ -164,7 +164,6 @@
     <ClCompile Include="CS6Dist.cpp" />
     <ClCompile Include="D13.cpp" />
     <ClCompile Include="DC.cpp" />
-    <ClCompile Include="Dirichlet.cpp" />
     <ClCompile Include="FollowerPathGenerator.cpp" />
     <ClCompile Include="LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="LabeledSellaMatrices.cpp" />
@@ -213,7 +212,6 @@
     <ClInclude Include="D13.h" />
     <ClInclude Include="DC.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
-    <ClInclude Include="Dirichlet.h" />
     <ClInclude Include="FollowerPathGenerator.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
     <ClInclude Include="LabeledDeloneTypeMatrices.h" />

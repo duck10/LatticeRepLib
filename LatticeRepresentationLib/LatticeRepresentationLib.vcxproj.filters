@@ -137,9 +137,6 @@
     <ClCompile Include="D13.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Dirichlet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MatD13.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -299,9 +296,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D13.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dirichlet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParseData.h">
