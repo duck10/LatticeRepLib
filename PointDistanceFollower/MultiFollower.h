@@ -52,7 +52,7 @@ public:
    void SetDistancesV7( const std::vector<double>& v ) { m_v7path.SetDistances( v ); }
    void SetDistancesLM(const std::vector<double>& v) { m_lmpath.SetDistances(v); }
    void SetDistancesDC(const std::vector<double>& v) { m_dcpath.SetDistances(v); }
-   void SetDistancesD13(const std::vector<double>& v) { m_d13path.SetDistances(v); }
+   //void SetDistancesD13(const std::vector<double>& v) { m_d13path.SetDistances(v); }
 
    LRL_Path<S6>& GetPathS6( void ) { return m_s6path; }
    LRL_Path<G6>& GetPathG6( void ) { return m_g6path; }
@@ -61,7 +61,7 @@ public:
    LRL_Path<G6>& GetPathV7( void ) { return m_v7path; }
    LRL_Path<S6>& GetPathLM(void) { return m_lmpath; }
    LRL_Path<DC>& GetPathDC(void) { return m_dcpath; }
-   LRL_Path<D13>& GetPathD13(void) { return m_d13path; }
+   //LRL_Path<D13>& GetPathD13(void) { return m_d13path; }
 
    std::pair<double, double> GetMinMax(void) const;
    size_t size(void)const { return maxNC(m_s6path.size(), m_g6path.size(), m_d7path.size(), m_cspath.size()); }
@@ -93,7 +93,7 @@ private:
    LRL_Path<G6> m_v7path;
    LRL_Path<S6> m_lmpath;
    LRL_Path<DC> m_dcpath;
-   ; LRL_Path<D13> m_d13path;
+   // LRL_Path<D13> m_d13path;
 
    std::vector<std::pair<S6, S6> > m_SellingReducedPath;
    std::vector<std::pair<G6, G6> >m_NiggiReducedPath;

@@ -66,9 +66,9 @@ LRL_Path<DC> MultiFollower::GetDC(void) const {
    return m_dcpath;
 }
 
-LRL_Path<D13> MultiFollower::GetD13(void) const {
-   return m_d13path;
-}
+//LRL_Path<D13> MultiFollower::GetD13(void) const {
+//   return m_d13path;
+//}
 
 MultiFollower MultiFollower::CalculateDistancesS6(const MultiFollower& mf) const {
    MultiFollower m(mf);
@@ -297,7 +297,7 @@ MultiFollower MultiFollower::GenerateAllDistances(void) {
    m.GetPathV7( ).SetGlitches( m.DetermineOutliers( m.GetPathV7( ).GetDistances( ) ) );
    m.GetPathLM( ).SetGlitches( m.DetermineOutliers( m.GetPathLM( ).GetDistances( ) ) );
    m.GetPathDC().SetGlitches(m.DetermineOutliers(m.GetPathDC().GetDistances()));
-   m.GetPathD13().SetGlitches(m.DetermineOutliers(m.GetPathD13().GetDistances()));
+   //m.GetPathD13().SetGlitches(m.DetermineOutliers(m.GetPathD13().GetDistances()));
 
    return m;
 }
@@ -355,12 +355,12 @@ std::pair<double, double> MultiFollower::GetMinMax(void) const {
    const std::pair<double, double> pV7 = GetPathMinMax( m_v7path );
    const std::pair<double, double> pLM = GetPathMinMax(m_lmpath);
    const std::pair<double, double> pDC = GetPathMinMax(m_dcpath);
-   const std::pair<double, double> pD13 = GetPathMinMax(m_d13path);
+   //const std::pair<double, double> pD13 = GetPathMinMax(m_d13path);
 
    const double minp = std::min(minNC(pS6.first, pG6.first, pD7.first, pCS.first, pV7.first, pLM.first), 
-      minNC(pDC.first, pD13.first));
+      pDC.first);
    const double maxp = std::max(maxNC(pS6.second, pG6.second, pD7.second, pCS.second, pV7.second, pLM.second),
-      maxNC(pDC.second, pD13.second));
+     pDC.second);
    return std::make_pair(minp, maxp);
 }
 

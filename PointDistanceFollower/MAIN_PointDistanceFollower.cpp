@@ -25,7 +25,6 @@
 #include "GenerateRandomLattice.h"
 //#include "MapBoundaryStrings2Colors.h"
 #include "MatG6.h"
-#include "LRL_MaximaTools.h"
 #include "LRL_Path.h"
 #include "LRL_ReadLatticeData.h"
 #include "MultiFollower.h"

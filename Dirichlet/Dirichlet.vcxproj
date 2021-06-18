@@ -150,8 +150,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\LRL_Tools\FileOperations.cpp" />
+    <ClCompile Include="Dirichlet.cpp" />
     <ClCompile Include="DirichletCellFaces.cpp" />
+    <ClCompile Include="DirichletConstants.cpp" />
     <ClCompile Include="Dirichlet_Main.cpp" />
+    <ClCompile Include="ReadDirichletGlobalData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
@@ -166,8 +169,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LRL_Tools\FileOperations.h" />
+    <ClInclude Include="Dirichlet.h" />
     <ClInclude Include="DirichletCellFaces.h" />
+    <ClInclude Include="DirichletConstants.h" />
     <ClInclude Include="ParseData.h" />
+    <ClInclude Include="ReadDirichletGlobalData.h" />
     <ClInclude Include="SVG_Tools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
