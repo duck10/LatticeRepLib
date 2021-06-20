@@ -76,10 +76,10 @@ private:
 
 private:
 
-   VecN CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
-      const std::vector<std::vector<int> >& dcIndices,
-      const std::vector<double>& dcAreas);
-   std::vector<int> HashIndices(const std::vector<std::vector<int> >& vin) const;
+   //VecN CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
+   //   const std::vector<std::vector<int> >& dcIndices,
+   //   const std::vector<double>& dcAreas);
+   //std::vector<int> HashIndices(const std::vector<std::vector<int> >& vin) const;
 };
 
 #endif  // DC_h

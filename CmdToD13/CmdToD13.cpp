@@ -145,18 +145,21 @@ int main()
 {
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    LRL_Cell cell1 = inputList[0].GetCell();
-   LRL_Cell cell2;
-   for (inputPoint = 1; inputPoint < inputList.size(); ++inputPoint) {
-      std::cout << inputPoint << std::endl;
-      cell2 = inputList[inputPoint].GetCell();
-      std::cout << "call FollowerStyleTest, inputPoint = " << inputPoint << std::endl;
-      FollowerStyleTest(cell1, cell2, 100000);
-      cell1 = cell2;
-      //const D13 d13(inputList[i].GetStrCell());
-      //std::cout << "D13 " << LRL_ToString(d13.GetVector()) << std::endl;
-      //std::cout << " " << LRL_ToString(d13.GetStringIndices()) << std::endl;
-      //std::cout << "NORM " << d13.Norm() << std::endl;
+   //LRL_Cell cell2;
+   //for (inputPoint = 1; inputPoint < inputList.size(); ++inputPoint) {
+   //   std::cout << inputPoint << std::endl;
+   //   cell2 = inputList[inputPoint].GetCell();
+   //   std::cout << "call FollowerStyleTest, inputPoint = " << inputPoint << std::endl;
+   //   FollowerStyleTest(cell1, cell2, 100000);
+   //   cell1 = cell2;
+   //   //const D13 d13(inputList[i].GetStrCell());
+   //   //std::cout << "D13 " << LRL_ToString(d13.GetVector()) << std::endl;
+   //   //std::cout << " " << LRL_ToString(d13.GetStringIndices()) << std::endl;
+   //   //std::cout << "NORM " << d13.Norm() << std::endl;
+   //}
+   //store.ShowResults();
+   //std::cout << "store: unique keys = " << store.size() << std::endl;
+   for (size_t i = 0; i < inputList.size(); ++i) {
+      std::cout << D13(inputList[i].GetCell()) << std::endl;
    }
-   store.ShowResults();
-   std::cout << "store: unique keys = " << store.size() << std::endl;
 }

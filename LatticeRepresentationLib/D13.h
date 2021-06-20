@@ -39,6 +39,7 @@ public:
    D13 operator- (void) const; // unary
    bool operator== (const D13& d13) const;
    bool operator!= (const D13& d13) const;
+   void FromCellToD13(const LRL_Cell& cell);
 
    double operator[](const size_t n) const { return m_vec[n]; }
    double& operator[](const size_t n) { return m_vec[n]; }
@@ -77,11 +78,11 @@ private:
 private:
    void ConstructHashedAreaList();
 
-   VecN CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
-      const std::vector<std::vector<int> >& dcIndices,
-      const std::vector<double>& dcAreas);
-   std::vector<int> HashIndices() const;
-   std::vector<int> HashIndices(const std::vector<std::vector<int> >& vin) const;
+   //VecN CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
+   //   const std::vector<std::vector<int> >& dcIndices,
+   //   const std::vector<double>& dcAreas);
+   //std::vector<int> HashIndices() const;
+   //std::vector<int> HashIndices(const std::vector<std::vector<int> >& vin) const;
 };
 
 #endif  // D13_h

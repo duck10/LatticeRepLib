@@ -3,6 +3,7 @@
 
 #include "CellInputData.h"
 #include "CS6Dist.h"
+#include "DC.h"
 #include "Delone.h"
 #include "LRL_CreateFileName.h"
 #include "CS6Dist.h"
@@ -21,6 +22,7 @@
 #include "MatN.h"
 #include "MatS6.h"
 #include "NCDist.h"
+#include "Niggli.h"
 #include "PairReporter.h"
 #include "S6.h"
 #include "S6Dist.h"
@@ -763,9 +765,53 @@ void GenerateFollowerPath() {
    std::cout << FollowerTriangle(5, S6("0 0 0 -95 -95 -95"), S6("0 0 0 -105 -105 -105"), S6( "0 0 0 -200 -200 -200")) << std::endl;
    exit(0);
 }
+void TestDC1() {
+   StoreResults<int, std::string> store(5);
+   for (size_t i = 0; i < 100000; ++i) {
+      S6 s1 = S6::randDeloneUnreduced();
+      s1 = 100.0 * s1 / s1.Norm();
+
+      S6 s2 = s1.Norm() * S6::randDeloneUnreduced();
+      s2 = s1.Norm() * s2 / s2.Norm();
+      s2 = s1 + 0.001 * s1.Norm() * S6::randDeloneUnreduced() / s2.Norm();
+
+      const DC d1(s1);
+      const DC d2(s2);
+
+      const double d = DC::DistanceBetween(d1, d2);
+      const int key = int(log10(10.0 * d / (d1).Norm()));
+      store.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ratio ", d/d1.norm(), "    ", s1, "  ---- ", s2));
+      if (key == 1) {
+         const double norm1 = s1.norm();
+         const double norm2 = s2.norm();
+         const double norm3 = d1.norm();
+         const double norm4 = d2.norm();
+         const double distNC = NCDist(G6(s1).data(), G6(s2).data());
+         const double distCS = CS6Dist(s1.data(), s2.data());
+         const double normDC = (d1 - d2).norm();
+         std::cout << " d1 " << d1 << std::endl;
+         std::cout << " d2 " << d2 << std::endl;
+         std::cout << " s1 " << s1 << std::endl;
+         std::cout << " s2 " << s2 << std::endl;
+         G6 g1, g2;
+         const bool b1 = Niggli::Reduce(G6(s1), g1);
+         const bool b2 = Niggli::Reduce(G6(s2), g2);
+         std::cout << " cell1 " << LRL_Cell_Degrees(g1) << std::endl;
+         std::cout << " cell2 " << LRL_Cell_Degrees(g2) << std::endl << std::endl;
+      }
+   }
+   store.ShowResults();
+}
+
+void TestDC2()
+{
+
+}
 
 int main(int argc, char* argv[])
 {
+   TestDC1();
+   exit(0);
    GenerateFollowerPath();
    Matrices();
    LookAtS6BoundaryCrossings();
