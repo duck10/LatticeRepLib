@@ -1,4 +1,5 @@
 #include "D13.h"
+#include "Niggli.h"
 #include "S6.h"
 
 #include <algorithm>
@@ -29,13 +30,22 @@ double HashV3(const T& v) {
    return hash;
 }
 
+void D13::FromCellToD13(const LRL_Cell& cell) {
+   G6 red;
+   const bool b = Niggli::Reduce(G6(cell), red);
+   const Matrix_3x3 m = LRL_Cell(red).Cart();
+   m_vec.resize(13);
+   for (size_t i = 0; i < D13::vertices.size(); ++i) {
+      m_vec[i] = (m * D13::vertices[i]).Norm();
+   }
+}
+
 D13::D13(const LRL_Cell& cell)
    : m_cell(cell)
    , m_lattice("P")
    , m_cellIsValid(cell.IsValid())
 {
-   m_vec.resize(13);
-   m_dim = 13;
+   FromCellToD13(cell);
    m_cellIsValid = m_cell.IsValid();
 }
 
@@ -48,25 +58,27 @@ D13::D13(const std::string& t)
       rcd.CellReader(t);
       m_cell = rcd.GetCell();
       m_lattice = rcd.GetLattice();
+      FromCellToD13(m_cell);
    }
    else {
       m_cell = LRL_Cell(std::string(t)); // cast to string is necessary for some reason
+      FromCellToD13(m_cell);
       m_lattice = "P";
    }
    m_cellIsValid = m_cell.IsValid();
 }
 
-std::vector<int> D13::HashIndices(const std::vector<std::vector<int> >& vin) const {
-   std::vector<int> v;
-   const std::vector<std::vector<int> >& indices = vin;
-   for (size_t i = 0; i < indices.size(); ++i) {
-      const std::vector<int>& index = indices[i];
-      const int hash = HashV3(index);
-      std::cout << i << " " << hash << std::endl;
-      v.push_back(hash);
-   }
-   return v;
-}
+//std::vector<int> D13::HashIndices(const std::vector<std::vector<int> >& vin) const {
+//   std::vector<int> v;
+//   const std::vector<std::vector<int> >& indices = vin;
+//   for (size_t i = 0; i < indices.size(); ++i) {
+//      const std::vector<int>& index = indices[i];
+//      const int hash = HashV3(index);
+//      std::cout << i << " " << hash << std::endl;
+//      v.push_back(hash);
+//   }
+//   return v;
+//}
 
 //std::vector<int> D13::HashIndices() const {
 //   return HashIndices(m_dc.GetIndices());
@@ -100,36 +112,36 @@ std::vector<int> D13::HashIndices(const std::vector<std::vector<int> >& vin) con
 //
 //}
 
-VecN D13::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
-   const std::vector<std::vector<int> >& dcIndices,
-   const std::vector<double>& dcAreas)
-{
-   std::vector<int> hashed13(13);
-
-   for (size_t i = 0; i < allIndices.size(); ++i) {
-      hashed13[i] = HashV3(allIndices[i]);
-      //std::cout << "hash13 " << i << "  " << hashed13[i] << std::endl;
-   }
-   //std::cout << std::endl;
-
-   for (size_t i = 0; i < dcIndices.size(); ++i) {
-      const int hash = HashV3(dcIndices[i]);
-      //std::cout << " hash  " << i << "  " << hash << std::endl;
-      auto place = std::find(hashed13.begin(), hashed13.end(), hash);
-      //if ( place != hashed13.end())
-         //std::cout << i << "  " << hash << " " <<  std::endl;
-
-      m_vec.resize(13);
-      if (place != hashed13.end()) {
-         const int xxxx = place - hashed13.begin();
-         //m_dirCellAreas[xxxx] = dcAreas[i];
-         m_vec[xxxx] = dcAreas[i];
-      }
-
-   }
-   //std::cout << LRL_ToString(m_vec) << std::endl;
-   return m_vec;
-}
+//VecN D13::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
+//   const std::vector<std::vector<int> >& dcIndices,
+//   const std::vector<double>& dcAreas)
+//{
+//   std::vector<int> hashed13(13);
+//
+//   for (size_t i = 0; i < allIndices.size(); ++i) {
+//      hashed13[i] = HashV3(allIndices[i]);
+//      //std::cout << "hash13 " << i << "  " << hashed13[i] << std::endl;
+//   }
+//   //std::cout << std::endl;
+//
+//   for (size_t i = 0; i < dcIndices.size(); ++i) {
+//      const int hash = HashV3(dcIndices[i]);
+//      //std::cout << " hash  " << i << "  " << hash << std::endl;
+//      auto place = std::find(hashed13.begin(), hashed13.end(), hash);
+//      //if ( place != hashed13.end())
+//         //std::cout << i << "  " << hash << " " <<  std::endl;
+//
+//      m_vec.resize(13);
+//      if (place != hashed13.end()) {
+//         const int xxxx = place - hashed13.begin();
+//         //m_dirCellAreas[xxxx] = dcAreas[i];
+//         m_vec[xxxx] = dcAreas[i];
+//      }
+//
+//   }
+//   //std::cout << LRL_ToString(m_vec) << std::endl;
+//   return m_vec;
+//}
 
 D13& D13::operator= (const LRL_Cell& v) {
    *this = D13(v);

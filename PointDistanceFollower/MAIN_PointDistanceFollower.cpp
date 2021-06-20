@@ -32,7 +32,6 @@
 #include "ReadGlobalData.h"
 #include "Selling.h"
 #include "SVG_DistancePlot.h"
-//#include "SVG_Writer.h"
 
 typedef Selling TREDUCE;
 

@@ -17,7 +17,6 @@
 #include "FileWriter.h"
 #include "FollowerConstants.h"
 #include "LRL_DataToSVG.h"
-#include "LRL_ToString.h"
 #include "MultiFollower.h"
 #include "SVG_Writer.h"
 
@@ -70,7 +69,7 @@ private:
          const size_t lastPositiveIndex = (size_t)((firstNegative == distances.end()) ? xmax : firstNegative - distances.begin());
 
          const std::string strokeWidth = "\" stroke-width=\"" + LRL_ToString(lineWidth) + "\"";
-         std::string s = LRL_ToString("   <polyline fill=\"none\" stroke=\"", color,  strokeWidth, " stroke-dasharray = \"", dashMode, "\" points=\" ");
+         std::string s = LRL_DataToSVG("   <polyline fill=\"none\" stroke=\"", color,  strokeWidth, " stroke-dasharray = \"", dashMode, "\" points=\" ");
 
          std::vector<double>::const_iterator it = distances.begin();
          for (size_t i = 1; i <= lastPositiveIndex; ++i, ++it)

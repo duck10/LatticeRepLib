@@ -92,9 +92,9 @@ private:
             "\"   font-family=\"sans-serif\" font-size=\"20\" fill=\"" +
             colorForName + "\">  " +
             nameForType + "  " + timestamp;
-         svg += LRL_ToString("\n   <line  x1=\"600\"   y1=", ToQuotedString(yheight), " x2 = \"900\" y2=", ToQuotedString(yheight));
-         svg += LRL_ToString(" fill=\"none\" stroke=\"", colorForName, "\"");
-         svg += LRL_ToString(strokeWidth, " stroke-dasharray = \"", dashmode, "\"></line> \\n");
+         svg += LRL_DataToSVG("\n   <line  x1=\"600\"   y1=", ToQuotedString(yheight), " x2 = \"900\" y2=", ToQuotedString(yheight));
+         svg += LRL_DataToSVG(" fill=\"none\" stroke=\"", colorForName, "\"");
+         svg += LRL_DataToSVG(strokeWidth, " stroke-dasharray = \"", dashmode, "\"></line> \\n");
       }
       return svg;
    }
@@ -165,14 +165,17 @@ private:
       m_svg.push_back( "<!-- whatever is within the viewbox will be remapped to show in this size -->" );
 
       const double& width = SVG_WriterConstants::globalGraphSpace;
-      m_svg.push_back( "<svg width=\"" + LRL_ToString(scaleFactor *width) + "\" height=\"" + LRL_ToString(scaleFactor * width) +
-         "\" viewBox=\"1 0  " + LRL_ToString(scaleFactor*width*1.2, scaleFactor*width*1.2) +
-         "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" );
-      m_svg.push_back( " <desc>ID (and file name) = " + sFileName + "  mode = " + ReadGlobalData::GetFollowerMode() + " </desc> " );
+      const std::string scaledWidth = LRL_DataToSVG(scaleFactor * width * 1.2);
+      m_svg.push_back("<svg width=\"" + LRL_ToString(scaleFactor * width) + "\" height=\"" + LRL_ToString(scaleFactor * width) +
+         "\" viewBox=\"1 0  " + LRL_ToString(scaleFactor * width * 1.2, scaleFactor * width * 1.2) +
+         "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
+      m_svg.push_back(" <desc>ID (and file name) = " + sFileName + "  mode = " + ReadGlobalData::GetFollowerMode() + " </desc> ");
 
       m_svg.push_back("<g transform = \"scale(" + LRL_ToString(scaleFactor, scaleFactor) + ")\">\n");
 
       m_svg.push_back("<text x = \"-850\" y=\"50\" transform=\"rotate(-90)\"  font-family=\"sans-serif\" font-size=\"40\" stroke =\"lightgray\" fill=\"none\"> PointDistanceFollower   " __DATE__ "</text>");
+      m_svg.push_back(" <rect fill = \"rgb(255,255,255)\" width = \"" + scaledWidth + "\" height = \"" +
+         scaledWidth + "\" />");
    }
 
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/

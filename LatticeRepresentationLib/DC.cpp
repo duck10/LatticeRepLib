@@ -30,14 +30,13 @@ double HashV3(const T& v) {
 }
 
 DC::DC(const LRL_Cell& cell)
-   : m_cell(cell)
-   , m_lattice("P")
+   : m_lattice("P")
    , m_cellIsValid(cell.IsValid())
    //, m_dc(m_lattice, cell)
 {
    G6 out;
    const bool b = Niggli::Reduce(G6(cell), out);
-   m_cell = out;
+   m_cell = LRL_Cell(out);
    //m_dirCellAreas = m_dc.GetAreas();
    m_dim = 13;
    m_vec = G6_to_V13(out);
@@ -71,17 +70,17 @@ DC::DC(const std::string& t)
    //CreateCompleteListOf13Areas(vertices, m_dc.GetIndices(), m_dc.GetAreas());
 }
 
-std::vector<int> DC::HashIndices(const std::vector<std::vector<int> >& vin) const {
-   std::vector<int> v;
-   const std::vector<std::vector<int> >& indices = vin;
-   for (size_t i = 0; i < indices.size(); ++i) {
-      const std::vector<int>& index = indices[i];
-      const int hash = HashV3(index);
-      std::cout << i << " " << hash << std::endl;
-      v.push_back(hash);
-   }
-   return v;
-}
+//std::vector<int> DC::HashIndices(const std::vector<std::vector<int> >& vin) const {
+//   std::vector<int> v;
+//   const std::vector<std::vector<int> >& indices = vin;
+//   for (size_t i = 0; i < indices.size(); ++i) {
+//      const std::vector<int>& index = indices[i];
+//      const int hash = HashV3(index);
+//      std::cout << i << " " << hash << std::endl;
+//      v.push_back(hash);
+//   }
+//   return v;
+//}
 
 //std::vector<int> DC::HashIndices() const {
 //   return HashIndices(m_dc.GetIndices());
@@ -115,36 +114,36 @@ std::vector<int> DC::HashIndices(const std::vector<std::vector<int> >& vin) cons
 //
 //}
 
-VecN DC::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
-   const std::vector<std::vector<int> >& dcIndices,
-   const std::vector<double>& dcAreas)
-{
-   std::vector<int> hasheDC(13);
-
-   for (size_t i = 0; i < allIndices.size(); ++i) {
-      hasheDC[i] = HashV3(allIndices[i]);
-      //std::cout << "hash13 " << i << "  " << hasheDC[i] << std::endl;
-   }
-   //std::cout << std::endl;
-
-   for (size_t i = 0; i < dcIndices.size(); ++i) {
-      const int hash = HashV3(dcIndices[i]);
-      //std::cout << " hash  " << i << "  " << hash << std::endl;
-      auto place = std::find(hasheDC.begin(), hasheDC.end(), hash);
-      //if ( place != hasheDC.end())
-         //std::cout << i << "  " << hash << " " <<  std::endl;
-
-      m_vec.resize(13);
-      if (place != hasheDC.end()) {
-         const int xxxx = place - hasheDC.begin();
-         //m_dirCellAreas[xxxx] = dcAreas[i];
-         m_vec[xxxx] = dcAreas[i];
-      }
-
-   }
-   //std::cout << LRL_ToString(m_vec) << std::endl;
-   return m_vec;
-}
+//VecN DC::CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
+//   const std::vector<std::vector<int> >& dcIndices,
+//   const std::vector<double>& dcAreas)
+//{
+//   std::vector<int> hasheDC(13);
+//
+//   for (size_t i = 0; i < allIndices.size(); ++i) {
+//      hasheDC[i] = HashV3(allIndices[i]);
+//      //std::cout << "hash13 " << i << "  " << hasheDC[i] << std::endl;
+//   }
+//   //std::cout << std::endl;
+//
+//   for (size_t i = 0; i < dcIndices.size(); ++i) {
+//      const int hash = HashV3(dcIndices[i]);
+//      //std::cout << " hash  " << i << "  " << hash << std::endl;
+//      auto place = std::find(hasheDC.begin(), hasheDC.end(), hash);
+//      //if ( place != hasheDC.end())
+//         //std::cout << i << "  " << hash << " " <<  std::endl;
+//
+//      m_vec.resize(13);
+//      if (place != hasheDC.end()) {
+//         const int xxxx = place - hasheDC.begin();
+//         //m_dirCellAreas[xxxx] = dcAreas[i];
+//         m_vec[xxxx] = dcAreas[i];
+//      }
+//
+//   }
+//   //std::cout << LRL_ToString(m_vec) << std::endl;
+//   return m_vec;
+//}
 
 DC& DC::operator= (const LRL_Cell& v) {
    *this = DC(v);

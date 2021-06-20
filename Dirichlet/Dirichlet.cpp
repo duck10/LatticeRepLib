@@ -10,6 +10,7 @@
 #include "LRL_ToString.h"
 #include "SVG_Tools.h"
 #include "TriangleAreaFromSides.h"
+#include "LRL_Vector3.h"
 
 #include <cmath>
 #include <iomanip>
