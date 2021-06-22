@@ -289,30 +289,31 @@ MatB4  MatB4::GetReflection(const size_t n) {
 
 std::vector<MatB4>   MatB4::GetReflections() {
    if (vB4_Refl.empty()) {
-      vB4_Refl.push_back(MatB4("1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1"));
-      vB4_Refl.push_back(MatB4("1 0 0 0  0 1 0 0  0 0 0 1  0 0 1 0"));
-      vB4_Refl.push_back(MatB4("1 0 0 0  0 0 1 0  0 1 0 0  0 0 0 1"));
-      vB4_Refl.push_back(MatB4("1 0 0 0  0 0 1 0  0 0 0 1  0 1 0 0"));
-      vB4_Refl.push_back(MatB4("1 0 0 0  0 0 0 1  0 1 0 0  0 0 1 0"));
-      vB4_Refl.push_back(MatB4("1 0 0 0  0 0 0 1  0 0 1 0  0 1 0 0"));
-      vB4_Refl.push_back(MatB4("0 1 0 0  1 0 0 0  0 0 1 0  0 0 0 1"));
-      vB4_Refl.push_back(MatB4("0 1 0 0  1 0 0 0  0 0 0 1  0 0 1 0"));
-      vB4_Refl.push_back(MatB4("0 1 0 0  0 0 1 0  1 0 0 0  0 0 0 1"));
-      vB4_Refl.push_back(MatB4("0 1 0 0  0 0 1 0  0 0 0 1  1 0 0 0"));
-      vB4_Refl.push_back(MatB4("0 1 0 0  0 0 0 1  1 0 0 0  0 0 1 0"));
-      vB4_Refl.push_back(MatB4("0 1 0 0  0 0 0 1  0 0 1 0  1 0 0 0"));
-      vB4_Refl.push_back(MatB4("0 0 1 0  1 0 0 0  0 1 0 0  0 0 0 1"));
-      vB4_Refl.push_back(MatB4("0 0 1 0  1 0 0 0  0 0 0 1  0 1 0 0"));
-      vB4_Refl.push_back(MatB4("0 0 1 0  0 1 0 0  1 0 0 0  0 0 0 1"));
-      vB4_Refl.push_back(MatB4("0 0 1 0  0 1 0 0  0 0 0 1  1 0 0 0"));
-      vB4_Refl.push_back(MatB4("0 0 1 0  0 0 0 1  1 0 0 0  0 1 0 0"));
-      vB4_Refl.push_back(MatB4("0 0 1 0  0 0 0 1  0 1 0 0  1 0 0 0"));
-      vB4_Refl.push_back(MatB4("0 0 0 1  1 0 0 0  0 1 0 0  0 0 1 0"));
-      vB4_Refl.push_back(MatB4("0 0 0 1  1 0 0 0  0 0 1 0  0 1 0 0"));
-      vB4_Refl.push_back(MatB4("0 0 0 1  0 1 0 0  1 0 0 0  0 0 1 0"));
-      vB4_Refl.push_back(MatB4("0 0 0 1  0 1 0 0  0 0 1 0  1 0 0 0"));
-      vB4_Refl.push_back(MatB4("0 0 0 1  0 0 1 0  1 0 0 0  0 1 0 0"));
-      vB4_Refl.push_back(MatB4("0 0 0 1  0 0 1 0  0 1 0 0  1 0 0 0"));
+      vB4_Refl.resize(24);
+      vB4_Refl[0] = MatB4("1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1");
+      vB4_Refl[1] = MatB4("1 0 0 0  0 1 0 0  0 0 0 1  0 0 1 0");
+      vB4_Refl[2] = MatB4("1 0 0 0  0 0 1 0  0 1 0 0  0 0 0 1");
+      vB4_Refl[3] = MatB4("1 0 0 0  0 0 1 0  0 0 0 1  0 1 0 0");
+      vB4_Refl[4] = MatB4("1 0 0 0  0 0 0 1  0 1 0 0  0 0 1 0");
+      vB4_Refl[5] = MatB4("1 0 0 0  0 0 0 1  0 0 1 0  0 1 0 0");
+      vB4_Refl[6] = MatB4("0 1 0 0  1 0 0 0  0 0 1 0  0 0 0 1");
+      vB4_Refl[7] = MatB4("0 1 0 0  1 0 0 0  0 0 0 1  0 0 1 0");
+      vB4_Refl[8] = MatB4("0 1 0 0  0 0 1 0  1 0 0 0  0 0 0 1");
+      vB4_Refl[9] = MatB4("0 1 0 0  0 0 1 0  0 0 0 1  1 0 0 0");
+      vB4_Refl[10] = MatB4("0 1 0 0  0 0 0 1  1 0 0 0  0 0 1 0");
+      vB4_Refl[11] = MatB4("0 1 0 0  0 0 0 1  0 0 1 0  1 0 0 0");
+      vB4_Refl[12] = MatB4("0 0 1 0  1 0 0 0  0 1 0 0  0 0 0 1");
+      vB4_Refl[13] = MatB4("0 0 1 0  1 0 0 0  0 0 0 1  0 1 0 0");
+      vB4_Refl[14] = MatB4("0 0 1 0  0 1 0 0  1 0 0 0  0 0 0 1");
+      vB4_Refl[15] = MatB4("0 0 1 0  0 1 0 0  0 0 0 1  1 0 0 0");
+      vB4_Refl[16] = MatB4("0 0 1 0  0 0 0 1  1 0 0 0  0 1 0 0");
+      vB4_Refl[17] = MatB4("0 0 1 0  0 0 0 1  0 1 0 0  1 0 0 0");
+      vB4_Refl[18] = MatB4("0 0 0 1  1 0 0 0  0 1 0 0  0 0 1 0");
+      vB4_Refl[19] = MatB4("0 0 0 1  1 0 0 0  0 0 1 0  0 1 0 0");
+      vB4_Refl[20] = MatB4("0 0 0 1  0 1 0 0  1 0 0 0  0 0 1 0");
+      vB4_Refl[21] = MatB4("0 0 0 1  0 1 0 0  0 0 1 0  1 0 0 0");
+      vB4_Refl[22] = MatB4("0 0 0 1  0 0 1 0  1 0 0 0  0 1 0 0");
+      vB4_Refl[23] = MatB4("0 0 0 1  0 0 1 0  0 1 0 0  1 0 0 0");
    }
    return vB4_Refl;
 }
