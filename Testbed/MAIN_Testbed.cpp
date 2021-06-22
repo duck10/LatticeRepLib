@@ -766,38 +766,48 @@ void GenerateFollowerPath() {
    exit(0);
 }
 void TestDC1() {
-   StoreResults<int, std::string> store(5);
-   for (size_t i = 0; i < 100000; ++i) {
-      S6 s1 = S6::randDeloneUnreduced();
-      s1 = 100.0 * s1 / s1.Norm();
+   StoreResults<int, std::string> store(25);
+   for (size_t i = 0; i < 10000000; ++i) {
+      G6 g1 = G6::randDeloneUnreduced();
+      g1 = 1000.0 * g1 / g1.Norm(); // make norm(g1) = 100
 
-      S6 s2 = s1.Norm() * S6::randDeloneUnreduced();
-      s2 = s1.Norm() * s2 / s2.Norm();
-      s2 = s1 + 0.001 * s1.Norm() * S6::randDeloneUnreduced() / s2.Norm();
+      G6 delta = G6::randDeloneUnreduced();
+      delta = 1000.0  * delta / delta.norm(); // make norm(delta) = 100
+      G6 g2 = g1 + 0.001 * delta; // shift g1 by a small amount
 
-      const DC d1(s1);
-      const DC d2(s2);
+      const DC d1(g1);
+      const DC d2(g2);
 
       const double d = DC::DistanceBetween(d1, d2);
       const int key = int(log10(10.0 * d / (d1).Norm()));
-      store.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ratio ", d/d1.norm(), "    ", s1, "  ---- ", s2));
-      if (key == 1) {
-         const double norm1 = s1.norm();
-         const double norm2 = s2.norm();
+      if (key>1 || key < -10) {
+         store.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ratio ", d/d1.norm(), "    ", g1, "  ---- ", g2));
+         const double norm1 = g1.norm();
+         const double norm2 = g2.norm();
          const double norm3 = d1.norm();
          const double norm4 = d2.norm();
-         const double distNC = NCDist(G6(s1).data(), G6(s2).data());
-         const double distCS = CS6Dist(s1.data(), s2.data());
+         const double distNC = NCDist(G6(g1).data(), G6(g2).data());
+         const double distCS = CS6Dist(g1.data(), g2.data());
          const double normDC = (d1 - d2).norm();
+         std::cout << "------------------------------------------------------------" << std::endl;
          std::cout << " d1 " << d1 << std::endl;
          std::cout << " d2 " << d2 << std::endl;
-         std::cout << " s1 " << s1 << std::endl;
-         std::cout << " s2 " << s2 << std::endl;
-         G6 g1, g2;
-         const bool b1 = Niggli::Reduce(G6(s1), g1);
-         const bool b2 = Niggli::Reduce(G6(s2), g2);
+         std::cout << " g1 " << g1 << std::endl;
+         std::cout << " g2 " << g2 << std::endl;
+         std::cout << " S6_1 " << S6(g1) << std::endl;
+         std::cout << " S6_2 " << S6(g2) << std::endl;
+         G6 g1out, g2out;
+         const bool b1 = Niggli::Reduce(G6(g1), g1out);
+         const bool b2 = Niggli::Reduce(G6(g2), g2out);
+         LRL_Cell_Degrees testcell(g1);
          std::cout << " cell1 " << LRL_Cell_Degrees(g1) << std::endl;
          std::cout << " cell2 " << LRL_Cell_Degrees(g2) << std::endl << std::endl;
+         std::cout << " cell1 reduced " << LRL_Cell_Degrees(g1out) << std::endl;
+         std::cout << " cell2 reduced " << LRL_Cell_Degrees(g2out) << std::endl << std::endl;
+         const DC d1X(g1out);
+         const DC d2X(g2out);
+         std::cout << d1X << std::endl;
+         std::cout << d2X << std::endl;
       }
    }
    store.ShowResults();

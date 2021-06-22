@@ -163,6 +163,11 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          iss >> onefield;
          if (iss) fields.push_back( onefield );
       }
+      if (fields.size() < 6) {
+         std::cout << "input line rejected, invalid cell" << std::endl;         m_lattice = "";
+         m_cell.SetValid(false);
+         return;
+      }
 
       bool valid = (iss)? true : false;
       {

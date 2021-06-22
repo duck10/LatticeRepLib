@@ -277,7 +277,7 @@ std::vector<std::pair<double, Vector_3> > DC::Cell_to_V13(const LRL_Cell& c) {
 }
 
 std::vector<double> DC::G6_to_V13(const G6& gin) {
-   std::vector<double> g(13);
+   std::vector<double> v(13);
 
    const double& g1 = gin[0];
    const double& g2 = gin[1];
@@ -286,25 +286,25 @@ std::vector<double> DC::G6_to_V13(const G6& gin) {
    const double& g5 = gin[4];
    const double& g6 = gin[5];
 
-   g[0] = g1;
-   g[1] = g2;
-   g[2] = g1 + g2 + g6;
-   g[3] = g1 + g2 - g6;
-   g[4] = g3;
-   g[5] = g2 + g3 + g4;
-   g[6] = g2 + g3 - g4;
-   g[7] = g1 + g3 + g5;
-   g[8] = g1 + g3 - g5;
-   g[9] = g1 + g2 + g3 + g4 + g5 + g6;
-   g[10] = g1 + g2 + g3 - g4 - g5 + g6;
-   g[11] = g1 + g2 + g3 - g4 + g5 - g6;
-   g[12] = g1 + g2 + g3 + g4 - g5 - g6;
+   v[0] = g1;
+   v[1] = g2;
+   v[2] = g1 + g2 + g6;
+   v[3] = g1 + g2 - g6;
+   v[4] = g3;
+   v[5] = g2 + g3 + g4;
+   v[6] = g2 + g3 - g4;
+   v[7] = g1 + g3 + g5;
+   v[8] = g1 + g3 - g5;
+   v[9] = g1 + g2 + g3 + g4 + g5 + g6;
+   v[10] = g1 + g2 + g3 - g4 - g5 + g6;
+   v[11] = g1 + g2 + g3 - g4 + g5 - g6;
+   v[12] = g1 + g2 + g3 + g4 - g5 - g6;
 
    const bool sorted = true;
    if (sorted)
-      std::sort(g.begin(), g.end());
+      std::sort(v.begin(), v.end());
 
-   return g;
+   return v;
 }
 
 double DC::DistanceBetween(const DC& v1, const DC& v2) {
