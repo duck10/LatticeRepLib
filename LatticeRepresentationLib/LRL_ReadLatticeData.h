@@ -13,12 +13,14 @@ public:
    std::vector<LRL_ReadLatticeData> ReadLatticeData();
    void CellReader( const std::string& s );
    void CellReader(const std::string& lattice, const std::string& cell);
+   std::vector<double> GetFieldsForCellFromString(const std::string& s);
 
    static std::vector<CellInputData> ReadAllLatticeData(const int seed);
    static std::vector<CellInputData> ReadAllLatticeDataAndMakePrimitive(const int seed);
 
 protected:
    GenerateRandomLattice<S6> generator;
+   std::pair<std::vector<double>, std::vector<double> > SplitFields(const int n, const std::vector<double>& fields);
 
    bool SetRandomCell( const std::string& inputDataType );
    bool SetG6Data( const std::string& inputDataType, std::vector<double>& fields );

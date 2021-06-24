@@ -74,7 +74,8 @@ bool HasLatticeParams7( const std::string& s ) {
    return fields.size( ) == 7;
 }
 
-static std::pair<std::vector<double>, std::vector<double> > SplitFields( const int n, const std::vector<double>& fields) {
+std::pair<std::vector<double>, std::vector<double> > LRL_ReadLatticeData::SplitFields( const int n, const std::vector<double>& fields) {
+   // if there are more than 6 fields, try to assume that the rest are standard deviations
    std::vector<double> v1, v2;
    if (n <= fields.size( ))
       v1 = std::vector<double>( fields.begin( ), fields.begin( ) + n );
@@ -147,8 +148,9 @@ bool LRL_ReadLatticeData::SetUnitCellTypeData( const std::string& inputDataType,
    return test;
 }
 
-void LRL_ReadLatticeData::CellReader(const std::string& s) {
-   std::istringstream iss( s );
+std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::string& s) {
+   std::vector<double> toReturn;
+   std::istringstream iss(s);
    m_inputDataType.clear();
    if ((LRL_StringTools::strToupper(s.substr(0, 3)) == std::string("END"))) {
       m_lattice = "EOF";
@@ -157,43 +159,45 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
       iss >> m_inputDataType;
       m_inputDataType = LRL_StringTools::strToupper(m_inputDataType);
       m_lattice = m_inputDataType[0];
-      std::vector<double> fields;
       double onefield;
       while (iss) {
          iss >> onefield;
-         if (iss) fields.push_back( onefield );
+         if (iss) toReturn.push_back(onefield);
       }
-      if (fields.size() < 6) {
+      if (toReturn.size() < 6) {
+         toReturn.clear();
          std::cout << "input line rejected, invalid cell" << std::endl;         m_lattice = "";
          m_cell.SetValid(false);
-         return;
+         return std::vector<double>();
       }
+   }
+   return toReturn;
+}
 
-      bool valid = (iss)? true : false;
-      {
-         const std::pair<std::vector<double>, std::vector<double> > params = SplitFields(6, fields);
-         m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
+void LRL_ReadLatticeData::CellReader(const std::string& s) {
+   bool valid = false;
+   std::vector<double> fields = GetFieldsForCellFromString(s);
 
-         //const bool b1 = SetRandomCell(m_inputDataType);
-         //const bool b2 = SetRandomCell(m_inputDataType);
-         //const bool b3 = SetRandomCell(m_inputDataType);
-         valid =
-            SetRandomCell(m_inputDataType) ||
-            SetG6Data(m_inputDataType, fields) ||
-            SetD7Data(m_inputDataType, fields) ||
-            SetS6Data(m_inputDataType, fields) ||
-            SetC3Data(m_inputDataType, fields) ||
-            SetUnitCellTypeData(m_inputDataType, params);
+   if (fields.size() < 6) return;
+   {
+      const std::pair<std::vector<double>, std::vector<double> > params = SplitFields(6, fields);
+      m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
+      valid =
+         SetRandomCell(m_inputDataType) ||
+         SetG6Data(m_inputDataType, fields) ||
+         SetD7Data(m_inputDataType, fields) ||
+         SetS6Data(m_inputDataType, fields) ||
+         SetC3Data(m_inputDataType, fields) ||
+         SetUnitCellTypeData(m_inputDataType, params);
 
-         if (valid && params.second.size() >= 6) // ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
-            m_cell.SetSigmas(params.second);
-      }
-      if (!valid || !m_cell.GetValid( )) {
+      if (valid && params.second.size() >= 6) // ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
+         m_cell.SetSigmas(params.second);
+   }
 
-         if (m_lattice != ";" )std::cout << "input line rejected, invalid cell" << std::endl;
-         m_lattice = "";
-         m_cell.SetValid(false);
-      }
+   if (!valid || !m_cell.GetValid()) {
+      if (m_lattice != ";")std::cout << "input line rejected, invalid cell" << std::endl;
+      m_lattice = "";
+      m_cell.SetValid(false);
    }
 }
 
