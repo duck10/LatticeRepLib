@@ -7,6 +7,23 @@
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
 
+class ReadComplexData : public LRL_ReadLatticeData {
+   ReadComplexData(const int seed = 0);
+   ReadComplexData read();
+   ReadComplexData CreateLatticeData(const std::string& s);
+   std::vector<ReadComplexData> ReadLatticeData();
+   void CellReader(const std::string& s);
+   void CellReader(const std::string& lattice, const std::string& cell);
+};
+
+ReadComplexData::ReadComplexData(const int seed)
+   : LRL_ReadLatticeData(seed)
+{ }
+
+ReadComplexData ReadComplexData::read() {
+
+}
+
 void ComplexCell(const S6& s)
 {
 

@@ -78,10 +78,15 @@ LRL_Cell::LRL_Cell(const std::string& s)
    : m_valid(true)
 {
    m_cell = LRL_StringTools::FromString(s);
-   m_valid = m_valid && m_cell[3] < oneeightyDegrees && m_cell[4] < oneeightyDegrees && m_cell[5] < oneeightyDegrees && (m_cell[3]+m_cell[4]+m_cell[5])< threesixtyDegrees;
-
-   for (size_t i = 3; i < 6; ++i)
-      m_cell[i] *= 4.0*atan(1.0) / 180.0;
+   m_valid = m_cell.size() == 6 && m_valid && 
+      m_cell[3] < oneeightyDegrees && 
+      m_cell[4] < oneeightyDegrees && 
+      m_cell[5] < oneeightyDegrees && 
+      (m_cell[3] + m_cell[4] + m_cell[5]) < threesixtyDegrees;
+   if (m_valid) {
+      for (size_t i = 3; i < 6; ++i)
+         m_cell[i] *= 4.0 * atan(1.0) / 180.0;
+   }
 }
 
 LRL_Cell::LRL_Cell(const S6& ds)
