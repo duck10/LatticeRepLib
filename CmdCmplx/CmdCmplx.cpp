@@ -5,9 +5,11 @@
 
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
+#include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 
 class ReadComplexData : public LRL_ReadLatticeData {
+public:
    ReadComplexData(const int seed = 0);
    ReadComplexData read();
    ReadComplexData CreateLatticeData(const std::string& s);
@@ -16,13 +18,42 @@ class ReadComplexData : public LRL_ReadLatticeData {
    void CellReader(const std::string& lattice, const std::string& cell);
 };
 
+void ReadComplexData::CellReader(const std::string& s) {
+   std::vector<double> fields = GetFieldsForCellFromString(s);
+
+   bool valid = StringToCell(fields);
+
+   if (!valid || !m_cell.GetValid()) {
+      if (m_lattice != ";")std::cout << "input line rejected, invalid cell" << std::endl;
+      m_lattice = "";
+      m_cell.SetValid(false);
+   }
+}
+
+void ReadComplexData::CellReader(const std::string& lattice, const std::string& cell) {
+   const int i19191 = 19191;
+}
+
+
 ReadComplexData::ReadComplexData(const int seed)
    : LRL_ReadLatticeData(seed)
 { }
 
 ReadComplexData ReadComplexData::read() {
-
+   std::getline(std::cin, m_strCell);
+   if (std::cin && (LRL_StringTools::strToupper(m_strCell.substr(0, 3)) != std::string("END"))) {
+      CellReader(m_strCell);
+   }
+   else {
+      m_lattice = "EOF";
+      m_cell.SetValid(false);
+   }
+   return *this;
 }
+
+//ReadComplexData ReadComplexData::read() {
+//
+//}
 
 void ComplexCell(const S6& s)
 {
@@ -58,17 +89,18 @@ void ComplexCell(const S6& s)
 int main()
 {
    std::cout << "; To Complex" << std::endl;
-
+   //ReadComplexData rcd;
+   //rcd.read();
    LRL_ReadLatticeData rld;
    rld.read();
-   
-   const std::string lattice = LRL_ToString(rld.GetStrCell()[0]);
-   const std::string strcell = rld.GetStrCell();
-   const std::string strCellWithoutLattice = strcell.substr(2, strcell.size() - 1);
-   rld.CellReader(lattice, strCellWithoutLattice);
-   if (!rld.IsValid())ComplexCell(rld.GetCell());
-   rld.CellReader("P", strCellWithoutLattice);
-   if (!rld.IsValid())ComplexCell(rld.GetCell());
+   const int i19191 = 19191;
+   //const std::string lattice = LRL_ToString(rld.GetStrCell()[0]);
+   //const std::string strcell = rld.GetStrCell();
+   //const std::string strCellWithoutLattice = strcell.substr(2, strcell.size() - 1);
+   //rld.CellReader(lattice, strCellWithoutLattice);
+   //if (!rld.IsValid())ComplexCell(rld.GetCell());
+   //rld.CellReader("P", strCellWithoutLattice);
+   //if (!rld.IsValid())ComplexCell(rld.GetCell());
 
 
 
@@ -93,17 +125,17 @@ int main()
    //   ComplexCell(test);
    //}
 
-   ComplexCell(S6(" 0 0 0 200  0 100"));
-   ComplexCell(S6(" 0 0 0 100 100 100"));
-   ComplexCell(S6(" 0 0 0 0 100 100"));
-   ComplexCell(S6(" 0 0 0 0 0 100"));
-   ComplexCell(S6(" 0 0 0 0 0 0"));
-   ComplexCell(S6("100 100 100 -1 0 0"));
-   ComplexCell(S6("100 100 100 1 0 0"));
-   ComplexCell(S6("100 100 100 0 0 0"));
-   ComplexCell(S6("-100 -100 -100 0 0 0"));
-   ComplexCell(S6("-100 -100 -100 0.01 0 0"));
-   ComplexCell(S6("-100 -100 -100 1 0 0"));
+   //ComplexCell(S6(" 0 0 0 200  0 100"));
+   //ComplexCell(S6(" 0 0 0 100 100 100"));
+   //ComplexCell(S6(" 0 0 0 0 100 100"));
+   //ComplexCell(S6(" 0 0 0 0 0 100"));
+   //ComplexCell(S6(" 0 0 0 0 0 0"));
+   //ComplexCell(S6("100 100 100 -1 0 0"));
+   //ComplexCell(S6("100 100 100 1 0 0"));
+   //ComplexCell(S6("100 100 100 0 0 0"));
+   //ComplexCell(S6("-100 -100 -100 0 0 0"));
+   //ComplexCell(S6("-100 -100 -100 0.01 0 0"));
+   //ComplexCell(S6("-100 -100 -100 1 0 0"));
 
    //ComplexCell(S6("-100 -100 -100 -30 -20 -10"));
    //ComplexCell(S6("100 100 100 30 20 10"));
