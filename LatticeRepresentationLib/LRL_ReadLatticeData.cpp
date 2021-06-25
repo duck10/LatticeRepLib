@@ -96,7 +96,7 @@ bool LRL_ReadLatticeData::SetRandomCell( const std::string& inputDataType) {
    return true;
 }
 
-bool LRL_ReadLatticeData::SetD7Data( const std::string& inputDataType, std::vector<double>& fields ) {
+bool LRL_ReadLatticeData::SetD7Data( const std::string& inputDataType, const std::vector<double>& fields ) {
    const bool test = IsLatticeName( m_inputDataType, vD7_names );
    if (test) {
       m_cell = LRL_Cell( D7( fields ) );
@@ -105,7 +105,7 @@ bool LRL_ReadLatticeData::SetD7Data( const std::string& inputDataType, std::vect
    return test;
 }
 
-bool LRL_ReadLatticeData::SetG6Data( const std::string& inputDataType, std::vector<double>& fields ) {
+bool LRL_ReadLatticeData::SetG6Data( const std::string& inputDataType, const std::vector<double>& fields ) {
    const bool test = IsLatticeName( m_inputDataType, vG6_names );
    if (test) {
       m_cell = LRL_Cell( G6( fields ) );
@@ -114,7 +114,7 @@ bool LRL_ReadLatticeData::SetG6Data( const std::string& inputDataType, std::vect
    return test;
 }
 
-bool LRL_ReadLatticeData::SetC3Data( const std::string& inputDataType, std::vector<double>& fields ) {
+bool LRL_ReadLatticeData::SetC3Data( const std::string& inputDataType, const std::vector<double>& fields ) {
    const bool test = IsLatticeName( m_inputDataType, vC3_names );
    if (test) {
       m_cell = LRL_Cell( C3( fields ) );
@@ -123,7 +123,7 @@ bool LRL_ReadLatticeData::SetC3Data( const std::string& inputDataType, std::vect
    return test;
 }
 
-bool LRL_ReadLatticeData::SetS6Data( const std::string& inputDataType, std::vector<double>& fields ) {
+bool LRL_ReadLatticeData::SetS6Data( const std::string& inputDataType, const std::vector<double>& fields ) {
    const bool test = IsLatticeName( m_inputDataType, vS6_names );
    if (test) {
       m_cell = LRL_Cell( S6( fields ) );
@@ -166,7 +166,7 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
       }
       if (toReturn.size() < 6) {
          toReturn.clear();
-         std::cout << "input line rejected, invalid cell" << std::endl;         m_lattice = "";
+         if ( m_lattice != ";") std::cout << "input line rejected, invalid cell" << std::endl;         m_lattice = "";
          m_cell.SetValid(false);
          return std::vector<double>();
       }
@@ -174,11 +174,9 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
    return toReturn;
 }
 
-void LRL_ReadLatticeData::CellReader(const std::string& s) {
+bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
    bool valid = false;
-   std::vector<double> fields = GetFieldsForCellFromString(s);
-
-   if (fields.size() < 6) return;
+   if (fields.size() < 6) return false;
    {
       const std::pair<std::vector<double>, std::vector<double> > params = SplitFields(6, fields);
       m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
@@ -190,12 +188,21 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
          SetC3Data(m_inputDataType, fields) ||
          SetUnitCellTypeData(m_inputDataType, params);
 
-      if (valid && params.second.size() >= 6) // ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
+      if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
          m_cell.SetSigmas(params.second);
+         return false;
+      }
    }
+   return valid;
+}
+
+void LRL_ReadLatticeData::CellReader(const std::string& s) {
+   std::vector<double> fields = GetFieldsForCellFromString(s);
+
+   bool valid = StringToCell(fields);
 
    if (!valid || !m_cell.GetValid()) {
-      if (m_lattice != ";")std::cout << "input line rejected, invalid cell" << std::endl;
+      if (s[0] != ';')std::cout << "input line rejected, invalid cell" << std::endl;
       m_lattice = "";
       m_cell.SetValid(false);
    }
@@ -228,7 +235,6 @@ std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimiti
    }
    return cellData;
 }
-
 
 LRL_ReadLatticeData::LRL_ReadLatticeData(const int seed )
 : generator(seed) {
