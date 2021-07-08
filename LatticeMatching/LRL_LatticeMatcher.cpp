@@ -240,7 +240,6 @@ std::pair<double, MV_Pair> LRL_LatticeMatcher::FindClosest(const S6& sample) con
    MV_Pair closest;
    const Scaler_MV scale(m_reducedReference);
    const S6 scaled_s = scale.Scale(sample);
-   //const S6 scaled_s = (sample);
    //if (!scaled_s.IsValid()) throw;
    const bool b = m_MVtree.NearestNeighbor(DBL_MAX, closest, MV_Pair(scaled_s, MatS6()));
    const double dist = (scaled_s - closest.GetS6()).norm();
