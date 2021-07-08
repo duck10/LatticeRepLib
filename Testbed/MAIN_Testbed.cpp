@@ -767,13 +767,14 @@ void GenerateFollowerPath() {
 }
 void TestDC1() {
    StoreResults<int, std::string> store(25);
-   for (size_t i = 0; i < 10000000; ++i) {
+   const double enlargeBy = 1000.0;
+   for (size_t i = 0; i < 100000000; ++i) {
       G6 g1 = G6::randDeloneUnreduced();
-      g1 = 1000.0 * g1 / g1.Norm(); // make norm(g1) = 100
+      g1 = enlargeBy * g1 / g1.Norm(); // make norm(g1) = 100
 
       G6 delta = G6::randDeloneUnreduced();
-      delta = 1000.0  * delta / delta.norm(); // make norm(delta) = 100
-      G6 g2 = g1 + 0.001 * delta; // shift g1 by a small amount
+      delta = enlargeBy * delta / delta.norm(); // make norm(delta) = enlargeBy
+      const G6 g2 = g1 + 0.001 * delta; // shift g1 by a small amount
 
       const DC d1(g1);
       const DC d2(g2);

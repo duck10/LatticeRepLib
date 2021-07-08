@@ -6,6 +6,7 @@
 //#include "stdafx.h"
 
 #include "CS6Dist.h"
+#include "CS6Dist.cpp"
 #include "D7.h"
 #include "G6.h"
 #include "S6.h"
