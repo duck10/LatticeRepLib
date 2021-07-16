@@ -72,7 +72,10 @@ const std::pair<int,int> Get2IntData( const std::vector<std::string>& s ) {
 void SetGlobalValue( const std::string& dataType, 
                      const std::vector<std::string>& value, 
                      void* pData ) {
-   if (value.size() > 2) {}
+   if (value.size() < 2) {
+      return;
+   }
+   else if (value.size() > 2) {}
    else if ( dataType == "bool" ) {
       *(bool*)pData = GetBoolData( value[1] );
    } else if ( dataType == "int" ) {

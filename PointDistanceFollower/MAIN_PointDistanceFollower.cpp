@@ -81,74 +81,6 @@ std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToFinish(const CellInputD
    return points;
 }
 
-std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell2ForModeLine(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
-   const std::vector<std::pair<S6, S6> > v1 = GenerateS6LineFromStartToFinish(cell1);
-   const std::vector<std::pair<S6, S6> > v2 = GenerateS6LineFromStartToFinish(cell2);
-   std::vector<std::pair<S6, S6> > vout;
-   for (size_t i = 0; i < v1.size(); ++i) {
-      vout.push_back(std::make_pair(v1[i].first, v2[i].first));
-   }
-   return vout;
-}
-
-std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeLine3(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
-   const S6 probe1 = cell1.GetCell();
-   const S6 probe2 = cell2.GetCell();
-   const S6 focus3 = cell3.GetCell();
-   const S6 midpoint = (probe1 + probe2) / 2.0;
-   const S6 delta1 = probe1 - midpoint;
-   const S6 delta2 = probe2 - midpoint;
-   std::vector<std::pair<S6, S6> > points1;
-   S6 reduced1;
-   S6 reduced2;
-
-   for (size_t step = 0; step<FollowerConstants::globalStepsPerFrame; ++step) {
-      const double t(double(step) / (FollowerConstants::globalStepsPerFrame - 1));
-      const S6 nextMid = (1.0 - t)*midpoint + t * focus3;
-      const S6 next1 = nextMid + delta1;
-      const S6 next2 = nextMid + delta2;
-
-      const bool b1 = Selling::Reduce(next1, reduced1);
-      const bool b2 = Selling::Reduce(next2, reduced2);
-      if (!b1 || !reduced1.IsAllMinus() || !reduced1.IsValid()) reduced1 = InvalidPoint();
-      if (!b2 || !reduced2.IsAllMinus() || !reduced2.IsValid()) reduced2 = InvalidPoint();
-      points1.push_back(std::make_pair(reduced1, reduced2));
-   }
-   return points1;
-}
-
-std::vector<std::pair<S6, S6> > GenerateS6LineFromStartToCell3ForModeTriangle(const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
-   const S6 probe1 = cell1.GetCell();
-   const S6 probe2 = cell2.GetCell();
-   const S6 focus3 = cell3.GetCell();
-
-   const S6 delta1 = (probe1 - focus3)/double(FollowerConstants::globalStepsPerFrame);
-   const S6 delta2 = (probe2 - focus3)/double(FollowerConstants::globalStepsPerFrame);
-   std::vector<std::pair<S6, S6> > points1;
-   S6 reduced1;
-   S6 reduced2;
-   S6 reducedFocus;
-
-   const bool bfocus = Selling::Reduce(focus3, reducedFocus);
-
-   for (size_t step = 1; step<FollowerConstants::globalStepsPerFrame+1; ++step) {
-      const double nonZeroStep = std::max(1.0E-3, double(step));
-      const double t(nonZeroStep / (FollowerConstants::globalStepsPerFrame - 1));
-
-      const S6 next1 = (1.0 - t) * probe1 + t * focus3;
-      const S6 next2 = (1.0 - t) * probe2 + t * focus3;
-
-      const bool b1 = Selling::Reduce(next1, reduced1);
-      if (!b1 || !reduced1.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced1 = InvalidPoint();
-      points1.push_back(std::make_pair(next1, reduced1));
-
-      const bool b2 = Selling::Reduce(next2, reduced2);
-      if (!b2 || !reduced2.IsAllMinus() || !LRL_Cell(reduced1).IsValid()) reduced2 = InvalidPoint();
-
-   }
-   return points1;
-}
-
 template<typename Tin, typename Tout, typename R>
 std::vector<std::pair<Tout, Tout> > ReducePath(const std::vector<std::pair<Tin, Tin> >& pin) {
    std::vector<std::pair<Tout, Tout> > out;
@@ -173,69 +105,15 @@ std::pair<std::string, std::string> GetLineEnds(const std::vector<std::pair<S6, 
    return std::make_pair(s1, s2);
 }
 
-MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plotCounter, const CellInputData& cell1,
-   const CellInputData& cell2, const CellInputData& cell3) {
-   const std::string baseFileName = NameOneFileForOneLattice(inputCellOrdinal) + LRL_ToString(plotCounter);
+std::string GetInputCells(const size_t numberInputCells, const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+   std::string toReturn = cell1.GetStrCell() + "\n";
+   if (numberInputCells == 2) toReturn += cell2.GetStrCell() + "\n";
+   if (numberInputCells == 3) toReturn += cell3.GetStrCell() + "\n";
+   return toReturn;
+}
 
-   const size_t npoints = FollowerConstants::globalStepsPerFrame;
-   std::unique_ptr<FollowerPathGenerator> fpg;
-   std::string inputCells;
-   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
-      std::unique_ptr<FollowerPathGenerator> fpgT(new FollowerTriangle(npoints, cell1.GetCell(), cell2.GetCell(), cell3.GetCell()));
-      fpg = std::move(fpgT);
-      inputCells += cell2.GetStrCell() + "\n";
-      inputCells += cell3.GetStrCell() + "\n";
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
-      std::unique_ptr<FollowerPathGenerator> fpgC3(new FollowerChord3(npoints, cell1.GetCell(), cell2.GetCell(), cell3.GetCell()));
-      fpg = std::move(fpgC3);
-      inputCells += cell2.GetStrCell() + "\n";
-      inputCells += cell3.GetStrCell() + "\n";
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) {
-      std::unique_ptr<FollowerPathGenerator> fpgC(new FollowerChord(npoints, cell1.GetCell(), cell2.GetCell()));
-      fpg = std::move(fpgC);
-      inputCells += cell2.GetStrCell() + "\n";
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
-      std::unique_ptr<FollowerPathGenerator> fpgL(new FollowerLine(npoints, cell1.GetCell(), cell2.GetCell()));
-      fpg = std::move(fpgL);
-      inputCells += cell2.GetStrCell() + "\n";
-   }
-   else {// globalSinglePoint
-      std::unique_ptr<FollowerPathGenerator> fpgP(new FollowerPoint(npoints, cell1.GetCell()));
-      fpg = std::move(fpgP);
-   }
-
-   std::string firstAndLastPoints;
+MultiFollower SetMultiFollower(const std::string& baseFileName, const std::unique_ptr<FollowerPathGenerator>& fpg) {
    const std::vector<std::pair<S6, S6> > path = fpg->GetPath();
-   std::pair<std::string, std::string> sp = GetLineEnds(path);
-   const size_t n = path.size();
-   const std::pair < std::string, std::string> pathExtremes = GetLineEnds(path);
-   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
-      firstAndLastPoints = pathExtremes.first + pathExtremes.second;
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
-      firstAndLastPoints = pathExtremes.first + pathExtremes.second;
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) {
-      firstAndLastPoints = pathExtremes.first + pathExtremes.second;
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
-      firstAndLastPoints = pathExtremes.first;
-   }
-   else {// globalSinglePoint
-      firstAndLastPoints = pathExtremes.first;
-   }
-
-
-   const std::string name = fpg->GetName();
-   GLOBAL_Report::globalDataReport +=
-      "\nINPUT   " + baseFileName + "   " + fpg->GetName() +
-      "\n" + cell1.GetStrCell() + "\n" + inputCells +
-      "  Path starts and ends \n" + firstAndLastPoints;
-
-
    const std::vector<std::pair<S6, S6> > sellingReducedPath = ReducePath<S6, S6, Selling>(path);
    const std::vector<std::pair<G6, G6> > niggliReducedPath = ReducePath<S6, G6, Niggli>(sellingReducedPath);
 
@@ -255,8 +133,28 @@ MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plot
    mf.SetTime2ComputeFrame(double(std::clock() - mf.GetComputeStartTime()));
 
    if (!mf.HasGlitches() && FollowerConstants::globalOutputGlitchesOnly) return mf;
-   SVG_DistancePlot<S6> distanceplot(mf, baseFileName);
+   return mf;
+}
+
+MultiFollower ProcessOneLattice(const size_t inputCellOrdinal, const size_t plotCounter, const CellInputData& cell1,
+   const CellInputData& cell2, const CellInputData& cell3) {
+   const std::string baseFileName = NameOneFileForOneLattice(inputCellOrdinal) + LRL_ToString(plotCounter);
+
+   const std::unique_ptr<FollowerPathGenerator>fpg = 
+      FollowerPathGenerator::PointerToFollowerPathType(cell1, cell2, cell3);
+
+   const std::string inputCells = GetInputCells(fpg->GetNumberOfInputCells(), cell1, cell2, cell3);
+   const std::string firstAndLastPoints = fpg->GetFirstAndLastPointsAsString();
+
+   GLOBAL_Report::globalDataReport +=
+      "\nINPUT   " + baseFileName + "   " + fpg->GetName() +
+      "\n" + cell1.GetStrCell() + "\n" + inputCells +
+      "  Path starts and ends \n" + firstAndLastPoints;
+
    std::cout << "#  " << baseFileName << std::endl;
+
+   MultiFollower mf(SetMultiFollower( baseFileName, fpg));
+   SVG_DistancePlot<S6> distanceplot(mf, baseFileName);
 
    return mf;
 }

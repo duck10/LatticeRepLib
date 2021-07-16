@@ -11,7 +11,7 @@ int main()
    std::cout << "; Niggli reduced" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    for (size_t i = 0; i < inputList.size(); ++i) {
-      LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
+      const LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
       //std::cout << pCell << std::endl;
       G6 g;
       const bool b = Niggli::Reduce(G6(pCell), g);

@@ -217,6 +217,26 @@ public:
 
          glitches.resize( m_multiFollow.size( ) );
          for (size_t counter = 0; counter < m_multiFollow.size( ); ++counter) {
+            folOut << "#S6  " << S6(pointsS6[0].first) << std::endl;
+         }
+         std::cout << std::endl;
+
+         for (size_t counter = 0; counter < m_multiFollow.size(); ++counter) {
+            folOut << "#S6  " << S6(pointsS6[0].second) << std::endl;
+         }
+         std::cout << std::endl;
+
+         for (size_t counter = 0; counter < m_multiFollow.size(); ++counter) {
+            folOut << "#S6  " << S6(pointsS6[counter].first) << std::endl;
+         }
+         std::cout << std::endl;
+
+         for (size_t counter = 0; counter < m_multiFollow.size(); ++counter) {
+            folOut << "#S6  " << S6(pointsS6[counter].second) << std::endl;
+         }
+         std::cout << std::endl;
+
+         for (size_t counter = 0; counter < m_multiFollow.size(); ++counter) {
             const std::string strS6 = (distancesS6.empty( )) ? "" : LRL_ToString( distancesS6[counter], " " );
             const std::string strG6 = (distancesG6.empty( )) ? "" : LRL_ToString( distancesG6[counter], " " );
             const std::string strD7 = (distancesD7.empty( )) ? "" : LRL_ToString( distancesD7[counter], " " );
