@@ -226,10 +226,7 @@ MultiFollower MultiFollower::GenerateAllDistances(void) {
    if (FollowerConstants::IsEnabled("DC")) m.m_dcpath = Converter<DC, std::vector<std::pair<DC, DC> >, Niggli>(m_SellingReducedPath);
    if (FollowerConstants::IsEnabled("DC")) m.m_dcpath = m_DCPath;
 
-
-   SetLatticePointChoiceForDistanceCalculation();
    m.SetLatticePointChoiceForDistanceCalculation();
-
    m.SetComputeStartTime();
 
    {

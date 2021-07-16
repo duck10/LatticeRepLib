@@ -1,4 +1,7 @@
+#include "FollowerConstants.h"
 #include "FollowerPathGenerator.h"
+#include "LRL_Cell_Degrees.h"
+#include "LRL_ToString.h"
 
 #include "Selling.h"
 
@@ -17,6 +20,55 @@ FollowerPoint::FollowerPoint(const size_t n, const S6& s1) {
       m_result.push_back(std::make_pair(next, reducedProbe));
    }
 }
+
+std::pair<std::string, std::string> FollowerPathGenerator::GetLineEnds(const std::vector<std::pair<S6, S6> >& v) const {
+   const size_t n = v.size();
+   const S6& s1f = v[0].first;
+   const S6& s2f = v[0].second;
+   const S6& s1s = v[n - 1].first;
+   const S6& s2s = v[n - 1].second;
+   const std::string s1 = "start, line1 " + LRL_ToString(LRL_Cell_Degrees(s1s), "\n  end, line1, ", LRL_Cell_Degrees(s1f), "\n");
+   const std::string s2 = "start, line2 " + LRL_ToString(LRL_Cell_Degrees(s2s), "\n  end, line2, ", LRL_Cell_Degrees(s2f), "\n");
+   return std::make_pair(s1, s2);
+}
+
+std::unique_ptr<FollowerPathGenerator> FollowerPathGenerator::PointerToFollowerPathType(
+   const CellInputData& cell1, const CellInputData& cell2, const CellInputData& cell3) {
+   std::unique_ptr<FollowerPathGenerator> fpg;
+   const size_t npoints = FollowerConstants::globalStepsPerFrame;
+
+   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
+      std::unique_ptr<FollowerTriangle> fpgT(new FollowerTriangle(npoints, cell1.GetCell(), cell2.GetCell(), cell3.GetCell()));
+      fpg = std::move(fpgT);
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
+      std::unique_ptr<FollowerChord3> fpgC3(new FollowerChord3(npoints, cell1.GetCell(), cell2.GetCell(), cell3.GetCell()));
+      fpg = std::move(fpgC3);
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) {
+      std::unique_ptr<FollowerChord> fpgC(new FollowerChord(npoints, cell1.GetCell(), cell2.GetCell()));
+      fpg = std::move(fpgC);
+   }
+   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalLine) {
+      std::unique_ptr<FollowerLine> fpgL(new FollowerLine(npoints, cell1.GetCell(), cell2.GetCell()));
+      fpg = std::move(fpgL);
+   }
+   else {// globalSinglePoint
+      std::unique_ptr<FollowerPoint> fpgP(new FollowerPoint(npoints, cell1.GetCell()));
+      fpg = std::move(fpgP);
+   }
+   fpg->SetName(fpg->GetName());
+
+   return fpg;
+}
+
+std::string  FollowerPathGenerator::GetFirstAndLastPointsAsString() const {
+   const std::string name = GetName();
+   const std::vector<std::pair<S6, S6> > path = GetPath();
+   const std::pair<std::string, std::string> sp = GetLineEnds(path);
+   return sp.first + sp.second;
+}
+
 
 FollowerLine::FollowerLine(const size_t n, const S6& s1, const S6& s2) {
    m_input.push_back(s1);
