@@ -76,12 +76,7 @@ LRL_LatticeMatcher::LRL_LatticeMatcher()
    , m_matrixGenerationRecursionDepth(2)
    , m_sphereSearchEnlargementfactor(2.0)
    , m_useOLD_Algorithm(false)
-{
-
-   BuildMatrixBase();
-
-   //BuildMatrixTree();
-}
+{}
 
 LRL_LatticeMatcher::LRL_LatticeMatcher(const int matrixGenerationRecursionDepth,
    const double sphereSearchEnlargementfactor,
@@ -94,11 +89,7 @@ LRL_LatticeMatcher::LRL_LatticeMatcher(const int matrixGenerationRecursionDepth,
    , m_matrixGenerationRecursionDepth(matrixGenerationRecursionDepth)
    , m_sphereSearchEnlargementfactor(sphereSearchEnlargementfactor)
    , m_useOLD_Algorithm(m_useOLD_Algorithm)
-{
-   BuildMatrixBase();
-
-   //BuildMatrixTree();
-}
+{}
 
 
 void LRL_LatticeMatcher::FillReflections() {
@@ -211,6 +202,7 @@ void LRL_LatticeMatcher::SetReferenceLattice(const S6& newReference) {
    m_originalReducedReferenceNorm = newReference.Norm();
 
    if ((newReference - m_reducedReference).norm() < 1.0E-4) return;
+   BuildMatrixBase();
    SetReferenceLattice(MV_Pair(newReference, MatS6().unit()));
 }
 
@@ -243,9 +235,14 @@ std::pair<double, MV_Pair> LRL_LatticeMatcher::FindClosest(const S6& sample) con
    //const S6 scaled_s = (sample);
    //if (!scaled_s.IsValid()) throw;
    const bool b = m_MVtree.NearestNeighbor(DBL_MAX, closest, MV_Pair(scaled_s, MatS6()));
-   const double dist = (scaled_s - closest.GetS6()).norm();
-   if (!b) throw("Nothing was within range, so probably m_MVtree is empty");
-   return std::make_pair(dist, closest);
+   if (!b) {
+      throw("Nothing was within range, so probably m_MVtree is empty");
+      return std::pair<double, MV_Pair>();
+   }
+   else {
+      const double dist = (scaled_s - closest.GetS6()).norm();
+      return std::make_pair(dist, closest);
+   }
 }
 
 std::vector<MV_Pair> LRL_LatticeMatcher::FindNearToClosest(const double d, const MV_Pair& sample) const {

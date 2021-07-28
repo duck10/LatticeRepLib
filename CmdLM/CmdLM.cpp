@@ -39,15 +39,22 @@ int main()
 {
    std::cout << "; Lattice Matching" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   const std::string referenceLattice = inputList[0].GetLattice();
-   const MatS6 mat_reference = GetMatrixToReturnToReference(referenceLattice, inputList[0].GetCell()); // NOTE: input cell
+   if (inputList.empty()) {
+      std::cout << "Lattice match requires something to match to" << std::endl;
+   } else {
+      const std::string referenceLattice = inputList[0].GetLattice();
+      const MatS6 mat_reference = GetMatrixToReturnToReference(referenceLattice, inputList[0].GetCell()); // NOTE: input cell
 
-   const std::vector<S6> vLat = GetInputSellingReducedVectors(inputList);
+      const std::vector<S6> vLat = GetInputSellingReducedVectors(inputList);
 
-   LRL_LatticeMatcher lm;
-   lm.SetReferenceLattice(vLat[0]); // Note that this uses the reduced cell
+      LRL_LatticeMatcher lm;
+      lm.SetRecursionDepth(2);
+      lm.SetReferenceLattice(vLat[0]); // Note that this uses the reduced cell
 
-   const std::vector<S6> vs = lm.MatchReference(vLat, mat_reference);
+      //lm.PrintMVtree();
 
-   std::cout << ListOutput(vs, referenceLattice);
+      const std::vector<S6> vs = lm.MatchReference(vLat, mat_reference);
+      std::cout << ListOutput(vs, referenceLattice);
+   }
+
 }
