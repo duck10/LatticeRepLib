@@ -11,6 +11,7 @@ class FollowerPathGenerator {
 public:
    friend std::ostream& operator<< (std::ostream&, const FollowerPathGenerator&);
 
+   virtual ~FollowerPathGenerator() {};
    size_t size() const { return m_result.size(); }
    std::vector<std::pair<S6, S6> > GetPath() const { return m_result; }
    virtual std::string GetName() const = 0;
