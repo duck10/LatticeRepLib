@@ -258,6 +258,15 @@ DC& DC::operator= (const B4& v) {
    return *this;
 }
 
+std::vector<double> DC::GetVector(void) const {
+   std::vector<double> v;
+   for (size_t i = 0; i < 7; ++i) {
+      v.push_back((*this)[i]);
+   }
+   return v;
+}
+
+
 std::vector<std::pair<double, Vector_3> > DC::Cell_to_V13(const LRL_Cell& c) {
    std::vector<std::pair<double, Vector_3> > g(13);
    const Matrix_3x3 cart = c.Cart();

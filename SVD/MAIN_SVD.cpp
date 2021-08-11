@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <vector>
 
+#include "DC.h"
+#include "LatticeConverter.h"
 #include "LRL_ToString.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
@@ -41,14 +43,31 @@ double DotS6(const S6& s1, const S6& s2) {
 int main()
 {
    std::cout << "; SVD" << std::endl;
-   const std::vector<LRL_ReadLatticeData> cellData = LRL_ReadLatticeData().ReadLatticeData();
+   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   std::vector<LRL_Cell> vcell;
+   for (size_t i = 0; i < inputList.size(); ++i) {
+      const LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
+      vcell.push_back(pCell);
+   }
 
    std::vector<std::vector<double> > a;
    std::vector<std::vector<double> > v;
    std::vector<double> w;
-   for (size_t n = 0; n < cellData.size(); ++n) {
-      const S6& s = cellData[n].GetCell();
-      a.push_back(s.GetVector());  // get the data into the data matrix
+
+   const std::string type = "DC7";    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   if (type == "S6") {
+      for (size_t n = 0; n < vcell.size(); ++n) {
+         const S6& s = vcell[n];
+         std::cout << "S6 from input cell " << s << std::endl;
+         a.push_back(s.GetVector());  // get the data into the data matrix
+      }
+   }
+   else if (type == "DC7") {
+      for (size_t i = 0; i < vcell.size(); ++i) {
+         const std::vector<double> d = DC(vcell[i]).GetVector();
+         a.push_back(d);
+      }
    }
 
    w.resize(a[0].size());
@@ -56,26 +75,33 @@ int main()
 
    svdcmp(a, w, v);
 
+   std::cout << std::endl;
    for (size_t i = 0; i < v.size(); ++i) {
-      std::cout << std::setw(5) << std::right << w[i] << "      " << LRL_ToString(v[i]) << std::endl;
+      std::cout << "eigenvalue " << std::setw(5) << std::right << w[i] << "    \t vector  \t";
+      for (size_t k = 0; k < v.size(); ++k) {
+         std::cout << v[k][i] << " ";
+      }
+      std::cout << std::endl;
    }
    std::cout << std::endl;
 
-   std::vector<S6> s(6);
+   std::vector<S6> s(a[0].size());
+
    s[0] = S6(v[0]);
    s[1] = S6(v[1]);
    s[2] = S6(v[2]);
    s[3] = S6(v[3]);
    s[4] = S6(v[4]);
    s[5] = S6(v[5]);
+   if (type == "DC7") s[6] = S6(v[6]);
 
 
-   for (size_t i = 0; i < cellData.size(); ++i) {
-      for (size_t n = 0; n < 6; ++n) {
-         std::cout << DotS6(s[n], cellData[i].GetCell()) << "  " ;
-      }
-      std::cout << std::endl;
-   }
+   //for (size_t i = 0; i < vcell.size(); ++i) {
+   //   for (size_t n = 0; n < a[0].size(); ++n) {
+   //      std::cout << DotS6(s[n], vcell[i]) << "  ";
+   //   }
+   //   std::cout << std::endl;
+   //}
 
    //TestCreator();
    return 0;

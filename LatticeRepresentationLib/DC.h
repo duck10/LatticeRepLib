@@ -48,7 +48,7 @@ public:
    double Norm() const { return m_vec.norm(); }
    double Norm(const DC& DC) const { return norm(DC); }
 
-   std::vector<double> GetVector(void) const { return GetVector(); }
+   std::vector<double> GetVector(void) const;
    double* data() const { return const_cast<double*>(m_vec.data()); }
    void SetVector(const std::vector<double>& v) { m_vec = v; }
    bool GetValid(void) const { return m_cellIsValid; }
