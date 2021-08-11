@@ -107,7 +107,6 @@ int main()
       vds[i] = inputList[i].GetCell();
    }
 
-   std::vector<double> vd;
    for (size_t i = 0; i < inputList.size(); ++i)
    {
       const DC dcA(inputList[i].GetCell());
