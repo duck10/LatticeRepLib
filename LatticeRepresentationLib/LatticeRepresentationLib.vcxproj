@@ -259,6 +259,7 @@
     <ClInclude Include="S6_Ordinals.h" />
     <ClInclude Include="SellaBuild.h" />
     <ClInclude Include="Selling.h" />
+    <ClInclude Include="svd.h" />
     <ClInclude Include="V7Dist.h" />
     <ClInclude Include="VecN.h" />
   </ItemGroup>

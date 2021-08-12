@@ -13,7 +13,8 @@ public:
    std::string m_name;
    std::string m_latticeType;
    std::string m_ITnumber;
-   std::string m_character;
+   std::string m_G6_character;
+   std::string m_DC7_character;
    double m_prjPrefix;
    std::string m_strProjector;
    MatG6 m_projector;  // from Paciorek & Bonin, 1992
@@ -88,12 +89,12 @@ public:
 
 class IT_Lat_Char_11a : public IT_Lat_Char_11 {
 public:
-   IT_Lat_Char_11a() : IT_Lat_Char_11() { m_ITnumber = "11a"; }
+   IT_Lat_Char_11a() : IT_Lat_Char_11() { m_ITnumber = "11a"; m_DC7_character = "(r,r,2r,2r,s,s+r,s+r)"; }
    bool IsMember(const G6& g) const { return (g[0] < g[2]/2.0); }
 };
 class IT_Lat_Char_11b : public IT_Lat_Char_11 {
 public:
-   IT_Lat_Char_11b() : IT_Lat_Char_11() { m_ITnumber = "11b"; }
+   IT_Lat_Char_11b() : IT_Lat_Char_11() { m_ITnumber = "11b"; m_DC7_character = "(r,r,2s,2r,2r,s+r,s+r)"; }
    bool IsMember(const G6& g) const { return (g[0] >= g[2]/2.0); }
 };
 

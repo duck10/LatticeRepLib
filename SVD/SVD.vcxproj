@@ -159,9 +159,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="svd.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="svd_backup.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
