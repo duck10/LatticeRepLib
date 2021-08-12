@@ -316,6 +316,9 @@
     <ClInclude Include="FollowerConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="svd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
