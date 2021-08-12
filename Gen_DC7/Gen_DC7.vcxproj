@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Code_That_Generated_IT_Types.cpp" />
     <ClCompile Include="Generated_IT_Types.cpp" />
     <ClCompile Include="Gen_DC7.cpp" />
   </ItemGroup>

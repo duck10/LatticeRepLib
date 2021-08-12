@@ -3,7 +3,31 @@
 #include <string>
 
 #include "Generated_IT_Types.h"
+#include "LRL_Cell.h"
 #include "MatG6.h"
+
+const size_t g_maxgen = 10000;
+
+IT_Lat_Char_Base::IT_Lat_Char_Base() {
+   std::string m_name;
+   std::string m_latticeType;
+   std::string m_ITnumber;
+   std::string m_character;
+   double m_prjPrefix;
+   std::string m_strProjector;
+   MatG6 m_projector;  // from Paciorek & Bonin, 1992
+}
+
+
+std::vector<G6> IT_Lat_Char_Base::CreateCells(const size_t n/* = 0 */) {
+   std::vector<G6> cells;
+   for (size_t i = 0; i < g_maxgen; ++i) {
+      const G6 g6 = m_projector * (G6().randDeloneUnreduced());
+      if (IsMember(g6) && LRL_Cell(g6).IsValid()) cells.push_back(g6);
+      if (cells.size() >= n) break;
+   }
+   return cells;
+}
 
 
 IT_Lat_Char_1::IT_Lat_Char_1() : IT_Lat_Char_Base() {
@@ -582,10 +606,13 @@ IT_Lat_Char_33::IT_Lat_Char_33() : IT_Lat_Char_Base() {
    */
 } // end of class IT_Lat_Char_33 constructor
 
-IT_Lat_Char_34::IT_Lat_Char_34() : IT_Lat_Char_Base() {
+
+// NOTE: Pacioric and Bonin seem to have reversed 34/35
+
+IT_Lat_Char_35::IT_Lat_Char_35() : IT_Lat_Char_Base() {
    m_name = "53C";
    m_latticeType = "mP";
-   m_ITnumber = "34";
+   m_ITnumber = "35";
    m_character = "(r, s, t, 0, 0, u)";
    m_prjPrefix = 1;
    m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 1";
@@ -598,12 +625,12 @@ IT_Lat_Char_34::IT_Lat_Char_34() : IT_Lat_Char_Base() {
    0 0 0 0 0 0
    0 0 0 0 0 1 ;
    */
-} // end of class IT_Lat_Char_34 constructor
+} // end of class IT_Lat_Char_35 constructor
 
-IT_Lat_Char_35::IT_Lat_Char_35() : IT_Lat_Char_Base() {
+IT_Lat_Char_34::IT_Lat_Char_34() : IT_Lat_Char_Base() {
    m_name = "53B";
    m_latticeType = "mP";
-   m_ITnumber = "35";
+   m_ITnumber = "34";
    m_character = "(r, s, t, u, 0, 0)";
    m_prjPrefix = 1;
    m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 0 0  0 0 0 0 0 0";
@@ -616,7 +643,7 @@ IT_Lat_Char_35::IT_Lat_Char_35() : IT_Lat_Char_Base() {
    0 0 0 0 0 0
    0 0 0 0 0 0 ;
    */
-} // end of class IT_Lat_Char_35 constructor
+} // end of class IT_Lat_Char_34 constructor
 
 IT_Lat_Char_36::IT_Lat_Char_36() : IT_Lat_Char_Base() {
    m_name = "50A";

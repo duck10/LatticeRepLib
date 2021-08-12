@@ -21,6 +21,9 @@
     <ClCompile Include="Generated_IT_Types.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Code_That_Generated_IT_Types.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Generated_IT_Types.h">
