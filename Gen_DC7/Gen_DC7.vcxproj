@@ -156,6 +156,9 @@
   <ItemGroup>
     <ClInclude Include="Generated_IT_Types.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Generated-2021-08-18.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

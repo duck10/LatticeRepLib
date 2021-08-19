@@ -30,4 +30,7 @@
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Generated-2021-08-18.txt" />
+  </ItemGroup>
 </Project>
