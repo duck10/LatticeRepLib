@@ -13,7 +13,7 @@ IT_Lat_Char_Base::IT_Lat_Char_Base()
    , m_latticeType("BASE")
    , m_ITnumber("BASE")
    , m_G6_character("BASE")
-   , m_DC7_character("")
+   , m_DC7_character("DC7_character NA")
    , m_prjPrefix(-19191.0E19)
    , m_strProjector("BASE")
    , m_projector("BASE")  // from Paciorek & Bonin, 1992
@@ -149,7 +149,7 @@ IT_Lat_Char_6::IT_Lat_Char_6() : IT_Lat_Char_Base() {
    m_name = "45D";
    m_latticeType = "tI";
    m_ITnumber = " 6";
-   m_G6_character =  "[r, r, r, -r -s, -r -s, 2s)";
+   m_G6_character =  "[r, r, r, -r+s, -r+s, -2s)";
    m_prjPrefix = 0.0384615;
    m_strProjector = "6 6 6 -4 -4 -4  6 6 6 -4 -4 -4  6 6 6 -4 -4 -4   -4 -4 -4 7 7 -6  -4 -4 -4 7 7 -6  -4 -4 -4 -6 -6 20";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
