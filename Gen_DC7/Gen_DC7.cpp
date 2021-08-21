@@ -83,7 +83,13 @@ void DC_SVD(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const std::vector<G6>
    store.Store(key, data);
    const size_t maxData = store.GetNmax();
    for (size_t i = 0; i < cells.size(); ++i) {
-      store.Store(key, LRL_ToString(cells[i]));
+      if (store.GetItemCount(key) <3) {
+         const size_t n = store.GetItemCount(key);
+         store.Store(key, LRL_ToString(cells[i], "\n", DC(cells[i]), "\n"));
+      }
+      else {
+         store.Store(key, LRL_ToString(cells[i]));
+      }
    }
 }
 

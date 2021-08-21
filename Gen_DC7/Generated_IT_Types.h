@@ -138,7 +138,7 @@ public:
 class IT_Lat_Char_8e : public IT_Lat_Char_8 {
 public:
    IT_Lat_Char_8e() : IT_Lat_Char_8() { m_ITnumber = " 8e"; m_DC7_character = "[r,r,r,r,2r-s,t+s,2r-t]"; }
-   bool IsMember(const G6& g) const { return (-g[4]<-g[3]) && (-2*g[4]-g[3] < 2*g[0]); }
+   bool IsMember(const G6& g) const { return (g[3] > 0) && (-g[4]<-g[3]) && (-2*g[4]-g[3] < 2*g[0]); }
 };
 class IT_Lat_Char_8f : public IT_Lat_Char_8 {
 public:

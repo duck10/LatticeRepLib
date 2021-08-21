@@ -8,6 +8,7 @@
 #include "LRL_ToString.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
+#include "Niggli.h"
 #include "svd.h"
 #include "S6.h"
 
@@ -64,9 +65,16 @@ int main()
       }
    }
    else if (type == "DC7") {
+      vcell.clear();
+      for (size_t i = 0; i < 1000000; ++i) {
+         G6 gout;
+         const bool b =  Niggli::Reduce(G6::rand(), gout);
+         vcell.push_back(gout);
+      }
       for (size_t i = 0; i < vcell.size(); ++i) {
-         const std::vector<double> d = DC(vcell[i]).GetVector();
-         a.push_back(d);
+         //const std::vector<double> d = DC(vcell[i]).GetVector();
+            const std::vector<double> d = DC::G6_to_V13(vcell[i]);
+            a.push_back(d);
       }
    }
 
