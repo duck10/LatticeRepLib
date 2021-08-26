@@ -57,7 +57,7 @@ IT_Lat_Char_1::IT_Lat_Char_1() : IT_Lat_Char_Base() {
    m_ITnumber = " 1";
    m_G6_character =  "[r, r, r, r, r, r)";
    m_DC7_character = "[r,r,r,r,r,r,2r]";
-   m_prjPrefix = 0.333333;
+   m_prjPrefix = 1.0/6.0;
    m_strProjector = "1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    /*
@@ -329,7 +329,7 @@ IT_Lat_Char_16::IT_Lat_Char_16() : IT_Lat_Char_Base() {
    m_name = "51A";
    m_latticeType = "oF";
    m_ITnumber = "16";
-   m_G6_character = "r, r, s, t, t, -2r -2t)";
+   m_G6_character = "r, r, s, -t, -t, -2r -2t)";
    m_prjPrefix = 0.1;
    m_strProjector = "3 3 0 -2 -2 -2  3 3 0 -2 -2 -2  0 0 10 0 0 0  -2 -2 0 3 3 -2  -2 -2 0 3 3 -2  -2 -2 0 -2 -2 8";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -347,7 +347,7 @@ IT_Lat_Char_17::IT_Lat_Char_17() : IT_Lat_Char_Base() {
    m_name = "57B";
    m_latticeType = "mC";
    m_ITnumber = "17";
-   m_G6_character =  "[r, r, s, t, u, -2r -t -u]";
+   m_G6_character = "[r, r, s, t, u, -2r -t -u]";
    m_prjPrefix = 0.1;
    m_strProjector = "3 3 0 -2 -2 -2  3 3 0 -2 -2 -2  0 0 10 0 0 0 -2 -2 0 8 -2 -2 -2 -2 0 -2 8 -2 -2 -2 0 -2 -2 8";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -440,7 +440,7 @@ IT_Lat_Char_22::IT_Lat_Char_22() : IT_Lat_Char_Base() {
    m_ITnumber = "22";
    m_G6_character = "[r, s, s, -s, 0, 0]";
    m_DC7_character = "[r, s, s, s, s + r, s + r, s + r]";
-   m_prjPrefix = 0.5;
+   m_prjPrefix = 1.0/3.0;
    m_strProjector = "3 0 0 0 0 0  0 1 1 -1 0 0  0 1 1 -1 0 0  0 -1 -1 1 0 0  0 0 0 0 0 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    /*
@@ -457,7 +457,7 @@ IT_Lat_Char_23::IT_Lat_Char_23() : IT_Lat_Char_Base() {
    m_name = "50E";
    m_latticeType = "oC";
    m_ITnumber = "23";
-   m_G6_character = "[r, s, s, t, 0, 0]";
+   m_G6_character = "[r, s, s, -t, 0, 0]";
    m_prjPrefix = 0.5;
    m_strProjector = "2 0 0 0 0 0  0 1 1 0 0 0  0 1 1 0 0 0  0 0 0 2 0 0  0 0 0 0 0 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -477,8 +477,8 @@ IT_Lat_Char_24::IT_Lat_Char_24() : IT_Lat_Char_Base() {
    m_ITnumber = "24";
    m_G6_character = "(3r, s, s, -s, -s+r, -2r, -2r)";
    m_DC7_character = "[r,s,s,s,s+r/3,s+r/3,s+r/3]";
-   m_prjPrefix = 0.0188679;
-   m_strProjector = "27 3 3 6 -18 -18  3 18 18 -17 -2 -2  3 18 18 -17 -2 -2  6 -17 -17 19 -4 -4  18 -2 -2 -4 12 12  -18 -2 -2 -4 12 12";
+   m_prjPrefix = 1.0/53.0;
+   m_strProjector = "27 3 3 6 -18 -18  3 18 18 -17 -2 -2  3 18 18 -17 -2 -2  6 -17 -17 19 -4 -4  -18 -2 -2 -4 12 12  -18 -2 -2 -4 12 12";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    /*
       m_projector = 0.509434 0.0566038 0.0566038 0.113208 -0.339623 -0.339623
@@ -636,6 +636,9 @@ IT_Lat_Char_33::IT_Lat_Char_33() : IT_Lat_Char_Base() {
 
 
 // NOTE: Pacioric and Bonin seem to have reversed 34/35
+// Also Andrews&Bernstein, 1988 
+// what does the IT say?
+
 
 IT_Lat_Char_35::IT_Lat_Char_35() : IT_Lat_Char_Base() {
    m_name = "53C";

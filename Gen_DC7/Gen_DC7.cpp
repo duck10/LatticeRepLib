@@ -14,7 +14,8 @@
 #include "StoreResults.h"
 #include "svd.h"
 
-StoreResults<std::string, std::string> store(5);
+const size_t numberOfExamplesToStore = 10;
+StoreResults<std::string, std::string> store(numberOfExamplesToStore);
 const size_t g_maxgen = 1000000;
 std::vector<G6> samples;
 
@@ -103,6 +104,7 @@ void CreateListOfTypes(std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
    vfpg.push_back(std::move(std::unique_ptr<IT_Lat_Char_Base>(new IT_Lat_Char_4b)));
    vfpg.push_back(std::move(std::unique_ptr<IT_Lat_Char_Base>(new IT_Lat_Char_5)));
    vfpg.push_back(std::move(std::unique_ptr<IT_Lat_Char_Base>(new IT_Lat_Char_6a)));
+
    vfpg.push_back(std::move(std::unique_ptr<IT_Lat_Char_Base>(new IT_Lat_Char_6b)));
    vfpg.push_back(std::move(std::unique_ptr<IT_Lat_Char_Base>(new IT_Lat_Char_7a)));
    vfpg.push_back(std::move(std::unique_ptr<IT_Lat_Char_Base>(new IT_Lat_Char_7b)));
@@ -213,7 +215,7 @@ std::vector<G6> Reduce(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const std:
       G6 gout;
       const bool b = Niggli::Reduce(projected, gout);
       const bool bproj = gout[3] > 0 && gout[4] > 0 && gout[5] > 0;
-      if ( b && (projected - gout).Norm() < 1.0E-5 && vfpg->IsMember(gout) && gout.IsValid())
+      if ( b && /*(projected - gout).Norm() < 1.0E-5 &&*/ vfpg->IsMember(gout) && gout.IsValid())
          output.push_back(gout);
    }
    return output;
@@ -258,14 +260,38 @@ void MonteCarloForOneType(const std::unique_ptr<IT_Lat_Char_Base>& vfpg) {
    exit(0);
 }
 
+void TestProjectors() {
+   //tested 2021-08-25 and found all projectors and prefixes are correct
+   // two prefixes were incorrect, and a minus sign had been lost in case 24
+
+   std::vector<std::unique_ptr<IT_Lat_Char_Base> > vfpg;
+   CreateListOfTypes(vfpg);
+   const G6 g = G6::rand();
+
+   for (size_t i = 0; i < vfpg.size(); ++i) {
+      const MatG6 projector = (vfpg[i]->m_projector);
+      const G6 g1 = projector * g;
+      const G6 g2 = projector * g1;
+      const double d = g2.norm() / g1.norm();
+      if (abs(d - 1.0) > 1.0e-3) {
+         std::cout << i << std::endl << g1 << std::endl << g2 << std::endl;
+         std::cout << "  d = " << d << vfpg[i]->m_ITnumber << " " << vfpg[i]->m_name << std::endl << std::endl;
+      }
+   }
+   exit(0);
+}
+
 
 int main()
 {
+
+   //TestProjectors();
    const bool noMonteCarlo = true;
 
       std::vector<std::unique_ptr<IT_Lat_Char_Base> > vfpg;
    if (noMonteCarlo) {
       std::cout << "; Generate sample G6 data for search DC7 types" << std::endl;
+      std::cout << "number of samples to generate " << g_maxgen << std::endl;
       CreateListOfTypes(vfpg);
       GenerateSamplesAndPerturbations(g_maxgen);
       Generate(vfpg);
