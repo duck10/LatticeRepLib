@@ -30,7 +30,6 @@ public:
    double m_prjPrefix;
    std::string m_strProjector;
    MatG6 m_projector;  // from Paciorek & Bonin, 1992
-   std::vector<G6> CreateCells(const size_t n = 0 );
    virtual std::string GetName() const { return m_name; }
    virtual std::string GetIT_Number() const { return m_ITnumber; }
 
@@ -244,7 +243,7 @@ public:
 class IT_Lat_Char_13a : public IT_Lat_Char_13 {
 public:
    IT_Lat_Char_13a() : IT_Lat_Char_13() { m_ITnumber = "13a"; m_DC7_character = "[r,r,2r-t,s,s+r,s+r,s+r]"; }
-   bool IsMember(const G6& g) const { return (G4Negative(g)) && (g[0] < (g[2] - g[5])/2 ) && (g[5] != 0); }
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (g[0] < (g[2] - g[5])/2 ) && Approx(g[3],g[4]); }
 };
 class IT_Lat_Char_13b : public IT_Lat_Char_13 {
 public:
