@@ -1,8 +1,11 @@
+#include <algorithm>
 #include <cstddef>
 #include <iomanip>
 #include <iostream>
+#include <utility>
 
 #include "DC.h"
+#include "Definitions.h"
 #include "Generated_IT_Types.h"
 #include"LatticeConverter.h"
 #include "LRL_ReadLatticeData.h"
@@ -13,15 +16,12 @@
 #include "Selling.h"
 #include "StoreResults.h"
 #include "svd.h"
-
-const size_t numberOfExamplesToStore = 10;
-StoreResults<std::string, std::string> store(numberOfExamplesToStore);
-const size_t g_maxgen = 1000000;
 std::vector<G6> samples;
+StoreResults<std::string, std::string> store(numberOfExamplesToDisplayInStore);
 
 const bool g_generateByPerturbation = false;
 
-void GenerateSamplesAndPerturbations(const size_t n) {
+std::vector<G6> GenerateSamplesAndPerturbations(const size_t n) {
    const G6 oneSample = G6().randDeloneUnreduced();
    samples.push_back(oneSample);
    for (size_t i = 0; i < n; ++i) {
@@ -35,14 +35,46 @@ void GenerateSamplesAndPerturbations(const size_t n) {
          samples.push_back(newSample);
       }
    }
+   return samples;
 }
 
-bool IsClose(const double a, const double b) {
-   return abs(a - b) < 1.0E-7;
+void FormatEigenValuesForStore(
+   const std::vector<std::pair<double, std::vector<double> > >& eigenResults,
+   const std::unique_ptr<IT_Lat_Char_Base>& vfpg,
+   const std::vector<std::vector<double> > v,
+   const std::vector<G6>& cells)
+{
+   std::string key;
+   for (size_t i = 0; i < 7; ++i) {
+      const double eigenvalue = eigenResults[v.size() - 1 - i].first;
+
+      key = vfpg->m_ITnumber + " (" + vfpg->m_name + ")";
+      std::string data = vfpg->m_ITnumber + " " + vfpg->m_name +
+         "  " + vfpg->m_latticeType + " " + vfpg->m_G6_character + "  " + 
+         vfpg->m_DC7_character + "\n";
+      if (eigenvalue > 1.0 || eigenvalue == 0) {
+         data += "eigenvalue " + LRL_ToString(eigenvalue) + " vector =  "
+            + LRL_ToString(eigenResults[v.size() - 1 - i].second) + "\n";
+      }
+   }
+
+   const std::string data = vfpg->m_ITnumber + " " + vfpg->m_name +
+      "  " + vfpg->m_latticeType + " " + vfpg->m_G6_character + "  " + vfpg->m_DC7_character + "\n";
+   if ( store.GetItemCount(key) == 0) store.Store(key, data);
+   const size_t maxData = store.GetNmax();
+   for (size_t i = 0; i < cells.size(); ++i) {
+      if (store.GetItemCount(key) < 3) {
+         const size_t n = store.GetItemCount(key);
+         store.Store(key, LRL_ToString(cells[i], "\n", DC(cells[i]), "\n"));
+      }
+      else {
+         store.Store(key, LRL_ToString(cells[i]));
+      }
+   }
 }
 
 void DC_SVD(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const std::vector<G6>& cells) {
-
+   //if ( cells.size() < 10 ) std::cout << " cells count in DC_SVD " << cells.size() << std::endl;
    if (cells.empty()) {
       store.Store(vfpg->m_ITnumber + " (" + vfpg->m_name + ")", "No valid cases found");
       return;
@@ -72,30 +104,46 @@ void DC_SVD(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const std::vector<G6>
 
    }
 
-   std::sort(eigenResults.begin(), eigenResults.end());
-   std::string key = vfpg->m_ITnumber + " (" + vfpg->m_name + ")";
-   std::string data = vfpg->m_ITnumber + " " + vfpg->m_name +
-      "  " + vfpg->m_latticeType + " " + vfpg->m_G6_character + "  " + vfpg->m_DC7_character + "\n";
-   const double test = eigenResults[0].second[6];
-   data += "largest eigenvalue " + LRL_ToString(eigenResults[v.size() - 1].first) + " vector =  "
-     + LRL_ToString(eigenResults[v.size() - 1].second);
-   data += LRL_ToString("\n", "next eigenvalue ", eigenResults[v.size() - 2].first, "\n");
 
-   store.Store(key, data);
-   const size_t maxData = store.GetNmax();
-   for (size_t i = 0; i < cells.size(); ++i) {
-      if (store.GetItemCount(key) <3) {
-         const size_t n = store.GetItemCount(key);
-         store.Store(key, LRL_ToString(cells[i], "\n", DC(cells[i]), "\n"));
-      }
-      else {
-         store.Store(key, LRL_ToString(cells[i]));
-      }
-   }
+   FormatEigenValuesForStore(eigenResults, vfpg, v, cells);
+
+
+
+
+
+   ////std::sort(eigenResults.begin(), eigenResults.end());
+   //std::string key = vfpg->m_ITnumber + " (" + vfpg->m_name + ")";
+   //std::string data = vfpg->m_ITnumber + " " + vfpg->m_name +
+   //   "  " + vfpg->m_latticeType + " " + vfpg->m_G6_character + "  " + vfpg->m_DC7_character + "\n";
+   ////const double test = eigenResults[0].second[6];
+   //////data += "largest eigenvalue " + LRL_ToString(eigenResults[v.size() - 1].first) + " vector =  "
+   //////  + LRL_ToString(eigenResults[v.size() - 1].second);
+   //////data += LRL_ToString("\n", "next eigenvalue ", eigenResults[v.size() - 2].first, "\n");
+   ////for (size_t i = 0; i < 7; ++i) {
+   ////   const double eigenvalue = eigenResults[v.size() - 1 - i].first;
+   ////   if (eigenvalue > 1.0 || eigenvalue == 0 )
+   ////   data += "eigenvalue " + LRL_ToString(eigenvalue) + " vector =  "
+   ////      + LRL_ToString(eigenResults[v.size() - 1 - i].second) + "\n";
+   ////}
+
+   //store.Store(key, data);
+   //const size_t maxData = store.GetNmax();
+   //for (size_t i = 0; i < cells.size(); ++i) {
+   //   if (store.GetItemCount(key) <3) {
+   //      const size_t n = store.GetItemCount(key);
+   //      store.Store(key, LRL_ToString(cells[i], "\n", DC(cells[i]), "\n"));
+   //   }
+   //   else {
+   //      store.Store(key, LRL_ToString(cells[i]));
+   //   }
+   //}
+}
+
+void FormatDataForStore() {
+
 }
 
 void CreateListOfTypes(std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
-   std::unique_ptr<IT_Lat_Char_Base> fpg;
 
    vfpg.push_back(std::move(std::unique_ptr<IT_Lat_Char_Base>(new IT_Lat_Char_1)));
    vfpg.push_back(std::move(std::unique_ptr<IT_Lat_Char_Base>(new IT_Lat_Char_2)));
@@ -207,6 +255,56 @@ void CreateListOfSelectedTypes(std::vector<std::unique_ptr<IT_Lat_Char_Base> >& 
 
 
 }
+std::vector<G6> GenerateRandomSamples(const size_t n) {
+   std::vector<G6> v;
+   for (size_t i = 0; i < n; ++i) {
+      v.push_back(G6().randDeloneUnreduced());
+   }
+   return v;
+}
+
+std::pair<bool, G6> TestOneSample(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const G6& sample) {
+   const MatG6& proj = vfpg->m_projector;
+   const G6 g1 = proj * sample;
+   G6 g2 = g1;
+   const bool b = Niggli::Reduce(proj * g1, g2);
+   const G6 g3 = proj * g2;
+   //std::cout << " input " << sample << std::endl;
+   //std::cout << "projected " << g1 << std::endl;
+   //std::cout << "Niggli reduced " << g2 << std::endl;
+   //std::cout << " projected again " << g3 << std::endl << std::endl;
+   const double d = (g3 - g2).norm();
+   const bool test1 = (g3 - g2).norm() < 1.0E-6;
+   const bool test2 = vfpg->IsMember(g3);;
+   const int i19191 = 19191;
+
+   return std::make_pair(test1 && test2, g3);
+}
+
+std::vector<G6> TestOneType(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const std::vector<G6>& samples) {
+   const MatG6& proj = vfpg->m_strProjector;
+   std::vector<G6> good;
+
+   for (size_t i = 0; i < samples.size(); ++i) {
+      const std::pair<bool, G6> out = TestOneSample(vfpg, samples[i]);
+      if (out.first) {
+         good.push_back(out.second);
+      }
+   }
+   return good;
+}
+
+void ProcessTypes(const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg, const std::vector<G6>& samples) {
+   for (size_t i = 0; i <vfpg.size(); ++i) {
+      const std::vector<G6> out = TestOneType(vfpg[i], samples);
+         std::cout << "start type # SVD " << i << " " << vfpg[i]->m_ITnumber << std::endl;
+      
+      for (size_t k = 0; k < out.size(); ++k) {
+         DC_SVD(vfpg[i], out);
+         //std::cout << i << " " << vfpg[i]->GetName() << " " << out[k].first << " " << out[k].second << std::endl;
+      }
+   }
+}
 
 std::vector<G6> Reduce(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const std::vector<G6>& g6) {
    std::vector<G6> output;
@@ -229,10 +327,11 @@ void Generate(const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
 
 }
 
-void MonteCarloForOneType(const std::unique_ptr<IT_Lat_Char_Base>& vfpg) {
-   StoreResults<double, G6> monte(5);
-   StoreResults<double, std::string> DCstore;
-   for (size_t i = 0; i < 2000000; ++i) {
+void MonteCarloForOneType(const size_t n, const std::unique_ptr<IT_Lat_Char_Base>& vfpg) {
+   //StoreResults<double, G6> monte(5);
+   //StoreResults<double, std::string> DCstore;
+   std::cout << "MonteCarloForOneType" << std::endl;
+   for (size_t i = 0; i < n; ++i) {
       G6 g1 = G6::rand();
       G6 gout;
       const bool b = Niggli::Reduce(g1, gout);
@@ -247,17 +346,16 @@ void MonteCarloForOneType(const std::unique_ptr<IT_Lat_Char_Base>& vfpg) {
       //std::cout << i << "  " << g1.norm() << "  " << (g1-g2).norm() / g1.Norm() << std::endl << std::endl;
       //std::cout << i << "  " << gnorm << "  " << dnorm << "  " << dnorm / gnorm << std::endl;
       const double key = double(int(100.0 * dnorm / gnorm)) / 100.0;
-      monte.Store(key, g1);
+      //monte.Store(key, g1);
 
-      const std::string examples = LRL_ToString("g6 ", g1,"\ng6 ",g2,"\n") +
-         LRL_ToString("DC7 ", DC(g1), "\nDC7 ", DC(g2), "\n") +
-         LRL_ToString("dnorm ", dnorm, "  gnorm ", gnorm, "\n");
+      //const std::string examples = LRL_ToString("g6 ", g1,"\ng6 ",g2,"\n") +
+      //   LRL_ToString("DC7 ", DC(g1), "\nDC7 ", DC(g2), "\n") +
+      //   LRL_ToString("dnorm ", dnorm, "  gnorm ", gnorm, "\n");
 
-      DCstore.Store(key, examples);
+      //DCstore.Store(key, examples);
    }
    //monte.ShowResults();
-   DCstore.ShowResults();
-   exit(0);
+   //DCstore.ShowResults();
 }
 
 void TestProjectors() {
@@ -281,6 +379,29 @@ void TestProjectors() {
    exit(0);
 }
 
+std::vector<G6> GenerationByPeturbation(const size_t n, const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
+   std::cout << "; Generate perturbation only sample G6 data for search DC7 types" << std::endl;
+   std::cout << "number of samples to generate " << n << std::endl;
+   const std::vector<G6> samples = GenerateSamplesAndPerturbations(n);
+   Generate(vfpg);
+   return samples;
+}
+
+void GenerationByMonteCarlo(const size_t n, const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
+   std::pair<G6, G6> samples;
+   for (size_t i = 0; i < vfpg.size(); ++i) {
+      MonteCarloForOneType(n, vfpg[i]);
+   }
+}
+
+std::vector<G6> GenerationByRandomAndProjection(const size_t n, const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
+   std::cout << "; Generate random and perturbed sample G6 data for search DC7 types" << std::endl;
+   std::cout << "number of samples to generate " << n << std::endl;
+   const std::vector<G6> samples = GenerateRandomSamples(n);
+   ProcessTypes(vfpg, samples);
+   return samples;
+}
+
 
 int main()
 {
@@ -288,22 +409,39 @@ int main()
    //TestProjectors();
    const bool noMonteCarlo = true;
 
-      std::vector<std::unique_ptr<IT_Lat_Char_Base> > vfpg;
-   if (noMonteCarlo) {
-      std::cout << "; Generate sample G6 data for search DC7 types" << std::endl;
-      std::cout << "number of samples to generate " << g_maxgen << std::endl;
-      CreateListOfTypes(vfpg);
-      GenerateSamplesAndPerturbations(g_maxgen);
-      Generate(vfpg);
-   }
-   else {
-     CreateListOfSelectedTypes(vfpg);
-     std::pair<G6, G6> samples;
-     for (size_t i = 0; i < vfpg.size(); ++i) {
-        MonteCarloForOneType(vfpg[i]);
-     }
+   std::vector<std::unique_ptr<IT_Lat_Char_Base> > vfpg;
+   CreateListOfTypes(vfpg);
+
+
+   const std::vector<G6> perturbationSamplesGenerationByPeturbation = GenerationByPeturbation(g_maxgen / 3, vfpg);
+   //GenerationByMonteCarlo(g_maxgen/3, vfpg);
+   const std::vector<G6> randomGenerationSamples = GenerationByRandomAndProjection(g_maxgen / 3, vfpg);
+
+   std::vector<G6> samples;
+   samples = perturbationSamplesGenerationByPeturbation;
+   samples.insert(samples.begin(), randomGenerationSamples.begin(), randomGenerationSamples.end());
+   for (size_t i = 0; i < vfpg.size(); ++i) {
+      DC_SVD(vfpg[i], samples);
    }
 
+   //   if (noMonteCarlo) {
+   //}
+   //else {
+   //  CreateListOfSelectedTypes(vfpg);
+   //  std::pair<G6, G6> samples;
+   //  for (size_t i = 0; i < vfpg.size(); ++i) {
+   //     MonteCarloForOneType(vfpg[i]);
+   //  }
+   //}
+   //{
+   //std::cout << "; Generate sample G6 data for search DC7 types" << std::endl;
+   //std::cout << "number of samples to generate " << g_maxgen << std::endl;
+   //CreateListOfTypes(vfpg);
+   //const std::vector<G6> samples = GenerateRandomSamples(g_maxgen);
+   //ProcessTypes(vfpg, samples);
+   //}
+
+   store.SetItemSeparator("==========================================================");
    store.ShowResultsByKeyAscending();
 
    exit(0);

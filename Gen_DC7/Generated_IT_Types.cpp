@@ -2,11 +2,11 @@
 #include <cstdio>
 #include <string>
 
+#include "Definitions.h"
 #include "Generated_IT_Types.h"
 #include "LRL_Cell.h"
 #include "MatG6.h"
 
-const size_t g_maxgen = 100000;
 
 IT_Lat_Char_Base::IT_Lat_Char_Base()
    : m_name("BASE")
@@ -28,28 +28,6 @@ G6 IT_Lat_Char_Base::GeneratePerturbation(const G6& v, const double amountToPert
    modVector = v.norm() * modVector / modVector.norm();
    return v + amountToPerturb * modVector;
 }
-
-std::vector<G6> IT_Lat_Char_Base::CreateCells(const size_t n/* = 0 */) {
-   std::vector<G6> cells;
-   G6().randDeloneUnreduced();
-   const G6 g6 = m_projector * (G6().randDeloneUnreduced());
-   size_t count = 0;
-   for (size_t i = 0; i < g_maxgen; ++i) {
-      ++count;
-      const G6 g6 = m_projector * (G6().randDeloneUnreduced());
-      if (IsMember(g6) && LRL_Cell(g6).IsValid()) cells.push_back(g6);
-      if (!cells.empty()) break;
-   }
-   count = 0;
-   for (size_t i = 0; i < g_maxgen; ++i) {
-      ++ count;
-      const G6 test = GeneratePerturbation(cells[0], 0.01);
-      if (IsMember(g6) && LRL_Cell(g6).IsValid()) cells.push_back(g6);
-      if (cells.size() >= n) break;
-   }
-   return cells;
-}
-
 
 IT_Lat_Char_1::IT_Lat_Char_1() : IT_Lat_Char_Base() {
    m_name = "44C";
