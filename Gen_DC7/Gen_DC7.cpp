@@ -402,6 +402,20 @@ std::vector<G6> GenerationByRandomAndProjection(const size_t n, const std::vecto
    return samples;
 }
 
+bool FilterForValidCell(const G6& g) {
+   if (!g.IsValid()) return false;
+   if (g[0] <= 0 || g[1] <= 0 || g[2] <= 0) return false;
+   return LRL_Cell(g).IsValid();
+}
+
+std::vector<G6> FilterForValidCell(const std::vector<G6>& vg) {
+   std::vector<G6> samples;
+   for (size_t i = 0; i < vg.size(); ++i) {
+      if (FilterForValidCell(vg[i])) samples.push_back(vg[i]);
+   }
+   return samples;
+}
+
 
 int main()
 {
