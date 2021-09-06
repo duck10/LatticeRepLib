@@ -7,14 +7,17 @@
 #include "G6.h"
 #include "MatG6.h"
 
-const double g_delta = 1.0E-6;
 
-static bool Approx(const double d1, const double d2, const double delta = g_delta) {
-   return abs(d1 - d2) < delta;
+static bool Approx(const double d1, const double d2) {
+   return abs(d1 - d2) < g_delta;
 }
 
-static bool Approx(const G6& g1, const G6& g2, const double delta = g_delta) {
-   return (g1 - g2).norm() < delta;
+static bool Approx(const double d1, const double d2, const double d3) {
+   return Approx(d1, d2) && Approx(d2, d3);
+}
+
+static bool Approx(const G6& g1, const G6& g2) {
+   return (g1 - g2).norm() < g_delta;
 }
 
 
@@ -65,8 +68,11 @@ public:
 class IT_Lat_Char_4a : public IT_Lat_Char_4 {
 public:
    IT_Lat_Char_4a() :IT_Lat_Char_4() { m_ITnumber = " 4a"; m_DC7_character = "[r,r,r,3r-3s,2r-s,2r-s,3r-s]"; }
-   bool IsMember(const G6& g) const { return (G4Negative(g)) && (g[4]<=0) && (g[0] >= -g[3]) && (-g[3] > g[0] / 2.0) && (g[3] <= 0.0); }
+   bool IsMember(const G6& g) const {
+      return (G4Negative(g)) && (g[4] <= 0) && (g[0] >= -g[3]) && (-g[3] > g[0] / 2.0) && (g[3] <= 0.0);
+   }
 };
+
 class IT_Lat_Char_4b : public IT_Lat_Char_4 {
 public:
    IT_Lat_Char_4b() :IT_Lat_Char_4() { m_ITnumber = " 4b"; m_DC7_character = "[r,r,r,2r-s,2r-s,2r-s,s+2r]"; }
@@ -114,12 +120,12 @@ public:
 class IT_Lat_Char_7a : public IT_Lat_Char_7 {
 public:
    IT_Lat_Char_7a() : IT_Lat_Char_7(){ m_ITnumber = " 7a"; m_DC7_character = "[r,r,r,r,2r-2s,s+r,s+r]"; }
-   bool IsMember(const G6& g) const { return (G4Negative(g)) && (g[0] / 2.0 >= -g[3]/2.0) && (-g[3]/2.0 > g[0]/3.0) && Approx(g[3], g[4]); };
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (g[0] / 2.0 >= -g[3]/2.0) && (-g[3]/2.0 > g[0]/3.0) && Approx(g[5], g[4]); };
 };
 class IT_Lat_Char_7b : public IT_Lat_Char_7 {
 public:
    IT_Lat_Char_7b() : IT_Lat_Char_7(){ m_ITnumber = " 7b"; m_DC7_character = "[r,r,r,r,s+r,s+r,2r-2s]"; }
-   bool IsMember(const G6& g) const { return (G4Negative(g)) && (-g[3]/2.0 <= g[0] / 3.0) && Approx(g[3], g[4]); };
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (-g[3]/2.0 <= g[0] / 3.0) && Approx(g[5], g[4]); };
 };
 
 class IT_Lat_Char_8 : public IT_Lat_Char_Base {
@@ -131,32 +137,32 @@ public:
 class IT_Lat_Char_8a : public IT_Lat_Char_8 {
 public:
    IT_Lat_Char_8a() : IT_Lat_Char_8() { m_ITnumber = " 8a"; m_DC7_character = "[r,r,r,r,t+s,2r-s,2r-t]"; }
-   bool IsMember(const G6& g) const { return (G4Positive(g)) && (-g[4] < -g[3]) && (-g[4] + 2 * (-g[3]) < 2 * g[0]); }
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (-g[4] < -g[3]) && (-g[4] + 2 * (-g[3]) < 2 * g[0]); }
 };
 class IT_Lat_Char_8b : public IT_Lat_Char_8 {
 public:
    IT_Lat_Char_8b() : IT_Lat_Char_8() { m_ITnumber = " 8b"; m_DC7_character = "[r,r,r,r,t+s,2r-t,2r-s]"; }
-   bool IsMember(const G6& g) const { return (G4Positive(g)) && (-g[4]>=-g[3]) && (2*(-g[4])-g[3]< 2*g[0]); }
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (-g[4]>=-g[3]) && (2*(-g[4])-g[3]< 2*g[0]); }
 };
 class IT_Lat_Char_8c : public IT_Lat_Char_8 {
 public:
    IT_Lat_Char_8c() : IT_Lat_Char_8() { m_ITnumber = " 8c"; m_DC7_character = "[r,r,r,r,2r-t,t+s,2r-s]"; }
-   bool IsMember(const G6& g) const { return (G4Positive(g)) && (-g[4]>=-g[3]) && ( 2*(-g[4])-g[3] >= 2*g[0]); }
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (-g[4]>=-g[3]) && ( 2*(-g[4])-g[3] >= 2*g[0]); }
 };
 class IT_Lat_Char_8d : public IT_Lat_Char_8 {
 public:
    IT_Lat_Char_8d() : IT_Lat_Char_8() { m_ITnumber = " 8d"; m_DC7_character = "[r,r,r,r,2r-t,2r-s,t+s]"; }
-   bool IsMember(const G6& g) const { return (G4Positive(g)) && (-g[4]>=-g[3]) && (-g[4]-2*g[3]>=2*g[0]); }
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (-g[4]>=-g[3]) && (-g[4]-2*g[3]>=2*g[0]); }
 };
 class IT_Lat_Char_8e : public IT_Lat_Char_8 {
 public:
    IT_Lat_Char_8e() : IT_Lat_Char_8() { m_ITnumber = " 8e"; m_DC7_character = "[r,r,r,r,2r-s,t+s,2r-t]"; }
-   bool IsMember(const G6& g) const { return (G4Positive(g)) && (-g[4]<-g[3]) && (-2*g[4]-g[3] < 2*g[0]); }
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (-g[4]<-g[3]) && (-2*g[4]-g[3] < 2*g[0]); }
 };
 class IT_Lat_Char_8f : public IT_Lat_Char_8 {
 public:
    IT_Lat_Char_8f() : IT_Lat_Char_8() { m_ITnumber = " 8f"; m_DC7_character = "[r,r,r,r,2r-s,2r-t,t+s]"; }
-   bool IsMember(const G6& g) const { return (G4Positive(g)) && (-g[4]<-g[3]) && (-2*g[4]-g[3]>=2*g[0]); }
+   bool IsMember(const G6& g) const { return (G4Negative(g)) && (-g[4]<-g[3]) && (-2*g[4]-g[3]>=2*g[0]); }
 };
 
 class IT_Lat_Char_9 : public IT_Lat_Char_Base {
@@ -349,7 +355,7 @@ public:
 class IT_Lat_Char_20 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_20();
-   bool IsMember(const G6& g) const { return Approx(g[5], g[4]); } //Roof says either +++ or ---
+   bool IsMember(const G6& g) const { return G4Positive(g) && Approx(g[5], g[4]); } //Roof says either +++ or ---
 };
 
 class IT_Lat_Char_21 : public IT_Lat_Char_Base {
@@ -389,7 +395,7 @@ public:
 class IT_Lat_Char_25 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_25();
-   bool IsMember(const G6& g) const { return Approx(g[5], g[4]); } //Roof says either +++ or ---
+   bool IsMember(const G6& g) const { return G4Positive(g) && Approx(g[5], g[4]); } //Roof says either +++ or ---
 };
 
 class IT_Lat_Char_26 : public IT_Lat_Char_Base {
@@ -460,17 +466,17 @@ public:
    bool IsMember(const G6& g) const { return g[2] >= g[1] + g[0]; }
 };
 
-
-#define r (g[0])
-#define s (g[1])
-#define t (g[2])
-#define u (-g[3])
-
 class IT_Lat_Char_33 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_33();
    bool IsMember(const G6& g) const = 0;
 };
+
+
+#define r (g[0])
+#define s (g[1])
+#define t (g[2])
+#define u (-g[4])
 
 class IT_Lat_Char_33a : public IT_Lat_Char_33 {
 public:
@@ -487,6 +493,12 @@ public:
    IT_Lat_Char_33c() : IT_Lat_Char_33() { m_ITnumber = "33c"; m_DC7_character = "[r,s,s+r,s+r,t,-u+t+r,t+s]"; }
    bool IsMember(const G6& g) const { return (G4Negative(g)) && (g[2] >=g[1]+g[0]) && (g[4] != 0); }
 };
+
+
+#undef u
+#define u (-g[3])
+
+
 
 class IT_Lat_Char_34 : public IT_Lat_Char_Base {
 public:

@@ -263,16 +263,33 @@ std::vector<G6> GenerateRandomSamples(const size_t n) {
    return v;
 }
 
+std::vector<G6> GenerateReducedRandomSamples(const size_t n) {
+   std::vector<G6> v;
+   for (size_t i = 0; i < n; ++i) {
+      const G6 oneCell = G6().rand();
+      G6 next = IT_Lat_Char_Base::GeneratePerturbation(oneCell, 0.1);
+      G6 out;
+      if ( i%2==0) const bool b = Niggli::Reduce(oneCell, out);
+      if ( i%2==1) const bool b = Niggli::Reduce(oneCell, out);
+      v.push_back(out);
+   }
+   return v;
+}
+
 std::pair<bool, G6> TestOneSample(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const G6& sample) {
    const MatG6& proj = vfpg->m_projector;
    const G6 g1 = proj * sample;
    G6 g2 = g1;
-   const bool b = Niggli::Reduce(proj * g1, g2);
+   const bool b = Niggli::Reduce(g1, g2);
    const G6 g3 = proj * g2;
-   //std::cout << " input " << sample << std::endl;
+   //std::cout << "input " << sample << std::endl;
    //std::cout << "projected " << g1 << std::endl;
-   //std::cout << "Niggli reduced " << g2 << std::endl;
-   //std::cout << " projected again " << g3 << std::endl << std::endl;
+   //std::cout << "Niggli_reduced " << g2 << std::endl;
+   //std::cout << "projected_again " << g3 << std::endl << std::endl;
+   //std::cout << "input " << LRL_Cell_Degrees(sample) << std::endl;
+   //std::cout << "projected " << LRL_Cell_Degrees(g1) << std::endl;
+   //std::cout << "Niggli_reduced " << LRL_Cell_Degrees(g2) << std::endl;
+   //std::cout << "projected_again " << LRL_Cell_Degrees(g3) << std::endl << std::endl;
    const double d = (g3 - g2).norm();
    const bool test1 = (g3 - g2).norm() < 1.0E-6;
    const bool test2 = vfpg->IsMember(g3);;
@@ -311,20 +328,23 @@ std::vector<G6> Reduce(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const std:
    for (size_t i = 0; i < g6.size(); ++i) {
       const G6 projected = vfpg->m_projector * g6[i];
       G6 gout;
-      const bool b = Niggli::Reduce(projected, gout);
+      const bool b1 = Niggli::Reduce(projected, gout);
+      const bool b2 = (projected - gout).Norm() < 1.0E-5;
       const bool bproj = gout[3] > 0 && gout[4] > 0 && gout[5] > 0;
-      if ( b && /*(projected - gout).Norm() < 1.0E-5 &&*/ vfpg->IsMember(gout) && gout.IsValid())
+      if ( b1 && (projected - gout).Norm() < 1.0E-5 && vfpg->IsMember(gout) && gout.IsValid())
          output.push_back(gout);
    }
    return output;
 }
 
-void Generate(const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
+std::vector<G6>  Generate(const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
+   std::vector<G6> out;
    for (size_t i = 0; i < vfpg.size(); ++i) {
       const std::vector<G6> cells = Reduce(vfpg[i], samples);
+      out.insert(out.begin(), cells.begin(), cells.end());
       DC_SVD(vfpg[i], cells);
    }
-
+   return out;
 }
 
 void MonteCarloForOneType(const size_t n, const std::unique_ptr<IT_Lat_Char_Base>& vfpg) {
@@ -383,8 +403,8 @@ std::vector<G6> GenerationByPeturbation(const size_t n, const std::vector<std::u
    std::cout << "; Generate perturbation only sample G6 data for search DC7 types" << std::endl;
    std::cout << "number of samples to generate " << n << std::endl;
    const std::vector<G6> samples = GenerateSamplesAndPerturbations(n);
-   Generate(vfpg);
-   return samples;
+   const std::vector<G6> out = Generate(vfpg);
+   return out;
 }
 
 void GenerationByMonteCarlo(const size_t n, const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg) {
@@ -416,44 +436,68 @@ std::vector<G6> FilterForValidCell(const std::vector<G6>& vg) {
    return samples;
 }
 
+std::vector<G6> FilterListForType(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const std::vector <G6>& vg) {
+   std::vector<G6> out;
+   for (size_t i = 0; i < vg.size(); ++i) {
+      const G6 projected = vfpg->m_projector * vg[i];
+      G6 gout;
+      const bool b1 = Niggli::Reduce(projected, gout);
+      const bool b2 = (projected - gout).Norm() < 1.0E-5;
+      const bool bproj = gout[3] > 0 && gout[4] > 0 && gout[5] > 0;
+      if (b1 && (projected - gout).Norm() < 1.0E-5 && vfpg->IsMember(gout) && gout.IsValid())
+         out.push_back(gout);
+   }
+   return out;
+}
+
 
 int main()
 {
+   std::vector<std::unique_ptr<IT_Lat_Char_Base> > vfpg;
+   CreateListOfTypes(vfpg);
+
+   const std::vector<G6> vred = GenerateReducedRandomSamples(g_maxgen);
+   for (size_t i = 0; i < vfpg.size(); ++i) {
+      const std::vector<G6> accepted = FilterListForType(vfpg[i], vred);
+      DC_SVD(vfpg[i], accepted);
+   }
+
+   store.SetItemSeparator("==========================================================");
+   store.ShowResultsByKeyAscending();
+   exit(0);
 
    //TestProjectors();
    const bool noMonteCarlo = true;
 
-   std::vector<std::unique_ptr<IT_Lat_Char_Base> > vfpg;
-   CreateListOfTypes(vfpg);
 
+   //const std::vector<G6> perturbationSamplesGenerationByPeturbation = GenerationByPeturbation(g_maxgen / 3, vfpg);
+   ////GenerationByMonteCarlo(g_maxgen/3, vfpg);
+   //const std::vector<G6> randomGenerationSamples = GenerationByRandomAndProjection(g_maxgen / 3, vfpg);
 
-   const std::vector<G6> perturbationSamplesGenerationByPeturbation = GenerationByPeturbation(g_maxgen / 3, vfpg);
-   //GenerationByMonteCarlo(g_maxgen/3, vfpg);
-   const std::vector<G6> randomGenerationSamples = GenerationByRandomAndProjection(g_maxgen / 3, vfpg);
+   //std::vector<G6> samples;
+   //samples.insert(samples.end(), 
+   //   perturbationSamplesGenerationByPeturbation.begin(), perturbationSamplesGenerationByPeturbation.end());
+   //samples.insert(samples.end(), randomGenerationSamples.begin(), randomGenerationSamples.end());
+   //for (size_t i = 0; i < vfpg.size(); ++i) {
+   //   DC_SVD(vfpg[i], samples);
+   //}
 
-   std::vector<G6> samples;
-   samples = perturbationSamplesGenerationByPeturbation;
-   samples.insert(samples.begin(), randomGenerationSamples.begin(), randomGenerationSamples.end());
-   for (size_t i = 0; i < vfpg.size(); ++i) {
-      DC_SVD(vfpg[i], samples);
+      if (noMonteCarlo) {
    }
-
-   //   if (noMonteCarlo) {
-   //}
-   //else {
-   //  CreateListOfSelectedTypes(vfpg);
-   //  std::pair<G6, G6> samples;
-   //  for (size_t i = 0; i < vfpg.size(); ++i) {
-   //     MonteCarloForOneType(vfpg[i]);
-   //  }
-   //}
-   //{
-   //std::cout << "; Generate sample G6 data for search DC7 types" << std::endl;
-   //std::cout << "number of samples to generate " << g_maxgen << std::endl;
-   //CreateListOfTypes(vfpg);
-   //const std::vector<G6> samples = GenerateRandomSamples(g_maxgen);
-   //ProcessTypes(vfpg, samples);
-   //}
+   else {
+//     CreateListOfSelectedTypes(vfpg);
+     std::pair<G6, G6> samples;
+     for (size_t i = 0; i < vfpg.size(); ++i) {
+        MonteCarloForOneType(g_maxgen, vfpg[i]);
+     }
+   }
+   {
+   std::cout << "; Generate sample G6 data for search DC7 types" << std::endl;
+   std::cout << "number of samples to generate " << g_maxgen << std::endl;
+//   CreateListOfTypes(vfpg);
+   const std::vector<G6> samples = GenerateRandomSamples(g_maxgen);
+   ProcessTypes(vfpg, samples);
+   }
 
    store.SetItemSeparator("==========================================================");
    store.ShowResultsByKeyAscending();

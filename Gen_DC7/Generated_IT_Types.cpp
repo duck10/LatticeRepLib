@@ -163,7 +163,7 @@ IT_Lat_Char_8::IT_Lat_Char_8() : IT_Lat_Char_Base() {
    m_name = "52A";
    m_latticeType = "oI";
    m_ITnumber = " 8";
-   m_G6_character = "[r, r, r, s, t, -2r-s-t]";
+   m_G6_character = "[r, r, r, -s, -t, -2r+s+t]";
    m_prjPrefix = 1.0/13.0;
    m_strProjector = "3 3 3 -2 -2 -2   3 3 3 -2 -2 -2   3 3 3 -2 -2 -2   -2 -2 -2 10 -3 -3   -2 -2 -2 -3 10 -3   -2 -2 -2 -3 -3 10";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -622,7 +622,7 @@ IT_Lat_Char_35::IT_Lat_Char_35() : IT_Lat_Char_Base() {
    m_name = "53C";
    m_latticeType = "mP";
    m_ITnumber = "35";
-   m_G6_character = "[r, s, t, 0, 0, u]";
+   m_G6_character = "[r, s, t, 0, 0, -u]";
    m_prjPrefix = 1;
    m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -640,7 +640,7 @@ IT_Lat_Char_34::IT_Lat_Char_34() : IT_Lat_Char_Base() {
    m_name = "53B";
    m_latticeType = "mP";
    m_ITnumber = "34";
-   m_G6_character = "[r, s, t, u, 0, 0]";
+   m_G6_character = "[r, s, t, -u, 0, 0]";
    m_prjPrefix = 1;
    m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 0 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
