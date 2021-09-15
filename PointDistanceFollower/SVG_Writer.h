@@ -94,7 +94,7 @@ private:
             nameForType + "  " + timestamp;
          svg += LRL_DataToSVG("\n   <line  x1=\"600\"   y1=", ToQuotedString(yheight), " x2 = \"900\" y2=", ToQuotedString(yheight));
          svg += LRL_DataToSVG(" fill=\"none\" stroke=\"", colorForName, "\"");
-         svg += LRL_DataToSVG(strokeWidth, " stroke-dasharray = \"", dashmode, "\"></line> \\n");
+         svg += LRL_DataToSVG(strokeWidth, " stroke-dasharray = \"", dashmode, "\"></line> \n");
       }
       return svg;
    }
