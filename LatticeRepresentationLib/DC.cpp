@@ -327,16 +327,16 @@ double DC::DistanceBetween(const DC& v1, const DC& v2) {
    const std::vector<double> lengths2 = G6_to_V13(g2);
 
    double sum = 0.0;
-   //for (size_t i = 0; i < 7; ++i)
-   //   sum += (lengths1[i] - lengths2[i]) * (lengths1[i] - lengths2[i]);
-   return sqrt(
-      (lengths1[0] - lengths2[0]) * (lengths1[0] - lengths2[0]) +
-      (lengths1[1] - lengths2[1]) * (lengths1[1] - lengths2[1]) +
-      (lengths1[2] - lengths2[2]) * (lengths1[2] - lengths2[2]) +
-      (lengths1[3] - lengths2[3]) * (lengths1[3] - lengths2[3]) +
-      (lengths1[4] - lengths2[4]) * (lengths1[4] - lengths2[4]) +
-      (lengths1[5] - lengths2[5]) * (lengths1[5] - lengths2[5]) +
-      (lengths1[6] - lengths2[6]) * (lengths1[6] - lengths2[6]));
+   for (size_t i = 0; i < 8; ++i)
+      sum += (lengths1[i] - lengths2[i]) * (lengths1[i] - lengths2[i]);
+   //return sqrt(
+   //   (lengths1[0] - lengths2[0]) * (lengths1[0] - lengths2[0]) +
+   //   (lengths1[1] - lengths2[1]) * (lengths1[1] - lengths2[1]) +
+   //   (lengths1[2] - lengths2[2]) * (lengths1[2] - lengths2[2]) +
+   //   (lengths1[3] - lengths2[3]) * (lengths1[3] - lengths2[3]) +
+   //   (lengths1[4] - lengths2[4]) * (lengths1[4] - lengths2[4]) +
+   //   (lengths1[5] - lengths2[5]) * (lengths1[5] - lengths2[5]) +
+   //   (lengths1[6] - lengths2[6]) * (lengths1[6] - lengths2[6]));
 
-   //return sqrt(sum);
+   return sqrt(sum);
 }
