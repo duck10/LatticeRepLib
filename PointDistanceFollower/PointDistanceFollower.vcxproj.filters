@@ -29,6 +29,9 @@
     <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Follower_Types.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReadGlobalData.h">
@@ -59,6 +62,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Follower_Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

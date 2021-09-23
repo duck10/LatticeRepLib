@@ -63,8 +63,10 @@ public:
 
    std::vector<double> GetAreas() const;
    std::vector<std::string> GetStringIndices();
-   std::string GetName() const { return "D13"; }
+  static  std::string GetName()  { return "D13"; }
    size_t size() const { return m_vec.size(); }
+
+   LRL_Cell GetCell() const { return m_cell; }
 
 private:
    LRL_Cell m_cell;
