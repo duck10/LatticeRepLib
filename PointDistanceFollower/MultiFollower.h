@@ -15,9 +15,13 @@
 #include "LM.h"
 #include "LRL_Path.h"
 #include "LRL_MinMaxTools.h"
+#include "MultiFollower.h"
 #include "S6.h"
 #include "D7.h"
 #include "OutlierFinder.h"
+
+enum m_enumLatticePointChoiceForDistanceCalculation { versusFirstPoint, versusCorrespondingPoint };
+static m_enumLatticePointChoiceForDistanceCalculation m_latticePointChoiceForDistanceCalculation;
 
 
 class MultiFollower {
@@ -84,6 +88,8 @@ public:
    std::vector<std::pair<DC, DC> > GetDCPath( ) const { return m_DCPath; }
    void SetInputVectors(const std::vector<S6>& v);
    std::string GetInputVectors() const { return m_inputVectors; }
+   std::vector<std::pair<S6, S6> > GetSellingReducedPath() const { return m_SellingReducedPath; }
+   std::vector<std::pair<G6, G6> > GetNiggliReducedPath() const { return m_NiggiReducedPath; }
 
 private:
    LRL_Path<S6> m_s6path;

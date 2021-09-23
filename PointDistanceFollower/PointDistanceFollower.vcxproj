@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.cpp" />
     <ClCompile Include="FollowerIO.cpp" />
+    <ClCompile Include="Follower_Types.cpp" />
     <ClCompile Include="MAIN_PointDistanceFollower.cpp" />
     <ClCompile Include="Multifollower.cpp" />
     <ClCompile Include="OutlierFinder.cpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="DistanceLineDescriptions.h" />
     <ClInclude Include="FileWriter.h" />
     <ClInclude Include="FollowerIO.h" />
+    <ClInclude Include="Follower_Types.h" />
     <ClInclude Include="LRL_Path.h" />
     <ClInclude Include="MultiFollower.h" />
     <ClInclude Include="OutlierFinder.h" />

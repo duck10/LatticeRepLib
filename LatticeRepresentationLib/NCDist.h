@@ -2041,7 +2041,7 @@ static double NCDist_pass(double gvec1[6], double gvec2[6], double dist) {
 }
 
 
-double NCDist(double * gvec1, double * gvec2) {
+static double NCDist(double * gvec1, double * gvec2) {
    double dist, dist1, dist2, distmin;
    double ndist1[24];
    double ndist2[24];

@@ -113,9 +113,12 @@ std::string GetInputCells(const size_t numberInputCells, const CellInputData& ce
 }
 
 MultiFollower SetMultiFollower(const std::string& baseFileName, const std::unique_ptr<FollowerPathGenerator>& fpg) {
+   MultiFollower mf;
    const std::vector<std::pair<S6, S6> > path = fpg->GetPath();
-   const std::vector<std::pair<S6, S6> > sellingReducedPath = ReducePath<S6, S6, Selling>(path);
-   const std::vector<std::pair<G6, G6> > niggliReducedPath = ReducePath<S6, G6, Niggli>(sellingReducedPath);
+   mf.SetSellingPath(ReducePath<S6, S6, Selling>(path));
+   const std::vector< std::pair<S6, S6> > sellingReducedPath(mf.GetSellingReducedPath());
+   const std::vector< std::pair<G6, G6> > niggliReducedPath(ReducePath<S6, G6, Niggli>(sellingReducedPath));
+   mf.SetNiggliPath(niggliReducedPath);
 
    std::vector<std::pair<DC, DC> > DCpath;
    if (FollowerConstants::IsEnabled("DC")) {
@@ -123,9 +126,6 @@ MultiFollower SetMultiFollower(const std::string& baseFileName, const std::uniqu
          DCpath.push_back(std::make_pair(DC(niggliReducedPath[i].first), DC(niggliReducedPath[i].second)));
    }
 
-   MultiFollower mf;
-   mf.SetNiggliPath(niggliReducedPath);
-   mf.SetSellingPath(sellingReducedPath);
    mf.SetDCPath(DCpath);
    mf.SetInputVectors(fpg->GetInput());
 
