@@ -3,11 +3,19 @@
 #include "NCDist.h"
 #include "S6.h"
 
-Follower_Type_D13::Follower_Type_D13()
-   : Follower_Type_Base<D13>()
+Follower_Type::Follower_Type (const Follower_Type_D13)
+   : m_name("D13")
 {
-   m_name =D13::GetName();
+   m_SellingPath = ??????????????????????????;
+   m_NiggliPath.clear();
+   m_D13Path.clear();
 }
+
+//Follower_Type_D13::Follower_Type_D13()
+//   : Follower_Type_Base<D13>()
+//{
+//   m_name =D13::GetName();
+//}
 
 MultiFollower Follower_Type_D13::CalculateDistances(const MultiFollower& mf) const {
 

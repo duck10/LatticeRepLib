@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29505.145
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LatticeRepresentationLib", "LatticeRepresentationLib\LatticeRepresentationLib.vcxproj", "{BF25D7AA-648C-48D2-B857-D383FAF1E215}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVG_TriangleFollow", "SVG_TriangleFollow\SVG_TriangleFollow.vcxproj", "{5721FE52-2363-49C4-AAFB-A57825CBD5A6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "spline_under_tension", "spline_under_tension\spline_under_tension.vcxproj", "{620506F1-EFDD-4AAE-9C0D-00503E7E5AB1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Testbed", "Testbed\Testbed.vcxproj", "{688FC5C9-33CC-4135-ACAC-90569E523ECC}"
@@ -101,6 +99,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LatticeMatching", "LatticeM
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gen_DC7", "Gen_DC7\Gen_DC7.vcxproj", "{2C49969D-FE7A-4512-8257-EEC54B5C4749}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FigureGrassmannian", "FigureGrassmannian\FigureGrassmannian.vcxproj", "{89122A3C-BCF4-45FD-AADD-19C91476B317}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -117,14 +117,6 @@ Global
 		{BF25D7AA-648C-48D2-B857-D383FAF1E215}.Release|x64.Build.0 = Release|x64
 		{BF25D7AA-648C-48D2-B857-D383FAF1E215}.Release|x86.ActiveCfg = Release|Win32
 		{BF25D7AA-648C-48D2-B857-D383FAF1E215}.Release|x86.Build.0 = Release|Win32
-		{5721FE52-2363-49C4-AAFB-A57825CBD5A6}.Debug|x64.ActiveCfg = Debug|x64
-		{5721FE52-2363-49C4-AAFB-A57825CBD5A6}.Debug|x64.Build.0 = Debug|x64
-		{5721FE52-2363-49C4-AAFB-A57825CBD5A6}.Debug|x86.ActiveCfg = Debug|Win32
-		{5721FE52-2363-49C4-AAFB-A57825CBD5A6}.Debug|x86.Build.0 = Debug|Win32
-		{5721FE52-2363-49C4-AAFB-A57825CBD5A6}.Release|x64.ActiveCfg = Release|x64
-		{5721FE52-2363-49C4-AAFB-A57825CBD5A6}.Release|x64.Build.0 = Release|x64
-		{5721FE52-2363-49C4-AAFB-A57825CBD5A6}.Release|x86.ActiveCfg = Release|Win32
-		{5721FE52-2363-49C4-AAFB-A57825CBD5A6}.Release|x86.Build.0 = Release|Win32
 		{620506F1-EFDD-4AAE-9C0D-00503E7E5AB1}.Debug|x64.ActiveCfg = Debug|x64
 		{620506F1-EFDD-4AAE-9C0D-00503E7E5AB1}.Debug|x64.Build.0 = Debug|x64
 		{620506F1-EFDD-4AAE-9C0D-00503E7E5AB1}.Debug|x86.ActiveCfg = Debug|Win32
@@ -413,6 +405,14 @@ Global
 		{2C49969D-FE7A-4512-8257-EEC54B5C4749}.Release|x64.Build.0 = Release|x64
 		{2C49969D-FE7A-4512-8257-EEC54B5C4749}.Release|x86.ActiveCfg = Release|Win32
 		{2C49969D-FE7A-4512-8257-EEC54B5C4749}.Release|x86.Build.0 = Release|Win32
+		{89122A3C-BCF4-45FD-AADD-19C91476B317}.Debug|x64.ActiveCfg = Debug|x64
+		{89122A3C-BCF4-45FD-AADD-19C91476B317}.Debug|x64.Build.0 = Debug|x64
+		{89122A3C-BCF4-45FD-AADD-19C91476B317}.Debug|x86.ActiveCfg = Debug|Win32
+		{89122A3C-BCF4-45FD-AADD-19C91476B317}.Debug|x86.Build.0 = Debug|Win32
+		{89122A3C-BCF4-45FD-AADD-19C91476B317}.Release|x64.ActiveCfg = Release|x64
+		{89122A3C-BCF4-45FD-AADD-19C91476B317}.Release|x64.Build.0 = Release|x64
+		{89122A3C-BCF4-45FD-AADD-19C91476B317}.Release|x86.ActiveCfg = Release|Win32
+		{89122A3C-BCF4-45FD-AADD-19C91476B317}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
