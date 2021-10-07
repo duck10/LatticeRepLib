@@ -60,6 +60,12 @@ public:
    C3(const std::complex<double>& c1, const std::complex<double>& c2, const std::complex<double>& c3);
    ~C3(void) {}
 
+
+   static std::complex<double>  Exchange(const std::complex<double>& cin) {
+      return std::complex<double>(cin.imag(), cin.real());
+   }
+
+
    C3& operator= (const C3& v);
    C3& operator= (const std::string& s);
    C3& operator= (const G6& v);
