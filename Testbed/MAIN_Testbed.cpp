@@ -3,6 +3,7 @@
 
 #include "CellInputData.h"
 #include "CS6Dist.h"
+#include "C3.h"
 #include "DC.h"
 #include "Delone.h"
 #include "LRL_CreateFileName.h"
@@ -781,8 +782,8 @@ void TestDC1() {
 
       const double d = DC::DistanceBetween(d1, d2);
       const int key = int(log10(10.0 * d / (d1).Norm()));
-      if (key>1 || key < -10) {
-         store.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ratio ", d/d1.norm(), "    ", g1, "  ---- ", g2));
+      if (key > 1 || key < -10) {
+         store.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ratio ", d / d1.norm(), "    ", g1, "  ---- ", g2));
          const double norm1 = g1.norm();
          const double norm2 = g2.norm();
          const double norm3 = d1.norm();
@@ -812,6 +813,79 @@ void TestDC1() {
       }
    }
    store.ShowResults();
+
+}
+
+void TestDC3() {
+C3 c0(S6::rand());
+C3 c1(c0);
+C3 c2(c0);
+C3 c3(c0);
+C3 c4(c0);
+C3 c5(c0);
+
+std::cout << "c0 input " << c0 << std::endl;
+std::cout << "c1 input " << c1 << std::endl;
+std::cout << "c2 input " << c2 << std::endl;
+std::cout << std::endl;
+
+std::cout << "cell0 input " << LRL_Cell_Degrees(c0) << std::endl;
+std::cout << "cell1 input " << LRL_Cell_Degrees(c1) << std::endl;
+std::cout << "cell2 input " << LRL_Cell_Degrees(c2) << std::endl;
+std::cout << std::endl;
+
+S6 x0(c0);
+S6 x1(c0);
+S6 x2(c0);
+
+
+S6 s0;
+S6 s1;
+S6 s2;
+
+Selling::Reduce(x0, s0);
+Selling::Reduce(x1, s1);
+Selling::Reduce(x2, s2);
+
+
+std::swap(s1[0], s1[2]);
+std::swap(s2[1], s2[2]);
+
+std::cout << " swapped entries in reduced s1 and s2 " << std::endl;
+
+Selling::Reduce(s0, s0);
+Selling::Reduce(s1, s1);
+Selling::Reduce(s2, s2);
+
+std::cout << "c0           reduced " << c0 << std::endl;
+std::cout << "c1 swapped and reduced " << C3(s1)<< std::endl;
+std::cout << "c2 swapped and reduced " << C3(s2)<< std::endl;
+std::cout << std::endl;
+
+
+
+S6Dist s6dist;
+
+std::cout << "cell0 " << LRL_Cell_Degrees(s0) << "  Reduced" << std::endl;
+std::cout << "cell1 " << LRL_Cell_Degrees(s1) << "  Reduced" << std::endl;
+std::cout << "cell2 " << LRL_Cell_Degrees(s2) << "  Reduced" << std::endl;
+std::cout << std::endl;
+
+const double d1 = s6dist.DistanceBetween(s0, s1);
+const double d2 = s6dist.DistanceBetween(s0, s2);
+
+std::cout << "DC0 " << DC(s0) << std::endl;
+std::cout << "DC1 " << DC(s1) << std::endl;
+std::cout << "DC2 " << DC(s2) << std::endl;
+std::cout << std::endl;
+
+std::cout << "s0-s1 " << CS6Dist(s0.data(), s1.data()) << std::endl;
+std::cout << "s0-s2 " << CS6Dist(s0.data(), s2.data()) << std::endl;
+std::cout << "s1-s2 " << CS6Dist(s1.data(), s2.data()) << std::endl;
+std::cout << std::endl;
+
+
+exit(0);
 }
 
 void TestDC2()
@@ -821,7 +895,7 @@ void TestDC2()
 
 int main(int argc, char* argv[])
 {
-   TestDC1();
+   TestDC3();
    exit(0);
    GenerateFollowerPath();
    Matrices();
