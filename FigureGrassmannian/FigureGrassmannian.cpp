@@ -101,6 +101,39 @@ std::string ToSVGFromOriginToPoint(const std::string& color, const Vector_3& vin
       + " />";
 }
 
+std::string MakeRotate(const double angle, const double x, const double y) {
+   return
+      " transform = \"rotate(" + LRL_ToString(angle) + ", " + LRL_ToString(x) + ", " + LRL_ToString(y) + ")\"";
+}
+
+std::string ToSVGFromText(const std::string& label, const std::string& color, const Vector_3& vin) {
+   const Vector_3 v(matrixToOrientVectors * vin + displacement);
+
+   return
+      "<text  stroke= \"" + color + "\" font-family = \"sans-serif\" font-size=\"60\" fill=\""
+      +  color + "\" stroke-width=\"3\" " 
+      + LRL_DataToSVG(" x=\"", v[0], "\"")
+      + LRL_DataToSVG(" y=\"", v[1], "\"")
+      + MakeRotate(90,v[0],v[1])
+      + " > "
+      + label 
+      + " </text>";
+}
+
+std::vector<std::string> CreateAxisLabels() {
+   std::vector<std::string> vsvg;
+   const Vector_3 v1(axisLength, 0, 0);
+   const Vector_3 v2(0, axisLength, 0);
+   const Vector_3 v3(0, 0, axisLength);
+   const Vector_3 v4(0, 0, radius);
+
+   vsvg.push_back( ToSVGFromText("s4 = a.d", "black", v1));
+   vsvg.push_back( ToSVGFromText("s5 = b.d", "black", v2));
+   vsvg.push_back( ToSVGFromText("s6 = c.d", "black", v3));
+
+   return vsvg;
+}
+
 std::string CreateAxes() {
    const Matrix_3x3 m = Vector_3(1., 1., 1.).Rotmat(120.0 / rad);
 
@@ -120,7 +153,7 @@ std::string CreateAxes() {
       s2 + " \n" +
       s3 + " \n" +
       s4 + " \n" +
-      s5 + " \n";
+      s5 + " \n\n";
 }
 
 std::string CreatePolylineFromPoints(const std::string& color, const std::string& width, const std::vector<Vector_3>& v) {
@@ -218,8 +251,52 @@ std::vector<std::string> CreateContent() {
    const std::string s = CreateAxes() +
       "\n\n" + CreateArcs() +
       "\n\n" + CreateCells() + "\n";
+
    const std::vector<std::string> vs(1, s);
    return vs;
+}
+
+std::string TransformFirstAxis(const std::string& s) {
+   const std::string delx = "20";
+   const std::string dely = "20";
+   std::string output;
+   output += "<g transform=\"translate(" + delx + ", " + dely + ") scale(1 1) rotate(0)\">\n";
+   output += "<g transform=\"translate(0, 2000) scale(1 1) rotate(-90)\">\n";
+   output += s;
+   output += "</g>\n</g>\n\n";
+   return output;
+}
+
+std::string TransformSecondAxis(const std::string& s) {
+   const std::string delx = "20";
+   const std::string dely = "20";
+   std::string output;
+   output += "<g transform=\"translate(" + delx + ", " + dely + ") scale(1 1) rotate(0)\">\n";
+   output += "<g transform=\"translate(0, 2000) scale(1 1) rotate(-90)\">\n";
+   output += s;
+   output += "</g>\n</g>\n\n";
+   return output;
+}
+
+std::string TransformThirdAxis(const std::string& s) {
+   const std::string delx = "-120";
+   const std::string dely = "-20";
+   std::string output;
+   output += "<g transform=\"translate(" + delx + ", " + dely + ") scale(1 1) rotate(0)\">\n";
+   output += "<g transform=\"translate(0, 2000) scale(1 1) rotate(-90)\">\n";
+   output += s;
+   output += "</g>\n</g>\n\n";
+   return output;
+}
+
+std::string TransformText(const std::string s) {
+   std::string output;
+   output += "\n";
+   output += "<g transform=\"translate(0, 0) scale(1 1) rotate(0)\">\n";
+   output += "<g transform=\"translate(0, 2000) scale(1 1) rotate(-90)\">\n";
+   output += s;
+   output += "</g>\n</g>\n";
+   return output;
 }
 
 std::string TransformOutput(const std::string& s) {
@@ -254,11 +331,17 @@ int main()
    std::string header = ImageHeader(2000, 2000) + "\n\n";
 
    std::vector<std::string> content(CreateContent());
+   const std::vector<std::string> labels = CreateAxisLabels();
 
    std::vector<std::string> footer = ImageFooter("");
 
-   const std::string output = header +
-      TransformOutput(LRL_StringTools::ConcatanateStrings(content)) + LRL_StringTools::ConcatanateStrings(footer);
+   std::string output = header + TransformOutput(LRL_StringTools::ConcatanateStrings(content));
+
+   std::vector<std::string> transformedLabels;
+   output += TransformFirstAxis(labels[0] + "\n");
+   output += TransformSecondAxis(labels[1] + "\n");
+   output += TransformThirdAxis(labels[2] + "\n");
+   output += LRL_StringTools::ConcatanateStrings(footer);
 
    std::cout << output << std::endl;
 }
