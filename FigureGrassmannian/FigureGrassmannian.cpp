@@ -256,31 +256,7 @@ std::vector<std::string> CreateContent() {
    return vs;
 }
 
-std::string TransformFirstAxis(const std::string& s) {
-   const std::string delx = "20";
-   const std::string dely = "20";
-   std::string output;
-   output += "<g transform=\"translate(" + delx + ", " + dely + ") scale(1 1) rotate(0)\">\n";
-   output += "<g transform=\"translate(0, 2000) scale(1 1) rotate(-90)\">\n";
-   output += s;
-   output += "</g>\n</g>\n\n";
-   return output;
-}
-
-std::string TransformSecondAxis(const std::string& s) {
-   const std::string delx = "20";
-   const std::string dely = "20";
-   std::string output;
-   output += "<g transform=\"translate(" + delx + ", " + dely + ") scale(1 1) rotate(0)\">\n";
-   output += "<g transform=\"translate(0, 2000) scale(1 1) rotate(-90)\">\n";
-   output += s;
-   output += "</g>\n</g>\n\n";
-   return output;
-}
-
-std::string TransformThirdAxis(const std::string& s) {
-   const std::string delx = "-120";
-   const std::string dely = "-20";
+std::string MoveAxisLabel(const std::string& s, const std::string& delx, const std::string dely) {
    std::string output;
    output += "<g transform=\"translate(" + delx + ", " + dely + ") scale(1 1) rotate(0)\">\n";
    output += "<g transform=\"translate(0, 2000) scale(1 1) rotate(-90)\">\n";
@@ -338,9 +314,9 @@ int main()
    std::string output = header + TransformOutput(LRL_StringTools::ConcatanateStrings(content));
 
    std::vector<std::string> transformedLabels;
-   output += TransformFirstAxis(labels[0] + "\n");
-   output += TransformSecondAxis(labels[1] + "\n");
-   output += TransformThirdAxis(labels[2] + "\n");
+   output += MoveAxisLabel(labels[0] + "\n", "20", "20");
+   output += MoveAxisLabel(labels[1] + "\n", "20", "20");
+   output += MoveAxisLabel(labels[2] + "\n", "-120", "-20");
    output += LRL_StringTools::ConcatanateStrings(footer);
 
    std::cout << output << std::endl;
