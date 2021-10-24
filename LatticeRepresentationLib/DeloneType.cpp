@@ -1,4 +1,5 @@
 #include "DeloneType.h"
+#include "LRL_Cell_Degrees.h"
 
 #include <cfloat>
 //DeloneType::DeloneType(const std::string& deloneType, 
@@ -54,21 +55,23 @@ DeloneFitResults::DeloneFitResults( const double fit, const S6& bestApprox, cons
 
 
 std::ostream& operator<< (std::ostream& o, const DeloneType& m) {
-   o << "Delone Type  " << m.m_deloneName << std::endl;
-   o << "BravaisLattice Type  " << m.m_bravaisType << std::endl;
-   o << "Character Type  " << m.m_character << std::endl;
-   o << "Canonical to Centered (E3)  " << m.m_toCentered_E3 << std::endl;
+   o << "====================================" << std::endl;
+   o << "Delone Type  " << m.m_deloneName;
+   o << "   BravaisLattice Type  " << m.m_bravaisType << " Character (" << m.m_character << ")" << std::endl;
+   //o << "Canonical to Centered (E3)  " << m.m_toCentered_E3 << std::endl;
    //o << "Canonical to Centered (S6)  " << std::endl << m.m_toCentered_S6 << std::endl;
-   o << "Count of all representations  " << m.m_matrices.size() << std::endl;
+   //o << "Canonical to Centered (S6)  " << std::endl << m.m_toCentered_S6 << std::endl;
+   //o << "Count of all representations  " << m.m_matrices.size() << std::endl;
    return o;
 }
 
 std::ostream& operator<< ( std::ostream& o, const DeloneFitResults& dfr) {
-   o << "m_latticeType           " << dfr.m_latticeType << std::endl;
-   o << "m_rawFit                " << dfr.m_rawFit << std::endl;
-   o << "m_zscore                " << dfr.m_zscore << std::endl;
-   o << "m_bestFit               " << dfr.m_bestFit << std::endl;
-   o << "m_difference            " << dfr.m_difference << std::endl;
+   o << "m_rawFit = " << dfr.m_rawFit
+   << "  m_zscore = " << dfr.m_zscore << std::endl;
+   o << "m_bestFit (S6)    " << dfr.m_bestFit << " (primitive)" << std::endl;
+
+   o << "m_bestFit (Cell)  " << LRL_Cell_Degrees(dfr.m_bestFit) << " (primitive)" << std::endl;
+   o << "m_difference (S6) " << dfr.m_difference;
    //o << "m_toCanonicalDeloneType " << std::endl << dfr.m_toCanonicalDeloneType << std::endl;
    return o;
 }
@@ -95,6 +98,6 @@ DeloneFitResults DeloneType::GetFit(const S6& s6) const {
    }
    if (bestFit < 1.0E-8) bestFit = 0.0;
    const S6 bestv = m_matrices.GetPrj(n) * s6;
-   MatS6 toCanonicalDeloneType = m_matrices.GetToCanon(n);
+   const MatS6 toCanonicalDeloneType = m_matrices.GetToCanon(n);
    return DeloneFitResults( bestFit, bestv, smallestPerp, toCanonicalDeloneType );
 }

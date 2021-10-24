@@ -10,6 +10,8 @@
 #include <sstream>
 #include <string>
 
+static const bool g_debug = false;
+
 const std::vector<std::string> DeloneTypeList::typelist{ "C1","C3","C5","R1","R3","T1","T2","T5","O1A","O1B","O2",/*"O3",*/"O4","O5","M1A","M1B","M2A"/*,"M2B"*//*,"M3"*/,"M4"/*,"A1","A2","A3"*/,"H4" };
 
 std::vector<std::pair<std::string, std::string> > DeloneTypeList::CreateBravaisTypeList() {
@@ -220,8 +222,10 @@ std::vector<double> DeloneTypeList::Make3dVector( const std::string& s) {
 }
 
 std::pair<std::string, MatS6 > DeloneTypeList::CreateCenteringMatrix(const std::string& lattice, const std::string& threespaceMatrix) {
-   std::cout << threespaceMatrix << std::endl;
-   std::cout << std::endl << MatS6::e3Tos6( Make3dVector( threespaceMatrix ) ) << std::endl << std::endl;
+   if (g_debug) {
+      std::cout << threespaceMatrix << std::endl;
+      std::cout << std::endl << MatS6::e3Tos6(Make3dVector(threespaceMatrix)) << std::endl << std::endl;
+   }
    return std::make_pair(lattice, MatS6::e3Tos6(Make3dVector(threespaceMatrix)));
 }
 
@@ -262,7 +266,8 @@ std::vector<std::pair<std::string, MatS6> > DeloneTypeList::CreateListOfCenterin
    //v.push_back(DeloneTypeList::CreateCenteringMatrix("C5", "1 0 0  0 0 1  0 1 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("C5", "1 0 0  0 1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("R1", "1 -1 0  0 1 -1  1 1 1"));
-   v.push_back(DeloneTypeList::CreateCenteringMatrix("R3", "1 0 0  0 0 1  1 3 2"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("R3", "1 0 0  0 0 1  1 3 2")); // this is the matrix for H input
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("R3", "1 0 0  0 1 0  0 0 1"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("T1", "0 1 1  1 0 1  1 1 0"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("T2", "1 0 0  0 1 0  1 1 2"));
    v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "1 0 0  0 1 0  0 0 1"));
@@ -345,10 +350,8 @@ double Zscore( const S6& s6, const S6& sigmas, const MatS6& reductionMatrix )
    double zscoreSq = 0.0;
    for (size_t i = 0; i < 6; ++i) {
       zscoreSq += s6[i] / modSig[i] * s6[i] / modSig[i];
-      //std::cout << s6[i] << "   " << modSig[i] << std::endl;
    }
-   std::cout << std::endl;
-   return sqrt( zscoreSq );
+   return (zscoreSq<1.0E-10) ? 0.0 : sqrt( zscoreSq );
 }
 
 double DeloneTypeList::GetFreeParams(const std::string& s) {

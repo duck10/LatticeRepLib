@@ -88,14 +88,15 @@ std::vector<std::pair<S6, S6> > CreatePath(const std::vector<LRL_ReadLatticeData
 }
 
 int main()
-{ 
+{
    FollowerConstants::globalStepsPerFrame = 20;
-   FollowerConstants::globalFollowerMode = FollowerConstants::globalChord3;
+   FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    std::vector<std::pair<S6, S6> > path;
    std::cout << "; Path generator" << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       path = CreatePath(inputList, i);
+      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) ++i;
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) ++i;
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) ++i, ++i;
       if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) ++i, ++i;

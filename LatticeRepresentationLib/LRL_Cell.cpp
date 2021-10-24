@@ -10,6 +10,7 @@
 #include <string>
 
 #include "LRL_Cell.h"
+#include "LRL_Cell_Degrees.h"
 #include "C3.h"
 #include "B4.h"
 #include "D7.h"
@@ -91,6 +92,8 @@ LRL_Cell::LRL_Cell(const std::string& s)
 
 LRL_Cell::LRL_Cell(const S6& ds)
 {
+   LRL_Cell_Degrees temp = G6(ds);
+   std::cout << temp << std::endl;
    m_cell.resize( 6 );
 
    const S6& s( ds );

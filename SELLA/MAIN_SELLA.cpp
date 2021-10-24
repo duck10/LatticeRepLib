@@ -6,6 +6,7 @@
 
 #include "C3.h"
 #include "DeloneTypeList.h"
+#include "LRL_inverse.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LatticeConverter.h"
 #include "LRL_MinMaxTools.h"
@@ -127,17 +128,24 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    exit(0);
 }
 
-void ReportFit1( const size_t i, const DeloneType& type, const std::tuple<double, S6, MatS6>& fit ) {
-   std::cout << i << "  " << type.GetName( ) << "  " << std::get<double>( fit ) << "     " << type.GetCharacter( ) <<
-      std::endl << "input  " << std::get<S6>( fit ) << std::endl << std::get<MatS6>( fit ) << std::endl;
-   std::cout << "result  " << std::get<MatS6>( fit ) * std::get<S6>( fit ) << std::endl;
-   const MatS6 ms6 = std::get<MatS6>( fit );
-   std::cout << type.GetToCentered( ) * std::get<MatS6>( fit ) * std::get<S6>( fit ) << std::endl;
-   std::cout << "centered cell  " << LRL_Cell_Degrees( type.GetToCentered( ) * std::get<MatS6>( fit ) * std::get<S6>( fit ) ) << std::endl << std::endl;
-}
-
 void ReportFit2( const size_t i, const DeloneType& type, const DeloneFitResults& fit ) {
    std::cout << type << "  " << fit << std::endl;
+
+   const MatS6 mToCentered = type.GetToCentered();
+   std::cout << std::endl << "mToCentered" << std::endl << mToCentered << std::endl;
+
+   double inverseCanon(36);
+   //std::cout << std::endl << "To Canon" << std::endl <<  << std::endl;
+
+   const MatS6 canon = fit.GetToCanon();
+
+   MatS6 inversedCanon = MatS6::Inverse(fit.GetToCanon());
+
+   const S6 bestFit = fit.GetBestFit();
+   std::cout << "Centered Cell" << std::endl;
+   const S6 best = mToCentered * inversedCanon * bestFit;
+   std::cout << best << std::endl;
+   std::cout << LRL_Cell_Degrees(best) << std::endl << std::endl;
 }
 
 void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit ) {
@@ -530,7 +538,8 @@ int main()
       std::cout << cellErrors << std::endl;
       std::cout << "S6 and S6 errors::" << std::endl;
       std::cout << vLat[i] << std::endl << errors[i] << std::endl;
-      std::cout << "RATIO " << vLat[i].norm() / errors[i].norm() << std::endl << std::endl;
+      std::cout << "RATIO " << vLat[i].norm() / errors[i].norm() << std::endl;
+      std::cout << "==============================================" << std::endl;
    }
 
   // for (size_t lat = 0; lat < vLat.size( ); ++lat) {
