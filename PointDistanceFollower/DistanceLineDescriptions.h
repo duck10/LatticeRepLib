@@ -11,6 +11,7 @@ class DistanceLineDescriptions {
 public:
    class Line {
    public:
+      Line() {} // but this should actually be private
       Line(const std::string& name, const std::string& color, const int lineWidth, const double time, const std::string& dashmode)
          : m_name(name)
          , m_color(color)
@@ -30,7 +31,6 @@ public:
       double m_time2Compute;
       std::string m_dashMode;
    private:
-      Line();
    };
 
 
