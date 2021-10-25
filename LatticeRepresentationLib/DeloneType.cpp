@@ -1,6 +1,11 @@
 #include "DeloneType.h"
+#include "LRL_Cell_Degrees.h"
+#include "MatG6.h"
+#include "MatS6.h"
 
 #include <cfloat>
+
+
 //DeloneType::DeloneType(const std::string& deloneType, 
 //	const std::string& bravaisType, const std::string& character, const std::pair<std::string, MatS6 >& fromCanon)
 //	: m_deloneName(deloneType)
@@ -69,19 +74,34 @@ std::ostream& operator<< ( std::ostream& o, const DeloneFitResults& dfr) {
    o << "m_zscore                " << dfr.m_zscore << std::endl;
    o << "m_bestFit               " << dfr.m_bestFit << std::endl;
    o << "m_difference            " << dfr.m_difference << std::endl;
+   o << "Best Cell in original centering\n"
+      << LRL_Cell_Degrees(MatS6::Inverse(dfr.m_reductionMatrix) * dfr.GetToCanon() * dfr.m_bestFit) << std::endl;
+   std::cout << LRL_Cell_Degrees(MatS6::Inverse(dfr.m_reductionMatrix) * dfr.GetToCanon() * dfr.m_bestFit) << std::endl;
+
+   const MatS6 makePrim = LRL_Cell::G6MakePrimitiveMatrix(dfr.m_latticeType);
+   const MatS6 prim2Center( LRL_Cell::G6MakePrimitiveMatrix(dfr.m_latticeType));
+
+   const S6 canon = dfr.GetToCanon() * dfr.m_bestFit;
+   std::cout << "canon   "  << (dfr.GetToCanon() * dfr.m_bestFit) << std::endl;
+   const S6 unreduced = MatS6::Inverse(dfr.m_reductionMatrix)* canon;
+   const S6 centered = MatS6::Inverse(prim2Center) * canon;
+   const LRL_Cell_Degrees projectedCenteredCell(centered);
+   std::cout << "projectedCenteredCell" << projectedCenteredCell << std::endl;
+
+
    //o << "m_toCanonicalDeloneType " << std::endl << dfr.m_toCanonicalDeloneType << std::endl;
    return o;
 }
 
 DeloneFitResults DeloneType::GetFit(const S6& s6) const {
-   size_t n = 0;
+   size_t nBest = 0;
    S6 smallestPerp;
    double bestFit = DBL_MAX;
    for ( size_t i=0; i< m_matrices.size(); ++i ) {
       const S6 perpv = m_matrices.GetPerp(i) * s6;
       const double rawFit = perpv.norm();
       if ( bestFit > rawFit){
-         n = i;
+         nBest = i;
          bestFit = rawFit;
          smallestPerp = perpv;
 
@@ -94,7 +114,8 @@ DeloneFitResults DeloneType::GetFit(const S6& s6) const {
       }
    }
    if (bestFit < 1.0E-8) bestFit = 0.0;
-   const S6 bestv = m_matrices.GetPrj(n) * s6;
-   MatS6 toCanonicalDeloneType = m_matrices.GetToCanon(n);
+   const S6 bestv = m_matrices.GetPrj(nBest) * s6;
+   MatS6 toCanonicalDeloneType = m_matrices.GetToCanon(nBest);
    return DeloneFitResults( bestFit, bestv, smallestPerp, toCanonicalDeloneType );
+   //return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6::Inverse(reductionMatrix));
 }

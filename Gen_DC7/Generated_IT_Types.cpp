@@ -33,7 +33,7 @@ IT_Lat_Char_1::IT_Lat_Char_1() : IT_Lat_Char_Base() {
    m_name = "44C";
    m_latticeType = "cF";
    m_ITnumber = " 1";
-   m_G6_character =  "[r, r, r, r, r, r)";
+   m_G6_character =  "[r, r, r, r, r, r]";
    m_DC7_character = "[r,r,r,r,r,r,2r]";
    m_prjPrefix = 1.0/6.0;
    m_strProjector = "1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1  1 1 1 1 1 1";
@@ -52,7 +52,7 @@ IT_Lat_Char_2::IT_Lat_Char_2() : IT_Lat_Char_Base() {
    m_name = "49C";
    m_latticeType = "hR";
    m_ITnumber = " 2";
-   m_G6_character =  "[r, r, r, s, s, s)";
+   m_G6_character =  "[r, r, r, s, s, s]";
    m_DC7_character = "[r,r,r,2r-s,2-s,3r-s]";
    m_prjPrefix = 0.333333;
    m_strProjector = "1 1 1 0 0 0  1 1 1 0 0 0  1 1 1 0 0 0  0 0 0 1 1 1  0 0 0 1 1 1  0 0 0 1 1 1";
@@ -71,9 +71,9 @@ IT_Lat_Char_3::IT_Lat_Char_3() : IT_Lat_Char_Base() {
    m_name = "44A";
    m_latticeType = "cP";
    m_ITnumber = " 3";
-   m_G6_character =  "[r, r, r, 0, 0, 0)";
+   m_G6_character =  "[r, r, r, 0, 0, 0]";
    m_DC7_character = "[r,r,r,2r,2r,2r,2r]";
-   m_prjPrefix = 0.333333;
+   m_prjPrefix = 1.0/3.0;
    m_strProjector = "1 1 1 0 0 0  1 1 1 0 0 0  1 1 1 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    /*
@@ -90,7 +90,7 @@ IT_Lat_Char_4::IT_Lat_Char_4() : IT_Lat_Char_Base() {
    m_name = "49D";
    m_latticeType = "hR";
    m_ITnumber = " 4";
-   m_G6_character =  "[r, r, r, -s, -s, -s)";
+   m_G6_character =  "[r, r, r, -s, -s, -s]";
    m_prjPrefix = 0.333333;
    m_strProjector = "1 1 1 0 0 0  1 1 1 0 0 0  1 1 1 0 0 0  0 0 0 1 1 1  0 0 0 1 1 1  0 0 0 1 1 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -108,7 +108,7 @@ IT_Lat_Char_5::IT_Lat_Char_5() : IT_Lat_Char_Base() {
    m_name = "44B";
    m_latticeType = "cI";
    m_ITnumber = " 5";
-   m_G6_character = "(3r, 3r, 3r, -2r, -2r, -2r)";
+   m_G6_character = "(3r, 3r, 3r, -2r, -2r, -2r]";
    m_DC7_character = "[r,r,r,r,4r/3,4r/3,4r/3]";
    m_prjPrefix = 0.025641;
    m_strProjector = "9 9 9 -6 -6 -6  9 9 9 -6 -6 -6  9 9 9 -6 -6 -6 -6 -6 -6 4 4 4 -6 -6 -6 4 4 4 -6 -6 -6 4 4 4";
@@ -127,7 +127,7 @@ IT_Lat_Char_6::IT_Lat_Char_6() : IT_Lat_Char_Base() {
    m_name = "45D";
    m_latticeType = "tI";
    m_ITnumber = " 6";
-   m_G6_character =  "[r, r, r, -r+s, -r+s, -2s)";
+   m_G6_character =  "[r, r, r, -r+s, -r+s, -2s]";
    m_prjPrefix = 0.0384615;
    m_strProjector = "6 6 6 -4 -4 -4  6 6 6 -4 -4 -4  6 6 6 -4 -4 -4   -4 -4 -4 7 7 -6  -4 -4 -4 7 7 -6  -4 -4 -4 -6 -6 20";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -145,7 +145,7 @@ IT_Lat_Char_7::IT_Lat_Char_7() : IT_Lat_Char_Base() {
    m_name = "45D";
    m_latticeType = "tI";
    m_ITnumber = " 7";
-   m_G6_character =  "[r, r, r, 2s, -r -s, -r -s)";
+   m_G6_character =  "[r, r, r, 2s, -r -s, -r -s]";
    m_prjPrefix = 0.0384615;
    m_strProjector = "6 6 6 -4 -4 -4  6 6 6 -4 -4 -4  6 6 6 -4 -4 -4 -4 -4 -4 20 -6 -6 -4 -4 -4 -6 7 7 -4 -4 -4 -6 7 7";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -307,7 +307,7 @@ IT_Lat_Char_16::IT_Lat_Char_16() : IT_Lat_Char_Base() {
    m_name = "51A";
    m_latticeType = "oF";
    m_ITnumber = "16";
-   m_G6_character = "r, r, s, -t, -t, -2r -2t)";
+   m_G6_character = "r, r, s, -t, -t, -2r -2t]";
    m_prjPrefix = 0.1;
    m_strProjector = "3 3 0 -2 -2 -2  3 3 0 -2 -2 -2  0 0 10 0 0 0  -2 -2 0 3 3 -2  -2 -2 0 3 3 -2  -2 -2 0 -2 -2 8";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -343,7 +343,7 @@ IT_Lat_Char_18::IT_Lat_Char_18() : IT_Lat_Char_Base() {
    m_name = "45E";
    m_latticeType = "tI";
    m_ITnumber = "18";
-   m_G6_character = "(2r, s, s, r, 2r, 2r)";
+   m_G6_character = "(2r, s, s, r, 2r, 2r]";
    m_prjPrefix = 0.0384615;
    m_strProjector = "8 0 0 4 8 8  0 13 13 0 0 0  0 13 13 0 0 0  4 0 0 2 4 4  8 0 0 4 8 8  8 0 0 4 8 8";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -453,7 +453,7 @@ IT_Lat_Char_24::IT_Lat_Char_24() : IT_Lat_Char_Base() {
    m_name = "49E";
    m_latticeType = "hR";
    m_ITnumber = "24";
-   m_G6_character = "(3r, s, s, -s, -s+r, -2r, -2r)";
+   m_G6_character = "(3r, s, s, -s, -s+r, -2r, -2r]";
    m_DC7_character = "[r,s,s,s,s+r/3,s+r/3,s+r/3]";
    m_prjPrefix = 1.0/53.0;
    m_strProjector = "27 3 3 6 -18 -18  3 18 18 -17 -2 -2  3 18 18 -17 -2 -2  6 -17 -17 19 -4 -4  -18 -2 -2 -4 12 12  -18 -2 -2 -4 12 12";
@@ -490,7 +490,7 @@ IT_Lat_Char_26::IT_Lat_Char_26() : IT_Lat_Char_Base() {
    m_name = "51B";
    m_latticeType = "oF";
    m_ITnumber = "26";
-   m_G6_character = "(2r, s, t, r, 2r, 2r)";
+   m_G6_character = "(2r, s, t, r, 2r, 2r]";
    m_prjPrefix = 0.0769231;
    m_strProjector = "4 0 0 2 4 4  0 13 0 0 0 0  0 0 13 0 0 0  2 0 0 1 2 2  4 0 0 2 4 4  4 0 0 2 4 4";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -658,7 +658,7 @@ IT_Lat_Char_36::IT_Lat_Char_36() : IT_Lat_Char_Base() {
    m_name = "50A";
    m_latticeType = "oC";
    m_ITnumber = "36";
-   m_G6_character =  "[r,s, t, 0, -r, 0)";
+   m_G6_character =  "[r,s, t, 0, -r, 0]";
    m_prjPrefix = 0.5;
    m_strProjector = "1 0 0 0 -1 0  0 2 0 0 0 0  0 0 2 0 0 0  0 0 0 0 0 0  -1 0 0 0 1 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -676,7 +676,7 @@ IT_Lat_Char_37::IT_Lat_Char_37() : IT_Lat_Char_Base() {
    m_name = "54C";
    m_latticeType = "mC";
    m_ITnumber = "37";
-   m_G6_character =  "[r, s, t, u, -r, 0)";
+   m_G6_character =  "[r, s, t, u, -r, 0]";
    m_prjPrefix = 0.5;
    m_strProjector = "1 0 0 0 -1 0  0 2 0 0 0 0  0 0 2 0 0 0  0 0 0 2 0 0 -1 0 0 0 1 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -694,7 +694,7 @@ IT_Lat_Char_38::IT_Lat_Char_38() : IT_Lat_Char_Base() {
    m_name = "50B";
    m_latticeType = "oC";
    m_ITnumber = "38";
-   m_G6_character =  "[r, s, t, 0, 0, -r)";
+   m_G6_character =  "[r, s, t, 0, 0, -r]";
    m_prjPrefix = 0.5;
    m_strProjector = "1 0 0 0 0 -1  0 2 0 0 0 0  0 0 2 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0 -1 0 0 0 0 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -712,7 +712,7 @@ IT_Lat_Char_39::IT_Lat_Char_39() : IT_Lat_Char_Base() {
    m_name = "54A";
    m_latticeType = "mC";
    m_ITnumber = "39";
-   m_G6_character =  "[r, s, t, u, 0, -r)";
+   m_G6_character =  "[r, s, t, u, 0, -r]";
    m_prjPrefix = 0.5;
    m_strProjector = "1 0 0 0 0 -1  0 2 0 0 0 0  0 0 2 0 0 0  0 0 0 2 0 0  0 0 0 0 0 0 -1 0 0 0 0 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -730,7 +730,7 @@ IT_Lat_Char_40::IT_Lat_Char_40() : IT_Lat_Char_Base() {
    m_name = "50F";
    m_latticeType = "oC";
    m_ITnumber = "40";
-   m_G6_character =  "[r, s, t, -s, 0, 0)";
+   m_G6_character =  "[r, s, t, -s, 0, 0]";
    m_prjPrefix = 0.5;
    m_strProjector = "2 0 0 0 0 0  0 1 0 -1 0 0  0 0 2 0 0 0  0 -1 0 1 0 0  0 0 0 0 0 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -748,7 +748,7 @@ IT_Lat_Char_41::IT_Lat_Char_41() : IT_Lat_Char_Base() {
    m_name = "54B";
    m_latticeType = "mC";
    m_ITnumber = "41";
-   m_G6_character =  "[r, s, t, -s, u, 0)";
+   m_G6_character =  "[r, s, t, -s, u, 0]";
    m_prjPrefix = 0.5;
    m_strProjector = "2 0 0 0 0 0  0 1 0 -1 0 0  0 0 2 0 0 0  0 -1 0 1 0 0  0 0 0 0 2 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -766,7 +766,7 @@ IT_Lat_Char_42::IT_Lat_Char_42() : IT_Lat_Char_Base() {
    m_name = "52C";
    m_latticeType = "oI";
    m_ITnumber = "42";
-   m_G6_character =  "[r, s, t, -s, -r, 0)";
+   m_G6_character =  "[r, s, t, -s, -r, 0]";
    m_prjPrefix = 0.5;
    m_strProjector = "1 0 0 0 -1 0  0 1 0 -1 0 0  0 0 2 0 0 0  0 -1 0 1 0 0 -1 0 0 0 1 0  0 0 0 0 0 0";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
@@ -784,7 +784,7 @@ IT_Lat_Char_43::IT_Lat_Char_43() : IT_Lat_Char_Base() {
    m_name = "57A";
    m_latticeType = "mC";
    m_ITnumber = "43";
-   m_G6_character =  "[r, s, t, -s -u, -r -u, 2u)";
+   m_G6_character =  "[r, s, t, -s -u, -r -u, 2u]";
    m_prjPrefix = 0.05;
    m_strProjector = "11 1 0 1 -9 -4  1 11 0 -9 1 -4  0 0 20 0 0 0  1 -9 0 11 1 -4 -9 1 0 1 11 -4 -4 -4 0 -4 -4 16";
    m_projector = m_prjPrefix * MatG6(m_strProjector);

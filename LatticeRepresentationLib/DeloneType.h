@@ -26,6 +26,8 @@ public:
    S6 GetDifference( void ) const { return m_difference; }
    MatS6 GetToCanon( void ) const { return m_toCanonicalDeloneType; }
    std::string GetLatticeType( void ) const { return m_latticeType; }
+   void SetReductionMatrix(const MatS6& matrix) { m_reductionMatrix = matrix; }
+   MatS6 GetReductionMatrix() const { return m_reductionMatrix; }
 protected:
    std::string m_latticeType;
    double m_rawFit;
@@ -33,6 +35,7 @@ protected:
    S6 m_bestFit;
    S6 m_difference;
    MatS6 m_toCanonicalDeloneType;
+   MatS6 m_reductionMatrix;
 };
 
 class MatricesForOneDeloneType {
