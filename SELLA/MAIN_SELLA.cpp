@@ -504,7 +504,7 @@ void TestSigmas( ) {
 int main()
 {
    //TestSigmas( );
-
+   std::cout << "SELLA\n";
 
 
 
@@ -542,6 +542,11 @@ int main()
       //std::cout << "input  " << input[lat].GetStrCell() << "    (" << (input[lat].GetCell()) <<")" << std::endl;
       //const std::vector<std::tuple<double, S6, MatS6> >  v = DeloneTypeList::Fit( "T", vLat[lat] );
       const std::vector<DeloneFitResults>  v = deloneList.Fit( vLat[lat], errors[lat], reductionMatrices[lat] );
+
+      //std::cout << lat << " " << deloneList[4].GetName() << std::endl;
+      //std::cout << reductionMatrices[lat] << std::endl << std::endl;
+
+
       ReportFit( lat, deloneList,  v );
       //std::cout << "************************************" << std::endl;
    }

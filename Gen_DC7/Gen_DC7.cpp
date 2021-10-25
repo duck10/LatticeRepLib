@@ -307,6 +307,7 @@ std::vector<G6> TestOneType(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const
       if (out.first) {
          good.push_back(out.second);
       }
+      if (good.size() > 10) break;
    }
    return good;
 }
@@ -314,12 +315,18 @@ std::vector<G6> TestOneType(const std::unique_ptr<IT_Lat_Char_Base>& vfpg, const
 void ProcessTypes(const std::vector<std::unique_ptr<IT_Lat_Char_Base> >& vfpg, const std::vector<G6>& samples) {
    for (size_t i = 0; i <vfpg.size(); ++i) {
       const std::vector<G6> out = TestOneType(vfpg[i], samples);
-         std::cout << "start type # SVD " << i << " " << vfpg[i]->m_ITnumber << std::endl;
+         std::cout << "start type # SVD " << i << " " << vfpg[i]->m_ITnumber << " "
+            << vfpg[i]->GetName() << " " << vfpg[i]->m_G6_character << std::endl;
+
+         for (size_t j = 0; j < out.size(); ++j) {
+            std::cout << "g6 " << out[j] << std::endl;
+            if (j > 10) break;
+         }
       
-      for (size_t k = 0; k < out.size(); ++k) {
-         DC_SVD(vfpg[i], out);
-         //std::cout << i << " " << vfpg[i]->GetName() << " " << out[k].first << " " << out[k].second << std::endl;
-      }
+      //for (size_t k = 0; k < out.size(); ++k) {
+      //   DC_SVD(vfpg[i], out);
+      //   //std::cout << i << " " << vfpg[i]->GetName() << " " << out[k].first << " " << out[k].second << std::endl;
+      //}
    }
 }
 
@@ -456,15 +463,15 @@ int main()
    std::vector<std::unique_ptr<IT_Lat_Char_Base> > vfpg;
    CreateListOfTypes(vfpg);
 
-   const std::vector<G6> vred = GenerateReducedRandomSamples(g_maxgen);
-   for (size_t i = 0; i < vfpg.size(); ++i) {
-      const std::vector<G6> accepted = FilterListForType(vfpg[i], vred);
-      DC_SVD(vfpg[i], accepted);
-   }
+   //const std::vector<G6> vred = GenerateReducedRandomSamples(g_maxgen);
+   //for (size_t i = 0; i < vfpg.size(); ++i) {
+   //   const std::vector<G6> accepted = FilterListForType(vfpg[i], vred);
+   //   DC_SVD(vfpg[i], accepted);
+   //}
 
-   store.SetItemSeparator("==========================================================");
-   store.ShowResultsByKeyAscending();
-   exit(0);
+   //store.SetItemSeparator("==========================================================");
+   //store.ShowResultsByKeyAscending();
+   //exit(0);
 
    //TestProjectors();
    const bool noMonteCarlo = true;

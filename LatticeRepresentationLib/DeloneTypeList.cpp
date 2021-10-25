@@ -1,10 +1,11 @@
 #include "DeloneTypeList.h"
 
 #include "LabeledSellaMatrices.h"
-#include "MatG6.h"
+#include "LRL_Cell_Degrees.h"
 #include "LRL_MaximaTools.h"
 //#include "SanMatrix.h"
 #include "LRL_inverse.h"
+#include "MatG6.h"
 #include "SellaBuild.h"
 
 #include <sstream>
@@ -220,8 +221,8 @@ std::vector<double> DeloneTypeList::Make3dVector( const std::string& s) {
 }
 
 std::pair<std::string, MatS6 > DeloneTypeList::CreateCenteringMatrix(const std::string& lattice, const std::string& threespaceMatrix) {
-   std::cout << threespaceMatrix << std::endl;
-   std::cout << std::endl << MatS6::e3Tos6( Make3dVector( threespaceMatrix ) ) << std::endl << std::endl;
+   //std::cout << threespaceMatrix << std::endl;
+   //std::cout << std::endl << MatS6::e3Tos6( Make3dVector( threespaceMatrix ) ) << std::endl << std::endl;
    return std::make_pair(lattice, MatS6::e3Tos6(Make3dVector(threespaceMatrix)));
 }
 
@@ -373,8 +374,13 @@ std::vector<DeloneFitResults> DeloneTypeList::Fit( const std::string& type, cons
          const double zscore = Zscore( s6-fit.GetBestFit(), sig, reductionMatrix ) * sqrt( GetFreeParams( name ) );
          fit.SetZscore( zscore );
          fit.SetLatticeType( name );
+         fit.SetReductionMatrix(reductionMatrix);
          v.push_back( fit );
          //std::cout << fit << std::endl << std::endl;
+         //std::cout << m_deloneTypes[i].GetName() << " in DeloneTypeList::Fit " << std::endl
+         //   << MatS6().Inverse(reductionMatrix) * fit.GetBestFit() << std::endl
+         //   << LRL_Cell_Degrees(MatS6().Inverse(reductionMatrix) * fit.GetBestFit()) << std::endl;
+         //std::cout << s6 << std::endl << fit.GetBestFit() << std::endl;
       }
    }
    return v;
