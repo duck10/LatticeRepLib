@@ -149,6 +149,9 @@
     <ClCompile Include="FollowerConstants.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Niggli_Types.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -317,6 +320,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="svd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Niggli_Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

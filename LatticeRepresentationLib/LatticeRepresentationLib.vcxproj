@@ -179,6 +179,7 @@
     <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
     <ClCompile Include="MatD13.cpp" />
+    <ClCompile Include="Niggli_Types.cpp" />
     <ClCompile Include="S6.cpp" />
     <ClCompile Include="S6Dist.cpp" />
     <ClCompile Include="D7.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="LRL_LatticeMatcher.h" />
     <ClInclude Include="MatD13.h" />
     <ClInclude Include="NCDist.h" />
+    <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="ParseData.h" />
     <ClInclude Include="S6.h" />
