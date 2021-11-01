@@ -893,8 +893,23 @@ void TestDC2()
 
 }
 
+void Gen_55A() {
+   for (size_t i = 0; i < 10; ++i) {
+      G6 g6 = G6::rand();
+      g6[3] = 0;
+      g6[5] = 0;
+      const B4 b4(g6);
+      const double d = (b4[0] + b4[1]).norm();
+      if ( d/2.0 < sqrt(g6[2])) {
+         std::cout << "I " << LRL_Cell_Degrees(g6) << std::endl;
+      }
+   }
+   exit(0);
+}
+
 int main(int argc, char* argv[])
 {
+   Gen_55A();
    TestDC3();
    exit(0);
    GenerateFollowerPath();

@@ -571,7 +571,7 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
 
 bool Niggli::Reduce(const G6& vi, G6& vout) {
    const bool b = Selling::Reduce(vi, vout);
-   return ReduceWithoutMatrices(vout, vout, 0.0);
+   return ReduceWithoutMatrices(vout, vout, 1.0E-10);
 }
 
 bool Niggli::Reduce(const G6& vi, G6& vout, const bool sellingFirst) {
