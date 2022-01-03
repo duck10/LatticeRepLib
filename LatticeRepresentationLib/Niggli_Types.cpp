@@ -1,5 +1,6 @@
 
 #include <cstdio>
+#include <set>
 #include <string>
 
 #include "Niggli_Types.h"
@@ -797,4 +798,3 @@ IT_Lat_Char_43::IT_Lat_Char_43() : IT_Lat_Char_Base() {
    -0.2 -0.2 0 -0.2 -0.2 0.8 ;
    */
 } // end of class IT_Lat_Char_43 constructor
-

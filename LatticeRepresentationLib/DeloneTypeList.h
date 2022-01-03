@@ -22,10 +22,10 @@ auto Getter(const std::string& s, const R& r) {
 class DeloneTypeList {
 public:
    DeloneTypeList(const bool build=true);
-
    DeloneType operator[] (const std::string& s) const;
    DeloneType operator[] (const size_t n) const;
    size_t size() const { return m_deloneTypes.size(); }
+   std::vector<DeloneType> GetAllTypes() const { return m_deloneTypes; }
    static std::vector<std::pair<std::string, std::vector<double> > > Make3dCenteringMatrices();
    std::vector<DeloneFitResults> Fit( const std::string& type, const S6& s6, const S6& sig, const MatS6& m ) const;
    std::vector<DeloneFitResults> Fit( const S6& s6, const S6& sig, const MatS6& m ) const;

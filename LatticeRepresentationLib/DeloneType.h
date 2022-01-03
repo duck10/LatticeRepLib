@@ -80,7 +80,7 @@ public:
       const int m_freePsrams,
       const MatricesForOneDeloneType& vm);
 
-   DeloneFitResults GetFit(const S6& s6) const;
+   DeloneFitResults GetFit(const std::string& name, const S6& s6, const MatS6& reductionMatrix) const;
 
    std::string GetName(void) const { return m_deloneName; }
    std::string GetBravaisType(void) const { return m_bravaisType; }

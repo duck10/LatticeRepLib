@@ -71,7 +71,6 @@ public:
 class IT_Lat_Char_4 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_4();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_4a : public IT_Lat_Char_4 {
@@ -97,7 +96,6 @@ public:
 class IT_Lat_Char_6 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_6();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_6a : public IT_Lat_Char_6 {
@@ -123,7 +121,6 @@ public:
 class IT_Lat_Char_7 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_7();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_7a : public IT_Lat_Char_7 {
@@ -140,7 +137,6 @@ public:
 class IT_Lat_Char_8 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_8();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_8a : public IT_Lat_Char_8 {
@@ -177,7 +173,6 @@ public:
 class IT_Lat_Char_9 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_9();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_9a : public IT_Lat_Char_9 {
@@ -199,7 +194,6 @@ public:
 class IT_Lat_Char_10 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_10();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_10a : public IT_Lat_Char_10 {
@@ -222,7 +216,6 @@ public:
 class IT_Lat_Char_11 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_11();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_11a : public IT_Lat_Char_11 {
@@ -239,7 +232,6 @@ public:
 class IT_Lat_Char_12 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_12();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_12a : public IT_Lat_Char_12 {
@@ -256,7 +248,6 @@ public:
 class IT_Lat_Char_13 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_13();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_13a : public IT_Lat_Char_13 {
@@ -273,7 +264,6 @@ public:
 class IT_Lat_Char_14 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_14();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_14a : public IT_Lat_Char_14 {
@@ -296,7 +286,6 @@ public:
 class IT_Lat_Char_15 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_15();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_15a : public IT_Lat_Char_15 {
@@ -313,7 +302,6 @@ public:
 class IT_Lat_Char_16 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_16();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_16a : public IT_Lat_Char_16 {
@@ -342,7 +330,6 @@ public:
 class IT_Lat_Char_18 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_18();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_18a : public IT_Lat_Char_18 {
@@ -359,7 +346,6 @@ public:
 class IT_Lat_Char_19 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_19();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_19a : public IT_Lat_Char_19 {
@@ -393,7 +379,6 @@ public:
 class IT_Lat_Char_23 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_23();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_23a : public IT_Lat_Char_23 {
@@ -422,7 +407,6 @@ public:
 class IT_Lat_Char_26 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_26();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_26a : public IT_Lat_Char_26 {
@@ -473,7 +457,6 @@ public:
 class IT_Lat_Char_32 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_32();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_32a : public IT_Lat_Char_32 {
@@ -490,7 +473,6 @@ public:
 class IT_Lat_Char_33 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_33();
-   bool IsMember(const G6& g) const = 0;
 };
 
 
@@ -524,7 +506,6 @@ public:
 class IT_Lat_Char_34 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_34();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_34a : public IT_Lat_Char_34 {
@@ -561,7 +542,6 @@ public:
 class IT_Lat_Char_35 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_35();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_35a : public IT_Lat_Char_35 {
@@ -588,7 +568,6 @@ public:
 class IT_Lat_Char_36 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_36();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_36a : public IT_Lat_Char_36 {
@@ -620,7 +599,6 @@ public:
 class IT_Lat_Char_38 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_38();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_38a : public IT_Lat_Char_38 {
@@ -647,13 +625,11 @@ public:
 class IT_Lat_Char_39 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_39();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_40 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_40();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_40a : public IT_Lat_Char_40 {
@@ -675,7 +651,6 @@ public:
 class IT_Lat_Char_42 : public IT_Lat_Char_Base {
 public:
    IT_Lat_Char_42();
-   bool IsMember(const G6& g) const = 0;
 };
 
 class IT_Lat_Char_42a : public IT_Lat_Char_42 {
@@ -998,4 +973,4 @@ public:
 };
 
 
-#endif  // GENERATED_IT_TYPES_H#pragma once
+#endif  // GENERATED_IT_TYPES_H
