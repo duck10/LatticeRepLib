@@ -8,6 +8,7 @@
 #include "MatG6.h"
 #include "SellaBuild.h"
 
+#include <set>
 #include <sstream>
 #include <string>
 
@@ -173,7 +174,7 @@ DeloneTypeList::DeloneTypeList(const bool build)
          Getter( typelist[i], centeringMatrices ),
          Getter( typelist[i], freeParams ),
          Getter( typelist[i], matrices ) );
-
+      if (typelist[i][0] == 'C' || typelist[i] == "C3")
       m_deloneTypes.push_back( dt );
          //std::cout << dt << std::endl;
    }
@@ -334,6 +335,13 @@ DeloneType DeloneTypeList::operator[] (const size_t n) const {
    return m_deloneTypes[n];
 }
 
+bool find_range(const char c, char start, char end) {
+   for (char x = start; x < end; ++x) {
+      if (x == c) return true;
+   }
+   return false;
+}
+
 DeloneType DeloneTypeList::operator[] (const std::string& s) const {
    for (size_t i = 0; i < m_deloneTypes.size(); ++i)
       if (m_deloneTypes[i].GetName() == s) return m_deloneTypes[i];
@@ -342,14 +350,8 @@ DeloneType DeloneTypeList::operator[] (const std::string& s) const {
 
 double Zscore( const S6& s6, const S6& sigmas, const MatS6& reductionMatrix )
 {
-   const S6 modSig( reductionMatrix * sigmas );
-   double zscoreSq = 0.0;
-   for (size_t i = 0; i < 6; ++i) {
-      zscoreSq += s6[i] / modSig[i] * s6[i] / modSig[i];
-      //std::cout << s6[i] << "   " << modSig[i] << std::endl;
-   }
-   std::cout << std::endl;
-   return sqrt( zscoreSq );
+   const double zscore = s6.Norm() / (reductionMatrix * sigmas).Norm();
+   return (zscore < 1.0E-6) ? 0.0 : zscore;
 }
 
 double DeloneTypeList::GetFreeParams(const std::string& s) {
@@ -369,7 +371,7 @@ std::vector<DeloneFitResults> DeloneTypeList::Fit( const std::string& type, cons
    for (size_t i = 0; i < m_deloneTypes.size( ); ++i) {
       const std::string name = m_deloneTypes[i].GetName( );
       if (type.empty( ) || name.find( type ) != std::string::npos) {  // LCA make type UC
-         DeloneFitResults fit = m_deloneTypes[i].GetFit( s6 );
+         DeloneFitResults fit = m_deloneTypes[i].GetFit(name, s6, reductionMatrix);
          
          const double zscore = Zscore( s6-fit.GetBestFit(), sig, reductionMatrix ) * sqrt( GetFreeParams( name ) );
          fit.SetZscore( zscore );

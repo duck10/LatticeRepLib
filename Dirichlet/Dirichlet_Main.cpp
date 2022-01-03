@@ -226,7 +226,7 @@ std::string EdgeLengths(const ANGLELIST& list) {
    return ostr.str();
 }
 
-double CleanNearZero(const double d) {
+static double CleanNearZero(const double d) {
    return (abs(d) < 1.0E-6) ? 0 : d;
 }
 
@@ -325,7 +325,25 @@ std::vector<std::string> RetrieveCellsAsStringsFromDirichletConstants() {
    return strCells;
 }
 
+std::vector<std::string> GetUpwardSymmetry(const std::string& s) {
+   // per Grimmer, 2015
+   if (s == "aP")  return std::vector<std::string> {"mP", "mS"};
+   else if (s == "mP")  return std::vector<std::string> {"oP", "oS"};
+   else if (s == "mS")  return std::vector<std::string> {"oS", "oF", "oI", "hR"};
+   else if (s == "oP")  return std::vector<std::string> {"tP"};
+   else if (s == "oS")  return std::vector<std::string> {"tP", "hP"};
+   else if (s == "oF")  return std::vector<std::string> {"tI"};
+   else if (s == "oI")  return std::vector<std::string> {"tI"};
+   else if (s == "tP")  return std::vector<std::string> {"cP"};
+   //else if ( s == "hP") return std::vector<std::string>();
+   else if (s == "hR")  return std::vector<std::string> {"cP", "cF", "cI"};
+   else if (s == "tI")  return std::vector<std::string> {"cF", "cI"};
+   else { return std::vector<std::string>(); }
+}
+
+
 int main() {
+   //std::cout << LRL_ToString(GetUpwardSymmetry("mS"));
    ReadGlobalData();
 
    std::vector<std::string> strCells = RetrieveCellsAsStringsFromDirichletConstants();

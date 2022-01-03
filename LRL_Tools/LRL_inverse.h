@@ -5,6 +5,8 @@
 #ifndef LRL_INVERSE
 #define LRL_INVERSE
 
+#include <vector>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -13,5 +15,14 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif 
+
+template<typename T>
+T Inverse(const T& min) {
+   T m(min);
+   std::vector<double> arout(m.size());
+   inverse(min.GetRowDim(), min.GetVector().data(), arout.data());
+   m.SetVector(arout);
+   return m;
+}
 
 #endif // LRL_INVERSE

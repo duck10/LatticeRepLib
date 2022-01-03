@@ -8,18 +8,6 @@
 #include "MatG6.h"
 
 
-static bool Approx(const double d1, const double d2) {
-   return abs(d1 - d2) < g_delta;
-}
-
-static bool Approx(const double d1, const double d2, const double d3) {
-   return Approx(d1, d2) && Approx(d2, d3);
-}
-
-static bool Approx(const G6& g1, const G6& g2) {
-   return (g1 - g2).norm() < g_delta;
-}
-
 
 class IT_Lat_Char_Base {
 public:
@@ -40,6 +28,11 @@ public:
    static G6 GeneratePerturbation(const G6& v, const double amountToPerturb);
    bool G4Positive(const G6& g) const { return g[3] > 0; }
    bool G4Negative(const G6& g) const { return g[3] <= 0; }
+protected:
+   static bool Approx(const double d1, const double d2);
+   static bool Approx(const double d1, const double d2, const double d3);
+   static bool Approx(const G6& g1, const G6& g2);
+
 };
 
 class IT_Lat_Char_1 : public IT_Lat_Char_Base {
