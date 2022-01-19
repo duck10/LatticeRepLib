@@ -42,7 +42,7 @@ public:
 
    double operator[](const size_t n) const { return m_vec[n]; }
    double& operator[](const size_t n) { return m_vec[n]; }
-   static double DistanceBetween(const DC& v1, const DC& v2);
+   static double DistanceBetween(const DC& v1, const DC& v2, const int length=7);
    double norm() const { return m_vec.norm(); }
    double norm(const DC& DC) const { return norm(DC); }
    double Norm() const { return m_vec.norm(); }
