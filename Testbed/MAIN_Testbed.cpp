@@ -11,6 +11,8 @@
 #include "CS6Dist.c"
 #include "DeloneTypeList.h"
 #include "FollowerPathGenerator.h"
+#include "GenerateLatticeTypeExamples.h"
+#include "G6.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
@@ -38,6 +40,7 @@
 std::string Letters( void ) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
 }
+
 
 std::vector<LRL_ReadLatticeData> GetInputCells( void ) {
    const std::string letters = Letters( );
@@ -766,54 +769,78 @@ void GenerateFollowerPath() {
    std::cout << FollowerTriangle(5, S6("0 0 0 -95 -95 -95"), S6("0 0 0 -105 -105 -105"), S6( "0 0 0 -200 -200 -200")) << std::endl;
    exit(0);
 }
-void TestDC1() {
-   StoreResults<int, std::string> store(25);
+void TestDC1() {  // 
+   StoreResults<int, std::string> storeSmall(20);
+   StoreResults<int, std::string> storeLarge(20);
+   StoreResults<int, std::string> storeOther(20);
+   StoreResults<int, double> storeRatio(10);
    const double enlargeBy = 1000.0;
    for (size_t i = 0; i < 100000000; ++i) {
-      G6 g1 = G6::randDeloneUnreduced();
-      g1 = enlargeBy * g1 / g1.Norm(); // make norm(g1) = 100
-
-      G6 delta = G6::randDeloneUnreduced();
-      delta = enlargeBy * delta / delta.norm(); // make norm(delta) = enlargeBy
-      const G6 g2 = g1 + 0.001 * delta; // shift g1 by a small amount
+      G6 gRan = G6::randDeloneUnreduced();
+      G6 g1;
+      const bool b = Niggli::Reduce(gRan, g1);
+      const G6 gdelta = CreateUnitOrthogonalVector(g1);
+      g1 *= enlargeBy/g1.norm();
+      G6 g2;
+      const bool b2 = Niggli::Reduce(g1 + gdelta, g2);
 
       const DC d1(g1);
       const DC d2(g2);
 
-      const double d = DC::DistanceBetween(d1, d2);
-      const int key = int(log10(10.0 * d / (d1).Norm()));
-      if (key > 1 || key < -10) {
-         store.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ratio ", d / d1.norm(), "    ", g1, "  ---- ", g2));
-         const double norm1 = g1.norm();
-         const double norm2 = g2.norm();
+      const double d = DC::DistanceBetween(d1, d2, 7);
+      //const int key = int(log10(10.0 * d / (d1).Norm()));
+      const double ncdist = NCDist(g1.data(), g2.data());
+      int key = int(log10(d / ncdist));
+      const double minRange = 0.5;
+      const double maxRange = 3.0;
+      {
+         storeSmall.SetTitle(LRL_ToString("selected range less than ", minRange));
+         storeLarge.SetTitle(LRL_ToString("selected range greater than ", maxRange));
+         storeOther.SetTitle(LRL_ToString("outside range less than ", minRange, " or greater than ", maxRange));
+         const G6& g1red = g1;
+         const G6& g2red = g2;
+         S6 s1red;
+         S6 s2red;
+         Selling::Reduce(g1, s1red);
+         Selling::Reduce(g2, s2red);
+         if (d < minRange)storeSmall.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ncdist ", ncdist, "    ", g1red, "  ---- ", g2red));
+         else if (d > maxRange)storeLarge.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ncdist ", ncdist, "    ", g1red, "  ---- ", g2red));
+         else storeOther.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ncdist ", ncdist, "    ", g1red, "  ---- ", g2red));
+
+         storeRatio.Store(int(log10(d / ncdist)), d / ncdist);
+
+
+         const double norm1 = g1red.norm();
+         const double norm2 = g2red.norm();
          const double norm3 = d1.norm();
          const double norm4 = d2.norm();
-         const double distNC = NCDist(G6(g1).data(), G6(g2).data());
-         const double distCS = CS6Dist(g1.data(), g2.data());
+         const double distCS = CS6Dist(s1red.data(), s2red.data());
          const double normDC = (d1 - d2).norm();
-         std::cout << "------------------------------------------------------------" << std::endl;
-         std::cout << " d1 " << d1 << std::endl;
-         std::cout << " d2 " << d2 << std::endl;
-         std::cout << " g1 " << g1 << std::endl;
-         std::cout << " g2 " << g2 << std::endl;
-         std::cout << " S6_1 " << S6(g1) << std::endl;
-         std::cout << " S6_2 " << S6(g2) << std::endl;
-         G6 g1out, g2out;
-         const bool b1 = Niggli::Reduce(G6(g1), g1out);
-         const bool b2 = Niggli::Reduce(G6(g2), g2out);
-         LRL_Cell_Degrees testcell(g1);
-         std::cout << " cell1 " << LRL_Cell_Degrees(g1) << std::endl;
-         std::cout << " cell2 " << LRL_Cell_Degrees(g2) << std::endl << std::endl;
-         std::cout << " cell1 reduced " << LRL_Cell_Degrees(g1out) << std::endl;
-         std::cout << " cell2 reduced " << LRL_Cell_Degrees(g2out) << std::endl << std::endl;
-         const DC d1X(g1out);
-         const DC d2X(g2out);
-         std::cout << d1X << std::endl;
-         std::cout << d2X << std::endl;
+         const DC d1X(g1red);
+         const DC d2X(g2red);
+         //std::cout << "------------------------------------------------------------" << std::endl;
+         //std::cout << " g1 " << g1 << std::endl;
+         //std::cout << " g2 " << g2 << std::endl;
+         //std::cout << "distances NC, CS, DC " << ncdist << " " << distCS << " " << d << std::endl;
+         //std::cout << " d1 " << d1 << std::endl;
+         //std::cout << " d2 " << d2 << std::endl;
+         //std::cout << " g1red " << g1red << std::endl;
+         //std::cout << " g2red " << g2red << std::endl;
+         //std::cout << " S6_1 reduced " << S6(s1red) << std::endl;
+         //std::cout << " S6_2 reduced " << S6(s2red) << std::endl;
+         //std::cout << " cell1 " << LRL_Cell_Degrees(g1) << std::endl;
+         //std::cout << " cell2 " << LRL_Cell_Degrees(g2) << std::endl << std::endl;
+         //std::cout << " cell1 reduced " << LRL_Cell_Degrees(g1red) << std::endl;
+         //std::cout << " cell2 reduced " << LRL_Cell_Degrees(g2red) << std::endl << std::endl;
+         //std::cout << d1X << std::endl;
+         //std::cout << d2X << std::endl;
       }
    }
-   store.ShowResults();
-
+   //storeSmall.ShowResultsByKeyDescending();
+   //storeLarge.ShowResultsByKeyDescending();
+   //storeOther.ShowResultsByKeyDescending();
+   storeRatio.ShowResultsByKeyAscending();
+   exit(0);
 }
 
 void TestDC3() {
@@ -907,8 +934,33 @@ void Gen_55A() {
    exit(0);
 }
 
+void TestGeneratedTypes() {
+   std::cout << IT_3() << std::endl;
+   exit(0);
+}
+
 int main(int argc, char* argv[])
 {
+   //std::cout << CreateUnitOrthogonalVector(G6("1 0 0  0 0 0")).Norm() << std::endl;
+   //std::cout << CreateUnitOrthogonalVector(S6("1 0 0  0 0 0")).Norm() << std::endl;
+
+   //std::cout << CreateUnitOrthogonalVector(G6(" 0 1 0  0 0 0")).Norm() << std::endl;
+   //std::cout << CreateUnitOrthogonalVector(S6(" 0 1 0  0 0 0")).Norm() << std::endl;
+
+   //std::cout << CreateUnitOrthogonalVector(G6("0 0 1  0 0 0")).Norm() << std::endl;
+   //std::cout << CreateUnitOrthogonalVector(S6("0 0 1  0 0 0")).Norm() << std::endl;
+
+   //std::cout << CreateUnitOrthogonalVector(G6("0 0  0 1 0 0")).Norm() << std::endl;
+   //std::cout << CreateUnitOrthogonalVector(S6("0 0  0 1 0 0")).Norm() << std::endl;
+
+   //std::cout << CreateUnitOrthogonalVector(G6("0 0  0 0 1 0")).Norm() << std::endl;
+   //std::cout << CreateUnitOrthogonalVector(S6("0 0  0 0 1 0")).Norm() << std::endl;
+
+   //std::cout << CreateUnitOrthogonalVector(G6("0 0  0 0 0 1")).Norm() << std::endl;
+   //std::cout << CreateUnitOrthogonalVector(S6("0 0  0 0 0 1")).Norm() << std::endl;
+
+   TestDC1();
+   TestGeneratedTypes();
    Gen_55A();
    TestDC3();
    exit(0);
