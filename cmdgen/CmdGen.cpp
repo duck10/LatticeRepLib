@@ -38,7 +38,7 @@ G6 Generate(const std::shared_ptr<GenerateNiggliBase>& pt) {
    //   << pt->GetITNum() << " "
    //   << LRL_Cell_Degrees(test)
    //   << std::endl;
-   return test;;
+   return probe;;
 }
 
 int main()
