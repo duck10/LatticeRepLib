@@ -50,12 +50,12 @@ int main()
       const std::shared_ptr<GenerateNiggliBase> pt = vglb[lat];
       for (size_t i = 0; i < ngen; ++i) {
          const G6 g = Generate(vglb[lat]);
-         std::cout
-            << LRL_Cell_Degrees(g) << " "
+         std::cout << "G6 "
+            << (g) << " "
             << pt->GetBravaisType() << " IT# = "
             << pt->GetITNum()
             << std::endl;
-
       }
+      std::cout << ";" << std::endl;
    }
 }
