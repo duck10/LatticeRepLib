@@ -162,7 +162,7 @@ G6::G6(const std::string& s) {
    m_vec.resize(6);
    m_vec = LRL_StringTools::FromString(s);
    m_dim = m_vec.size();
-   m_valid = true;
+   m_valid = m_vec[0] > 0.0;
    if (m_dim != 6) throw "bad dimension in G6 from a string";
 }
 
@@ -196,18 +196,22 @@ G6& G6::operator= (const std::string& s)
 G6& G6::operator= (const D7& v)
 {
    (*this) = G6(v);
+   m_vec.SetValid(v.GetValid());
    return *this;
 }
 
 G6& G6::operator= (const S6& v)
 {
    (*this) = G6(v);
+   m_vec.SetValid(v.GetValid());
+   m_valid = v.GetValid();
    return *this;
 }
 
 G6& G6::operator= (const C3& c3)
 {
    (*this) = S6(c3);
+   m_vec.SetValid(c3.GetValid());
    return *this;
 }
 

@@ -11,6 +11,8 @@
 #include "CS6Dist.c"
 #include "DeloneTypeList.h"
 #include "FollowerPathGenerator.h"
+#include "GenerateLatticeTypeExamples.h"
+#include "G6.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
@@ -35,33 +37,34 @@
 #include <cstdlib>
 #include <cstdio>
 
-std::string Letters( void ) {
+std::string Letters(void) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
 }
 
-std::vector<LRL_ReadLatticeData> GetInputCells( void ) {
-   const std::string letters = Letters( );
+
+std::vector<LRL_ReadLatticeData> GetInputCells(void) {
+   const std::string letters = Letters();
    std::string lattice;
    std::vector<LRL_ReadLatticeData> cellDataList;
    LRL_ReadLatticeData rcd;
    while (lattice != "EOF") {
-      rcd.read( );
-      lattice = rcd.GetLattice( );
-      if ((!lattice.empty( )) && (letters.find( static_cast<char>(toupper( lattice[0] )) ) != std::string::npos))
-         cellDataList.push_back( rcd );
+      rcd.read();
+      lattice = rcd.GetLattice();
+      if ((!lattice.empty()) && (letters.find(static_cast<char>(toupper(lattice[0]))) != std::string::npos))
+         cellDataList.push_back(rcd);
    }
 
    return cellDataList;
 }
 
-std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLatticeData>& input ) {
+std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeData>& input) {
    std::vector<S6> v;
    LatticeConverter converter;
 
    MatS6 mat;
-   for (size_t i = 0; i < input.size( ); ++i) {
-      const S6 s6 = converter.SellingReduceCell( input[i].GetLattice( ), input[i].GetCell( ), mat );
-      v.push_back( s6 );
+   for (size_t i = 0; i < input.size(); ++i) {
+      const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell(), mat);
+      v.push_back(s6);
    }
    return v;
 }
@@ -69,33 +72,33 @@ std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLattice
 void Test_E3toS6() {
 
    // R1 is index 4  R3 is index 5
-   std::string lattice( "R" );
-   LRL_Cell cellacute( "10 10 10 65 65 65" );
-   LRL_Cell cellobtuse( "10 10 10  15 15 15" );
+   std::string lattice("R");
+   LRL_Cell cellacute("10 10 10 65 65 65");
+   LRL_Cell cellobtuse("10 10 10  15 15 15");
    LatticeConverter lc;
-   const  std::vector<std::pair<std::string, std::vector<double> > > vM3d = DeloneTypeList::Make3dCenteringMatrices(  );
+   const  std::vector<std::pair<std::string, std::vector<double> > > vM3d = DeloneTypeList::Make3dCenteringMatrices();
 
-   for (size_t i = 0; i < vM3d.size( ); ++i) std::cout << i << " " << vM3d[i].first << std::endl;
+   for (size_t i = 0; i < vM3d.size(); ++i) std::cout << i << " " << vM3d[i].first << std::endl;
 
-   const MatS6 m6_R1( MatS6::e3Tos6( vM3d[4].second ) );
+   const MatS6 m6_R1(MatS6::e3Tos6(vM3d[4].second));
    std::cout << "R1" << std::endl;
-   std::cout << LRL_Cell_Degrees( m6_R1 * S6(cellacute) ) << std::endl;
+   std::cout << LRL_Cell_Degrees(m6_R1 * S6(cellacute)) << std::endl;
 
-   const MatS6 m6_R3( MatS6::e3Tos6( vM3d[4].second ) );
+   const MatS6 m6_R3(MatS6::e3Tos6(vM3d[4].second));
    std::cout << "R3" << std::endl;
-   std::cout << LRL_Cell_Degrees( m6_R3 * cellobtuse ) << std::endl;
-   std::cout << LRL_Cell_Degrees( lc.DeloneReduceCell("P", m6_R3 * S6(cellobtuse)) ) << std::endl;
+   std::cout << LRL_Cell_Degrees(m6_R3 * cellobtuse) << std::endl;
+   std::cout << LRL_Cell_Degrees(lc.DeloneReduceCell("P", m6_R3 * S6(cellobtuse))) << std::endl;
 
 }
 
 class AngularS6 {
 public:
-   AngularS6( ) : m_isValid(false) {}
-   AngularS6( const S6& s, const MatS6& m );
-   double AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const;
+   AngularS6() : m_isValid(false) {}
+   AngularS6(const S6& s, const MatS6& m);
+   double AngleBetween(const AngularS6& s1, const AngularS6& s2) const;
 
-   AngularS6 operator-( const AngularS6& s ) const;
-   double norm( ) const { return (*this).m_S6[0]; }
+   AngularS6 operator-(const AngularS6& s) const;
+   double norm() const { return (*this).m_S6[0]; }
 
    bool m_isValid;
    S6 m_S6;
@@ -103,15 +106,15 @@ public:
 
 };
 
-double AngularS6::AngleBetween( const AngularS6& s1, const AngularS6& s2 ) const {
+double AngularS6::AngleBetween(const AngularS6& s1, const AngularS6& s2) const {
    double sum = 0.0;
    for (size_t i = 0; i < 6; ++i) sum += s1.m_S6[i] * s2.m_S6[i];
-   return acos(sum/(s1.m_S6.norm()*s2.m_S6.norm()));
+   return acos(sum / (s1.m_S6.norm() * s2.m_S6.norm()));
 }
 
-AngularS6 AngularS6::operator- ( const AngularS6&a ) const {
+AngularS6 AngularS6::operator- (const AngularS6& a) const {
    AngularS6 as6;
-   as6.m_S6[0] = AngleBetween( (*this), a );
+   as6.m_S6[0] = AngleBetween((*this), a);
    return as6;
 }
 
@@ -129,7 +132,7 @@ std::vector<MatS6> BuildNCDist_Reflections() {
    return cs6Dist_Refl;
 }
 
-CNearTree<MatS6> BuildTree( const std::vector<MatS6>& v) {
+CNearTree<MatS6> BuildTree(const std::vector<MatS6>& v) {
    return CNearTree<MatS6>(v);
 }
 
@@ -208,8 +211,8 @@ void CheckBoundaries() {
 }
 
 void TestMatrices() {
-//static int MS[15][36] = {
-//   static int RS[NREFL][36] = {
+   //static int MS[15][36] = {
+   //   static int RS[NREFL][36] = {
    CheckReflections();
 
    CheckBoundaries();
@@ -234,7 +237,7 @@ std::vector<size_t> LocateNonZeros(const S6& s) {
    std::vector<size_t> q;
    size_t locate = 0;
    for (size_t k = 0; k < 6; ++k) {
-      if (abs(s[k]) <1.0e-6) {
+      if (abs(s[k]) < 1.0e-6) {
          q.push_back(k);
       }
       ++locate;
@@ -326,11 +329,11 @@ double DistanceTo_ValidThreeZeros(const S6& s) {
 }
 
 double DistanceTo_INValidThreeZeros(const S6& s) {
-   const double mind = sqrt( minNC(     
-         s[1] * s[1] + s[2] * s[2] + s[3] * s[3],
-         s[0] * s[0] + s[2] * s[2] + s[4] * s[4],
-         s[0] * s[0] + s[1] * s[1] + s[5] * s[5],
-         s[3] * s[3] + s[4] * s[4] + s[5] * s[5]));
+   const double mind = sqrt(minNC(
+      s[1] * s[1] + s[2] * s[2] + s[3] * s[3],
+      s[0] * s[0] + s[2] * s[2] + s[4] * s[4],
+      s[0] * s[0] + s[1] * s[1] + s[5] * s[5],
+      s[3] * s[3] + s[4] * s[4] + s[5] * s[5]));
 
    const double d0 = sqrt(s[1] * s[1] + s[2] * s[2] + s[3] * s[3]);
    const double d1 = sqrt(s[0] * s[0] + s[2] * s[2] + s[4] * s[4]);
@@ -343,41 +346,41 @@ double DistanceTo_INValidThreeZeros(const S6& s) {
 double DistanceTo_INValidFourZeros(const S6& s) {
    const double mind = sqrt(minNC(
       minNC(
-      s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[3] * s[3],
-      s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[4] * s[4],
-      s[0] * s[0] + s[1] * s[1] + s[3] * s[3] + s[4] * s[4],
-      s[0] * s[0] + s[2] * s[2] + s[3] * s[3] + s[4] * s[4],
-      s[1] * s[1] + s[2] * s[2] + s[3] * s[3] + s[4] * s[4],
-      s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[5] * s[5],
-      s[0] * s[0] + s[1] * s[1] + s[3] * s[3] + s[5] * s[5]),
+         s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[3] * s[3],
+         s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[4] * s[4],
+         s[0] * s[0] + s[1] * s[1] + s[3] * s[3] + s[4] * s[4],
+         s[0] * s[0] + s[2] * s[2] + s[3] * s[3] + s[4] * s[4],
+         s[1] * s[1] + s[2] * s[2] + s[3] * s[3] + s[4] * s[4],
+         s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[5] * s[5],
+         s[0] * s[0] + s[1] * s[1] + s[3] * s[3] + s[5] * s[5]),
 
       minNC(
-      s[0] * s[0] + s[2] * s[2] + s[3] * s[3] + s[5] * s[5],
-      s[1] * s[1] + s[2] * s[2] + s[3] * s[3] + s[5] * s[5],
-      s[0] * s[0] + s[1] * s[1] + s[4] * s[4] + s[5] * s[5],
-      s[0] * s[0] + s[2] * s[2] + s[4] * s[4] + s[5] * s[5],
-      s[1] * s[1] + s[2] * s[2] + s[4] * s[4] + s[5] * s[5],
-      s[0] * s[0] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5],
-      s[1] * s[1] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]),
+         s[0] * s[0] + s[2] * s[2] + s[3] * s[3] + s[5] * s[5],
+         s[1] * s[1] + s[2] * s[2] + s[3] * s[3] + s[5] * s[5],
+         s[0] * s[0] + s[1] * s[1] + s[4] * s[4] + s[5] * s[5],
+         s[0] * s[0] + s[2] * s[2] + s[4] * s[4] + s[5] * s[5],
+         s[1] * s[1] + s[2] * s[2] + s[4] * s[4] + s[5] * s[5],
+         s[0] * s[0] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5],
+         s[1] * s[1] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]),
 
       s[2] * s[2] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]));
 
 
-      const double d00 =   sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[3] * s[3]);
-      const double d01 =   sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[4] * s[4]);
-      const double d02 =   sqrt(s[0] * s[0] + s[1] * s[1] + s[3] * s[3] + s[4] * s[4]);
-      const double d03 =   sqrt(s[0] * s[0] + s[2] * s[2] + s[3] * s[3] + s[4] * s[4]);
-      const double d04 =   sqrt(s[1] * s[1] + s[2] * s[2] + s[3] * s[3] + s[4] * s[4]);
-      const double d05 =   sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[5] * s[5]);
-      const double d06 =   sqrt(s[0] * s[0] + s[1] * s[1] + s[3] * s[3] + s[5] * s[5]);
-      const double d07 =   sqrt(s[0] * s[0] + s[2] * s[2] + s[3] * s[3] + s[5] * s[5]);
-      const double d08 =   sqrt(s[1] * s[1] + s[2] * s[2] + s[3] * s[3] + s[5] * s[5]);
-      const double d09 =   sqrt(s[0] * s[0] + s[1] * s[1] + s[4] * s[4] + s[5] * s[5]);
-      const double d10 =   sqrt(s[0] * s[0] + s[2] * s[2] + s[4] * s[4] + s[5] * s[5]);
-      const double d11 =   sqrt(s[1] * s[1] + s[2] * s[2] + s[4] * s[4] + s[5] * s[5]);
-      const double d12 =   sqrt(s[0] * s[0] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]);
-      const double d13 =   sqrt(s[1] * s[1] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]);
-      const double d14 =   sqrt(s[2] * s[2] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]);
+   const double d00 = sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[3] * s[3]);
+   const double d01 = sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[4] * s[4]);
+   const double d02 = sqrt(s[0] * s[0] + s[1] * s[1] + s[3] * s[3] + s[4] * s[4]);
+   const double d03 = sqrt(s[0] * s[0] + s[2] * s[2] + s[3] * s[3] + s[4] * s[4]);
+   const double d04 = sqrt(s[1] * s[1] + s[2] * s[2] + s[3] * s[3] + s[4] * s[4]);
+   const double d05 = sqrt(s[0] * s[0] + s[1] * s[1] + s[2] * s[2] + s[5] * s[5]);
+   const double d06 = sqrt(s[0] * s[0] + s[1] * s[1] + s[3] * s[3] + s[5] * s[5]);
+   const double d07 = sqrt(s[0] * s[0] + s[2] * s[2] + s[3] * s[3] + s[5] * s[5]);
+   const double d08 = sqrt(s[1] * s[1] + s[2] * s[2] + s[3] * s[3] + s[5] * s[5]);
+   const double d09 = sqrt(s[0] * s[0] + s[1] * s[1] + s[4] * s[4] + s[5] * s[5]);
+   const double d10 = sqrt(s[0] * s[0] + s[2] * s[2] + s[4] * s[4] + s[5] * s[5]);
+   const double d11 = sqrt(s[1] * s[1] + s[2] * s[2] + s[4] * s[4] + s[5] * s[5]);
+   const double d12 = sqrt(s[0] * s[0] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]);
+   const double d13 = sqrt(s[1] * s[1] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]);
+   const double d14 = sqrt(s[2] * s[2] + s[3] * s[3] + s[4] * s[4] + s[5] * s[5]);
 
 
 
@@ -390,16 +393,16 @@ void DistancesToInvalidLattices() {
       S6 s(S6::rand());
       RHrand storeRand;
 
-      s[size_t(rand()/double(RAND_MAX) * 6.0)] = 0.0;
-      s[size_t(rand()/double(RAND_MAX) * 6.0)] = 0.0;
+      s[size_t(rand() / double(RAND_MAX) * 6.0)] = 0.0;
+      s[size_t(rand() / double(RAND_MAX) * 6.0)] = 0.0;
       //s[size_t(rand()/double(RAND_MAX) * 6.0)] = 0.0;
 
-      const double d3v = DistanceTo_ValidThreeZeros(s)   ;
-      const double d3i = DistanceTo_INValidThreeZeros(s) ;
-      const double d4i = DistanceTo_INValidFourZeros(s)  ;
+      const double d3v = DistanceTo_ValidThreeZeros(s);
+      const double d3i = DistanceTo_INValidThreeZeros(s);
+      const double d4i = DistanceTo_INValidFourZeros(s);
 
       const double test = abs(101.36766552387854 - d3i);
-      if (d4i < d3i ) std::cout << d3i << "  " << d4i << "    " << s << std::endl;
+      if (d4i < d3i) std::cout << d3i << "  " << d4i << "    " << s << std::endl;
 
       //if (minNC(d3v, d3i, d4i) < 70) {
       //   std::cout << std::endl;
@@ -457,7 +460,7 @@ void HowMuchBetterIsCS6DistThanJustDistanceInFundamentalUnit(const T& t = T())
 {
    ListDeloneLatticeTypes();
    StoreResults<double, PairReporter<T, T> > store(5);
-   StoreResults<double, PairReporter<double,double> > store2(5);
+   StoreResults<double, PairReporter<double, double> > store2(5);
    const std::string lat1 = "M1B";
    const std::string lat2 = "M4";
    store.SetTitle("in Fundamental unit vs CS6Dist for " + lat1 + " & " + lat2);
@@ -475,7 +478,7 @@ void HowMuchBetterIsCS6DistThanJustDistanceInFundamentalUnit(const T& t = T())
       if (CountZeros(s2red) != 2) continue;
       if (b1 && b2) {
          s2red = s1red.FindBestMatchAmongReflections(s2red);
-      //std::cout << s1red << "   " << s2red << std::endl << std::endl;
+         //std::cout << s1red << "   " << s2red << std::endl << std::endl;
          const double dFundamental = (s2red - s1red).norm();
          const double dCs6Dist = CS6Dist(s1red.data(), s2red.data());
 
@@ -503,10 +506,10 @@ class C3_ForCells {
 public:
    C3_ForCells() {}
    C3_ForCells(const S6& s) {
-      const LRL_Cell c (s);
-      m_v[0] = std::polar(c[0],c[3]);
-      m_v[1] = std::polar(c[1],c[4]);
-      m_v[2] = std::polar(c[2],c[5]);
+      const LRL_Cell c(s);
+      m_v[0] = std::polar(c[0], c[3]);
+      m_v[1] = std::polar(c[1], c[4]);
+      m_v[2] = std::polar(c[2], c[5]);
    }
 
    template<typename T> C3_ForCells(const T& t) {
@@ -521,7 +524,7 @@ public:
       double theta[3];
       for (size_t i = 0; i < 3; ++i)   r[i] = abs(fc.m_v[i]);
       for (size_t i = 0; i < 3; ++i)   theta[i] = arg(fc.m_v[i]);
-      for (size_t i = 0; i < 3; ++i)   std::cout << r[i] << "," << 180.0/(4.0*atan(1.0))*theta[i] << "   ";
+      for (size_t i = 0; i < 3; ++i)   std::cout << r[i] << "," << 180.0 / (4.0 * atan(1.0)) * theta[i] << "   ";
 
       std::cout << std::endl << std::endl;
 
@@ -537,7 +540,7 @@ void StuffFor_a_alpha() {
 
    const MatS6 m1 = FindProjector("C5");
    //const S6 testlattice = m1 * S6::randDeloneReduced();
-   const S6 testlattice = S6(G6( "100 100 100  100 100 100"));
+   const S6 testlattice = S6(G6("100 100 100  100 100 100"));
    std::cout << "input cell " << LRL_Cell_Degrees(testlattice) << std::endl;
    std::cout << "apply 24 S6 reflections to that " << std::endl << std::endl;
    for (size_t i = 0; i < redc.size(); ++i) {
@@ -565,7 +568,7 @@ void ComplexCell(const S6& s)
    const double csq = -(s[5] + s[1] + s[0]);
    const std::complex<double> a = std::sqrt(std::complex<double>(asq, 0.0));
    const std::complex<double> b = std::sqrt(std::complex<double>(bsq, 0.0));
-   const std::complex<double> c = std::sqrt(std::complex<double>(csq,0.0));
+   const std::complex<double> c = std::sqrt(std::complex<double>(csq, 0.0));
 
    const std::complex<double> cosal = s[0] / (b * c);
    const std::complex<double> cosbe = s[1] / (a * c);
@@ -603,7 +606,7 @@ void TestDistance(const S6& s1, const S6& s2) {
    const double d1 = CS6Dist(s1.data(), s2.data());
    static const std::vector<std::pair<MatS6, MatS6> > redc(CreateReductionMatrices());
 
-   const double d2 = CS6Dist((redc[1].first*s1).data(), (redc[1].first*s2).data());
+   const double d2 = CS6Dist((redc[1].first * s1).data(), (redc[1].first * s2).data());
 
    const double d3 = (s1 - s2).norm();
    const double d4 = (redc[1].first * s1 - redc[1].first * s2).norm();
@@ -669,9 +672,9 @@ void CountCycles() {
       S6 vout;
       Selling::Reduce(s6in, vout);
       const size_t cycles = sell.GetCycles();
-      if (cycles <10) continue;
-      const size_t key = (cycles == 0 ) ? 0 : log10(cycles);
-      sr.Store(key, LRL_ToString( cycles, "  " , s6in));
+      if (cycles < 10) continue;
+      const size_t key = (cycles == 0) ? 0 : log10(cycles);
+      sr.Store(key, LRL_ToString(cycles, "  ", s6in));
    }
    sr.ShowResults();
    exit(0);
@@ -691,7 +694,7 @@ void LookAtS6BoundaryCrossings() {
    exit(0);
 }
 
-void MakeRow_a(const size_t n,Matrix_3x3& m) {
+void MakeRow_a(const size_t n, Matrix_3x3& m) {
    m[3 * n + 0] = 1;
    m[3 * n + 1] = 0;
    m[3 * n + 2] = 0;
@@ -757,135 +760,159 @@ void Matrices() {
 void GenerateFollowerPath() {
    std::vector<std::pair<S6, S6> > result;
 
-   std::unique_ptr<FollowerPathGenerator> fpg( new FollowerPoint(5, S6::randDeloneUnreduced()));
+   std::unique_ptr<FollowerPathGenerator> fpg(new FollowerPoint(5, S6::randDeloneUnreduced()));
    std::cout << (*fpg) << std::endl;
 
-   std::cout << FollowerLine (5, S6::randDeloneUnreduced(), S6::randDeloneUnreduced()) << std::endl;
+   std::cout << FollowerLine(5, S6::randDeloneUnreduced(), S6::randDeloneUnreduced()) << std::endl;
    std::cout << FollowerChord(5, S6("0 0 2 -100 -100 -100"), S6("0 0 4 -110 -110 -110")) << std::endl;
    std::cout << FollowerChord3(5, S6("0 0 0 -95 -95 -95"), S6("0 0 0 -105 -105 -105"), S6("0 0 0 -200 -200 -200")) << std::endl;
-   std::cout << FollowerTriangle(5, S6("0 0 0 -95 -95 -95"), S6("0 0 0 -105 -105 -105"), S6( "0 0 0 -200 -200 -200")) << std::endl;
+   std::cout << FollowerTriangle(5, S6("0 0 0 -95 -95 -95"), S6("0 0 0 -105 -105 -105"), S6("0 0 0 -200 -200 -200")) << std::endl;
    exit(0);
 }
-void TestDC1() {
-   StoreResults<int, std::string> store(25);
+void TestDC1() {  // 
+   StoreResults<int, std::string> storeSmall(20);
+   StoreResults<int, std::string> storeLarge(20);
+   StoreResults<int, std::string> storeOther(20);
+   StoreResults<int, double> storeRatio(10);
    const double enlargeBy = 1000.0;
    for (size_t i = 0; i < 100000000; ++i) {
-      G6 g1 = G6::randDeloneUnreduced();
-      g1 = enlargeBy * g1 / g1.Norm(); // make norm(g1) = 100
-
-      G6 delta = G6::randDeloneUnreduced();
-      delta = enlargeBy * delta / delta.norm(); // make norm(delta) = enlargeBy
-      const G6 g2 = g1 + 0.001 * delta; // shift g1 by a small amount
+      G6 gRan = G6::randDeloneUnreduced();
+      G6 g1;
+      const bool b = Niggli::Reduce(gRan, g1);
+      const G6 gdelta = CreateUnitOrthogonalVector(g1);
+      g1 *= enlargeBy / g1.norm();
+      G6 g2;
+      const bool b2 = Niggli::Reduce(g1 + gdelta, g2);
 
       const DC d1(g1);
       const DC d2(g2);
 
-      const double d = DC::DistanceBetween(d1, d2);
-      const int key = int(log10(10.0 * d / (d1).Norm()));
-      if (key > 1 || key < -10) {
-         store.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ratio ", d / d1.norm(), "    ", g1, "  ---- ", g2));
-         const double norm1 = g1.norm();
-         const double norm2 = g2.norm();
+      const double d = DC::DistanceBetween(d1, d2, 7);
+      //const int key = int(log10(10.0 * d / (d1).Norm()));
+      const double ncdist = NCDist(g1.data(), g2.data());
+      int key = int(log10(d / ncdist));
+      const double minRange = 0.5;
+      const double maxRange = 3.0;
+      {
+         storeSmall.SetTitle(LRL_ToString("selected range less than ", minRange));
+         storeLarge.SetTitle(LRL_ToString("selected range greater than ", maxRange));
+         storeOther.SetTitle(LRL_ToString("outside range less than ", minRange, " or greater than ", maxRange));
+         const G6& g1red = g1;
+         const G6& g2red = g2;
+         S6 s1red;
+         S6 s2red;
+         Selling::Reduce(g1, s1red);
+         Selling::Reduce(g2, s2red);
+         if (d < minRange)storeSmall.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ncdist ", ncdist, "    ", g1red, "  ---- ", g2red));
+         else if (d > maxRange)storeLarge.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ncdist ", ncdist, "    ", g1red, "  ---- ", g2red));
+         else storeOther.Store(key, LRL_ToString("d=", d, "  d1.norm  ", d1.norm(), "  ncdist ", ncdist, "    ", g1red, "  ---- ", g2red));
+
+         storeRatio.Store(int(log10(d / ncdist)), d / ncdist);
+
+
+         const double norm1 = g1red.norm();
+         const double norm2 = g2red.norm();
          const double norm3 = d1.norm();
          const double norm4 = d2.norm();
-         const double distNC = NCDist(G6(g1).data(), G6(g2).data());
-         const double distCS = CS6Dist(g1.data(), g2.data());
+         const double distCS = CS6Dist(s1red.data(), s2red.data());
          const double normDC = (d1 - d2).norm();
-         std::cout << "------------------------------------------------------------" << std::endl;
-         std::cout << " d1 " << d1 << std::endl;
-         std::cout << " d2 " << d2 << std::endl;
-         std::cout << " g1 " << g1 << std::endl;
-         std::cout << " g2 " << g2 << std::endl;
-         std::cout << " S6_1 " << S6(g1) << std::endl;
-         std::cout << " S6_2 " << S6(g2) << std::endl;
-         G6 g1out, g2out;
-         const bool b1 = Niggli::Reduce(G6(g1), g1out);
-         const bool b2 = Niggli::Reduce(G6(g2), g2out);
-         LRL_Cell_Degrees testcell(g1);
-         std::cout << " cell1 " << LRL_Cell_Degrees(g1) << std::endl;
-         std::cout << " cell2 " << LRL_Cell_Degrees(g2) << std::endl << std::endl;
-         std::cout << " cell1 reduced " << LRL_Cell_Degrees(g1out) << std::endl;
-         std::cout << " cell2 reduced " << LRL_Cell_Degrees(g2out) << std::endl << std::endl;
-         const DC d1X(g1out);
-         const DC d2X(g2out);
-         std::cout << d1X << std::endl;
-         std::cout << d2X << std::endl;
+         const DC d1X(g1red);
+         const DC d2X(g2red);
+         //std::cout << "------------------------------------------------------------" << std::endl;
+         //std::cout << " g1 " << g1 << std::endl;
+         //std::cout << " g2 " << g2 << std::endl;
+         //std::cout << "distances NC, CS, DC " << ncdist << " " << distCS << " " << d << std::endl;
+         //std::cout << " d1 " << d1 << std::endl;
+         //std::cout << " d2 " << d2 << std::endl;
+         //std::cout << " g1red " << g1red << std::endl;
+         //std::cout << " g2red " << g2red << std::endl;
+         //std::cout << " S6_1 reduced " << S6(s1red) << std::endl;
+         //std::cout << " S6_2 reduced " << S6(s2red) << std::endl;
+         //std::cout << " cell1 " << LRL_Cell_Degrees(g1) << std::endl;
+         //std::cout << " cell2 " << LRL_Cell_Degrees(g2) << std::endl << std::endl;
+         //std::cout << " cell1 reduced " << LRL_Cell_Degrees(g1red) << std::endl;
+         //std::cout << " cell2 reduced " << LRL_Cell_Degrees(g2red) << std::endl << std::endl;
+         //std::cout << d1X << std::endl;
+         //std::cout << d2X << std::endl;
       }
    }
-   store.ShowResults();
-
+   //storeSmall.ShowResultsByKeyDescending();
+   //storeLarge.ShowResultsByKeyDescending();
+   //storeOther.ShowResultsByKeyDescending();
+   storeRatio.ShowResultsByKeyAscending();
+   exit(0);
 }
 
 void TestDC3() {
-C3 c0(S6::rand());
-C3 c1(c0);
-C3 c2(c0);
-C3 c3(c0);
-C3 c4(c0);
-C3 c5(c0);
+   C3 c0(S6::rand());
+   C3 c1(c0);
+   C3 c2(c0);
+   C3 c3(c0);
+   C3 c4(c0);
+   C3 c5(c0);
 
-std::cout << "c0 input " << c0 << std::endl;
-std::cout << "c1 input " << c1 << std::endl;
-std::cout << "c2 input " << c2 << std::endl;
-std::cout << std::endl;
+   std::cout << "c0 input " << c0 << std::endl;
+   std::cout << "c1 input " << c1 << std::endl;
+   std::cout << "c2 input " << c2 << std::endl;
+   std::cout << std::endl;
 
-std::cout << "cell0 input " << LRL_Cell_Degrees(c0) << std::endl;
-std::cout << "cell1 input " << LRL_Cell_Degrees(c1) << std::endl;
-std::cout << "cell2 input " << LRL_Cell_Degrees(c2) << std::endl;
-std::cout << std::endl;
+   std::cout << "cell0 input " << LRL_Cell_Degrees(c0) << std::endl;
+   std::cout << "cell1 input " << LRL_Cell_Degrees(c1) << std::endl;
+   std::cout << "cell2 input " << LRL_Cell_Degrees(c2) << std::endl;
+   std::cout << std::endl;
 
-S6 x0(c0);
-S6 x1(c0);
-S6 x2(c0);
-
-
-S6 s0;
-S6 s1;
-S6 s2;
-
-Selling::Reduce(x0, s0);
-Selling::Reduce(x1, s1);
-Selling::Reduce(x2, s2);
+   S6 x0(c0);
+   S6 x1(c0);
+   S6 x2(c0);
 
 
-std::swap(s1[0], s1[2]);
-std::swap(s2[1], s2[2]);
+   S6 s0;
+   S6 s1;
+   S6 s2;
 
-std::cout << " swapped entries in reduced s1 and s2 " << std::endl;
-
-Selling::Reduce(s0, s0);
-Selling::Reduce(s1, s1);
-Selling::Reduce(s2, s2);
-
-std::cout << "c0           reduced " << c0 << std::endl;
-std::cout << "c1 swapped and reduced " << C3(s1)<< std::endl;
-std::cout << "c2 swapped and reduced " << C3(s2)<< std::endl;
-std::cout << std::endl;
+   Selling::Reduce(x0, s0);
+   Selling::Reduce(x1, s1);
+   Selling::Reduce(x2, s2);
 
 
+   std::swap(s1[0], s1[2]);
+   std::swap(s2[1], s2[2]);
 
-S6Dist s6dist;
+   std::cout << " swapped entries in reduced s1 and s2 " << std::endl;
 
-std::cout << "cell0 " << LRL_Cell_Degrees(s0) << "  Reduced" << std::endl;
-std::cout << "cell1 " << LRL_Cell_Degrees(s1) << "  Reduced" << std::endl;
-std::cout << "cell2 " << LRL_Cell_Degrees(s2) << "  Reduced" << std::endl;
-std::cout << std::endl;
+   Selling::Reduce(s0, s0);
+   Selling::Reduce(s1, s1);
+   Selling::Reduce(s2, s2);
 
-const double d1 = s6dist.DistanceBetween(s0, s1);
-const double d2 = s6dist.DistanceBetween(s0, s2);
-
-std::cout << "DC0 " << DC(s0) << std::endl;
-std::cout << "DC1 " << DC(s1) << std::endl;
-std::cout << "DC2 " << DC(s2) << std::endl;
-std::cout << std::endl;
-
-std::cout << "s0-s1 " << CS6Dist(s0.data(), s1.data()) << std::endl;
-std::cout << "s0-s2 " << CS6Dist(s0.data(), s2.data()) << std::endl;
-std::cout << "s1-s2 " << CS6Dist(s1.data(), s2.data()) << std::endl;
-std::cout << std::endl;
+   std::cout << "c0           reduced " << c0 << std::endl;
+   std::cout << "c1 swapped and reduced " << C3(s1) << std::endl;
+   std::cout << "c2 swapped and reduced " << C3(s2) << std::endl;
+   std::cout << std::endl;
 
 
-exit(0);
+
+   S6Dist s6dist;
+
+   std::cout << "cell0 " << LRL_Cell_Degrees(s0) << "  Reduced" << std::endl;
+   std::cout << "cell1 " << LRL_Cell_Degrees(s1) << "  Reduced" << std::endl;
+   std::cout << "cell2 " << LRL_Cell_Degrees(s2) << "  Reduced" << std::endl;
+   std::cout << std::endl;
+
+   const double d1 = s6dist.DistanceBetween(s0, s1);
+   const double d2 = s6dist.DistanceBetween(s0, s2);
+
+   std::cout << "DC0 " << DC(s0) << std::endl;
+   std::cout << "DC1 " << DC(s1) << std::endl;
+   std::cout << "DC2 " << DC(s2) << std::endl;
+   std::cout << std::endl;
+
+   std::cout << "s0-s1 " << CS6Dist(s0.data(), s1.data()) << std::endl;
+   std::cout << "s0-s2 " << CS6Dist(s0.data(), s2.data()) << std::endl;
+   std::cout << "s1-s2 " << CS6Dist(s1.data(), s2.data()) << std::endl;
+   std::cout << std::endl;
+
+
+   exit(0);
 }
 
 void TestDC2()
@@ -900,85 +927,469 @@ void Gen_55A() {
       g6[5] = 0;
       const B4 b4(g6);
       const double d = (b4[0] + b4[1]).norm();
-      if ( d/2.0 < sqrt(g6[2])) {
+      if (d / 2.0 < sqrt(g6[2])) {
          std::cout << "I " << LRL_Cell_Degrees(g6) << std::endl;
       }
    }
    exit(0);
 }
 
-int main(int argc, char* argv[])
-{
-   Gen_55A();
-   TestDC3();
-   exit(0);
-   GenerateFollowerPath();
-   Matrices();
-   LookAtS6BoundaryCrossings();
-   C3Matrices xxxxxxxx;
-   CountCycles();
-   ConvertCellsToC3_Assym();
+G6 TryToGetAGoodProjection(const MatG6& m, const int trials = 5) {
+   G6 probe;
+   int count = 0;
+   while (!probe.IsValid() && count < trials) {
+      const bool b = probe.IsValid();
+      const G6 start = G6::randDeloneReduced();
+      Niggli::Reduce(start, probe);
+      probe = m * probe;
+      ++count;
+   }
+   return probe;
+}
 
-   const S6 s1 = C3("-10 -11- -90 -1190 -190 -190");
-   const S6 s2 = C3("-10 -100 -200 -100 -200-200");
-   TestDistance(s1.data(), s2.data());
-   MakeBoundaryTransforms();
-   //ComplexCell(S6(" 0 0 0 200  0 100"));
-   //ComplexCell(S6(" 0 0 0 100 100 100"));
-   //ComplexCell(S6(" 0 0 0 0 100 100"));
-   //ComplexCell(S6(" 0 0 0 0 0 100"));
-   //ComplexCell(S6(" 0 0 0 0 0 0"));
-   ComplexCell(S6("100 100 100 -1 0 0"));
-   ComplexCell(S6("100 100 100 1 0 0"));
-   ComplexCell(S6("100 100 100 0 0 0"));
-   ComplexCell(S6("-100 -100 -100 0 0 0"));
-   ComplexCell(S6("-100 -100 -100 -1 0 0"));
-   ComplexCell(S6("-100 -100 -100 1 0 0"));
+void TestOneToCentered(const size_t samples, const std::string& str) {
+   for (size_t k = 0; k < samples; ++k) {
+      const std::vector<std::shared_ptr<GenerateNiggliBase> >
+         vglb = GenerateNiggliBase().Select(str);
 
-   ComplexCell(S6("-100 -100 -100 -30 -20 -10"));
-   ComplexCell(S6("100 100 100 30 20 10"));
-   exit(0);
+      for (size_t i = 0; i < vglb.size(); ++i) {
+         const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
+         const G6 probe = TryToGetAGoodProjection(pt->GetPrj(), 50);
+
+         const G6 test = pt->GetToCenter() * probe;
+         std::cout
+            << pt->GetBravaisType() << " "
+            << pt->GetITNum() << " "
+            << LRL_Cell_Degrees(test)
+            << std::endl;
+      }
+   }
+}
+
+   void TestToCentered() {
+      TestOneToCentered(1,""); // blank for all lattices.
+      exit(0);
+   }
+
+   void TestGeneratedTypes() {
+      //std::vector<std::shared_ptr<GenerateNiggliBase> > vglb;
+      //std::vector<std::shared_ptr<GenerateNiggliBase> > vx;
+      //std::vector<std::shared_ptr<GenerateNiggliBase> > vy;
+      //std::vector<std::shared_ptr<GenerateNiggliBase> > vout;
+
+      std::vector<G6> vg;
+      vg = GenerateNiggliBase::Generate("", 10);
+      std::cout << std::endl << std::endl;
+      vg = GenerateNiggliBase::Generate("3", 10);
+      std::cout << std::endl << std::endl;
+      vg = GenerateNiggliBase::Generate("55A", 10);
+      std::cout << std::endl << std::endl;
+      vg = GenerateNiggliBase::Generate("o", 10);
+      std::cout << std::endl << std::endl;
+      vg = GenerateNiggliBase::Generate("mC", 10);
+      std::cout << std::endl << std::endl;
+      vg = GenerateNiggliBase::Generate("oS", 10);
 
 
-   TestSomeCells();
-   StuffFor_a_alpha();
-   HowMuchBetterIsCS6DistThanJustDistanceInFundamentalUnit<S6>();
-   DistancesToInvalidLattices();
-   ExamineBoundariesInS6OfInvalidLattices();
-   TestMatrices();
-   ////Test_E3toS6( );
-   //S6 s1, s2;
-   //CNearTree<S6> snt;
-   //snt.insert( s1 );
-   //snt.insert( s2 );
-   //snt.NearestNeighbor( 0.0, s2 );
+      //vglb = GenerateNiggliBase().Select("");
+      //vglb.clear();
+      //vglb = GenerateNiggliBase().Select("3");
+      //vx = GenerateNiggliBase().Select("1");
+      //vout = GenerateLatticesBase::VecAdd(vglb, vx);
+      //vglb.clear();
+      //vglb = GenerateNiggliBase().Select("33");
+      //vglb.clear();
+      //vglb = GenerateNiggliBase().Select("o");
+      //vglb.clear();
+      //vglb = GenerateNiggliBase().Select("mC");
+      //vglb.clear();
+
+      exit(0);
+   }
+
+   void MatchLatticeType(const G6& g) {
+      std::cout << "GenerateLatticesBase " << g << std::endl;
+      static const std::vector<std::shared_ptr<GenerateNiggliBase> >
+         vglb = GenerateNiggliBase().Select("");
+      for (size_t i = 0; i < vglb.size(); ++i) {
+         const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
+         G6 probe= g;
+         //Niggli::Reduce(g, probe);
+         const G6 perpV = pt->GetPerp() * probe;
+         double d = perpV.norm();
+         if (d < 1.0E-8) d = 0.0;
+
+         std::cout
+            << pt->GetITNum() << " " 
+            << pt->GetBravaisType() << " "
+            << d <<std::endl;
+      }
+   }
+
+   void TestMatchLatticeType() {
+      const std::vector<std::shared_ptr<GenerateNiggliBase> >
+         vglb = GenerateNiggliBase().Select("");
+      const G6 g(G6::randDeloneReduced());
+      G6 preProbe;
+      const bool b = Niggli::Reduce(g, preProbe);
+      for (size_t i = 0; i < vglb.size(); ++i) {
+         const G6 probe = vglb[i]->GetPrj() * preProbe;
+         std::cout << "Match to " << vglb[i]->GetITNum() << " " << probe << std::endl;
+         MatchLatticeType(probe);
+      }
+      exit(0);
+   }
+
+class SellaSearchResult {
+public:
+   friend std::ostream& operator<< (std::ostream&, const SellaSearchResult&);
+
+   SellaSearchResult() {}
+   std::string GetDeloneType() const { return m_DeloneType; }
+   std::string GetBravaisType() const { return m_BravaisType; }
+   S6 GetProbe() const { return m_probe; }
+   S6 GetProjected() const { return m_projected; }
+
+   void SetDeloneType(const std::string& str) { m_DeloneType = str; }
+   void SetBravaisType(const std::string& str) { m_BravaisType = str; }
+   void SetProbe(const S6& str) { m_probe = str; }
+   void SetProjected(const S6& str) { m_projected = str; }
+
+protected:
+   std::string m_DeloneType;
+   std::string m_BravaisType;
+   S6 m_probe;
+   S6 m_projected;
+};
+
+class SellaResult {
+public:
+   friend std::ostream& operator<< (std::ostream&, const SellaResult&);
+
+   SellaResult() {}
+   void SetDistance(const double a) { m_distance = a; }
+   void SetIT_Type(const std::string& a) { m_IT_Type = a; }
+   void SetBravaisClass(const std::string& a) { m_BravaisClass = a; }
+   void SetGeneralBravaisClass(const std::string& a) { m_GeneralBravaisClass = a; }
+   void SetProbe(const G6& a) { m_probe = a; }
+   void SetProjected(const G6& a) { m_projected = a; }
+   void SetCentered(const G6& a) { m_centered = a; }
+
+   double GetDistance() const { return m_distance; }
+   std::string GetIT_Type() const { return m_IT_Type; }
+   std::string GetBravaisClass() const { return m_BravaisClass; }
+   std::string GetGeneralBravaisClass() const { return m_GeneralBravaisClass; }
+   G6 GetProbe() const { return m_probe; }
+   G6 GetProjected() const { return m_projected; }
+   G6 GetCentered() const { return m_centered; }
+   bool operator< (const SellaResult& sr) const {
+      return (*this).m_distance < sr.m_distance;
+   }
+protected:
+   double m_distance;
+   std::string m_IT_Type;
+   std::string m_BravaisClass;
+   std::string m_GeneralBravaisClass;
+   G6 m_probe;
+   G6 m_projected;
+   G6 m_centered;
+};
+
+
+std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
+   o << "SELLA SEARCH RESULTS" << std::endl;
+   o << "Delone Type " << sr.m_DeloneType << std::endl;
+   o << "Bravais Type " << sr.m_BravaisType << std::endl;
+   o << "Initial Probe S6 " << sr.m_probe << std::endl;
+   o << "Projected Probe S6 " << sr.m_projected << std::endl;
+   return o;
+}
+
+   std::ostream& operator<< (std::ostream& o , const SellaResult& sr) {
+      o << "SELLA RESULT" << std::endl;
+      o << "distance " << sr.m_distance << std::endl;
+      o << "IT Type " << sr.m_IT_Type << std::endl;
+      o << "Bravais Type " << sr.m_BravaisClass << std::endl;
+      o << "Bravais General Class " << sr.m_GeneralBravaisClass << std::endl;
+      o << "Initial reduced probe G6 " << sr.m_probe << std::endl;
+      o << "Projected G6 " << sr.m_projected << std::endl;
+      o << "Restore Cell Centering " << LRL_Cell_Degrees(sr.m_centered) << std::endl;
+      o << " " << std::endl;
+      return o;
+   }
+
+
+   StoreResults<double, std::string> store(100);
+   std::vector<std::pair<double, std::string> > vstore;
+   std::vector<SellaResult> sellaResult;
+
+   void NiggliSearchForCenteredCell(
+      const std::shared_ptr<GenerateNiggliBase>& pt, const G6& red ) {
+      const G6 proj = pt->GetPrj() * red;
+      const double dtest = proj.norm();
+      const double dist = (pt->GetPerp() * red).norm() *
+         sqrt(pt->GetFreeParams());
+
+      const MatG6& toCentered = pt->GetToCenter();
+      const G6 centeredProjected = toCentered * proj;
+      const G6 centeredReduced = toCentered * red;
+      std::cout << pt->GetBravaisType() << std::endl;
+      std::cout << pt->GetITNum() << std::endl;
+      std::cout << " proj " << centeredProjected << std::endl;
+      std::cout << " red  " << red << std::endl << std::endl;
+      std::cout << " centered  " << LRL_Cell_Degrees(centeredReduced) << std::endl << std::endl;
+
+      const std::string blnk("  ");
+      const std::string str = LRL_ToString(
+         dist, " ", pt->GetITNum(), blnk, pt->GetBravaisType(),
+         blnk, proj, "\n");
+      store.Store(dist, str);
+      vstore.push_back(std::make_pair(dist, str));
+      SellaResult sr;
+      sr.SetDistance(dist);
+      sr.SetBravaisClass(pt->GetBravaisType());
+      sr.SetGeneralBravaisClass(pt->GetBravaisLatticeGeneral());
+      sr.SetIT_Type(pt->GetITNum());
+      sr.SetProbe(red);
+      sr.SetProjected(proj);
+      sr.SetCentered(centeredReduced);
+      sellaResult.push_back(sr);
+   }
+
+   int randInt(const int n) {
+      return rand() % n;
+   }
+
+   G6 MakeOneSellaSample(const std::string& lat) {
+      const std::vector<std::shared_ptr<GenerateNiggliBase> >
+         vglb = GenerateNiggliBase().Select(lat);
+      if (vglb.empty()) return G6();
+      G6 gout;
+      G6 gfinal;
+      LRL_Cell_Degrees cel;
+      gout.SetValid(false);
+      gfinal.SetValid(false);
+      int count = 0;
+      while (((!gfinal.IsValid()) && count < 100) || cel[0] < 0.001) {
+         ++count;
+         const G6 g = G6::rand();
+         Niggli::Reduce(g, gout);
+         const G6 projected = vglb[0]->GetPrj() * gout;
+         gfinal = MatS6::GetReflection(randInt(24)) * S6(vglb[0]->GetPrj() * gout);
+
+
+         G6 what;
+         Niggli::Reduce(gfinal, what);
+         gfinal = PerturbVector(0.10, what);
+         cel = gfinal;
+         //const LRL_Cell_Degrees celwhat(what);
+         //std::cout << "what    " << what << std::endl;
+         //std::cout << "celwhat " << celwhat << std::endl;
+         //std::cout << "centered what " << vglb[0]->GetToCenter() * what << std::endl;
+         //std::cout << "centered what " << LRL_Cell_Degrees(vglb[0]->GetToCenter() * what) << std::endl;
+
+
+         //const G6 test = vglb[0]->GetToCenter() * gfinal;
+         //const LRL_Cell_Degrees celTest(test);
+         //std::cout << "G6 to be returned " << gfinal << std::endl;
+         //std::cout << "Cell to be returned " << cel << std::endl;
+         //std::cout << "should be centered " << celTest << std::endl;
+         //std::cout << "Projector" << std::endl << vglb[0]->GetPrj() << std::endl << std::endl;
+      }
+
+      SellaSearchResult ssr;
+      ssr.SetDeloneType(lat);
+      ssr.SetBravaisType(lat);
+      ssr.SetProbe(gfinal);
+      //ssr.SetProjected(const S6 & s) { m_projected = s; }
+      std::cout << ssr << std::endl;
 
 
 
 
-   //   double dist;
-   //   lmd.SetReferenceLattice( MV_Pair(vLat[0], MatS6()) );
-   //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
-   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-   //      dist = lmd.DistanceBetween(vs6[lat]);
-   //   }
-   //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
-   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-   //      dist = (vs6[0] - vs6[lat]).norm( );
-   //   }
-   //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
-   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-   //      dist = (vs6[0] - vs6[lat]).norm( );
-   //   }
-   //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
-   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-   //      dist = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
-   //   }
-   //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
-   //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-   //      dist = sd.DistanceBetween( vLat[0], vLat[lat] );
-   //   }
-   //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
+      if (gfinal.IsValid() && cel[0] > 0.001) return gfinal;
+      //const G6 test = vglb[0]->GetToCenter() * v[0];
+      ////std::cout << LRL_Cell_Degrees(test) << std::endl;
+      return G6();
+   }
+
+   std::vector<G6> MakeSellaSamples(const size_t ngen, const std::string& lat) {
+      const std::vector<std::shared_ptr<GenerateNiggliBase> >
+         vglb = GenerateNiggliBase().Select(lat);
+      std::vector<G6> vSample;
+      std::vector<SellaSearchResult> vSellaSearchResult;
+      while (vSample.size() < ngen) {
+         const G6 gout = MakeOneSellaSample(lat);
+         if (gout.IsValid()) vSample.push_back(gout);
+      }
+
+      //std::cout << vglb[0]->GetCharacter() << std::endl;
+      //for (size_t i = 0; i < vSample.size(); ++i)
+      //   std::cout << vSample[i] << std::endl;
+      return vSample;
+   }
+
+   std::vector<G6> MakeSellaSamples(const std::string& lat, const size_t n) {
+      return MakeSellaSamples(n, lat);
+   }
+
+   void TestSellaTypeSearch(const std::vector<G6> vg) {
+      const std::vector<std::shared_ptr<GenerateNiggliBase> >
+         vglb = GenerateNiggliBase().Select("mC");
+
+      for (size_t ran = 0; ran < vg.size(); ++ran) {
+         std::cout << "initial vector " << vg[ran] << std::endl;
+         std::cout << "initial cell   " << LRL_Cell_Degrees(vg[ran]) << std::endl;
+         G6 red;
+         Niggli::Reduce(vg[ran], red);
+         const LRL_Cell_Degrees celred(red);
+         std::cout << "redu in TestSellaTypeSearch " << red << std::endl;
+         std::cout << "redu in TestSellaTypeSearch " << celred << std::endl;
+         for (size_t lat = 0; lat < vglb.size(); ++lat) {
+            NiggliSearchForCenteredCell(vglb[lat], red);
+            vglb[lat]->GetToCenter()* red;
+            std::cout << "generated and centered " << 
+               LRL_Cell_Degrees(vglb[lat]->GetToCenter() * red) << std::endl;
+         }
+      }
+
+      ////store.ShowResults();
+      //std::sort(vstore.begin(), vstore.end());
+      //size_t stopAt = vstore.size();
+      //if (vstore.size() > 2) {
+      //   const double min = vstore[0].first;
+      //   for (size_t i = 2; i < vstore.size(); ++i) {
+      //      if (vstore[i].first > 50.0 * min) {
+      //         stopAt = i;
+      //         break;
+      //      }
+      //   }
+      //}
+      //for (size_t i = 0; i < stopAt; ++i) {
+      //   std::cout << i << "  distance = " << vstore[i].first << std::endl
+      //      << vstore[i].second << std::endl << std::endl;
+      //}
+      std::sort(sellaResult.begin(), sellaResult.end());
+      size_t stopAtSR = sellaResult.size();
+      if (sellaResult.size() > 2) {
+         const double min = sellaResult[0].GetDistance();
+         for (size_t i = 2; i < sellaResult.size(); ++i) {
+            if (sellaResult[i].GetDistance() > 50.0 * min) {
+               stopAtSR = i;
+               break;
+            }
+         }
+      }
+      for (size_t i = 0; i < stopAtSR; ++i) {
+         std::cout << sellaResult[i] << std::endl;
+      }
+      exit(0);
+   }
+
+   int main(int argc, char* argv[])
+   {
+      std::vector<std::shared_ptr<GenerateDeloneBase> > sptest = 
+         GenerateLatticeTypeExamples::CreateListOfDeloneTypes();
+      for (size_t i = 0; i < sptest.size(); ++i) {
+         std::cout << *sptest[i] << std::endl;
+      }
+      // 10 14 17 20 25 27 28 29 30 37 39 41 43 (FAILS 17 43, fixed by multiple sampling,
+      // some projections were invalid lattices)
+      const std::vector<G6> vg = MakeSellaSamples(1,"17");
+      TestSellaTypeSearch(vg);
+      exit(0);
+      TestMatchLatticeType();
+      TestToCentered();
+      //std::cout << CreateUnitOrthogonalVector(G6("1 0 0  0 0 0")).Norm() << std::endl;
+      //std::cout << CreateUnitOrthogonalVector(S6("1 0 0  0 0 0")).Norm() << std::endl;
+
+      //std::cout << CreateUnitOrthogonalVector(G6(" 0 1 0  0 0 0")).Norm() << std::endl;
+      //std::cout << CreateUnitOrthogonalVector(S6(" 0 1 0  0 0 0")).Norm() << std::endl;
+
+      //std::cout << CreateUnitOrthogonalVector(G6("0 0 1  0 0 0")).Norm() << std::endl;
+      //std::cout << CreateUnitOrthogonalVector(S6("0 0 1  0 0 0")).Norm() << std::endl;
+
+      //std::cout << CreateUnitOrthogonalVector(G6("0 0  0 1 0 0")).Norm() << std::endl;
+      //std::cout << CreateUnitOrthogonalVector(S6("0 0  0 1 0 0")).Norm() << std::endl;
+
+      //std::cout << CreateUnitOrthogonalVector(G6("0 0  0 0 1 0")).Norm() << std::endl;
+      //std::cout << CreateUnitOrthogonalVector(S6("0 0  0 0 1 0")).Norm() << std::endl;
+
+      //std::cout << CreateUnitOrthogonalVector(G6("0 0  0 0 0 1")).Norm() << std::endl;
+      //std::cout << CreateUnitOrthogonalVector(S6("0 0  0 0 0 1")).Norm() << std::endl;
+
+      //TestDC1();
+      TestGeneratedTypes();
+      Gen_55A();
+      TestDC3();
+      exit(0);
+      GenerateFollowerPath();
+      Matrices();
+      LookAtS6BoundaryCrossings();
+      C3Matrices xxxxxxxx;
+      CountCycles();
+      ConvertCellsToC3_Assym();
+
+      const S6 s1 = C3("-10 -11- -90 -1190 -190 -190");
+      const S6 s2 = C3("-10 -100 -200 -100 -200-200");
+      TestDistance(s1.data(), s2.data());
+      MakeBoundaryTransforms();
+      //ComplexCell(S6(" 0 0 0 200  0 100"));
+      //ComplexCell(S6(" 0 0 0 100 100 100"));
+      //ComplexCell(S6(" 0 0 0 0 100 100"));
+      //ComplexCell(S6(" 0 0 0 0 0 100"));
+      //ComplexCell(S6(" 0 0 0 0 0 0"));
+      ComplexCell(S6("100 100 100 -1 0 0"));
+      ComplexCell(S6("100 100 100 1 0 0"));
+      ComplexCell(S6("100 100 100 0 0 0"));
+      ComplexCell(S6("-100 -100 -100 0 0 0"));
+      ComplexCell(S6("-100 -100 -100 -1 0 0"));
+      ComplexCell(S6("-100 -100 -100 1 0 0"));
+
+      ComplexCell(S6("-100 -100 -100 -30 -20 -10"));
+      ComplexCell(S6("100 100 100 30 20 10"));
+      exit(0);
+
+
+      TestSomeCells();
+      StuffFor_a_alpha();
+      HowMuchBetterIsCS6DistThanJustDistanceInFundamentalUnit<S6>();
+      DistancesToInvalidLattices();
+      ExamineBoundariesInS6OfInvalidLattices();
+      TestMatrices();
+      ////Test_E3toS6( );
+      //S6 s1, s2;
+      //CNearTree<S6> snt;
+      //snt.insert( s1 );
+      //snt.insert( s2 );
+      //snt.NearestNeighbor( 0.0, s2 );
+
+
+
+
+      //   double dist;
+      //   lmd.SetReferenceLattice( MV_Pair(vLat[0], MatS6()) );
+      //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
+      //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      //      dist = lmd.DistanceBetween(vs6[lat]);
+      //   }
+      //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
+      //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      //      dist = (vs6[0] - vs6[lat]).norm( );
+      //   }
+      //   std::cout << LRL_CreateFileName( ).Create( "", "" ) << std::endl;
+      //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      //      dist = (vs6[0] - vs6[lat]).norm( );
+      //   }
+      //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
+      //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      //      dist = CS6Dist( vLat[0].data( ), vLat[lat].data( ) );
+      //   }
+      //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
+      //   for (size_t lat = 0; lat < vLat.size( ); ++lat) {
+      //      dist = sd.DistanceBetween( vLat[0], vLat[lat] );
+      //   }
+      //   std::cout << LRL_CreateFileName( ).Create("","" ) << std::endl;
    }
 
    //return 0;
@@ -1018,7 +1429,7 @@ end
 f 10 10.001 10.002  89 89 89
 f 10 10 10  90 90 90
 f 11 10 10  90 90 90
-f 10 11 10  90 90 90  this is the problem one 
+f 10 11 10  90 90 90  this is the problem one
 f 10 10 11  90 90 90
 end
 

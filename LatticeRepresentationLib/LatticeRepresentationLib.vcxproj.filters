@@ -158,6 +158,12 @@
     <ClCompile Include="IT_TypeList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GenerateLatticeTypeExamples.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadTypedData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -335,6 +341,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IT_TypeList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GenerateLatticeTypeExamples.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadTypedData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

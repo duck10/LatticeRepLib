@@ -316,7 +316,7 @@ std::vector<double> DC::G6_to_V13(const G6& gin) {
    return v;
 }
 
-double DC::DistanceBetween(const DC& v1, const DC& v2) {
+double DC::DistanceBetween(const DC& v1, const DC& v2, const int length /*=7*/) {
 
    G6 g1;
    const bool b1 = Niggli::Reduce(G6(v1.m_cell), g1);
@@ -327,7 +327,7 @@ double DC::DistanceBetween(const DC& v1, const DC& v2) {
    const std::vector<double> lengths2 = G6_to_V13(g2);
 
    double sum = 0.0;
-   for (size_t i = 0; i < 8; ++i)
+   for (size_t i = 0; i < length; ++i)
       sum += (lengths1[i] - lengths2[i]) * (lengths1[i] - lengths2[i]);
    //return sqrt(
    //   (lengths1[0] - lengths2[0]) * (lengths1[0] - lengths2[0]) +
