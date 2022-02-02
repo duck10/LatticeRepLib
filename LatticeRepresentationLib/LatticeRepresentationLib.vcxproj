@@ -167,6 +167,7 @@
     <ClCompile Include="Delone_Types.cpp" />
     <ClCompile Include="FollowerConstants.cpp" />
     <ClCompile Include="FollowerPathGenerator.cpp" />
+    <ClCompile Include="GenerateLatticeTypeExamples.cpp" />
     <ClCompile Include="IT_TypeList.cpp" />
     <ClCompile Include="LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="LabeledSellaMatrices.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
     <ClCompile Include="MatD13.cpp" />
     <ClCompile Include="Niggli_Types.cpp" />
+    <ClCompile Include="ReadTypedData.cpp" />
     <ClCompile Include="S6.cpp" />
     <ClCompile Include="S6Dist.cpp" />
     <ClCompile Include="D7.cpp" />
@@ -219,6 +221,7 @@
     <ClInclude Include="Delone_Types.h" />
     <ClInclude Include="FollowerConstants.h" />
     <ClInclude Include="FollowerPathGenerator.h" />
+    <ClInclude Include="GenerateLatticeTypeExamples.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
     <ClInclude Include="IT_TypeList.h" />
     <ClInclude Include="LabeledDeloneTypeMatrices.h" />
@@ -239,6 +242,7 @@
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="ParseData.h" />
+    <ClInclude Include="ReadTypedData.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6Dist.h" />
     <ClInclude Include="D7.h" />

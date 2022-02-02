@@ -787,7 +787,7 @@ IT_Lat_Char_43::IT_Lat_Char_43() : IT_Lat_Char_Base() {
    m_ITnumber = "43";
    m_G6_character = "[r, s, t, -s -u, -r -u, 2u]";
    m_prjPrefix = 0.05;
-   m_strProjector = "11 1 0 1 -9 -4  1 11 0 -9 1 -4  0 0 20 0 0 0  1 -9 0 11 1 -4 -9 1 0 1 11 -4 -4 -4 0 -4 -4 16";
+   m_strProjector = "11 1 0 1 -9 -4   1 11 0 -9 1 -4   0 0 20 0 0 0   1 -9 0 11 1 -4   -9 1 0 1 11 -4   -4 -4 0 -4 -4 16";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    /*
       m_projector = 0.55 0.05 0 0.05 -0.45 -0.2

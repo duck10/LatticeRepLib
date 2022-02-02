@@ -178,6 +178,7 @@ MatG6 operator/(const double d, const MatG6& m) {
 G6 MatG6::operator* (const G6& v) const {
    G6 g6(v);
    g6.SetVector( (m_mat * v.GetVector()).GetVector());
+   g6.SetValid(g6[0]>0.001 && g6[1]>0.001 && g6[2]>0.001);
    return g6;
 }
 

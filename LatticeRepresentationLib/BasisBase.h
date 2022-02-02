@@ -13,6 +13,29 @@ class B4;
 class G6;
 class VecN;
 
+template<typename T>
+T CreateUnitOrthogonalVector(const T& t) {
+   // assume t is not null and rand is not parallel to t
+   T base = t / t.norm();
+   T temp(T::rand());
+   temp /= temp.norm();
+   const double d = dot(VecN(base.GetVector()), VecN(temp.GetVector()));
+   const T ortho = temp - d * base;
+   return ortho / ortho.norm();
+}
+
+template<typename T1, typename T2>
+double dot(const T1& t1, const T2& t2) {
+   const T1 t1x(t2);
+   const size_t n1 = t1.size();
+   const size_t n2 = t2.size();
+   if (n1 != n2) return -19199;
+   double sum = 0.0;
+   for (size_t i = 0; i < n1; ++i)
+      sum += t1[i] * t1x[i];
+   return sum;
+}
+
 template<typename T, typename TELEMENT=double>
 class BasisBase {
 public:
