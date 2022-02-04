@@ -746,6 +746,20 @@ IT_30::IT_30() : GenerateNiggliBase() {
    */
 } // end of class IT_30 constructor
 
+IT_31::IT_31() : GenerateNiggliBase() {
+   m_name = "58B";
+   m_bravaisType = "aP";
+   m_bravaisLatticeGeneral = "aP";
+   m_ITnumber = "31";
+   m_freeParams = 6;
+   m_character = "[r, s, t, u, v, w]";
+   m_prjPrefix = 1.0;
+   m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1";
+   m_projector = m_prjPrefix * MatG6(m_strProjector);
+   m_toCentered_E3 = "1 0 0 0 1 0 0 0 1 ";
+   m_toCentered = MatrixE3ToG6(m_toCentered_E3);
+} // end of class IT_Lat_Char_31 constructor
+
 IT_32::IT_32() : GenerateNiggliBase() {
    m_name = "50C";
    m_bravaisLatticeGeneral = "oP";
@@ -1017,6 +1031,20 @@ IT_43::IT_43() : GenerateNiggliBase() {
    */
 } // end of class IT_43 constructor
 
+IT_44::IT_44() : GenerateNiggliBase() {
+   m_name = "58B";
+   m_bravaisType = "aP";
+   m_bravaisLatticeGeneral = "aP";
+   m_ITnumber = "44";
+   m_freeParams = 6;
+   m_character = "[r, s, t, -u, -v, -w]";
+   m_prjPrefix = 1.0;
+   m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1";
+   m_projector = m_prjPrefix * MatG6(m_strProjector);
+   m_toCentered_E3 = "1 0 0 0 1 0 0 0 1 ";
+   m_toCentered = MatrixE3ToG6(m_toCentered_E3);
+} // end of class IT_Lat_Char_44 constructor
+
 
 Delone_C1::Delone_C1() {
    m_name = "C1";
@@ -1273,6 +1301,7 @@ GenerateLatticeTypeExamples::CreateListOfNiggliTypes()
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_28));
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_29));
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_30));
+   vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_31));
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_32));
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_33));
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_34));
@@ -1285,6 +1314,7 @@ GenerateLatticeTypeExamples::CreateListOfNiggliTypes()
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_41));
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_42));
    vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_43));
+   vglb.push_back(std::shared_ptr<GenerateNiggliBase>(new IT_44));
 
    return vglb;
 }
