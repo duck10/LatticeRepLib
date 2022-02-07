@@ -106,13 +106,22 @@ public:
    std::string GetBravaisLatticeGeneral() const { return m_bravaisLatticeGeneral; }
    std::vector<std::shared_ptr<GenerateNiggliBase> >
       Select(const std::string& s = "") const;
-   std::string GetITNum() { return m_ITnumber; }
-   std::string GetXtalType(const std::string& s) { return m_bravaisType; }
+   std::string GetITNum() const { return m_ITnumber; }
+   std::string GetXtalType(const std::string& s) const { return m_bravaisType; }
    MatG6 GetToCenter() const { return m_toCentered; }
    static std::vector<G6>
       Generate(const std::string& s, const size_t n = 1);
+   virtual bool IsMember(const G6& g) const { return true; }
+   bool IsTypeI(const G6& g) const;
+   bool IsTypeII(const G6& g) const;
 
 protected:
+   static bool Approx(const double d1, const double d2);
+   static bool Approx(const double d1, const double d2, const double d3);
+   static bool Approx(const G6& g1, const G6& g2);
+   bool G4Positive(const G6& g) const { return g[3] > 0; }
+   bool G4Negative(const G6& g) const { return g[3] <= 0; }
+
    std::string m_toCentered_E3;
    std::string m_ITnumber;
    double m_prjPrefix;
@@ -130,6 +139,9 @@ public:
 class IT_2 : public GenerateNiggliBase {
 public:
    IT_2();
+   bool IsMember(const G6& g) const {
+      return IsTypeI(g);
+   }
 }
 ;
 class IT_3 : public GenerateNiggliBase {
@@ -140,6 +152,9 @@ public:
 class IT_4 : public GenerateNiggliBase {
 public:
    IT_4();
+   bool IsMember(const G6& g) const {
+      return IsTypeII(g);
+   }
 }
 ;
 class IT_5 : public GenerateNiggliBase {
@@ -220,6 +235,9 @@ public:
 class IT_20 : public GenerateNiggliBase {
 public:
    IT_20();
+   bool IsMember(const G6& g) const {
+      return IsTypeI(g);
+   }
 }
 ;
 class IT_21 : public GenerateNiggliBase {
@@ -245,6 +263,9 @@ public:
 class IT_25 : public GenerateNiggliBase {
 public:
    IT_25();
+   bool IsMember(const G6& g) const {
+      return IsTypeII(g);
+   }
 }
 ;
 class IT_26 : public GenerateNiggliBase {
@@ -275,6 +296,9 @@ public:
 class IT_31 : public GenerateNiggliBase {
 public:
    IT_31();
+   bool IsMember(const G6& g) const {
+      return IsTypeI(g);
+   }
 }
 ;
 class IT_32 : public GenerateNiggliBase {
@@ -340,6 +364,9 @@ public:
 class IT_44 : public GenerateNiggliBase {
 public:
    IT_44();
+   bool IsMember(const G6& g) const {
+      return IsTypeII(g);
+   }
 }
 ;
 
