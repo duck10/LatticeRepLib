@@ -1384,7 +1384,7 @@ RetrieveByITNumber(const std::string& s,
    const std::vector<std::shared_ptr<GenerateNiggliBase> >& v) {
    std::vector<std::shared_ptr<GenerateNiggliBase> > out;
    for (size_t i = 0; i < v.size(); ++i) {
-      if (s == v[i]->GetITNum()) out.push_back(v[i]);
+      if (s == v[i]->GetITNumber()) out.push_back(v[i]);
    }
    return out;
 }
