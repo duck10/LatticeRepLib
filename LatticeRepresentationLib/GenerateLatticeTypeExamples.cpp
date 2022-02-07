@@ -6,7 +6,6 @@
 #include "GenerateLatticeTypeExamples.h"
 
 #include "Niggli.h"
-#include "Niggli_Types.h"
 #include "LRL_Cell.h"
 #include "MatG6.h"
 
@@ -30,10 +29,36 @@ std::ostream& operator<< (std::ostream& o, const GenerateNiggliBase& g)
    return o;
 }
 
+
+static const double g_delta = 1.0E-6;
+
+ bool GenerateNiggliBase::Approx(const double d1, const double d2) {
+   return abs(d1 - d2) < g_delta;
+}
+
+ bool GenerateNiggliBase::Approx(const double d1, const double d2, const double d3) {
+   return Approx(d1, d2) && Approx(d2, d3);
+}
+
+ bool GenerateNiggliBase::Approx(const G6& g1, const G6& g2) {
+   return (g1 - g2).norm() < g_delta;
+}
+
 MatG6  MatrixE3ToG6(const Matrix_3x3& m) {
    return MatG6(MatS6::e3Tos6(Matrix_3x3(m).GetVector()));
 }
 
+bool GenerateNiggliBase::IsTypeI(const G6& g) const {
+   return (g[3] <= 0) && (g[4] <= 0) && (g[5] <= 0);
+}
+
+bool GenerateNiggliBase::IsTypeII(const G6& g) const {
+   //std::cout << g << std::endl;
+   //std::cout << (g[3] < 0) << std::endl;
+   //std::cout << (g[4] < 0) << std::endl;
+   //std::cout << (g[5] < 0) << std::endl;
+   return (g[3] > 0) && (g[4] > 0) && (g[5] > 0);
+}
 
 GenerateLatticesBase::GenerateLatticesBase()
 //: m_name("BASE")
@@ -1352,7 +1377,7 @@ GenerateLatticeTypeExamples::CreateListOfDeloneTypes()
 }
 
 static std::string numbers("0123456789");
-static std::string xtals("ctromh");
+static std::string xtals("ctromha");
 
 std::vector<std::shared_ptr<GenerateNiggliBase> >
 RetrieveByITNumber(const std::string& s,

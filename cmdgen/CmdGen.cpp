@@ -7,20 +7,22 @@
 #include "Niggli.h"
 #include "GenerateLatticeTypeExamples.h"
 
-static const int ngen = 5;
-static std::string name = "mS"; // blank or unrecognized gives all types
+static const int ngen = 20;
+static std::string name = "a"; // blank or unrecognized gives all types
 
 
-G6 TryToGetAGoodProjection(const MatG6& projector, const int trials = 500) {
+G6 TryToGetAGoodProjection(const std::shared_ptr<GenerateNiggliBase>& pt,
+   const MatG6& projector, const int trials = 500) {
    G6 probe;
    probe.SetValid(false);
    int count = 0;
-   while (!LRL_Cell(probe).IsValid() && count < trials) {
+   while ((!LRL_Cell(probe).IsValid()) ||( count > trials) || (!pt->IsMember(probe))) {
       const bool b = probe.IsValid();
       const G6 start = G6::randDeloneReduced();
       Niggli::Reduce(start, probe);
       probe = projector * probe;
       Niggli::Reduce(probe, probe);
+      bool bmember = pt->IsMember(probe);
       ++count;
    }
    //std::cout << "probe in TryToGetAGoodProjection "
@@ -30,7 +32,7 @@ G6 TryToGetAGoodProjection(const MatG6& projector, const int trials = 500) {
 }
 
 G6 Generate(const std::shared_ptr<GenerateNiggliBase>& pt) {
-   const G6 probe = TryToGetAGoodProjection(pt->GetPrj(), 50);
+   const G6 probe = TryToGetAGoodProjection(pt, pt->GetPrj(), 50);
 
    const G6 test = pt->GetToCenter() * probe;
    //std::cout
