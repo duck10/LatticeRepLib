@@ -106,7 +106,7 @@ public:
    std::string GetBravaisLatticeGeneral() const { return m_bravaisLatticeGeneral; }
    std::vector<std::shared_ptr<GenerateNiggliBase> >
       Select(const std::string& s = "") const;
-   std::string GetITNum() const { return m_ITnumber; }
+   //std::string GetITNum() const { return m_ITnumber; }
    std::string GetXtalType(const std::string& s) const { return m_bravaisType; }
    MatG6 GetToCenter() const { return m_toCentered; }
    static std::vector<G6>

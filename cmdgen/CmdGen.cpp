@@ -45,17 +45,18 @@ G6 Generate(const std::shared_ptr<GenerateNiggliBase>& pt) {
 
 int main()
 {
-   std::cout << "; generate examples" << std::endl;
+   std::cout << "; generate examples  ngen = " << ngen << "  lattice type selection = """ << name << std::endl;
    const std::vector<std::shared_ptr<GenerateNiggliBase> >
       vglb = GenerateNiggliBase().Select(name);
    for (size_t lat = 0; lat < vglb.size(); ++lat) {
       const std::shared_ptr<GenerateNiggliBase> pt = vglb[lat];
+      std::cout << "; lattice type = " << pt->GetITNumber() << std::endl;
       for (size_t i = 0; i < ngen; ++i) {
          const G6 g = Generate(vglb[lat]);
          std::cout << "G6 "
             << (g) << " "
             << pt->GetBravaisType() << " IT# = "
-            << pt->GetITNum()
+            << pt->GetITNumber()
             << std::endl;
       }
       std::cout << ";" << std::endl;
