@@ -101,7 +101,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gen_DC7", "Gen_DC7\Gen_DC7.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FigureGrassmannian", "FigureGrassmannian\FigureGrassmannian.vcxproj", "{89122A3C-BCF4-45FD-AADD-19C91476B317}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Cmdgen", "cmdgen\cmdgen.vcxproj", "{79B30DB3-BF22-476C-862A-B61D3BC9918E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdGen", "cmdgen\cmdgen.vcxproj", "{79B30DB3-BF22-476C-862A-B61D3BC9918E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdPerturb", "CmdPerturb\CmdPerturb.vcxproj", "{B4AE6B73-B554-427A-801A-3D887497927B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -423,6 +425,14 @@ Global
 		{79B30DB3-BF22-476C-862A-B61D3BC9918E}.Release|x64.Build.0 = Release|x64
 		{79B30DB3-BF22-476C-862A-B61D3BC9918E}.Release|x86.ActiveCfg = Release|Win32
 		{79B30DB3-BF22-476C-862A-B61D3BC9918E}.Release|x86.Build.0 = Release|Win32
+		{B4AE6B73-B554-427A-801A-3D887497927B}.Debug|x64.ActiveCfg = Debug|x64
+		{B4AE6B73-B554-427A-801A-3D887497927B}.Debug|x64.Build.0 = Debug|x64
+		{B4AE6B73-B554-427A-801A-3D887497927B}.Debug|x86.ActiveCfg = Debug|Win32
+		{B4AE6B73-B554-427A-801A-3D887497927B}.Debug|x86.Build.0 = Debug|Win32
+		{B4AE6B73-B554-427A-801A-3D887497927B}.Release|x64.ActiveCfg = Release|x64
+		{B4AE6B73-B554-427A-801A-3D887497927B}.Release|x64.Build.0 = Release|x64
+		{B4AE6B73-B554-427A-801A-3D887497927B}.Release|x86.ActiveCfg = Release|Win32
+		{B4AE6B73-B554-427A-801A-3D887497927B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
