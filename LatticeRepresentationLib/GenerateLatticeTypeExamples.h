@@ -6,19 +6,21 @@
 
 #include "G6.h"
 #include "MatG6.h"
+#include "rhrand.h"
 #include "S6.h"
 
-template<typename T>
-T CreateUnitOrthogonalComponent(const T& t) {
-   // assume t is not null and rand is not parallel to t
-   T base = t / t.norm();
-   T temp(T::rand());
-   temp /= temp.norm();
-   const double d = dot(VecN(base.GetVector()), VecN(temp.GetVector()));
-   T ortho = temp - d * base;
-   ortho.SetValid(true);
-   return ortho / ortho.norm();
-}
+//template<typename T>
+//T CreateUnitOrthogonalComponent(const T& t) {
+//   // assume t is not null and rand is not parallel to t
+//   const T base = t / t.norm();
+//   T temp;
+//   for (size_t i = 0; i < 6; ++i) temp[i] = rhrand.urand() - 0.5;
+//   temp /= temp.norm();
+//   const double d = dot(VecN(base.GetVector()), VecN(temp.GetVector()));
+//   T ortho = temp - d * base;
+//   ortho.SetValid(true);
+//   return ortho / ortho.norm();
+//}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 // add some small random perturbation
@@ -33,7 +35,6 @@ template<typename T>
 T PerturbVector(const double amountToPerturb, const T& v) {
    const T ortho = amountToPerturb * CreateUnitOrthogonalComponent(v);
    const T out = v + ortho;
-   const LRL_Cell_Degrees cel(out);
    return out;
 }
 

@@ -7,8 +7,8 @@
 #include "Niggli.h"
 #include "GenerateLatticeTypeExamples.h"
 
-static const int ngen = 20;
-static std::string name = "a"; // blank or unrecognized gives all types
+static const int ngen = 1;
+static std::string name = "cP"; // blank or unrecognized gives all types
 
 
 G6 TryToGetAGoodProjection(const std::shared_ptr<GenerateNiggliBase>& pt,
@@ -17,12 +17,10 @@ G6 TryToGetAGoodProjection(const std::shared_ptr<GenerateNiggliBase>& pt,
    probe.SetValid(false);
    int count = 0;
    while ((!LRL_Cell(probe).IsValid()) ||( count > trials) || (!pt->IsMember(probe))) {
-      const bool b = probe.IsValid();
       const G6 start = G6::randDeloneReduced();
       Niggli::Reduce(start, probe);
       probe = projector * probe;
       Niggli::Reduce(probe, probe);
-      bool bmember = pt->IsMember(probe);
       ++count;
    }
    //std::cout << "probe in TryToGetAGoodProjection "

@@ -41,10 +41,6 @@
 //   const std::string& wholeLine,
 //   void* pData);
 //
-//G6 GeneratePerturbation(const G6& v, const double perturbationFraction);
-//
-//G6 GeneratePerturbation(const G6& v);
-//
 //const std::pair<std::string, void*> FindBestTextMatch(const std::string& stringToMatch,
 //   const std::vector<ParseData>& parseData,
 //   const ThetaMatch<std::string>& tMatch);
