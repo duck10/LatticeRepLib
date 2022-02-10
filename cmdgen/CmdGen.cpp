@@ -8,7 +8,7 @@
 #include "GenerateLatticeTypeExamples.h"
 
 static const int ngen = 1;
-static std::string name = "cP"; // blank or unrecognized gives all types
+static std::string name = "hR"; // blank or unrecognized gives all types
 
 
 G6 TryToGetAGoodProjection(const std::shared_ptr<GenerateNiggliBase>& pt,
@@ -53,8 +53,8 @@ int main()
          const G6 g = Generate(vglb[lat]);
          std::cout << "G6 "
             << (g) << " "
-            << pt->GetBravaisType() << " IT# = "
-            << pt->GetITNumber()
+            << " IT# = " << pt->GetITNumber() << "  "
+            << pt->GetBravaisType()
             << std::endl;
       }
       std::cout << ";" << std::endl;

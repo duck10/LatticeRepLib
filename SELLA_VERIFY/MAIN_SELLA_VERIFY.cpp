@@ -15,6 +15,7 @@
 #include <map>
 #include <vector>
 
+RHrand ranSellaV;
 
 std::string Letters(void) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
@@ -55,7 +56,7 @@ GenerateRandomLattice<S6> generator(seed);
 S6 GenerateRandomUnitSphereAtOrigin(const double radius) {
    S6 s6;
    for (size_t i = 0; i < 6; ++i) {
-      s6[i] = 2.0 * rhrand.urand() - 1.0;
+      s6[i] = 2.0 * ranSellaV.urand() - 1.0;
    }
    return s6 / s6.norm();
 }

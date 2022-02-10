@@ -1,6 +1,7 @@
 // Testbed.cpp : Defines the entry point for the console application.
 //
 
+#include "BasisBase.h"
 #include "CellInputData.h"
 #include "CS6Dist.h"
 #include "C3.h"
@@ -959,7 +960,7 @@ void TestOneToCentered(const size_t samples, const std::string& str) {
          const G6 test = pt->GetToCenter() * probe;
          std::cout
             << pt->GetBravaisType() << " "
-            << pt->GetITNum() << " "
+            << pt->GetITNumber() << " "
             << LRL_Cell_Degrees(test)
             << std::endl;
       }
@@ -1020,7 +1021,7 @@ void TestOneToCentered(const size_t samples, const std::string& str) {
          if (d < 1.0E-8) d = 0.0;
 
          std::cout
-            << pt->GetITNum() << " " 
+            << pt->GetITNumber() << " " 
             << pt->GetBravaisType() << " "
             << d <<std::endl;
       }
@@ -1034,7 +1035,7 @@ void TestOneToCentered(const size_t samples, const std::string& str) {
       const bool b = Niggli::Reduce(g, preProbe);
       for (size_t i = 0; i < vglb.size(); ++i) {
          const G6 probe = vglb[i]->GetPrj() * preProbe;
-         std::cout << "Match to " << vglb[i]->GetITNum() << " " << probe << std::endl;
+         std::cout << "Match to " << vglb[i]->GetITNumber() << " " << probe << std::endl;
          MatchLatticeType(probe);
       }
       exit(0);
@@ -1134,14 +1135,14 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
       const G6 centeredProjected = toCentered * proj;
       const G6 centeredReduced = toCentered * red;
       std::cout << pt->GetBravaisType() << std::endl;
-      std::cout << pt->GetITNum() << std::endl;
+      std::cout << pt->GetITNumber() << std::endl;
       std::cout << " proj " << centeredProjected << std::endl;
       std::cout << " red  " << red << std::endl << std::endl;
       std::cout << " centered  " << LRL_Cell_Degrees(centeredReduced) << std::endl << std::endl;
 
       const std::string blnk("  ");
       const std::string str = LRL_ToString(
-         dist, " ", pt->GetITNum(), blnk, pt->GetBravaisType(),
+         dist, " ", pt->GetITNumber(), blnk, pt->GetBravaisType(),
          blnk, proj, "\n");
       store.Store(dist, str);
       vstore.push_back(std::make_pair(dist, str));
@@ -1149,7 +1150,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
       sr.SetDistance(dist);
       sr.SetBravaisClass(pt->GetBravaisType());
       sr.SetGeneralBravaisClass(pt->GetBravaisLatticeGeneral());
-      sr.SetIT_Type(pt->GetITNum());
+      sr.SetIT_Type(pt->GetITNumber());
       sr.SetProbe(red);
       sr.SetProjected(proj);
       sr.SetCentered(centeredReduced);
