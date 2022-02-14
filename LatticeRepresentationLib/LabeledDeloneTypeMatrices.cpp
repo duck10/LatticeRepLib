@@ -33,7 +33,7 @@ std::vector<LabeledDeloneTypeMatrices>
          if (!AlreadyHasThisProjector(prj, lsm)) {
             lsm.m_prjs.push_back(ProjectorFromVector(label, p.second[i]));
             lsm.m_perps.push_back(unit - ProjectorFromVector(label, p.second[i]));
-            lsm.m_toCanons.push_back(ToCanon(p.second[i]));
+            //lsm.m_toCanons.push_back(ToCanon(p.second[i]));
          }
       }
 
@@ -120,6 +120,10 @@ static std::string WriteOneNumber(const double d) {
    else if (abs(d + 1.0 / 3.0) < 1.0E-8) ostr << "-1.0/3.0";
    else if (abs(d - 2.0 / 3.0) < 1.0E-8) ostr << "2.0/3.0";
    else if (abs(d + 2.0 / 3.0) < 1.0E-8) ostr << "-2.0/3.0";
+   else if (abs(d - 1.0 / 6.0) < 1.0E-8) ostr << "1.0/6.0";
+   else if (abs(d + 1.0 / 6.0) < 1.0E-8) ostr << "-1.0/6.0";
+   else if (abs(d - 5.0 / 6.0) < 1.0E-8) ostr << "5.0/6.0";
+   else if (abs(d + 5.0 / 6.0) < 1.0E-8) ostr << "-5.0/6.0";
    else ostr << d;
    return ostr.str();
 }
