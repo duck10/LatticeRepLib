@@ -7,6 +7,18 @@
 #include "LRL_Cell.h"
 #include "MatG6.h"
 
+ bool IT_Lat_Char_Base::Approx(const double d1, const double d2) {
+   return abs(d1 - d2) < g_delta;
+}
+
+ bool IT_Lat_Char_Base::Approx(const double d1, const double d2, const double d3) {
+   return Approx(d1, d2) && Approx(d2, d3);
+}
+
+ bool IT_Lat_Char_Base::Approx(const G6& g1, const G6& g2) {
+   return (g1 - g2).norm() < g_delta;
+}
+
 
 IT_Lat_Char_Base::IT_Lat_Char_Base()
    : m_name("BASE")

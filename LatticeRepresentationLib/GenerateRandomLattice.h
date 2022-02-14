@@ -12,7 +12,7 @@
 
 
 static int s6RandomSeed = 19195;
-static  RHrand rhrand(s6RandomSeed);
+static  RHrand rhrandGRL(s6RandomSeed);
 
 
 template<typename T = S6>
@@ -26,7 +26,7 @@ public:
       , m_hasLengthLimits(false)
 
    {
-      rhrand.srandom(seed2);
+      rhrandGRL.srandom(seed2);
       m_minA = 5.0;
       m_maxA = 100.0;
       m_minB = 5.0;
@@ -43,7 +43,7 @@ public:
    T Generate(void) {
       S6 s6(randSellingReduced());
 
-      const double choice = rhrand.urand();
+      const double choice = rhrandGRL.urand();
       // the constants are chosen from results for 
       // random generation of valid cells !!!!!!!!!!!!!!!!
       // but they are somewhat random and can be adjusted.
@@ -119,7 +119,7 @@ public:
       return T(d * rand() / LRL_Cell::randomLatticeNormalizationConstantSquared);
    }
 
-   void SetSeed(const int n) { m_seed = n; rhrand.srandom(n); }
+   void SetSeed(const int n) { m_seed = n; rhrandGRL.srandom(n); }
    void PerturbBy(const double perturb) { m_perturb = perturb; }
 
    GenerateRandomLattice& SetLengthLimits(
@@ -192,9 +192,9 @@ private:
    }
 
    void GenerateThreeRandomFractionsThatSumToOne( double& r1, double& r2, double& r3 ) {
-      const double a1 = rhrand.urand();
-      const double a2 = rhrand.urand();
-      const double a3 = rhrand.urand();
+      const double a1 = rhrandGRL.urand();
+      const double a2 = rhrandGRL.urand();
+      const double a3 = rhrandGRL.urand();
       const double sum = a1 + a2 + a3;
       r1 = a1 / sum;
       r2 = a2 / sum;
@@ -212,7 +212,7 @@ private:
 
       double totalAngles = 0.0;
       while ( totalAngles < 2.0*tenDegrees)
-         totalAngles = rhrand.urand() * threesixtyDegrees;
+         totalAngles = rhrandGRL.urand() * threesixtyDegrees;
       double r1, r2, r3;
 
       a3 = DBL_MAX; // force at least one pass
@@ -230,7 +230,7 @@ private:
 
    void Prepare2CellElements(const double minEdge, const double maxEdge, const size_t i, LRL_Cell& c) {
       const double range = std::fabs(minEdge - maxEdge);
-      const double d1 = rhrand.urand();
+      const double d1 = rhrandGRL.urand();
       c[i] = range * d1 + minEdge;
    }
 
@@ -241,7 +241,7 @@ private:
    }
 
    S6 RandomUnreduceOne(const S6& s6) {
-      const double choice = 12.0 * rhrand.urand();
+      const double choice = 12.0 * rhrandGRL.urand();
 
       if (choice < 1) return S6::Unreduce11(s6);
       else if (choice < 2) return S6::Unreduce12(s6);
@@ -274,7 +274,7 @@ private:
    S6 S6_randDeloneReduced() {
       S6 s6;
       for (size_t i = 0; i < 6; ++i)
-         s6[i] = -rhrand.urand() * LRL_Cell::randomLatticeNormalizationConstantSquared;
+         s6[i] = -rhrandGRL.urand() * LRL_Cell::randomLatticeNormalizationConstantSquared;
       s6.m_valid = true;
       return s6;
    }

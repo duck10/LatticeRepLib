@@ -21,9 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2c49969d-fe7a-4512-8257-eec54b5c4749}</ProjectGuid>
-    <RootNamespace>GenDC7</RootNamespace>
+    <ProjectGuid>{79b30db3-bf22-476c-862a-b61d3bc9918e}</ProjectGuid>
+    <RootNamespace>cmdgen</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>CmdGen</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -141,9 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Code_That_Generated_IT_Types.cpp" />
-    <ClCompile Include="Generated_IT_Types.cpp" />
-    <ClCompile Include="Gen_DC7.cpp" />
+    <ClCompile Include="CmdGen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
@@ -152,15 +151,6 @@
     <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
       <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Generated-2021-08-18.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Untitled 1.odt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Generated_IT_Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

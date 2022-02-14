@@ -152,7 +152,16 @@
     <ClCompile Include="Niggli_Types.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Delone_Types.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IT_TypeList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="GenerateLatticeTypeExamples.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadTypedData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -328,7 +337,16 @@
     <ClInclude Include="Niggli_Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Delone_Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IT_TypeList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="GenerateLatticeTypeExamples.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadTypedData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

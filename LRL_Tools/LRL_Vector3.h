@@ -5,8 +5,10 @@
 #include <cfloat>
 #include <cmath>
 #include <climits>
+#include <sstream>
 #include <list>
 #include <iostream>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -377,6 +379,23 @@ Matrix_3x3( const Matrix_3x3& o )
 //-------------------------------------------------------------------------------------
 {
     for ( int i=0; i<9; ++i) m[i] = o.m[i];
+}
+
+Matrix_3x3(const std::string& s) {
+   std::istringstream istr(s);
+   double d;
+   int i = 0;
+   while (istr && !istr.eof() && i < 10) {
+      istr >> d;
+      m[i] = d;
+      ++i;
+   }
+}
+
+std::vector<double> GetVector() const {
+   std::vector<double> v(9);
+   for (size_t i = 0; i < 9; ++i) v[i] = (*this)[i];
+   return v;
 }
 
 //-----------------------------------------------------------------------------
