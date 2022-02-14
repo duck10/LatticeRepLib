@@ -217,8 +217,8 @@ int main()
 {
    DeloneTypeList();
    SellaBuild sellaBuild;
-   //sellaBuild.Build();
-   //exit(0);
+   sellaBuild.Build();
+   exit(0);
 
    //TestLatticeCentering();
 
