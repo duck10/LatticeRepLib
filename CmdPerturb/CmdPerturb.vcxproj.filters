@@ -15,25 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Gen_DC7.cpp">
+    <ClCompile Include="CmdPerturb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Generated_IT_Types.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Code_That_Generated_IT_Types.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Generated-2021-08-18.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Untitled 1.odt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Generated_IT_Types.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

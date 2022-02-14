@@ -5,6 +5,7 @@
 #include "DirichletCellFaces.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell_Degrees.h"
+#include "LRL_inverse.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
@@ -338,6 +339,47 @@ DirichletCell::DirichletCell(const std::string& lattice, const LRL_Cell& cell)
    }
 }
 
+std::vector<DirichletFace> SortTheFaces(const std::vector<DirichletFace>& dirichletFaces) {
+   std::vector<DirichletFace> v(dirichletFaces);
+   for (size_t i = 0; i < v.size(); ++i) {
+      for (size_t kk = 0; kk < v.size() - 1; ++kk) {
+         if (v[kk].GetDistance() > v[kk + 1].GetDistance()) {
+            std::swap(v[kk], v[kk + 1]);
+         }
+      }
+   }
+   return v;
+}
+
+std::vector<DirichletFace> RemoveOppositeVectors(const Matrix_3x3& inv, const std::vector<DirichletFace>& dirichletFaces) {
+   std::vector<DirichletFace> v(1,dirichletFaces[0]);
+   for (size_t i = 1; i < dirichletFaces.size(); ++i) {
+      const Vector_3 v1 = inv*dirichletFaces[i-1].GetCoord();
+      const Vector_3 v2 = inv*dirichletFaces[i].GetCoord();
+      const Vector_3 vsum = v1 + v2;
+      const double diff = vsum.norm();
+      if (diff>1.0E-6) {
+         v.push_back(dirichletFaces[i]);
+      }
+   }
+   return v;
+}
+
+static double CleanNearZero(const double d) {
+   return (abs(d) < 1.0E-6) ? 0 : d;
+}
+
+void ListFaces(const Matrix_3x3& m,const std::vector<DirichletFace>& dirichletFaces) {
+   const Matrix_3x3 invCart = m.Inver();
+   std::vector<DirichletFace> v = RemoveOppositeVectors(invCart, SortTheFaces(dirichletFaces));
+   
+   for (size_t i = 0; i < v.size(); ++i) {
+      Vector_3 indices = invCart * v[i].GetCoord();
+      indices = Vector_3(CleanNearZero(indices[0]), CleanNearZero(indices[1]), CleanNearZero(indices[2]));
+      std::cout << v[i].GetDistance() << " " << indices << std::endl;
+   }
+}
+
 void DirichletCell::ProcessInputCell(const std::string lattice, const LRL_Cell& reducedCell) {
    m_reducedCell = reducedCell;
    ////-------------cell create faces
@@ -348,6 +390,15 @@ void DirichletCell::ProcessInputCell(const std::string lattice, const LRL_Cell& 
    const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(m_cart);
    std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
    const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(tree);
+
+
+   ListFaces(m_cart, dirichletFaces);
+
+
+
+
+
+
    const ANGLESFORFACES vvPoints = AssignPointsToFaceList(v_Intersections);
 
    m_facesWithVertices = MakeRings(vvPoints, v_Intersections.second);

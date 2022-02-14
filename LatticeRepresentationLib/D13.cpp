@@ -38,6 +38,9 @@ void D13::FromCellToD13(const LRL_Cell& cell) {
    for (size_t i = 0; i < D13::vertices.size(); ++i) {
       m_vec[i] = (m * D13::vertices[i]).Norm();
    }
+   std::vector<double> v = m_vec.GetVector();
+   std::sort(v.begin(), v.end());
+   m_vec = v;
 }
 
 D13::D13(const LRL_Cell& cell)

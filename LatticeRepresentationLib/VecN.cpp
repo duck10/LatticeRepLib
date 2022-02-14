@@ -117,7 +117,9 @@ VecN operator*( const double d, const VecN& v ) {
 
 double VecN::norm( void ) const {
    double sum = 0.0;
-   for ( size_t i=0; i<m_dim; ++i ) sum += m_vec[i]*m_vec[i];
+   for (size_t i = 0; i < m_dim; ++i) {
+      sum += m_vec[i] * m_vec[i];
+   }
    return std::sqrt( sum );
 }
 
@@ -149,6 +151,7 @@ VecN& VecN::operator= ( const VecN& v2 ) {
    m_dim = v2.m_dim;
    const size_t size1 = m_vec.size( );
    const size_t size2 = v2.m_vec.size( );
+   m_valid = v2.m_valid;
    return *this;
 }
 

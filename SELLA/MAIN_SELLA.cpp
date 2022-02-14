@@ -13,6 +13,9 @@
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
+#include "MatG6.h"
+#include "MatS6.h"
+#include "Niggli.h"
 #include "S6.h"
 #include "Sella.h"
 #include "Selling.h"
@@ -37,6 +40,7 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
 
    return cellDataList;
 }
+
 
 std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLatticeData>& input ) {
    std::vector<S6> v;
@@ -129,28 +133,47 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
 }
 
 void ReportFit2( const size_t i, const DeloneType& type, const DeloneFitResults& fit ) {
-   std::cout << type << "  " << fit << std::endl;
+   std::cout << "Fit Report for Delone Type " << i << std::endl;
+   std::cout << "\t" << type << "  " << fit << std::endl;
 
    const MatS6 mToCentered = type.GetToCentered();
-   std::cout << std::endl << "mToCentered" << std::endl << mToCentered << std::endl;
+   std::cout << std::endl << "\t" << "mToCentered" << std::endl << mToCentered << std::endl;
 
    double inverseCanon(36);
    //std::cout << std::endl << "To Canon" << std::endl <<  << std::endl;
 
    const MatS6 canon = fit.GetToCanon();
-
-   MatS6 inversedCanon = MatS6::Inverse(fit.GetToCanon());
+   std::cout << "\t" << "canon \n" << canon << std::endl;
 
    const S6 bestFit = fit.GetBestFit();
-   std::cout << "Centered Cell" << std::endl;
-   const S6 best = mToCentered * inversedCanon * bestFit;
-   std::cout << best << std::endl;
-   std::cout << LRL_Cell_Degrees(best) << std::endl << std::endl;
+   MatG6 g6RedMat;
+   G6 g6Red;
+   std::cout << "\tNiggli Reduced " << g6Red << std::endl;
+   std::cout << "\tNiggli Reduced " << LRL_Cell_Degrees(g6Red) << std::endl;
+   std::cout << "\t" <<"Centered Cell" << std::endl;
+   const S6 best = mToCentered * canon * bestFit;
+
+
+   //LCA this is where we need to test the reflections and ToCanon to find
+   // the correct to canon matrix
+
+
+
+
+   std::cout << "\t" << "S6 " << best << std::endl;
+   std::cout << "\t" << "Cell " << LRL_Cell_Degrees(best) << std::endl;
+
+   const bool bNiggli = Niggli::Reduce(G6(bestFit), g6RedMat, g6Red);
+   std::cout << std::endl;
+
 }
 
 void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit ) {
+   std::cout << "*******   SELLA report for input cell " << n << std::endl;
    for ( size_t i=0; i<fit.size(); ++i )
       ReportFit2( i, types[i], fit[i] );
+   std::cout << "*******   END SELLA report for input cell " << n << std::endl;
+
 }
 
 static double sq( const double d ) { return d * d; }
@@ -451,52 +474,52 @@ S6 S6ErrorsFromCell( const LRL_Cell& cell, const LRL_Cell& errorsInRadians ) {
    const double& be = cell[4];
    const double& ga = cell[5];
 
-   const double& da = errorsInRadians[0];
-   const double& db = errorsInRadians[1];
-   const double& dc = errorsInRadians[2];
-   const double& dal = errorsInRadians[3];
-   const double& dbe = errorsInRadians[4];
-   const double& dga = errorsInRadians[5];
+const double& da = errorsInRadians[0];
+const double& db = errorsInRadians[1];
+const double& dc = errorsInRadians[2];
+const double& dal = errorsInRadians[3];
+const double& dbe = errorsInRadians[4];
+const double& dga = errorsInRadians[5];
 
-   const double cosal = cos(al);
-   const double cosbe = cos(be);
-   const double cosga = cos(ga);
-   const double sinal = sin(al);
-   const double sinbe = sin(be);
-   const double singa = sin(ga);
+const double cosal = cos(al);
+const double cosbe = cos(be);
+const double cosga = cos(ga);
+const double sinal = sin(al);
+const double sinbe = sin(be);
+const double singa = sin(ga);
 
-   std::cout << std::endl;
-   std::cout << "   db * c * cosal " << db * c * cosal << std::endl;
-   std::cout << "   da * c * cosbe " << da * c * cosbe << std::endl;
-   std::cout << "   da * b * cosga " << da * b * cosga << std::endl;
-   std::cout << "   dc * b * cosal  " << dc * b * cosal << std::endl;
-   std::cout << "   dc * a * cosbe  " << dc * a * cosbe << std::endl;
-   std::cout << "   db * a * cosga  " << db * a * cosga << std::endl;
-   std::cout << " -dal * b * c * sinal " << -dal * b * c * sinal << std::endl;
-   std::cout << " -dbe * a * c * sinbe " << -dbe * a * c * sinbe << std::endl;
-   std::cout << " -dga * a * b * singa " << -dga * a * b * singa << std::endl;
-   std::cout << std::endl;
+std::cout << std::endl;
+std::cout << "   db * c * cosal " << db * c * cosal << std::endl;
+std::cout << "   da * c * cosbe " << da * c * cosbe << std::endl;
+std::cout << "   da * b * cosga " << da * b * cosga << std::endl;
+std::cout << "   dc * b * cosal  " << dc * b * cosal << std::endl;
+std::cout << "   dc * a * cosbe  " << dc * a * cosbe << std::endl;
+std::cout << "   db * a * cosga  " << db * a * cosga << std::endl;
+std::cout << " -dal * b * c * sinal " << -dal * b * c * sinal << std::endl;
+std::cout << " -dbe * a * c * sinbe " << -dbe * a * c * sinbe << std::endl;
+std::cout << " -dga * a * b * singa " << -dga * a * b * singa << std::endl;
+std::cout << std::endl;
 
-   s6errors[0] = sqrt( sq( db * c * cosal ) + sq( dc * b * cosal ) + sq( -dal * b * c * sinal ) );
-   s6errors[1] = sqrt( sq( da * c * cosbe ) + sq( dc * a * cosbe ) + sq( -dbe * a * c * sinbe ) );
-   s6errors[2] = sqrt( sq( da * b * cosga ) + sq( db * a * cosga ) + sq( -dga * a * b * singa ) );
+s6errors[0] = sqrt(sq(db * c * cosal) + sq(dc * b * cosal) + sq(-dal * b * c * sinal));
+s6errors[1] = sqrt(sq(da * c * cosbe) + sq(dc * a * cosbe) + sq(-dbe * a * c * sinbe));
+s6errors[2] = sqrt(sq(da * b * cosga) + sq(db * a * cosga) + sq(-dga * a * b * singa));
 
-   s6errors[3] = sqrt( sq( -2.0 * a * da ) + sq( -s6errors[2] ) + sq( -s6errors[1] ) );
-   s6errors[4] = sqrt( sq( -2.0 * b * db ) + sq( -s6errors[2] ) + sq( -s6errors[0] ) );
-   s6errors[5] = sqrt( sq( -2.0 * c * dc ) + sq( -s6errors[0] ) + sq( -s6errors[1] ) );
+s6errors[3] = sqrt(sq(-2.0 * a * da) + sq(-s6errors[2]) + sq(-s6errors[1]));
+s6errors[4] = sqrt(sq(-2.0 * b * db) + sq(-s6errors[2]) + sq(-s6errors[0]));
+s6errors[5] = sqrt(sq(-2.0 * c * dc) + sq(-s6errors[0]) + sq(-s6errors[1]));
 
-   s6errors[0] = maxNC( abs( db * c * cosal ), abs( dc * b * cosal ), abs( -dal * b * c * sinal ) );
-   s6errors[1] = maxNC( abs( da * c * cosbe ), abs( dc * a * cosbe ), abs( -dbe * a * c * sinbe ) );
-   s6errors[2] = maxNC( abs( da * b * cosga ), abs( db * a * cosga ), abs( -dga * a * b * singa ) );
+s6errors[0] = maxNC(abs(db * c * cosal), abs(dc * b * cosal), abs(-dal * b * c * sinal));
+s6errors[1] = maxNC(abs(da * c * cosbe), abs(dc * a * cosbe), abs(-dbe * a * c * sinbe));
+s6errors[2] = maxNC(abs(da * b * cosga), abs(db * a * cosga), abs(-dga * a * b * singa));
 
-   s6errors[3] = maxNC( abs( -2.0 * a * da ), abs( -s6errors[2] ), abs( -s6errors[1] ) );
-   s6errors[4] = maxNC( abs( -2.0 * b * db ), abs( -s6errors[2] ), abs( -s6errors[0] ) );
-   s6errors[5] = maxNC( abs( -2.0 * c * dc ), abs( -s6errors[0] ), abs( -s6errors[1] ) );
+s6errors[3] = maxNC(abs(-2.0 * a * da), abs(-s6errors[2]), abs(-s6errors[1]));
+s6errors[4] = maxNC(abs(-2.0 * b * db), abs(-s6errors[2]), abs(-s6errors[0]));
+s6errors[5] = maxNC(abs(-2.0 * c * dc), abs(-s6errors[0]), abs(-s6errors[1]));
 
-   return s6errors/sqrt(6.0);
+return s6errors / sqrt(6.0);
 }
 
-void TestSigmas( ) {
+void TestSigmas() {
    const LRL_Cell cell("10 12 15  95 100 105 ");
    const LRL_Cell cellErrors(" .01 .01 .01 .001 .002 .003");
    std::cout << "input cell " << LRL_Cell(cell) << std::endl;
@@ -509,43 +532,90 @@ void TestSigmas( ) {
 
 }
 
+void TestReflections(const S6& s, const DeloneType& type) {
+   static std::vector<MatS6> refls = MatS6::GetReflections();
+   const MatS6& tocenter = type.GetToCentered();
+   //const MatS6& tocanon = type.GetToCanon();
+   for (size_t i = 0; i < refls.size(); ++i) {
+      std::cout << i << "  " << refls[i] * s << std::endl;
+   }
+}
+
+template<typename T>
+std::string InputLattice(const size_t n, const std::string& lattice, const T& t, const LRL_Cell& c) {
+   LatticeConverter converter;
+   MatS6 ms;
+   MatG6 mg;
+   std::ostringstream o;
+   o << "\tOriginal Cell " << n << std::endl;
+   o << "input " << lattice << " " << LRL_Cell_Degrees(t) << std::endl;
+   const S6 s6Red = converter.SellingReduceCell(lattice, S6(t), ms);
+   o << "errors " << LRL_Cell_Degrees(c) << std::endl;
+   return o.str();
+}
+
+std::vector<S6> CreateS6Errors(const std::vector< S6>& vs) {
+   std::vector<S6> out;
+   for (size_t i = 0; i < vs.size(); ++i) {
+      out.push_back(0.1 * vs[i]);
+   }
+   return out;
+}
+
+std::vector<LRL_Cell> CreateE3Errors(const std::vector<LRL_Cell>& vc) {
+   std::vector<LRL_Cell> out;
+   LRL_Cell cellErrors;
+   for (size_t i = 0; i < vc.size(); ++i) {
+      cellErrors = 0.01 * vc[i];
+      cellErrors[3] = 0.01 * vc[i][3];
+      cellErrors[4] = 0.01 * vc[i][4];
+      cellErrors[5] = 0.01 * vc[i][5];
+      out.push_back(cellErrors);
+   }
+   return out;
+}
+
+std::vector<LRL_Cell> CreateCells(const std::vector<LRL_ReadLatticeData>& input) {
+   std::vector<LRL_Cell> cells;
+   for (size_t i = 0; i < input.size(); ++i ) {
+      cells.push_back(input[i].GetCell());
+}
+   return cells;
+}
+
 int main()
 {
    //TestSigmas( );
    std::cout << "SELLA\n";
-
-
+   static const DeloneTypeList deloneList;
+   const std::vector<DeloneType>& types = deloneList.GetAllTypes();
+   //std::vector<std::string> typeFound0 = deloneList.GetStrBravaisTypes("");
+   //std::vector<std::string> typeFound1 = deloneList.GetStrBravaisTypes("*");
+   //std::vector<std::string> typeFound2 = deloneList.GetStrBravaisTypes("**");
+   //std::vector<std::string> typeFound3 = deloneList.GetStrBravaisTypes("mC");
+   //std::vector<std::string> typeFound4 = deloneList.GetStrBravaisTypes("m*");
+   //std::vector<std::string> typeFound5 = deloneList.GetStrBravaisTypes("m");
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
-   //std::cout << "input complete" << std::endl;
-   //AnalyzePDBCells( input );
-   //exit( 0 );
-   static const DeloneTypeList deloneList;
+
+
+
    std::vector<MatS6> reductionMatrices;
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input, reductionMatrices);
-   std::vector<S6> errors;
+   const std::vector<LRL_Cell> cells = CreateCells(input);
+   const std::vector<S6> errors = CreateS6Errors(vLat);
+   const std::vector<LRL_Cell> cellErrors = CreateE3Errors(cells);
+
    for (size_t i = 0; i < vLat.size( ); ++i) {
-      const LRL_Cell currentCell = LRL_Cell( vLat[i] );
-      LRL_Cell cellErrors = 0.01 * currentCell;
-      cellErrors[3] = 0.01 * currentCell[3];
-      cellErrors[4] = 0.01 * currentCell[4];
-      cellErrors[5] = 0.01 * currentCell[5];
-      errors.push_back( S6ErrorsFromCell( input[i].GetCell( ), cellErrors ));
-      std::cout << "input cell::" << std::endl;
-      std::cout << input[i].GetStrCell( ) << std::endl;
+      std::cout << InputLattice(i, input[i].GetLattice(), cells[i], cellErrors[i]);
       std::cout << "input cell errors (A and radians)::" << std::endl;
-      std::cout << cellErrors << std::endl;
+      std::cout << cellErrors[i] << std::endl;
       std::cout << "S6 and S6 errors::" << std::endl;
       std::cout << vLat[i] << std::endl << errors[i] << std::endl;
       std::cout << "RATIO " << vLat[i].norm() / errors[i].norm() << std::endl;
       std::cout << "==============================================" << std::endl;
    }
-
-  // for (size_t lat = 0; lat < vLat.size( ); ++lat) {
-  //    std::cout << "input  " << input[lat].GetStrCell( ) << "    (" << vLat[lat] << ")" << std::endl;
-  //    const std::vector<std::tuple<double, S6, MatS6> >  v = deloneList.Fit( vLat[lat] );
-  //}
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       //std::cout << "input  " << input[lat].GetStrCell() << "    (" << (input[lat].GetCell()) <<")" << std::endl;

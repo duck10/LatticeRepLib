@@ -162,7 +162,7 @@ G6::G6(const std::string& s) {
    m_vec.resize(6);
    m_vec = LRL_StringTools::FromString(s);
    m_dim = m_vec.size();
-   m_valid = true;
+   m_valid = m_vec[0] > 0.001 && m_vec[1] > 0.001 && m_vec[2] > 0.001;
    if (m_dim != 6) throw "bad dimension in G6 from a string";
 }
 
