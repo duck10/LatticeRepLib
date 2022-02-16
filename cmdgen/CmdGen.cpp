@@ -8,7 +8,7 @@
 #include "GenerateLatticeTypeExamples.h"
 
 static const int ngen = 1;
-static std::string name = "c"; // blank or unrecognized gives all types
+static std::string name = "cI"; // blank or unrecognized gives all types
 
 
 G6 TryToGetAGoodProjection(const std::shared_ptr<GenerateNiggliBase>& pt,
