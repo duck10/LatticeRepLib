@@ -30,6 +30,7 @@ std::ostream& operator<< (std::ostream& o, const GenerateNiggliBase& g)
 }
 
 
+
 static const double g_delta = 1.0E-6;
 
  bool GenerateNiggliBase::Approx(const double d1, const double d2) {
@@ -691,7 +692,7 @@ IT_27::IT_27() : GenerateNiggliBase() {
    m_freeParams = 4;
    m_character = "[r, s, t, u, r, r]";
    m_prjPrefix = 1.0/3.0;
-   m_strProjector = "1 0 0 0 1 1   0 3 0 0 0 0   0 0 3 0 0 0   0 0 0 3 0 0   1 0 0 0 1 1   1 0 0 0 1 1";
+   m_strProjector = "1 0 0 0 1 1  0 3 0 0 0 0  0 0 3 0 0 0  0 0 0 3 0 0  1 0 0 0 1 1  1 0 0 0 1 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "-1 2 0   -1 0 0   0 -1 1 ";
    m_toCentered = MatrixE3ToG6(m_toCentered_E3);
@@ -1071,7 +1072,7 @@ IT_44::IT_44() : GenerateNiggliBase() {
 } // end of class IT_Lat_Char_44 constructor
 
 
-Delone_C1::Delone_C1() {
+Delone_C1::Delone_C1() : GenerateDeloneBase() {
    m_name = "C1";
    m_bravaisLatticeGeneral = "cI";
    m_bravaisType = "cI";
@@ -1079,6 +1080,7 @@ Delone_C1::Delone_C1() {
    m_character = "rrr rrr";
    m_freeParams = 1;
    m_prjPrefix = 1.0 / 6.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_C3::Delone_C3() {
@@ -1089,16 +1091,18 @@ Delone_C3::Delone_C3() {
    m_character = "rr0 rr0";
    m_freeParams = 1;
    m_prjPrefix = 1.0 / 4.0 ;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_C5::Delone_C5() {
    m_name = "C5";
    m_bravaisLatticeGeneral = "cP";
    m_bravaisType = "cP";
-   m_strProjector = "1 0 0 0 0 0   0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1";
+   m_strProjector = "0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 1 1 1  0 0 0 1 1 1  0 0 0 1 1 1";
    m_character = "000 rrr";
    m_freeParams = 1;
-   m_prjPrefix = 1.0;
+   m_prjPrefix = 1.0/3.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_T1::Delone_T1() {
@@ -1109,6 +1113,7 @@ Delone_T1::Delone_T1() {
    m_character = "rrs rrs";
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 4.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_T2::Delone_T2() {
@@ -1119,6 +1124,7 @@ Delone_T2::Delone_T2() {
    m_character = "rr0 rrs";
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 4.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_T5::Delone_T5() {
@@ -1129,6 +1135,7 @@ Delone_T5::Delone_T5() {
    m_character = "000 rrs";
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_R1::Delone_R1() {
@@ -1139,6 +1146,7 @@ Delone_R1::Delone_R1() {
    m_character = "rrr sss";
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 3.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_R3::Delone_R3() {
@@ -1149,6 +1157,7 @@ Delone_R3::Delone_R3() {
    m_character = "rr0 sr0";
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 3.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_O1A::Delone_O1A() {
@@ -1159,6 +1168,7 @@ Delone_O1A::Delone_O1A() {
    m_character = "rrs rrt";
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 4.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_O1B::Delone_O1B() {
@@ -1169,26 +1179,29 @@ Delone_O1B::Delone_O1B() {
    m_character = "rst rst";
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_O2::Delone_O2() {
    m_name = "O2";
    m_bravaisLatticeGeneral = "oI";
    m_bravaisType = "oI";
-   m_strProjector = "1 0 0 1 0 0  0 1 0 0 1 0  0 0 1 0 0 1  1 0 0 1 0 0  0 1 0 0 1 0  0 0 1 0 0 1";
+   m_strProjector = "1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0  0 1 0 0 1 0  1 0 0 1 0 0  0 0 0 0 0 2";
    m_character = "rs0 srt";
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_O3::Delone_O3() {
    m_name = "O3";
    m_bravaisLatticeGeneral = "oI";
    m_bravaisType = "oI";
-   m_strProjector = "1 0 0 1 0 0  0 1 0 0 1 0  0 0 1 0 0 1  1 0 0 1 0 0  0 1 0 0 1 0  0 0 1 0 0 1";
+   m_strProjector = "1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0  1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0";
    m_character = "rs0 rs0";
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_O4::Delone_O4() {
@@ -1199,16 +1212,18 @@ Delone_O4::Delone_O4() {
    m_character = "00r sst";
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_O5::Delone_O5() {
    m_name = "O5";
-   m_bravaisLatticeGeneral = "oI";
-   m_bravaisType = "oI";
-   m_strProjector = "0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0  1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0";
+   m_bravaisLatticeGeneral = "oP";
+   m_bravaisType = "oP";
+   m_strProjector = "0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0";
    m_character = "000 rst";
    m_freeParams = 3;
    m_prjPrefix = 1.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_M1A::Delone_M1A() {
@@ -1219,6 +1234,7 @@ Delone_M1A::Delone_M1A() {
    m_character = "rrs ttu";
    m_freeParams = 4;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_M1B::Delone_M1B() {
@@ -1229,6 +1245,7 @@ Delone_M1B::Delone_M1B() {
    m_character = "rst rsu";
    m_freeParams = 4;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_M2A::Delone_M2A() {
@@ -1239,6 +1256,7 @@ Delone_M2A::Delone_M2A() {
    m_character = "rs0 stu";
    m_freeParams = 4;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_M2B::Delone_M2B() {
@@ -1249,6 +1267,7 @@ Delone_M2B::Delone_M2B() {
    m_character = "rs0 rst";
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 Delone_M3::Delone_M3() {
    m_name = "M3";
@@ -1258,6 +1277,7 @@ Delone_M3::Delone_M3() {
    m_character = "rs0 ts0";
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_M4::Delone_M4() {
@@ -1268,16 +1288,51 @@ Delone_M4::Delone_M4() {
    m_character = "00r stu";
    m_freeParams = 4;
    m_prjPrefix = 1.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 Delone_H4::Delone_H4() {
    m_name = "H4";
    m_bravaisLatticeGeneral = "hP";
    m_bravaisType = "hP";
-   m_strProjector = "0 0 0 0 0 0  0 0 0 0 0 0  0 0 1 1 1 0  0 0 1 1 1 0  0 0 1 1 1 0  0 0 0 0 0 2";
-   m_character = "000 rrs";
+   m_strProjector = "0 0 0 0 0 0  0 0 0 0 0 0  0 0 1 1 1 0  0 0 1 1 1 0  0 0 1 1 1 0  0 0 0 0 0 3";
+   m_character = "00r rrs";
    m_freeParams = 2;
-   m_prjPrefix = 1.0 / 2.0;
+   m_prjPrefix = 1.0 / 3.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
+}
+
+Delone_A1::Delone_A1() {
+   m_name = "A1";
+   m_bravaisLatticeGeneral = "aP";
+   m_bravaisType = "aP";
+   m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1";
+   m_character = "rst uvw";
+   m_freeParams = 6;
+   m_prjPrefix = 1.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
+}
+
+Delone_A2::Delone_A2() {
+   m_name = "A2";
+   m_bravaisLatticeGeneral = "aP";
+   m_bravaisType = "aP";
+   m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1";
+   m_character = "rs0 tuv";
+   m_freeParams = 6;
+   m_prjPrefix = 1.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
+}
+
+Delone_A3::Delone_A3() {
+   m_name = "A3";
+   m_bravaisLatticeGeneral = "aP";
+   m_bravaisType = "aP";
+   m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 0";
+   m_character = "rs0 tu0";
+   m_freeParams = 6;
+   m_prjPrefix = 1.0;
+   m_projector = m_prjPrefix * MatS6(m_strProjector);
 }
 
 std::ostream& operator<< (std::ostream& o, const GenerateDeloneBase* gdb) {
@@ -1286,9 +1341,23 @@ std::ostream& operator<< (std::ostream& o, const GenerateDeloneBase* gdb) {
 }
 
 std::ostream& operator<< (std::ostream& o, const GenerateDeloneBase& gdb) {
-   std::cout << gdb.GetName() << " " << gdb.GetBravaisType() << " " <<
-       gdb.GetBravaisLatticeGeneral() << "  " << gdb.GetFreeParams()
-      << "     " << gdb.GetCharacter();
+   //o << gdb.GetName() << " " << gdb.GetBravaisType() << " " 
+   //   << "     (" << gdb.GetCharacter() << ")";
+   //o << std::endl << gdb.GetPrefix() << " * [";
+   //o << gdb.GetStringProjector() << "]";
+   //return o;
+   o << "$#begin{matrix} $" << gdb.GetName()
+      << "$ ## $" << gdb.GetBravaisType()
+      << "$ ## $(" << gdb.GetCharacter() << ")$"
+      << std::endl;
+   o << "#end{matrix} $" << std::endl;
+   o << "%---------------------------" << std::endl;
+
+   o << "$#begin{matrix} " << std::endl;
+   o << "&$" << gdb.GetPrefix() << "~*~$ ##" << std::endl;
+   o << "#end{matrix} $" << std::endl;
+   o << "%---------------------------" << std::endl;
+   o << "$#begin{bmatrix}" << std::endl;
    return o;
 }
 
@@ -1349,6 +1418,9 @@ GenerateLatticeTypeExamples::CreateListOfDeloneTypes()
 {
    std::vector<std::shared_ptr<GenerateDeloneBase> > vglb;
 
+   const bool includeUninterestingTypes = true;
+   const bool includeTriclinic = true;
+
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_C1));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_C3));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_C5));
@@ -1360,18 +1432,18 @@ GenerateLatticeTypeExamples::CreateListOfDeloneTypes()
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O1A));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O1B));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O2));
-   //vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O3));
+   if (includeUninterestingTypes) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O3));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O4));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O5));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M1A));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M1B));
-   //vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M2B));
+   if (includeUninterestingTypes) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M2B));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M2A));
-   //vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M3));
+   if (includeUninterestingTypes) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M3));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M4));
-   //vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A1));
-   //vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A2));
-   //vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A3));
+   if (includeTriclinic) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A1));
+   if (includeTriclinic) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A2));
+   if (includeTriclinic) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A3));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_H4));
    return vglb;
 }

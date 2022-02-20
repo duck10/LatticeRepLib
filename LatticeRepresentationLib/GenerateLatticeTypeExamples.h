@@ -79,6 +79,7 @@ public:
    std::string GetCharacter(void) const { return m_character; }
    int GetFreeParams(void) const { return m_freeParams; }
    std::string GetStringProjector(void) const { return m_strProjector; }
+   double GetPrefix(void) const { return m_prjPrefix; }
    G6 GeneratePerturbation(const G6& v, const double amountToPerturb);
    template<typename T>
    static T VecAdd(const T& t1, const T& t2) {
@@ -127,7 +128,6 @@ protected:
 
    std::string m_toCentered_E3;
    std::string m_ITnumber;
-   double m_prjPrefix;
    MatG6 m_projector;
    MatG6 m_toCentered; // International Tables Table 3.1.3.1
 };
@@ -391,7 +391,6 @@ public:
       Generate(const std::string& s, const size_t n = 1);
 
 protected:
-   double m_prjPrefix;
    MatS6 m_projector;
 };
 
