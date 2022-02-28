@@ -589,12 +589,6 @@ int main()
    std::cout << "SELLA\n";
    static const DeloneTypeList deloneList;
    const std::vector<DeloneType>& types = deloneList.GetAllTypes();
-   //std::vector<std::string> typeFound0 = deloneList.GetStrBravaisTypes("");
-   //std::vector<std::string> typeFound1 = deloneList.GetStrBravaisTypes("*");
-   //std::vector<std::string> typeFound2 = deloneList.GetStrBravaisTypes("**");
-   //std::vector<std::string> typeFound3 = deloneList.GetStrBravaisTypes("mC");
-   //std::vector<std::string> typeFound4 = deloneList.GetStrBravaisTypes("m*");
-   //std::vector<std::string> typeFound5 = deloneList.GetStrBravaisTypes("m");
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
 

@@ -1358,7 +1358,10 @@ std::ostream& operator<< (std::ostream& o, const GenerateDeloneBase& gdb) {
    o << "#end{matrix} $" << std::endl;
    o << "%---------------------------" << std::endl;
    o << "$#begin{bmatrix}" << std::endl;
+   o << gdb.GetPrj() / gdb.GetPrefix() << std::endl;;
+   o << "#end{bmatrix}$ ##" << std::endl;
    return o;
+
 }
 
 std::vector<std::shared_ptr<GenerateNiggliBase> >

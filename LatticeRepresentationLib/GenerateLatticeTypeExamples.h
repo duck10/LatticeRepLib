@@ -1,6 +1,7 @@
 #ifndef GENERATELATTICETYPEEXAMPLES_H
 #define GENERATELATTICETYPEEXAMPLES_H
 
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -65,8 +66,63 @@ static std::vector<std::string> GetUpwardBravaisSymmetry(const std::string& s) {
    //else if ( s == "hP") return std::vector<std::string>();
    else if (s == "hR")  return std::vector<std::string> {"cP", "cF", "cI"};
    else if (s == "tI")  return std::vector<std::string> {"cF", "cI"};
-   else return std::vector<std::string> {"mP", "mS"};
+   else return std::vector<std::string> {""};
 }
+
+class CheckDeloneProjectors {
+public:
+   static size_t CountZeros(const std::string& character) {
+      size_t count = 0;
+      for (size_t i = 0; i < character.size(); ++i)
+         if (character[i] == '0') ++count;
+      return count;
+   }
+
+   static bool CheckOneProjector( const std::string& character, const MatS6& prj ) {
+      const S6 ones(" 1 1 1  1 1 1");
+
+      const S6 product = prj * ones;
+      const double prodNorm = product.norm();
+      const double testValue = prodNorm * prodNorm + double(CountZeros(character));
+      return (abs(testValue - 6.0) > 1.0E-6) ? false : true;
+   }
+
+   static bool Agree(const std::vector<double>& v) {
+      if (v.size() < 2) return true;
+      for (size_t i = 0; i < v.size(); ++i) {
+         if (abs(v[0] - v[i]) > 1.0E-6) return false;
+      }
+      return true;
+   }
+
+   static bool DoesProjectorAgreeWithCharacter(const std::string& character, const MatS6& prj) {
+      std::vector<double> r, s, t, u, v, w, blank, other, zero;
+
+      const S6 goat("13 29 -100  47 63 123");
+      const S6 kid = prj *goat;
+      size_t k = 0;
+      for (size_t i = 0; i < character.size(); ++i) {
+         if (character[i] == 'r') r.push_back(kid[k]);
+         else if (character[i] == 's') s.push_back(kid[k]);
+         else if (character[i] == 't') t.push_back(kid[k]);
+         else if (character[i] == 'u') u.push_back(kid[k]);
+         else if (character[i] == 'v') v.push_back(kid[k]);
+         else if (character[i] == 'w') w.push_back(kid[k]);
+         else if (character[i] == ' ') blank.push_back(kid[k]);
+         else if (character[i] == '0') zero.push_back(kid[k]);
+         else {
+            other.push_back(kid[k]);
+         }
+         if (std::string("rstuvw0").find(character[i]) != std::string::npos) ++k;
+      }
+      if (!other.empty()) {
+         return false;
+      }
+
+      return Agree(r) && Agree(s) && Agree(t) &&
+         Agree(u) && Agree(v) && Agree(w);
+   }
+};
 
 class GenerateLatticesBase {
 public:
