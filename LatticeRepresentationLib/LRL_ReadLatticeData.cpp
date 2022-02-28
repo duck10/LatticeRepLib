@@ -167,7 +167,7 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
       if (toReturn.size() < 6 && m_inputDataType != "RANDOM") {
          toReturn.clear();
          if ( m_lattice != ";" && (!s.empty()) && s != " ")
-            std::cout << "input line rejected, invalid cell" << s << std::endl;
+            std::cout << "input line rejected, invalid cell A " << s << std::endl;
          m_lattice = "";
          m_cell.SetValid(false);
          return std::vector<double>();
@@ -191,7 +191,7 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
 
       if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
          m_cell.SetSigmas(params.second);
-         return false;
+         //return false;
       }
    }
    return valid;
@@ -204,7 +204,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
 
    if (!valid || !m_cell.GetValid()) {
       if (s[0] != ';' && (!s.empty()) && s != " ")
-         std::cout << "input line rejected, invalid cell" << s << std::endl;
+         std::cout << "input line rejected, invalid cell B " << s << std::endl;
       m_lattice = "";
       m_cell.SetValid(false);
    }
