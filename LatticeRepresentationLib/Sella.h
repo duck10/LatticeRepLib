@@ -17,12 +17,49 @@
 
 class SellaResult {
 public:
+   friend std::ostream& operator<< (std::ostream& o, const SellaResult& sr) {
+      o << "Delone name " << sr.GetName() << std::endl;
+      o << "Bravais Type " << sr.GetBravaisType() << std::endl;
+      o << "distance " << sr.GetDistance() << std::endl;
+      o << "original " << sr.GetOriginal() << std::endl;
+      o << "projected " << sr.GetProjected() << std::endl;
+      //o << "perp " << sr.GetPerp() << std::endl;
+      o << "zscore " << sr.GetZscore() << std::endl;
+      return o;
+   }
+   SellaResult() {}
 
+   std::string GetName() const { return m_label; }
+   std::string GetBravaisType() const { return m_BravaisType; }
+   std::string GetGeneralBravaisType() const { return m_generalBravaisType; }
+   double GetDistance() const { return m_distance; }
+   S6 GetProjected() const { return m_projected; }
+   S6 GetPerp() const { return m_perped; }
+   double GetZscore() const { return m_zscore; }
+   S6 GetOriginal() const { return m_original; }
 
-   const std::string m_label;
-   const double m_distance;
-   const S6 m_projected;
-   const S6 m_perped;
+   void SetName(const std::string& label) { m_label = label; }
+   void SetBravaisType(const std::string& type) { m_BravaisType = type; }
+   void SetGeneralBravaisType(const std::string& generalBravaisType) { m_generalBravaisType = generalBravaisType; }
+   void SetDistance(const double distance) { m_distance = distance; }
+   void SetProjected(const S6& projected) { m_projected = projected; }
+   void SetPerp(const S6& perped) { m_perped = perped; }
+   void SetZscore(const double zscore) { m_zscore = zscore; }
+   void SetOriginal(const S6& s6) { m_original = s6; }
+
+   bool operator< (const SellaResult& sr) {
+      return m_distance <sr.m_distance;
+   }
+private:
+   std::string m_label;
+   double m_distance;
+   double m_zscore;
+   S6 m_original;
+   S6 m_projected;
+   S6 m_perped;
+   std::string m_BravaisType;
+   std::string m_generalBravaisType;
+
 };
 
 class Sella {

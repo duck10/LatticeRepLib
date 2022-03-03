@@ -377,6 +377,7 @@ std::vector<DeloneFitResults> DeloneTypeList::Fit( const std::string& type, cons
          fit.SetZscore( zscore );
          fit.SetLatticeType( name );
          fit.SetReductionMatrix(reductionMatrix);
+         fit.SetOriginalInput(s6);
          v.push_back( fit );
          //std::cout << fit << std::endl << std::endl;
          //std::cout << m_deloneTypes[i].GetName() << " in DeloneTypeList::Fit " << std::endl

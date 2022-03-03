@@ -132,46 +132,72 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    exit(0);
 }
 
-void ReportFit2( const size_t i, const DeloneType& type, const DeloneFitResults& fit ) {
-   std::cout << "Fit Report for Delone Type " << i << std::endl;
-   std::cout << "\t" << type << "  " << fit << std::endl;
+SellaResult ReportFit2( const size_t i, const DeloneType& type, const DeloneFitResults& fit ) {
+   //std::cout << "Fit Report for Delone Type " << i << std::endl;
+   //std::cout << "\t" << type << "  " << fit << std::endl;
 
    const MatS6 mToCentered = type.GetToCentered();
-   std::cout << std::endl << "\t" << "mToCentered" << std::endl << mToCentered << std::endl;
+   //std::cout << std::endl << "\t" << "mToCentered" << std::endl << mToCentered << std::endl;
 
    double inverseCanon(36);
    //std::cout << std::endl << "To Canon" << std::endl <<  << std::endl;
 
    const MatS6 canon = fit.GetToCanon();
-   std::cout << "\t" << "canon \n" << canon << std::endl;
+   //std::cout << "\t" << "canon \n" << canon << std::endl;
 
    const S6 bestFit = fit.GetBestFit();
    MatG6 g6RedMat;
    G6 g6Red;
-   std::cout << "\tNiggli Reduced " << g6Red << std::endl;
-   std::cout << "\tNiggli Reduced " << LRL_Cell_Degrees(g6Red) << std::endl;
-   std::cout << "\t" <<"Centered Cell" << std::endl;
+   //std::cout << "\tNiggli Reduced " << g6Red << std::endl;
+   //std::cout << "\tNiggli Reduced " << LRL_Cell_Degrees(g6Red) << std::endl;
+   //std::cout << "\t" <<"Centered Cell" << std::endl;
    const S6 best = mToCentered * canon * bestFit;
 
 
    //LCA this is where we need to test the reflections and ToCanon to find
    // the correct to canon matrix
+   SellaResult sr;
+   sr.SetBravaisType(type.GetBravaisType());
+   // need character
+   sr.SetDistance(fit.GetRawFit());
+   sr.SetName(type.GetName());
+   sr.SetPerp(S6());
+   sr.SetProjected(bestFit);
+   sr.SetZscore(fit.GetZscore());
+   sr.SetOriginal(fit.GetOriginalInput());
 
 
+   //std::cout << sr << std::endl;
+
+   return sr;
+   //std::ostream& operator<< (std::ostream & o, const DeloneType & m) {
+   //   o << "REPORT FOR ONE DELONE TYPE " << std::endl;
+   //   o << "\t" << "Delone Type  " << m.m_deloneName << std::endl;
+   //   o << "\t" << "BravaisLattice Type  " << m.m_bravaisType << std::endl;
+   //   o << "\t" << "Character Type  " << m.m_character << std::endl;
+   //   o << "\t" << "Canonical to Centered (E3)  " << m.m_toCentered_E3 << std::endl;
+   //   //o << "\t" << "Canonical to Centered (S6)  " << std::endl << m.m_toCentered_S6 << std::endl;
+   //   o << "\t" << "Count of all representations  " << m.m_matrices.size() << std::endl;
+   //   return o;
+   //}
 
 
-   std::cout << "\t" << "S6 " << best << std::endl;
-   std::cout << "\t" << "Cell " << LRL_Cell_Degrees(best) << std::endl;
+   //std::cout << "\t" << "S6 " << best << std::endl;
+   //std::cout << "\t" << "Cell " << LRL_Cell_Degrees(best) << std::endl;
 
-   const bool bNiggli = Niggli::Reduce(G6(bestFit), g6RedMat, g6Red);
-   std::cout << std::endl;
+   //const bool bNiggli = Niggli::Reduce(G6(bestFit), g6RedMat, g6Red);
+   //std::cout << std::endl;
 
 }
 
 void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit ) {
    std::cout << "*******   SELLA report for input cell " << n << std::endl;
+   std::vector<SellaResult> vsr;
    for ( size_t i=0; i<fit.size(); ++i )
-      ReportFit2( i, types[i], fit[i] );
+      vsr.push_back(ReportFit2( i, types[i], fit[i] ));
+
+   for (size_t i = 0; i < vsr.size(); ++i)
+      std::cout << vsr[i] << std::endl;
    std::cout << "*******   END SELLA report for input cell " << n << std::endl;
 
 }
@@ -592,8 +618,6 @@ int main()
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
 
-
-
    std::vector<MatS6> reductionMatrices;
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input, reductionMatrices);
@@ -601,27 +625,19 @@ int main()
    const std::vector<S6> errors = CreateS6Errors(vLat);
    const std::vector<LRL_Cell> cellErrors = CreateE3Errors(cells);
 
-   for (size_t i = 0; i < vLat.size( ); ++i) {
-      std::cout << InputLattice(i, input[i].GetLattice(), cells[i], cellErrors[i]);
-      std::cout << "input cell errors (A and radians)::" << std::endl;
-      std::cout << cellErrors[i] << std::endl;
-      std::cout << "S6 and S6 errors::" << std::endl;
-      std::cout << vLat[i] << std::endl << errors[i] << std::endl;
-      std::cout << "RATIO " << vLat[i].norm() / errors[i].norm() << std::endl;
-      std::cout << "==============================================" << std::endl;
-   }
+   //for (size_t i = 0; i < vLat.size( ); ++i) {
+   //   std::cout << InputLattice(i, input[i].GetLattice(), cells[i], cellErrors[i]);
+   //   std::cout << "input cell errors (A and radians)::" << std::endl;
+   //   std::cout << cellErrors[i] << std::endl;
+   //   std::cout << "S6 and S6 errors::" << std::endl;
+   //   std::cout << vLat[i] << std::endl << errors[i] << std::endl;
+   //   std::cout << "RATIO " << vLat[i].norm() / errors[i].norm() << std::endl;
+   //   std::cout << "==============================================" << std::endl;
+   //}
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      //std::cout << "input  " << input[lat].GetStrCell() << "    (" << (input[lat].GetCell()) <<")" << std::endl;
-      //const std::vector<std::tuple<double, S6, MatS6> >  v = DeloneTypeList::Fit( "T", vLat[lat] );
-      const std::vector<DeloneFitResults>  v = deloneList.Fit( vLat[lat], errors[lat], reductionMatrices[lat] );
-
-      //std::cout << lat << " " << deloneList[4].GetName() << std::endl;
-      //std::cout << reductionMatrices[lat] << std::endl << std::endl;
-
-
+      const std::vector<DeloneFitResults>  v = deloneList.Fit(vLat[lat], errors[lat], reductionMatrices[lat]);
       ReportFit( lat, deloneList,  v );
-      //std::cout << "************************************" << std::endl;
    }
 
    const int  i19191 = 19191;
