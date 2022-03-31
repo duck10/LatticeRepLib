@@ -287,9 +287,12 @@ int main(int argc, char* argv[])
    else if ( cmd == "2D") {
       const std::vector<Vector_3> v = ReadVector_3File(std::cin);
 
+      if (v.empty()) std::cout << "missing vector input" << std::endl;
+
       if ( cmd2=="" || cmd2=="M4" ) Nullspace::Test_CenteredNullspace2And3("M4" , "P", S6(LRL_Cell("10 20 15 90 110 90")),v);
       if ( cmd2=="" || cmd2=="M1A") Nullspace::Test_CenteredNullspace2And3("M1A", "C", S6(LRL_Cell("10 20 15 90 110 90")),v);
       if ( cmd2=="" || cmd2=="M1B") Nullspace::Test_CenteredNullspace2And3("M1B", "C", S6(LRL_Cell("89.6 75.6 69.7 90 141.9 90")),v);
+      // datagen geosp 50000 | scale .1 | sella_verify 2D M1B > sella_verify.out
       if ( cmd2=="" || cmd2=="M2A") Nullspace::Test_CenteredNullspace2And3("M2A", "C", S6(LRL_Cell("20 10 15 90 110 90")), v);
 
       if ( cmd2=="" || cmd2=="M1AP") Nullspace::Test_CenteredNullspace2And3("M1A", "P", S6("-24.35 -24.35 -75 -25.65 -25.65 -173.68687"), v); 

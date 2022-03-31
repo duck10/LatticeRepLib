@@ -3,7 +3,9 @@
 #include "LabeledDeloneTypeMatrices.h"
 #include "S6Dist.h"
 #include "DeloneTypeList.h"
+
 #include <string>
+#include <sstream>
 
 
 bool LabeledDeloneTypeMatrices::AlreadyHasThisProjector( const MatS6& m, const LabeledDeloneTypeMatrices& lsm) const{
@@ -149,10 +151,72 @@ void LabeledDeloneTypeMatrices::DoToCanon(const std::vector<LabeledDeloneTypeMat
    }
 }
 
+
+std::string LabeledDeloneTypeMatrices::FinalWriteSellaMatrices(const std::string& functionName, const std::string& label, const std::vector<MatS6>& mat) const {
+
+   std::vector<MatS6> vm;
+   std::stringstream os;
+
+   const std::string name = "   vm_" + functionName + ".push_back(MatS6( ";
+
+
+   //os << class name << std::endl;
+
+   //os << "/*  " << label << "  */" << std::endl;
+   for (size_t k = 0; k < mat.size(); ++k) {
+      os << name;
+
+      for (size_t ll = 0; ll < mat[k].size(); ++ll) {
+         os << WriteOneNumber(mat[k][ll]);
+         const size_t ssss = mat[k].size() - 1;
+        os << ((ll < ssss) ? "," : "));\n");
+      }
+   }
+   os << std::endl;
+   return os.str();
+}
+
+void WriteSellaMatrixBase() {
+   std::cout << " class SellaMatrixBase {" << std::endl;
+   std::cout << "   ~SellaMatrixBase(){}" << std::endl;;
+   std::cout << "protected:" << std::endl;
+   std::cout << "   std::vector<MatS6> vm_prjs;" << std::endl;
+   std::cout << "   std::vector<MatS6> vm_perps;" << std::endl;
+   std::cout << "   std::vector<MatS6> vm_toCanons;" << std::endl;
+   std::cout << "};" << std::endl << std::endl;
+}
+
 void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   DoPerps(matsForAllDeloneTypes);
-   DoPrjs(matsForAllDeloneTypes);
-   DoToCanon(matsForAllDeloneTypes);
+   if (false) {
+      DoPerps(matsForAllDeloneTypes);
+      DoPrjs(matsForAllDeloneTypes);
+      DoToCanon(matsForAllDeloneTypes);
+   }
+
+   WriteSellaMatrixBase();
+
+   for (size_t i = 0; i < matsForAllDeloneTypes.size(); ++i) {
+      const LabeledDeloneTypeMatrices ldmat = matsForAllDeloneTypes[i];
+
+      std::string s;
+      const std::string sellaMatricesClassName = "SellaMatrices_" + ldmat.GetLabel();
+      std::cout << "class " << sellaMatricesClassName <<
+         " : public SellaMatrixBase()" << " {" << std::endl;
+
+      std::cout << "\n void " << sellaMatricesClassName << "()\n : SellaMatrixBase() { ";
+
+      for (size_t k = 0; k < ldmat.m_perps.size(); ++k) {
+         //std::cout << "// prj" << std::endl;
+         s = FinalWriteSellaMatrices("prjs", ldmat.GetLabel(), ldmat.m_prjs)/* << std::endl*/;
+         s += FinalWriteSellaMatrices("perps", ldmat.GetLabel(), ldmat.m_perps)/* << std::endl*/;
+         s += FinalWriteSellaMatrices("toCanons", ldmat.GetLabel(), ldmat.m_toCanons)/* << std::endl*/;
+      }
+
+      std::cout << std::endl;
+      std::cout << s;
+      std::cout << "};\n" << std::endl;
+
+   }
 }
 
 void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::string& functionName, const std::string& label, const std::vector<MatS6>& mat) const {
