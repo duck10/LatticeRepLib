@@ -6,6 +6,7 @@
 
 #include "C3.h"
 #include "DeloneTypeList.h"
+#include "GenerateLatticeTypeExamples.h"
 #include "LRL_inverse.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LatticeConverter.h"
@@ -611,10 +612,13 @@ std::vector<LRL_Cell> CreateCells(const std::vector<LRL_ReadLatticeData>& input)
 
 int main()
 {
+   std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =
+      GenerateLatticeTypeExamples::CreateListOfDeloneTypes();
+
    //TestSigmas( );
    std::cout << "SELLA\n";
    static const DeloneTypeList deloneList;
-   const std::vector<DeloneType>& types = deloneList.GetAllTypes();
+   //const std::vector<DeloneType>& types = deloneList.GetAllTypes();
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
 

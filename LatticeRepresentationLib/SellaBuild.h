@@ -8,7 +8,6 @@
 #include <string>
 #include <vector>
 
-#include "Delone.h"
 #include "LabeledDeloneTypeMatrices.h"
 #include "LabeledSellaMatrices.h"
 #include "MatS6.h"
