@@ -233,7 +233,7 @@ void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::string& functionNa
          for (size_t ll = 0; ll < mat[k].size(); ++ll) {
             std::cout << WriteOneNumber(mat[k][ll]);
             const size_t ssss = mat[k].size() - 1;
-            std::cout << ((ll < ssss) ? "," : "));\n");
+            std::cout << ((ll < ssss) ? "," : "));\n\n");
          }
       }
       std::cout << std::endl;

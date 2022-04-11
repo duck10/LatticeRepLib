@@ -1296,7 +1296,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
       }
       // 10 14 17 20 25 27 28 29 30 37 39 41 43 (FAILS 17 43, fixed by multiple sampling,
       // some projections were invalid lattices)
-      const std::vector<G6> vg = MakeSellaSamples(1,"17");
+      const std::vector<G6> vg = MakeSellaSamples(1,"57C");
       TestSellaTypeSearch(vg);
       exit(0);
       TestMatchLatticeType();
