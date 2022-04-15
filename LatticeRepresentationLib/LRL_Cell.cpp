@@ -92,7 +92,6 @@ LRL_Cell::LRL_Cell(const std::string& s)
 
 LRL_Cell::LRL_Cell(const S6& ds)
 {
-   LRL_Cell_Degrees temp = G6(ds);
    m_cell.resize( 6 );
 
    const S6& s( ds );

@@ -182,6 +182,7 @@
     <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
     <ClCompile Include="MatD13.cpp" />
+    <ClCompile Include="MatricesForOneDeloneType.cpp" />
     <ClCompile Include="Niggli_Types.cpp" />
     <ClCompile Include="ReadTypedData.cpp" />
     <ClCompile Include="S6.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="LRL_CreateFileName.h" />
     <ClInclude Include="LRL_LatticeMatcher.h" />
     <ClInclude Include="MatD13.h" />
+    <ClInclude Include="MatricesForOneDeloneType.h" />
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
