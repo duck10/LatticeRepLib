@@ -164,6 +164,9 @@
     <ClCompile Include="ReadTypedData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MatricesForOneDeloneType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -347,6 +350,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ReadTypedData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatricesForOneDeloneType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
