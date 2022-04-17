@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <vector>
 
 //#include "BasisBase.h" // this has CreateUnitOrthogonalVector
 #include "LRL_Cell_Degrees.h"
@@ -50,7 +52,7 @@ void HandleOneInputCell(const LRL_ReadLatticeData& inputlattice) {
 
    const std::string strcel = inputlattice.GetStrCell();
 
-   std::cout << "\n;" << strcel << std::endl;
+   std::cout << "\n;" << strcel << "    original input" << std::endl;
    std::cout << "G6 " << base << "    scaled input" << std::endl;
 
    const size_t pos = strcel.find("IT#");
