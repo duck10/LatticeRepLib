@@ -1081,6 +1081,9 @@ Delone_C1::Delone_C1() : GenerateDeloneBase() {
    m_freeParams = 1;
    m_prjPrefix = 1.0 / 6.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_C1().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_C1().GetMatrices();
 }
 
 Delone_C3::Delone_C3() {
@@ -1092,6 +1095,9 @@ Delone_C3::Delone_C3() {
    m_freeParams = 1;
    m_prjPrefix = 1.0 / 4.0 ;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_C3().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_C3().GetMatrices();
 }
 
 Delone_C5::Delone_C5() {
@@ -1103,6 +1109,9 @@ Delone_C5::Delone_C5() {
    m_freeParams = 1;
    m_prjPrefix = 1.0/3.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_C5().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_C5().GetMatrices();
 }
 
 Delone_T1::Delone_T1() {
@@ -1114,6 +1123,9 @@ Delone_T1::Delone_T1() {
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 4.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_T1().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_T1().GetMatrices();
 }
 
 Delone_T2::Delone_T2() {
@@ -1125,6 +1137,9 @@ Delone_T2::Delone_T2() {
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 4.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_T2().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_T2().GetMatrices();
 }
 
 Delone_T5::Delone_T5() {
@@ -1136,6 +1151,9 @@ Delone_T5::Delone_T5() {
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_T5().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_T5().GetMatrices();
 }
 
 Delone_R1::Delone_R1() {
@@ -1147,6 +1165,9 @@ Delone_R1::Delone_R1() {
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 3.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_R1().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_R1().GetMatrices();
 }
 
 Delone_R3::Delone_R3() {
@@ -1158,6 +1179,9 @@ Delone_R3::Delone_R3() {
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 3.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_R3().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_R3().GetMatrices();
 }
 
 Delone_O1A::Delone_O1A() {
@@ -1169,17 +1193,23 @@ Delone_O1A::Delone_O1A() {
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 4.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_O1A().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_O1A().GetMatrices();
 }
 
 Delone_O1B::Delone_O1B() {
    m_name = "O1B";
-   m_bravaisLatticeGeneral = "oF";
-   m_bravaisType = "oF";
+   m_bravaisLatticeGeneral = "oI";
+   m_bravaisType = "oI";
    m_strProjector = "1 0 0 1 0 0  0 1 0 0 1 0  0 0 1 0 0 1  1 0 0 1 0 0  0 1 0 0 1 0  0 0 1 0 0 1";
    m_character = "rst rst";
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_O1B().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_O1B().GetMatrices();
 }
 
 Delone_O2::Delone_O2() {
@@ -1191,6 +1221,9 @@ Delone_O2::Delone_O2() {
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_O2().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_O2().GetMatrices();
 }
 
 Delone_O3::Delone_O3() {
@@ -1202,6 +1235,9 @@ Delone_O3::Delone_O3() {
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_O3().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_O3().GetMatrices();
 }
 
 Delone_O4::Delone_O4() {
@@ -1213,6 +1249,9 @@ Delone_O4::Delone_O4() {
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_O4().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_O4().GetMatrices();
 }
 
 Delone_O5::Delone_O5() {
@@ -1224,6 +1263,9 @@ Delone_O5::Delone_O5() {
    m_freeParams = 3;
    m_prjPrefix = 1.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_O5().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_O5().GetMatrices();
 }
 
 Delone_M1A::Delone_M1A() {
@@ -1235,6 +1277,9 @@ Delone_M1A::Delone_M1A() {
    m_freeParams = 4;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_M1A().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_M1A().GetMatrices();
 }
 
 Delone_M1B::Delone_M1B() {
@@ -1246,6 +1291,9 @@ Delone_M1B::Delone_M1B() {
    m_freeParams = 4;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_M1B().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_M1B().GetMatrices();
 }
 
 Delone_M2A::Delone_M2A() {
@@ -1257,6 +1305,9 @@ Delone_M2A::Delone_M2A() {
    m_freeParams = 4;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_M2A().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_M2A().GetMatrices();
 }
 
 Delone_M2B::Delone_M2B() {
@@ -1268,7 +1319,11 @@ Delone_M2B::Delone_M2B() {
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_M2B().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_M2B().GetMatrices();
 }
+
 Delone_M3::Delone_M3() {
    m_name = "M3";
    m_bravaisLatticeGeneral = "mS";
@@ -1278,6 +1333,9 @@ Delone_M3::Delone_M3() {
    m_freeParams = 3;
    m_prjPrefix = 1.0 / 2.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_M3().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_M3().GetMatrices();
 }
 
 Delone_M4::Delone_M4() {
@@ -1289,6 +1347,9 @@ Delone_M4::Delone_M4() {
    m_freeParams = 4;
    m_prjPrefix = 1.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_M4().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_M4().GetMatrices();
 }
 
 Delone_H4::Delone_H4() {
@@ -1300,6 +1361,9 @@ Delone_H4::Delone_H4() {
    m_freeParams = 2;
    m_prjPrefix = 1.0 / 3.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_H4().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_H4().GetMatrices();
 }
 
 Delone_A1::Delone_A1() {
@@ -1311,6 +1375,9 @@ Delone_A1::Delone_A1() {
    m_freeParams = 6;
    m_prjPrefix = 1.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_A1().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_A1().GetMatrices();
 }
 
 Delone_A2::Delone_A2() {
@@ -1322,6 +1389,9 @@ Delone_A2::Delone_A2() {
    m_freeParams = 6;
    m_prjPrefix = 1.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_A2().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_A2().GetMatrices();
 }
 
 Delone_A3::Delone_A3() {
@@ -1333,6 +1403,9 @@ Delone_A3::Delone_A3() {
    m_freeParams = 6;
    m_prjPrefix = 1.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
+
+   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_A3().GetMatrices();
+   m_sellaPerps = LabeledSellaMatrices::CreatePerps_A3().GetMatrices();
 }
 
 std::ostream& operator<< (std::ostream& o, const GenerateDeloneBase* gdb) {
@@ -1453,6 +1526,7 @@ GenerateLatticeTypeExamples::CreateListOfDeloneTypes()
 
 static std::string numbers("0123456789");
 static std::string xtals("ctromha");
+static std::string deloneTypes("CTROMHA");
 
 std::vector<std::shared_ptr<GenerateNiggliBase> >
 RetrieveByITNumber(const std::string& s,
@@ -1509,6 +1583,22 @@ RetrieveByGeneralBravaisType(const std::string& s,
    return out;
 }
 
+template<typename T>
+std::vector<std::shared_ptr<T> >
+RetrieveByDeloneName(const std::string& s,
+   const std::vector<std::shared_ptr<T> >& v) {
+   std::vector<std::shared_ptr<T> > out;
+   for (size_t i = 0; i < v.size(); ++i) {
+      const std::string type = v[i]->GetBravaisLatticeGeneral();
+      if (s.length() == 2 && s == v[i]->GetName()) out.push_back(v[i]);
+      if (s.length() == 1 && s[0] == v[i]->GetName()[0]) out.push_back(v[i]);
+      if (!out.size() && out.size() < 4) {
+         const int i19191 = 19191;
+      }
+   }
+   return out;
+}
+
 
 std::vector<std::shared_ptr<GenerateNiggliBase> >
 GenerateNiggliBase::Select(const std::string& s/* = ""*/) const {
@@ -1524,6 +1614,39 @@ GenerateNiggliBase::Select(const std::string& s/* = ""*/) const {
    else if (numbers.find(s[0]) != std::string::npos) {
       return RetrieveByITNumber(s, vglb);
    }
+   else if (s.size() == 2 && s[1] == 'S') {
+      return RetrieveByGeneralBravaisType(s, vglb);
+   }
+   else if (xtals.find(s[0]) != std::string::npos) {
+      return RetrieveByXtalType(s, vglb);
+   }
+   else {
+      return vglb;
+   }
+
+
+   return vglb;
+
+}
+
+std::vector<std::shared_ptr<GenerateDeloneBase> >
+GenerateDeloneBase::Select(const std::string& s/* = ""*/) const {
+
+   const std::vector<std::shared_ptr<GenerateDeloneBase> > vglb =
+      GenerateLatticeTypeExamples::CreateListOfDeloneTypes();
+
+   if (s.empty()) {
+      return vglb;
+   }
+   else if (s.size() == 3) {
+      return RetrieveByName(s, vglb);
+   }
+   else if (deloneTypes.find(s[0]) != std::string::npos) {
+      return RetrieveByDeloneName(s, vglb);
+   }
+   //else if (numbers.find(s[1]) != std::string::npos) {
+   //   return RetrieveByDeloneName(s, vglb);
+   //}
    else if (s.size() == 2 && s[1] == 'S') {
       return RetrieveByGeneralBravaisType(s, vglb);
    }

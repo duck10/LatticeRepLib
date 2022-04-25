@@ -70,7 +70,8 @@ std::ostream& operator<< (std::ostream& o, const DeloneType& m) {
 }
 
 std::ostream& operator<< ( std::ostream& o, const DeloneFitResults& dfr) {
-   o << "\tm_latticeType           " << dfr.m_latticeType << std::endl;
+   o << "\tm_latticeType           " << dfr.m_latticeType <<
+      ",  " << dfr.GetType() << std::endl;
    o << "\tm_rawFit                " << dfr.m_rawFit << std::endl;
    o << "\tm_zscore                " << dfr.m_zscore << std::endl;
    o << "\tm_bestFit               " << dfr.m_bestFit << std::endl;
@@ -79,16 +80,16 @@ std::ostream& operator<< ( std::ostream& o, const DeloneFitResults& dfr) {
    o << "\tBest Cell in original centering\n";
    o << "\t" << LRL_Cell_Degrees(MatS6::Inverse(dfr.m_reductionMatrix) * dfr.GetToCanon() * dfr.m_bestFit) << std::endl;
 
-   const MatS6 makePrim = LRL_Cell::G6MakePrimitiveMatrix(dfr.m_latticeType);
-   const MatS6 prim2Center( LRL_Cell::G6MakePrimitiveMatrix(dfr.m_latticeType));
+   //const MatS6 makePrim = LRL_Cell::G6MakePrimitiveMatrix(dfr.m_latticeType);
+   //const MatS6 prim2Center( LRL_Cell::G6MakePrimitiveMatrix(dfr.m_latticeType));
 
-
-   const S6 canon = dfr.GetToCanon() * dfr.m_bestFit;
-   o << "\tcanon   "  << (dfr.GetToCanon() * dfr.m_bestFit) << std::endl;
-   const S6 unreduced = MatS6::Inverse(dfr.m_reductionMatrix)* canon;
-   const S6 centered = MatS6::Inverse(prim2Center) * canon;
-   const LRL_Cell_Degrees projectedCenteredCell(centered);
-   o << "\tprojectedCenteredCell" << projectedCenteredCell << std::endl;
+   // this block is not working correctly 2022-04-19
+   //const S6 canon = dfr.GetToCanon() * dfr.m_bestFit;
+   //o << "\tcanon   "  << (dfr.GetToCanon() * dfr.m_bestFit) << std::endl;
+   //const S6 unreduced = MatS6::Inverse(dfr.m_reductionMatrix)* canon;
+   //const S6 centered = MatS6::Inverse(prim2Center) * canon;
+   //const LRL_Cell_Degrees projectedCenteredCell(centered);
+   //o << "\tprojectedCenteredCell" << projectedCenteredCell << std::endl;
 
 
    //o << "m_toCanonicalDeloneType " << std::endl << dfr.m_toCanonicalDeloneType << std::endl;

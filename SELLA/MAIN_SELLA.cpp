@@ -1,10 +1,17 @@
 // SELLA.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include <algorithm>
+#include <iomanip>
 #include <iostream>
+#include <map>
 #include <string>
+#include <utility>
 
+#include "BravaisHeirarchy.h"
 #include "C3.h"
+#include "FileOperations.h"
+
 #include "DeloneTypeList.h"
 #include "GenerateLatticeTypeExamples.h"
 #include "LRL_inverse.h"
@@ -62,9 +69,13 @@ std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLattice
 
    for (size_t i = 0; i < input.size( ); ++i) {
       const S6 s6 = converter.SellingReduceCell( input[i].GetLattice( ), input[i].GetCell( ), m );
+      if (s6[0] > 0 || s6[1] > 0 || s6[2] > 0 || s6[3] > 0 || s6[4] > 0 || s6[5] > 0) {
+         throw;
+      }
       v.push_back( s6 );
       vmat.push_back( m );
    }
+
    return v;
 }
 
@@ -133,7 +144,7 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    exit(0);
 }
 
-SellaResult ReportFit2( const size_t i, const DeloneType& type, const DeloneFitResults& fit ) {
+SellaResult ReportFit2(const size_t i, const DeloneType& type, const DeloneFitResults& fit) {
    //std::cout << "Fit Report for Delone Type " << i << std::endl;
    //std::cout << "\t" << type << "  " << fit << std::endl;
 
@@ -191,15 +202,30 @@ SellaResult ReportFit2( const size_t i, const DeloneType& type, const DeloneFitR
 
 }
 
-void ReportFit( const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit ) {
-   std::cout << "*******   SELLA report for input cell " << n << std::endl;
-   std::vector<SellaResult> vsr;
-   for ( size_t i=0; i<fit.size(); ++i )
-      vsr.push_back(ReportFit2( i, types[i], fit[i] ));
 
-   for (size_t i = 0; i < vsr.size(); ++i)
-      std::cout << vsr[i] << std::endl;
-   std::cout << "*******   END SELLA report for input cell " << n << std::endl;
+//void ReportFit(const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit) {
+//   std::cout << "*******   SELLA report for input cell " << n << std::endl;
+//   std::vector<SellaResult> vsr;
+//   for (size_t i = 0; i < fit.size(); ++i)
+//      vsr.push_back(ReportFit2(i, types[i], fit[i]));
+//
+//   for (size_t i = 0; i < vsr.size(); ++i)
+//      std::cout << vsr[i] << std::endl;
+//   std::cout << "*******   END SELLA report for input cell " << n << std::endl;
+//
+//}
+
+void ReportSellaFit(const size_t n, const std::vector<std::shared_ptr<GenerateDeloneBase> >& types, const std::vector<DeloneFitResults>& fit) {
+   //std::cout << "*******   SELLA report for input cell " << n << std::endl;
+   //std::vector<SellaResult> vsr;
+
+   //for (size_t i = 0; i < types.size(); ++i) {
+   //   std::cout << types[i]->GetName() << std::endl;
+   //}
+
+   //for (size_t i = 0; i < vsr.size(); ++i)
+   //   std::cout << vsr[i] << std::endl;
+   //std::cout << "*******   END SELLA report for input cell " << n << std::endl;
 
 }
 
@@ -610,15 +636,193 @@ std::vector<LRL_Cell> CreateCells(const std::vector<LRL_ReadLatticeData>& input)
    return cells;
 }
 
+static double Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix)
+{
+   //std::cout << "s6 " << s6 << std::endl;
+   //std::cout << "sigmas " << sigmas << std::endl;
+   //std::cout << "red mat " << reductionMatrix.norm() << std::endl;
+   //std::cout << "s6 norm " << s6.Norm() << std::endl;
+   //std::cout << "denom " << (reductionMatrix * sigmas).Norm() << std::endl;
+   const double zscore = s6.Norm() / (MatS6::Inverse(reductionMatrix) * sigmas).Norm();
+   return (zscore < 1.0E-6) ? 0.0 : zscore;
+}
+
+
+
+static DeloneFitResults GetFit(
+   const std::shared_ptr<GenerateDeloneBase>& type, 
+   const S6& s6, 
+   const MatS6& reductionMatrix) {
+
+   size_t nBest = 0;
+   S6 smallestPerp;
+   double bestFit = DBL_MAX;
+   const std::vector<MatS6> perps = type->GetSellaPerps();
+   for (size_t i = 0; i < perps.size(); ++i) {
+      const S6 perpv = perps[i] * s6;
+      const double rawFit = perpv.norm();
+      if (bestFit > rawFit) {
+         nBest = i;
+         bestFit = rawFit;
+         smallestPerp = perpv;
+
+         //std::cout << " representation   " << i << std::endl;
+         //std::cout << "original " << s6 << std::endl;
+         //std::cout << "projected  " << bestv << std::endl;
+         //std::cout << "perp v " << perpv << std::endl;
+         //std::cout << "projected s6 " << bestv << std::endl;
+         //std::cout << "distance " << rawFit << std::endl;
+      }
+   }
+   if (bestFit < 1.0E-8) bestFit = 0.0;
+   const S6 bestv = perps[nBest] * s6;
+   //const MatS6 toCanonicalDeloneType = type->GetToCanon(nBest);
+
+   return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6().unit());
+}
+
+DeloneFitResults SellaFitXXXXXX(
+   const std::shared_ptr<GenerateDeloneBase>& sptype,
+   const S6& s6,
+   const MatS6& reductionMatrix) {
+
+   size_t nBest = 0;
+   double bestFit = DBL_MAX;
+   const std::vector<MatS6>& perps = sptype->GetSellaPerps();
+   const std::vector<MatS6>& prjs = sptype->GetSellaProjectors();
+   for (size_t i = 0; i < perps.size(); ++i) {
+      const S6 perpv = perps[i] * s6;
+      const double rawFit = perpv.norm();
+      if (bestFit > rawFit) {
+         nBest = i;
+         bestFit = rawFit;
+
+         //std::cout << " representation   " << i << std::endl;
+         //std::cout << "original " << s6 << std::endl;
+         //std::cout << "projected  " << bestv << std::endl;
+         //std::cout << "perp v " << perpv << std::endl;
+         //std::cout << "projected s6 " << bestv << std::endl;
+         //std::cout << "distance " << rawFit << std::endl;
+      }
+   }
+   if (bestFit < 1.0E-8) bestFit = 0.0;
+   const S6 smallestPerp = perps[nBest] * s6;
+   const S6 bestv = prjs[nBest] * s6;
+   const MatS6 toCanonicalDeloneType/* = sptypes[nBest]->GetToCanon(nBest)*/;
+   //std::cout << "input " << s6 << std::endl;
+   //std::cout << "nBest " << nBest << std::endl;
+   //std::cout << " bestv " << bestv << std::endl;
+   //std::cout << "prj " << std::endl;
+   //std::cout << prjs[nBest] << std::endl;
+
+   return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6().unit());
+}
+
+static std::vector<DeloneFitResults> SellaFit(
+   const std::vector<std::shared_ptr<GenerateDeloneBase> >& sptypes,
+   const S6& s6,
+   const S6& errors,
+   const MatS6& reductionMatrix) {
+
+   std::vector<DeloneFitResults> vDeloneFitResults;
+
+   for (size_t i = 0; i < sptypes.size(); ++i) {
+      const std::string name = sptypes[i]->GetName();
+      /*if (type.empty() || name.find(type) != std::string::npos) */{  // LCA make type UC
+         DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6, reductionMatrix);
+
+         const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
+         //std::cout << "s6 " << s6 << "---------------------" << std::endl;
+         //std::cout << "best fit " << fit.GetBestFit() << std::endl;
+         //std::cout << "errors " << errors << std::endl;
+         //std::cout << "name " << name << std::endl;
+         //std::cout << "free params " << sptypes[i]->GetFreeParams() << std::endl;
+         //std::cout << "zscore " << zscore << std::endl;
+         //std::cout << "red norm " << reductionMatrix.norm() << std::endl;
+         fit.SetZscore(zscore);
+         fit.SetLatticeType(name);
+         fit.SetReductionMatrix(reductionMatrix);
+         fit.SetType(sptypes[i]->GetBravaisType());
+         fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());
+
+         //std::cout << "--------------------" << name << std::endl;
+         //std::cout << s6 << std::endl;
+         //std::cout << fit.GetBestFit() << std::endl;
+         //std::cout << fit.GetDifference() << std::endl;
+
+         fit.SetDifference(s6 - fit.GetBestFit());
+         fit.SetOriginalInput(s6);
+         vDeloneFitResults.push_back(fit);
+      }
+   }
+   return vDeloneFitResults;
+}
+
+static const std::vector<std::string> heirarchy{
+   "cP","cF","cI",
+   "tP","hP","hR","tI",
+   "oP","oC","oF","oI",
+   "mP","mC",  
+   "aP"};
+
+
+void ReportTypeHeirachy(const std::vector<DeloneFitResults>& vDeloneFitResults) {
+   for (size_t i = 0; i < heirarchy.size(); ++i) {
+      size_t kkbest = 0;
+      double bestScore = DBL_MAX;
+      const std::string thisLattice = heirarchy[i];
+      for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
+         const DeloneFitResults& thisOne = vDeloneFitResults[kk];
+         if ((thisLattice == thisOne.GetType()) &&
+            thisOne.GetRawFit() < bestScore) {
+            kkbest = kk;
+            bestScore = thisOne.GetRawFit();
+         }
+      }
+      std::cout << heirarchy[i] << "  ";
+      if (bestScore == DBL_MAX)
+         std::cout << "invalid          ";
+      else {
+         std::cout << std::setw(3) << std::setprecision(5) << bestScore << " ";
+         std::cout << std::setw(3) << std::setprecision(2) << vDeloneFitResults[kkbest].GetZscore();
+      }
+      if (i == 2 || i == 6 || i == 10 || i == 12)
+         std::cout << std::endl;
+      else std::cout << "     ";
+   }
+}
+
+std::vector<std::pair<std::string, double> > DeloneFitToScores(std::vector< DeloneFitResults>& fits) {
+
+   std::map<std::string, std::pair<std::string, double> > best;
+
+   for (size_t i = 0; i < fits.size(); ++i) {
+      auto test = best.find(fits[i].GetType());
+      if (test== best.end()) {
+         fits[i].GetZscore();
+         best.insert(std::make_pair(fits[i].GetType(), std::make_pair(fits[i].GetType(), fits[i].GetRawFit())));
+      }
+      else
+      {
+         const double previous = (*test).second.second;
+         if (fits[i].GetRawFit() < previous) {
+            best[fits[i].GetType()] = std::make_pair(fits[i].GetType(), fits[i].GetRawFit());
+         }
+
+      }
+
+   }
+   std::vector<std::pair<std::string, double> > out;
+   for (auto i = best.begin(); i != best.end(); ++i) {
+      out.push_back((*i).second);
+   }
+   return out;
+}
+
 int main()
 {
-   std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =
-      GenerateLatticeTypeExamples::CreateListOfDeloneTypes();
-
    //TestSigmas( );
    std::cout << "SELLA\n";
-   static const DeloneTypeList deloneList;
-   //const std::vector<DeloneType>& types = deloneList.GetAllTypes();
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
 
@@ -629,19 +833,23 @@ int main()
    const std::vector<S6> errors = CreateS6Errors(vLat);
    const std::vector<LRL_Cell> cellErrors = CreateE3Errors(cells);
 
-   //for (size_t i = 0; i < vLat.size( ); ++i) {
-   //   std::cout << InputLattice(i, input[i].GetLattice(), cells[i], cellErrors[i]);
-   //   std::cout << "input cell errors (A and radians)::" << std::endl;
-   //   std::cout << cellErrors[i] << std::endl;
-   //   std::cout << "S6 and S6 errors::" << std::endl;
-   //   std::cout << vLat[i] << std::endl << errors[i] << std::endl;
-   //   std::cout << "RATIO " << vLat[i].norm() / errors[i].norm() << std::endl;
-   //   std::cout << "==============================================" << std::endl;
-   //}
+//-----------------------------------------------------------------------------------
+   std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =
+      GenerateDeloneBase().Select("");
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      const std::vector<DeloneFitResults>  v = deloneList.Fit(vLat[lat], errors[lat], reductionMatrices[lat]);
-      ReportFit( lat, deloneList,  v );
+      std::vector<DeloneFitResults> vDeloneFitResults = SellaFit( sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
+      //for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
+      //   std::cout << vDeloneFitResults[kk] << std::endl;
+      //}
+      //std::cout << vDeloneFitResults.size() << std::endl;
+      //ReportSellaFit(lat, sptest, vDeloneFitResults);
+      ReportTypeHeirachy(vDeloneFitResults);
+      const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
+
+      std::cout << std::endl << "lat " << lat << std::endl;
+      /*std::cout << */BravaisHeirarchy::ProduceSVG(
+         input[lat], vLat[lat], scores);
    }
 
    const int  i19191 = 19191;

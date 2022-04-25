@@ -35,7 +35,7 @@ std::vector<LabeledDeloneTypeMatrices>
          if (!AlreadyHasThisProjector(prj, lsm)) {
             lsm.m_prjs.push_back(ProjectorFromVector(label, p.second[i]));
             lsm.m_perps.push_back(unit - ProjectorFromVector(label, p.second[i]));
-            //lsm.m_toCanons.push_back(ToCanon(p.second[i]));
+            lsm.m_toCanons.push_back(ToCanon(p.second[i]));
          }
       }
 
@@ -46,7 +46,7 @@ std::vector<LabeledDeloneTypeMatrices>
 
 MatS6 LabeledDeloneTypeMatrices::ToCanon(const S6_Ordinals& s) {
    const MatS6 fromCanon = ToCanon(s.m_ordinals);
-   MatN mn(6);
+   MatN mn(36);
    mn.SetVector(fromCanon.GetVector());
    MatS6 ms6I = mn.inverse();
    for (size_t i = 0; i < 36; ++i) if(ms6I[i] == 0.0) ms6I[i] = 0.0;
