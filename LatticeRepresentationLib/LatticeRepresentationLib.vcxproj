@@ -158,6 +158,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BravaisHeirarchy.cpp" />
     <ClCompile Include="C3.cpp" />
     <ClCompile Include="ColorTables.cpp" />
     <ClCompile Include="CS6Dist.c" />
@@ -213,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
+    <ClInclude Include="BravaisHeirarchy.h" />
     <ClInclude Include="C3.h" />
     <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />

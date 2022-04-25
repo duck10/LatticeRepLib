@@ -1,0 +1,294 @@
+#include "BravaisHeirarchy.h"
+#include "FileOperations.h"
+#include "LRL_CreateFileName.h"
+#include "LRL_ToString.h"
+#include "S6.h"
+
+#include <iomanip>
+#include <iostream>
+
+std::string BravaisHeirarchy::BoilerPlate_2() {
+   return
+      "\n"
+      "   </g>\n"
+      "\n"
+      "   </svg>\n"
+      "\n"
+      ;
+}
+
+std::string SetWP(const double d) {
+   std::ostringstream os;
+   int precision = 4;
+   if (d < 10.0) precision = 3;
+   os << std::setw(11) << std::setprecision(precision) << d;
+   return os.str();
+}
+
+std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::string, double> >& scores)
+{
+   std::string out;
+
+   for (size_t i = 0; i < scores.size(); ++i) {
+      const std::pair<std::string, double>& scr = scores[i];
+      if (scr.first == "cP") 
+         out +=
+         "   <rect id=\"cP\" x=\"215\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"cP\" x=\"220\" y=\"250\" font-size=\"18\">"+
+         SetWP(scr.second)+
+         "</text>\n"
+         "\n";
+
+
+      if (scores[i].first == "cF") out +=
+         "   <rect id=\"cF\" x=\"365\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"cF\" x=\"370\" y=\"250\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         "</text>\n"
+         "\n";
+
+      if (scores[i].first == "cI") out +=
+         "   <rect id=\"cI\" x=\"515\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"cI\" x=\"520\" y=\"250\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "\n";
+
+      if (scores[i].first == "tP") out +=
+         "   <g transform=\" translate(20 30)  \"> "
+         "   <rect id=\"tP\" x=\"125\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"tP\" x=\"135\" y=\"400\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "</g>\n";
+
+      if (scores[i].first == "hP") out +=
+         "   <g transform=\" translate(-10 10)  \"> "
+         "   <rect id=\"hP\" x=\"285\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"hP\" x=\"300\" y=\"400\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "</g>\n";
+
+      if (scores[i].first == "hR") out +=
+         "   <g transform=\" translate(10 10)  \"> "
+         "   <rect id=\"hR\" x=\"385\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"hR\" x=\"400\" y=\"400\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "</g>\n";
+
+      if (scores[i].first == "tI") out +=
+         "   <g transform=\" translate(20 10)  \"> "
+         "   <rect id=\"tI\" x=\"535\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"tI\" x=\"550\" y=\"400\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "</g>\n";
+
+      if (scores[i].first == "oP") out +=
+         "   <g transform=\" translate(20 30)  \"> "
+         "   <rect id=\"oP\" x=\"125\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"oP\" x=\"135\" y=\"550\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "</g>\n";
+
+      if (scores[i].first == "oC" || scores[i].first == "os") out +=
+          "   <rect id=\"oS\" x=\"285\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+        "   <text id=\"oS\" x=\"300\" y=\"550\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "\n";
+
+      if (scores[i].first == "oF") out +=
+         "   <rect id=\"oF\" x=\"460\" y=\"520\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"oF\" x=\"470\" y=\"540\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "\n";
+
+      if (scores[i].first == "oI") out +=
+         "   <g transform=\" translate(40 30)  \"> "
+         "   <rect id=\"oI\" x=\"535\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"oI\" x=\"550\" y=\"550\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "</g>\n"
+         "\n"
+         "\n";
+
+      if (scores[i].first == "mP") out +=
+         "   <g transform=\" translate(-70 30)  \"> "
+         "   <rect id=\"mP\" x=\"285\" y=\"650\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"mP\" x=\"300\" y=\"670\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "</g>\n";
+
+      if (scores[i].first == "mC" ||scores[i].first == "mS") out +=
+         "   <g transform=\" translate(90 20)  \"> "
+         "   <rect id=\"mS\" x=\"435\" y=\"650\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"mS\" x=\"450\" y=\"670\" font-size=\"18\">" +
+         SetWP(scr.second) +
+         " </text>\n"
+         "</g>\n";
+
+   }
+   return out;
+}
+
+std::string BravaisHeirarchy::BoilerPlate_1() {
+   return
+      "<?xml version=\"1.0\" standalone=\"no\" ?>\n"
+      "<!--the width and height set the total pixel output of the image in the browser-->\n"
+      "<!--whatever is within the viewbox will be remapped to show in this size-->\n"
+      "<svg width=\"1000\" height=\"800\" viewBox=\"1 1000 800\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
+      "\n"
+      "<g\n"
+      "   transform=\" translate(-50 -100)   scale( .8 .8)\">\n"
+      "\n"
+      "   <line id=\"cI-tP-oP\" x1=\"250\" y1=\"300\" x2=\"250\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cF-hR\" x1=\"400\" y1=\"300\" x2=\"400\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cP-oI\" x1=\"550\" y1=\"300\" x2=\"550\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "\n"
+      "\n"
+      "   <line id=\"cI-hR\" x1=\"250\" y1=\"300\" x2=\"400\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cP-hR\" x1=\"550\" y1=\"300\" x2=\"400\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "\n"
+      "   <line id=\"hP-oS-mP\" x1=\"325\" y1=\"450\" x2=\"323\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"tP-oS\" x1=\"250\" y1=\"450\" x2=\"323\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"oS-mS\" x1=\"323\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"oP-mP\" x1=\"250\" y1=\"600\" x2=\"323\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"hR-mS\" x1=\"400\" y1=\"450\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"tI-oF\" x1=\"550\" y1=\"450\" x2=\"495\" y2=\"575\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"oI-mS\" x1=\"550\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"oF-mS\" x1=\"495\" y1=\"595\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"mp-aP\" x1=\"323\" y1=\"700\" x2=\"405\" y2=\"800\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"mS-aP\" x1=\"495\" y1=\"700\" x2=\"405\" y2=\"800\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+
+      "<circle cx=\"250\" cy=\"300\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle cx=\"400\" cy=\"300\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle cx=\"550\" cy=\"300\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+
+      "<circle cx=\"250\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle cx=\"325\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle cx=\"400\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle cx=\"550\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+
+      "<circle cx=\"250\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle cx=\"325\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"oF\" cx = \"495\" cy=\"575\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle cx=\"550\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+
+      "<circle cx=\"323\" cy=\"700\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle cx=\"495\" cy=\"700\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+
+      "<circle cx=\"405\" cy=\"800\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+
+      "<text x=\"239\" y=\"307\" font-size=\"25\">cP</text>\n"
+      "<text x=\"386\" y=\"308\" font-size=\"25\" >cF</text>\n"
+      "<text x=\"537\" y=\"308\" font-size=\"25\" >cI</text>\n"
+
+      "<text x=\"238\" y=\"458\" font-size=\"25\" >tP</text>\n"
+      "<text x=\"313\" y=\"458\" font-size=\"25\" >hP</text>\n"
+      "<text x=\"386\" y=\"458\" font-size=\"25\" >hR</text>\n"
+      "<text x=\"542\" y=\"458\" font-size=\"25\" >tI</text>\n"
+
+      "<text x=\"236\" y=\"608\" font-size=\"25\" >oP</text>\n"
+      "<text x=\"310\" y=\"608\" font-size=\"25\" >oS</text>\n"
+      "<text x=\"480\" y=\"583\" font-size=\"25\" >oF</text>\n"
+      "<text x=\"535\" y=\"608\" font-size=\"25\" >oI</text>\n"
+
+      "<text x=\"307\" y=\"708\" font-size=\"25\" >mP</text>\n"
+      "<text x=\"478\" y=\"708\" font-size=\"25\" >mS</text>\n"
+
+      "<text x=\"392\" y=\"808\" font-size=\"25\" >aP</text>\n"
+
+
+      ;
+}
+
+void SendSellaToFile(const std::string& s) {
+   std::cout << "SendSellaToFile" << std::endl;
+   std::string filename = LRL_CreateFileName::Create("SEL_", "svg");
+   std::cout << filename << std::endl;
+   std::ofstream fileout;
+   int count = 0;
+
+   while ( !FileOperations::OpenOutputFile(fileout, filename) ||
+      (filename == LRL_CreateFileName::Create("SEL_", "svg") && count < 100000))
+   {
+      filename = LRL_CreateFileName::Create("SEL_", "svg");
+      //std::cout << filename << "  " << count << "\n";
+      ++count;
+   }
+      FileOperations::OpenOutputFile(fileout, filename);
+
+   if (fileout.is_open())
+   {
+      fileout.seekp(0);
+      fileout << s << std::endl;
+   }
+   else
+      std::cout << "Could not open file " << filename << " for write in SendSellaToFile.h" << std::endl;
+
+   fileout.close();
+}
+
+std::string FormatCellData(
+   const LRL_ReadLatticeData& input,
+   const S6& reducedCell)
+{
+   std::string inputText;
+   inputText +=
+      "<text x=\"700\" y=\"325\" font-size=\"20\" >INPUT:  </text>\n"
+      "<text x=\"720\" y=\"350\" font-size=\"12\" >" +
+      input.GetStrCell() + "</text>\n" +
+      "<text x=\"720\" y=\"375\" font-size=\"12\" >" +
+      LRL_ToString("Cell ", LRL_Cell_Degrees(input.GetCell())) + "</text>\n" +
+      "<text x=\"720\" y=\"400\" font-size=\"12\" >" +
+      LRL_ToString("G6 ", G6(LRL_Cell_Degrees(input.GetCell()))) + "</text>\n" +
+      "<text x=\"720\" y=\"425\" font-size=\"12\" >" +
+      LRL_ToString("S6 ",S6(LRL_Cell_Degrees(input.GetCell()))) + "</text>\n";
+
+ 
+ 
+   inputText +=
+      "<text x=\"700\" y=\"450\" font-size=\"20\" >REDUCED:  </text>\n"
+      "<text x=\"720\" y=\"475\" font-size=\"12\" >" +
+      LRL_ToString("Cell ", LRL_Cell_Degrees(reducedCell)) + "</text>\n" +
+      "<text x=\"720\" y=\"500\" font-size=\"12\" >" +
+      LRL_ToString("G6 ", G6((reducedCell))) + "</text>\n" +
+      "<text x=\"720\" y=\"525\" font-size=\"12\" >" +
+      LRL_ToString("S6 ", S6((reducedCell))) + "</text>\n";
+ 
+ 
+ 
+   return inputText;
+}
+
+std::string BravaisHeirarchy::ProduceSVG(
+   const LRL_ReadLatticeData& input,
+   const S6& reducedCell,
+   const std::vector<std::pair<std::string, double> >& scores) {
+
+   std::cout << "enter ProduceSVG" << std::endl;
+   const std::string inputText = "<text x=\"175\" y=\"175\" font-size=\"25\" >SELLA RESULTS  "
+      "</text>\n";
+   const std::string reduced = "<text x=\"175\" y=\"210\" font-size=\"25\" >      " +
+      input.GetStrCell() + "</text>\n";
+
+   std::string s =
+      BravaisHeirarchy::BoilerPlate_1() +
+         inputText +
+         reduced +
+         FormatCellData(input, reducedCell) +
+         BravaisHeirarchy::ScoreLabels(scores) +
+         BravaisHeirarchy::BoilerPlate_2();
+
+   ;
+
+   SendSellaToFile(s);
+   return s;
+   }
