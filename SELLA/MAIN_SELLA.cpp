@@ -13,6 +13,7 @@
 
 #include "GenerateLatticeTypeExamples.h"
 #include "LRL_inverse.h"
+#include "LRL_Cell_Degrees.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LatticeConverter.h"
 #include "LRL_MinMaxTools.h"
@@ -815,6 +816,35 @@ std::vector<std::pair<std::string, double> > DeloneFitToScores(std::vector< Delo
    return out;
 }
 
+void NiggliMatchLatticeType(const DeloneFitResults& vDeloneFitResults) {
+
+    const S6 input = vDeloneFitResults.GetOriginalInput();
+	const S6 bestFit = vDeloneFitResults.GetBestFit();
+	const std::string latticeType = vDeloneFitResults.GetType();
+	const std::string latticeGeneral = vDeloneFitResults.GetGeneralType();
+	
+    const std::vector<std::shared_ptr<GenerateNiggliBase> >
+        vglb = GenerateNiggliBase().Select(latticeGeneral);
+    for (size_t i = 0; i < vglb.size(); ++i) {
+        const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
+        G6 probe;
+        Niggli::Reduce(G6(bestFit), probe);
+        const G6 perpV = pt->GetPerp() * probe;
+        double d = perpV.norm();
+        if (d < 1.0E-8) d = 0.0;
+
+        std::cout
+            << latticeType
+            << " input" << input
+            << "\n red " << probe 
+            << "  IT=" << pt->GetITNumber()
+            << " type=" << pt->GetBravaisType()
+            << " d=" << d << std::endl
+            //<< "perp       " << perpV << "\n"
+			<< "projected  " << LRL_Cell_Degrees(pt->GetPrj() * probe) << "\n\n";
+    }
+}
+
 int main()
 {
    //TestSigmas( );
@@ -835,6 +865,16 @@ int main()
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::vector<DeloneFitResults> vDeloneFitResults = SellaFit( sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
+
+	
+      for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
+          if (vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm() < 0.02) {
+              NiggliMatchLatticeType(vDeloneFitResults[kk]);
+          }
+      }
+
+
+	
       //for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
       //   std::cout << vDeloneFitResults[kk] << std::endl;
       //}
@@ -843,7 +883,7 @@ int main()
       ReportTypeHeirachy(vDeloneFitResults);
       const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
 
-      std::cout << std::endl << "lat " << lat << std::endl;
+      std::cout << std::endl << std::endl << "lat " << lat << std::endl << std::endl << std::endl;
       /*std::cout << */BravaisHeirarchy::ProduceSVG(
          input[lat], vLat[lat], scores);
    }
