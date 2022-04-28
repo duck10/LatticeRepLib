@@ -31,11 +31,12 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
 
    for (size_t i = 0; i < scores.size(); ++i) {
       const std::pair<std::string, double>& scr = scores[i];
+      const std::string strAngstroms = SetWP(sqrt(scr.second));
       if (scr.first == "cP") 
          out +=
          "   <rect id=\"cP\" x=\"215\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"cP\" x=\"220\" y=\"250\" font-size=\"18\">"+
-         SetWP(scr.second)+
+         strAngstroms+
          "</text>\n"
          "\n";
 
@@ -43,14 +44,14 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
       if (scores[i].first == "cF") out +=
          "   <rect id=\"cF\" x=\"365\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"cF\" x=\"370\" y=\"250\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          "</text>\n"
          "\n";
 
       if (scores[i].first == "cI") out +=
          "   <rect id=\"cI\" x=\"515\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"cI\" x=\"520\" y=\"250\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "\n";
 
@@ -58,7 +59,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "   <g transform=\" translate(20 30)  \"> "
          "   <rect id=\"tP\" x=\"125\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"tP\" x=\"135\" y=\"400\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "</g>\n";
 
@@ -66,7 +67,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "   <g transform=\" translate(-10 10)  \"> "
          "   <rect id=\"hP\" x=\"285\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"hP\" x=\"300\" y=\"400\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "</g>\n";
 
@@ -74,7 +75,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "   <g transform=\" translate(10 10)  \"> "
          "   <rect id=\"hR\" x=\"385\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"hR\" x=\"400\" y=\"400\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "</g>\n";
 
@@ -82,7 +83,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "   <g transform=\" translate(20 10)  \"> "
          "   <rect id=\"tI\" x=\"535\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"tI\" x=\"550\" y=\"400\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "</g>\n";
 
@@ -90,21 +91,21 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "   <g transform=\" translate(20 30)  \"> "
          "   <rect id=\"oP\" x=\"125\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"oP\" x=\"135\" y=\"550\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "</g>\n";
 
       if (scores[i].first == "oC" || scores[i].first == "os") out +=
           "   <rect id=\"oS\" x=\"285\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
         "   <text id=\"oS\" x=\"300\" y=\"550\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "\n";
 
       if (scores[i].first == "oF") out +=
          "   <rect id=\"oF\" x=\"460\" y=\"520\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"oF\" x=\"470\" y=\"540\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "\n";
 
@@ -112,7 +113,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "   <g transform=\" translate(40 30)  \"> "
          "   <rect id=\"oI\" x=\"535\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"oI\" x=\"550\" y=\"550\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "</g>\n"
          "\n"
@@ -122,7 +123,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "   <g transform=\" translate(-70 30)  \"> "
          "   <rect id=\"mP\" x=\"285\" y=\"650\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"mP\" x=\"300\" y=\"670\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "</g>\n";
 
@@ -130,7 +131,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "   <g transform=\" translate(90 20)  \"> "
          "   <rect id=\"mS\" x=\"435\" y=\"650\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"mS\" x=\"450\" y=\"670\" font-size=\"18\">" +
-         SetWP(scr.second) +
+         strAngstroms +
          " </text>\n"
          "</g>\n";
 
@@ -241,6 +242,14 @@ std::string FormatCellData(
    const S6& reducedCell)
 {
    std::string inputText;
+
+   inputText +=
+       "<text x=\"700\" y=\"225\" font-size=\"20\" >S6 Length:  "+
+	LRL_ToString(sqrt(reducedCell.norm())) +
+      " </text>\n";
+
+
+
    inputText +=
       "<text x=\"700\" y=\"325\" font-size=\"20\" >INPUT:  </text>\n"
       "<text x=\"720\" y=\"350\" font-size=\"12\" >" +
@@ -274,7 +283,7 @@ std::string BravaisHeirarchy::ProduceSVG(
    const std::vector<std::pair<std::string, double> >& scores) {
 
    std::cout << "enter ProduceSVG" << std::endl;
-   const std::string inputText = "<text x=\"175\" y=\"175\" font-size=\"25\" >SELLA RESULTS  "
+   const std::string inputText = "<text x=\"175\" y=\"175\" font-size=\"25\" >SELLA RESULTS  (Angstroms)"
       "</text>\n";
    const std::string reduced = "<text x=\"175\" y=\"210\" font-size=\"25\" >      " +
       input.GetStrCell() + "</text>\n";
