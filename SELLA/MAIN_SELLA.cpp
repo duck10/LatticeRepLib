@@ -9,10 +9,8 @@
 #include <utility>
 
 #include "BravaisHeirarchy.h"
-#include "C3.h"
 #include "FileOperations.h"
 
-#include "DeloneTypeList.h"
 #include "GenerateLatticeTypeExamples.h"
 #include "LRL_inverse.h"
 #include "LRL_CoordinateConversionMatrices.h"
@@ -27,7 +25,6 @@
 #include "S6.h"
 #include "Sella.h"
 #include "Selling.h"
-#include "StoreResults.h"
 
 
 std::string Letters(void) {
@@ -117,7 +114,6 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    const std::vector<S6> vLat = GetInputSellingReducedVectors(input);
    Sella sella;
 
-   const std::vector<std::string>& typelist = DeloneTypeList::typelist;
    for (size_t lat = 0; lat < vLat.size( ); ++lat) {
       const std::string strCell = input[lat].GetStrCell( );
       if (strCell[0] == 'A' || strCell[0] == 'a') continue;
