@@ -12,13 +12,10 @@
 #include "FileOperations.h"
 
 #include "GenerateLatticeTypeExamples.h"
-#include "LRL_inverse.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LatticeConverter.h"
-#include "LRL_MinMaxTools.h"
 #include "LRL_ReadLatticeData.h"
-#include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "MatG6.h"
 #include "MatS6.h"
@@ -26,6 +23,7 @@
 #include "S6.h"
 #include "Sella.h"
 #include "Selling.h"
+#include "StoreResults.h"
 
 
 std::string Letters(void) {
@@ -96,12 +94,6 @@ std::string Trim(const std::string type) {
    return type;
 }
 
-double FitRange(const double f) {
-   return f;
-   if (f < 1.0E-6) return -6.0;
-   return round(log10(f));
-}
-
 void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    StoreResults<std::string, std::string> storeGood(20);
    StoreResults<std::string, std::string> storeLocalProblems(100);
@@ -139,91 +131,6 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    storeM3 .ShowResults();
    storeM2B.ShowResults();
    exit(0);
-}
-
-SellaResult ReportFit2(const size_t i, const DeloneType& type, const DeloneFitResults& fit) {
-   //std::cout << "Fit Report for Delone Type " << i << std::endl;
-   //std::cout << "\t" << type << "  " << fit << std::endl;
-
-   const MatS6 mToCentered = type.GetToCentered();
-   //std::cout << std::endl << "\t" << "mToCentered" << std::endl << mToCentered << std::endl;
-
-   double inverseCanon(36);
-   //std::cout << std::endl << "To Canon" << std::endl <<  << std::endl;
-
-   const MatS6 canon = fit.GetToCanon();
-   //std::cout << "\t" << "canon \n" << canon << std::endl;
-
-   const S6 bestFit = fit.GetBestFit();
-   MatG6 g6RedMat;
-   G6 g6Red;
-   //std::cout << "\tNiggli Reduced " << g6Red << std::endl;
-   //std::cout << "\tNiggli Reduced " << LRL_Cell_Degrees(g6Red) << std::endl;
-   //std::cout << "\t" <<"Centered Cell" << std::endl;
-   const S6 best = mToCentered * canon * bestFit;
-
-
-   //LCA this is where we need to test the reflections and ToCanon to find
-   // the correct to canon matrix
-   SellaResult sr;
-   sr.SetBravaisType(type.GetBravaisType());
-   // need character
-   sr.SetDistance(fit.GetRawFit());
-   sr.SetName(type.GetName());
-   sr.SetPerp(S6());
-   sr.SetProjected(bestFit);
-   sr.SetZscore(fit.GetZscore());
-   sr.SetOriginal(fit.GetOriginalInput());
-
-
-   //std::cout << sr << std::endl;
-
-   return sr;
-   //std::ostream& operator<< (std::ostream & o, const DeloneType & m) {
-   //   o << "REPORT FOR ONE DELONE TYPE " << std::endl;
-   //   o << "\t" << "Delone Type  " << m.m_deloneName << std::endl;
-   //   o << "\t" << "BravaisLattice Type  " << m.m_bravaisType << std::endl;
-   //   o << "\t" << "Character Type  " << m.m_character << std::endl;
-   //   o << "\t" << "Canonical to Centered (E3)  " << m.m_toCentered_E3 << std::endl;
-   //   //o << "\t" << "Canonical to Centered (S6)  " << std::endl << m.m_toCentered_S6 << std::endl;
-   //   o << "\t" << "Count of all representations  " << m.m_matrices.size() << std::endl;
-   //   return o;
-   //}
-
-
-   //std::cout << "\t" << "S6 " << best << std::endl;
-   //std::cout << "\t" << "Cell " << LRL_Cell_Degrees(best) << std::endl;
-
-   //const bool bNiggli = Niggli::Reduce(G6(bestFit), g6RedMat, g6Red);
-   //std::cout << std::endl;
-
-}
-
-
-//void ReportFit(const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit) {
-//   std::cout << "*******   SELLA report for input cell " << n << std::endl;
-//   std::vector<SellaResult> vsr;
-//   for (size_t i = 0; i < fit.size(); ++i)
-//      vsr.push_back(ReportFit2(i, types[i], fit[i]));
-//
-//   for (size_t i = 0; i < vsr.size(); ++i)
-//      std::cout << vsr[i] << std::endl;
-//   std::cout << "*******   END SELLA report for input cell " << n << std::endl;
-//
-//}
-
-void ReportSellaFit(const size_t n, const std::vector<std::shared_ptr<GenerateDeloneBase> >& types, const std::vector<DeloneFitResults>& fit) {
-   //std::cout << "*******   SELLA report for input cell " << n << std::endl;
-   //std::vector<SellaResult> vsr;
-
-   //for (size_t i = 0; i < types.size(); ++i) {
-   //   std::cout << types[i]->GetName() << std::endl;
-   //}
-
-   //for (size_t i = 0; i < vsr.size(); ++i)
-   //   std::cout << vsr[i] << std::endl;
-   //std::cout << "*******   END SELLA report for input cell " << n << std::endl;
-
 }
 
 static double sq( const double d ) { return d * d; }
@@ -266,95 +173,6 @@ LRL_Cell CellErrorsFromS6(const S6& s, const S6& sig) {
    double dsqrtb = -0.5 / (sqrtb * sqrtb * sqrtb) * sqrt(sq( ds5 ) + sq( ds3 ) + sq( ds1 ));
    double dsqrtc = -0.5 / (sqrtc * sqrtc * sqrtc) * sqrt(sq( ds6 ) + sq( ds2 ) + sq( ds1 ));
 
-   /*
-   %i8) derivative(alp,s1);
-
-(%o8) -(1/sqrt(((-s5)-s3-s1)*((-s6)-s2-s1))
- -(s1*(s6+s5+s3+s2+2*s1))/(2*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2)))/sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
-(%i9) derivative(alp,s2);
-
-(%o9) (s1*(s5+s3+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
-(%i10) derivative(alp,s3);
-
-(%o10) (s1*(s6+s2+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
-(%i11) derivative(alp,s5);
-
-(%o11) (s1*(s6+s2+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
-((%i12) derivative(alp,s6);
-
-(%o12) (s1*(s5+s3+s1))/(2*sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))*(((-s5)-s3-s1)*((-s6)-s2-s1))^(3/2))
-
-
-==============================================================================================
-cell2s6(a,b,c,alpha,beta,gamma):=[b*c*cos(alpha),a*c*cos(beta),a*b*cos(gamma),-a*a-a*b*cos(gamma)-a*c*cos(beta),-a*b*cos(gamma)-b*b-b*c*cos(alpha),-a*c*cos(beta)-b*c*cos(alpha)-c*c];
-s6tocell(s1,s2,s3,s4,s5,s6):=[sqrt(-s4-s3-s2),sqrt(-s5-s3-s1),sqrt(-s6-s2-s1),acos(s1/(sqrt(-s5-s3-s1)*sqrt(-s6-s2-s1))),acos(s2/(sqrt(-s4-s3-s2)*sqrt(-s6-s2-s1))),acos(s3/(sqrt(-s4-s3-s2)*sqrt(-s5-s3-s1)))];
-
-[ds1*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s1),
-ds2*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s2),
-ds3*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s3),
-ds4*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s4),
-ds5*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s5),
-ds6*derivative(s6tocell(s1,s2,s3,s4,s5,s6),s6)];
-
-produced:
-
-(%o16) [[0,-ds1/(2*sqrt((-s5)-s3-s1)),-ds1/(2*sqrt((-s6)-s2-s1)),
-         -(ds1*(1/(sqrt((-s5)-s3-s1)*sqrt((-s6)-s2-s1))
-               +s1/(2*((-s5)-s3-s1)^(3/2)*sqrt((-s6)-s2-s1))
-               +s1/(2*sqrt((-s5)-s3-s1)*((-s6)-s2-s1)^(3/2))))
-          /sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1))),
-         -(ds1*s2)/(2*sqrt((-s4)-s3-s2)
-                     *sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1)))
-                     *((-s6)-s2-s1)^(3/2)),
-         -(ds1*s3)/(2*sqrt((-s4)-s3-s2)
-                     *sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))
-                     *((-s5)-s3-s1)^(3/2))],
-        [-ds2/(2*sqrt((-s4)-s3-s2)),0,-ds2/(2*sqrt((-s6)-s2-s1)),
-         -(ds2*s1)/(2*sqrt((-s5)-s3-s1)
-                     *sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
-                     *((-s6)-s2-s1)^(3/2)),
-         -(ds2*(1/(sqrt((-s4)-s3-s2)*sqrt((-s6)-s2-s1))
-               +s2/(2*((-s4)-s3-s2)^(3/2)*sqrt((-s6)-s2-s1))
-               +s2/(2*sqrt((-s4)-s3-s2)*((-s6)-s2-s1)^(3/2))))
-          /sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1))),
-         -(ds2*s3)/(2*((-s4)-s3-s2)^(3/2)
-                     *sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))
-                     *sqrt((-s5)-s3-s1))],
-        [-ds3/(2*sqrt((-s4)-s3-s2)),-ds3/(2*sqrt((-s5)-s3-s1)),0,
-         -(ds3*s1)/(2*((-s5)-s3-s1)^(3/2)
-                     *sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
-                     *sqrt((-s6)-s2-s1)),
-         -(ds3*s2)/(2*((-s4)-s3-s2)^(3/2)
-                     *sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1)))
-                     *sqrt((-s6)-s2-s1)),
-         -(ds3*(1/(sqrt((-s4)-s3-s2)*sqrt((-s5)-s3-s1))
-               +s3/(2*((-s4)-s3-s2)^(3/2)*sqrt((-s5)-s3-s1))
-               +s3/(2*sqrt((-s4)-s3-s2)*((-s5)-s3-s1)^(3/2))))
-          /sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))],
-        [-ds4/(2*sqrt((-s4)-s3-s2)),0,0,0,
-         -(ds4*s2)/(2*((-s4)-s3-s2)^(3/2)
-                     *sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1)))
-                     *sqrt((-s6)-s2-s1)),
-         -(ds4*s3)/(2*((-s4)-s3-s2)^(3/2)
-                     *sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))
-                     *sqrt((-s5)-s3-s1))],
-        [0,-ds5/(2*sqrt((-s5)-s3-s1)),0,
-         -(ds5*s1)/(2*((-s5)-s3-s1)^(3/2)
-                     *sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
-                     *sqrt((-s6)-s2-s1)),0,
-         -(ds5*s3)/(2*sqrt((-s4)-s3-s2)
-                     *sqrt(1-s3^2/(((-s4)-s3-s2)*((-s5)-s3-s1)))
-                     *((-s5)-s3-s1)^(3/2))],
-        [0,0,-ds6/(2*sqrt((-s6)-s2-s1)),
-         -(ds6*s1)/(2*sqrt((-s5)-s3-s1)
-                     *sqrt(1-s1^2/(((-s5)-s3-s1)*((-s6)-s2-s1)))
-                     *((-s6)-s2-s1)^(3/2)),
-         -(ds6*s2)/(2*sqrt((-s4)-s3-s2)
-                     *sqrt(1-s2^2/(((-s4)-s3-s2)*((-s6)-s2-s1)))
-                     *((-s6)-s2-s1)^(3/2)),0]]
-*/
-
-   // ds1 ---------------------------------------------------------------------
    double tds1[6] = {
    0,
    -ds1 / (2 * sqrt( (-s5) - s3 - s1 )),
@@ -489,28 +307,6 @@ for (size_t i = 0; i < 6; ++i) {
       const int i19191 = 19191;
    }
 
-   //{
-   //   double t1 = -(1 / sqrt(((-s5) - s3 - s1) * ((-s6) - s2 - s1))
-   //      - (s1 * (s6 + s5 + s3 + s2 + 2 * s1)) / (2 * pow((((-s5) - s3 - s1) * ((-s6) - s2 - s1)), 1.5))) / sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1)));
-   //   double t2 = (s1 * (s5 + s3 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
-   //   double t3 = (s1 * (s6 + s2 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
-   //   double t4 = 0;
-   //   double t5 = (s1 * (s6 + s2 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
-   //   double t6 = (s1 * (s5 + s3 + s1)) / (2 * sqrt(1 - s1 * s1 / (((-s5) - s3 - s1) * ((-s6) - s2 - s1))) * pow((((-s5) - s3 - s1) * (-s6 - s2 - s1)), 1.5));
-   //   double deraltest = sqrt(sq(t1 * ds1) + sq(t2 * ds2) + sq(t3 * ds3) + sq(t4 * ds4) + sq(t5 * ds5) + sq(t6 * ds6));
-   //}
-   //{
-   //   double term1 = -(1 / sqrt(bas * cas)) / sqrt(1 - s1 * s1 / (bas * cas)) * ds1;
-   //   double term1A = -(s1 * (-bas - cas)) / (2 * (bas * cas) * sqrtb * sqrtc) / sqrt(1 - s1 * s1 / (bas * cas)) * ds1;
-
-   //   double denom = (2 * sqrt(1 - s1 * s1 / (bas * cas)) * (bas * cas) * sqrtb * sqrtc);
-   //   double term2 = -(s1 * bas) / denom * ds2;
-   //   double term3 = -(s1 * cas) / denom * ds3;
-   //   double term4 = -(s1 * cas) / denom * ds5;
-   //   double term5 = -(s1 * bas) / denom * ds6;
-   //   double deralpha = sqrt(sq(term1A) + sq(term1) + sq(term2) + sq(term3) + sq(term4) + sq(term5));
-   //}
-
    return cer;
 }
 
@@ -569,28 +365,6 @@ s6errors[5] = maxNC(abs(-2.0 * c * dc), abs(-s6errors[0]), abs(-s6errors[1]));
 return s6errors / sqrt(6.0);
 }
 
-void TestSigmas() {
-   const LRL_Cell cell("10 12 15  95 100 105 ");
-   const LRL_Cell cellErrors(" .01 .01 .01 .001 .002 .003");
-   std::cout << "input cell " << LRL_Cell(cell) << std::endl;
-   std::cout << "cell sigs " << cellErrors << std::endl;
-   const S6 s6(cell);
-   const S6 s6er = S6ErrorsFromCell(cell, cellErrors);
-   const LRL_Cell newCellErrors = CellErrorsFromS6(s6, s6er);
-   std::cout << std::endl << "output cell sigs " << newCellErrors << std::endl;
-
-
-}
-
-void TestReflections(const S6& s, const DeloneType& type) {
-   static std::vector<MatS6> refls = MatS6::GetReflections();
-   const MatS6& tocenter = type.GetToCentered();
-   //const MatS6& tocanon = type.GetToCanon();
-   for (size_t i = 0; i < refls.size(); ++i) {
-      std::cout << i << "  " << refls[i] * s << std::endl;
-   }
-}
-
 template<typename T>
 std::string InputLattice(const size_t n, const std::string& lattice, const T& t, const LRL_Cell& c) {
    LatticeConverter converter;
@@ -635,11 +409,6 @@ std::vector<LRL_Cell> CreateCells(const std::vector<LRL_ReadLatticeData>& input)
 
 static double Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix)
 {
-   //std::cout << "s6 " << s6 << std::endl;
-   //std::cout << "sigmas " << sigmas << std::endl;
-   //std::cout << "red mat " << reductionMatrix.norm() << std::endl;
-   //std::cout << "s6 norm " << s6.Norm() << std::endl;
-   //std::cout << "denom " << (reductionMatrix * sigmas).Norm() << std::endl;
    const double zscore = s6.Norm() / (MatS6::Inverse(reductionMatrix) * sigmas).Norm();
    return (zscore < 1.0E-6) ? 0.0 : zscore;
 }
@@ -662,13 +431,6 @@ static DeloneFitResults GetFit(
          nBest = i;
          bestFit = rawFit;
          smallestPerp = perpv;
-
-         //std::cout << " representation   " << i << std::endl;
-         //std::cout << "original " << s6 << std::endl;
-         //std::cout << "projected  " << bestv << std::endl;
-         //std::cout << "perp v " << perpv << std::endl;
-         //std::cout << "projected s6 " << bestv << std::endl;
-         //std::cout << "distance " << rawFit << std::endl;
       }
    }
    if (bestFit < 1.0E-8) bestFit = 0.0;
@@ -693,24 +455,12 @@ DeloneFitResults SellaFitXXXXXX(
       if (bestFit > rawFit) {
          nBest = i;
          bestFit = rawFit;
-
-         //std::cout << " representation   " << i << std::endl;
-         //std::cout << "original " << s6 << std::endl;
-         //std::cout << "projected  " << bestv << std::endl;
-         //std::cout << "perp v " << perpv << std::endl;
-         //std::cout << "projected s6 " << bestv << std::endl;
-         //std::cout << "distance " << rawFit << std::endl;
       }
    }
    if (bestFit < 1.0E-8) bestFit = 0.0;
    const S6 smallestPerp = perps[nBest] * s6;
    const S6 bestv = prjs[nBest] * s6;
    const MatS6 toCanonicalDeloneType/* = sptypes[nBest]->GetToCanon(nBest)*/;
-   //std::cout << "input " << s6 << std::endl;
-   //std::cout << "nBest " << nBest << std::endl;
-   //std::cout << " bestv " << bestv << std::endl;
-   //std::cout << "prj " << std::endl;
-   //std::cout << prjs[nBest] << std::endl;
 
    return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6().unit());
 }
@@ -729,23 +479,11 @@ static std::vector<DeloneFitResults> SellaFit(
          DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6, reductionMatrix);
 
          const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
-         //std::cout << "s6 " << s6 << "---------------------" << std::endl;
-         //std::cout << "best fit " << fit.GetBestFit() << std::endl;
-         //std::cout << "errors " << errors << std::endl;
-         //std::cout << "name " << name << std::endl;
-         //std::cout << "free params " << sptypes[i]->GetFreeParams() << std::endl;
-         //std::cout << "zscore " << zscore << std::endl;
-         //std::cout << "red norm " << reductionMatrix.norm() << std::endl;
          fit.SetZscore(zscore);
          fit.SetLatticeType(name);
          fit.SetReductionMatrix(reductionMatrix);
          fit.SetType(sptypes[i]->GetBravaisType());
          fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());
-
-         //std::cout << "--------------------" << name << std::endl;
-         //std::cout << s6 << std::endl;
-         //std::cout << fit.GetBestFit() << std::endl;
-         //std::cout << fit.GetDifference() << std::endl;
 
          fit.SetDifference(s6 - fit.GetBestFit());
          fit.SetOriginalInput(s6);
@@ -805,9 +543,7 @@ std::vector<std::pair<std::string, double> > DeloneFitToScores(std::vector< Delo
          if (fits[i].GetRawFit() < previous) {
             best[fits[i].GetType()] = std::make_pair(fits[i].GetType(), fits[i].GetRawFit());
          }
-
       }
-
    }
    std::vector<std::pair<std::string, double> > out;
    for (auto i = best.begin(); i != best.end(); ++i) {
@@ -818,7 +554,7 @@ std::vector<std::pair<std::string, double> > DeloneFitToScores(std::vector< Delo
 
 void NiggliMatchLatticeType(const DeloneFitResults& vDeloneFitResults) {
 
-    const S6 input = vDeloneFitResults.GetOriginalInput();
+   const S6 input = vDeloneFitResults.GetOriginalInput();
 	const S6 bestFit = vDeloneFitResults.GetBestFit();
 	const std::string latticeType = vDeloneFitResults.GetType();
 	const std::string latticeGeneral = vDeloneFitResults.GetGeneralType();
@@ -847,7 +583,7 @@ void NiggliMatchLatticeType(const DeloneFitResults& vDeloneFitResults) {
 
 int main()
 {
-   //TestSigmas( );
+   ////TestSigmas( );
    std::cout << "SELLA\n";
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
