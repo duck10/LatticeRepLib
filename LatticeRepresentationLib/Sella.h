@@ -9,8 +9,9 @@
 #include <vector>
 
 #include "Delone.h"
-#include "LabeledSellaMatrices.h"
 #include "DeloneType.h"
+#include "GenerateLatticeTypeExamples.h"
+#include "LabeledSellaMatrices.h"
 #include "MatS6.h"
 #include "S6.h"
 #include "StoreResults.h"
@@ -28,6 +29,7 @@ public:
       return o;
    }
    SellaResult() {}
+
 
    std::string GetName() const { return m_label; }
    std::string GetBravaisType() const { return m_BravaisType; }
@@ -83,6 +85,19 @@ public:
 
    void GetDeloneTypesForCrystalType();
    void GetCrystalTypesForDeloneType();
+
+   std::vector<DeloneFitResults> SellaFit(
+      const std::vector<std::shared_ptr<GenerateDeloneBase> >& sptypes,
+      const S6& s6,
+      const S6& errors,
+      const MatS6& reductionMatrix);
+
+   DeloneFitResults SellaFitXXXXXX(
+      const std::shared_ptr<GenerateDeloneBase>& sptype,
+      const S6& s6,
+      const MatS6& reductionMatrix);
+
+   static double Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix);
 
 private:
    static const std::vector<LabeledSellaMatrices> projectors;
