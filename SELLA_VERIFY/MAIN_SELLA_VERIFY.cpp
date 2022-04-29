@@ -134,62 +134,6 @@ std::vector<S6> GenerateOrthorhombicTestCells(const std::string& type) {
    //exit(0);
 }
 
-StoreResults<std::string, std::string> store_cP(1000);
-StoreResults<std::string, std::string> store_cI(1000);
-StoreResults<std::string, std::string> store_cF(1000);
-
-//void GenerateCubicTest() {
-//   S6 s6;
-//   Sella sella;
-//
-//   std::vector<S6> v;
-//   const long x0 = 0;
-//   const long ydel = 1;
-//   const long zdel = 1;
-//   const long y0 = -2 * ydel;
-//   const long z0 = -2 * zdel;
-//
-//   s6[0] = 0.0;
-//   double& y = s6[1];
-//   double& z = s6[2];
-//   s6[3] = -100.0;
-//   s6[4] = -100.0;
-//   s6[5] = -100.0;
-//
-//   const double range = 40;
-//   int rowcount = 0;
-//   int colcount = 0;
-//   for (long iy = -ydel; iy < range; iy += ydel) {
-//      y = y0 + iy + ydel;
-//      colcount = 0;
-//      ++rowcount;
-//      for (long iz = -zdel; iz < range; iz += zdel) {
-//         z = z0 + iz + zdel;
-//
-//         const S6 redP = ReduceLatticeType("p", s6);
-//         const S6 redI = ReduceLatticeType("i", s6);
-//         const S6 redF = ReduceLatticeType("f", s6);
-//         const double bestP = sella.GetFitForDeloneType("C5", redP);
-//         const double bestI = sella.GetFitForDeloneType("C1", redI);
-//         const double bestF = sella.GetFitForDeloneType("C3", redF);
-//         std::cout << bestP << " ";
-//         //std::cout << iy << " " << iz << "  " << bestP << "   " <<  s6 << "    "<< redP << std::endl;
-//
-// /*        store_cP.Store("C1",  LRL_ToString( " ", bestP, "   ", redP));
-//         store_cI.Store("C3",  LRL_ToString( " ", bestI, "   ", redI));
-//         store_cF.Store("C5",  LRL_ToString( " ", bestF, "   ", redF));*/
-//
-//
-//      }
-//      std::cout << std::endl;
-//   }
-//   //store_cP.ShowResults();
-//   //store_cI.ShowResults();
-//   //store_cF.ShowResults();
-//   //exit(0);
-//
-//}
-
 std::string Trim(const std::string type) {
    for (size_t i = 0; i < type.size(); ++i) {
       if (type[i] == ' ') return type.substr(0, i);

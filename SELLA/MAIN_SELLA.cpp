@@ -125,10 +125,6 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    }
    storeLocalProblems.ShowResults( );
    storeGood.ShowResults();
-
-   storeO3 .ShowResults();
-   storeM3 .ShowResults();
-   storeM2B.ShowResults();
    exit(0);
 }
 //void ReportFit(const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit) {
@@ -142,22 +138,6 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
 //   std::cout << "*******   END SELLA report for input cell " << n << std::endl;
 //
 //}
-
-void ReportSellaFit(const size_t n, const std::vector<std::shared_ptr<GenerateDeloneBase> >& types, const std::vector<DeloneFitResults>& fit) {
-   std::cout << "*******   SELLA report for input cell " << n << std::endl;
-   std::vector<SellaResult> vsr;
-
-   for (size_t i = 0; i < types.size(); ++i) {
-      std::cout << types[i]->GetName() << std::endl;
-   }
-
-   for (size_t i = 0; i < vsr.size(); ++i)
-      std::cout << vsr[i] << std::endl;
-   std::cout << "*******   END SELLA report for input cell " << n << std::endl;
-
-}
-
-
 
 static double sq( const double d ) { return d * d; }
 
@@ -433,92 +413,6 @@ std::vector<LRL_Cell> CreateCells(const std::vector<LRL_ReadLatticeData>& input)
    return cells;
 }
 
-static double Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix)
-{
-   const double zscore = s6.Norm() / (MatS6::Inverse(reductionMatrix) * sigmas).Norm();
-   return (zscore < 1.0E-6) ? 0.0 : zscore;
-}
-
-
-
-static DeloneFitResults GetFit(
-   const std::shared_ptr<GenerateDeloneBase>& type, 
-   const S6& s6, 
-   const MatS6& reductionMatrix) {
-
-   size_t nBest = 0;
-   S6 smallestPerp;
-   double bestFit = DBL_MAX;
-   const std::vector<MatS6> perps = type->GetSellaPerps();
-   for (size_t i = 0; i < perps.size(); ++i) {
-      const S6 perpv = perps[i] * s6;
-      const double rawFit = perpv.norm();
-      if (bestFit > rawFit) {
-         nBest = i;
-         bestFit = rawFit;
-         smallestPerp = perpv;
-      }
-   }
-   if (bestFit < 1.0E-8) bestFit = 0.0;
-   const S6 bestv = perps[nBest] * s6;
-   //const MatS6 toCanonicalDeloneType = type->GetToCanon(nBest);
-
-   return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6().unit());
-}
-
-DeloneFitResults SellaFitXXXXXX(
-   const std::shared_ptr<GenerateDeloneBase>& sptype,
-   const S6& s6,
-   const MatS6& reductionMatrix) {
-
-   size_t nBest = 0;
-   double bestFit = DBL_MAX;
-   const std::vector<MatS6>& perps = sptype->GetSellaPerps();
-   const std::vector<MatS6>& prjs = sptype->GetSellaProjectors();
-   for (size_t i = 0; i < perps.size(); ++i) {
-      const S6 perpv = perps[i] * s6;
-      const double rawFit = perpv.norm();
-      if (bestFit > rawFit) {
-         nBest = i;
-         bestFit = rawFit;
-      }
-   }
-   if (bestFit < 1.0E-8) bestFit = 0.0;
-   const S6 smallestPerp = perps[nBest] * s6;
-   const S6 bestv = prjs[nBest] * s6;
-   const MatS6 toCanonicalDeloneType/* = sptypes[nBest]->GetToCanon(nBest)*/;
-
-   return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6().unit());
-}
-
-static std::vector<DeloneFitResults> SellaFit(
-   const std::vector<std::shared_ptr<GenerateDeloneBase> >& sptypes,
-   const S6& s6,
-   const S6& errors,
-   const MatS6& reductionMatrix) {
-
-   std::vector<DeloneFitResults> vDeloneFitResults;
-
-   for (size_t i = 0; i < sptypes.size(); ++i) {
-      const std::string name = sptypes[i]->GetName();
-      /*if (type.empty() || name.find(type) != std::string::npos) */{  // LCA make type UC
-         DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6, reductionMatrix);
-
-         const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
-         fit.SetZscore(zscore);
-         fit.SetLatticeType(name);
-         fit.SetReductionMatrix(reductionMatrix);
-         fit.SetType(sptypes[i]->GetBravaisType());
-         fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());
-
-         fit.SetDifference(s6 - fit.GetBestFit());
-         fit.SetOriginalInput(s6);
-         vDeloneFitResults.push_back(fit);
-      }
-   }
-   return vDeloneFitResults;
-}
-
 static const std::vector<std::string> heirarchy{
    "cP","cF","cI",
    "tP","hP","hR","tI",
@@ -605,6 +499,7 @@ void NiggliMatchLatticeType(const DeloneFitResults& vDeloneFitResults) {
           << "  IT=" << pt->GetITNumber()
           << " type=" << pt->GetBravaisType()
           << " d=" << d << std::endl
+          << " ratio " << d / probe.norm() << "\n"
           << "perp       " << perpV << "\n"
           << "projected  " << LRL_Cell_Degrees(pt->GetPrj() * probe) << "\n";
 
@@ -630,9 +525,10 @@ int main()
       GenerateDeloneBase().Select("");
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      std::vector<DeloneFitResults> vDeloneFitResults = SellaFit( sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
+      std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit( sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
       for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
+         const double d = vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm();
           if (vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm() < g_maxDeltaForMatch) {
               NiggliMatchLatticeType(vDeloneFitResults[kk]);
           }
@@ -644,12 +540,11 @@ int main()
       //   std::cout << vDeloneFitResults[kk] << std::endl;
       //}
       std::cout << vDeloneFitResults.size() << std::endl;
-      //ReportSellaFit(lat, sptest, vDeloneFitResults);
       ReportTypeHeirachy(vDeloneFitResults);
       const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
 
-      std::cout << std::endl << std::endl << "lat " << lat << std::endl << std::endl << std::endl;
-      /*std::cout << */BravaisHeirarchy::ProduceSVG(
-         input[lat], vLat[lat], scores);
+      //std::cout << std::endl << std::endl << "lat " << lat << std::endl << std::endl << std::endl;
+      ///*std::cout << */BravaisHeirarchy::ProduceSVG(
+      //   input[lat], vLat[lat], scores);
    }
 }

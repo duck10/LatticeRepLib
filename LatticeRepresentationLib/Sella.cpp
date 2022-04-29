@@ -19,10 +19,6 @@ std::vector <DeloneType> Sella::m_latticeCharacters;
 
 Sella::Sella()
 {
-   LabeledDeloneTypeMatrices labeledPerType;
-   DeloneType dt;
-   std::string label;
-   label = "C1";
 }
 
 static int seed = 19191;
@@ -105,4 +101,64 @@ double Sella::GetFitForDeloneType(const std::string& type, const S6& s6) {
       }
    }
    return bestFit;
+}
+
+DeloneFitResults Sella::SellaFitXXXXXX(
+   const std::shared_ptr<GenerateDeloneBase>& sptype,
+   const S6& s6,
+   const MatS6& reductionMatrix) {
+
+   const std::string name = sptype->GetName();
+   size_t nBest = 0;
+   double bestFit = DBL_MAX;
+   const std::vector<MatS6> perps = sptype->GetSellaPerps();
+   const std::vector<MatS6> prjs = sptype->GetSellaProjectors();
+   for (size_t i = 0; i < perps.size(); ++i) {
+      const S6 perpv = perps[i] * s6;
+      const double testFit = perpv.norm();
+      if (bestFit > testFit) {
+         nBest = i;
+         bestFit = testFit;
+      }
+   }
+   if (bestFit < 1.0E-8) bestFit = 0.0;
+   const S6 smallestPerp = perps[nBest] * s6;
+   const S6 bestv = prjs[nBest] * s6;
+   const MatS6 toCanonicalDeloneType/* = sptypes[nBest]->GetToCanon(nBest)*/;
+
+   return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6().unit());
+}
+
+double Sella::Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix)
+{
+   const double zscore = s6.Norm() / (MatS6::Inverse(reductionMatrix) * sigmas).Norm();
+   return (zscore < 1.0E-6) ? 0.0 : zscore;
+}
+
+std::vector<DeloneFitResults> Sella::SellaFit(
+   const std::vector<std::shared_ptr<GenerateDeloneBase> >& sptypes,
+   const S6& s6,
+   const S6& errors,
+   const MatS6& reductionMatrix) {
+
+   std::vector<DeloneFitResults> vDeloneFitResults;
+
+   for (size_t i = 0; i < sptypes.size(); ++i) {
+      const std::string name = sptypes[i]->GetName();
+      /*if (type.empty() || name.find(type) != std::string::npos) */ {  // LCA make type UC
+         DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6, reductionMatrix);
+
+         const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
+         fit.SetZscore(zscore);
+         fit.SetLatticeType(name);
+         fit.SetReductionMatrix(reductionMatrix);
+         fit.SetType(sptypes[i]->GetBravaisType());
+         fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());
+
+         fit.SetDifference(s6 - fit.GetBestFit());
+         fit.SetOriginalInput(s6);
+         vDeloneFitResults.push_back(fit);
+      }
+   }
+   return vDeloneFitResults;
 }
