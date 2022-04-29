@@ -26,9 +26,11 @@
 #include "StoreResults.h"
 
 
-std::string Letters(void) {
+static const std::string Letters(void) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
 }
+
+static const double g_maxDeltaForMatch = 0.02;
 
 std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    const std::string letters = Letters();
@@ -65,9 +67,6 @@ std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLattice
 
    for (size_t i = 0; i < input.size( ); ++i) {
       const S6 s6 = converter.SellingReduceCell( input[i].GetLattice( ), input[i].GetCell( ), m );
-      if (s6[0] > 0 || s6[1] > 0 || s6[2] > 0 || s6[3] > 0 || s6[4] > 0 || s6[5] > 0) {
-         throw;
-      }
       v.push_back( s6 );
       vmat.push_back( m );
    }
@@ -132,6 +131,33 @@ void AnalyzePDBCells(const std::vector<LRL_ReadLatticeData>& input) {
    storeM2B.ShowResults();
    exit(0);
 }
+//void ReportFit(const size_t n, const DeloneTypeList& types, const std::vector<DeloneFitResults>& fit) {
+//   std::cout << "*******   SELLA report for input cell " << n << std::endl;
+//   std::vector<SellaResult> vsr;
+//   for (size_t i = 0; i < fit.size(); ++i)
+//      vsr.push_back(ReportFit2(i, types[i], fit[i]));
+//
+//   for (size_t i = 0; i < vsr.size(); ++i)
+//      std::cout << vsr[i] << std::endl;
+//   std::cout << "*******   END SELLA report for input cell " << n << std::endl;
+//
+//}
+
+void ReportSellaFit(const size_t n, const std::vector<std::shared_ptr<GenerateDeloneBase> >& types, const std::vector<DeloneFitResults>& fit) {
+   std::cout << "*******   SELLA report for input cell " << n << std::endl;
+   std::vector<SellaResult> vsr;
+
+   for (size_t i = 0; i < types.size(); ++i) {
+      std::cout << types[i]->GetName() << std::endl;
+   }
+
+   for (size_t i = 0; i < vsr.size(); ++i)
+      std::cout << vsr[i] << std::endl;
+   std::cout << "*******   END SELLA report for input cell " << n << std::endl;
+
+}
+
+
 
 static double sq( const double d ) { return d * d; }
 
@@ -561,29 +587,33 @@ void NiggliMatchLatticeType(const DeloneFitResults& vDeloneFitResults) {
 	
     const std::vector<std::shared_ptr<GenerateNiggliBase> >
         vglb = GenerateNiggliBase().Select(latticeGeneral);
-    for (size_t i = 0; i < vglb.size(); ++i) {
-        const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
-        G6 probe;
-        Niggli::Reduce(G6(bestFit), probe);
-        const G6 perpV = pt->GetPerp() * probe;
-        double d = perpV.norm();
-        if (d < 1.0E-8) d = 0.0;
 
-        std::cout
-            << latticeType
-            << " input" << input
-            << "\n red " << probe 
-            << "  IT=" << pt->GetITNumber()
-            << " type=" << pt->GetBravaisType()
-            << " d=" << d << std::endl
-            //<< "perp       " << perpV << "\n"
-			<< "projected  " << LRL_Cell_Degrees(pt->GetPrj() * probe) << "\n\n";
+    for (size_t i = 0; i < vglb.size(); ++i) {
+       const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
+       if (pt->GetBravaisType()[0] == 'a') continue;
+       G6 probe;
+       Niggli::Reduce(G6(bestFit), probe);
+       const G6 perpV = pt->GetPerp() * probe;
+       double d = perpV.norm();
+       if (d < 1.0E-8) d = 0.0;
+       if ( d/probe.norm() > g_maxDeltaForMatch) continue;
+
+       std::cout
+          << latticeType
+          << " input" << input
+          << "\n red " << probe
+          << "  IT=" << pt->GetITNumber()
+          << " type=" << pt->GetBravaisType()
+          << " d=" << d << std::endl
+          << "perp       " << perpV << "\n"
+          << "projected  " << LRL_Cell_Degrees(pt->GetPrj() * probe) << "\n";
+
+       std::cout << "centered " << LRL_Cell_Degrees(pt->GetToCenter() * probe) << std::endl << std::endl;
     }
 }
 
 int main()
 {
-   ////TestSigmas( );
    std::cout << "SELLA\n";
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
@@ -602,19 +632,18 @@ int main()
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::vector<DeloneFitResults> vDeloneFitResults = SellaFit( sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
-	
       for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
-          if (vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm() < 0.02) {
+          if (vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm() < g_maxDeltaForMatch) {
               NiggliMatchLatticeType(vDeloneFitResults[kk]);
           }
       }
 
 
-	
+
       //for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
       //   std::cout << vDeloneFitResults[kk] << std::endl;
       //}
-      //std::cout << vDeloneFitResults.size() << std::endl;
+      std::cout << vDeloneFitResults.size() << std::endl;
       //ReportSellaFit(lat, sptest, vDeloneFitResults);
       ReportTypeHeirachy(vDeloneFitResults);
       const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
@@ -623,6 +652,4 @@ int main()
       /*std::cout << */BravaisHeirarchy::ProduceSVG(
          input[lat], vLat[lat], scores);
    }
-
-   const int  i19191 = 19191;
 }
