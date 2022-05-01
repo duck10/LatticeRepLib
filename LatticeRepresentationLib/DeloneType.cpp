@@ -1,3 +1,4 @@
+#include "DeloneFitResults.h"
 #include "DeloneType.h"
 #include "LRL_Cell_Degrees.h"
 #include "MatG6.h"
@@ -47,15 +48,6 @@ protected:
    S6 m_difference;
    MatS6 m_toCanonicalDeloneType;
 */
-
-DeloneFitResults::DeloneFitResults( const double fit, const S6& bestApprox, const S6& perpv, const MatS6& toCanon )
-: m_rawFit(fit)
-, m_zscore(-19191.0)
-, m_bestFit( bestApprox )
-, m_difference(perpv)
-, m_toCanonicalDeloneType(toCanon)
-{
-}
 
 
 std::ostream& operator<< (std::ostream& o, const DeloneType& m) {
@@ -109,31 +101,31 @@ std::ostream& operator<< ( std::ostream& o, const DeloneFitResults& dfr) {
 
 
 
-DeloneFitResults DeloneType::GetFit(const std::string& name, const S6& s6, const MatS6& reductionMatrix) const {
-   size_t nBest = 0;
-   S6 smallestPerp;
-   double bestFit = DBL_MAX;
-   for ( size_t i=0; i< m_matrices.size(); ++i ) {
-      const S6 perpv = m_matrices.GetPerp(i) * s6;
-      const double rawFit = perpv.norm();
-      if ( bestFit > rawFit){
-         nBest = i;
-         bestFit = rawFit;
-         smallestPerp = perpv;
-
-         //std::cout << " representation   " << i << std::endl;
-         //std::cout << "original " << s6 << std::endl;
-         //std::cout << "projected  " << bestv << std::endl;
-         //std::cout << "perp v " << perpv << std::endl;
-         //std::cout << "projected s6 " << bestv << std::endl;
-         //std::cout << "distance " << rawFit << std::endl;
-      }
-   }
-   if (bestFit < 1.0E-8) bestFit = 0.0;
-   const S6 bestv = m_matrices.GetPrj(nBest) * s6;
-   const MatS6 toCanonicalDeloneType = m_matrices.GetToCanon(nBest);
-
-   //TestReflections(name, bestv, toCanonicalDeloneType);
-   return DeloneFitResults( bestFit, bestv, smallestPerp, MatS6::Inverse(reductionMatrix) * toCanonicalDeloneType );
-   //return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6::Inverse(reductionMatrix));
-}
+//DeloneFitResults DeloneType::GetFit(const std::string& name, const S6& s6, const MatS6& reductionMatrix) const {
+//   size_t nBest = 0;
+//   S6 smallestPerp;
+//   double bestFit = DBL_MAX;
+//   for ( size_t i=0; i< m_matrices.size(); ++i ) {
+//      const S6 perpv = m_matrices.GetPerp(i) * s6;
+//      const double rawFit = perpv.norm();
+//      if ( bestFit > rawFit){
+//         nBest = i;
+//         bestFit = rawFit;
+//         smallestPerp = perpv;
+//
+//         //std::cout << " representation   " << i << std::endl;
+//         //std::cout << "original " << s6 << std::endl;
+//         //std::cout << "projected  " << bestv << std::endl;
+//         //std::cout << "perp v " << perpv << std::endl;
+//         //std::cout << "projected s6 " << bestv << std::endl;
+//         //std::cout << "distance " << rawFit << std::endl;
+//      }
+//   }
+//   if (bestFit < 1.0E-8) bestFit = 0.0;
+//   const S6 bestv = m_matrices.GetPrj(nBest) * s6;
+//   const MatS6 toCanonicalDeloneType = m_matrices.GetToCanon(nBest);
+//
+//   //TestReflections(name, bestv, toCanonicalDeloneType);
+//   return DeloneFitResults( bestFit, bestv, smallestPerp, MatS6::Inverse(reductionMatrix) * toCanonicalDeloneType );
+//   //return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6::Inverse(reductionMatrix));
+//}

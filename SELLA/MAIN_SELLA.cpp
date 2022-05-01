@@ -539,12 +539,12 @@ int main()
       //for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
       //   std::cout << vDeloneFitResults[kk] << std::endl;
       //}
-      std::cout << vDeloneFitResults.size() << std::endl;
+      //std::cout << vDeloneFitResults.size() << std::endl;
       ReportTypeHeirachy(vDeloneFitResults);
       const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
 
       //std::cout << std::endl << std::endl << "lat " << lat << std::endl << std::endl << std::endl;
-      ///*std::cout << */BravaisHeirarchy::ProduceSVG(
-      //   input[lat], vLat[lat], scores);
+      /*std::cout << */BravaisHeirarchy::ProduceSVG(
+         input[lat], vLat[lat], scores);
    }
 }

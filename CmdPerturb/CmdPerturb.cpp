@@ -9,8 +9,8 @@
 #include "rhrand.h"
 #include "S6.h"
 
-const double delta = 1.0;
-const size_t ngen = 20;
+double delta = 1.0;
+size_t ngen = 20;
 
 const std::string latticeNames = "pifrhcPIFRHC";
 RHrand ran;
@@ -62,8 +62,15 @@ void HandleOneInputCell(const LRL_ReadLatticeData& inputlattice) {
    }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+   if (argc > 1) {
+      ngen = atoi(argv[1]);
+      if (argc > 2) {
+         const double d = atof(argv[2]);
+         if (d != 0.0) delta = atof(argv[2]);
+      }
+   }
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    std::cout << "; Perturb vectors, input scaled to 1000, perturbed by " << delta
       << "  ngen = " << ngen << std::endl;

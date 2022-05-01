@@ -165,6 +165,7 @@
     <ClCompile Include="CS6Dist.cpp" />
     <ClCompile Include="D13.cpp" />
     <ClCompile Include="DC.cpp" />
+    <ClCompile Include="DeloneFitResults.cpp" />
     <ClCompile Include="Delone_Types.cpp" />
     <ClCompile Include="FollowerConstants.cpp" />
     <ClCompile Include="FollowerPathGenerator.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="D13.h" />
     <ClInclude Include="DC.h" />
+    <ClInclude Include="DeloneFitResults.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
     <ClInclude Include="Delone_Types.h" />
     <ClInclude Include="FollowerConstants.h" />
