@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 
+#include "DeloneFitResults.h"
 #include "DeloneType.h"
 #include "MatS6.h"
 

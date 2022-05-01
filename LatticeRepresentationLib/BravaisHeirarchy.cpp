@@ -211,7 +211,7 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
 }
 
 void SendSellaToFile(const std::string& s) {
-   std::cout << "SendSellaToFile" << std::endl;
+   std::cout << "Send Sella Plot To File " << std::endl;
    std::string filename = LRL_CreateFileName::Create("SEL_", "svg");
    std::cout << filename << std::endl;
    std::ofstream fileout;
@@ -244,7 +244,7 @@ std::string FormatCellData(
    std::string inputText;
 
    inputText +=
-       "<text x=\"700\" y=\"225\" font-size=\"20\" >S6 Length:  "+
+       "<text x=\"700\" y=\"235\" font-size=\"20\" >S6 Length:  "+
 	LRL_ToString(sqrt(reducedCell.norm())) +
       " </text>\n";
 

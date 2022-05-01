@@ -134,7 +134,7 @@ bool LRL_ReadLatticeData::SetS6Data( const std::string& inputDataType, const std
 
 bool LRL_ReadLatticeData::SetUnitCellTypeData( const std::string& inputDataType, const std::pair<std::vector<double>, std::vector<double> >& params ) {
    const bool test = IsLatticeName( m_inputDataType, vlattice_names );
-   if (test) {
+   if (test && params.first.size()>=6) {
       m_cell = LRL_Cell( params.first[0], params.first[1], params.first[2], params.first[3], params.first[4], params.first[5] );
       m_cell.SetValid( G6( m_cell ).IsValid( ) );
       if (params.second.size( ) >= 6)

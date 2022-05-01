@@ -9,7 +9,8 @@
 #include <vector>
 
 #include "Delone.h"
-#include "DeloneType.h"
+#include "DeloneFitResults.h"
+//#include "DeloneType.h"
 #include "GenerateLatticeTypeExamples.h"
 #include "LabeledSellaMatrices.h"
 #include "MatS6.h"
@@ -102,7 +103,7 @@ public:
 private:
    static const std::vector<LabeledSellaMatrices> projectors;
    static const std::vector<LabeledSellaMatrices> perps;
-	static std::vector<DeloneType> m_latticeCharacters;
+	//static std::vector<DeloneType> m_latticeCharacters;
 
 private:
 };

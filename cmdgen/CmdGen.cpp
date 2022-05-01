@@ -7,7 +7,7 @@
 #include "GenerateLatticeTypeExamples.h"
 
 // how many examples of each type to generate
-static const int ngen = 1;
+static int ngen = 1;
 
 /*
 The "name" variable is the designator for the Bravais type(s)
@@ -55,8 +55,17 @@ G6 Generate(const std::shared_ptr<GenerateNiggliBase>& pt) {
    return probe;;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+   if (argc > 1) {
+      const int test = atoi(argv[1]);
+      if (test != 0) ngen = test;
+      if (argc > 2) {
+         const std::string strtest = argv[2];
+         name = strtest;
+      }
+   }
+
    std::cout << "; generate examples  ngen = " << ngen << "  lattice type selection = """ << name << std::endl;
    const std::vector<std::shared_ptr<GenerateNiggliBase> >
       vglb = GenerateNiggliBase().Select(name);
