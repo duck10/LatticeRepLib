@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <map>
 
 #include "G6.h"
 #include "LRL_Cell.h"
@@ -55,6 +56,34 @@ G6 Generate(const std::shared_ptr<GenerateNiggliBase>& pt) {
    return probe;;
 }
 
+std::string TranslateDeloneToIT(const std::string& s) {
+
+   std::map<std::string, std::string> m;
+   m.insert(std::make_pair("C1", "cI"));
+   m.insert(std::make_pair("C3", "cF"));
+   m.insert(std::make_pair("C5", "cP"));
+   m.insert(std::make_pair("T1", "tI"));
+   m.insert(std::make_pair("T2", "tI"));
+   m.insert(std::make_pair("T5", "tP"));
+   m.insert(std::make_pair("R1", "hR"));
+   m.insert(std::make_pair("R3", "hR"));
+   m.insert(std::make_pair("O1A", "oF"));
+   m.insert(std::make_pair("O2", "oI"));
+   m.insert(std::make_pair("O3", "oI"));
+   m.insert(std::make_pair("O4", "oS"));
+   m.insert(std::make_pair("O5", "oP"));
+   m.insert(std::make_pair("O1B", "oI"));
+   m.insert(std::make_pair("M1A", "mC"));
+   m.insert(std::make_pair("M1B", "mC"));
+   m.insert(std::make_pair("M2", "mC"));
+   m.insert(std::make_pair("M3", "mC"));
+   m.insert(std::make_pair("M4", "mP"));
+   m.insert(std::make_pair("M2B", "mC"));
+   m.insert(std::make_pair("H4", "hP"));   std::string out{ "" };
+   if (m.find(s) != m.end()) out = m[s];
+   return out;
+}
+
 int main(int argc, char* argv[])
 {
    if (argc > 1) {
@@ -63,6 +92,8 @@ int main(int argc, char* argv[])
       if (argc > 2) {
          const std::string strtest = argv[2];
          name = strtest;
+         const std::string translated = TranslateDeloneToIT(name);
+         if (translated != "") name = translated;
       }
    }
 

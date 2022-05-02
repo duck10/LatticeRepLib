@@ -10,7 +10,6 @@
 #include "LabeledSellaMatrices.h"
 #include "LabeledDeloneTypeMatrices.h"
 #include "Selling.h"
-#include "StoreResults.h"
 
 #include <cfloat>
 

@@ -8,9 +8,12 @@
 #include "S6.h"
 #include "MatS6.h"
 #include "Sella.h"
+#include "StoreResults.h"
 
 static double g_maxDeltaForMatch = 0.02;
 std::string selectBravaisCase = "";
+
+std::vector<std::string> g_valueErrors;
 
 std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeData>& input, std::vector<MatS6>& vmat) {
    std::vector<S6> v;
@@ -51,7 +54,7 @@ std::map<std::string, double> CreateBasicBravaisMap() {
    return bravaisMap;
 }
 
-std::vector<DeloneFitResults> FilterForBestExample(
+std::map<std::string, DeloneFitResults>  CreateMapForBestExamples(
    const std::vector<DeloneFitResults>& vDeloneFitResults)
 {
    std::map<std::string, DeloneFitResults>  bravaisMap;
@@ -68,6 +71,13 @@ std::vector<DeloneFitResults> FilterForBestExample(
          if (delta < (*mapElement).second.GetDifference().norm())
             (*mapElement).second = vDeloneFitResults[i];
    }
+   return bravaisMap;
+}
+
+std::vector<DeloneFitResults> FilterForBestExample(
+   const std::vector<DeloneFitResults>& vDeloneFitResults)
+{
+   std::map<std::string, DeloneFitResults>  bravaisMap = CreateMapForBestExamples(vDeloneFitResults);
 
    std::vector<DeloneFitResults> out;
    for (auto i = bravaisMap.begin(); i != bravaisMap.end(); ++i) {
@@ -112,11 +122,13 @@ std::vector<std::vector<std::string> > CreateBravaisChains()
    return v;
 }
 
-void CheckOneBravaisChain(
+bool CheckOneBravaisChain(
    const std::vector<std::string>& bravaisChain, 
    const std::vector<DeloneFitResults>& v,
     std::map<std::string, double>& valueMap)
 {
+
+   bool okCheck = true;
    for (size_t i = 0; i < bravaisChain.size()-1; ++i)
    {
       const std::string name1 = bravaisChain[i];
@@ -129,14 +141,16 @@ void CheckOneBravaisChain(
       if (value2 < 1.0E-3) value2 = 0;
       if (value2 - value1 < -0.0001)
       {
+         okCheck = false;
          std::cout << "value error  " 
             << name1 << " " << value1 << " "
             << name2 << " " << value2 << std::endl;
       }
    }
+   return okCheck;
 }
 
-void CheckBravaisChains(const std::vector<DeloneFitResults>& v)
+bool CheckBravaisChains(const std::vector<DeloneFitResults>& v)
 {
    //for (size_t i = 0; i < v.size(); ++i)
    //{
@@ -145,12 +159,15 @@ void CheckBravaisChains(const std::vector<DeloneFitResults>& v)
 
 
    std::map<std::string, double> valueMap = GetBestOfEachBravaisType(v);
-
+   bool okCheck = true;
    static const std::vector<std::vector<std::string> > bravaisChains = CreateBravaisChains();
    for (size_t i = 0; i < bravaisChains.size() - 1; ++i)
    {
-      CheckOneBravaisChain(bravaisChains[i], v, valueMap);
+      if (!CheckOneBravaisChain(bravaisChains[i], v, valueMap)) {
+         okCheck = false;
+      }
    }
+   return okCheck;
 }
 
 void NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
@@ -208,8 +225,11 @@ int main(int argc, char* argv[])
       const std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
 
-      CheckBravaisChains(vDeloneFitResults);
-
+      const bool okCheck = CheckBravaisChains(vDeloneFitResults);
+      if (!okCheck) {
+         std::cout << "Bravais chain values check failed, input = " << inputList[lat].GetStrCell() << std::endl;
+         g_valueErrors.push_back(inputList[lat].GetStrCell());
+      }
       const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResults);
 
       std::cout << "; " << inputList[lat].GetStrCell() << " input data" << std::endl;
@@ -224,4 +244,10 @@ int main(int argc, char* argv[])
       }
    }
 
+   if (!g_valueErrors.empty()) {
+      std::cout << "Bravais chain failuress\n";
+      for (size_t i = 0; i < g_valueErrors.size(); ++i) {
+         std::cout << g_valueErrors[i] << std::endl;
+      }
+   }
 }
