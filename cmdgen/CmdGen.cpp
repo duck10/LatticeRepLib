@@ -71,6 +71,7 @@ std::string TranslateDeloneToIT(const std::string& s) {
    m.insert(std::make_pair("O2", "oI"));
    m.insert(std::make_pair("O3", "oI"));
    m.insert(std::make_pair("O4", "oS"));
+   m.insert(std::make_pair("O4B", "oS"));
    m.insert(std::make_pair("O5", "oP"));
    m.insert(std::make_pair("O1B", "oI"));
    m.insert(std::make_pair("M1A", "mC"));

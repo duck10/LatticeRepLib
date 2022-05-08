@@ -12,6 +12,7 @@
 #include "Selling.h"
 
 #include <cfloat>
+#include <iostream>
 
 
 //std::vector <DeloneType> Sella::m_latticeCharacters;
@@ -112,8 +113,18 @@ DeloneFitResults Sella::SellaFitXXXXXX(
    double bestFit = DBL_MAX;
    const std::vector<MatS6> perps = sptype->GetSellaPerps();
    const std::vector<MatS6> prjs = sptype->GetSellaProjectors();
+
+
+
+
    for (size_t i = 0; i < perps.size(); ++i) {
       const S6 perpv = perps[i] * s6;
+      //if (name == "O4") {
+      //   std::cout << std::endl;
+      //   std::cout << i << " " << name << std::endl;
+      //   std::cout << perpv <<"\n";
+      //   std::cout << perps[i] << std::endl;
+      //}
       const double testFit = perpv.norm();
       if (bestFit > testFit) {
          nBest = i;

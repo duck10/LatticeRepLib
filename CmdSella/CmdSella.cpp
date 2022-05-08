@@ -89,19 +89,26 @@ std::vector<DeloneFitResults> FilterForBestExample(
 std::map<std::string, double> GetBestOfEachBravaisType(
    const std::vector<DeloneFitResults>& vDeloneFitResults)
 {
-   std::map<std::string, double>  bravaisMap = CreateBasicBravaisMap();
 
-   for (size_t i = 0; i < vDeloneFitResults.size(); ++i) {
-      std::string name = vDeloneFitResults[i].GetGeneralType();
-      //if (name == "oC") name = "oS";
-      const double& delta = vDeloneFitResults[i].GetDifference().norm();
+   std::map<std::string, DeloneFitResults> msdfr = CreateMapForBestExamples(vDeloneFitResults);
+   std::map<std::string, double>  bravaisMap;
+   //std::map<std::string, double>  bravaisMap = CreateBasicBravaisMap();
 
-      auto mapElement = bravaisMap.find(name);
-      if (mapElement == bravaisMap.end()) 
-         bravaisMap.insert(std::make_pair(name, delta));
-      else
-         if (delta < (*mapElement).second)
-            (*mapElement).second = delta;
+   //for (size_t i = 0; i < vDeloneFitResults.size(); ++i) {
+   //   std::string name = vDeloneFitResults[i].GetGeneralType();
+   //   //if (name == "oC") name = "oS";
+   //   const double& delta = vDeloneFitResults[i].GetDifference().norm();
+
+   //   auto mapElement = bravaisMap.find(name);
+   //   if (mapElement == bravaisMap.end()) 
+   //      bravaisMap.insert(std::make_pair(name, delta));
+   //   else
+   //      if (delta < (*mapElement).second)
+   //         (*mapElement).second = delta;
+   //}
+
+   for (auto it = msdfr.begin(); it != msdfr.end(); ++it) {
+      bravaisMap.insert(make_pair((*it).first, (*it).second.GetDifference().norm()));
    }
    return bravaisMap;
 }
@@ -245,7 +252,7 @@ int main(int argc, char* argv[])
    }
 
    if (!g_valueErrors.empty()) {
-      std::cout << "Bravais chain failuress\n";
+      std::cout << "Bravais chain failures\n";
       for (size_t i = 0; i < g_valueErrors.size(); ++i) {
          std::cout << g_valueErrors[i] << std::endl;
       }

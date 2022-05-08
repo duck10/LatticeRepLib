@@ -248,6 +248,7 @@ int main(int argc, char* argv[])
 
       if ( cmd2=="" || cmd2=="O5" ) Nullspace::Test_CenteredNullspace2And3("O5", "P", S6(LRL_Cell("10 20 15 90 90 90")), v);  // 
       if ( cmd2=="" || cmd2=="O4" ) Nullspace::Test_CenteredNullspace2And3("O4", "C", S6(LRL_Cell("22.742 58.341 23.669 90 90 90")), v);  // 3T86
+      if ( cmd2=="" || cmd =="O4B") Nullspace::Test_CenteredNullspace2And3("O4B", "C", S6(LRL_Cell("22.742 58.341 23.669 90 90 90")), v);  // 3T86
       if ( cmd2=="" || cmd2=="O2" ) Nullspace::Test_CenteredNullspace2And3("O2", "I", S6(LRL_Cell("26.22 44.359 52.336 90 90 90")), v);  // 1S23
       if ( cmd2=="" || cmd2=="O1A") Nullspace::Test_CenteredNullspace2And3("O1A", "F", S6(LRL_Cell("59.94 81.33 26.86 90 90 90")), v);  // 200D // needs circle from quartet
       if ( cmd2=="" || cmd2=="O1B") Nullspace::Test_CenteredNullspace2And3("O1B", "I", S6(LRL_Cell("42.546 53.084 64.357 90 90 90")), v);  // 3CP0
