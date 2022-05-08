@@ -107,7 +107,7 @@ bool LRL_ReadLatticeData::SetD7Data( const std::string& inputDataType, const std
 
 bool LRL_ReadLatticeData::SetG6Data( const std::string& inputDataType, const std::vector<double>& fields ) {
    const bool test = IsLatticeName( m_inputDataType, vG6_names );
-   if (test) {
+   if (test && fields.size() >= 6) {
       m_cell = LRL_Cell( G6( fields ) );
       m_lattice = "P";
    }
@@ -167,7 +167,7 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
       if (toReturn.size() < 6 && m_inputDataType != "RANDOM") {
          toReturn.clear();
          if ( m_lattice != ";" && (!s.empty()) && s != " ")
-            std::cout << "input line rejected, invalid cell A " << s << std::endl;
+            std::cout << "input line rejected, invalid cell A: " << s << std::endl;
          m_lattice = "";
          m_cell.SetValid(false);
          return std::vector<double>();
@@ -199,12 +199,17 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
 
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
    std::vector<double> fields = GetFieldsForCellFromString(s);
+   if (s.length() == 0 || s[0] == ';') return;
+   if (fields.size() < 6) {
+      std::cout << "input line rejected, insufficient data  " << s << std::endl;
+      return;
+   }
 
    bool valid = StringToCell(fields);
 
    if (!valid || !m_cell.GetValid()) {
       if (s[0] != ';' && (!s.empty()) && s != " ")
-         std::cout << "input line rejected, invalid cell B " << s << std::endl;
+         std::cout << "input line rejected, invalid cell B: " << s << std::endl;
       m_lattice = "";
       m_cell.SetValid(false);
    }
@@ -255,6 +260,7 @@ LRL_ReadLatticeData LRL_ReadLatticeData::CreateLatticeData(const std::string& s)
 
 LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
    std::getline(std::cin, m_strCell);
+   if (m_strCell.length() > 0 && m_strCell[0] == ';') return *this;
    if (std::cin && (LRL_StringTools::strToupper(m_strCell.substr(0, 3)) != std::string("END"))) {
       CellReader(m_strCell);
    }

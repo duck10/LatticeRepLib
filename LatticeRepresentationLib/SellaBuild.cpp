@@ -172,15 +172,53 @@ void SellaBuild::OneBound( const std::string& label, const S6_Ordinals& s1, MatS
    StoreAllReflections( label, s6temp, transformations );
 }
 
+std::vector<S6> MakeAllReflections(const S6& s) {
+   std::vector<S6> v;
+   static std::vector<MatS6> refls = MatS6::GetReflections();
+   for (size_t i = 0; i < refls.size(); ++i) {
+      v.push_back(refls[i] * s);
+   }
+   return v;
+}
+
 void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6, MatS6 transformations ) {
+   static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
+
    const std::vector<size_t> v = FindS6Zeros( s6 );
    const size_t nzeros = v.size( );
+
+   const size_t totalTransformationCount = store.GetTotalSampleCount();
+   const size_t itemTransformationCount = store.GetItemCount(label);
 
    if (nzeros == 0) {
       return;
    } else if (nzeros == 1) {
       OneBound( label, s6, transformations );
-   } else {
+   }
+   else if (nzeros == 2) {
+
+
+      const S6 s1 = MultiplyUsingFunction(fnRedn[v[0]], s6);
+      const S6 s2 = MultiplyUsingFunction(fnRedn[v[1]], s6);
+      StoreAllReflections(label, s1, transformations);
+      StoreAllReflections(label, s2, transformations);
+
+      const std::vector<S6> reflected1 = MakeAllReflections(s1);
+      const std::vector<S6> reflected2 = MakeAllReflections(s2);
+
+      for (size_t i = 0; i < reflected1.size(); ++i) {
+         StoreAllReflections(label,
+            MultiplyUsingFunction(fnRedn[v[1]], reflected1[i]), transformations);
+      }
+
+      for (size_t i = 0; i < reflected2.size(); ++i) {
+         StoreAllReflections(label,
+            MultiplyUsingFunction(fnRedn[v[0]], reflected2[i]), transformations);
+      }
+
+
+   }
+   else {
       for (size_t i = 0; i < v.size( ); ++i) {
          S6_Ordinals temp( s6 );
          temp[v[i]] = DBL_MIN;

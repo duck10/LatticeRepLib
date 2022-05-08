@@ -529,6 +529,11 @@ public:
    Delone_O4();
    ~Delone_O4() {}
 };
+class Delone_O4B : public GenerateDeloneBase {
+public:
+   Delone_O4B();
+   ~Delone_O4B() {}
+};
 class Delone_O5 : public GenerateDeloneBase {
 public:
    Delone_O5();
