@@ -146,7 +146,7 @@ double GeneratePairsOfTestData::PositiveDistance(const S6& s6) {
    return sqrt(sum / sqsum);
 }
 
-static const std::string types[] = { std::string("C1 (cI)"), std::string("C3 (cF)"), std::string("C5 (cP)"), std::string("T1 (tI)"), std::string("t2 (tI)"), std::string("t5 (tP)"), std::string("R1 (rP)"), std::string("R3 (rP)"), std::string("O1A (oF)"), std::string("O1B (oI)"), std::string("O2 (oI)"), std::string("O3 (oI)"), std::string("O4 (oS)"), std::string("O4B (oS)"), std::string("O5 (oP)"), std::string("M1A (mC)"), std::string("M1B (mC)"), std::string("M2B (mC)"), std::string("M2A (mC)"), std::string("M3 (mC)"), std::string("M4 (mP)"), std::string("A1 (aP)"), std::string("A2 (aP)"), std::string("A3 (aP)"), std::string("H4 (hP)") };
+static const std::string types[] = { std::string("C1 (cI)"), std::string("C3 (cF)"), std::string("C5 (cP)"), std::string("T1 (tI)"), std::string("t2 (tI)"), std::string("t5 (tP)"), std::string("R1 (rP)"), std::string("R3 (rP)"), std::string("O1A (oF)"), std::string("O1B (oI)"), std::string("O2 (oI)"), std::string("O3 (oI)"), std::string("O4 (oS)"), /*std::string("O4B (oS)"), */std::string("O5 (oP)"), std::string("M1A (mC)"), std::string("M1B (mC)"), std::string("M2B (mC)"), std::string("M2A (mC)"), std::string("M3 (mC)"), std::string("M4 (mP)"), std::string("A1 (aP)"), std::string("A2 (aP)"), std::string("A3 (aP)"), std::string("H4 (hP)") };
 static const size_t avoidList[] = { 0,1,3,4,8,9 };
 
 bool GeneratePairsOfTestData::IsGoodLatticeTypeForPerturbation(const size_t n) {

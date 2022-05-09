@@ -13,7 +13,7 @@
 #include <string>
  #include <vector>
 //
-const std::vector<std::string> DeloneTypeList::typelist{ "C1","C3","C5","R1","R3","T1","T2","T5","O1A","O1B","O2",/*"O3",*/"O4","O4B","O5","M1A","M1B","M2A"/*,"M2B"*//*,"M3"*/,"M4"/*,"A1","A2","A3"*/,"H4" };
+const std::vector<std::string> DeloneTypeList::typelist{ "C1","C3","C5","R1","R3","T1","T2","T5","O1A","O1B","O2",/*"O3",*/"O4",/*"O4B",*/"O5","M1A","M1B","M2A"/*,"M2B"*//*,"M3"*/,"M4"/*,"A1","A2","A3"*/,"H4" };
 
 std::vector<std::pair<std::string, std::string> > DeloneTypeList::CreateBravaisTypeList() {
    std::vector<std::pair<std::string, std::string> > v;
@@ -30,7 +30,7 @@ std::vector<std::pair<std::string, std::string> > DeloneTypeList::CreateBravaisT
    v.push_back(std::make_pair("O2", "oI"));
    v.push_back(std::make_pair("O3", "oI"));
    v.push_back(std::make_pair("O4", "oS"));
-   v.push_back(std::make_pair("O4B", "oS"));
+   //v.push_back(std::make_pair("O4B", "oS"));
    v.push_back(std::make_pair("O5", "oP"));
    v.push_back(std::make_pair("M1A", "mC"));
    v.push_back(std::make_pair("M1B", "mC"));
@@ -60,7 +60,7 @@ std::vector<std::pair<std::string, std::string> > DeloneTypeList::CreateCharacte
    v.push_back(std::make_pair("O2", "rs0 srt"));
    v.push_back(std::make_pair("O3", "rs0 rs0"));
    v.push_back(std::make_pair("O4", "00r sst"));
-   v.push_back(std::make_pair("O4B", "0r0 sst"));
+   //v.push_back(std::make_pair("O4B", "0r0 sst"));
    v.push_back(std::make_pair("O5", "000 rst"));
    v.push_back(std::make_pair("M1A", "rrs ttu"));
    v.push_back(std::make_pair("M1B", "rst rsu"));
