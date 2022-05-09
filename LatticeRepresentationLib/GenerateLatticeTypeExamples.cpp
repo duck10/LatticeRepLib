@@ -1560,9 +1560,6 @@ RetrieveByName(const std::string& s,
    std::vector<std::shared_ptr<T> > out;
    for (size_t i = 0; i < v.size(); ++i) {
       const std::string name = v[i]->GetName();
-      if (name == "55C") {
-         const int i19191 = 19191;
-      }
       if (s == v[i]->GetName()) out.push_back(v[i]);
    }
    return out;
@@ -1659,9 +1656,6 @@ GenerateDeloneBase::Select(const std::string& s/* = ""*/) const {
    else if (deloneTypes.find(s[0]) != std::string::npos) {
       return RetrieveByDeloneName(s, vglb);
    }
-   //else if (numbers.find(s[1]) != std::string::npos) {
-   //   return RetrieveByDeloneName(s, vglb);
-   //}
    else if (s.size() == 2 && s[1] == 'S') {
       return RetrieveByGeneralBravaisType(s, vglb);
    }

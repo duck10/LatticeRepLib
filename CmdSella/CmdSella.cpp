@@ -214,15 +214,13 @@ int main(int argc, char* argv[])
          if (d != 0.0) g_maxDeltaForMatch = atof(argv[2]);
       }
    }
-   std::cout << "SELLA\n";
+   std::cout << ";SELLA\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
    std::vector<MatS6> reductionMatrices;
 
    const std::vector<S6> vLat = GetInputSellingReducedVectors(inputList, reductionMatrices);
-   //const std::vector<LRL_Cell> cells = CreateCells(input);
    const std::vector<S6> errors = CreateS6Errors(vLat);
-   //const std::vector<LRL_Cell> cellErrors = CreateE3Errors(cells);
 
    //-----------------------------------------------------------------------------------
    std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =

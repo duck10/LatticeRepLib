@@ -394,7 +394,7 @@ Matrix_3x3(const std::string& s) {
 
 std::vector<double> GetVector() const {
    std::vector<double> v(9);
-   for (size_t i = 0; i < 9; ++i) v[i] = (*this)[i];
+   for (int i = 0; i < 9; ++i) v[i] = (*this)[i];
    return v;
 }
 

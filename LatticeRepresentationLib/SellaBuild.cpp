@@ -183,6 +183,7 @@ std::vector<S6> MakeAllReflections(const S6& s) {
 
 void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6, MatS6 transformations ) {
    static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
+   std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
 
    const std::vector<size_t> v = FindS6Zeros( s6 );
    const size_t nzeros = v.size( );
@@ -200,6 +201,7 @@ void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6, 
 
       const S6 s1 = MultiplyUsingFunction(fnRedn[v[0]], s6);
       const S6 s2 = MultiplyUsingFunction(fnRedn[v[1]], s6);
+      StoreAllReflections(label, s6, transformations);
       StoreAllReflections(label, s1, transformations);
       StoreAllReflections(label, s2, transformations);
 
@@ -217,12 +219,67 @@ void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6, 
       }
 
 
+      for (size_t i = 0; i < reflected1.size(); ++i) {
+         StoreAllReflections(label,
+            MultiplyUsingFunction(fnRedn[v[1]], fnRedn[v[0]](reflected1[i])), transformations);
+         StoreAllReflections(label,
+            MultiplyUsingFunction(fnRedn[v[0]], fnRedn[v[1]](reflected1[i])), transformations);
+      }
+
    }
    else {
-      for (size_t i = 0; i < v.size( ); ++i) {
-         S6_Ordinals temp( s6 );
-         temp[v[i]] = DBL_MIN;
-         ProcessZeros( label, temp, transformations );
+
+      for (size_t i = 0; i < 3; ++i) {
+         S6 onlyTwoZeros(s6);
+         onlyTwoZeros[v[i]] = DBL_MIN;
+         ProcessZeros(label, onlyTwoZeros, transformations);
+      }
+      const S6 s1 = MultiplyUsingFunction(fnRedn[v[0]], s6);
+      const S6 s2 = MultiplyUsingFunction(fnRedn[v[1]], s6);
+      const S6 s3 = MultiplyUsingFunction(fnRedn[v[2]], s6);
+      StoreAllReflections(label, s6, transformations);
+      StoreAllReflections(label, s1, transformations);
+      StoreAllReflections(label, s2, transformations);
+      StoreAllReflections(label, s3, transformations);
+
+
+      // now process all three
+      const S6 sM1 = MultiplyUsingFunction(fnRedn[v[0]], s6);
+      const S6 sM2 = MultiplyUsingFunction(fnRedn[v[1]], s6);
+      const S6 sM3 = MultiplyUsingFunction(fnRedn[v[2]], s6);
+
+      const std::vector<S6> reflected1 = MakeAllReflections(sM1);
+      const std::vector<S6> reflected2 = MakeAllReflections(sM2);
+      const std::vector<S6> reflected3 = MakeAllReflections(sM2);
+
+      std::vector<S6> redRefl1 = MakeAllReflections(sM1);
+      std::vector<S6> redRefl2 = MakeAllReflections(sM2);
+      std::vector<S6> redRefl3 = MakeAllReflections(sM2);
+
+      std::vector<S6> allReflRed;
+
+      for (size_t i = 0; i < redRefl1.size(); ++i)
+         allReflRed.push_back(fnRedn[v[0]](redRefl2[i]));  // red1 * red2
+
+      for (size_t i = 0; i < redRefl1.size(); ++i)
+         allReflRed.push_back(fnRedn[v[0]](redRefl3[i]));  // red1 * red2
+
+      for (size_t i = 0; i < redRefl2.size(); ++i)
+         allReflRed.push_back(fnRedn[v[1]](redRefl1[i]));  // red2 * red
+
+      for (size_t i = 0; i < reflected2.size(); ++i)
+         allReflRed.push_back(fnRedn[v[1]](redRefl3[i]));  // red3 * red0
+
+      for (size_t i = 0; i < reflected3.size(); ++i)
+         allReflRed.push_back(fnRedn[v[2]](redRefl1[i]));  // red1 * red0
+
+      for (size_t i = 0; i < reflected3.size(); ++i)
+         allReflRed.push_back(fnRedn[v[2]](redRefl2[i]));  // red1 * red0
+
+
+
+      for (size_t i = 0; i < allReflRed.size(); ++i) {
+         StoreAllReflections(label, allReflRed[i], transformations);
       }
    }
 
