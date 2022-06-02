@@ -4,10 +4,10 @@ const std::vector<LabeledSellaMatrices> LabeledSellaMatrices::projectors = Creat
 const std::vector<LabeledSellaMatrices> LabeledSellaMatrices::perps = CreateAllPerps( );
 const std::vector<LabeledSellaMatrices> LabeledSellaMatrices::toCanons = CreateAllToCanon( );
 
+/*  A1   */
 LabeledSellaMatrices LabeledSellaMatrices::CreatePerps_A1() {
    std::vector<MatS6> vm;
 
-   /*  A1   */
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
    return LabeledSellaMatrices("A1", vm);
 }
@@ -374,36 +374,6 @@ LabeledSellaMatrices LabeledSellaMatrices::CreatePerps_T5() {
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, -0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, -0.5, 0, 0.5));
    vm.push_back(MatS6(1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, -0.5, 0, 0, 0, 0.5));
    return LabeledSellaMatrices("T5", vm);
-}
-
-std::vector<LabeledSellaMatrices> LabeledSellaMatrices::CreateAllPerps() {
-   std::vector< LabeledSellaMatrices> vlsm;
-   vlsm.push_back(CreatePerps_C1());
-   vlsm.push_back(CreatePerps_C3());
-   vlsm.push_back(CreatePerps_C5());
-   vlsm.push_back(CreatePerps_R1());
-   vlsm.push_back(CreatePerps_R3());
-   vlsm.push_back(CreatePerps_T1());
-   vlsm.push_back(CreatePerps_T2());
-   vlsm.push_back(CreatePerps_T5());
-   vlsm.push_back(CreatePerps_O1A());
-   vlsm.push_back(CreatePerps_O1B());
-   vlsm.push_back(CreatePerps_O2());
-   vlsm.push_back(CreatePerps_O3());
-   vlsm.push_back(CreatePerps_O4());
-   vlsm.push_back(CreatePerps_O5());
-   vlsm.push_back(CreatePerps_M1A());
-   vlsm.push_back(CreatePerps_M1B());
-   vlsm.push_back(CreatePerps_M2A());
-   vlsm.push_back(CreatePerps_M2B());
-   vlsm.push_back(CreatePerps_M3());
-   vlsm.push_back(CreatePerps_M4());
-   vlsm.push_back(CreatePerps_A1());
-   vlsm.push_back(CreatePerps_A2());
-   vlsm.push_back(CreatePerps_A3());
-   vlsm.push_back(CreatePerps_H4());
-
-   return vlsm;
 }
 
 LabeledSellaMatrices LabeledSellaMatrices::CreatePrjs_A1() {
@@ -793,36 +763,6 @@ LabeledSellaMatrices LabeledSellaMatrices::CreatePrjs_T5() {
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0.5));
    vm.push_back(MatS6(0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0.5));
    return LabeledSellaMatrices("T5", vm);
-}
-
-std::vector<LabeledSellaMatrices> LabeledSellaMatrices::CreateAllPrjs() {
-   std::vector< LabeledSellaMatrices> vlsm;
-   vlsm.push_back(CreatePrjs_C1());
-   vlsm.push_back(CreatePrjs_C3());
-   vlsm.push_back(CreatePrjs_C5());
-   vlsm.push_back(CreatePrjs_R1());
-   vlsm.push_back(CreatePrjs_R3());
-   vlsm.push_back(CreatePrjs_T1());
-   vlsm.push_back(CreatePrjs_T2());
-   vlsm.push_back(CreatePrjs_T5());
-   vlsm.push_back(CreatePrjs_O1A());
-   vlsm.push_back(CreatePrjs_O1B());
-   vlsm.push_back(CreatePrjs_O2());
-   vlsm.push_back(CreatePrjs_O3());
-   vlsm.push_back(CreatePrjs_O4());
-   vlsm.push_back(CreatePrjs_O5());
-   vlsm.push_back(CreatePrjs_M1A());
-   vlsm.push_back(CreatePrjs_M1B());
-   vlsm.push_back(CreatePrjs_M2A());
-   vlsm.push_back(CreatePrjs_M2B());
-   vlsm.push_back(CreatePrjs_M3());
-   vlsm.push_back(CreatePrjs_M4());
-   vlsm.push_back(CreatePrjs_A1());
-   vlsm.push_back(CreatePrjs_A2());
-   vlsm.push_back(CreatePrjs_A3());
-   vlsm.push_back(CreatePrjs_H4());
-
-   return vlsm;
 }
 
 LabeledSellaMatrices LabeledSellaMatrices::CreateToCanon_A1( ) {
@@ -1273,3 +1213,63 @@ std::vector<LabeledSellaMatrices> LabeledSellaMatrices::CreateAllToCanon( ) {
    return vlsm;
 }
 
+std::vector<LabeledSellaMatrices> LabeledSellaMatrices::CreateAllPrjs() {
+   std::vector< LabeledSellaMatrices> vlsm;
+   vlsm.push_back(CreatePrjs_C1());
+   vlsm.push_back(CreatePrjs_C3());
+   vlsm.push_back(CreatePrjs_C5());
+   vlsm.push_back(CreatePrjs_R1());
+   vlsm.push_back(CreatePrjs_R3());
+   vlsm.push_back(CreatePrjs_T1());
+   vlsm.push_back(CreatePrjs_T2());
+   vlsm.push_back(CreatePrjs_T5());
+   vlsm.push_back(CreatePrjs_O1A());
+   vlsm.push_back(CreatePrjs_O1B());
+   vlsm.push_back(CreatePrjs_O2());
+   vlsm.push_back(CreatePrjs_O3());
+   vlsm.push_back(CreatePrjs_O4());
+   vlsm.push_back(CreatePrjs_O5());
+   vlsm.push_back(CreatePrjs_M1A());
+   vlsm.push_back(CreatePrjs_M1B());
+   vlsm.push_back(CreatePrjs_M2A());
+   vlsm.push_back(CreatePrjs_M2B());
+   vlsm.push_back(CreatePrjs_M3());
+   vlsm.push_back(CreatePrjs_M4());
+   vlsm.push_back(CreatePrjs_A1());
+   vlsm.push_back(CreatePrjs_A2());
+   vlsm.push_back(CreatePrjs_A3());
+   vlsm.push_back(CreatePrjs_H4());
+
+   return vlsm;
+}
+
+
+std::vector<LabeledSellaMatrices> LabeledSellaMatrices::CreateAllPerps() {
+   std::vector< LabeledSellaMatrices> vlsm;
+   vlsm.push_back(CreatePerps_C1());
+   vlsm.push_back(CreatePerps_C3());
+   vlsm.push_back(CreatePerps_C5());
+   vlsm.push_back(CreatePerps_R1());
+   vlsm.push_back(CreatePerps_R3());
+   vlsm.push_back(CreatePerps_T1());
+   vlsm.push_back(CreatePerps_T2());
+   vlsm.push_back(CreatePerps_T5());
+   vlsm.push_back(CreatePerps_O1A());
+   vlsm.push_back(CreatePerps_O1B());
+   vlsm.push_back(CreatePerps_O2());
+   vlsm.push_back(CreatePerps_O3());
+   vlsm.push_back(CreatePerps_O4());
+   vlsm.push_back(CreatePerps_O5());
+   vlsm.push_back(CreatePerps_M1A());
+   vlsm.push_back(CreatePerps_M1B());
+   vlsm.push_back(CreatePerps_M2A());
+   vlsm.push_back(CreatePerps_M2B());
+   vlsm.push_back(CreatePerps_M3());
+   vlsm.push_back(CreatePerps_M4());
+   vlsm.push_back(CreatePerps_A1());
+   vlsm.push_back(CreatePerps_A2());
+   vlsm.push_back(CreatePerps_A3());
+   vlsm.push_back(CreatePerps_H4());
+
+   return vlsm;
+}

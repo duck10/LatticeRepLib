@@ -188,6 +188,7 @@
     <ClCompile Include="Niggli_Types.cpp" />
     <ClCompile Include="ReadTypedData.cpp" />
     <ClCompile Include="S6.cpp" />
+    <ClCompile Include="S6BoundaryTransforms.cpp" />
     <ClCompile Include="S6Dist.cpp" />
     <ClCompile Include="D7.cpp" />
     <ClCompile Include="D7Dist.c" />
@@ -250,6 +251,7 @@
     <ClInclude Include="ParseData.h" />
     <ClInclude Include="ReadTypedData.h" />
     <ClInclude Include="S6.h" />
+    <ClInclude Include="S6BoundaryTransforms.h" />
     <ClInclude Include="S6Dist.h" />
     <ClInclude Include="D7.h" />
     <ClInclude Include="D7Dist.h" />

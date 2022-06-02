@@ -109,15 +109,17 @@ MatS6 LabeledDeloneTypeMatrices::ProjectorFromVector(const std::string& label, c
          m[Index6(k, j)] = m[Index6(j, k)];
       }
    }
-
-	//std::cout << label << "   " << s << std::endl;
-   //std::cout << m << std::endl << std::endl;
    return m;
 }
 
-//
 static std::string WriteOneNumber(const double d) {
    std::ostringstream ostr;
+   /*
+   * This is done so that _these_ fraction are not
+   * written to code as decimals. If they were, then
+   * there would truncation error. Let the compiler 
+   * work out the best representation.
+   */
    if (abs(d - 1.0 / 3.0) < 1.0E-8) ostr << "1.0/3.0";
    else if (abs(d + 1.0 / 3.0) < 1.0E-8) ostr << "-1.0/3.0";
    else if (abs(d - 2.0 / 3.0) < 1.0E-8) ostr << "2.0/3.0";
@@ -130,42 +132,13 @@ static std::string WriteOneNumber(const double d) {
    return ostr.str();
 }
 
-void LabeledDeloneTypeMatrices::DoPerps(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   for (size_t i=0; i<matsForAllDeloneTypes.size(); ++i ) {
-      WriteSellaMatrices("Perp", matsForAllDeloneTypes[i].m_label, matsForAllDeloneTypes[i].m_perps);
-   }
-}
-
-void LabeledDeloneTypeMatrices::DoPrjs(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   for (size_t i = 0; i < matsForAllDeloneTypes.size( ); ++i) {
-      WriteSellaMatrices( "Prj", matsForAllDeloneTypes[i].m_label, matsForAllDeloneTypes[i].m_perps );
-   }
-   for (size_t i = 0; i < matsForAllDeloneTypes.size( ); ++i) {
-      std::cout << matsForAllDeloneTypes[i].GetLabel( ) << "   " << matsForAllDeloneTypes[i].size( ) << std::endl;;
-   }
-}
-
-void LabeledDeloneTypeMatrices::DoToCanon(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   for (size_t i = 0; i < matsForAllDeloneTypes.size(); ++i) {
-      WriteSellaMatrices("ToCanon", matsForAllDeloneTypes[i].m_label, matsForAllDeloneTypes[i].m_toCanons);
-   }
-}
-
-
 std::string LabeledDeloneTypeMatrices::FinalWriteSellaMatrices(const std::string& functionName, const std::string& label, const std::vector<MatS6>& mat) const {
 
-   std::vector<MatS6> vm;
    std::stringstream os;
-
+   os << "\n   std::vector<MatS6> vm_" << functionName << ";\n";
    const std::string name = "   vm_" + functionName + ".push_back(MatS6( ";
-
-
-   //os << class name << std::endl;
-
-   //os << "/*  " << label << "  */" << std::endl;
    for (size_t k = 0; k < mat.size(); ++k) {
       os << name;
-
       for (size_t ll = 0; ll < mat[k].size(); ++ll) {
          os << WriteOneNumber(mat[k][ll]);
          const size_t ssss = mat[k].size() - 1;
@@ -186,58 +159,59 @@ void WriteSellaMatrixBase() {
    std::cout << "};" << std::endl << std::endl;
 }
 
+std::string LabeledDeloneTypeMatrices::WriteMatrixTypes(
+   const std::string& label, 
+   const std::string& functionHead,
+   const std::string& matrixType,
+   const std::vector<MatS6>& vm) const {
+
+   std::stringstream s;
+   
+   const std::string sellaMatricesClassName = "LabeledSellaMatrices::Create"
+      + functionHead + matrixType + "_"
+      + label;
+
+   
+      const size_t count = vm.size();
+      s << "/*  " + label +"  */\n";
+      s << "LabeledSellaMatrices " << sellaMatricesClassName << "() {";
+      s << "// count = " << count;
+      s << FinalWriteSellaMatrices(matrixType, label, vm)/* << std::endl*/;
+      s << "   return LabeledSellaMatrices(\"" << label << "\", vm_";
+      s << matrixType << ");" << std::endl;
+      s << "}" << std::endl;
+
+      return s.str();
+}
+
 void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::vector<LabeledDeloneTypeMatrices>& matsForAllDeloneTypes) const {
-   if (false) {
-      DoPerps(matsForAllDeloneTypes);
-      DoPrjs(matsForAllDeloneTypes);
-      DoToCanon(matsForAllDeloneTypes);
-   }
 
    WriteSellaMatrixBase();
 
    for (size_t i = 0; i < matsForAllDeloneTypes.size(); ++i) {
-      const LabeledDeloneTypeMatrices ldmat = matsForAllDeloneTypes[i];
-
-      std::string s;
-      const std::string sellaMatricesClassName = "SellaMatrices_" + ldmat.GetLabel();
-      std::cout << "class " << sellaMatricesClassName <<
-         " : public SellaMatrixBase()" << " {" << std::endl;
-
-      std::cout << "\n void " << sellaMatricesClassName << "()\n : SellaMatrixBase() { ";
-
-      for (size_t k = 0; k < ldmat.m_perps.size(); ++k) {
-         //std::cout << "// prj" << std::endl;
-         s = FinalWriteSellaMatrices("prjs", ldmat.GetLabel(), ldmat.m_prjs)/* << std::endl*/;
-         s += FinalWriteSellaMatrices("perps", ldmat.GetLabel(), ldmat.m_perps)/* << std::endl*/;
-         s += FinalWriteSellaMatrices("toCanons", ldmat.GetLabel(), ldmat.m_toCanons)/* << std::endl*/;
-      }
-
-      std::cout << std::endl;
-      std::cout << s;
-      std::cout << "};\n" << std::endl;
-
+      const std::string s = WriteMatrixTypes(
+         matsForAllDeloneTypes[i].GetLabel(),
+         "",
+         "Perps",
+         matsForAllDeloneTypes[i].m_perps);
+      std::cout << s << std::endl;
    }
-}
 
-void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::string& functionName, const std::string& label, const std::vector<MatS6>& mat) const {
-
-   std::cout << "std::vector<LabeledSellaMatrices> " << functionName << "() {" << std::endl;
-   std::vector<MatS6> vm;
-
-   std::cout << "   std::vector<MatS6> vm;\n";
-
-      std::cout << "/*  " << label << "  */" << std::endl;
-      for (size_t k = 0; k < mat.size(); ++k) {
-         std::cout << "   vm.push_back(MatS6(";
-
-         for (size_t ll = 0; ll < mat[k].size(); ++ll) {
-            std::cout << WriteOneNumber(mat[k][ll]);
-            const size_t ssss = mat[k].size() - 1;
-            std::cout << ((ll < ssss) ? "," : "));\n\n");
-         }
-      }
-      std::cout << std::endl;
-      std::cout << "   return LabeledSellaMatrices(\"" << label << "\", vm);" << std::endl;
-
-   std::cout << "}   // end of " << functionName << std::endl << std::endl;
+   for (size_t i = 0; i < matsForAllDeloneTypes.size(); ++i) {
+      const std::string s = WriteMatrixTypes(
+         matsForAllDeloneTypes[i].GetLabel(),
+         "",
+         "Prjs",
+         matsForAllDeloneTypes[i].m_prjs);
+      std::cout << s << std::endl;
+   }
+   
+   for (size_t i = 0; i < matsForAllDeloneTypes.size(); ++i) {
+      const std::string s = WriteMatrixTypes(
+         matsForAllDeloneTypes[i].GetLabel(),
+         "",
+         "ToCanons",
+         matsForAllDeloneTypes[i].m_toCanons);
+      std::cout << s << std::endl;
+   }
 }
