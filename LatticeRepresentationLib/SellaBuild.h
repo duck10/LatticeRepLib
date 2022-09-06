@@ -23,7 +23,6 @@ public:
    double TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm);
    void TestAllTypes(const S6& s6);
    void TestPerps();
-   std::vector<std::pair<std::string, double> > GetVectorOfFits(const S6& s6);
    void ShowIndexResults() const;
    const std::map<std::string, std::vector<S6_Ordinals> >& SellaBuildMap() { return themap; }
 
@@ -37,10 +36,13 @@ private:
 
 private:
    void ProcessItemStoreToVectorMap();
-   void StoreAllReflections(const std::string& label, const S6_Ordinals& s1, const MatS6& transformations);
-   void OneBound(const std::string& label, const S6_Ordinals& s1, MatS6 transformations);
-   void ProcessZeros(const std::string& label, const S6_Ordinals& s6, MatS6 transformations);
+   void StoreAllReflections(const std::string& label, const S6_Ordinals& s);
+   void OneBound(const std::string& label, const S6_Ordinals& s1, const size_t zeroBound );
+   void ProcessZeros(const std::string& label, const S6_Ordinals& s6 );
    void Expand(const std::string& label, const MatS6& m, MatS6 transformations);
+   void Expand(const std::string& label, const S6& sample);
+   void ProcessTwoZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros);
+   void ProcessThreeZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros);
 
    static bool FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ordinals s6);
    static S6 MakeSampleType(const MatS6& m);

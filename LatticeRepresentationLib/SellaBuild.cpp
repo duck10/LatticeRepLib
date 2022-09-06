@@ -4,16 +4,18 @@
 #include "GenerateRandomLattice.h"
 #include "LRL_ToString.h"
 #include "LRL_MaximaTools.h"
+#include "S6BoundaryTransforms.h"
 #include "S6_Ordinals.h"
 #include "S6Dist.h"
 #include "Selling.h"
 
 std::vector< std::pair<std::string, MatS6> > SellaBuild::vDeloneTypes = Delone::LoadLabeledLatticeTypeProjectors();
+static const std::vector<MatS6> g_refls = MatS6::GetReflections();
+static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
 
-void WriteSellMatrixBase() {}
 
 SellaBuild::SellaBuild() {
-   store.SetMaxItemStore(350);
+   store.SetMaxItemStore(20000);
 }
 
 std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
@@ -24,7 +26,8 @@ std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
 
    for (size_t i = 0; i < vDeloneTypes.size(); ++i) {
       transformations = transformations.unit();
-      Expand(vDeloneTypes[i].first, vDeloneTypes[i].second, transformations);
+      //Expand(vDeloneTypes[i].first, vDeloneTypes[i].second, transformations);
+      Expand(vDeloneTypes[i].first, MakeSampleType(vDeloneTypes[i].second));
    }
    store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
@@ -33,7 +36,6 @@ std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
    LabeledDeloneTypeMatrices lsm2;
    const std::vector<LabeledDeloneTypeMatrices> vtypes = lsm2.ProcessVectorMapToPerpsAndProjectors(themap);
 
-   WriteSellMatrixBase();
    lsm2.WriteSellaMatrices(vtypes);
    return vtypes;
 }
@@ -83,23 +85,6 @@ void SellaBuild::TestAllTypes(const S6& s6) { // assumes that s6 is aleady reduc
    }
 }
 
-std::vector<std::pair<std::string, double> > SellaBuild::GetVectorOfFits(const S6& s6) {
-   S6 reduced;
-   std::vector<std::pair<std::string, double> > v;
-   const double s6norm = s6.norm();
-   if (!s6.IsValid() && s6norm > 1.0E-4) return v;
-
-   const bool b = Selling::Reduce(s6, reduced);
-   if (b) {
-      for (size_t i = 0; i < perps.size(); ++i) {
-         const std::string label = perps[i].GetLabel();
-         const double bestForOneType = TestOneType(label, reduced, perps[i].GetMatrices());
-         v.push_back(std::make_pair(label, bestForOneType));
-      }
-   }
-   return v;
-}
-
 bool IsNotDup(const std::vector<MatS6>& v, const MatS6& m) {
    for (size_t i = 0; i < v.size(); ++i) {
       if ((v[i] - m).norm() < 1.0E-4) return false;
@@ -119,39 +104,90 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
    return v;
 }
 
-template<typename T>
-S6_Ordinals MultiplyUsingFunction( T refl, const S6_Ordinals& so )
-{
-   S6_Ordinals s1( so );
-   s1 = refl( s1 );
-   s1.m_ordinals = refl( s1.m_ordinals );
-   return s1;
-}
-
-void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinals& s1in, const MatS6& transformations ) {
-   std::vector< S6( *)(const S6&)> refl = S6::SetRelectionFunctions( );
+void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinals& s1in ) {
+   const std::vector< S6( *)(const S6&)> refl = S6::SetRelectionFunctions( );
    S6_Ordinals s1( s1in );
 
    for (size_t i = 0; i < refl.size( ); ++i) {
-      store.Store( label, MultiplyUsingFunction( refl[i], s1 ) );
+      store.Store( label, refl[i](s1 ) );
    }
    //store.ShowResults();
 }
 
+void SellaBuild::Expand(const std::string& label, const S6& sample) {
+   const size_t nzeros = sample.CountZeros();
+   const std::vector<size_t> vZeros = FindS6Zeros(sample);
+
+   std::vector<MatS6> vt;
+
+   if (nzeros == 0) {
+      S6BoundaryMatricesZero smz;
+      vt = smz.GetVector();
+   }
+   else if ( nzeros == 1) {
+      S6BoundaryMatricesOne smo(vZeros[0]);
+         vt = smo.GetVector();
+   }
+   else if (nzeros == 2) {
+      S6BoundaryMatricesThree smthr(2, 3, 5);
+      vt = smthr.GetVector();
+   }      
+   else if (nzeros == 3) {
+      S6BoundaryMatricesThree smthr(2, 3, 5);
+      vt = smthr.GetVector();
+   }
+
+   for (size_t i = 0; i < vt.size(); ++i) {
+      store.Store(label, vt[i] * sample);
+   }
+   
+   const int i19191 = 19191;
+
+
+      
+   
+   //switch (nzeros) {
+   //case 0:
+   //   S6BoundaryMatricesZero smz;
+   //   vt = smz.GetVector();
+   //   break;
+   //case 1:
+   //   S6BoundaryMatricesOne smo(0);
+   //   vt = smo.GetVector();
+   //   break;
+   //case 2:
+   //   S6BoundaryMatricesTwo smtwo(2, 3);
+   //   vt = smtwo.GetVector();
+   //   break;
+   //case 3:
+   //   S6BoundaryMatricesThree smthr(2, 3, 5);
+   //   vt = smthr.GetVector();
+   //   break;
+   //default:
+   //   throw "this should never happen";
+   //   break;
+   //}
+   //store.ShowResults();
+
+}
+
 void SellaBuild::Expand(const std::string& label, const MatS6& m, MatS6 transformations) {
    const S6_Ordinals s6 = MakeSampleType(m);
+   const std::vector<size_t> vZeros = FindS6Zeros(s6);
 
    if (s6.IsValid()) {
       switch (s6.CountZeros()) {
       case 0:
-         StoreAllReflections(label, s6, transformations);
+         StoreAllReflections(label, s6 );
          break;
       case 1:
-         OneBound(label, s6, transformations);
+         OneBound(label, s6, vZeros[0]);
          break;
       case 2:
+         ProcessTwoZeros(label, s6, vZeros);
+         break;
       case 3:
-         ProcessZeros(label, s6, transformations);
+         ProcessThreeZeros(label, s6, vZeros);
          break;
       default:
          throw "this should never happen";
@@ -161,128 +197,95 @@ void SellaBuild::Expand(const std::string& label, const MatS6& m, MatS6 transfor
    //store.ShowResults();
 }
 
-void SellaBuild::OneBound( const std::string& label, const S6_Ordinals& s1, MatS6 transformations ) {
-   static const std::vector< S6( *)(const S6&)> fnRedn = S6Dist::SetVCPFunctions( );
-
-   size_t nzero = 0;
-   for (size_t i = 0; i < 6; ++i) if (s1[i] == 0) nzero = i;
-   StoreAllReflections( label, s1, transformations );
-   const S6_Ordinals s6temp = MultiplyUsingFunction( fnRedn[nzero], s1 );
-   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! doesn't accumulate the transformation here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   StoreAllReflections( label, s6temp, transformations );
+void SellaBuild::OneBound(const std::string& label, const S6_Ordinals& s1,
+   const size_t zeroBound)
+{
+   const S6_Ordinals s6temp = fnRedn[zeroBound](s1);
+   StoreAllReflections(label, s6temp);
 }
 
-std::vector<S6> MakeAllReflections(const S6& s) {
-   std::vector<S6> v;
-   static std::vector<MatS6> refls = MatS6::GetReflections();
-   for (size_t i = 0; i < refls.size(); ++i) {
-      v.push_back(refls[i] * s);
-   }
-   return v;
+void SellaBuild::ProcessTwoZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros) {
+
+   // handle input as if no zeros, just reflections
+   StoreAllReflections(label, s6);
+
+   // Process each zero by itself
+   OneBound(label, s6, vZeros[0]);
+   OneBound(label, s6, vZeros[1]);
+   
+   fnRedn[0](s6);
+   const S6 red1 =  fnRedn[vZeros[0]](s6);
+   const S6 red2 =  fnRedn[vZeros[1]](s6);
+   const S6 red12 = fnRedn[vZeros[0]](red1);
+   const S6 red21 = fnRedn[vZeros[1]](red2);
+   StoreAllReflections(label, red12);
+   StoreAllReflections(label, red21);
+
 }
 
-void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6, MatS6 transformations ) {
-   static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
+void SellaBuild::ProcessThreeZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros) {
+   // base vector
+   StoreAllReflections(label, s6);
+
+   // treat each separate bound
+   const S6 red_0 = fnRedn[vZeros[0]](s6);
+   const S6 red_1 = fnRedn[vZeros[1]](s6);
+   const S6 red_2 = fnRedn[vZeros[2]](s6);
+   
+   StoreAllReflections(label, red_0);
+   StoreAllReflections(label, red_1);
+   StoreAllReflections(label, red_2);
+
+
+   // treat each pair of zeros
+   const S6 red_1_0 = fnRedn[vZeros[1]](red_0);
+   const S6 red_2_0 = fnRedn[vZeros[2]](red_0);
+   const S6 red_0_1 = fnRedn[vZeros[0]](red_1);
+   const S6 red_2_1 = fnRedn[vZeros[2]](red_1);
+   const S6 red_0_2 = fnRedn[vZeros[0]](red_2);
+   const S6 red_1_2 = fnRedn[vZeros[1]](red_2);
+
+   StoreAllReflections(label, red_1_0);
+   StoreAllReflections(label, red_2_0);
+   StoreAllReflections(label, red_0_1);
+   StoreAllReflections(label, red_2_1);
+   StoreAllReflections(label, red_0_2);
+   StoreAllReflections(label, red_1_2);
+
+   // now process all three zeros
+   const S6 red_0_1_2 = fnRedn[vZeros[0]](red_1_2);
+   const S6 red_0_2_1 = fnRedn[vZeros[0]](red_2_1);
+   const S6 red_1_0_2 = fnRedn[vZeros[1]](red_0_2);
+   const S6 red_1_2_0 = fnRedn[vZeros[1]](red_2_0);
+   const S6 red_2_0_1 = fnRedn[vZeros[2]](red_0_1);
+   const S6 red_2_1_0 = fnRedn[vZeros[2]](red_1_0);
+
+   StoreAllReflections(label, red_0_1_2);
+   StoreAllReflections(label, red_0_2_1);
+   StoreAllReflections(label, red_1_0_2);
+   StoreAllReflections(label, red_1_2_0);
+   StoreAllReflections(label, red_2_0_1);
+   StoreAllReflections(label, red_2_1_0);
+
+}
+
+void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6 ) {
    std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
 
-   const std::vector<size_t> v = FindS6Zeros( s6 );
-   const size_t nzeros = v.size( );
-
-   const size_t totalTransformationCount = store.GetTotalSampleCount();
-   const size_t itemTransformationCount = store.GetItemCount(label);
+   const std::vector<size_t> vZeros = FindS6Zeros( s6 );
+   const size_t nzeros = vZeros.size( );
 
    if (nzeros == 0) {
       return;
    } else if (nzeros == 1) {
-      OneBound( label, s6, transformations );
+      OneBound( label, s6, vZeros[0]);
    }
    else if (nzeros == 2) {
-
-
-      const S6 s1 = MultiplyUsingFunction(fnRedn[v[0]], s6);
-      const S6 s2 = MultiplyUsingFunction(fnRedn[v[1]], s6);
-      StoreAllReflections(label, s6, transformations);
-      StoreAllReflections(label, s1, transformations);
-      StoreAllReflections(label, s2, transformations);
-
-      const std::vector<S6> reflected1 = MakeAllReflections(s1);
-      const std::vector<S6> reflected2 = MakeAllReflections(s2);
-
-      for (size_t i = 0; i < reflected1.size(); ++i) {
-         StoreAllReflections(label,
-            MultiplyUsingFunction(fnRedn[v[1]], reflected1[i]), transformations);
-      }
-
-      for (size_t i = 0; i < reflected2.size(); ++i) {
-         StoreAllReflections(label,
-            MultiplyUsingFunction(fnRedn[v[0]], reflected2[i]), transformations);
-      }
-
-
-      for (size_t i = 0; i < reflected1.size(); ++i) {
-         StoreAllReflections(label,
-            MultiplyUsingFunction(fnRedn[v[1]], fnRedn[v[0]](reflected1[i])), transformations);
-         StoreAllReflections(label,
-            MultiplyUsingFunction(fnRedn[v[0]], fnRedn[v[1]](reflected1[i])), transformations);
-      }
-
+      ProcessTwoZeros(label, s6, vZeros);
    }
    else {
-
-      for (size_t i = 0; i < 3; ++i) {
-         S6 onlyTwoZeros(s6);
-         onlyTwoZeros[v[i]] = DBL_MIN;
-         ProcessZeros(label, onlyTwoZeros, transformations);
-      }
-      const S6 s1 = MultiplyUsingFunction(fnRedn[v[0]], s6);
-      const S6 s2 = MultiplyUsingFunction(fnRedn[v[1]], s6);
-      const S6 s3 = MultiplyUsingFunction(fnRedn[v[2]], s6);
-      StoreAllReflections(label, s6, transformations);
-      StoreAllReflections(label, s1, transformations);
-      StoreAllReflections(label, s2, transformations);
-      StoreAllReflections(label, s3, transformations);
-
-
-      // now process all three
-      const S6 sM1 = MultiplyUsingFunction(fnRedn[v[0]], s6);
-      const S6 sM2 = MultiplyUsingFunction(fnRedn[v[1]], s6);
-      const S6 sM3 = MultiplyUsingFunction(fnRedn[v[2]], s6);
-
-      const std::vector<S6> reflected1 = MakeAllReflections(sM1);
-      const std::vector<S6> reflected2 = MakeAllReflections(sM2);
-      const std::vector<S6> reflected3 = MakeAllReflections(sM2);
-
-      std::vector<S6> redRefl1 = MakeAllReflections(sM1);
-      std::vector<S6> redRefl2 = MakeAllReflections(sM2);
-      std::vector<S6> redRefl3 = MakeAllReflections(sM2);
-
-      std::vector<S6> allReflRed;
-
-      for (size_t i = 0; i < redRefl1.size(); ++i)
-         allReflRed.push_back(fnRedn[v[0]](redRefl2[i]));  // red1 * red2
-
-      for (size_t i = 0; i < redRefl1.size(); ++i)
-         allReflRed.push_back(fnRedn[v[0]](redRefl3[i]));  // red1 * red2
-
-      for (size_t i = 0; i < redRefl2.size(); ++i)
-         allReflRed.push_back(fnRedn[v[1]](redRefl1[i]));  // red2 * red
-
-      for (size_t i = 0; i < reflected2.size(); ++i)
-         allReflRed.push_back(fnRedn[v[1]](redRefl3[i]));  // red3 * red0
-
-      for (size_t i = 0; i < reflected3.size(); ++i)
-         allReflRed.push_back(fnRedn[v[2]](redRefl1[i]));  // red1 * red0
-
-      for (size_t i = 0; i < reflected3.size(); ++i)
-         allReflRed.push_back(fnRedn[v[2]](redRefl2[i]));  // red1 * red0
-
-
-
-      for (size_t i = 0; i < allReflRed.size(); ++i) {
-         StoreAllReflections(label, allReflRed[i], transformations);
-      }
+      ProcessThreeZeros(label, s6, vZeros);
    }
-
 }
 
 
@@ -316,13 +319,6 @@ std::vector<size_t> SellaBuild::FindS6Zeros(const S6& s) {
    std::vector<size_t> v;
    for (size_t i = 0; i < 6; ++i) if (s[i] == 0.0) v.push_back(i);
    return v;
-}
-
-void SellaBuild::TestPerps() {
-   const G6 g6(" 100 100 100 100 100 100");
-   const LRL_Cell cell(" 10 10 10 89 89 89");
-   const S6 s6(cell);
-   TestAllTypes(s6);
 }
 
 void SellaBuild::ShowIndexResults() const {
