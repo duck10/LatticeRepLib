@@ -109,6 +109,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdDists", "CmdDists\CmdDis
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdSella", "CmdSella\CmdSella.vcxproj", "{BA7C0A37-FD1C-43DA-B2FC-FEBC6CF1221B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prj89", "prj89\prj89.vcxproj", "{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -453,6 +455,14 @@ Global
 		{BA7C0A37-FD1C-43DA-B2FC-FEBC6CF1221B}.Release|x64.Build.0 = Release|x64
 		{BA7C0A37-FD1C-43DA-B2FC-FEBC6CF1221B}.Release|x86.ActiveCfg = Release|Win32
 		{BA7C0A37-FD1C-43DA-B2FC-FEBC6CF1221B}.Release|x86.Build.0 = Release|Win32
+		{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}.Debug|x64.ActiveCfg = Debug|x64
+		{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}.Debug|x64.Build.0 = Debug|x64
+		{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}.Debug|x86.ActiveCfg = Debug|Win32
+		{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}.Debug|x86.Build.0 = Debug|Win32
+		{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}.Release|x64.ActiveCfg = Release|x64
+		{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}.Release|x64.Build.0 = Release|x64
+		{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}.Release|x86.ActiveCfg = Release|Win32
+		{FE48A569-8F88-4C5E-BA0A-C78C7A87503F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
