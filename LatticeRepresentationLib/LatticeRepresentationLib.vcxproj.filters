@@ -173,6 +173,9 @@
     <ClCompile Include="DeloneFitResults.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="S6BoundaryTransforms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -365,6 +368,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DeloneFitResults.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="S6BoundaryTransforms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
