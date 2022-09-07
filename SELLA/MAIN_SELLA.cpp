@@ -426,6 +426,7 @@ void ReportTypeHeirachy(const std::vector<DeloneFitResults>& vDeloneFitResults) 
       size_t kkbest = 0;
       double bestScore = DBL_MAX;
       const std::string thisLattice = heirarchy[i];
+
       for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
          const DeloneFitResults& thisOne = vDeloneFitResults[kk];
          if ((thisLattice == thisOne.GetType()) &&
@@ -524,6 +525,7 @@ int main()
    std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =
       GenerateDeloneBase().Select("");
 
+
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit( sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
@@ -533,6 +535,8 @@ int main()
               NiggliMatchLatticeType(vDeloneFitResults[kk]);
           }
       }
+
+      std::cout << std::endl << "reported distances and zscores (in A^2)" << std::endl;
 
 
 

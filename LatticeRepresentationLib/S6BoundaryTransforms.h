@@ -3,6 +3,9 @@
 
 #include "MatS6.h"
 
+#include <set>
+#include <vector>
+
 class S6BoundaryTransforms {
 public:
    S6BoundaryTransforms();
@@ -46,7 +49,9 @@ private:
 class S6BoundaryMatricesTwo : public S6BoundaryMatricesBase {
 public:
    S6BoundaryMatricesTwo(const size_t n1, const size_t n2);
+   S6BoundaryMatricesTwo(const std::set<size_t>& exclusions, const std::vector<size_t>& zeros);
 private:
+   void ProcessWithTwoZeros(const std::set<size_t>& exclusions, const std::vector<size_t>& zeros);
 };
 
 class S6BoundaryMatricesThree : public S6BoundaryMatricesBase {
