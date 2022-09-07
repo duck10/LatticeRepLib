@@ -65,7 +65,7 @@ int main()
 {
    std::cout << "; SVD" << std::endl;
    std::vector<LRL_ReadLatticeData> inputList;
-   const std::string type = "DC13";    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   const std::string type = "S6";    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    if ( type != "DC13")
       inputList = LRL_ReadLatticeData().ReadLatticeData();
    std::vector<LRL_Cell> vcell;

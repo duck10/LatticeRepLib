@@ -27,7 +27,7 @@ std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
    for (size_t i = 0; i < vDeloneTypes.size(); ++i) {
       transformations = transformations.unit();
       //Expand(vDeloneTypes[i].first, vDeloneTypes[i].second, transformations);
-      Expand(vDeloneTypes[i].first, MakeSampleType(vDeloneTypes[i].second));
+      Expand(std::set<size_t>(), vDeloneTypes[i].first, MakeSampleType(vDeloneTypes[i].second));
    }
    store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
@@ -50,8 +50,7 @@ S6 SellaBuild::MakeSampleType(const MatS6& m) {
    bool again = true;
 
    while (again && count < 10) {
-      const S6 ran = generate.randSellingReduced();
-      s6 = m * ran;
+      s6 = m * generate.randSellingReduced();
       again = !s6.GetValid();
       ++count;
    }
@@ -114,9 +113,43 @@ void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinal
    //store.ShowResults();
 }
 
-void SellaBuild::Expand(const std::string& label, const S6& sample) {
-   const size_t nzeros = sample.CountZeros();
-   const std::vector<size_t> vZeros = FindS6Zeros(sample);
+/*
+Produce a list of the zeros in zeros. The list should have the indices of all
+those zeros in zeros, EXCEPT for the ones in the exclusions.
+*/
+
+std::vector<size_t> SellaBuild::DetermineToProcess(const std::set<size_t>& exclusions,
+   const S6& zeros)
+{ // vZeros contains the INDICES of the zero elements of zeros
+   std::vector<size_t> vZeros = FindS6Zeros(zeros);
+   for (auto it = exclusions.begin(); it != exclusions.end(); ++it)
+   {
+      auto zeroIT = std::find(vZeros.begin(), vZeros.end(), *it);
+      if (zeroIT != vZeros.end()) vZeros.erase(zeroIT);
+   }
+   return vZeros;
+}
+
+
+void SellaBuild::Expand(const std::set<size_t>& exclusions,
+   const std::string& label, const S6& sample) {
+   //const size_t nzeros = sample.CountZeros();
+   //const std::vector<size_t> vZeros = FindS6Zeros(sample);
+   
+   std::vector< std::set<size_t>> excluders{ {0,3}, {1,4}, {2,5}, {0,3}, {1,4}, {2,5} };
+
+   //for (size_t i = 0; i < 6; ++i)
+   //{
+   //   std::set<size_t> ex;
+   //   ex.insert(i);
+   //   ex.insert(2);
+   //   const std::vector<size_t> toProcessX = DetermineToProcess(ex, S6("1 2 0 4 0 0"));
+   //}
+
+   // Still need to consider where two zeros are OPPOSITE!!!!!!!!!!!!!!!!!!
+
+   const std::vector<size_t> toProcess = DetermineToProcess(exclusions, sample);
+   const size_t nzeros = toProcess.size();
 
    std::vector<MatS6> vt;
 
@@ -125,7 +158,7 @@ void SellaBuild::Expand(const std::string& label, const S6& sample) {
       vt = smz.GetVector();
    }
    else if ( nzeros == 1) {
-      S6BoundaryMatricesOne smo(vZeros[0]);
+      S6BoundaryMatricesOne smo(toProcess[0]);
          vt = smo.GetVector();
    }
    else if (nzeros == 2) {

@@ -5,6 +5,7 @@
 #include <cfloat>
 #include <cmath>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -35,12 +36,17 @@ private:
    StoreResults<std::string, std::string> indexstore;
 
 private:
+   std::vector<size_t> DetermineToProcess(const std::set<size_t>& exclusions,
+      const S6& zeros);
+   std::vector<size_t> DetermineToProcess(const S6& zeros,
+      const std::set<size_t>& exclusions) {
+      return DetermineToProcess(exclusions, zeros); }
    void ProcessItemStoreToVectorMap();
    void StoreAllReflections(const std::string& label, const S6_Ordinals& s);
    void OneBound(const std::string& label, const S6_Ordinals& s1, const size_t zeroBound );
    void ProcessZeros(const std::string& label, const S6_Ordinals& s6 );
    void Expand(const std::string& label, const MatS6& m, MatS6 transformations);
-   void Expand(const std::string& label, const S6& sample);
+   void Expand(const std::set<size_t>& exclusions, const std::string& label, const S6& sample);
    void ProcessTwoZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros);
    void ProcessThreeZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros);
 

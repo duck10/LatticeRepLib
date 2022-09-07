@@ -264,7 +264,7 @@ std::string FormatCellData(
  
  
    inputText +=
-      "<text x=\"700\" y=\"450\" font-size=\"20\" >REDUCED:  </text>\n"
+      "<text x=\"700\" y=\"450\" font-size=\"20\" >SELLING REDUCED:  </text>\n"
       "<text x=\"720\" y=\"475\" font-size=\"12\" >" +
       LRL_ToString("Cell ", LRL_Cell_Degrees(reducedCell)) + "</text>\n" +
       "<text x=\"720\" y=\"500\" font-size=\"12\" >" +
@@ -282,7 +282,7 @@ std::string BravaisHeirarchy::ProduceSVG(
    const S6& reducedCell,
    const std::vector<std::pair<std::string, double> >& scores) {
 
-   std::cout << "enter ProduceSVG" << std::endl;
+   //std::cout << "enter ProduceSVG" << std::endl;
    const std::string inputText = "<text x=\"175\" y=\"175\" font-size=\"25\" >SELLA RESULTS  (Angstroms)"
       "</text>\n";
    const std::string reduced = "<text x=\"175\" y=\"210\" font-size=\"25\" >      " +

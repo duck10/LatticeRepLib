@@ -126,6 +126,38 @@ S6BoundaryMatricesTwo::S6BoundaryMatricesTwo(const size_t n1, const size_t n2)
    std::cout << "end of S6BoundaryMatricesTwo" " m_mats.size " << m_mats.size() << std::endl;
 }
 
+void S6BoundaryMatricesTwo::ProcessWithTwoZeros(const std::set<size_t>& exclusions, const std::vector<size_t>& zeros)
+{
+   std::vector<size_t> toProcess;
+   for (size_t i = 0; i < zeros.size(); ++i)
+   {
+      if (exclusions.find(zeros[i]) != exclusions.end())
+      {
+         toProcess.push_back(zeros[i]);
+      }
+   }
+   if (toProcess.size() == 1)
+   {
+      const std::vector<MatS6> out = S6BoundaryMatricesOne(toProcess[0]).GetVector();
+      m_mats.insert(m_mats.end(), out.begin(), out.end());
+   }
+}
+
+S6BoundaryMatricesTwo::S6BoundaryMatricesTwo(const std::set<size_t>& exclusions, const std::vector<size_t>& zeros)
+{
+   std::set<size_t> oneZero;
+   oneZero.insert(zeros[0]);
+   const std::vector<MatS6> out1 = S6BoundaryMatricesOne(zeros[0]).GetVector();
+   const std::vector<MatS6> out12 = S6BoundaryMatricesTwo(
+      oneZero, zeros).GetVector();
+
+   oneZero.clear();
+   oneZero.insert(zeros[1]);
+   const std::vector<MatS6> out2 = S6BoundaryMatricesOne(zeros[1]).GetVector();
+   const std::vector<MatS6> out21 = S6BoundaryMatricesTwo(
+      oneZero, zeros).GetVector();
+}
+
 S6BoundaryMatricesThree::S6BoundaryMatricesThree(
    const std::vector<MatS6>& v1, 
    const std::vector<MatS6>& v2)
