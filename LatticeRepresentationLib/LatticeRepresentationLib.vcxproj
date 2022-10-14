@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="BravaisHeirarchy.cpp" />
     <ClCompile Include="C3.cpp" />
+    <ClCompile Include="C3Plot.cpp" />
     <ClCompile Include="ColorTables.cpp" />
     <ClCompile Include="CS6Dist.c" />
     <ClCompile Include="CS6Dist.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="BasisBase.h" />
     <ClInclude Include="BravaisHeirarchy.h" />
     <ClInclude Include="C3.h" />
+    <ClInclude Include="C3Plot.h" />
     <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="D13.h" />

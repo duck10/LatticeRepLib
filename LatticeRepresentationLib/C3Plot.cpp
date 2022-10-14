@@ -1,0 +1,138 @@
+#include "C3Plot.h"
+#include "LRL_CreateFileName.h"
+#include "LRL_DataToSVG.h"
+#include "LRL_ReadLatticeData.h"
+#include "LRL_ToString.h"
+#include "S6.h"
+
+#include <cmath>
+#include <iostream>
+#include <string>
+#include <vector>
+
+
+double C3Plot::CellScale(const std::vector<S6>& v) {
+   double maxs = -DBL_MAX;
+   for (size_t i = 0; i < v.size(); ++i) {
+      for (size_t kk = 0; kk < 6; ++kk) {
+         maxs = fmax(maxs, -v[i][kk]);
+      }
+   }
+   m_maxScalar = maxs;
+   return maxs;
+}
+
+double C3Plot::CellScaleFactor() {
+   return 0.9 * m_gx / m_maxScalar;
+}
+
+std::string C3Plot::CreatePolylineFromPoints(const size_t scalar, const std::string& width, const std::vector<S6>& v) {
+   CellScale(v);
+   const double cellScale = CellScaleFactor();
+   const ScalarProperties sp(scalar);
+   std::string transform = "<g transform = \"translate( "
+      + LRL_DataToSVG(0) + ", " + LRL_DataToSVG(0)
+      + ")\" >\n";
+
+   const std::string dashMode("");
+   const std::string strokeWidth = "\" stroke-width=\"" + width + "\"";
+   std::string svg = transform + LRL_DataToSVG("   <polyline fill=\"none\" stroke=\"", "black", strokeWidth, "  points=\" ");
+   for (size_t i = 0; i < v.size(); ++i) {
+      const double& s1 = v[i][sp.index1];
+      const double& s2 = v[i][sp.index2];
+      svg += LRL_DataToSVG(s1 * cellScale) + " " + LRL_DataToSVG(s2 * cellScale) + ",  ";
+   }
+
+   svg += "\"/> \n\n";
+   svg += "</g> <!--End of transform -->\n\n";
+   return svg;
+}
+
+
+std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
+
+   CellScale(v);
+   const double cellScale = CellScaleFactor();
+   const ScalarProperties sp(scalar);
+   const std::string defs = "<defs>\n	<circle id = \"circ\"  r=\"3\" stroke = \"black\" fill=\"none\" />\n</defs>\n";
+
+   const std::string scale = LRL_ToString(1);
+   std::string transform = "<g transform = \"translate( "
+      + LRL_DataToSVG(0) + ", " + LRL_DataToSVG(0)
+      +")\" >\n" + defs + "\n";
+   for (size_t i = 0; i < v.size(); ++i) {
+      const std::string x = LRL_DataToSVG_ToQuotedString(v[i][sp.index1]*cellScale);
+      const std::string y = LRL_DataToSVG_ToQuotedString(v[i][sp.index2]*cellScale);
+      const std::string radius = LRL_DataToSVG_ToQuotedString( 3);
+
+      const std::string s = std::string("<use href=\"#circ\"") +
+         " x=" + x +
+         " y=" + y + "/>\n";
+      transform += s;
+
+
+   }
+
+   transform += "</g> <!--End of transform -->\n\n";
+
+   return transform;
+}
+
+
+C3Plot::C3Plot(const int wx, const int wy, const int gx, const int gy)
+   : m_wx(wx)
+   , m_wy(wy)
+   , m_gx(gx)
+   , m_gy(gy)
+   , m_svgIntro(BuildIntro())
+   , m_svgFoot("\n</svg>")
+{
+}
+
+std::string C3Plot::BuildIntro() {
+   const std::string swx = LRL_DataToSVG_ToQuotedString(m_wx);
+   const std::string swy = LRL_DataToSVG_ToQuotedString(m_wy);
+   
+   const std::string filename = LRL_CreateFileName::Create("SEL_", "svg");
+
+   return
+   "<svg width=" + swx + " height=" + swy +
+      " viewBox=\"1 0  " + LRL_DataToSVG(m_wx * 1.2, " ", m_wy * 1.2) +
+      "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" \nxmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
+      "\n<desc>File name  = " + filename + " </desc> """ +
+      "\n\n";
+}
+
+
+std::vector<S6> C3Plot::PrepareCells() {
+   std::vector<S6> v;
+   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   for (size_t i = 0; i < inputList.size(); ++i) {
+      v.push_back(S6(inputList[i].GetCell()));
+   }
+   return v;
+}
+
+S6 C3Plot::FindNearestReflection(const S6& ref, const S6& var) {
+   static const std::vector<MatS6> refl_one = MatS6::GetReflections();
+   double distMin = DBL_MAX;
+   S6 s6min;
+
+   for (size_t i = 0; i < refl_one.size(); ++i) {
+      double d = (ref - refl_one[i] * var).norm();
+      if (d < distMin) {
+         distMin = std::min(distMin, d);
+         s6min = refl_one[i] * var;
+      }
+   }
+   return s6min;
+}
+
+std::vector<S6> C3Plot::FindNearestReflection(const std::vector<S6>& var) {
+   std::vector<S6> out(1, var[0]);
+   for (size_t i = 1; i < var.size(); ++i) {
+      out.push_back(FindNearestReflection(out[i-1], var[i]));
+   }
+   return out;
+}
+
