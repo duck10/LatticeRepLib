@@ -122,12 +122,6 @@
     <ClCompile Include="DeloneType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LRL_LatticeMatcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CS6Dist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -317,12 +311,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DeloneTypeVarietyList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_LatticeMatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="S6M_SellingReduce.h">

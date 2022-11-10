@@ -76,7 +76,12 @@ LRL_LatticeMatcher::LRL_LatticeMatcher()
    , m_matrixGenerationRecursionDepth(2)
    , m_sphereSearchEnlargementfactor(2.0)
    , m_useOLD_Algorithm(false)
-{}
+{
+
+   BuildMatrixBase();
+
+   //BuildMatrixTree();
+}
 
 LRL_LatticeMatcher::LRL_LatticeMatcher(const int matrixGenerationRecursionDepth,
    const double sphereSearchEnlargementfactor,
@@ -89,7 +94,11 @@ LRL_LatticeMatcher::LRL_LatticeMatcher(const int matrixGenerationRecursionDepth,
    , m_matrixGenerationRecursionDepth(matrixGenerationRecursionDepth)
    , m_sphereSearchEnlargementfactor(sphereSearchEnlargementfactor)
    , m_useOLD_Algorithm(m_useOLD_Algorithm)
-{}
+{
+   BuildMatrixBase();
+
+   //BuildMatrixTree();
+}
 
 
 void LRL_LatticeMatcher::FillReflections() {
@@ -321,6 +330,17 @@ S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
    return bestS6;
 }
 
+double LRL_LatticeMatcher::Angle6(const S6& s1, const S6& s2) const {
+   const S6 s1n = s1 / s1.Norm();
+   const S6 s2n = s2 / s2.Norm();
+   const double cosFit =
+      s1n[0] * s2n[0] + s1n[1] * s2n[1] *
+      s1n[2] * s2n[2] + s1n[3] * s2n[3] *
+      s1n[4] * s2n[4] + s1n[5] * s2n[5];
+   const double angle = acos(cosFit) * 180.0 / (4.0 * atan(1.0));
+   return angle;
+}
+
 S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) const {
    const static bool debug = false;
    std::pair<double, MV_Pair> closest = FindClosest(sample);
@@ -336,6 +356,11 @@ S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) const {
          std::cout << " invalid in InternalMatchReference " << i << " " << vClosest[i].GetS6() << std::endl;
          throw("this should not happen, and if it's invalid here, I have no idea how to proceed. It might mean that there is bad data in MV_Pair");
       }
+   }
+
+   for (size_t i = 0; i < vClosest.size(); ++i) {
+      const double angle = Angle(sample, vClosest[i].GetS6());
+      std::cout << i << " " << angle << std::endl;
    }
 
    return FindBestAmongMany(vClosest, sample);

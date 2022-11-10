@@ -27,7 +27,6 @@ public:
    //   const int wx = 2000, const int wy = 2000, const std::string& s = "");
 
    S6 FindNearestReflection(const S6& ref, const S6& var);
-   std::vector<S6> FindNearestReflection(const std::vector<S6>& var);
    std::vector<S6> PrepareCells();
    std::string CreatePolylineFromPoints(const size_t scalarr, const std::string& width, const std::vector<S6>& v);
 protected:

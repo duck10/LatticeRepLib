@@ -60,10 +60,10 @@ public:
    MatS6 GetReferenceMatrix() const { return m_matReference; }
    std::vector<MV_Pair> FindNearToClosest(const double d, const MV_Pair& closest) const;
    S6 FindBestAmongMany(const std::vector<MV_Pair>& vClosest, const S6& closest) const;
-   S6 MatchReference(const S6& s) const;
-   std::vector<S6> MatchReference(const std::vector<S6>& samples, const MatS6& mat_reference) const;
-   std::vector<S6> MatchReferenceForExpandedSample( const std::vector<S6>& vs ) const;
-   S6 InternalMatchReference(const S6& s) const;
+   S6 MatchReference(const S6& s);
+   std::vector<S6> MatchReference(const std::vector<S6>& samples, const MatS6& mat_reference);
+   std::vector<S6> MatchReferenceForExpandedSample( const std::vector<S6>& vs );
+   S6 InternalMatchReference(const S6& s);
    std::pair<double, MV_Pair> FindClosest(const S6& s) const;
    void ApplyReflections( const std::vector<MatS6>& t );
    size_t size( ) const { return m_MVtree.size( ); }
@@ -77,6 +77,9 @@ public:
    int GetRecursionDepth() const { return m_matrixGenerationRecursionDepth; }
    void PrintMVtree() const;
    double GetMaxRadius() const;
+   double Angle6(const S6& s1, const S6& s2) const;
+   void SetNewAngleAgreement( double angle);
+   std::vector<double> GetAngleAgreements(void) const { return m_angleAgreement; }
 
 protected: // functions
    void BuildReferenceTree( const S6& s );
@@ -91,7 +94,6 @@ protected: // functions
    void ExpandReflections(const MatS6& m);
    void ExpandBoundaries(const MatS6& m);
 
-
 protected: // member data
    CNearTree<MV_Pair> m_MVtree;
    std::set<MatS6> m_matrixTree;
@@ -105,6 +107,7 @@ protected: // member data
    int m_matrixGenerationRecursionDepth;
    double m_sphereSearchEnlargementfactor;
    bool m_useOLD_Algorithm;
+   std::vector<double> m_angleAgreement;
 };
 
 

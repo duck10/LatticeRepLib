@@ -36,7 +36,7 @@ std::string C3Plot::CreatePolylineFromPoints(const size_t scalar, const std::str
 
    const std::string dashMode("");
    const std::string strokeWidth = "\" stroke-width=\"" + width + "\"";
-   std::string svg = transform + LRL_DataToSVG("   <polyline fill=\"none\" stroke=\"", "black", strokeWidth, "  points=\" ");
+   std::string svg = transform + LRL_DataToSVG("   <polyline fill=\"none\" stroke=\"", "#A3A3A3", strokeWidth, "  points=\" ");
    for (size_t i = 0; i < v.size(); ++i) {
       const double& s1 = v[i][sp.index1];
       const double& s2 = v[i][sp.index2];
@@ -54,20 +54,20 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
    CellScale(v);
    const double cellScale = CellScaleFactor();
    const ScalarProperties sp(scalar);
-   const std::string defs = "<defs>\n	<circle id = \"circ\"  r=\"3\" stroke = \"black\" fill=\"none\" />\n</defs>\n";
+   //const std::string defs = "<defs>\n	<circle id = \"circ\"  r=\"5\" stroke = \"black\" stroke-width=\".6\"  />\n</defs>\n";
 
    const std::string scale = LRL_ToString(1);
    std::string transform = "<g transform = \"translate( "
       + LRL_DataToSVG(0) + ", " + LRL_DataToSVG(0)
-      +")\" >\n" + defs + "\n";
+      +")\" >\n" +  "\n";
    for (size_t i = 0; i < v.size(); ++i) {
       const std::string x = LRL_DataToSVG_ToQuotedString(v[i][sp.index1]*cellScale);
       const std::string y = LRL_DataToSVG_ToQuotedString(v[i][sp.index2]*cellScale);
       const std::string radius = LRL_DataToSVG_ToQuotedString( 3);
 
-      const std::string s = std::string("<use href=\"#circ\"") +
-         " x=" + x +
-         " y=" + y + "/>\n";
+      const std::string s = std::string("<circle fill=\"none\"  r=\"5\" stroke = \"black\" stroke-width=\".3\"" 
+         " cx=" + x +
+         " cy=" + y + "/>\n" );
       transform += s;
 
 
@@ -111,28 +111,5 @@ std::vector<S6> C3Plot::PrepareCells() {
       v.push_back(S6(inputList[i].GetCell()));
    }
    return v;
-}
-
-S6 C3Plot::FindNearestReflection(const S6& ref, const S6& var) {
-   static const std::vector<MatS6> refl_one = MatS6::GetReflections();
-   double distMin = DBL_MAX;
-   S6 s6min;
-
-   for (size_t i = 0; i < refl_one.size(); ++i) {
-      double d = (ref - refl_one[i] * var).norm();
-      if (d < distMin) {
-         distMin = std::min(distMin, d);
-         s6min = refl_one[i] * var;
-      }
-   }
-   return s6min;
-}
-
-std::vector<S6> C3Plot::FindNearestReflection(const std::vector<S6>& var) {
-   std::vector<S6> out(1, var[0]);
-   for (size_t i = 1; i < var.size(); ++i) {
-      out.push_back(FindNearestReflection(out[i-1], var[i]));
-   }
-   return out;
 }
 

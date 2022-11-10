@@ -4,6 +4,7 @@
 #include "LatticeConverter.h"
 #include "LRL_LatticeMatcher.h"
 #include "LRL_ReadLatticeData.h"
+#include "LRL_ToString.h"
 #include "S6.h"
 
 
@@ -19,11 +20,17 @@ std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeD
    return v;
 }
 
-std::string ListOutput(const std::vector<S6>& vs, const std::string& referenceLattice) {
+std::string ListOutput(const std::vector<S6>& vs,
+   const std::vector<double>& angles,
+   const std::string& referenceLattice) {
+
    std::ostringstream ostr;
    for (size_t i2 = 0; i2 < vs.size(); ++i2) {
       ostr << referenceLattice + "  " << LRL_Cell_Degrees(vs[i2]);
-      if (i2 == 0) ostr << "   REFERENCE";
+      ostr << LRL_ToString("(", angles[i2], " degrees)");
+      if (i2 == 0) {
+         ostr << "   REFERENCE";
+      }
       ostr << std::endl;
    }
    return ostr.str();
@@ -37,6 +44,7 @@ MatS6 GetMatrixToReturnToReference(const std::string& referenceLattice, const LR
 
 int main()
 {
+   std::vector<S6> vLat;
    std::cout << "; Lattice Matching" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    if (inputList.empty()) {
@@ -45,7 +53,7 @@ int main()
       const std::string referenceLattice = inputList[0].GetLattice();
       const MatS6 mat_reference = GetMatrixToReturnToReference(referenceLattice, inputList[0].GetCell()); // NOTE: input cell
 
-      const std::vector<S6> vLat = GetInputSellingReducedVectors(inputList);
+      vLat = GetInputSellingReducedVectors(inputList);
 
       LRL_LatticeMatcher lm;
       lm.SetRecursionDepth(2);
@@ -54,7 +62,11 @@ int main()
       //lm.PrintMVtree();
 
       const std::vector<S6> vs = lm.MatchReference(vLat, mat_reference);
-      std::cout << ListOutput(vs, referenceLattice);
+       const std::vector<double> angles(lm.GetAngleAgreements());
+     //for (size_t i = 0; i < vs.size(); ++i) {
+      //   std::cout << i << " " << angles[i] << std::endl;
+      //}
+      std::cout << ListOutput(vs, angles, referenceLattice);
    }
 
 }
