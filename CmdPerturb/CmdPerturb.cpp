@@ -5,6 +5,7 @@
 //#include "BasisBase.h" // this has CreateUnitOrthogonalVector
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
+#include "LRL_ToString.h"
 #include "NCDist.h"
 #include "rhrand.h"
 #include "S6.h"
@@ -71,10 +72,16 @@ int main(int argc, char* argv[])
          if (d != 0.0) delta = atof(argv[2]);
       }
    }
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   std::cout << "; Perturb vectors, input scaled to 1000 in S6, perturbed by " << delta
+
+   LRL_ReadLatticeData reader;
+   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
+   std::cout << "; Perturb vectors, input scaled to 1000 in S6, perturbed by (ppt) " << delta
       << "  ngen = " << ngen << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       HandleOneInputCell(inputList[i]);
    }
+
+   std::cout << "; "+LRL_ToString(reader.GetIncomingSemicolons()) << std::endl;
+   std::cout << LRL_ToString("; CmdPerturb ngen = ", ngen,
+      " orthogonal delta = ", delta, " of 1000\n\n");
 }

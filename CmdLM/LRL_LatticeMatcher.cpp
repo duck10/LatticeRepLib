@@ -16,6 +16,8 @@
 
 void LRL_LatticeMatcher::PrintMVtree() const {
    for (size_t i = 0; i < m_MVtree.size(); ++i) {
+
+      std::cout << "  " << Angle6(m_originalReducedReference, m_MVtree[i].GetS6());
       std::cout << " " << LRL_ToString(m_MVtree[i].GetS6()) << std::endl;
    }
 }
@@ -295,7 +297,7 @@ std::vector<S6> ExpandVectorByBoundaries(const std::vector<S6>& sampleList) {  /
    return expandedSample;
 }
 
-std::vector<S6> LRL_LatticeMatcher::MatchReference(const std::vector<S6>& samples, const MatS6& mat_reference) const {
+std::vector<S6> LRL_LatticeMatcher::MatchReference(const std::vector<S6>& samples, const MatS6& mat_reference) {
    std::vector<S6> out;
    for (size_t i2 = 0; i2 < samples.size(); ++i2) {
       const S6 s6match = MatchReference(samples[i2]);
@@ -304,7 +306,7 @@ std::vector<S6> LRL_LatticeMatcher::MatchReference(const std::vector<S6>& sample
    return out;
 }
 
-S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
+S6 LRL_LatticeMatcher::MatchReference(const S6& sample)  {
 
    //const std::vector<S6> expandedSample = ExpandVectorByBoundaries(ExpandVectorByReflections(sample));
    //const std::vector<S6> expandedSample(ExpandVectorByReflections(sample));
@@ -329,18 +331,18 @@ S6 LRL_LatticeMatcher::MatchReference(const S6& sample) const {
    return bestS6;
 }
 
-double LRL_LatticeMatcher::Angle(const S6& s1, const S6& s2) const {
+double LRL_LatticeMatcher::Angle6(const S6& s1, const S6& s2) const {
    const S6 s1n = s1 / s1.Norm();
    const S6 s2n = s2 / s2.Norm();
    const double cosFit =
-      s1n[0] * s2n[0] + s1n[1] * s2n[1] *
-      s1n[2] * s2n[2] + s1n[3] * s2n[3] *
+      s1n[0] * s2n[0] + s1n[1] * s2n[1] +
+      s1n[2] * s2n[2] + s1n[3] * s2n[3] +
       s1n[4] * s2n[4] + s1n[5] * s2n[5];
    const double angle = acos(cosFit) * 180.0 / (4.0 * atan(1.0));
    return angle;
 }
 
-S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) const {
+S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) {
    const static bool debug = false;
    std::pair<double, MV_Pair> closest = FindClosest(sample);
    const double d = closest.first;
@@ -357,15 +359,17 @@ S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) const {
       }
    }
 
-   for (size_t i = 0; i < vClosest.size(); ++i) {
-      const double angle = Angle6(sample, vClosest[i].GetS6());
-      std::cout << i << " " << angle << std::endl;
-   }
-
-   return FindBestAmongMany(vClosest, sample);
+   const S6 best = FindBestAmongMany(vClosest, sample);
+   const double angle = Angle6(m_originalReducedReference, best);
+   SetNewAngleAgreement( (angle<1.0E-4) ? 0,0 : angle);
+   return best;
 }
 
-std::vector<S6> LRL_LatticeMatcher::MatchReferenceForExpandedSample(const std::vector<S6>& vSamples) const {
+void LRL_LatticeMatcher::SetNewAngleAgreement( double angle) {
+   m_angleAgreement.push_back(angle);
+}
+
+std::vector<S6> LRL_LatticeMatcher::MatchReferenceForExpandedSample(const std::vector<S6>& vSamples) {
    std::vector<S6> v;
    for (size_t i = 0; i < vSamples.size(); ++i) {
       if (!vSamples[i].IsValid()) std::cout << "invalid in MatchReference " << LRL_ToString(vSamples[i].GetVector()) << std::endl;

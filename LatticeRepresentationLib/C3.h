@@ -159,11 +159,20 @@ public:
    template<typename T>
    static C3 ConvertToFundamentalUnit(const T& tin) {
       C3 c3(tin);
-      for (size_t i = 0; i < 3; ++i) {
-         if (std::abs(c3[0].real()) > std::abs(c3[0].imag())) C3::ComplexInvertSwap(c3[0], c3[1]);
-         if (std::abs(c3[1].real()) > std::abs(c3[1].imag())) C3::ComplexInvertSwap(c3[1], c3[2]);
-      }
-      return SortC3(c3);
+      if (abs(c3[0]) > abs(c3[1])) std::swap(c3[0], c3[1]);
+      if (abs(c3[1]) > abs(c3[2])) std::swap(c3[1], c3[2]);
+
+      if (std::abs(c3[0].real()) > std::abs(c3[0].imag())) {
+         c3[0] = std::complex<double>(c3[0].imag(), c3[0].real());
+         c3[2] = std::complex<double>(c3[2].imag(), c3[2].real());
+      };
+
+      if (std::abs(c3[1].real()) > std::abs(c3[1].imag())) {
+         c3[1] = std::complex<double>(c3[1].imag(), c3[1].real());
+         c3[2] = std::complex<double>(c3[2].imag(), c3[2].real());
+      };
+
+      return c3;
    }
 
    template<typename T>

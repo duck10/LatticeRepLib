@@ -115,7 +115,8 @@ void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinal
 
 /*
 Produce a list of the zeros in zeros. The list should have the indices of all
-those zeros in zeros, EXCEPT for the ones in the exclusions.
+those zeros in zeros, EXCEPT for the ones in the exclusions. vZeros has the
+list of those indices that are on a boundary and therefore need transformations.
 */
 
 std::vector<size_t> SellaBuild::DetermineToProcess(const std::set<size_t>& exclusions,
@@ -133,6 +134,8 @@ std::vector<size_t> SellaBuild::DetermineToProcess(const std::set<size_t>& exclu
 
 void SellaBuild::Expand(const std::set<size_t>& exclusions,
    const std::string& label, const S6& sample) {
+
+   // LCA write codes for 3,2,1 active zeros (not in exclusions)
    //const size_t nzeros = sample.CountZeros();
    //const std::vector<size_t> vZeros = FindS6Zeros(sample);
    
