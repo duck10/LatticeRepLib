@@ -18,13 +18,5 @@
     <ClCompile Include="CmdLM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LRL_LatticeMatcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="LRL_LatticeMatcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -141,7 +141,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CmdLM.cpp" />
-    <ClCompile Include="LRL_LatticeMatcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
@@ -150,9 +149,6 @@
     <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
       <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="LRL_LatticeMatcher.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

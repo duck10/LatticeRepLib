@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.cpp" />
+    <ClCompile Include="..\LatticeRepresentationLib\LM.cpp" />
     <ClCompile Include="FollowerIO.cpp" />
     <ClCompile Include="Follower_Types.cpp" />
     <ClCompile Include="MAIN_PointDistanceFollower.cpp" />
@@ -37,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h" />
+    <ClInclude Include="..\LatticeRepresentationLib\LM.h" />
     <ClInclude Include="DistanceLineDescriptions.h" />
     <ClInclude Include="FileWriter.h" />
     <ClInclude Include="FollowerIO.h" />
@@ -136,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,7 +176,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
