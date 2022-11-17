@@ -207,9 +207,16 @@ void SellaBuild::Expand(const std::set<size_t>& exclusions,
 
 }
 
+S6 SetPos(const size_t n) { S6 zero(0, 0, 0, 0, 0, 0); zero[n] += 0.0000000001; return zero; }
+
 void SellaBuild::Expand(const std::string& label, const MatS6& m, MatS6 transformations) {
    const S6_Ordinals s6 = MakeSampleType(m);
    const std::vector<size_t> vZeros = FindS6Zeros(s6);
+
+   // for two bounds
+   const S6 zero(0, 0, 0, 0, 0, 0);
+   const S6 mod1 = SetPos(vZeros[0]);
+   const S6 mod2 = SetPos(vZeros[1]);
 
    if (s6.IsValid()) {
       switch (s6.CountZeros()) {
@@ -251,9 +258,10 @@ void SellaBuild::ProcessTwoZeros(const std::string& label, const S6& s6, const s
    
    fnRedn[0](s6);
    const S6 red1 =  fnRedn[vZeros[0]](s6);
-   const S6 red2 =  fnRedn[vZeros[1]](s6);
-   const S6 red12 = fnRedn[vZeros[0]](red1);
-   const S6 red21 = fnRedn[vZeros[1]](red2);
+   const S6 red2 =  fnRedn[vZeros[1]](s6); //LCA this is the error point!!!
+                                           // We don't really know where vZeros[1] went in red1
+   const S6 red12 = fnRedn[vZeros[1]](red1);
+   const S6 red21 = fnRedn[vZeros[0]](red2);
    StoreAllReflections(label, red12);
    StoreAllReflections(label, red21);
 

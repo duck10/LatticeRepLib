@@ -7,6 +7,7 @@
 #include "CS6Dist.cpp"
 #include "D7Dist.h"
 #include "Delone.h"
+#include "LM.h"
 #include "LRL_MinMaxTools.h"
 #include "LRL_Path.h"
 #include "NCDist.h"
