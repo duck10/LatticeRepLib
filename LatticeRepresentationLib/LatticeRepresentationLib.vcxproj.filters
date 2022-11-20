@@ -122,12 +122,6 @@
     <ClCompile Include="DeloneType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LM.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LRL_LatticeMatcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CS6Dist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,6 +168,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="S6BoundaryTransforms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C3Plot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_LatticeMatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -316,12 +316,6 @@
     <ClInclude Include="DeloneTypeVarietyList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LRL_LatticeMatcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="S6M_SellingReduce.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -371,6 +365,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="S6BoundaryTransforms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C3Plot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_LatticeMatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

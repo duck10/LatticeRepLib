@@ -5,6 +5,7 @@
 #include <cfloat>
 #include <cmath>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -103,7 +104,7 @@ public:
 private:
    static const std::vector<LabeledSellaMatrices> projectors;
    static const std::vector<LabeledSellaMatrices> perps;
-	//static std::vector<DeloneType> m_latticeCharacters;
+	
 
 private:
 };

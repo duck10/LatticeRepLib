@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="BravaisHeirarchy.cpp" />
     <ClCompile Include="C3.cpp" />
+    <ClCompile Include="C3Plot.cpp" />
     <ClCompile Include="ColorTables.cpp" />
     <ClCompile Include="CS6Dist.c" />
     <ClCompile Include="CS6Dist.cpp" />
@@ -176,7 +177,6 @@
     <ClCompile Include="DeloneTypeList.cpp" />
     <ClCompile Include="DeloneType.cpp" />
     <ClCompile Include="LatticeConverter.cpp" />
-    <ClCompile Include="LM.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
     <ClCompile Include="CellInputData.cpp" />
     <ClCompile Include="LRL_Cell_Degrees.cpp" />
@@ -218,6 +218,7 @@
     <ClInclude Include="BasisBase.h" />
     <ClInclude Include="BravaisHeirarchy.h" />
     <ClInclude Include="C3.h" />
+    <ClInclude Include="C3Plot.h" />
     <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="D13.h" />
@@ -235,7 +236,6 @@
     <ClInclude Include="DeloneTypeList.h" />
     <ClInclude Include="DeloneType.h" />
     <ClInclude Include="LatticeConverter.h" />
-    <ClInclude Include="LM.h" />
     <ClInclude Include="LRL_Cell.h" />
     <ClInclude Include="CellInputData.h" />
     <ClInclude Include="CoordinateConversionMatrices.h" />
