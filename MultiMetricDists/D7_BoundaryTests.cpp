@@ -78,7 +78,7 @@ void D7_BoundaryTests::ScanAllBoundaries() {
       const bool b = Delone::Reduce(S6(LRL_Cell::rand()*30.0), m, vout, 0.0);
       if (b) ExamineAllBoundariesForOneVector(D7(vout));
    }
-   sr.ShowResults();
+   //sr.ShowResults();
 };
 
 void D7_BoundaryTests::ListTransformMatrices(void) {

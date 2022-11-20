@@ -201,6 +201,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
 
    const std::string strupper = LRL_StringTools::strToupper(s.substr(0, 5));
    std::vector<double> fields = GetFieldsForCellFromString(s);
+   if (s[0] == ';') m_incomingSemicolons += "\n" +m_strCell;
    if (s.length() == 0 || s[0] == ';') return;
    if (fields.size() < 6 && strupper !="RANDO") {
       std::cout << "input line rejected, insufficient data  " << s << std::endl;
@@ -209,6 +210,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
 
    bool valid = StringToCell(fields);
 
+   if (s[0] == ';') m_incomingSemicolons += "\n"+s;
    if (!valid || !m_cell.GetValid()) {
       if (s[0] != ';' && (!s.empty()) && s != " ")
          std::cout << "input line rejected, invalid cell B: " << s << std::endl;
@@ -261,7 +263,10 @@ LRL_ReadLatticeData LRL_ReadLatticeData::CreateLatticeData(const std::string& s)
 }
 
 LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
+   m_strCell.clear();
+   m_cell.SetValid(false);
    std::getline(std::cin, m_strCell);
+   if (m_strCell[0] == ';') m_incomingSemicolons  += "\n"+m_strCell;
    if (m_strCell.length() > 0 && m_strCell[0] == ';') return *this;
    if (std::cin && (LRL_StringTools::strToupper(m_strCell.substr(0, 3)) != std::string("END"))) {
       CellReader(m_strCell);
@@ -278,7 +283,7 @@ std::vector<LRL_ReadLatticeData> LRL_ReadLatticeData::ReadLatticeData() {
    LRL_ReadLatticeData readData;
    LRL_ReadLatticeData  input;
    while (input.GetLattice() != "EOF") {
-      input = readData.read();
+      input = read();
       if (input.IsValid()) inputList.push_back(input);
 //      std::cout << "number of cells read " << inputList.size() << std::endl;
       const size_t n = inputList.size();

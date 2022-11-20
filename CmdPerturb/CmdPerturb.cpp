@@ -5,6 +5,7 @@
 //#include "BasisBase.h" // this has CreateUnitOrthogonalVector
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
+#include "LRL_ToString.h"
 #include "NCDist.h"
 #include "rhrand.h"
 #include "S6.h"
@@ -29,15 +30,15 @@ T CreateTotallyRandomUnitOrthogonalComponent(const T& t) {
    return ortho / ortho.norm();
 }
 
-G6 PerturbOneVector( const LRL_ReadLatticeData& input, const G6& base, 
+G6 PerturbOneVector( const LRL_ReadLatticeData& input, const S6& base, 
    const std::string& label )
 {
-   const G6 perturbation = delta * CreateTotallyRandomUnitOrthogonalComponent(base);
-   const G6 perturbed = base + perturbation;
+   const S6 perturbation = delta * CreateTotallyRandomUnitOrthogonalComponent(base);
+   const S6 perturbed = base + perturbation;
 
    const char cl = input.GetStrCell()[0];
    if (latticeNames.find(cl) == std::string::npos)
-      std::cout << "G6 " << perturbed << "  perturbed  " + label << std::endl;
+      std::cout << "S6 " << perturbed << "  perturbed  " + label << std::endl;
    else {
       std::string s("  ");
       s[0] = cl;
@@ -47,13 +48,13 @@ G6 PerturbOneVector( const LRL_ReadLatticeData& input, const G6& base,
 }
 
 void HandleOneInputCell(const LRL_ReadLatticeData& inputlattice) {
-   const G6 input(inputlattice.GetCell());
-   const G6 base = 1000.0 * input / input.Norm();
+   const S6 input(inputlattice.GetCell());
+   const S6 base = 1000.0 * input / input.Norm();
 
    const std::string strcel = inputlattice.GetStrCell();
 
    std::cout << "\n;" << strcel << "    original input" << std::endl;
-   std::cout << "G6 " << base << "    scaled input" << std::endl;
+   std::cout << ";S6 " << base << "    scaled input" << std::endl;
 
    const size_t pos = strcel.find("IT#");
    const std::string label = (pos != std::string::npos) ? strcel.substr(pos) : "";
@@ -71,10 +72,16 @@ int main(int argc, char* argv[])
          if (d != 0.0) delta = atof(argv[2]);
       }
    }
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   std::cout << "; Perturb vectors, input scaled to 1000, perturbed by " << delta
+
+   LRL_ReadLatticeData reader;
+   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
+   std::cout << "; Perturb vectors, input scaled to 1000 in S6, perturbed by (ppt) " << delta
       << "  ngen = " << ngen << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       HandleOneInputCell(inputList[i]);
    }
+
+   std::cout << "; "+LRL_ToString(reader.GetIncomingSemicolons()) << std::endl;
+   std::cout << LRL_ToString("; CmdPerturb ngen = ", ngen,
+      " orthogonal delta = ", delta, " of 1000\n\n");
 }
