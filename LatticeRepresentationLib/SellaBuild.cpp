@@ -26,8 +26,8 @@ std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
 
    for (size_t i = 0; i < vDeloneTypes.size(); ++i) {
       transformations = transformations.unit();
-      //Expand(vDeloneTypes[i].first, vDeloneTypes[i].second, transformations);
-      Expand(std::set<size_t>(), vDeloneTypes[i].first, MakeSampleType(vDeloneTypes[i].second));
+      Expand(vDeloneTypes[i].first, vDeloneTypes[i].second, transformations);
+      //Expand(std::set<size_t>(), vDeloneTypes[i].first, MakeSampleType(vDeloneTypes[i].second));
    }
    store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
@@ -103,6 +103,7 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
    return v;
 }
 
+
 void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinals& s1in ) {
    const std::vector< S6( *)(const S6&)> refl = S6::SetRelectionFunctions( );
    S6_Ordinals s1( s1in );
@@ -111,6 +112,12 @@ void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinal
       store.Store( label, refl[i](s1 ) );
    }
    //store.ShowResults();
+}
+
+void SellaBuild::StoreAllReflections(const std::string& label, const std::set<S6_Ordinals>& s) {
+    for (std::set<S6_Ordinals>::const_iterator it = s.begin(); it != s.end(); ++it) {
+        StoreAllReflections(label, *it);
+    }
 }
 
 /*
@@ -134,22 +141,6 @@ std::vector<size_t> SellaBuild::DetermineToProcess(const std::set<size_t>& exclu
 
 void SellaBuild::Expand(const std::set<size_t>& exclusions,
    const std::string& label, const S6& sample) {
-
-   // LCA write codes for 3,2,1 active zeros (not in exclusions)
-   //const size_t nzeros = sample.CountZeros();
-   //const std::vector<size_t> vZeros = FindS6Zeros(sample);
-   
-   std::vector< std::set<size_t>> excluders{ {0,3}, {1,4}, {2,5}, {0,3}, {1,4}, {2,5} };
-
-   //for (size_t i = 0; i < 6; ++i)
-   //{
-   //   std::set<size_t> ex;
-   //   ex.insert(i);
-   //   ex.insert(2);
-   //   const std::vector<size_t> toProcessX = DetermineToProcess(ex, S6("1 2 0 4 0 0"));
-   //}
-
-   // Still need to consider where two zeros are OPPOSITE!!!!!!!!!!!!!!!!!!
 
    const std::vector<size_t> toProcess = DetermineToProcess(exclusions, sample);
    const size_t nzeros = toProcess.size();
@@ -207,30 +198,34 @@ void SellaBuild::Expand(const std::set<size_t>& exclusions,
 
 }
 
-S6 SetPos(const size_t n) { S6 zero(0, 0, 0, 0, 0, 0); zero[n] += 0.0000000001; return zero; }
+S6 SetPos(const size_t n) {
+    S6 zero(0, 0, 0, 0, 0, 0); 
+    zero[n] += 0.0000000001; 
+    return zero; 
+}
+
+S6 SetPos(const size_t n, const S6& s6) {
+    S6 out(s6); 
+    out[n] += 0.0000000001; 
+    return out; 
+}
 
 void SellaBuild::Expand(const std::string& label, const MatS6& m, MatS6 transformations) {
    const S6_Ordinals s6 = MakeSampleType(m);
    const std::vector<size_t> vZeros = FindS6Zeros(s6);
-
-   // for two bounds
-   const S6 zero(0, 0, 0, 0, 0, 0);
-   const S6 mod1 = SetPos(vZeros[0]);
-   const S6 mod2 = SetPos(vZeros[1]);
-
-   if (s6.IsValid()) {
+   if (vZeros.empty()) {
+       StoreAllReflections(label, s6);
+   }
+   else if (s6.IsValid()) {
       switch (s6.CountZeros()) {
-      case 0:
-         StoreAllReflections(label, s6 );
-         break;
       case 1:
          OneBound(label, s6, vZeros[0]);
          break;
       case 2:
-         ProcessTwoZeros(label, s6, vZeros);
+         ProcessTwoZeros(label, s6);
          break;
       case 3:
-         ProcessThreeZeros(label, s6, vZeros);
+         ProcessThreeZeros(label, s6);
          break;
       default:
          throw "this should never happen";
@@ -247,7 +242,8 @@ void SellaBuild::OneBound(const std::string& label, const S6_Ordinals& s1,
    StoreAllReflections(label, s6temp);
 }
 
-void SellaBuild::ProcessTwoZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros) {
+void SellaBuild::ProcessTwoZeros(const std::string& label, const S6& s6) {
+    const std::vector<size_t> vZeros = FindS6Zeros(s6);
 
    // handle input as if no zeros, just reflections
    StoreAllReflections(label, s6);
@@ -256,20 +252,46 @@ void SellaBuild::ProcessTwoZeros(const std::string& label, const S6& s6, const s
    OneBound(label, s6, vZeros[0]);
    OneBound(label, s6, vZeros[1]);
    
-   fnRedn[0](s6);
-   const S6 red1 =  fnRedn[vZeros[0]](s6);
-   const S6 red2 =  fnRedn[vZeros[1]](s6); //LCA this is the error point!!!
-                                           // We don't really know where vZeros[1] went in red1
-   const S6 red12 = fnRedn[vZeros[1]](red1);
-   const S6 red21 = fnRedn[vZeros[0]](red2);
+   const S6 red1 = SetPos(vZeros[0],fnRedn[vZeros[0]](s6)); //LCA this is the error point!!!
+   // We don't really know where vZeros[1] went in red1
+   const S6 red2 = SetPos(vZeros[1],fnRedn[vZeros[1]](s6));
+
+   const std::vector<size_t> vZeros1 = FindS6Zeros(red1);
+   const std::vector<size_t> vZeros2 = FindS6Zeros(red2);
+
+   const S6 red12 = fnRedn[vZeros1[0]](red1);
+   const S6 red21 = fnRedn[vZeros2[0]](red2);
+
+   StoreAllReflections(label, red1);
+   StoreAllReflections(label, red2);
    StoreAllReflections(label, red12);
    StoreAllReflections(label, red21);
-
 }
 
-void SellaBuild::ProcessThreeZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros) {
-   // base vector
-   StoreAllReflections(label, s6);
+S6 SetPos(const size_t n, const size_t m) {
+    S6 zero(0, 0, 0, 0, 0, 0);
+    zero[n] += 0.0000000001;
+    zero[m] += 0.0000000001;
+    return zero;
+}
+
+std::set<S6> SellaBuild::BoundAndRefl(const size_t n, const S6& s) {
+    const std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
+    const S6 s6(s);
+    std::set<S6> out;
+    S6 rxxxx = fnRedn[n](s);
+
+    for (size_t i = 0; i < refl.size(); ++i) {
+        out.insert(refl[i](rxxxx));
+    }
+    return out;
+}
+
+void SellaBuild::ProcessThreeZeros(const std::string& label, const S6& s6) {
+    const std::vector<size_t> vZeros = FindS6Zeros(s6);
+
+    // handle input as if no zeros, just reflections
+    StoreAllReflections(label, s6);
 
    // treat each separate bound
    const S6 red_0 = fnRedn[vZeros[0]](s6);
@@ -325,10 +347,10 @@ void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6 )
       OneBound( label, s6, vZeros[0]);
    }
    else if (nzeros == 2) {
-      ProcessTwoZeros(label, s6, vZeros);
+      ProcessTwoZeros(label, s6);
    }
    else {
-      ProcessThreeZeros(label, s6, vZeros);
+      ProcessThreeZeros(label, s6);
    }
 }
 
@@ -360,8 +382,14 @@ void SellaBuild::ProcessItemStoreToVectorMap() {
 }
 
 std::vector<size_t> SellaBuild::FindS6Zeros(const S6& s) {
-   std::vector<size_t> v;
+      std::vector<size_t> v;
    for (size_t i = 0; i < 6; ++i) if (s[i] == 0.0) v.push_back(i);
+   return v;
+}
+
+std::vector<size_t> FindNearS6Zeros(const S6& s) {
+   std::vector<size_t> v;
+   for (size_t i = 0; i < 6; ++i) if (abs(s[i]) < 1.0E-5) v.push_back(i);
    return v;
 }
 
@@ -369,3 +397,54 @@ void SellaBuild::ShowIndexResults() const {
    indexstore.ShowResults();
 }
 
+std::set<S6>SellaBuild::Xpand1(const std::set<S6>& vsin) {
+   std::set<S6> out;
+   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
+      out = Xpand1(*it);
+   }
+
+   return out;
+}
+
+std::set<S6>SellaBuild::Xpand2(const std::set<S6>& vsin) {
+   std::set<S6> vs;
+   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
+      const std::vector<size_t> vZeros = FindNearS6Zeros(*it);
+      std::set<S6> out = Xpand2(*it);
+      vs.insert(out.begin(), out.end());
+   }
+   return vs;
+}
+
+std::set<S6>SellaBuild::Xpand3(const std::set<S6>& vsin) {
+   std::set<S6> vs;
+   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
+      const std::vector<size_t> vZeros = FindNearS6Zeros(*it);
+      std::set<S6> out = Xpand3(*it);
+      vs.insert(out.begin(), out.end());
+   }
+   return vs;
+}
+
+std::set<S6>SellaBuild::Xpand1(const S6& s) {
+   std::set<S6> out;
+   for (size_t i = 0; i < g_refls.size(); ++i) {
+      out.insert(g_refls[i] * s);
+   }
+   const std::vector<size_t> vZeros = FindNearS6Zeros(s);
+   out.insert(fnRedn[vZeros[0]](s));
+   return out;
+}
+
+std::set<S6>SellaBuild::Xpand2(const S6& s) {
+   std::set<S6> out;
+   const std::vector<size_t> vZeros = FindS6Zeros(s);
+   return out;
+}
+
+
+std::set<S6>SellaBuild::Xpand3(const S6& s) {
+   std::set<S6> out;
+   const std::vector<size_t> vZeros = FindS6Zeros(s);
+   return out;
+}

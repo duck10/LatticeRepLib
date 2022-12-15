@@ -311,6 +311,16 @@ bool S6::operator!= (const S6& s6) const {
    return !((*this) == s6);
 }
 
+bool S6::operator< (const S6& s2) const {
+    const S6& s1(*this);
+    for (size_t i = 0; i < 6; ++i) {
+        if (s1[i] < s2[i]) return true;
+        if (s1[i] > s2[i]) return false;
+    }
+    return false;
+}
+
+
 S6& S6::operator/= (const double d) {
    (*this).m_vec /= d;
    return *this;

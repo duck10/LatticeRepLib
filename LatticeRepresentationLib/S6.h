@@ -53,6 +53,7 @@ public:
    S6 operator- (void) const; // unary
    bool operator== (const S6& s6) const;
    bool operator!= (const S6& s6) const;
+   bool operator< (const S6& s2) const;
 
    double operator[](const size_t n) const { return m_vec[n]; }
    double& operator[](const size_t n) { return m_vec[n]; }

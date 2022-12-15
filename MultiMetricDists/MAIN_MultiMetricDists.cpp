@@ -87,7 +87,7 @@ std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    while (lattice != "EOF") {
       rcd.read();
       lattice = rcd.GetLattice();
-      if ((!lattice.empty()) && (static_cast<char>(letters.find(toupper(lattice[0]))) != std::string::npos))
+      if ((!lattice.empty()) && (letters.find(toupper(lattice[0]))) != std::string::npos)
          cellDataList.push_back(rcd);
    }
 
