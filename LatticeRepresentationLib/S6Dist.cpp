@@ -169,7 +169,7 @@ std::pair<double, size_t> S6Dist::MinForListOfS6(const std::vector<S6>& v1, cons
          }
       }
    }
-   if (m_s6Debug) g_debug.ShowResultsByKeyDescending(); //  LCA  LCA
+//   if (m_s6Debug) g_debug.ShowResultsByKeyDescending(); //  LCA  LCA
    g_debug.clear();
    g_bestVectors.clear();
    return p;
@@ -331,7 +331,7 @@ double S6Dist::DistanceBetween(const S6& s1, const S6& s2) {
       g_debug.Store(m_dmin, item);
    }
    TwoBoundaryDistance(s1, s2);
-   if (m_s6Debug) g_debug.ShowResultsByKeyDescending();
+   //if (m_s6Debug) g_debug.ShowResultsByKeyDescending();
    return m_dmin;
 }
 

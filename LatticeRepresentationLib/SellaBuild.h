@@ -43,16 +43,26 @@ private:
       return DetermineToProcess(exclusions, zeros); }
    void ProcessItemStoreToVectorMap();
    void StoreAllReflections(const std::string& label, const S6_Ordinals& s);
+   void StoreAllReflections(const std::string& label, const std::set<S6_Ordinals>& s);
    void OneBound(const std::string& label, const S6_Ordinals& s1, const size_t zeroBound );
    void ProcessZeros(const std::string& label, const S6_Ordinals& s6 );
    void Expand(const std::string& label, const MatS6& m, MatS6 transformations);
    void Expand(const std::set<size_t>& exclusions, const std::string& label, const S6& sample);
-   void ProcessTwoZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros);
-   void ProcessThreeZeros(const std::string& label, const S6& s6, const std::vector<size_t>& vZeros);
+   void ProcessTwoZeros(const std::string& label, const S6& s6);
+   void ProcessThreeZeros(const std::string& label, const S6& s6);
+   std::set<S6> BoundAndRefl(const size_t n, const S6& s);
 
    static bool FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ordinals s6);
    static S6 MakeSampleType(const MatS6& m);
    static std::vector<size_t> FindS6Zeros(const S6& s);
+   static std::vector<size_t> FindNearS6Zeros(const S6& s);
+
+   static std::set<S6> Xpand1(const std::set<S6>& vs);
+   static std::set<S6> Xpand2(const std::set<S6>& vs);
+   static std::set<S6> Xpand3(const std::set<S6>& vs);
+   static std::set<S6> Xpand1(const S6& vs);
+   static std::set<S6> Xpand2(const S6& vs);
+   static std::set<S6> Xpand3(const S6& vs);
 };
 
 #endif // SELLA_H
