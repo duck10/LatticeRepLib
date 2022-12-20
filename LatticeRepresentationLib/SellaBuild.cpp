@@ -103,6 +103,15 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
    return v;
 }
 
+void SellaBuild::Store(const std::string& label, const S6_Ordinals& s) {
+   store.Store(label, s);
+}
+
+void SellaBuild::Store(const std::string& label, const std::set<S6_Ordinals>& s) {
+   for (auto i = s.begin(); i!=s.end(); ++i) {
+      Store(label, *i);
+   }
+}
 
 void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinals& s1in ) {
    const std::vector< S6( *)(const S6&)> refl = S6::SetRelectionFunctions( );
@@ -139,64 +148,64 @@ std::vector<size_t> SellaBuild::DetermineToProcess(const std::set<size_t>& exclu
 }
 
 
-void SellaBuild::Expand(const std::set<size_t>& exclusions,
-   const std::string& label, const S6& sample) {
-
-   const std::vector<size_t> toProcess = DetermineToProcess(exclusions, sample);
-   const size_t nzeros = toProcess.size();
-
-   std::vector<MatS6> vt;
-
-   if (nzeros == 0) {
-      S6BoundaryMatricesZero smz;
-      vt = smz.GetVector();
-   }
-   else if ( nzeros == 1) {
-      S6BoundaryMatricesOne smo(toProcess[0]);
-         vt = smo.GetVector();
-   }
-   else if (nzeros == 2) {
-      S6BoundaryMatricesThree smthr(2, 3, 5);
-      vt = smthr.GetVector();
-   }      
-   else if (nzeros == 3) {
-      S6BoundaryMatricesThree smthr(2, 3, 5);
-      vt = smthr.GetVector();
-   }
-
-   for (size_t i = 0; i < vt.size(); ++i) {
-      store.Store(label, vt[i] * sample);
-   }
-   
-   const int i19191 = 19191;
-
-
-      
-   
-   //switch (nzeros) {
-   //case 0:
-   //   S6BoundaryMatricesZero smz;
-   //   vt = smz.GetVector();
-   //   break;
-   //case 1:
-   //   S6BoundaryMatricesOne smo(0);
-   //   vt = smo.GetVector();
-   //   break;
-   //case 2:
-   //   S6BoundaryMatricesTwo smtwo(2, 3);
-   //   vt = smtwo.GetVector();
-   //   break;
-   //case 3:
-   //   S6BoundaryMatricesThree smthr(2, 3, 5);
-   //   vt = smthr.GetVector();
-   //   break;
-   //default:
-   //   throw "this should never happen";
-   //   break;
-   //}
-   //store.ShowResults();
-
-}
+//void SellaBuild::Expand(const std::set<size_t>& exclusions,
+//   const std::string& label, const S6& sample) {
+//
+//   const std::vector<size_t> toProcess = DetermineToProcess(exclusions, sample);
+//   const size_t nzeros = toProcess.size();
+//
+//   std::vector<MatS6> vt;
+//
+//   if (nzeros == 0) {
+//      S6BoundaryMatricesZero smz;
+//      vt = smz.GetVector();
+//   }
+//   else if ( nzeros == 1) {
+//      S6BoundaryMatricesOne smo(toProcess[0]);
+//         vt = smo.GetVector();
+//   }
+//   else if (nzeros == 2) {
+//      S6BoundaryMatricesThree smthr(2, 3, 5);
+//      vt = smthr.GetVector();
+//   }      
+//   else if (nzeros == 3) {
+//      S6BoundaryMatricesThree smthr(2, 3, 5);
+//      vt = smthr.GetVector();
+//   }
+//
+//   for (size_t i = 0; i < vt.size(); ++i) {
+//      store.Store(label, vt[i] * sample);
+//   }
+//   
+//   const int i19191 = 19191;
+//
+//
+//      
+//   
+//   //switch (nzeros) {
+//   //case 0:
+//   //   S6BoundaryMatricesZero smz;
+//   //   vt = smz.GetVector();
+//   //   break;
+//   //case 1:
+//   //   S6BoundaryMatricesOne smo(0);
+//   //   vt = smo.GetVector();
+//   //   break;
+//   //case 2:
+//   //   S6BoundaryMatricesTwo smtwo(2, 3);
+//   //   vt = smtwo.GetVector();
+//   //   break;
+//   //case 3:
+//   //   S6BoundaryMatricesThree smthr(2, 3, 5);
+//   //   vt = smthr.GetVector();
+//   //   break;
+//   //default:
+//   //   throw "this should never happen";
+//   //   break;
+//   //}
+//   //store.ShowResults();
+//
+//}
 
 S6 SetPos(const size_t n) {
     S6 zero(0, 0, 0, 0, 0, 0); 
@@ -387,7 +396,7 @@ std::vector<size_t> SellaBuild::FindS6Zeros(const S6& s) {
    return v;
 }
 
-std::vector<size_t> FindNearS6Zeros(const S6& s) {
+std::vector<size_t> SellaBuild::FindNearS6Zeros(const S6& s) {
    std::vector<size_t> v;
    for (size_t i = 0; i < 6; ++i) if (abs(s[i]) < 1.0E-5) v.push_back(i);
    return v;
@@ -395,6 +404,16 @@ std::vector<size_t> FindNearS6Zeros(const S6& s) {
 
 void SellaBuild::ShowIndexResults() const {
    indexstore.ShowResults();
+}
+
+std::set<S6>SellaBuild::Xpand1(const S6& s) {
+   std::set<S6> out;
+   for (size_t i = 0; i < g_refls.size(); ++i) {
+      out.insert(g_refls[i] * s);
+   }
+   const std::vector<size_t> vZeros = FindNearS6Zeros(s);
+   out.insert(fnRedn[vZeros[0]](s));
+   return out;
 }
 
 std::set<S6>SellaBuild::Xpand1(const std::set<S6>& vsin) {
@@ -424,16 +443,6 @@ std::set<S6>SellaBuild::Xpand3(const std::set<S6>& vsin) {
       vs.insert(out.begin(), out.end());
    }
    return vs;
-}
-
-std::set<S6>SellaBuild::Xpand1(const S6& s) {
-   std::set<S6> out;
-   for (size_t i = 0; i < g_refls.size(); ++i) {
-      out.insert(g_refls[i] * s);
-   }
-   const std::vector<size_t> vZeros = FindNearS6Zeros(s);
-   out.insert(fnRedn[vZeros[0]](s));
-   return out;
 }
 
 std::set<S6>SellaBuild::Xpand2(const S6& s) {

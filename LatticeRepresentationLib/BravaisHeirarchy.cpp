@@ -151,6 +151,7 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
       "\n"
       "   <line id=\"cI-tP-oP\" x1=\"250\" y1=\"300\" x2=\"250\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
       "   <line id=\"cF-hR\" x1=\"400\" y1=\"300\" x2=\"400\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cF-tI\" x1=\"400\" y1=\"300\" x2=\"550\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
       "   <line id=\"cP-oI\" x1=\"550\" y1=\"300\" x2=\"550\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
       "\n"
       "\n"
