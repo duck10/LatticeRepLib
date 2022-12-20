@@ -42,6 +42,8 @@ private:
       const std::set<size_t>& exclusions) {
       return DetermineToProcess(exclusions, zeros); }
    void ProcessItemStoreToVectorMap();
+   void Store(const std::string& label, const S6_Ordinals& s);
+   void Store(const std::string& label, const std::set<S6_Ordinals>& s);
    void StoreAllReflections(const std::string& label, const S6_Ordinals& s);
    void StoreAllReflections(const std::string& label, const std::set<S6_Ordinals>& s);
    void OneBound(const std::string& label, const S6_Ordinals& s1, const size_t zeroBound );
