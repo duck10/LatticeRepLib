@@ -118,14 +118,19 @@ std::vector<std::vector<std::string> > CreateBravaisChains()
    std::vector<std::vector<std::string> > v;
    v.push_back({ "aP", "mP", "oP", "tP", "cP" });
    v.push_back({ "aP", "mP", "oS", "tP", "cP" });
-   v.push_back({ "aP", "mP", "oS", "hP" });
    v.push_back({ "aP", "mS", "oS", "tP", "cP" });
-   v.push_back({ "aP", "mS", "oS", "hP" });
    v.push_back({ "aP", "mS", "hR", "cP" });
-   v.push_back({ "aP", "mS", "hR", "cF" });
+
+   v.push_back({ "aP", "mP", "oS", "hP" });
+   v.push_back({ "aP", "mS", "oS", "hP" });
+
    v.push_back({ "aP", "mS", "hR", "cI" });
    v.push_back({ "aP", "mS", "oF", "tI", "cI" });
    v.push_back({ "aP", "mS", "oI", "tI", "cI" });
+
+   v.push_back({ "aP", "mS", "oI", "tI", "cF" });
+   v.push_back({ "aP", "mS", "oF", "tI", "cF" });
+   v.push_back({ "aP", "mS", "hR", "cF" });
    return v;
 }
 
