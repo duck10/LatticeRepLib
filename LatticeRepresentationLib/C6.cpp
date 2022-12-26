@@ -17,7 +17,8 @@ C6::C6(const C6& c)
 }
 
 C6::C6(const S6& s)
-    : m_dim(true)
+   : m_dim(6)
+   , m_valid(true)
 {
     static const double pi = 4.0 * atan(1.0);
     const double asq = -(s[3] + s[2] + s[1]);
