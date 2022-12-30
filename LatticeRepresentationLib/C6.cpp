@@ -45,7 +45,7 @@ C6::C6(const S6& s)
 
 C6::C6(const std::vector<double>& v)
    : m_dim(6)
-   , m_valid(m_valid = v.size() == 6)
+   , m_valid(v.size() == 6)
 {
    m_vec.resize(6);
    for (size_t i = 0; i < 6; ++i) { m_vec[i] = v[i]; }
@@ -53,7 +53,7 @@ C6::C6(const std::vector<double>& v)
 
 C6::C6(const std::vector<std::complex<double> >& v)
    : m_dim(6)
-   , m_valid(m_valid = v.size() == 6)
+   , m_valid(v.size() == 6)
    , m_vec(v)
 {
 }

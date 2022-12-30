@@ -68,7 +68,8 @@ void ComplexCell(const S6& s)
 int main()
 {
     std::cout << "; To Complex" << std::endl;
-    const std::vector<ReadComplexLatticeData> inputList = ReadComplexLatticeData().ReadLatticeData();
+    //const std::vector<ReadComplexLatticeData> inputList = ReadComplexLatticeData().ReadLatticeData();
+    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
     for (size_t i = 0; i < inputList.size(); ++i) {
         std::cout << inputList[i].GetCell() << std::endl;

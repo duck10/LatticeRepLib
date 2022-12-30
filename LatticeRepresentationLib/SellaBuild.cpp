@@ -26,13 +26,13 @@ std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
 
    for (size_t i = 0; i < vDeloneTypes.size(); ++i) {
       transformations = transformations.unit();
-      Expand(vDeloneTypes[i].first, vDeloneTypes[i].second, transformations);
+      Expand(vDeloneTypes[i].first, vDeloneTypes[i].second/*, transformations*/);
       //Expand(std::set<size_t>(), vDeloneTypes[i].first, MakeSampleType(vDeloneTypes[i].second));
    }
    store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
    std::cout << std::endl << std::endl << "after ProcessItemStoreToVectorMap, the map " << themap.size() << std::endl;
-   for (std::map<std::string, std::vector<S6_Ordinals> >::const_iterator ita = themap.begin(); ita != themap.end(); ++ita) std::cout << (*ita).first << "  " << (*ita).second.size() << std::endl;
+   for (std::map<std::string, std::vector<S6> >::const_iterator ita = themap.begin(); ita != themap.end(); ++ita) std::cout << (*ita).first << "  " << (*ita).second.size() << std::endl;
    LabeledDeloneTypeMatrices lsm2;
    const std::vector<LabeledDeloneTypeMatrices> vtypes = lsm2.ProcessVectorMapToPerpsAndProjectors(themap);
 
@@ -113,20 +113,38 @@ void SellaBuild::Store(const std::string& label, const std::set<S6_Ordinals>& s)
    }
 }
 
-void SellaBuild::StoreAllReflections( const std::string& label, const S6_Ordinals& s1in ) {
-   const std::vector< S6( *)(const S6&)> refl = S6::SetRelectionFunctions( );
-   S6_Ordinals s1( s1in );
+void SellaBuild::StoreAllReflections(const std::string& label, const S6_Ordinals& s1in) {
+   const std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
+   S6_Ordinals s1(s1in);
 
-   for (size_t i = 0; i < refl.size( ); ++i) {
-      store.Store( label, refl[i](s1 ) );
+   for (size_t i = 0; i < refl.size(); ++i) {
+      store.Store(label, refl[i](s1));
    }
-   //store.ShowResults();
 }
 
 void SellaBuild::StoreAllReflections(const std::string& label, const std::set<S6_Ordinals>& s) {
-    for (std::set<S6_Ordinals>::const_iterator it = s.begin(); it != s.end(); ++it) {
-        StoreAllReflections(label, *it);
-    }
+   for (std::set<S6_Ordinals>::const_iterator it = s.begin(); it != s.end(); ++it) {
+      StoreAllReflections(label, *it);
+   }
+}
+
+std::set<S6> SellaBuild::GenerateAllReflections(const S6& s1in) {
+   const std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
+   std::set<S6> setS6;
+   for (size_t i = 0; i < refl.size(); ++i) {
+      setS6.insert(refl[i](s1in));
+   }
+   return setS6;
+}
+
+std::set<S6> SellaBuild::GenerateAllReflections(const std::set<S6>& s) {
+   std::set<S6> setS6;
+   std::set<S6> xxxx;
+   for (std::set<S6>::const_iterator it = s.begin(); it != s.end(); ++it) {
+      xxxx = GenerateAllReflections(*it);
+   }
+   setS6.insert(xxxx.begin(), xxxx.end());
+   return setS6;
 }
 
 /*
@@ -214,12 +232,19 @@ S6 SetPos(const size_t n) {
 }
 
 S6 SetPos(const size_t n, const S6& s6) {
-    S6 out(s6); 
-    out[n] += 0.0000000001; 
-    return out; 
+   S6 out(s6);
+   out[n] += 0.0000000001;
+   return out;
 }
 
-void SellaBuild::Expand(const std::string& label, const MatS6& m, MatS6 transformations) {
+S6 SetPos(const size_t n1, const size_t n2, const S6& s6) {
+   S6 out(s6);
+   out[n1] += 0.0000000001;
+   out[n2] += 0.0000000001;
+   return out;
+}
+
+void SellaBuild::Expand(const std::string& label, const MatS6& m/*, MatS6 transformations*/) {
    const S6_Ordinals s6 = MakeSampleType(m);
    const std::vector<size_t> vZeros = FindS6Zeros(s6);
    if (vZeros.empty()) {
@@ -364,7 +389,7 @@ void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6 )
 }
 
 
-bool SellaBuild::FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ordinals s6) {
+bool SellaBuild::FindDuplicate(const std::vector<S6>& out, const S6& s6) {
    bool fail = false;
    if (!out.empty()) {
       for (size_t o = 0; o < out.size(); ++o) {
@@ -379,8 +404,8 @@ bool SellaBuild::FindDuplicate(const std::vector<S6_Ordinals>& out, const S6_Ord
 void SellaBuild::ProcessItemStoreToVectorMap() {
    std::vector<std::string> labels = store.GetKeys();
    for (size_t i = 0; i < labels.size(); ++i) {
-      std::vector<S6_Ordinals> out;
-      const std::vector<std::pair<std::string, S6_Ordinals> > v = store.GetResult(labels[i]);
+      std::vector<S6> out;
+      const std::vector<std::pair<std::string, S6> > v = store.GetResult(labels[i]);
       out.push_back(v[0].second);
       for (size_t iv = 1; iv < v.size(); ++iv) {
          const bool fail = FindDuplicate(out, v[iv].second);
@@ -406,54 +431,96 @@ void SellaBuild::ShowIndexResults() const {
    indexstore.ShowResults();
 }
 
-std::set<S6>SellaBuild::Xpand1(const S6& s) {
-   std::set<S6> out;
-   for (size_t i = 0; i < g_refls.size(); ++i) {
-      out.insert(g_refls[i] * s);
-   }
+S6 ResetZeros(const S6& sin) {
+   S6 sout(sin);
+   for (size_t i = 0; i < 6; ++i) if (abs(sin[i]) < 1.0E-3) sout[i] = 0.0;
+   return sout;
+}
+
+std::set<S6> SellaBuild::Xpand1(const std::string& label, const S6& s) {
+   std::set<S6> out = GenerateAllReflections(s);
    const std::vector<size_t> vZeros = FindNearS6Zeros(s);
-   out.insert(fnRedn[vZeros[0]](s));
+   const std::set<S6> out1 = GenerateAllReflections(fnRedn[vZeros[0]](s));
+   out.insert(out1.begin(), out1.end());
+
+   //for (auto it = out.begin(); it != out.end(); ++it) std::cout << *it << std::endl;
    return out;
 }
 
-std::set<S6>SellaBuild::Xpand1(const std::set<S6>& vsin) {
+std::set<S6> SellaBuild::Xpand1(const std::string& label, const std::set<S6>& vsin) {
    std::set<S6> out;
    for (auto it = vsin.begin(); it != vsin.end(); ++it) {
-      out = Xpand1(*it);
+      out = Xpand1(label, ResetZeros(*it));
    }
-
    return out;
 }
 
-std::set<S6>SellaBuild::Xpand2(const std::set<S6>& vsin) {
-   std::set<S6> vs;
-   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
-      const std::vector<size_t> vZeros = FindNearS6Zeros(*it);
-      std::set<S6> out = Xpand2(*it);
-      vs.insert(out.begin(), out.end());
-   }
-   return vs;
-}
-
-std::set<S6>SellaBuild::Xpand3(const std::set<S6>& vsin) {
-   std::set<S6> vs;
-   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
-      const std::vector<size_t> vZeros = FindNearS6Zeros(*it);
-      std::set<S6> out = Xpand3(*it);
-      vs.insert(out.begin(), out.end());
-   }
-   return vs;
-}
-
-std::set<S6>SellaBuild::Xpand2(const S6& s) {
-   std::set<S6> out;
+std::set<S6> SellaBuild::Xpand2(const std::string& label, const S6& s) {
    const std::vector<size_t> vZeros = FindS6Zeros(s);
-   return out;
-}
+   const S6 s6temp0 = fnRedn[vZeros[0]](s);
+   const S6 s6temp1 = fnRedn[vZeros[1]](s);
 
+   const std::set<S6>  pluss6temp0 = Xpand1(label, SetPos(0,s6temp0));
+   const std::set<S6>  pluss6temp1 = Xpand1(label, SetPos(1,s6temp1));
 
-std::set<S6>SellaBuild::Xpand3(const S6& s) {
+   const std::set<S6> setRefl1  = GenerateAllReflections(s6temp0);
+   const std::set<S6> setRefl2  = GenerateAllReflections(s6temp1);
+   const std::set<S6> setRefl3  = GenerateAllReflections(pluss6temp0);
+   const std::set<S6> setRefl4  = GenerateAllReflections(pluss6temp1);
+
    std::set<S6> out;
-   const std::vector<size_t> vZeros = FindS6Zeros(s);
+   out.insert(s6temp0);
+   out.insert(s6temp1);
+   out.insert(pluss6temp0.begin(), pluss6temp0.end());
+   out.insert(pluss6temp1.begin(), pluss6temp1.end());
+   out.insert(setRefl1.begin(), setRefl1.end());
+   out.insert(setRefl2.begin(), setRefl2.end());
+   out.insert(setRefl3.begin(), setRefl3.end());
+   out.insert(setRefl4.begin(), setRefl4.end());
+
+   std::cout << "at the end of Xpand2" << std::endl;
+   const int i19191 = 19191;
+   for (auto it = out.begin(); it != out.end(); ++it) std::cout << *it << std::endl;
+
    return out;
 }
+
+//std::set<S6> SellaBuild::Xpand2(const std::string& label, const std::set<S6>& vsin) {
+//   std::set<S6> vs;
+//   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
+//      std::set<S6> out = Xpand2(label, ResetZeros(*it));
+//      vs.insert(out.begin(), out.end());
+//   }
+//   return vs;
+//}
+//
+//std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s) {
+//   std::set<S6> out;
+//   const std::vector<size_t> vZeros = FindS6Zeros(s);
+//   const S6 s6temp0 = fnRedn[vZeros[0]](s);
+//   const S6 s6temp1 = fnRedn[vZeros[1]](s);
+//   const S6 s6temp2 = fnRedn[vZeros[2]](s);
+//
+//   const std::set<S6>  pluss6temp0 = Xpand2(label, SetPos(0, s6temp0));
+//   const std::set<S6>  pluss6temp1 = Xpand2(label, SetPos(1, s6temp1));
+//   const std::set<S6>  pluss6temp2 = Xpand2(label, SetPos(2, s6temp2));
+//
+//   StoreAllReflections(label, s6temp0);
+//   StoreAllReflections(label, s6temp1);
+//   StoreAllReflections(label, s6temp2);
+//   StoreAllReflections(label, pluss6temp0);
+//   StoreAllReflections(label, pluss6temp1);
+//   StoreAllReflections(label, pluss6temp2);
+//
+//   return out;
+//}
+//
+//std::set<S6> SellaBuild::Xpand3(const std::string& label, const std::set<S6>& vsin) {
+//   std::set<S6> vs;
+//   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
+//      std::set<S6> out = Xpand3(label, ResetZeros(*it));
+//      vs.insert(out.begin(), out.end());
+//   }
+//   return vs;
+//}
+
