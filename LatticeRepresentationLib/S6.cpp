@@ -313,10 +313,13 @@ bool S6::operator!= (const S6& s6) const {
 
 bool S6::operator< (const S6& s2) const {
     const S6& s1(*this);
+    const double relDiff = (s1 - s2).norm() / (s1 + s2).norm();
     for (size_t i = 0; i < 6; ++i) {
         if (s1[i] < s2[i]) return true;
         if (s1[i] > s2[i]) return false;
     }
+    //const bool b = s1[5]==s2[5];
+    //return relDiff > 1.0E-5;
     return false;
 }
 

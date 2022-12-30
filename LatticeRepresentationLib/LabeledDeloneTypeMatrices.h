@@ -14,7 +14,7 @@ public:
    LabeledDeloneTypeMatrices(){}
    std::vector<LabeledDeloneTypeMatrices>
       ProcessVectorMapToPerpsAndProjectors
-      (const std::map<std::string, std::vector<S6_Ordinals> >& themap);
+      (const std::map<std::string, std::vector<S6> >& themap);
 
    size_t size() const { return m_perps.size(); }
 

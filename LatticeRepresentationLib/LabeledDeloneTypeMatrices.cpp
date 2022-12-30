@@ -18,12 +18,12 @@ bool LabeledDeloneTypeMatrices::AlreadyHasThisProjector( const MatS6& m, const L
 
 std::vector<LabeledDeloneTypeMatrices> 
    LabeledDeloneTypeMatrices::ProcessVectorMapToPerpsAndProjectors
-   (const std::map<std::string, std::vector<S6_Ordinals> >& themap)
+   (const std::map<std::string, std::vector<S6> >& themap)
 {
    static const MatS6 unit = MatS6().unit();
    std::vector<LabeledDeloneTypeMatrices> vlsm;
-   for (std::map<std::string, std::vector<S6_Ordinals> >::const_iterator it = themap.begin(); it != themap.end(); ++it) {
-      const std::pair<std::string, std::vector<S6_Ordinals> > p = *it;
+   for (std::map<std::string, std::vector<S6> >::const_iterator it = themap.begin(); it != themap.end(); ++it) {
+      const std::pair<std::string, std::vector<S6> > p = *it;
       LabeledDeloneTypeMatrices lsm;
       std::vector<MatS6> vmprj;
       std::vector<MatS6> vmprp;
