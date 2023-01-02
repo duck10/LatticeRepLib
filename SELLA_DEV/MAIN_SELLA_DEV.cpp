@@ -23,10 +23,13 @@
 
 int main()
 {
-   const S6 s6(-100, -100, -100, 0, -50, 0);
+   const S6 s6(-100, -100, -100, 0, 0, 0);
    SellaBuild sb;
-   const  std::set<S6> setS6 = sb.Xpand2("xxx",s6);
+   const  std::set<S6> setS6 = sb.Xpand3("xxx",s6);
    const int i191919 = 19191;
+   std::cout << std::endl;
+   for (auto it = setS6.begin(); it != setS6.end(); ++it) std::cout << *it << std::endl;
+   std::cout << "setS6 size  " << setS6.size() << std::endl;
    //S6BoundaryMatricesZero smz;
    //const std::vector<MatS6> vz = smz.GetVector();
 

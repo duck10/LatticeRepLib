@@ -226,7 +226,7 @@ void ListReflectionsByC3() {
       storeMat.Store(index, PairReporter<C3, MatS6>(c, vmR[i]));
 
    }
-   storeMat.ShowResults();
+   //storeMat.ShowResults();
 }
 
 int main(int argc, char* argv[]) {

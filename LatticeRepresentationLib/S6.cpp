@@ -25,7 +25,6 @@ static const double randomLatticeNormalizationConstantSquared = randomLatticeNor
 static int s6RandomSeedS6 = 19195;
 static RHrand rhrandS6(s6RandomSeedS6);
 
-
 S6::S6( void )
    : m_dim(6)
    , m_valid(true)
@@ -313,16 +312,14 @@ bool S6::operator!= (const S6& s6) const {
 
 bool S6::operator< (const S6& s2) const {
     const S6& s1(*this);
-    const double relDiff = (s1 - s2).norm() / (s1 + s2).norm();
+    const double delta =  1.0 + (1.0E5 * DBL_EPSILON);
+
     for (size_t i = 0; i < 6; ++i) {
-        if (s1[i] < s2[i]) return true;
-        if (s1[i] > s2[i]) return false;
+       if (s1[i] < delta*s2[i]) return true;
+       if (s1[i] > s2[i]) return false;
     }
-    //const bool b = s1[5]==s2[5];
-    //return relDiff > 1.0E-5;
     return false;
 }
-
 
 S6& S6::operator/= (const double d) {
    (*this).m_vec /= d;
