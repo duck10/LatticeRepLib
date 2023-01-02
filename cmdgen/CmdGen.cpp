@@ -142,19 +142,19 @@ int main(int argc, char* argv[])
    if (name.length() > 1 && g_DeloneTypes.find(name) != std::string::npos) {
       std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
          GenerateDeloneBase().Select(name);
-      std::cout << "Delone input " << std::endl;
+      std::cout << "; Delone lattice type input " << std::endl;
       ForDeloneInput(DeloneTypes);
    }
    else if ((g_LatticeTypes.find(name) != std::string::npos) && (name != "") && (test == 0)) {
       std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
          GenerateDeloneBase().Select(name);
-      std::cout << "Delone input " << std::endl;
+      std::cout << "; Delone lattice type input " << std::endl;
       ForDeloneInput(DeloneTypes);
    }
    else {
       std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
          GenerateNiggliBase().Select(name);
-      std::cout << "Niggli input " << std::endl;
+      std::cout << "; Niggli lattice type input " << std::endl;
       ForNiggliInput(NiggiTypes);
    }
 

@@ -58,18 +58,18 @@ G6 Reduce(const LRL_Cell& in) {
 
 int main()
 {
-   std::cout << "; From first cell, radial dist, ncdist" << std::endl;
+   std::cout << "; Radial distances from first cell, radial dist (rd), ncdist (nc)" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    const LRL_Cell& baseCell = inputList[0].GetCell();
    const C3 baseC3(baseCell);
    const G6 baseG6 = Reduce(baseCell);
-   std::cout << baseCell << std::endl;
+   std::cout << "; first input cell  " << LRL_Cell_Degrees(baseCell) << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       const LRL_Cell currentCell = inputList[i].GetCell();
       const C3 currentC3(currentCell);
       const G6 currentG6(Reduce(currentCell).data());
-      std::cout << RadialDist(baseCell, currentCell) << "  " <<
-         NCDist(baseG6.data(), currentG6.data()) << "  " <<
+      std::cout << "rd " << RadialDist(baseCell, currentCell) << "  nc " <<
+         NCDist(baseG6.data(), currentG6.data()) << "  --  cell " <<
          LRL_Cell_Degrees(currentCell) << std::endl;
    }
 }

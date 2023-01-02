@@ -478,9 +478,9 @@ std::set<S6> SellaBuild::Xpand2(const std::string& label, const S6& s) {
    out.insert(setRefl3.begin(), setRefl3.end());
    out.insert(setRefl4.begin(), setRefl4.end());
 
-   std::cout << "at the end of Xpand2" << std::endl;
-   const int i19191 = 19191;
-   for (auto it = out.begin(); it != out.end(); ++it) std::cout << *it << std::endl;
+   //std::cout << "at the end of Xpand2" << std::endl;
+   //const int i19191 = 19191;
+   //for (auto it = out.begin(); it != out.end(); ++it) std::cout << *it << std::endl;
 
    return out;
 }
@@ -493,34 +493,49 @@ std::set<S6> SellaBuild::Xpand2(const std::string& label, const S6& s) {
 //   }
 //   return vs;
 //}
-//
-//std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s) {
-//   std::set<S6> out;
-//   const std::vector<size_t> vZeros = FindS6Zeros(s);
-//   const S6 s6temp0 = fnRedn[vZeros[0]](s);
-//   const S6 s6temp1 = fnRedn[vZeros[1]](s);
-//   const S6 s6temp2 = fnRedn[vZeros[2]](s);
-//
-//   const std::set<S6>  pluss6temp0 = Xpand2(label, SetPos(0, s6temp0));
-//   const std::set<S6>  pluss6temp1 = Xpand2(label, SetPos(1, s6temp1));
-//   const std::set<S6>  pluss6temp2 = Xpand2(label, SetPos(2, s6temp2));
-//
-//   StoreAllReflections(label, s6temp0);
-//   StoreAllReflections(label, s6temp1);
-//   StoreAllReflections(label, s6temp2);
-//   StoreAllReflections(label, pluss6temp0);
-//   StoreAllReflections(label, pluss6temp1);
-//   StoreAllReflections(label, pluss6temp2);
-//
-//   return out;
-//}
-//
-//std::set<S6> SellaBuild::Xpand3(const std::string& label, const std::set<S6>& vsin) {
-//   std::set<S6> vs;
-//   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
-//      std::set<S6> out = Xpand3(label, ResetZeros(*it));
-//      vs.insert(out.begin(), out.end());
-//   }
-//   return vs;
-//}
+
+std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s) {
+   std::set<S6> out;
+   const std::vector<size_t> vZeros = FindS6Zeros(s);
+   const S6 s6temp0 = fnRedn[vZeros[0]](s);
+   const S6 s6temp1 = fnRedn[vZeros[1]](s);
+   const S6 s6temp2 = fnRedn[vZeros[2]](s);
+
+   const std::set<S6>  pluss6temp0 = Xpand2(label, SetPos(0, s6temp0));
+   const std::set<S6>  pluss6temp1 = Xpand2(label, SetPos(1, s6temp1));
+   const std::set<S6>  pluss6temp2 = Xpand2(label, SetPos(2, s6temp2));
+
+   const std::set<S6> setRefl1 = GenerateAllReflections(s6temp0);
+   const std::set<S6> setRefl2 = GenerateAllReflections(s6temp1);
+   const std::set<S6> setRefl3 = GenerateAllReflections(s6temp2);
+   const std::set<S6> setRefl4 = GenerateAllReflections(pluss6temp0);
+   const std::set<S6> setRefl5 = GenerateAllReflections(pluss6temp1);
+   const std::set<S6> setRefl6 = GenerateAllReflections(pluss6temp2);
+
+   out.insert(s6temp0);
+   out.insert(s6temp1);
+   out.insert(s6temp2);
+
+   out.insert(pluss6temp0.begin(), pluss6temp0.end());
+   out.insert(pluss6temp1.begin(), pluss6temp1.end());
+   out.insert(pluss6temp2.begin(), pluss6temp2.end());
+
+   out.insert(setRefl1.begin(), setRefl1.end());
+   out.insert(setRefl2.begin(), setRefl2.end());
+   out.insert(setRefl3.begin(), setRefl3.end());
+   out.insert(setRefl4.begin(), setRefl4.end());
+   out.insert(setRefl5.begin(), setRefl5.end());
+   out.insert(setRefl6.begin(), setRefl6.end());
+
+   return out;
+}
+
+std::set<S6> SellaBuild::Xpand3(const std::string& label, const std::set<S6>& vsin) {
+   std::set<S6> out;
+   for (auto it = vsin.begin(); it != vsin.end(); ++it) {
+      const std::set<S6> vs = Xpand3(label, ResetZeros(*it));
+      out.insert(vs.begin(), vs.end());
+   }
+   return out;
+}
 
