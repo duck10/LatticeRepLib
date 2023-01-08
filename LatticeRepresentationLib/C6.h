@@ -2,6 +2,7 @@
 #define C6_H
 
 #include "BasisBase.h"
+#include "S6.h"
 #include "VecN.h"
 
 #include <complex>
@@ -10,6 +11,9 @@
 
 class C6 {
 public:
+	friend std::ostream& operator<< (std::ostream&, const C6&);
+
+
 	C6();
 	explicit C6(const C6& c6);
 	explicit C6(const S6& s6);
@@ -24,12 +28,16 @@ public:
 	C6 operator+(const C6&);
 	C6 operator-(const C6&);
 
-	std::complex<double> operator[](const size_t n) const{ return m_vec[n]; }
+	std::complex<double> operator[](const size_t n) const { return m_vec[n]; }
+
+	operator S6() const;
 
 protected:
 	std::vector<std::complex<double> >  m_vec;
 	size_t m_dim;
 	bool m_valid;
+	S6 m_s6Input;
+	bool m_hasS6Input;
 
 };
 

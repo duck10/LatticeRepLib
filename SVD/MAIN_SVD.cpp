@@ -52,7 +52,7 @@ void DoSVD( std::vector<std::vector<double> >& a) {
 
    std::cout << std::endl;
    for (size_t i = 0; i < v.size(); ++i) {
-      std::cout << "eigenvalue " << std::setw(5) << std::right << w[i] << "    \t vector  \t";
+      std::cout << "eigenvalue " << std::setw(5) << std::right << w[i] << ";    \t vector  \t";
       for (size_t k = 0; k < v.size(); ++k) {
          std::cout << v[k][i] << " ";
       }

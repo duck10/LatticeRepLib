@@ -1,4 +1,5 @@
 #include "C3Plot.h"
+#include "FileOperations.h"
 #include "LRL_CreateFileName.h"
 #include "LRL_DataToSVG.h"
 #include "LRL_ReadLatticeData.h"
@@ -7,6 +8,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -79,21 +81,19 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
 }
 
 
-C3Plot::C3Plot(const int wx, const int wy, const int gx, const int gy)
+C3Plot::C3Plot(const std::string& filename, const int wx, const int wy, const int gx, const int gy)
    : m_wx(wx)
    , m_wy(wy)
    , m_gx(gx)
    , m_gy(gy)
-   , m_svgIntro(BuildIntro())
+   , m_svgIntro(BuildIntro(filename))
    , m_svgFoot("\n</svg>")
 {
 }
 
-std::string C3Plot::BuildIntro() {
+std::string C3Plot::BuildIntro(const std::string& filename) {
    const std::string swx = LRL_DataToSVG_ToQuotedString(m_wx);
    const std::string swy = LRL_DataToSVG_ToQuotedString(m_wy);
-   
-   const std::string filename = LRL_CreateFileName::Create("SEL_", "svg");
 
    return
    "<svg width=" + swx + " height=" + swy +
@@ -113,3 +113,18 @@ std::vector<S6> C3Plot::PrepareCells() {
    return v;
 }
 
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+void C3Plot::SendFrameToFile(const std::string& sFileName, const std::string& data) {
+   std::ofstream fileout;
+   FileOperations::OpenOutputFile(fileout, sFileName.c_str());
+
+   if (fileout.is_open())
+   {
+      fileout.seekp(0);
+         fileout << data << std::endl;
+   }
+   else
+      std::cout << "Could not open file " << sFileName << " for write in SVGWriter.h" << std::endl;
+
+   fileout.close();
+}

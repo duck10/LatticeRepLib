@@ -155,6 +155,30 @@ protected:
    std::string m_strProjector;
 };
 
+class GenerateComplexBase : public GenerateLatticesBase {
+public:
+   friend std::ostream& operator<< (std::ostream&, const GenerateComplexBase&);
+   friend std::ostream& operator<< (std::ostream&, const GenerateComplexBase*);
+   GenerateComplexBase() {}; // LCA
+   virtual ~GenerateComplexBase() {}
+   virtual MatS6 GetPrj(void) const { return m_projector; }
+   virtual MatS6 GetPerp(void) const { return MatS6().unit() - m_projector; }
+
+   std::string GetBravaisLatticeGeneral() const { return m_bravaisLatticeGeneral; }
+   std::vector<std::shared_ptr<GenerateComplexBase> >
+      Select(const std::string& s = "") const;
+   std::string GetXtalType(const std::string& s) { return m_bravaisType; }
+   static std::vector<S6>
+      Generate(const std::string& s, const size_t n = 1);
+   //std::vector<MatS6> GetSellaProjectors() const { return m_sellaProjectors; }
+   //std::vector<MatS6> GetSellaPerps() const { return m_sellaPerps; }
+
+protected:
+   MatS6 m_projector;
+   std::vector<MatS6> m_sellaProjectors;
+   std::vector<MatS6> m_sellaPerps;
+};
+
 
 class GenerateNiggliBase : public GenerateLatticesBase {
 public:

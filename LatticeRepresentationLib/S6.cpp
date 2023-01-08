@@ -312,7 +312,7 @@ bool S6::operator!= (const S6& s6) const {
 
 bool S6::operator< (const S6& s2) const {
     const S6& s1(*this);
-    const double delta =  1.0 + (1.0E5 * DBL_EPSILON);
+    const double delta =  1.0 + (1.0E-5 * DBL_EPSILON);
 
     for (size_t i = 0; i < 6; ++i) {
        if (s1[i] < delta*s2[i]) return true;

@@ -9,9 +9,9 @@
 
 class C3Plot {
 public:
-   C3Plot(const int wx, const int wy, const int gx, const int gy);
+   C3Plot(const std::string& filename, const int wx, const int wy, const int gx, const int gy);
 
-   std::string GetIntro() { return m_svgIntro; }
+   std::string GetIntro(const std::string& filename) { return m_svgIntro; }
    std::string GetFoot() { return m_svgFoot; }
    double CellScale(const std::vector<S6>& v);
    double CellScaleFactor();
@@ -21,7 +21,7 @@ public:
    double GetGx() const { return m_gx; }
    double GetGy() const { return m_gy; }
    //std::string DrawGraphs(const std::vector<S6>& v);
-   std::string PlotC3(const int wx, const int wy, const std::string& s);
+   std::string PlotC3(const size_t scalar, const int wx, const int wy, const std::string& s);
 
    //std::string WrapSVG(const std::string& fileName,
    //   const int wx = 2000, const int wy = 2000, const std::string& s = "");
@@ -29,6 +29,8 @@ public:
    S6 FindNearestReflection(const S6& ref, const S6& var);
    std::vector<S6> PrepareCells();
    std::string CreatePolylineFromPoints(const size_t scalarr, const std::string& width, const std::vector<S6>& v);
+   void SendFrameToFile(const std::string& sFileName, const std::string& data);
+
 protected:
    const int m_wx;
    const int m_wy;
@@ -39,7 +41,7 @@ protected:
    std::string m_svgFoot;
 
 private:
-   std::string BuildIntro();
+   std::string BuildIntro(const std::string& filename);
    double m_maxScalar;
 
 };
@@ -75,3 +77,4 @@ public:
 
 
 #endif  // C3PLOT_H
+

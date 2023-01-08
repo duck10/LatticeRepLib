@@ -4,6 +4,7 @@
 #include "C3Plot.h"
 #include "LRL_ToString.h"
 #include "LRL_DataToSVG.h"
+#include "LRL_CreateFileName.h"
 #include "LRL_ReadLatticeData.h"
 #include "S6.h"
 #include "LRL_Vector3.h"
@@ -20,13 +21,15 @@ size_t scalar = 19191;
 std::vector<std::string> allowed{ "seq","C3","RI" };
 
 
-std::string PlotC3(const int wx, const int wy, const std::string& s) {
+std::string PlotC3( const size_t scalar, const int wx, const int wy, const std::string& s) {
+   const std::string sScaler = LRL_ToString(scalar);
+   const std::string sScalerP3 = LRL_ToString(scalar+3);
    //<g transform = "translate(150,975) scale(1 -1)">
    const std::string x1 = LRL_DataToSVG_ToQuotedString(-0);
    const std::string y1 = LRL_DataToSVG_ToQuotedString(0);
    const std::string x2 = LRL_DataToSVG_ToQuotedString(0);
-   const std::string y2 = LRL_DataToSVG_ToQuotedString(-wy);
-   const std::string x3 = LRL_DataToSVG_ToQuotedString(-wx);
+   const std::string y2 = LRL_DataToSVG_ToQuotedString(-std::min(wx, wy));
+   const std::string x3 = LRL_DataToSVG_ToQuotedString(-std::min(wx,wy));
    const std::string y3 = LRL_DataToSVG_ToQuotedString(0);
 
    const std::string line1 = "\n<line x1=" + x1 + " y1 = " + y1 + " x2 =" + x2
@@ -53,16 +56,17 @@ std::string PlotC3(const int wx, const int wy, const std::string& s) {
       "<g transform = \"translate(0,0)\" >\n"
       "<text   x = \"-480\" y = \"-20\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -s </text>\n"
       "<g transform = \"translate(30,10)\">\n"
-      "<text  x = \"-480\" y = \"-20\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >x</text >\n"
+      "<text  x = \"-480\" y = \"-20\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >"+sScaler+"</text >\n"
       "</g>\n"
       "</g>\n"
 
       "<g transform = \"translate(0,0)\" >\n"
       "<text  x = \"-60\" y = \"-450\" font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -s </text>\n"
       "<g transform = \"translate(30,10)\">\n"
-      "<text x = \"-60\" y = \"-450\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >x+3 </text >\n"
+      "<text x = \"-60\" y = \"-450\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >"+sScalerP3+"</text >\n"
       "</g>\n"
-      "</g>\n";
+      "</g>\n"
+   "</g>\n";
 
 
 
@@ -92,22 +96,22 @@ int main(int argc, char* argv[])
 {
    std::string type;
 
-   if (argc != 2) {
-      std::cout << " input param must be which scalar (1..3) you want to plot";
-      exit(0);
-   }
-   else {
-      scalar = atoi(argv[1]);
-   }
+   const std::string filename = LRL_CreateFileName::Create("PLt_", "svg");
+   std::cout << "SVG file =" + filename << std::endl;
+
+   C3Plot c3plot(filename, 2000, 2000, 500, 500);
+
+   std::string svgOutput;
+   const std::string intro = c3plot.GetIntro(filename);
+   svgOutput += intro;
 
    const std::string swx = LRL_DataToSVG_ToQuotedString(-450);
    const std::string swy1 = LRL_DataToSVG_ToQuotedString(50);
    const std::string swy2 = LRL_DataToSVG_ToQuotedString(50+20);
    const std::string swy3 = LRL_DataToSVG_ToQuotedString(50 + 40);
    const std::string swy4 = LRL_DataToSVG_ToQuotedString(50 + 60);
-
    //const std::string testtext = "<text x = " + swx + " y=" + swy1 + "> " +
-   //   "C3 scalar = " + LRL_DataToSVG(scalar) + " </text>\n";
+//   "C3 scalar = " + LRL_DataToSVG(scalar) + " </text>\n";
 
    const std::string testtext2 = "<text x = " + swx + " y=" + swy2 + "> " +
       "Perturb generated  = " + LRL_DataToSVG(".") + " points per input point </text>\n";
@@ -118,28 +122,37 @@ int main(int argc, char* argv[])
    const std::string testtext4 = "<text x = " + swx + " y=" + swy4 + "> . </text>\n";
 
 
-   C3Plot c3plot(2000, 2000, 500, 500);
    const std::vector<S6> v = PrepareCells();
    //const double cellScale = c3plot.CellScale(v);
 
    //const std::vector<S6> vv = c3plot.FindNearestReflection(v);
-   const std::vector<S6>& vv(v);
 
-   std::string line;
-   std::string cells;
+   for (size_t scalar = 1; scalar < 4; ++scalar) {
+      const std::vector<S6>& vv(v);
+
+      std::string line;
+      std::string cells;
+
 
       line += c3plot.CreatePolylineFromPoints(scalar, ".5", vv);
       cells += c3plot.DrawCells(scalar, vv);
+      cells.clear();
 
-   std::cout << c3plot.GetIntro() << std::endl;
+      std::string plotc3;
+      if (scalar == 1)
+         plotc3 = PlotC3(scalar, 500, 500, line + "  " + cells);
+      if (scalar == 2)
+         plotc3 = PlotC3(scalar, 1200, 500, line + "  " + cells);
+      if (scalar == 3)
+         plotc3 = PlotC3(scalar, 500, 1200, line + "  " + cells);
 
-   const std::string plotc3 = PlotC3(500, 500, line + "  " + cells);
-   std::cout << WrapSVG("xxx", c3plot.GetGx(), c3plot.GetGy(), 
-      plotc3) << std::endl;
+      svgOutput += plotc3;;
+      c3plot.SendFrameToFile(filename, plotc3);
+   }
+   const std::string wrapper = WrapSVG("xxx", c3plot.GetGx(), c3plot.GetGy(),
+      "");
+   c3plot.SendFrameToFile(filename, svgOutput + c3plot.GetFoot());
 
 
-
-
-   std::cout << c3plot.GetFoot() << std::endl;
 }
 

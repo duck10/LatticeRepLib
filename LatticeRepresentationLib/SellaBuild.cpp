@@ -237,6 +237,19 @@ S6 SetPos(const size_t n, const S6& s6) {
    return out;
 }
 
+std::set<S6> SetPos(const size_t n, const std::set<S6>& s6) {
+   std::set<S6> out;
+   int i19191 = 0;
+   for (auto it = s6.begin(); it != s6.end(); ++it)
+   {
+      ++i19191;
+      const S6 temp = SetPos(n, *it);
+      std::cout << temp << std::endl;
+      out.insert(temp);
+   }
+   return out;
+}
+
 S6 SetPos(const size_t n1, const size_t n2, const S6& s6) {
    S6 out(s6);
    out[n1] += 0.0000000001;
@@ -437,10 +450,24 @@ S6 ResetZeros(const S6& sin) {
    return sout;
 }
 
+S6 Rounder(const S6& s6) {
+   S6 out(s6);
+   for (size_t i = 0; i < 6; ++i) out[i] = round(out[i]);
+   return out;
+}
+
+std::set<S6> Rounder(const std::set<S6>& ss) {
+   std::set<S6> out;
+   for (auto it = ss.begin(); it != ss.end(); ++it) {
+      out.insert(Rounder(*it));
+   }
+   return out;
+}
+
 std::set<S6> SellaBuild::Xpand1(const std::string& label, const S6& s) {
    std::set<S6> out = GenerateAllReflections(s);
    const std::vector<size_t> vZeros = FindNearS6Zeros(s);
-   const std::set<S6> out1 = GenerateAllReflections(fnRedn[vZeros[0]](s));
+   const std::set<S6> out1 = GenerateAllReflections(Rounder(fnRedn[vZeros[0]](s)));
    out.insert(out1.begin(), out1.end());
 
    //for (auto it = out.begin(); it != out.end(); ++it) std::cout << *it << std::endl;
@@ -457,8 +484,8 @@ std::set<S6> SellaBuild::Xpand1(const std::string& label, const std::set<S6>& vs
 
 std::set<S6> SellaBuild::Xpand2(const std::string& label, const S6& s) {
    const std::vector<size_t> vZeros = FindS6Zeros(s);
-   const S6 s6temp0 = fnRedn[vZeros[0]](s);
-   const S6 s6temp1 = fnRedn[vZeros[1]](s);
+   const S6 s6temp0 = Rounder(fnRedn[vZeros[0]](s));
+   const S6 s6temp1 = Rounder(fnRedn[vZeros[1]](s));
 
    const std::set<S6>  pluss6temp0 = Xpand1(label, SetPos(0,s6temp0));
    const std::set<S6>  pluss6temp1 = Xpand1(label, SetPos(1,s6temp1));
@@ -497,20 +524,20 @@ std::set<S6> SellaBuild::Xpand2(const std::string& label, const S6& s) {
 std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s) {
    std::set<S6> out;
    const std::vector<size_t> vZeros = FindS6Zeros(s);
-   const S6 s6temp0 = fnRedn[vZeros[0]](s);
-   const S6 s6temp1 = fnRedn[vZeros[1]](s);
-   const S6 s6temp2 = fnRedn[vZeros[2]](s);
+   const S6 s6temp0 = Rounder(fnRedn[vZeros[0]](s));
+   const S6 s6temp1 = Rounder(fnRedn[vZeros[1]](s));
+   const S6 s6temp2 = Rounder(fnRedn[vZeros[2]](s));
 
-   const std::set<S6>  pluss6temp0 = Xpand2(label, SetPos(0, s6temp0));
-   const std::set<S6>  pluss6temp1 = Xpand2(label, SetPos(1, s6temp1));
-   const std::set<S6>  pluss6temp2 = Xpand2(label, SetPos(2, s6temp2));
+   const std::set<S6>  pluss6temp0 = Rounder(Xpand2(label, SetPos(0, s6temp0)));
+   const std::set<S6>  pluss6temp1 = Rounder(Xpand2(label, SetPos(1, s6temp1)));
+   const std::set<S6>  pluss6temp2 = Rounder(Xpand2(label, SetPos(2, s6temp2)));
 
-   const std::set<S6> setRefl1 = GenerateAllReflections(s6temp0);
-   const std::set<S6> setRefl2 = GenerateAllReflections(s6temp1);
-   const std::set<S6> setRefl3 = GenerateAllReflections(s6temp2);
-   const std::set<S6> setRefl4 = GenerateAllReflections(pluss6temp0);
-   const std::set<S6> setRefl5 = GenerateAllReflections(pluss6temp1);
-   const std::set<S6> setRefl6 = GenerateAllReflections(pluss6temp2);
+   const std::set<S6> setRefl1 =Rounder(GenerateAllReflections(SetPos(0, s6temp0)));
+   const std::set<S6> setRefl2 =Rounder(GenerateAllReflections(SetPos(1, s6temp1)));
+   const std::set<S6> setRefl3 =Rounder(GenerateAllReflections(SetPos(2, s6temp2)));
+   const std::set<S6> setRefl4 =Rounder(GenerateAllReflections(SetPos(0, pluss6temp0)));
+   const std::set<S6> setRefl5 =Rounder(GenerateAllReflections(SetPos(1, pluss6temp1)));
+   const std::set<S6> setRefl6 =Rounder(GenerateAllReflections(SetPos(2, pluss6temp2)));
 
    out.insert(s6temp0);
    out.insert(s6temp1);
@@ -533,7 +560,7 @@ std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s) {
 std::set<S6> SellaBuild::Xpand3(const std::string& label, const std::set<S6>& vsin) {
    std::set<S6> out;
    for (auto it = vsin.begin(); it != vsin.end(); ++it) {
-      const std::set<S6> vs = Xpand3(label, ResetZeros(*it));
+      const std::set<S6> vs = Rounder(Xpand3(label, ResetZeros(*it)));
       out.insert(vs.begin(), vs.end());
    }
    return out;
