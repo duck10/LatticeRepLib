@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 {
    std::string type;
 
-   const std::string filename = LRL_CreateFileName::Create("PLt_", "svg");
+   const std::string filename = LRL_CreateFileName::Create("PLT_", "svg");
    std::cout << "SVG file =" + filename << std::endl;
 
    C3Plot c3plot(filename, 2000, 2000, 500, 500);
@@ -136,15 +136,14 @@ int main(int argc, char* argv[])
 
       line += c3plot.CreatePolylineFromPoints(scalar, ".5", vv);
       cells += c3plot.DrawCells(scalar, vv);
-      cells.clear();
 
       std::string plotc3;
       if (scalar == 1)
          plotc3 = PlotC3(scalar, 500, 500, line + "  " + cells);
       if (scalar == 2)
-         plotc3 = PlotC3(scalar, 1200, 500, line + "  " + cells);
+         plotc3 = PlotC3(scalar, 1100, 500, line + "  " + cells);
       if (scalar == 3)
-         plotc3 = PlotC3(scalar, 500, 1200, line + "  " + cells);
+         plotc3 = PlotC3(scalar, 500, 1100, line + "  " + cells);
 
       svgOutput += plotc3;;
       c3plot.SendFrameToFile(filename, plotc3);

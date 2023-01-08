@@ -67,7 +67,7 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
       const std::string y = LRL_DataToSVG_ToQuotedString(v[i][sp.index2]*cellScale);
       const std::string radius = LRL_DataToSVG_ToQuotedString( 3);
 
-      const std::string s = std::string("<circle fill=\"none\"  r=\"5\" stroke = \"black\" stroke-width=\".3\"" 
+      const std::string s = std::string("<circle fill=\"none\"  r=\"5\" stroke = \"black\" stroke-width=\"1\"" 
          " cx=" + x +
          " cy=" + y + "/>\n" );
       transform += s;
@@ -87,7 +87,7 @@ C3Plot::C3Plot(const std::string& filename, const int wx, const int wy, const in
    , m_gx(gx)
    , m_gy(gy)
    , m_svgIntro(BuildIntro(filename))
-   , m_svgFoot("\n</svg>")
+   , m_svgFoot("\n</g> <!--end of scale=0.6-->\n</svg>")
 {
 }
 
@@ -100,7 +100,7 @@ std::string C3Plot::BuildIntro(const std::string& filename) {
       " viewBox=\"1 0  " + LRL_DataToSVG(m_wx * 1.2, " ", m_wy * 1.2) +
       "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" \nxmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
       "\n<desc>File name  = " + filename + " </desc> """ +
-      "\n\n";
+      "\n <g transform=\"scale(0.6)\">\n";
 }
 
 
