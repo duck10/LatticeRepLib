@@ -230,25 +230,16 @@ void ListReflectionsByC3() {
 }
 
 int main(int argc, char* argv[]) {
-   //ListReflectionsByC3();
-   std::cout << "main file name *** " << __FILE__ << " ***" << std::endl;
-
-   //ListReflections(S6(" -35.78280 -90.89944 -16.76471 -22.15936 -105.64854 -94.23607"));
-
-   //D7_BoundaryTests bt;
-   //bt.MainTests();
-
-   //TestConversions(cellDataList);
-   //TREDUCE::SetDebug(true);
-
+   std::string doMaxima = "";
+   if (argc > 1) {
+      const std::string strtest = argv[1];
+      doMaxima = strtest;
+   }
    LatticeConverter converter;
    Header();
    const std::string letters = Letters();
 
-   std::cout << "Do you want Maxima style output? (y/n)   ";
-   std::string answer;
-   std::getline(std::cin, answer);
-   if (answer[0] == 'y') converter.SetOutputMaxima();
+   if (LRL_StringTools::strToupper(doMaxima.substr(0, 1))[0] == 'Y') converter.SetOutputMaxima();
 
    const std::vector<LRL_ReadLatticeData> cellDataList = GetInputCells();
 

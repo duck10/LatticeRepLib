@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
    LRL_ReadLatticeData reader;
    std::cout << "; Various sortings" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
+   std::cout << "; sort selected = " << sorter << std::endl;
 
 
 

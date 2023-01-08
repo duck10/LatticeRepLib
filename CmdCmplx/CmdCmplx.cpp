@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 
+#include "C6.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
@@ -67,14 +68,29 @@ void ComplexCell(const S6& s)
 
 int main()
 {
-    std::cout << "; To Complex" << std::endl;
-    //const std::vector<ReadComplexLatticeData> inputList = ReadComplexLatticeData().ReadLatticeData();
-    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   //S6 s6(S6(0,0,0,100,100,100));
+   //C6 c6(s6);
+   //std::cout << c6 << std::endl;
+   //const S6 temp = static_cast<S6>(c6);
+   //std::cout << temp << std::endl;
 
-    for (size_t i = 0; i < inputList.size(); ++i) {
-        std::cout << inputList[i].GetCell() << std::endl;
-        ComplexCell(S6(inputList[i].GetCell()));
-    }
+
+   std::cout << C6(S6(-100, -100, -100, 0, 0, 0)) << std::endl;;
+   std::cout << C6(S6(100, 100, 100, 0, 0, 0)) << std::endl;;
+   std::cout << C6(S6(0, 0, 0, -100, -100, -100)) << std::endl;;
+   std::cout << C6(S6(0, 0, 0, 100, 100, 100)) << std::endl;;
+
+
+   const int i19191 = 19191;
+   exit(0);
+    //std::cout << "; To Complex" << std::endl;
+    ////const std::vector<ReadComplexLatticeData> inputList = ReadComplexLatticeData().ReadLatticeData();
+    //const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+
+    //for (size_t i = 0; i < inputList.size(); ++i) {
+    //    std::cout << inputList[i].GetCell() << std::endl;
+    //    ComplexCell(S6(inputList[i].GetCell()));
+    //}
    //ReadComplexLatticeData rcd;
    //rcd.read();
    //const int i19191 = 19191;
@@ -95,19 +111,19 @@ int main()
    //   ComplexCell(test);
    //}
 
-   //ComplexCell(S6(" 0 0 0 200  0 100"));
-   //ComplexCell(S6(" 0 0 0 100 100 100"));
-   //ComplexCell(S6(" 0 0 0 0 100 100"));
-   //ComplexCell(S6(" 0 0 0 0 0 100"));
-   //ComplexCell(S6(" 0 0 0 0 0 0"));
-   //ComplexCell(S6("100 100 100 -1 0 0"));
-   //ComplexCell(S6("100 100 100 1 0 0"));
-   //ComplexCell(S6("100 100 100 0 0 0"));
-   //ComplexCell(S6("-100 -100 -100 0 0 0"));
-   //ComplexCell(S6("-100 -100 -100 0.01 0 0"));
-   //ComplexCell(S6("-100 -100 -100 1 0 0"));
+   ComplexCell(S6(" 0 0 0 200  0 100"));
+   ComplexCell(S6(" 0 0 0 100 100 100"));
+   ComplexCell(S6(" 0 0 0 0 100 100"));
+   ComplexCell(S6(" 0 0 0 0 0 100"));
+   ComplexCell(S6(" 0 0 0 0 0 0"));
+   ComplexCell(S6("100 100 100 -1 0 0"));
+   ComplexCell(S6("100 100 100 1 0 0"));
+   ComplexCell(S6("100 100 100 0 0 0"));
+   ComplexCell(S6("-100 -100 -100 0 0 0"));
+   ComplexCell(S6("-100 -100 -100 0.01 0 0"));
+   ComplexCell(S6("-100 -100 -100 1 0 0"));
 
-   //ComplexCell(S6("-100 -100 -100 -30 -20 -10"));
-   //ComplexCell(S6("100 100 100 30 20 10"));
-   //std::cout << LRL_Cell_Degrees(S6("-100 -100 -100 0 0 0")) << std::endl;
+   ComplexCell(S6("-100 -100 -100 -30 -20 -10"));
+   ComplexCell(S6("100 100 100 30 20 10"));
+//   std::cout << LRL_Cell_Degrees(S6("-100 -100 -100 0 0 0")) << std::endl;
 }
