@@ -68,8 +68,6 @@ std::string PlotC3( const size_t scalar, const int wx, const int wy, const std::
       "</g>\n"
    "</g>\n";
 
-
-
    return plotc3;;
 }
 
@@ -92,9 +90,39 @@ std::vector<S6> PrepareCells() {
    return v;
 }
 
+std::string PrepareLegend(const double x, const double y, const std::vector<S6>& v) {
+   std::string out;
+   const std::string xtext = LRL_ToString(x);
+   const std::string ytext = LRL_ToString(y);
+   const std::string sourceFile(__FILE__);
+   const std::string sxlabel = LRL_ToString(x + 20);
+   const std::string sylabel = LRL_ToString(y + 50);
+
+   const std::string sydate = LRL_ToString(y+100);
+   const std::string sycount = LRL_ToString(y + 150);
+
+   const std::string fileLabel = "<text x=\"" + sxlabel + "\" y=\""+ sylabel+"\" >"
+      + sourceFile + " </text>\n";
+
+   const std::string date = "<text x=\"" + sxlabel + "\" y=\""
+      + sydate + "\" > " + "Generated: " + std::string(__DATE__) + "</text>\n";
+
+   const std::string count = "<text x=\"" + sxlabel + "\" y=\""
+      + sycount + "\" > " + "Number of points: " + LRL_ToString(v.size()) + "</text>\n";
+
+   const std::string rect = 
+      "<rect x=\""+xtext+"\" y= \"" + ytext + "\" width = \"500\"" +" height=\"500\" fill=\"none\" "
+      "stroke=\"black\" stroke-width=\"2\" />\n";
+
+   out += fileLabel;
+   out += date;
+   out += rect;
+   out += count;
+   return out;
+}
+
 int main(int argc, char* argv[])
 {
-   std::string type;
 
    const std::string filename = LRL_CreateFileName::Create("PLT_", "svg");
    std::cout << "SVG file =" + filename << std::endl;
@@ -105,37 +133,18 @@ int main(int argc, char* argv[])
    const std::string intro = c3plot.GetIntro(filename);
    svgOutput += intro;
 
-   const std::string swx = LRL_DataToSVG_ToQuotedString(-450);
-   const std::string swy1 = LRL_DataToSVG_ToQuotedString(50);
-   const std::string swy2 = LRL_DataToSVG_ToQuotedString(50+20);
-   const std::string swy3 = LRL_DataToSVG_ToQuotedString(50 + 40);
-   const std::string swy4 = LRL_DataToSVG_ToQuotedString(50 + 60);
-   //const std::string testtext = "<text x = " + swx + " y=" + swy1 + "> " +
-//   "C3 scalar = " + LRL_DataToSVG(scalar) + " </text>\n";
-
-   const std::string testtext2 = "<text x = " + swx + " y=" + swy2 + "> " +
-      "Perturb generated  = " + LRL_DataToSVG(".") + " points per input point </text>\n";
-
-   const std::string testtext3 = "<text x = " + swx + " y=" + swy3 + "> " +
-      "Perturbation = " + ".per 1000</text>\n";
-
-   const std::string testtext4 = "<text x = " + swx + " y=" + swy4 + "> . </text>\n";
-
-
    const std::vector<S6> v = PrepareCells();
-   //const double cellScale = c3plot.CellScale(v);
-
-   //const std::vector<S6> vv = c3plot.FindNearestReflection(v);
+   const std::string legend = PrepareLegend(600, 600, v);
+   svgOutput += legend;
 
    for (size_t scalar = 1; scalar < 4; ++scalar) {
-      const std::vector<S6>& vv(v);
 
       std::string line;
       std::string cells;
 
 
-      line += c3plot.CreatePolylineFromPoints(scalar, ".5", vv);
-      cells += c3plot.DrawCells(scalar, vv);
+      line += c3plot.CreatePolylineFromPoints(scalar, ".5", v);
+      cells += c3plot.DrawCells(scalar, v);
 
       std::string plotc3;
       if (scalar == 1)
@@ -146,10 +155,9 @@ int main(int argc, char* argv[])
          plotc3 = PlotC3(scalar, 500, 1100, line + "  " + cells);
 
       svgOutput += plotc3;;
-      c3plot.SendFrameToFile(filename, plotc3);
+      //c3plot.SendFrameToFile(filename, plotc3);
    }
-   const std::string wrapper = WrapSVG("xxx", c3plot.GetGx(), c3plot.GetGy(),
-      "");
+
    c3plot.SendFrameToFile(filename, svgOutput + c3plot.GetFoot());
 
 
