@@ -67,7 +67,7 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
       const std::string y = LRL_DataToSVG_ToQuotedString(v[i][sp.index2]*cellScale);
       const std::string radius = LRL_DataToSVG_ToQuotedString( 3);
 
-      const std::string s = std::string("<circle fill=\"none\"  r=\"5\" stroke = \"black\" stroke-width=\"1\"" 
+      const std::string s = std::string("<circle fill=\"none\"  r=\"5\" stroke = \"black\" stroke-width=\"2\"" 
          " cx=" + x +
          " cy=" + y + "/>\n" );
       transform += s;
