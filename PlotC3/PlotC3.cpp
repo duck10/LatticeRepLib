@@ -11,9 +11,10 @@
 
 #include <algorithm>
 #include <cmath>
-#include <utility>
-#include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 size_t scalar = 19191;
@@ -90,6 +91,16 @@ std::vector<S6> PrepareCells() {
    return v;
 }
 
+std::string CellPrecision2(const S6& s) {
+   std::stringstream os;
+   const LRL_Cell_Degrees cell(s);
+   os << std::fixed << std::setprecision(2);
+   for (size_t i = 0; i < 6; ++i) {
+      os << cell[i] << "  ";
+   }
+   return os.str();
+}
+
 std::string PrepareLegend(const double x, const double y, const std::vector<S6>& v) {
    std::string out;
    const std::string xtext = LRL_ToString(x);
@@ -118,6 +129,48 @@ std::string PrepareLegend(const double x, const double y, const std::vector<S6>&
    out += date;
    out += rect;
    out += count;
+
+   if (v.empty()) {
+      std::cout << "; PlotC3 requires at least one lattice" << std::endl;
+   }
+   else if (v.size() < 5) {
+      // just list them all
+      for (size_t i = 0; i < v.size(); ++i) {
+         const std::string ypos = LRL_ToString(y + 200 + i * 20);
+         const std::string cellText =
+            "<text x=\"" + sxlabel + "\" y=\""
+            + ypos + "\" > " + "P " + CellPrecision2(v[i]) + "</text>\n";
+         out += cellText;
+      }
+   }
+   else {
+      // just list the first 3 and the last one
+      for (size_t i = 0; i < 3; ++i) {
+         const std::string ypos = LRL_ToString(y + 200 + i * 20);
+         const std::string cellText1 =
+            "<text x=\"" + sxlabel + "\" y=\""
+            + ypos + "\" > " + "P " + CellPrecision2(v[i]) + "</text>\n";
+
+         out += cellText1;
+         out += "...\n";
+      }
+      const std::string ypos = LRL_ToString(y + 280);
+      std::stringstream os;
+      os << CellPrecision2(v[v.size() - 1]);
+
+      const std::string cellText2 =
+         "<text x=\"" + sxlabel + "\" y=\""
+         + ypos + "\" > " + "P " + os.str() + "</text>\n";
+      const std::string dots =
+         "<text x=\"" + sxlabel + "\" y=\""
+         + LRL_ToString(y + 255) + "\" > " + "\n ...\n</text>\n";
+      out += dots;
+      out += cellText2;
+
+   }
+
+
+
    return out;
 }
 
