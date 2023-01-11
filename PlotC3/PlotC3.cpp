@@ -168,9 +168,12 @@ std::string PrepareLegend(const double x, const double y, const std::vector<S6>&
       out += cellText2;
 
    }
+   const std::string ypos = LRL_ToString(y + 3400);
+   const std::string commandLine =
+      "<text x=\"" + sxlabel + "\" y=\""
+      + LRL_ToString(y + 355) + "\" > " + "\n edit SVG file to insert command line text</text>\n";
 
-
-
+   //out += commandLine;
    return out;
 }
 

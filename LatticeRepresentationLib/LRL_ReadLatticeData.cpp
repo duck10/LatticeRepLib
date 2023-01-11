@@ -167,7 +167,7 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
       if (toReturn.size() < 6 && m_inputDataType != "RANDOM") {
          toReturn.clear();
          if ( m_lattice != ";" && (!s.empty()) && s != " ")
-            std::cout << ";input line rejected, invalid cell A: " << s << std::endl;
+            std::cout << ";input line rejected, invalid cell (A): " << s << std::endl;
          m_lattice = "";
          m_cell.SetValid(false);
          return std::vector<double>();
@@ -204,7 +204,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
    if (s[0] == ';') m_incomingSemicolons += "\n" +m_strCell;
    if (s.length() == 0 || s[0] == ';') return;
    if (fields.size() < 6 && strupper !="RANDO") {
-      std::cout << ";input line rejected, insufficient data  " << s << std::endl;
+      std::cout << ";input line rejected (C), insufficient data  " << s << std::endl;
       return;
    }
 
@@ -213,7 +213,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
    if (s[0] == ';') m_incomingSemicolons += "\n"+s;
    if (!valid || !m_cell.GetValid()) {
       if (s[0] != ';' && (!s.empty()) && s != " ")
-         std::cout << ";input line rejected, invalid cell B: " << s << std::endl;
+         std::cout << ";input line rejected (D), invalid cell (B): " << s << std::endl;
       m_lattice = "";
       m_cell.SetValid(false);
    }
