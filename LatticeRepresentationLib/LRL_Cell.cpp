@@ -161,17 +161,47 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
            const double alpha, const double beta, const double gamma)
    : m_valid(true)
 {
+   static const double pi = 4.0 * atan(1.0);
+   static const double twopi = 2.0 * pi;
+   static const double rad = 180.0 / pi;
+
+    bool radianInput = false;
+
    m_cell.resize( 6 );
    m_cell[0] = a;
    m_cell[1] = b;
    m_cell[2] = c;
-   m_cell[3] = alpha / 57.2957795130823;
-   m_cell[4] = beta / 57.2957795130823;
-   m_cell[5] = gamma / 57.2957795130823;
+   if (alpha < pi && beta < pi && gamma < pi) {
+      // radian input
+      m_cell[3] = alpha;
+      m_cell[4] = beta;
+      m_cell[5] = gamma;
+      radianInput = true;
+   }
+   else {
+      // angle input, convert to radians
+      m_cell[3] = alpha / rad;
+      m_cell[4] = beta / rad;
+      m_cell[5] = gamma / rad;
+      radianInput = false;
+   }
+
+   if (alpha < pi || beta < pi || gamma < pi) {
+      if (!radianInput) std::cout << "; angles less then pi degrees are unusual\n";
+   }
+
+   if (alpha > 175 || beta > 175 || gamma > 175) {
+      std::cout << "; angles greater than 175 degrees are unusual\n";
+   }
+
    const double lowerlimit = 0.001;
-   m_valid = m_valid && a > lowerlimit && b > lowerlimit && c > lowerlimit && alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit
-      && alpha < 179.99 && beta < 179.99 && gamma < 179.99 && (alpha + beta + gamma) < 360.0 &&
-      (alpha + beta + gamma - 2.0*maxNC(alpha, beta, gamma) >= 0.0);
+   const bool b1 = a > lowerlimit && b > lowerlimit && c > lowerlimit;
+   const bool b2 = alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit;
+   const bool b3 = alpha < 179.99 && beta < 179.99 && gamma < 179.99;
+   const bool b4 = (alpha + beta + gamma) < 360.0;
+   const bool b5 = (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) > 0.0;
+   m_valid = m_valid && b2 && b2 && b3 && b4 && b5;
+   if (!b5) std::cout << "; angles do not satisfy the triangle inequality\n";
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
