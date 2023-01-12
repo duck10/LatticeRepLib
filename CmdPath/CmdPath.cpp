@@ -62,6 +62,7 @@ int main(int argc, char* argv[])
       path.insert(path.end(), pathStep.begin(), pathStep.end());
    }
 
+   std::cout << "; no. of points output is " << path.size() << std::endl;
    for (size_t i = 0; i < path.size(); ++i) {
       std::cout << "S  " << path[i] << "   " << i+1 << std::endl;
    }
