@@ -115,15 +115,16 @@ std::string PrepareLegend(const double x, const double y, const std::vector<S6>&
    const std::string fileLabel = "<text x=\"" + sxlabel + "\" y=\""+ sylabel+"\" >"
       + sourceFile + " </text>\n";
 
-   const std::string date = "<text x=\"" + sxlabel + "\" y=\""
-      + sydate + "\" > " + "Generated: " + std::string(__DATE__) + "</text>\n";
-
    const std::string count = "<text x=\"" + sxlabel + "\" y=\""
       + sycount + "\" > " + "Number of points: " + LRL_ToString(v.size()) + "</text>\n";
 
    const std::string rect = 
       "<rect x=\""+xtext+"\" y= \"" + ytext + "\" width = \"500\"" +" height=\"500\" fill=\"none\" "
       "stroke=\"black\" stroke-width=\"2\" />\n";
+
+   const std::string dateTime = LRL_CreateFileName::Create("Created ", "");
+   const std::string datePos = LRL_ToString(y + 460);
+   const std::string date = "<text x=\"" + sxlabel + "\" y=\"" + datePos + "\">" + dateTime + "</text>\n";
 
    out += fileLabel;
    out += date;
@@ -174,14 +175,13 @@ std::string PrepareLegend(const double x, const double y, const std::vector<S6>&
       + LRL_ToString(y + 355) + "\" > " + "\n edit SVG file to insert command line text</text>\n";
 
    //out += commandLine;
+
    return out;
 }
 
 int main(int argc, char* argv[])
 {
-
    const std::string filename = LRL_CreateFileName::Create("PLT_", "svg");
-   std::cout << "SVG file =" + filename << std::endl;
 
    C3Plot c3plot(filename, 2000, 2000, 500, 500);
 
@@ -198,7 +198,6 @@ int main(int argc, char* argv[])
       std::string line;
       std::string cells;
 
-
       line += c3plot.CreatePolylineFromPoints(scalar, ".5", v);
       cells += c3plot.DrawCells(scalar, v);
 
@@ -214,8 +213,7 @@ int main(int argc, char* argv[])
       //c3plot.SendFrameToFile(filename, plotc3);
    }
 
+   std::cout << "; Graphical output SVG file =" + filename << std::endl;
    c3plot.SendFrameToFile(filename, svgOutput + c3plot.GetFoot());
-
-
 }
 
