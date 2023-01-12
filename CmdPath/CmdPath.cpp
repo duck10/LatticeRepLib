@@ -24,11 +24,12 @@ int main(int argc, char* argv[])
 {
    std::cout << "; Path generator" << std::endl;
    int test = 20;
-   int pathLength = 20;
+   int pathLength = 0;
    if (argc > 1) {
       test = atoi(argv[1]);
+      if (test == 0) test = 20;
    }
-   pathLength = std::max(pathLength, test);
+   pathLength = test;
 
 
 
