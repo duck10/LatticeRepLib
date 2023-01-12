@@ -8,103 +8,61 @@
 #include "G6.h"
 #include "Niggli.h"
 
-class G6_Reduced : public G6 {
-public:
-   G6_Reduced() {}
-   G6_Reduced(const G6& g6);
-};
+std::vector<S6> CreatePathBetweenTwoPoints(const int npts, const S6& delta,  const S6& s1, const S6& s2) {
+   std::vector<S6> out(1,s1);
 
-G6_Reduced::G6_Reduced(const G6& g6) {
-   G6 g6out;
-   m_valid = Niggli::Reduce( g6, g6out);
-   m_vec = g6out.GetVector();
-}
-
-class S6_Reduced : public S6 {
-   S6_Reduced() {}
-   S6_Reduced(const S6& s6);
-};
-
-S6_Reduced::S6_Reduced(const S6& s6) {
-   S6 s6out;
-   m_valid = Selling::Reduce(s6, s6out);
-   m_vec = s6out.GetVector();
-}
-
-
-std::vector<std::pair<S6, S6> > MakeS6SinglePointPath(const LRL_Cell& start, const LRL_Cell&target) {
-   const size_t npath = FollowerConstants::globalStepsPerFrame;
-   std::vector<std::pair<S6, S6> > path;
-   for (size_t i = 0; i < npath + 1; ++i) {
-      const S6 cellX = (double(i) * S6(target) + double(npath - i) * S6(start)) / double(npath);
-      path.push_back(std::make_pair(cellX, target));
+   for (int i = 0; i < npts-1; ++i) {
+      const S6 diff = double(i+1) * delta;
+      const S6 temp = s1 + diff;
+      out.push_back(temp);
    }
-   return path;
+
+   return out;
 }
 
-std::vector<std::pair<S6, S6> > MakeS6LinePath(const LRL_Cell& c1, const LRL_Cell& c2) {
-   const std::vector<std::pair<S6, S6> > path1 = MakeS6SinglePointPath(c1, G6_Reduced(G6(c1)));
-   const std::vector<std::pair<S6, S6> > path2 = MakeS6SinglePointPath(c2, G6_Reduced(G6(c2)));
-
-   std::vector<std::pair<S6, S6> > path;
-   for (size_t i = 0; i < path1.size(); ++i)
-      path.push_back(std::make_pair(path1[i].first, path2[i].first));
-
-   return path;
-}
-
-std::vector<std::pair<S6, S6> > MakeS6Line3Path(const LRL_Cell& c1, const LRL_Cell& c2, const LRL_Cell& c3) {
-   const S6 initialMidPoint = (S6(c1) + S6(c2)) / 2.0;
-   const std::vector<std::pair<S6, S6> > midPointPath = MakeS6SinglePointPath(initialMidPoint, c3);
-   const S6 delta1 = S6(c1) - initialMidPoint;
-   const S6 delta2 = S6(c2) - initialMidPoint;
-
-   for ( size_t i=0; i<midPointPath.size(); ++i )
-      std::cout << i << "  " << LRL_Cell_Degrees(midPointPath[i].first) << "  " << LRL_Cell_Degrees(midPointPath[i].second) << std::endl;
-
-   std::vector<std::pair<S6, S6> > path;
-   for (size_t i = 0; i < midPointPath.size(); ++i)
-      path.push_back(std::make_pair(delta1+midPointPath[i].first, delta2+midPointPath[i].first));
-
-   return path;
-}
-
-std::vector<std::pair<S6, S6> > CreatePath(const std::vector<LRL_ReadLatticeData>& cells, const size_t n1) {
-   const size_t npath =FollowerConstants::globalStepsPerFrame;
-   std::vector<std::pair<S6, S6> > path;
-   if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) {
-      const S6 target = G6_Reduced(G6(cells[n1].GetCell()));
-      path = MakeS6SinglePointPath(cells[n1].GetCell(),target);
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) {
-      path = MakeS6LinePath(cells[n1].GetCell(), cells[n1 + 1].GetCell());
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) {
-      path = MakeS6Line3Path(cells[n1].GetCell(), cells[n1 + 1].GetCell(), cells[n1 + 2].GetCell());
-   }
-   else if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) {
-   };
-   return path;
-}
-
-int main()
+int main(int argc, char* argv[])
 {
-   FollowerConstants::globalStepsPerFrame = 20;
-   FollowerConstants::globalFollowerMode = FollowerConstants::globalSinglePoint;
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   std::vector<std::pair<S6, S6> > path;
    std::cout << "; Path generator" << std::endl;
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      path = CreatePath(inputList, i);
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) ++i;
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord) ++i;
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalChord3) ++i, ++i;
-      if (FollowerConstants::globalFollowerMode == FollowerConstants::globalTriangle) ++i, ++i;
+   int test = 20;
+   int pathLength = 20;
+   if (argc > 1) {
+      test = atoi(argv[1]);
    }
+   pathLength = std::max(pathLength, test);
 
+
+
+    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+    std::vector<S6> s6Cells;
+    for (int i = 0; i < inputList.size(); ++i) {
+       s6Cells.push_back(inputList[i].GetCell());
+    }
+
+    if (inputList.empty()) exit(99);
+
+    //const std::string lattice = std::string(inputList[0].GetStrCell()[0]);
+    //const G6 g6red = LatticeConverter().NiggliReduceCell(lattice, s6Cells[0]);
+
+    G6 g6red;
+    if (s6Cells.size() == 1) {
+       const std::string lattice = inputList[0].GetLattice();
+       const G6 g6red = LatticeConverter().NiggliReduceCell(lattice, s6Cells[0]);
+       s6Cells.push_back(g6red);
+    }
+
+   std::vector<S6> path;
+   //std::cout << "npts " << npts << std::endl;
+   const S6& s1(s6Cells[0]);
+   const S6& s2(s6Cells.back());
+   const S6 delta  = (s2 - s1) / double(pathLength-1);
+
+   for (int i = 0; i < s6Cells.size()-1; ++i) {
+      const std::vector<S6> pathStep = CreatePathBetweenTwoPoints(pathLength, delta, s6Cells[i], s6Cells[i+1]);
+      path.insert(path.end(), pathStep.begin(), pathStep.end());
+   }
 
    for (size_t i = 0; i < path.size(); ++i) {
-      std::cout << i + 1 << "  " << LRL_Cell_Degrees(path[i].first) << "    " << LRL_Cell_Degrees(path[i].second) << std::endl;
+      std::cout << "S  " << path[i] << "   " << i+1 << std::endl;
    }
 
 }

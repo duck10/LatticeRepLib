@@ -199,7 +199,7 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    const bool b2 = alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit;
    const bool b3 = alpha < 179.99 && beta < 179.99 && gamma < 179.99;
    const bool b4 = (alpha + beta + gamma) < 360.0;
-   const bool b5 = (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) > 0.0;
+   const bool b5 = (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) >= 0.0 - 0.00001;
    m_valid = m_valid && b2 && b2 && b3 && b4 && b5;
    if (!b5) std::cout << "; angles do not satisfy the triangle inequality\n";
 }
