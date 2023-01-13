@@ -210,7 +210,6 @@ int main(int argc, char* argv[])
          plotc3 = PlotC3(scalar, 500, 1100, line + "  " + cells);
 
       svgOutput += plotc3;;
-      //c3plot.SendFrameToFile(filename, plotc3);
    }
 
    std::cout << "; Graphical output SVG file =" + filename << std::endl;
