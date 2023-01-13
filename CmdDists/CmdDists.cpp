@@ -56,4 +56,9 @@ int main()
          << dEu << " " << dG6 << " " << dS6 << "          "
          << LRL_Cell_Degrees(vcells[i]) << std::endl;
    }
+
+   std::cout << std::fixed << std::setprecision(3) 
+      << "                                      "
+      << LRL_Cell_Degrees(vcells[vcells.size() - 1]) << std::endl;
+
 }
