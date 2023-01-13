@@ -10,8 +10,6 @@
 
 std::vector<S6> CreatePathBetweenTwoPoints(const int npts, const S6& delta,  const S6& s1, const S6& s2) {
    std::vector<S6> out(1,s1);
-   //std::cout << "s1 " << s1 << "  s2 " << s2 << std::endl;
-   std::cout << "delta " << delta << std::endl;
    for (int i = 0; i < npts-1; ++i) {
       const S6 diff = double(i+1) * delta;
       const S6 temp = s1 + diff;
@@ -56,7 +54,6 @@ int main(int argc, char* argv[])
 
    for (size_t i = 0; i < s6Cells.size()-1; ++i) {
       const S6 delta = (s6Cells[i + 1] - s6Cells[i]) / double(pathLength - 1);
-      std::cout << i << " s6c1 " << s6Cells[i] << "  s6c2 " << s6Cells[i + 1] << std::endl;
       const std::vector<S6> pathStep = CreatePathBetweenTwoPoints(pathLength, delta, s6Cells[i], s6Cells[i+1]);
       path.insert(path.end(), pathStep.begin(), pathStep.end());
    }
