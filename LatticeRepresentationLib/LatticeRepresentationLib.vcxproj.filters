@@ -179,6 +179,12 @@
     <ClCompile Include="C6.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DC7u.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MatDC7u.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -377,6 +383,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DC7u.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_indices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatDC7u.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
