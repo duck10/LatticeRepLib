@@ -1596,11 +1596,11 @@ inline bool LeftShortNearestNeighbor ( const DistanceType& dRadius,  T& tClosest
                 DistanceType testRadius;
                 while (shortRadius <= limitRadius) {
                     testRadius = shortRadius;
-                    if (bReturn = this->m_BaseNode.LeftNearest ( testRadius, tClosest, t, index, m_ObjectStore
+                    if ((bReturn = this->m_BaseNode.LeftNearest ( testRadius, tClosest, t, index, m_ObjectStore
 #ifdef CNEARTREE_INSTRUMENTED
                                                             , m_NodeVisits
 #endif
-                                                            )) return bReturn;
+                                                            ))) return bReturn;
                     shortRadius *= DistanceType(10);
                 }
             }

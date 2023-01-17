@@ -16,6 +16,7 @@
 #else 
 #include <math.h>
 #include <float.h>
+#include <stdlib.h>
 #endif
 
 

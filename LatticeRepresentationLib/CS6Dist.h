@@ -60,6 +60,9 @@ if(CS6M_changed) {fprintf(stderr,"%s[%g, %g, %g, %g, %g, %g]%s",prolog,value[0],
 
 #define NS6BDPRJ 6
 
+#include <math.h>
+#include <float.h>
+
 
 /* S6Dist Boundary projectors */
 
