@@ -70,10 +70,11 @@ std::string LRL_MaximaTools::MaximaFromString( const size_t rowLength, const std
       if (nextFrag != "\n" && nextFrag != " \n") sFrag += MaximaFromString( nextFrag );
       pos += nextFrag.length( );
       const std::string remaining = s.substr( pos, s.length() );
-      if (remaining.find_first_not_of(" ") != std::string::npos)
+      if (remaining.find_first_not_of(" ") != std::string::npos) {
          if (remaining != "\n" && remaining != " \n")sFrag += ",";
-      else
+      } else {
          break;
+      }
    }
 
    for ( unsigned int i=0; i<sFrag.length(); ++i )

@@ -12,6 +12,7 @@
 #include "LRL_Cell.h"
 #include "Delone.h"
 #include "D7.h"
+#include "DC7u.h"
 #include "G6.h"
 #include "LRL_RandTools.h"
 #include "MatS6.h"
@@ -43,12 +44,12 @@ G6::G6(const G6& v)
 G6::G6(const double v[6])
    : G6()
 {
-   m_vec[0] = v[0];
-   m_vec[1] = v[1];
-   m_vec[2] = v[2];
-   m_vec[3] = v[3];
-   m_vec[4] = v[4];
-   m_vec[5] = v[5];
+   m_vec[G6_AA_idx] = v[G6_AA_idx];
+   m_vec[G6_BB_idx] = v[G6_BB_idx];
+   m_vec[G6_CC_idx] = v[G6_CC_idx];
+   m_vec[G6_2BC_idx] = v[G6_2BC_idx];
+   m_vec[G6_2AC_idx] = v[G6_2AC_idx];
+   m_vec[G6_2AB_idx] = v[G6_2AB_idx];
    m_dim = 6;
 }
 
@@ -59,12 +60,12 @@ G6::G6(const LRL_Cell& c) {
 
    m_vec.resize(6);
    m_valid = c.GetValid();
-   m_vec[0] = c[0] * c[0];
-   m_vec[1] = c[1] * c[1];
-   m_vec[2] = c[2] * c[2];
-   m_vec[3] = 2.0 * c[1] * c[2] * cos(c[3]);
-   m_vec[4] = 2.0 * c[0] * c[2] * cos(c[4]);
-   m_vec[5] = 2.0 * c[0] * c[1] * cos(c[5]);
+   m_vec[G6_AA_idx] = c[0] * c[0];
+   m_vec[G6_BB_idx] = c[1] * c[1];
+   m_vec[G6_CC_idx] = c[2] * c[2];
+   m_vec[G6_2BC_idx] = 2.0 * c[1] * c[2] * cos(c[3]);
+   m_vec[G6_2AC_idx] = 2.0 * c[0] * c[2] * cos(c[4]);
+   m_vec[G6_2AB_idx] = 2.0 * c[0] * c[1] * cos(c[5]);
    for (size_t i = 3; i<6; ++i) if (std::fabs(m_vec[i]) < 1.0E-10) m_vec[i] = 0.0;
 
    bool b1 = c.GetValid();
@@ -86,12 +87,12 @@ G6::G6(const S6& ds)
    const double& t = ds[4];
    const double& u = ds[5];
 
-   double& g1 = m_vec[0];
-   double& g2 = m_vec[1];
-   double& g3 = m_vec[2];
-   double& g4 = m_vec[3];
-   double& g5 = m_vec[4];
-   double& g6 = m_vec[5];
+   double& g1 = m_vec[G6_AA_idx];
+   double& g2 = m_vec[G6_BB_idx];
+   double& g3 = m_vec[G6_CC_idx];
+   double& g4 = m_vec[G6_2BC_idx];
+   double& g5 = m_vec[G6_2AC_idx];
+   double& g6 = m_vec[G6_2AB_idx];
 
    g1 = -s - r - q;
    g2 = -t - r - p;
@@ -157,6 +158,83 @@ G6::G6(const D7& v7) {
    m_valid = g1 > 0.001 && g2 > 0.001 && g3 > 0.001 && v7.GetValid();
    m_dim = 6;
 }
+
+G6::G6(const DC7u& dc7u) {
+   double delta;
+   double u, v, w, testsign;
+   int error, ii;
+   m_vec.resize(6);
+   error=0;
+   delta=std::fabs(dc7u[DC7u_AA_idx])*1.e-10;
+   for (ii=0;ii<7;ii++) {
+     if (dc7u[ii]<delta) error++;
+   }
+   if (dc7u[DC7u_AA_idx] > dc7u[DC7u_BB_idx]+delta ||
+       dc7u[DC7u_BB_idx] > dc7u[DC7u_CC_idx]+delta ) error++;
+   if (error > 0) {
+     throw std::invalid_argument( "invalid unsorted DC7 cell" );
+     m_valid=false;
+   } else {
+     m_vec[G6_AA_idx]=dc7u[DC7u_AA_idx];
+     m_vec[G6_BB_idx]=dc7u[DC7u_BB_idx];
+     m_vec[G6_CC_idx]=dc7u[DC7u_CC_idx];
+     u=dc7u[DC7u_MIN_BC_diagsq_idx]
+       -dc7u[DC7u_BB_idx]-dc7u[DC7u_CC_idx];
+     v=dc7u[DC7u_MIN_AC_diagsq_idx]
+       -dc7u[DC7u_AA_idx]-dc7u[DC7u_CC_idx];
+     w=dc7u[DC7u_MIN_AB_diagsq_idx]
+       -dc7u[DC7u_AA_idx]-dc7u[DC7u_BB_idx];
+     testsign=dc7u[DC7u_MIN_ABC_diagsq_idx]
+             -(m_vec[G6_AA_idx]
+              +m_vec[G6_BB_idx]
+              +m_vec[G6_CC_idx]+u+v+w);
+     if ((std::fabs(testsign)<=delta)
+        || (std::fabs(u)<=delta)
+        || (std::fabs(v)<=delta)
+        || (std::fabs(w)<=delta)) {
+        m_vec[G6_2BC_idx]=u;
+        m_vec[G6_2AC_idx]=v;
+        m_vec[G6_2AB_idx]=w;
+      } else {
+        m_vec[G6_2BC_idx]=-u;
+        m_vec[G6_2AC_idx]=-v;
+        m_vec[G6_2AB_idx]=-w;
+      }
+      if (dc7u[DC7u_AA_idx]>dc7u[DC7u_BB_idx]+delta ||
+        dc7u[DC7u_BB_idx]>dc7u[DC7u_CC_idx]+delta ) error++;
+      if (error > 0) {
+        for (ii=0;ii<6;ii++) m_vec[ii]=0.;
+         m_valid=false;
+      } else {
+        m_vec[G6_AA_idx]=dc7u[DC7u_AA_idx];
+        m_vec[G6_BB_idx]=dc7u[DC7u_BB_idx];
+        m_vec[G6_CC_idx]=dc7u[DC7u_CC_idx];
+        u=dc7u[DC7u_MIN_BC_diagsq_idx]
+          -dc7u[DC7u_BB_idx]-dc7u[DC7u_CC_idx];
+        v=dc7u[DC7u_MIN_AC_diagsq_idx]
+          -dc7u[DC7u_AA_idx]-dc7u[DC7u_CC_idx];
+        w=dc7u[DC7u_MIN_AB_diagsq_idx]
+          -dc7u[DC7u_AA_idx]-dc7u[DC7u_BB_idx];
+        testsign=dc7u[DC7u_MIN_ABC_diagsq_idx]
+             -(m_vec[G6_AA_idx]
+              +m_vec[G6_BB_idx]
+              +m_vec[G6_CC_idx]+u+v+w);
+        if ((std::fabs(testsign)<=delta)
+            || (std::fabs(u)<=delta)
+            || (std::fabs(v)<=delta)
+            || (std::fabs(w)<=delta)) {
+          m_vec[G6_2BC_idx]=u;
+          m_vec[G6_2AC_idx]=v;
+          m_vec[G6_2AB_idx]=w;
+        } else {
+          m_vec[G6_2BC_idx]=-u;
+          m_vec[G6_2AC_idx]=-v;
+          m_vec[G6_2AB_idx]=-w;
+        }
+        m_valid=true;
+      }
+    }
+  }
 
 G6::G6(const std::string& s) {
    m_vec.resize(6);
@@ -305,12 +383,12 @@ G6 G6::operator- (const G6& v) const {
 G6 G6::InverseG6Vector(void) const {
    G6 v(*this);
 
-   double a = sqrt(v[0]);
-   double b = sqrt(v[1]);
-   double c = sqrt(v[2]);
-   double cosalpha = 0.5*v[3] / v[1] / v[2];
-   double cosbeta = 0.5*v[4] / v[0] / v[2];
-   double cosgamma = 0.5*v[5] / v[0] / v[1];
+   double a = sqrt(v[G6_AA_idx]);
+   double b = sqrt(v[G6_BB_idx]);
+   double c = sqrt(v[G6_CC_idx]);
+   double cosalpha = 0.5*v[G6_2BC_idx] / v[G6_BB_idx] / v[G6_CC_idx];
+   double cosbeta = 0.5*v[G6_2AC_idx] / v[G6_AA_idx] / v[G6_CC_idx];
+   double cosgamma = 0.5*v[G6_2AB_idx] / v[G6_AA_idx] / v[G6_BB_idx];
 
    const double sinalpha = sqrt(1.0 - cosalpha*cosalpha);
    const double sinbeta = sqrt(1.0 - cosbeta *cosbeta);

@@ -12,12 +12,14 @@
 
 #include "BasisBase.h"
 #include "VecN.h"
+#include "LRL_indices.h"
 
 class LRL_Cell;
 class C3;
 class S6;
 class D7;
 class B4;
+class DC7u;
 
 #include <ostream>
 #include <string>
@@ -32,6 +34,7 @@ public:
    G6(const G6& v);
    G6(const double v[6]);
    G6(const D7& v);
+   G6(const DC7u& dc7u);
    G6(const LRL_Cell& c);
    G6(const VecN& v);
    G6(const S6& ds);
@@ -44,6 +47,7 @@ public:
    G6& operator= (const G6& v);
    G6& operator= (const std::string& s);
    G6& operator= (const D7& v);
+   G6& operator= (const DC7u& dc7u);
    G6& operator= (const S6& v);
    G6& operator= (const C3& c3);
    G6& operator= (const B4& v);
