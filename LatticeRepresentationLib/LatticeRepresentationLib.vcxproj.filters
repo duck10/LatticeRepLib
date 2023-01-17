@@ -185,6 +185,36 @@
     <ClCompile Include="MatDC7u.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LRL_Vector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_StringTools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileOperations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_inverse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_MaximaTools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LRL_RandTools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sella.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVG_Tools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangleAreaFromSides.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -392,6 +422,75 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MatDC7u.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_Vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_StringTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstSingleton_T.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeloneTypeVerietyList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileOperations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_DataStreamToString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_DataToSVG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_inverse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_MaximaTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_MinMaxTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_RandTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRL_ToString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PairReporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rhrand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sella.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StoreResults.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVG_Tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Theta.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TNear.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleAreaFromSides.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="triple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xLRL_LatticeMatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
