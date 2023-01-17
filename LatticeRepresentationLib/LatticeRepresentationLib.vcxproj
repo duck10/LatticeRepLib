@@ -167,6 +167,7 @@
     <ClCompile Include="CS6Dist.cpp" />
     <ClCompile Include="D13.cpp" />
     <ClCompile Include="DC.cpp" />
+    <ClCompile Include="DC7u.cpp" />
     <ClCompile Include="DeloneFitResults.cpp" />
     <ClCompile Include="Delone_Types.cpp" />
     <ClCompile Include="FollowerConstants.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
     <ClCompile Include="MatD13.cpp" />
+    <ClCompile Include="MatDC7u.cpp" />
     <ClCompile Include="MatricesForOneDeloneType.cpp" />
     <ClCompile Include="Niggli_Types.cpp" />
     <ClCompile Include="ReadTypedData.cpp" />
@@ -225,6 +227,7 @@
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="D13.h" />
     <ClInclude Include="DC.h" />
+    <ClInclude Include="DC7u.h" />
     <ClInclude Include="DeloneFitResults.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
     <ClInclude Include="Delone_Types.h" />
@@ -244,8 +247,10 @@
     <ClInclude Include="LRL_Cell_Degrees.h" />
     <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
+    <ClInclude Include="LRL_indices.h" />
     <ClInclude Include="LRL_LatticeMatcher.h" />
     <ClInclude Include="MatD13.h" />
+    <ClInclude Include="MatDC7u.h" />
     <ClInclude Include="MatricesForOneDeloneType.h" />
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="Niggli_Types.h" />
