@@ -11,7 +11,7 @@
 
 std::vector< std::pair<std::string, MatS6> > SellaBuild::vDeloneTypes = Delone::LoadLabeledLatticeTypeProjectors();
 static const std::vector<MatS6> g_refls = MatS6::GetReflections();
-static const std::vector< S6(*)(const S6&)> fnRedn = S6Dist::SetVCPFunctions();
+static const std::vector< S6(*)(const S6&)> fnMakeVirtualCartPoint = S6Dist::SetVCPFunctions();
 
 
 SellaBuild::SellaBuild() {
@@ -285,7 +285,7 @@ void SellaBuild::Expand(const std::string& label, const MatS6& m/*, MatS6 transf
 void SellaBuild::OneBound(const std::string& label, const S6_Ordinals& s1,
    const size_t zeroBound)
 {
-   const S6_Ordinals s6temp = fnRedn[zeroBound](s1);
+   const S6_Ordinals s6temp = fnMakeVirtualCartPoint[zeroBound](s1);
    StoreAllReflections(label, s6temp);
 }
 
@@ -299,15 +299,15 @@ void SellaBuild::ProcessTwoZeros(const std::string& label, const S6& s6) {
    OneBound(label, s6, vZeros[0]);
    OneBound(label, s6, vZeros[1]);
    
-   const S6 red1 = SetPos(vZeros[0],fnRedn[vZeros[0]](s6)); //LCA this is the error point!!!
+   const S6 red1 = SetPos(vZeros[0],fnMakeVirtualCartPoint[vZeros[0]](s6)); //LCA this is the error point!!!
    // We don't really know where vZeros[1] went in red1
-   const S6 red2 = SetPos(vZeros[1],fnRedn[vZeros[1]](s6));
+   const S6 red2 = SetPos(vZeros[1],fnMakeVirtualCartPoint[vZeros[1]](s6));
 
    const std::vector<size_t> vZeros1 = FindS6Zeros(red1);
    const std::vector<size_t> vZeros2 = FindS6Zeros(red2);
 
-   const S6 red12 = fnRedn[vZeros1[0]](red1);
-   const S6 red21 = fnRedn[vZeros2[0]](red2);
+   const S6 red12 = fnMakeVirtualCartPoint[vZeros1[0]](red1);
+   const S6 red21 = fnMakeVirtualCartPoint[vZeros2[0]](red2);
 
    StoreAllReflections(label, red1);
    StoreAllReflections(label, red2);
@@ -326,7 +326,7 @@ std::set<S6> SellaBuild::BoundAndRefl(const size_t n, const S6& s) {
     const std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
     const S6 s6(s);
     std::set<S6> out;
-    S6 rxxxx = fnRedn[n](s);
+    S6 rxxxx = fnMakeVirtualCartPoint[n](s);
 
     for (size_t i = 0; i < refl.size(); ++i) {
         out.insert(refl[i](rxxxx));
@@ -341,9 +341,9 @@ void SellaBuild::ProcessThreeZeros(const std::string& label, const S6& s6) {
     StoreAllReflections(label, s6);
 
    // treat each separate bound
-   const S6 red_0 = fnRedn[vZeros[0]](s6);
-   const S6 red_1 = fnRedn[vZeros[1]](s6);
-   const S6 red_2 = fnRedn[vZeros[2]](s6);
+   const S6 red_0 = fnMakeVirtualCartPoint[vZeros[0]](s6);
+   const S6 red_1 = fnMakeVirtualCartPoint[vZeros[1]](s6);
+   const S6 red_2 = fnMakeVirtualCartPoint[vZeros[2]](s6);
    
    StoreAllReflections(label, red_0);
    StoreAllReflections(label, red_1);
@@ -351,12 +351,12 @@ void SellaBuild::ProcessThreeZeros(const std::string& label, const S6& s6) {
 
 
    // treat each pair of zeros
-   const S6 red_1_0 = fnRedn[vZeros[1]](red_0);
-   const S6 red_2_0 = fnRedn[vZeros[2]](red_0);
-   const S6 red_0_1 = fnRedn[vZeros[0]](red_1);
-   const S6 red_2_1 = fnRedn[vZeros[2]](red_1);
-   const S6 red_0_2 = fnRedn[vZeros[0]](red_2);
-   const S6 red_1_2 = fnRedn[vZeros[1]](red_2);
+   const S6 red_1_0 = fnMakeVirtualCartPoint[vZeros[1]](red_0);
+   const S6 red_2_0 = fnMakeVirtualCartPoint[vZeros[2]](red_0);
+   const S6 red_0_1 = fnMakeVirtualCartPoint[vZeros[0]](red_1);
+   const S6 red_2_1 = fnMakeVirtualCartPoint[vZeros[2]](red_1);
+   const S6 red_0_2 = fnMakeVirtualCartPoint[vZeros[0]](red_2);
+   const S6 red_1_2 = fnMakeVirtualCartPoint[vZeros[1]](red_2);
 
    StoreAllReflections(label, red_1_0);
    StoreAllReflections(label, red_2_0);
@@ -366,12 +366,12 @@ void SellaBuild::ProcessThreeZeros(const std::string& label, const S6& s6) {
    StoreAllReflections(label, red_1_2);
 
    // now process all three zeros
-   const S6 red_0_1_2 = fnRedn[vZeros[0]](red_1_2);
-   const S6 red_0_2_1 = fnRedn[vZeros[0]](red_2_1);
-   const S6 red_1_0_2 = fnRedn[vZeros[1]](red_0_2);
-   const S6 red_1_2_0 = fnRedn[vZeros[1]](red_2_0);
-   const S6 red_2_0_1 = fnRedn[vZeros[2]](red_0_1);
-   const S6 red_2_1_0 = fnRedn[vZeros[2]](red_1_0);
+   const S6 red_0_1_2 = fnMakeVirtualCartPoint[vZeros[0]](red_1_2);
+   const S6 red_0_2_1 = fnMakeVirtualCartPoint[vZeros[0]](red_2_1);
+   const S6 red_1_0_2 = fnMakeVirtualCartPoint[vZeros[1]](red_0_2);
+   const S6 red_1_2_0 = fnMakeVirtualCartPoint[vZeros[1]](red_2_0);
+   const S6 red_2_0_1 = fnMakeVirtualCartPoint[vZeros[2]](red_0_1);
+   const S6 red_2_1_0 = fnMakeVirtualCartPoint[vZeros[2]](red_1_0);
 
    StoreAllReflections(label, red_0_1_2);
    StoreAllReflections(label, red_0_2_1);
@@ -467,7 +467,7 @@ std::set<S6> Rounder(const std::set<S6>& ss) {
 std::set<S6> SellaBuild::Xpand1(const std::string& label, const S6& s) {
    std::set<S6> out = GenerateAllReflections(s);
    const std::vector<size_t> vZeros = FindNearS6Zeros(s);
-   const std::set<S6> out1 = GenerateAllReflections(Rounder(fnRedn[vZeros[0]](s)));
+   const std::set<S6> out1 = GenerateAllReflections(Rounder(fnMakeVirtualCartPoint[vZeros[0]](s)));
    out.insert(out1.begin(), out1.end());
 
    //for (auto it = out.begin(); it != out.end(); ++it) std::cout << *it << std::endl;
@@ -484,8 +484,8 @@ std::set<S6> SellaBuild::Xpand1(const std::string& label, const std::set<S6>& vs
 
 std::set<S6> SellaBuild::Xpand2(const std::string& label, const S6& s) {
    const std::vector<size_t> vZeros = FindS6Zeros(s);
-   const S6 s6temp0 = Rounder(fnRedn[vZeros[0]](s));
-   const S6 s6temp1 = Rounder(fnRedn[vZeros[1]](s));
+   const S6 s6temp0 = Rounder(fnMakeVirtualCartPoint[vZeros[0]](s));
+   const S6 s6temp1 = Rounder(fnMakeVirtualCartPoint[vZeros[1]](s));
 
    const std::set<S6>  pluss6temp0 = Xpand1(label, SetPos(0,s6temp0));
    const std::set<S6>  pluss6temp1 = Xpand1(label, SetPos(1,s6temp1));
@@ -524,9 +524,9 @@ std::set<S6> SellaBuild::Xpand2(const std::string& label, const S6& s) {
 std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s) {
    std::set<S6> out;
    const std::vector<size_t> vZeros = FindS6Zeros(s);
-   const S6 s6temp0 = Rounder(fnRedn[vZeros[0]](s));
-   const S6 s6temp1 = Rounder(fnRedn[vZeros[1]](s));
-   const S6 s6temp2 = Rounder(fnRedn[vZeros[2]](s));
+   const S6 s6temp0 = Rounder(fnMakeVirtualCartPoint[vZeros[0]](s));
+   const S6 s6temp1 = Rounder(fnMakeVirtualCartPoint[vZeros[1]](s));
+   const S6 s6temp2 = Rounder(fnMakeVirtualCartPoint[vZeros[2]](s));
 
    const std::set<S6>  pluss6temp0 = Rounder(Xpand2(label, SetPos(0, s6temp0)));
    const std::set<S6>  pluss6temp1 = Rounder(Xpand2(label, SetPos(1, s6temp1)));

@@ -55,9 +55,9 @@ MatS6 LabeledDeloneTypeMatrices::ToCanon(const S6_Ordinals& s) {
 
 MatS6 LabeledDeloneTypeMatrices::ToCanon(const S6& s) {
    MatS6 m(MatS6().Zero());
-   for (size_t i = 0; i < 6; ++i) {
-      m[6 * i + int(s[i])] = 1.0;
-   }
+   //for (size_t i = 0; i < 6; ++i) {
+   //   m[6 * i + int(s[i])] = 1.0;
+   //}
    return m;
 }
 
