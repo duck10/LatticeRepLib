@@ -192,8 +192,8 @@ void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::vector<LabeledDelo
       const std::string s = WriteMatrixTypes(
          matsForAllDeloneTypes[i].GetLabel(),
          "",
-         "Perps",
-         matsForAllDeloneTypes[i].m_perps);
+         "Prjs",
+         matsForAllDeloneTypes[i].m_prjs);
       std::cout << s << std::endl;
    }
 
@@ -201,11 +201,11 @@ void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::vector<LabeledDelo
       const std::string s = WriteMatrixTypes(
          matsForAllDeloneTypes[i].GetLabel(),
          "",
-         "Prjs",
-         matsForAllDeloneTypes[i].m_prjs);
+         "Perps",
+         matsForAllDeloneTypes[i].m_perps);
       std::cout << s << std::endl;
    }
-   
+
    for (size_t i = 0; i < matsForAllDeloneTypes.size(); ++i) {
       const std::string s = WriteMatrixTypes(
          matsForAllDeloneTypes[i].GetLabel(),
