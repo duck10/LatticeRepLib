@@ -12,7 +12,7 @@
 std::vector< std::pair<std::string, MatS6> > SellaBuild::vDeloneTypes = Delone::LoadLabeledLatticeTypeProjectors();
 static const std::vector<MatS6> g_refls = MatS6::GetReflections();
 static const std::vector< S6(*)(const S6&)> fnMakeVirtualCartPoint = S6Dist::SetVCPFunctions();
-
+static const std::vector<S6(*)(const S6&)> fnRefl = S6::SetRelectionFunctions();
 
 SellaBuild::SellaBuild() {
    store.SetMaxItemStore(20000);
@@ -114,11 +114,10 @@ void SellaBuild::Store(const std::string& label, const std::set<S6_Ordinals>& s)
 }
 
 void SellaBuild::StoreAllReflections(const std::string& label, const S6_Ordinals& s1in) {
-   const std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
    S6_Ordinals s1(s1in);
 
-   for (size_t i = 0; i < refl.size(); ++i) {
-      store.Store(label, refl[i](s1));
+   for (size_t i = 0; i < fnRefl.size(); ++i) {
+      store.Store(label, fnRefl[i](s1));
    }
 }
 
@@ -129,10 +128,9 @@ void SellaBuild::StoreAllReflections(const std::string& label, const std::set<S6
 }
 
 std::set<S6> SellaBuild::GenerateAllReflections(const S6& s1in) {
-   const std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
    std::set<S6> setS6;
-   for (size_t i = 0; i < refl.size(); ++i) {
-      setS6.insert(refl[i](s1in));
+   for (size_t i = 0; i < fnRefl.size(); ++i) {
+      setS6.insert(fnRefl[i](s1in));
    }
    return setS6;
 }
@@ -323,28 +321,27 @@ S6 SetPos(const size_t n, const size_t m) {
 }
 
 std::set<S6> SellaBuild::BoundAndRefl(const size_t n, const S6& s) {
-    const std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
     const S6 s6(s);
     std::set<S6> out;
     S6 rxxxx = fnMakeVirtualCartPoint[n](s);
 
-    for (size_t i = 0; i < refl.size(); ++i) {
-        out.insert(refl[i](rxxxx));
+    for (size_t i = 0; i < fnRefl.size(); ++i) {
+        out.insert(fnRefl[i](rxxxx));
     }
     return out;
 }
 
 void SellaBuild::ProcessThreeZeros(const std::string& label, const S6& s6) {
-    const std::vector<size_t> vZeros = FindS6Zeros(s6);
+   const std::vector<size_t> vZeros = FindS6Zeros(s6);
 
-    // handle input as if no zeros, just reflections
-    StoreAllReflections(label, s6);
+   // handle input as if no zeros, just reflections
+   StoreAllReflections(label, s6);
 
    // treat each separate bound
    const S6 red_0 = fnMakeVirtualCartPoint[vZeros[0]](s6);
    const S6 red_1 = fnMakeVirtualCartPoint[vZeros[1]](s6);
    const S6 red_2 = fnMakeVirtualCartPoint[vZeros[2]](s6);
-   
+
    StoreAllReflections(label, red_0);
    StoreAllReflections(label, red_1);
    StoreAllReflections(label, red_2);
@@ -383,8 +380,6 @@ void SellaBuild::ProcessThreeZeros(const std::string& label, const S6& s6) {
 }
 
 void SellaBuild::ProcessZeros( const std::string& label, const S6_Ordinals& s6 ) {
-   std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
-
    const std::vector<size_t> vZeros = FindS6Zeros( s6 );
    const size_t nzeros = vZeros.size( );
 
