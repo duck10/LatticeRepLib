@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.12)
 set(PROJECT_NAME LatticeRepresentationLib)
 project(${PROJECT_NAME} CXX)
 
+if (WIN32)
+  set(${CMAKE_INSTALL_LIBDIR} "lib")
+  set(${CMAKE_INSTALL_DATADIR} "share")
+  set(${CMAKE_INSTALL_INCLUDEDIR} "include")
+  set(${CMAKE_INSTALL_BINDIR} "bin")
+  message(STATUS "Setting installation destination on Windows to: ${CMAKE_INSTALL_PREFIX}")
+else()
+  include(GNUInstallDirs)
+  message(STATUS "Setting installation destination to: ${CMAKE_INSTALL_PREFIX}")
+endif()
+
 ################################################################################
 # Header files
 ################################################################################
@@ -136,8 +147,16 @@ set(SRC_FILES
 )
 source_group("Sources" FILES ${SRC_FILES})
 
-# Warning: pch and target are the same for every configuration
 ################################################################################
 # Target
 ################################################################################
-add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${HEADERS_FILES})
+add_library(${PROJECT_NAME}_static STATIC ${SRC_FILES} ${HEADERS_FILES})
+add_library(${PROJECT_NAME} SHARED ${SRC_FILES} ${HEADERS_FILES})
+
+################################################################################
+# Install
+################################################################################
+
+install(TARGETS ${PROJECT_NAME}_static ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(FILES ${HEADERS_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
