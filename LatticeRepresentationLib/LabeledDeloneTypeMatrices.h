@@ -8,13 +8,15 @@
 #include "MatS6.h"
 #include "S6_Ordinals.h"
 #include "StoreResults.h"
+#include "Transformations.h"
 
 class LabeledDeloneTypeMatrices {
 public:
    LabeledDeloneTypeMatrices(){}
    std::vector<LabeledDeloneTypeMatrices>
       ProcessVectorMapToPerpsAndProjectors
-      (const std::map<std::string, std::vector<S6> >& themap);
+      (const std::map<std::string, std::vector<S6> >& themap,
+         const std::map<std::string, std::vector<Transformations> >& xfmap);
 
    size_t size() const { return m_perps.size(); }
 
@@ -36,7 +38,9 @@ private:
 
    static double Fraction(const double d, const S6& s);
    static size_t Index6(const size_t i, const size_t j);
-   static MatS6 ProjectorFromVector(const std::string& label, const S6& s);
+   //static MatS6 ProjectorFromVector(const std::string& label, const S6& s);
+   //static MatS6 ProjectorFromVector(const std::string& label,
+      //const Transformations& xf);
    static MatS6 ToCanon(const S6& s);
    static MatS6 ToCanon(const S6_Ordinals& s);
    bool AlreadyHasThisProjector(const MatS6& m, const LabeledDeloneTypeMatrices& lsm) const;
@@ -45,6 +49,50 @@ private:
    std::vector<MatS6> m_perps;
    std::vector<MatS6> m_prjs;
    std::vector<MatS6> m_toCanons;
+
+
+
+   template <typename T>
+   std::vector<LabeledDeloneTypeMatrices> MapToMatrices(const T& t) const {
+      std::vector<LabeledDeloneTypeMatrices> vlsm;
+      static const MatS6 unitM = MatS6().unit();
+      for (auto it = t.begin(); it != t.end(); ++it) {
+         const auto& p = *it;
+         LabeledDeloneTypeMatrices lsm;
+         const std::string& label = p.first;
+         lsm.m_label = label;
+         for (size_t i = 0; i < p.second.size(); ++i) {
+            const S6 s6 = p.second[i].GetVector();
+            const MatS6 prj = ProjectorFromVector(label,s6);
+            if (!AlreadyHasThisProjector(prj, lsm)) {
+               lsm.m_prjs.push_back(ProjectorFromVector(label, p.second[i]));
+               lsm.m_perps.push_back(unitM - ProjectorFromVector(label, p.second[i]));
+               //lsm.m_toCanons.push_back(ToCanon(p.second[i]));
+               // LCA -- NEED TO MAKE ToCanon work for Transformations !!!!!!!!!!!!!!!!!!
+            }
+         }
+
+         vlsm.push_back(lsm);
+      }
+      return vlsm;
+   }
+
+   template <typename T>
+   MatS6 ProjectorFromVector(const std::string& label, const T& t) const {
+      MatS6 m;
+      m = m.Zero();
+      const S6 s = ReZeroScalars(S6(t));
+
+      for (size_t j = 0; j < 6; ++j) {
+         for (size_t k = j; k < 6; ++k) {
+            const double thisFrac = Fraction(s[k], s);
+            m[Index6(j, k)] = (abs(s[j] - s[k]) < 1.0E-5 && abs(s[k]) > 1.0E-5) ? thisFrac : 0.0;
+            m[Index6(k, j)] = m[Index6(j, k)];
+         }
+      }
+      return m;
+   }
+
 };
 
 #endif  // LabeledSellaMatricesForDeloneType_H

@@ -394,6 +394,9 @@
     <ClInclude Include="MatDC7u.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Transformations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
