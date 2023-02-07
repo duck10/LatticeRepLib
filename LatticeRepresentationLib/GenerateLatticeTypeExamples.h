@@ -4,6 +4,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "G6.h"
 #include "LabeledSellaMatrices.h"

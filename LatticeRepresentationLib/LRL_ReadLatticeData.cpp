@@ -6,6 +6,7 @@
 #include "S6.h"
 #include "B4.h"
 #include "D7.h"
+#include "DC7u.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_RandTools.h"
@@ -41,6 +42,9 @@ std::vector<std::string> vS6_names(S6_names, S6_names + sizeof(S6_names) / sizeo
 std::string C3_names[] = { "C3 " };
 std::vector<std::string> vC3_names(C3_names, C3_names + sizeof(C3_names) / sizeof(C3_names[0]));
 
+std::string U_names[] = { "U ", "DC7u " };
+std::vector<std::string> vU_names(U_names, U_names + sizeof(U_names) / sizeof(U_names[0]));
+
 std::string lattice_names[] = { "A ", "B ", "C ", "P ", "R ", "F ", "I ", "H " };
 std::vector<std::string> vlattice_names(lattice_names, lattice_names + sizeof(lattice_names) / sizeof(lattice_names[0]));
 
@@ -52,32 +56,11 @@ bool LRL_ReadLatticeData::IsLatticeName(const std::vector<std::string>& nameList
    return std::find(nameList.begin(), nameList.end(), inputName) != nameList.end();
 }
 
-bool HasLatticeParams6(const std::string& s) {
-   std::istringstream iss( s );
-   std::vector<std::string> fields;
-   std::string onefield;
-   while (iss) {
-      iss >> onefield;
-      if (iss) fields.push_back( onefield );
-   }
-   return fields.size( ) == 6;
-}
-
-bool HasLatticeParams7( const std::string& s ) {
-   std::istringstream iss( s );
-   std::vector<std::string> fields;
-   std::string onefield;
-   while (iss) {
-      iss >> onefield;
-      if (iss) fields.push_back( onefield );
-   }
-   return fields.size( ) == 7;
-}
 
 std::pair<std::vector<double>, std::vector<double> > LRL_ReadLatticeData::SplitFields( const int n, const std::vector<double>& fields) {
-   // if there are more than 6 fields, try to assume that the rest are standard deviations
+   // if there are more than n fields, try to assume that the rest are standard deviations
    std::vector<double> v1, v2;
-   if (n <= fields.size( ))
+   if ( n <= fields.size( ))
       v1 = std::vector<double>( fields.begin( ), fields.begin( ) + n );
    if ( 2*n <= fields.size( ))
       v2 = std::vector<double>( fields.begin( ) + n, fields.begin( ) + 2*n );
@@ -118,6 +101,16 @@ bool LRL_ReadLatticeData::SetC3Data( const std::string& inputDataType, const std
    const bool test = IsLatticeName( m_inputDataType, vC3_names );
    if (test) {
       m_cell = LRL_Cell( C3( fields ) );
+      m_lattice = "P";
+   }
+   return test;
+}
+
+bool LRL_ReadLatticeData::SetUData( const std::string& inputDataType, const std::vector<double>& fields ) {
+   const bool test = IsLatticeName( m_inputDataType, vU_names );
+   if (test) {
+      DC7u dc7u=DC7u(fields);
+      m_cell = LRL_Cell( G6( dc7u ) );
       m_lattice = "P";
    }
    return test;
@@ -187,6 +180,7 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
          SetD7Data(m_inputDataType, fields) ||
          SetS6Data(m_inputDataType, fields) ||
          SetC3Data(m_inputDataType, fields) ||
+         SetUData(m_inputDataType, fields) ||
          SetUnitCellTypeData(m_inputDataType, params);
 
       if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES

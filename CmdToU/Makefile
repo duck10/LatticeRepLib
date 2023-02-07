@@ -7,6 +7,7 @@ $(COMMAND):	$(COMMAND).cpp \
         ../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
         ../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/D13.cpp \
+	../LatticeRepresentationLib/DC7u.cpp \
         ../LatticeRepresentationLib/D7_Boundary.cpp ../LatticeRepresentationLib/D7_BoundaryList.cpp  \
         ../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
         ../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
@@ -21,10 +22,11 @@ $(COMMAND):	$(COMMAND).cpp \
         ../LatticeRepresentationLib/S6.cpp ../LatticeRepresentationLib/S6Dist.cpp \
         ../LatticeRepresentationLib/S6_Matrices.cpp ../LatticeRepresentationLib/Selling.cpp \
         ../LatticeRepresentationLib/VecN.cpp ../LatticeRepresentationLib/LRL_Vector3.cpp
-	$(CXX) -I ../LatticeRepresentationLib -o $(COMMAND) $(COMMAND).cpp \
+	$(CXX) -g -I ../LatticeRepresentationLib -o $(COMMAND) $(COMMAND).cpp \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/D13.cpp \
+	../LatticeRepresentationLib/DC7u.cpp \
 	../LatticeRepresentationLib/D7_Boundary.cpp ../LatticeRepresentationLib/D7_BoundaryList.cpp  \
 	../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \

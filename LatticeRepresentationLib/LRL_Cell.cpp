@@ -14,6 +14,7 @@
 #include "C3.h"
 #include "B4.h"
 #include "D7.h"
+#include "DC7u.h"
 #include "Delone.h"
 #include "G6.h"
 #include "LRL_MinMaxTools.h"
@@ -254,6 +255,12 @@ LRL_Cell::LRL_Cell(const G6& g6)
 }
 
 LRL_Cell::LRL_Cell(const D7& v7)
+   : m_valid(v7.GetValid())
+{
+   (*this) = G6(v7);
+}
+
+LRL_Cell::LRL_Cell(const DC7u& v7)
    : m_valid(v7.GetValid())
 {
    (*this) = G6(v7);
@@ -529,6 +536,11 @@ LRL_Cell operator* (const double d, const LRL_Cell& c) {
 }
 
 LRL_Cell& LRL_Cell::operator= (const D7& v) {
+   *this = LRL_Cell(v);
+   return *this;
+}
+
+LRL_Cell& LRL_Cell::operator= (const DC7u& v) {
    *this = LRL_Cell(v);
    return *this;
 }

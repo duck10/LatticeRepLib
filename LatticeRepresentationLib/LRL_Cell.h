@@ -21,6 +21,7 @@
 class C3;
 class S6;
 class D7;
+class DC7u;
 class B4;
 class G6;
 class MatG6;
@@ -42,6 +43,7 @@ public:
       const double alpha, const double beta, const double gamma);
    LRL_Cell(const G6& v6); // specialized for G6
    LRL_Cell(const D7& v7); // specialized for d7
+   LRL_Cell(const DC7u& v7); // specialized for dc7u
    LRL_Cell(const S6& dt); // specialized for S6
    LRL_Cell(const C3& c3); // specialized for C3
    LRL_Cell(const B4& ds); // specialized for Delone tetrahedron
@@ -51,6 +53,7 @@ public:
 
    LRL_Cell& operator= (const std::string& s);
    LRL_Cell& operator= (const D7& v);
+   LRL_Cell& operator= (const DC7u& v);
    LRL_Cell& operator= (const C3& c3);
    LRL_Cell& operator= (const S6& v);
    LRL_Cell& operator= (const B4& v);
