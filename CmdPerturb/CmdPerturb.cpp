@@ -30,36 +30,44 @@ T CreateTotallyRandomUnitOrthogonalComponent(const T& t) {
    return ortho / ortho.norm();
 }
 
+G6 PerturbOneVector(const std::string& lattice, const S6& base,
+   const std::string& label) {
+   return G6();
+}
+
 G6 PerturbOneVector( const LRL_ReadLatticeData& input, const S6& base, 
    const std::string& label )
 {
    const S6 perturbation = delta * CreateTotallyRandomUnitOrthogonalComponent(base);
    const S6 perturbed = base + perturbation;
 
-   const char cl = input.GetStrCell()[0];
-   if (latticeNames.find(cl) == std::string::npos)
-      std::cout << "S6 " << perturbed << "  perturbed  " + label << std::endl;
-   else {
-      std::string s("  ");
-      s[0] = cl;
-      std::cout << s << LRL_Cell_Degrees(perturbed) << "  perturbed  " + label << std::endl;
-   }
    return perturbed;
 }
 
+void OutputPerturbedCell(const std::string& lattice, const S6& perturbed,
+   const std::string& label) {
+   if (latticeNames.find(lattice) == std::string::npos)
+      std::cout << "S6 " << perturbed << "  perturbed  " + label << std::endl;
+   else {
+      std::cout << lattice+" " << LRL_Cell_Degrees(perturbed) << "  perturbed  " + label << std::endl;
+   }
+}
+
 void HandleOneInputCell(const LRL_ReadLatticeData& inputlattice) {
-   const S6 input(inputlattice.GetCell());
-   const S6 base = 1000.0 * input / input.Norm();
+   const S6 inputCell(inputlattice.GetCell());
+   const double scale = 1000.0 / inputCell.Norm();
+   const S6 base = inputCell * scale;
 
    const std::string strcel = inputlattice.GetStrCell();
 
-   std::cout << "\n;" << strcel << "    original input" << std::endl;
-   std::cout << ";S6 " << base << "    scaled input" << std::endl;
+   std::cout << "\n;" << strcel << "    original inputCell" << std::endl;
 
    const size_t pos = strcel.find("IT#");
    const std::string label = (pos != std::string::npos) ? strcel.substr(pos) : "";
    for (size_t k = 0; k < ngen; ++k) {
-      PerturbOneVector(inputlattice, base, label);
+      //const G6 perturbed1 = PerturbOneVector(inputlattice, base, label);
+      const G6 perturbed2 = PerturbOneVector(strcel[0], inputCell, label);
+      OutputPerturbedCell(strcel.substr(0,1), perturbed2, label);
    }
 }
 
@@ -75,7 +83,7 @@ int main(int argc, char* argv[])
 
    LRL_ReadLatticeData reader;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
-   std::cout << "; Perturb vectors, input scaled to 1000 in S6, perturbed by (ppt) " << delta
+   std::cout << "; Perturb vectors, perturbed in G6, perturbed by (ppt) " << delta
       << "  ngen = " << ngen << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
       HandleOneInputCell(inputList[i]);

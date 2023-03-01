@@ -13,6 +13,7 @@
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "LRL_StringTools.h"
+#include "LRL_Vector3.h"
 
 
 #include <algorithm>
@@ -40,6 +41,9 @@ std::vector<std::string> vS6_names(S6_names, S6_names + sizeof(S6_names) / sizeo
 
 std::string C3_names[] = { "C3 " };
 std::vector<std::string> vC3_names(C3_names, C3_names + sizeof(C3_names) / sizeof(C3_names[0]));
+
+std::string B4_names[] = { "B ", "B4 " };
+std::vector<std::string> vB4_names(B4_names, B4_names + sizeof(B4_names) / sizeof(B4_names[0]));
 
 std::string lattice_names[] = { "A ", "B ", "C ", "P ", "R ", "F ", "I ", "H " };
 std::vector<std::string> vlattice_names(lattice_names, lattice_names + sizeof(lattice_names) / sizeof(lattice_names[0]));
@@ -114,10 +118,30 @@ bool LRL_ReadLatticeData::SetG6Data( const std::string& inputDataType, const std
    return test;
 }
 
-bool LRL_ReadLatticeData::SetC3Data( const std::string& inputDataType, const std::vector<double>& fields ) {
-   const bool test = IsLatticeName( m_inputDataType, vC3_names );
+bool LRL_ReadLatticeData::SetC3Data(const std::string& inputDataType, const std::vector<double>& fields) {
+   const bool test = IsLatticeName(m_inputDataType, vC3_names);
    if (test) {
-      m_cell = LRL_Cell( C3( fields ) );
+      m_cell = LRL_Cell(C3(fields));
+      m_lattice = "P";
+   }
+   return test;
+}
+
+bool LRL_ReadLatticeData::SetB4Data(const std::string& inputDataType, const std::vector<double>& fields) {
+   if (fields.size() < 12) return false;
+   const bool test = IsLatticeName(m_inputDataType, vB4_names);
+   const Vector_3 v1(Vector_3(fields[0], fields[1], fields[2]));
+   const Vector_3 v2(Vector_3(fields[3], fields[4], fields[5]));
+   const Vector_3 v3(Vector_3(fields[6], fields[7], fields[8]));
+   const Vector_3 v4(Vector_3(fields[9], fields[10], fields[11]));
+   const double s1 = v2.Dot(v3);
+   const double s2 = v1.Dot(v3);
+   const double s3 = v1.Dot(v2);
+   const double s4 = v4.Dot(v1);
+   const double s5 = v4.Dot(v2);
+   const double s6 = v4.Dot(v3);
+   if (test) {
+      m_cell = LRL_Cell(S6(s1,s2,s3,s4,s5,s6));
       m_lattice = "P";
    }
    return test;
@@ -187,6 +211,7 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
          SetD7Data(m_inputDataType, fields) ||
          SetS6Data(m_inputDataType, fields) ||
          SetC3Data(m_inputDataType, fields) ||
+         SetB4Data(m_inputDataType, fields) ||
          SetUnitCellTypeData(m_inputDataType, params);
 
       if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES

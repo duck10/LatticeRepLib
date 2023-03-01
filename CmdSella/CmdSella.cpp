@@ -151,7 +151,7 @@ bool CheckOneBravaisChain(
       double value2 = valueMap[name2];
       if (value1 < 1.0E-3) value1 = 0;
       if (value2 < 1.0E-3) value2 = 0;
-      if (value2 - value1 < -0.0001)
+      if ((value2 - value1) < -0.0001)
       {
          okCheck = false;
          std::cout << "value error  " 

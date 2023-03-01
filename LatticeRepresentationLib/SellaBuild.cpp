@@ -14,6 +14,19 @@ static const std::vector<MatS6> g_refls = MatS6::GetReflections();
 static const std::vector< S6(*)(const S6&)> fnMakeVirtualCartPoint = S6Dist::SetVCPFunctions();
 static const std::vector<S6(*)(const S6&)> fnRefl = S6::SetRelectionFunctions();
 
+std::set<S6> BoundaryAndAllReflections(const size_t n, const S6& s) {
+   return std::set<S6>();
+}
+
+std::set<S6> BoundaryAndAllReflections(const size_t n, const std::set<S6>& s) {
+   std::set<S6> out;
+   for (auto it = s.begin(); it != s.end(); ++it) {
+      const std::set<S6> temp = BoundaryAndAllReflections(n, *it);
+      out.insert(temp.begin(), temp.end());
+   }
+   return out;
+}
+
 SellaBuild::SellaBuild() {
    store.SetMaxItemStore(20000);
 }

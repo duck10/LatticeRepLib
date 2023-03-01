@@ -369,7 +369,7 @@ std::ostream& operator<< (std::ostream& o, const S6& dc) {
    const size_t n = dc.size();
    for (size_t i = 0; i < n; ++i) {
       const double d = dc[i];
-      o << std::setw(9) << d << " " << std::endl;
+      o << std::setw(9) << d << " ";
    }
    o << std::setprecision(oldPrecision);
    o.unsetf(std::ios::floatfield);
