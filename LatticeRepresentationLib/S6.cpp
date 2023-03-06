@@ -19,6 +19,7 @@ static const double randomLatticeNormalizationConstantSquared = randomLatticeNor
 #include "rhrand.h"
 #include "S6.h"
 #include "Selling.h"
+#include "LRL_indices.h"
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
 
@@ -98,10 +99,10 @@ S6::S6(const D7& v7)
 S6::S6( const B4& del )
    : S6()
 {
-   const Vector_3 a = del[0UL];
-   const Vector_3 b = del[1UL];
-   const Vector_3 c = del[2UL];
-   const Vector_3 d = del[3UL];
+   const Vector_3 a = del[B4_Avec_idx];
+   const Vector_3 b = del[B4_Bvec_idx];
+   const Vector_3 c = del[B4_Cvec_idx];
+   const Vector_3 d = del[B4_Dvec_idx];
    double& p = (*this)[0];
    double& q = (*this)[1];
    double& r = (*this)[2];

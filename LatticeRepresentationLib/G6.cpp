@@ -1,7 +1,5 @@
 #pragma warning( disable : 4189) //   local variable is initialized but not referenced
 
-
-
 #include <cmath>
 #include <iomanip>
 #include <iostream>

@@ -17,10 +17,18 @@ public:
 public:
    friend std::ostream& operator<< (std::ostream&, const DC7u&);
 
-   DC7u() {}
-
+   DC7u(void) ;
+   DC7u(const DC7u& v);
+   DC7u(const double v[7]);
    DC7u(const LRL_Cell& cell);
+   DC7u(const VecN& v);
+   DC7u(const G6& v);
+   DC7u(const S6& v);
+   DC7u(const C3& v);
+   DC7u(const D7& v);
+   DC7u(const B4& v);
    DC7u(const std::string& t);
+   DC7u(const std::vector<double>& v);
    DC7u& operator= (const DC7u& v);
    DC7u& operator= (const std::string& s) { throw; return *this; }
    DC7u& operator= (const G6& v);
@@ -62,30 +70,17 @@ public:
       return vertices; 
    }
 
-   std::vector<double> GetAreas() const;
    std::vector<std::string> GetStringIndices();
    static  std::string GetName()  { return "DC7u"; }
    size_t size() const { return m_vec.size(); }
 
-   LRL_Cell GetCell() const { return m_cell; }
 
 private:
-   LRL_Cell m_cell;
    std::string m_lattice;
    bool m_cellIsValid;
-   VecN m_dirCellAreas;
    size_t m_dim;
-   std::vector<std::pair<int, std::pair<std::vector<int>, double> > > m_hashedAreaList;
    VecN m_vec;
 
-private:
-   void ConstructHashedAreaList();
-
-   //VecN CreateCompleteListOf13Areas(const std::vector<Vector_3>& allIndices,
-   //   const std::vector<std::vector<int> >& dcIndices,
-   //   const std::vector<double>& dcAreas);
-   //std::vector<int> HashIndices() const;
-   //std::vector<int> HashIndices(const std::vector<std::vector<int> >& vin) const;
 };
 
 #endif  // DC7U_H

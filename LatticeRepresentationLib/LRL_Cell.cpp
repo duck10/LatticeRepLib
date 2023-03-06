@@ -172,7 +172,9 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    m_cell[0] = a;
    m_cell[1] = b;
    m_cell[2] = c;
-   if (alpha < pi && beta < pi && gamma < pi) {
+   if ((alpha < 2.*pi && -2.*pi < alpha) 
+     && (beta < 2.*pi && -2.*pi < beta)
+     && (gamma < 2.*pi && -2.*pi < gamma)) {
       // radian input
       m_cell[3] = alpha;
       m_cell[4] = beta;

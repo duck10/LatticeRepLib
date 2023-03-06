@@ -1,12 +1,12 @@
 #include "DC7u.h"
 #include "Niggli.h"
 #include "S6.h"
+#include "LRL_indices.h"
 
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <utility>
-
 
 const std::vector<Vector_3> DC7u::vertices =
 { Vector_3(0,1,0), Vector_3(1,1,0), Vector_3(1,0,0), Vector_3(1,-1,0),
@@ -56,31 +56,163 @@ void DC7u::FromCellToDC7u(const LRL_Cell& cell) {
 }
 
 DC7u::DC7u(const LRL_Cell& cell)
-   : m_cell(cell)
-   , m_lattice("P")
-   , m_cellIsValid(cell.IsValid())
+   : m_cellIsValid(cell.IsValid())
 {
    FromCellToDC7u(cell);
-   m_cellIsValid = m_cell.IsValid();
+}
+
+DC7u::DC7u(const DC7u& u)
+   : m_cellIsValid(u.m_cellIsValid)
+   , m_vec(u.m_vec)
+{
+   m_cellIsValid = IsValid();;
+}
+
+DC7u::DC7u( void )
+{
+  m_cellIsValid=false;
+}
+
+DC7u::DC7u(const VecN& v)
+  : m_vec(v)
+  , m_cellIsValid(false)
+{
+  m_cellIsValid = IsValid();
+}
+
+DC7u::DC7u(const std::vector<double>& v)
+  : m_vec(v)
+  , m_cellIsValid(false)
+{
+  m_cellIsValid = IsValid();
+}
+
+
+DC7u::DC7u(const B4& v)
+  : DC7u()
+{  G6 red;
+   S6 s=S6(v);
+   double delta;
+   int ii, error;
+   const bool b = Niggli::Reduce(G6(s), red);
+   m_vec.resize(7);
+   m_vec[DC7u_AA_idx] = red[G6_AA_idx];
+   m_vec[DC7u_BB_idx] = red[G6_BB_idx];
+   m_vec[DC7u_CC_idx] = red[G6_CC_idx];
+   m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx]+red[G6_CC_idx]-std::fabs(red[G6_2BC_idx]);
+   m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx]+red[G6_CC_idx]-std::fabs(red[G6_2AC_idx]);
+   m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]-std::fabs(red[G6_2AB_idx]);
+   m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
+     -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
+   delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
+   error=0;
+   for (ii=0; ii < 7; ii++) {
+     if (m_vec[ii] < delta) error++;
+   }
+   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
+   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
+      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
+   }
+   m_cellIsValid = IsValid();
+}
+
+DC7u::DC7u(const C3& v)
+{  G6 red;
+   S6 s=S6(v);
+   double delta;
+   int ii, error;
+   const bool b = Niggli::Reduce(G6(s), red);
+   m_vec.resize(7);
+   m_vec[DC7u_AA_idx] = red[G6_AA_idx];
+   m_vec[DC7u_BB_idx] = red[G6_BB_idx];
+   m_vec[DC7u_CC_idx] = red[G6_CC_idx];
+   m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx]+red[G6_CC_idx]-std::fabs(red[G6_2BC_idx]);
+   m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx]+red[G6_CC_idx]-std::fabs(red[G6_2AC_idx]);
+   m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]-std::fabs(red[G6_2AB_idx]);
+   m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
+     -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
+   delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
+   error=0;
+   for (ii=0; ii < 7; ii++) {
+     if (m_vec[ii] < delta) error++;
+   }
+   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
+   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
+      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
+   }
+   m_cellIsValid = IsValid();
+}
+
+DC7u::DC7u(const G6& v)
+{  G6 red;
+   double delta;
+   int ii, error;
+   const bool b = Niggli::Reduce(v, red);
+   m_vec.resize(7);
+   m_vec[DC7u_AA_idx] = red[G6_AA_idx];
+   m_vec[DC7u_BB_idx] = red[G6_BB_idx];
+   m_vec[DC7u_CC_idx] = red[G6_CC_idx];
+   m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx]+red[G6_CC_idx]-std::fabs(red[G6_2BC_idx]);
+   m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx]+red[G6_CC_idx]-std::fabs(red[G6_2AC_idx]);
+   m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]-std::fabs(red[G6_2AB_idx]);
+   m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
+     -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
+   delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
+   error=0;
+   for (ii=0; ii < 7; ii++) {
+     if (m_vec[ii] < delta) error++;
+   }
+   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
+   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
+      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
+   }
+   m_cellIsValid = IsValid();
+}
+
+DC7u::DC7u(const D7& v)
+{  G6 red;
+   S6 s=S6(v);
+   double delta;
+   int ii, error;
+   const bool b = Niggli::Reduce(G6(s), red);
+   m_vec.resize(7);
+   m_vec[DC7u_AA_idx] = red[G6_AA_idx];
+   m_vec[DC7u_BB_idx] = red[G6_BB_idx];
+   m_vec[DC7u_CC_idx] = red[G6_CC_idx];
+   m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx]+red[G6_CC_idx]-std::fabs(red[G6_2BC_idx]);
+   m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx]+red[G6_CC_idx]-std::fabs(red[G6_2AC_idx]);
+   m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]-std::fabs(red[G6_2AB_idx]);
+   m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
+     -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
+   delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
+   error=0;
+   for (ii=0; ii < 7; ii++) {
+     if (m_vec[ii] < delta) error++;
+   }
+   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
+   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
+      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
+   }
+   m_cellIsValid = IsValid();
 }
 
 DC7u::DC7u(const std::string& t)
 {
    const std::string strInput = t;
+   LRL_Cell x_cell;
+
    if ((strInput[0] >= 'a' && strInput[0] <= 'z') ||
       (strInput[0] >= 'A' && strInput[0] <= 'Z')) {
       LRL_ReadLatticeData rcd;
       rcd.CellReader(t);
-      m_cell = rcd.GetCell();
-      m_lattice = rcd.GetLattice();
-      FromCellToDC7u(m_cell);
+      x_cell = rcd.GetCell();
+      FromCellToDC7u(x_cell);
    }
    else {
-      m_cell = LRL_Cell(std::string(t)); // cast to string is necessary for some reason
-      FromCellToDC7u(m_cell);
-      m_lattice = "P";
+      x_cell = LRL_Cell(std::string(t)); // cast to string is necessary for some reason
+      FromCellToDC7u(x_cell);
    }
-   m_cellIsValid = m_cell.IsValid();
+   m_cellIsValid = x_cell.IsValid();
 }
 
 DC7u& DC7u::operator= (const LRL_Cell& v) {
@@ -91,11 +223,8 @@ DC7u& DC7u::operator= (const LRL_Cell& v) {
 
 
 DC7u& DC7u::operator= (const DC7u& v) {
-   m_dirCellAreas = v.m_dirCellAreas;
    m_dim = v.m_dim;
    m_cellIsValid = v.m_cellIsValid;
-   m_cell = v.m_cell;
-   m_lattice = v.m_lattice;
    m_vec = v.m_vec;
    return *this;
 }
