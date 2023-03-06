@@ -146,13 +146,13 @@ int main(int argc, char* argv[])
       std::cout << "; Delone lattice type requested " << std::endl;
       ForDeloneInput(DeloneTypes);
    }
-   else if ((g_LatticeTypes.find(name) != std::string::npos) && (name != "") && (test == 0)) {
+   else if ((g_LatticeTypes.find(name) != std::string::npos) && (name != "")) {
       std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
          GenerateDeloneBase().Select(name);
       std::cout << "; Delone lattice type requested " << std::endl;
       ForDeloneInput(DeloneTypes);
    }
-   else if ((g_Complex.find(name) != std::string::npos) && (name != "") && (test != 0)) {
+   else if ((g_Complex.find(name) != std::string::npos) && (name != "")) {
    //   std::vector<std::shared_ptr<GenerateComplexBase> > ComplexTypes =
    //      GenerateComplexBase().Select(name);
       std::cout << ";Complex S6 requested " << std::endl;
