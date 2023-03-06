@@ -6,6 +6,7 @@ all:	$(COMMAND)
 $(COMMAND):	$(COMMAND).cpp \
         ../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
         ../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
+	../LatticeRepresentationLib/DC7u.cpp \
 	../LatticeRepresentationLib/D13.cpp \
         ../LatticeRepresentationLib/D7_Boundary.cpp ../LatticeRepresentationLib/D7_BoundaryList.cpp  \
         ../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
@@ -14,6 +15,7 @@ $(COMMAND):	$(COMMAND).cpp \
         ../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
         ../LatticeRepresentationLib/LRL_Cell_Degrees.cpp ../LatticeRepresentationLib/LRL_CoordinateConversionMatrices.cpp \
         ../LatticeRepresentationLib/LRL_inverse.cpp ../LatticeRepresentationLib/LRL_MaximaTools.cpp \
+	../LatticeRepresentationLib/LRL_LatticeMatcher.cpp \
         ../LatticeRepresentationLib/LRL_ReadLatticeData.cpp ../LatticeRepresentationLib/LRL_StringTools.cpp \
 	../LatticeRepresentationLib/MatD13.cpp \
         ../LatticeRepresentationLib/MatD7.cpp ../LatticeRepresentationLib/MatG6.cpp ../LatticeRepresentationLib/MatMN.cpp \
@@ -24,6 +26,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	$(CXX) -I ../LatticeRepresentationLib -o $(COMMAND) $(COMMAND).cpp \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
+	../LatticeRepresentationLib/DC7u.cpp \
 	../LatticeRepresentationLib/D13.cpp \
 	../LatticeRepresentationLib/D7_Boundary.cpp ../LatticeRepresentationLib/D7_BoundaryList.cpp  \
 	../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
@@ -32,6 +35,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
 	../LatticeRepresentationLib/LRL_Cell_Degrees.cpp ../LatticeRepresentationLib/LRL_CoordinateConversionMatrices.cpp \
 	../LatticeRepresentationLib/LRL_inverse.cpp ../LatticeRepresentationLib/LRL_MaximaTools.cpp \
+	../LatticeRepresentationLib/LRL_LatticeMatcher.cpp \
 	../LatticeRepresentationLib/LRL_ReadLatticeData.cpp ../LatticeRepresentationLib/LRL_StringTools.cpp \
 	../LatticeRepresentationLib/MatD13.cpp \
 	../LatticeRepresentationLib/MatD7.cpp ../LatticeRepresentationLib/MatG6.cpp ../LatticeRepresentationLib/MatMN.cpp \

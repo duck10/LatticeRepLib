@@ -6,11 +6,13 @@ all:	$(COMMAND)
 $(COMMAND):	$(COMMAND).cpp \
         ../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
         ../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
+	../LatticeRepresentationLib/DC7u.cpp \
 	../LatticeRepresentationLib/D13.cpp \
         ../LatticeRepresentationLib/D7_Boundary.cpp ../LatticeRepresentationLib/D7_BoundaryList.cpp  \
         ../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
         ../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
         ../LatticeRepresentationLib/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
+	../LatticeRepresentationLib/FollowerConstants.cpp \
         ../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
         ../LatticeRepresentationLib/LRL_Cell_Degrees.cpp ../LatticeRepresentationLib/LRL_CoordinateConversionMatrices.cpp \
         ../LatticeRepresentationLib/LRL_inverse.cpp ../LatticeRepresentationLib/LRL_MaximaTools.cpp \
@@ -24,11 +26,13 @@ $(COMMAND):	$(COMMAND).cpp \
 	$(CXX) -I ../LatticeRepresentationLib -o $(COMMAND) $(COMMAND).cpp \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
+	../LatticeRepresentationLib/DC7u.cpp \
 	../LatticeRepresentationLib/D13.cpp \
 	../LatticeRepresentationLib/D7_Boundary.cpp ../LatticeRepresentationLib/D7_BoundaryList.cpp  \
 	../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
+	../LatticeRepresentationLib/FollowerConstants.cpp \
 	../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
 	../LatticeRepresentationLib/LRL_Cell_Degrees.cpp ../LatticeRepresentationLib/LRL_CoordinateConversionMatrices.cpp \
 	../LatticeRepresentationLib/LRL_inverse.cpp ../LatticeRepresentationLib/LRL_MaximaTools.cpp \

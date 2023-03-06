@@ -26,7 +26,7 @@ void test2() {
    S6 red2;
    Selling::Reduce(targetS6, red2);
 
-   const const int cycles = 100;
+   const int cycles = 100;
    const int start = 0;
    for (int i = -20; i < cycles+1; ++i) {
       const S6 cellX = (double(i) * S6(targetCell) + double(cycles - i) * S6(cell1))/double(cycles-start);
