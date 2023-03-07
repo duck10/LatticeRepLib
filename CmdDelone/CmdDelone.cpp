@@ -18,6 +18,6 @@ int main()
       const bool b = Selling::Reduce(S6(pCell), s);
       std::cout << "S  " << s << std::endl;
    }
-   std::cout << "; " + LRL_ToString(reader.GetIncomingSemicolons()) << std::endl;
+   //std::cout << "; " + LRL_ToString(reader.GetIncomingSemicolons()) << std::endl;
 
 }
