@@ -365,7 +365,7 @@ S6 S6::operator- (const S6& v) const {
 
 std::ostream& operator<< (std::ostream& o, const S6& dc) {
    std::streamsize oldPrecision = o.precision();
-   o << std::fixed << std::setprecision(5);
+   o << std::fixed << std::setprecision(3);
    const size_t n = dc.size();
    for (size_t i = 0; i < n; ++i) {
       const double d = dc[i];
