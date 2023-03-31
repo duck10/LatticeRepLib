@@ -15,7 +15,8 @@ static const std::vector< S6(*)(const S6&)> fnMakeVirtualCartPoint = S6Dist::Set
 static const std::vector<S6(*)(const S6&)> fnRefl = S6::SetRelectionFunctions();
 
 std::set<S6> BoundaryAndAllReflections(const size_t n, const S6& s) {
-   return std::set<S6>();
+      const std::set<S6> bAndR = SellaBuild::GenerateAllReflections(fnMakeVirtualCartPoint[n](s));
+      return bAndR;
 }
 
 std::set<S6> BoundaryAndAllReflections(const size_t n, const std::set<S6>& s) {
@@ -457,7 +458,7 @@ std::set<S6> SellaBuild::Xpand1(const std::string& label, const S6& s, const Mat
    const std::vector<size_t> vZeros = FindNearS6Zeros(s);
    if (vZeros.empty()) return out;
 
-   const std::set<S6> out1 = GenerateAllReflections(Rounder(fnMakeVirtualCartPoint[vZeros[0]](s)));
+   const std::set<S6> out1 = GenerateAllReflections(Rounder(BoundaryAndAllReflections(vZeros[0], s)));
    out.insert(out1.begin(), out1.end());
 
    //for (auto it = out.begin(); it != out.end(); ++it) std::cout << *it << std::endl;

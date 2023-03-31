@@ -334,10 +334,12 @@ S6 LRL_LatticeMatcher::MatchReference(const S6& sample)  {
 double LRL_LatticeMatcher::Angle6(const S6& s1, const S6& s2) const {
    const S6 s1n = s1 / s1.Norm();
    const S6 s2n = s2 / s2.Norm();
-   const double cosFit =
+   double cosFit =
       s1n[0] * s2n[0] + s1n[1] * s2n[1] +
       s1n[2] * s2n[2] + s1n[3] * s2n[3] +
       s1n[4] * s2n[4] + s1n[5] * s2n[5];
+   if (cosFit > 1.0) cosFit = 1.0;
+   if (cosFit < -1.0) cosFit = -1.0;
    const double angle = acos(cosFit) * 180.0 / (4.0 * atan(1.0));
    return angle;
 }

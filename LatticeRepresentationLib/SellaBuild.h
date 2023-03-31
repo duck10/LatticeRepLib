@@ -50,9 +50,9 @@ public:
    void StoreAllReflections(const std::string& label, const S6& s);
    void StoreAllReflections(const std::string& label, const std::set<S6_Ordinals>& s);
    void StoreAllReflections(const std::string& label, const std::set<S6>& s);
-   std::set<S6> GenerateAllReflections(const S6& s);
-   std::set<S6> GenerateAllReflections(const std::set<S6_Ordinals>& s);
-   std::set<S6> GenerateAllReflections(const std::set<S6>& s);
+   static std::set<S6> GenerateAllReflections(const S6& s);
+   static std::set<S6> GenerateAllReflections(const std::set<S6_Ordinals>& s);
+   static std::set<S6> GenerateAllReflections(const std::set<S6>& s);
    void OneBound(const std::string& label, const S6_Ordinals& s1, const size_t zeroBound );
    void ProcessZeros(const std::string& label, const S6_Ordinals& s6 );
    void Expand(const std::string& label, const MatS6& fromCanon/*, MatS6 transformations*/);

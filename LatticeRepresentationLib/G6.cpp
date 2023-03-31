@@ -26,8 +26,6 @@
 
 #define Default6 6
 
-static int randSeed1 = 19191;
-
 G6::G6(void) {
    m_vec.resize(6);
    m_dim = 6;
