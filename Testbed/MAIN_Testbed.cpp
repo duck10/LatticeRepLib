@@ -7,6 +7,7 @@
 #include "C3.h"
 #include "DC.h"
 #include "Delone.h"
+#include "LatticeConverter.h"
 #include "LRL_CreateFileName.h"
 #include "CS6Dist.h"
 #include "CS6Dist.c"
@@ -1287,8 +1288,63 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
       exit(0);
    }
 
+   void TestNiggli() {
+      const G6 ref("100252.964 16816.866 34424.733 4771.70 -1146.32 -81789.15");
+      G6 xxxx = ref;
+      const LRL_Cell referenceCell = LatticeConverter::NiggliReduceCell("P", ref);
+      if (!referenceCell.IsValid()) {
+         std::cout << "the reference cell is invalid " << std::endl;
+         exit(99);
+      }
+      //const LRL_Cell_Degrees referenceCell(G6("109.004	115.054	147.436	83.538	46.654	85.14"));
+      const G6 referenceG6(referenceCell);
+      const double referenceNorm = referenceG6.norm();
+      std::cout << "Reference" << referenceG6 << "   " << 
+         LRL_Cell_Degrees(referenceCell) << std::endl << std::endl;
+
+      for (size_t i = 0; i < 30000000; ++i) {
+         std::cout << "=== i =================================== " << i << std::endl;
+         const G6 ran(G6::rand());
+
+         G6 redTest;
+         MatG6 m= MatG6::Eye();
+         const bool b = Niggli::Reduce(ran, m, redTest, 0.001);
+         std::cout << "m after Niggli::Reduce\n" << m << std::endl << std::endl;
+         if (!b) break;
+
+         const G6 scaledReducedRan = redTest * referenceNorm / redTest.norm();
+         const size_t count = Niggli::GetCycles();
+         const double dist = (scaledReducedRan - referenceG6).norm() / referenceNorm;
+         if (dist < 0.2 && dist != 0 && count > 4) {
+            std::cout << i << " " << count << "  " << dist 
+               << "\n in main, scaled reduced ran    " << scaledReducedRan
+               << "\n  ran as cell   " << LRL_Cell_Degrees(ran) << std::endl << std::endl;
+            std::cout << m << std::endl << std::endl;
+            std::cout << "after Niggli::Reduce\n" << m << std::endl << std::endl;
+            std::cout << " m * ran  " << m * ran << std::endl;
+            std::cout << " reduced  " << redTest << std::endl << std::endl;
+         }
+         if (count >20) {
+            std::cout << i << " " << count << "  " << dist << "     " << ran
+               << "     " << LRL_Cell_Degrees(ran) << std::endl;
+            std::cout << "after Niggli::Reduce\n" << m << std::endl << std::endl;
+            std::cout << " m * ran  " << m * ran << std::endl;
+            std::cout << " reduced  " << redTest << std::endl << std::endl;
+            //std::cout << m << std::endl << std::endl;
+         }
+      }
+      exit(0);
+   }
+
    int main(int argc, char* argv[])
    {
+
+      C3::Test_C3();
+
+      TestNiggli();
+
+
+
       std::vector<std::shared_ptr<GenerateDeloneBase> > sptest = 
          GenerateLatticeTypeExamples::CreateListOfDeloneTypes();
       for (size_t i = 0; i < sptest.size(); ++i) {

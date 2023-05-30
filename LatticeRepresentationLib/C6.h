@@ -19,6 +19,7 @@ public:
 	explicit C6(const S6& s6);
 	C6(const std::vector<double>& v);
 	C6(const std::vector<std::complex<double> >& v);
+	std::complex<double> c3_s1(const std::complex<double>& a);
 
 	std::vector<std::complex<double> > GetVector() const { return m_vec; }
 
@@ -29,6 +30,7 @@ public:
 	C6 operator-(const C6&);
 
 	std::complex<double> operator[](const size_t n) const { return m_vec[n]; }
+	std::complex<double>& operator[](const size_t n)  { return m_vec[n]; }
 
 	operator S6() const;
 

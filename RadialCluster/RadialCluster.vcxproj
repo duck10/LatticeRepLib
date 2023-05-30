@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{33463275-9961-444c-b6e7-ee2083729dec}</ProjectGuid>
-    <RootNamespace>Radial</RootNamespace>
+    <ProjectGuid>{ce6f295f-9816-427b-ab7d-dfce07ef5910}</ProjectGuid>
+    <RootNamespace>RadialCluster</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -129,8 +129,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main_Radial.cpp" />
+    <ClCompile Include="..\LatticeRepresentationLib\dbscan.cpp" />
+    <ClCompile Include="Lloyd.cpp" />
+    <ClCompile Include="MainRadialCluster.cpp" />
     <ClCompile Include="Radial.cpp" />
+    <ClCompile Include="SampleMain.cpp" />
     <ClCompile Include="Vector_2.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -142,7 +145,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main_Radial.h" />
+    <ClInclude Include="..\LatticeRepresentationLib\dbscan.h" />
+    <ClInclude Include="LLoyd.h" />
     <ClInclude Include="Radial.h" />
     <ClInclude Include="Vector_2.h" />
   </ItemGroup>

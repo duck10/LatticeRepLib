@@ -185,6 +185,9 @@
     <ClCompile Include="MatDC7u.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dbscan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h">
@@ -395,6 +398,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Transformations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dbscan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

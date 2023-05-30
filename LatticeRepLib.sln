@@ -115,6 +115,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cmdSort", "cmdSort\cmdSort.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdToU", "CmdToU\CmdToU.vcxproj", "{EF78D873-2818-48D7-B278-81ECCB555591}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RadialCluster", "RadialCluster\RadialCluster.vcxproj", "{CE6F295F-9816-427B-AB7D-DFCE07EF5910}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -483,6 +485,14 @@ Global
 		{EF78D873-2818-48D7-B278-81ECCB555591}.Release|x64.Build.0 = Release|x64
 		{EF78D873-2818-48D7-B278-81ECCB555591}.Release|x86.ActiveCfg = Release|Win32
 		{EF78D873-2818-48D7-B278-81ECCB555591}.Release|x86.Build.0 = Release|Win32
+		{CE6F295F-9816-427B-AB7D-DFCE07EF5910}.Debug|x64.ActiveCfg = Debug|x64
+		{CE6F295F-9816-427B-AB7D-DFCE07EF5910}.Debug|x64.Build.0 = Debug|x64
+		{CE6F295F-9816-427B-AB7D-DFCE07EF5910}.Debug|x86.ActiveCfg = Debug|Win32
+		{CE6F295F-9816-427B-AB7D-DFCE07EF5910}.Debug|x86.Build.0 = Debug|Win32
+		{CE6F295F-9816-427B-AB7D-DFCE07EF5910}.Release|x64.ActiveCfg = Release|x64
+		{CE6F295F-9816-427B-AB7D-DFCE07EF5910}.Release|x64.Build.0 = Release|x64
+		{CE6F295F-9816-427B-AB7D-DFCE07EF5910}.Release|x86.ActiveCfg = Release|Win32
+		{CE6F295F-9816-427B-AB7D-DFCE07EF5910}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
