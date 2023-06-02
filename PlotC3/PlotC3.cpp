@@ -73,7 +73,7 @@ std::string PlotC3( const size_t scalar, const int wx, const int wy, const std::
 }
 
 std::string WrapSVG(const std::string& fileName,
-   const int wx = 2000, const int wy = 2000, const std::string& s = "") {
+   const int wx = 1800, const int wy = 750, const std::string& s = "") {
    const std::string swx = LRL_DataToSVG_ToQuotedString(wx);
    const std::string swy = LRL_DataToSVG_ToQuotedString(wy);
 
@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
 {
    const std::string filename = LRL_CreateFileName::Create("PLT_", "svg");
 
-   C3Plot c3plot(filename, 2000, 2000, 500, 500);
+   C3Plot c3plot(filename, 1800, 750, 500, 500);
 
    std::string svgOutput;
    const std::string intro = c3plot.GetIntro(filename);
@@ -207,7 +207,7 @@ int main(int argc, char* argv[])
       if (scalar == 2)
          plotc3 = PlotC3(scalar, 1100, 500, line + "  " + cells);
       if (scalar == 3)
-         plotc3 = PlotC3(scalar, 500, 1100, line + "  " + cells);
+         plotc3 = PlotC3(scalar, 1700, 500, line + "  " + cells);
 
       svgOutput += plotc3;;
    }

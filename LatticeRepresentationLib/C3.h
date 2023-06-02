@@ -60,7 +60,7 @@ public:
    C3(const std::complex<double>& c1, const std::complex<double>& c2, const std::complex<double>& c3);
    ~C3(void) {}
 
-   static C3 C3::c3_s1(const C3& a);
+   static C3 c3_s1(const C3& a);
 
    static std::complex<double>  Exchange(const std::complex<double>& cin) {
       return std::complex<double>(cin.imag(), cin.real());
