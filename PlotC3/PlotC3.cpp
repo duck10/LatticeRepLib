@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
 {
    const std::string filename = LRL_CreateFileName::Create("PLT_", "svg");
 
-   C3Plot c3plot(filename, 1800, 750, 500, 500);
+   C3Plot c3plot(filename, 1800, 800, 500, 500);
 
    std::string svgOutput;
    const std::string intro = c3plot.GetIntro(filename);
