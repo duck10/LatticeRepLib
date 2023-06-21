@@ -193,8 +193,8 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
       }
       if (toReturn.size() < 6 && m_inputDataType != "RANDOM") {
          toReturn.clear();
-         if ( m_lattice != ";" && (!s.empty()) && s != " ")
-            std::cout << ";input line rejected, invalid cell (A): " << s << std::endl;
+         //if ( m_lattice != ";" && (!s.empty()) && s != " ")
+         //   std::cout << ";input line rejected, invalid cell (A): " << s << std::endl;
          m_lattice = "";
          m_cell.SetValid(false);
          return std::vector<double>();
@@ -304,10 +304,34 @@ LRL_ReadLatticeData LRL_ReadLatticeData::CreateLatticeData(const std::string& s)
    return *this;
 }
 
+std::string replaceTabsAndCommas(std::string str) {
+   // Create a new string to store the result.
+   std::string newStr;
+
+   // Iterate through the original string.
+   for (char c : str) {
+      // If the character is a tab or a comma, replace it with a space.
+      if (c == '\t' || c == ',') {
+         newStr += ' ';
+      }
+      else {
+         newStr += c;
+      }
+   }
+
+   // Return the new string.
+   return newStr;
+}
+
+
 LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
    m_strCell.clear();
    m_cell.SetValid(false);
    std::getline(std::cin, m_strCell);
+   if (m_strCell.find(',')==std::string::npos || m_strCell.find('\t')==std::string::npos) {
+      const std::string temp = replaceTabsAndCommas(m_strCell);
+      m_strCell = temp;
+   }
 
    if (m_strCell.length() > 0 && m_strCell[0] == ';') {
       m_incomingSemicolons += "\n" + m_strCell;

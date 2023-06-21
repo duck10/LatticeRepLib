@@ -49,7 +49,7 @@ std::string PlotC3( const size_t scalar, const int wx, const int wy, const std::
       "<g transform = \"translate(0,-265)\" >\n"
       "<text x = \"-350\" y = \"-200\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" >Coordinate c</text>\n"
       "<g transform = \"translate(205,10)\">\n"
-      "<text x = \"-328\" y = \"-200\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >" + strScalar + " </text >\n"
+      "<text x = \"-300\" y = \"-200\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >" + strScalar + " </text >\n"
       "</g>\n"
       "</g>\n"
 
