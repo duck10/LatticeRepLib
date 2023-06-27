@@ -246,6 +246,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
    if (s[0] == ';') m_incomingSemicolons += "\n" +m_strCell;
    if (s.length() == 0 || s[0] == ';') return;
    if (fields.size() < 6 && strupper !="RANDO") {
+      std::cout << fields.size() << " " << s << std::endl;
       std::cout << ";input line rejected (C), insufficient data  " << s << std::endl;
       return;
    }

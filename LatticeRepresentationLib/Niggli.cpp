@@ -1131,13 +1131,13 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
       //      }
       MKnorm(vout, m1, vin, delta);
 
-      std::cout << "in Niggli::Reduce  end of cycle " << count << " in reduced\n";
-      std::cout << "in Niggli::Reduce  m \n"<< m <<std::endl;
-      std::cout << "in Niggli::Reduce  vin " << vin << std::endl;
-      std::cout << "in Niggli::Reduce  vi " << vi << std::endl;
-      std::cout << "in Niggli::Reduce  vout " << vout << std::endl;
-      std::cout << "in Niggli::Reduce m1*vi " << m1 * vi << std::endl << std::endl;
-      std::cout << "in Niggli::Reduce m*vi " << m * vi << std::endl << std::endl;
+      //std::cout << "in Niggli::Reduce  end of cycle " << count << " in reduced\n";
+      //std::cout << "in Niggli::Reduce  m \n"<< m <<std::endl;
+      //std::cout << "in Niggli::Reduce  vin " << vin << std::endl;
+      //std::cout << "in Niggli::Reduce  vi " << vi << std::endl;
+      //std::cout << "in Niggli::Reduce  vout " << vout << std::endl;
+      //std::cout << "in Niggli::Reduce m1*vi " << m1 * vi << std::endl << std::endl;
+      //std::cout << "in Niggli::Reduce m*vi " << m * vi << std::endl << std::endl;
       m = m1;
    }
 

@@ -258,7 +258,7 @@ const std::vector<Vector_2> Vector_2::ConvertCellsToXYAndRemoveReferenceCell(
       const double dx = radialX.XAxisDist(latticeb, b) - basex;
       const double dy = radialX.YAxisDist(latticeb, b) - basey;
       out.emplace_back(dx, dy);
-      std::cout << " xy in ConvertCellsToXYAndRemoveReferenceCell " << dx <<
+      std::cout << "; xy in ConvertCellsToXYAndRemoveReferenceCell " << dx <<
          " " << dy << std::endl;
    }
 
