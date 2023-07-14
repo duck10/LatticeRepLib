@@ -64,9 +64,9 @@ std::vector<Vector_2> Rescale(const std::vector<Vector_2>& vv) {
 std::vector<Vector_2> RotateDataSetToXAxis(const std::vector<Vector_2>& vv) {
    Radial radial;
    const Vector_2 cm = Vector_2::CenterOfMass(vv);
-   std::cout << " cm of input " << cm << std::endl;
+   std::cout << "; cm of input " << cm << std::endl;
    const double angle = cm.angle(Vector_2(0.0, 1.0));
-   std::cout << "angle of input to x axis " << cm.angleDegrees(Vector_2(1.0, 0.0))
+   std::cout << "; angle of input to x axis " << cm.angleDegrees(Vector_2(1.0, 0.0))
       << " degrees" << std::endl;
    return Vector_2::Rotate(-angle, vv);
 }
@@ -74,30 +74,30 @@ std::vector<Vector_2> RotateDataSetToXAxis(const std::vector<Vector_2>& vv) {
 void TEST( const std::vector<Vector_2>& vv) {
    const std::vector<Vector_2> rotated = RotateDataSetToXAxis(vv);
    const Vector_2 cmRotated = Vector_2::CenterOfMass(rotated);
-   std::cout << "cm of rotated " << cmRotated << std::endl;
+   std::cout << "; cm of rotated " << cmRotated << std::endl;
    std::vector<Vector_2> shifted = Vector_2::ShiftList(-cmRotated, rotated);
    const Vector_2 cmShifted = Vector_2::CenterOfMass(shifted);
-   std::cout << "cm of shifted " << cmShifted << std::endl;
+   std::cout << "; cm of shifted " << cmShifted << std::endl;
 
    const Matrix_2 inertia = Matrix_2::InertiaTensor(shifted);
-   std::cout << "inertia tensor " << inertia << std::endl;
+   //std::cout << "inertia tensor " << inertia << std::endl;
    const Vector_2 eigen1 = Matrix_2::Eigen1(inertia);
    const Vector_2 eigen2{ eigen1[1], eigen1[0] };
-   std::cout << "eigenvector of the largest eigenvalue " << eigen1 << std::endl;
+   //std::cout << "eigenvector of the largest eigenvalue " << eigen1 << std::endl;
 
    const double maxEigenValue = (inertia * eigen1).norm();
    const double minEigenValue = (inertia * eigen2).norm();
-   std::wcout << "eigenvalues " << minEigenValue << " " << maxEigenValue << std::endl;
+   //std::cout << "eigenvalues " << minEigenValue << " " << maxEigenValue << std::endl;
 
    for (size_t i = 0; i < shifted.size(); ++i) {
-      std::cout << shifted[i][0] * maxEigenValue / minEigenValue << "  " << shifted[i][1]
-         << std::endl;
+      //std::cout << shifted[i][0] * maxEigenValue / minEigenValue << "  " << shifted[i][1]
+      //   << std::endl;
    }
 
    const std::pair<double, double> maxes = GetDataMax(shifted);
    const std::pair<double, double> mins = GetDataMin(shifted);
-   std::cout << "max x,y " << maxes.first << " " << maxes.second << std::endl;
-   std::cout << "min x,y " << mins.first << " " << mins.second << std::endl;
+   std::cout << "; max x,y " << maxes.first << " " << maxes.second << std::endl;
+   std::cout << "; min x,y " << mins.first << " " << mins.second << std::endl;
 
 // eigen vector of the largest eigenvalue -0.168518 0.985699
    exit(0);
@@ -160,8 +160,8 @@ int main(int argc, char* argv[])
    TEST(vxy);
 
 
-   RotateRecenterAndRescale(inputList);
-   exit(0); 
+   //RotateRecenterAndRescale(inputList);
+   //exit(0); 
 
 
    for (size_t i = 0; i < inputList.size(); ++i) {
