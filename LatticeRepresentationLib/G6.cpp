@@ -1,5 +1,7 @@
 #pragma warning( disable : 4189) //   local variable is initialized but not referenced
 
+
+
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -23,8 +25,6 @@
 #include "LRL_Vector3.h"
 
 #define Default6 6
-
-static int randSeed1 = 19191;
 
 G6::G6(void) {
    m_vec.resize(6);

@@ -108,8 +108,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools</AdditionalIncludeDirectories>
       <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
     <Link>
@@ -149,8 +148,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,11 +166,11 @@
     <ClCompile Include="CS6Dist.c" />
     <ClCompile Include="CS6Dist.cpp" />
     <ClCompile Include="D13.cpp" />
+    <ClCompile Include="dbscan.cpp" />
     <ClCompile Include="DC.cpp" />
     <ClCompile Include="DC7u.cpp" />
     <ClCompile Include="DeloneFitResults.cpp" />
     <ClCompile Include="Delone_Types.cpp" />
-    <ClCompile Include="FileOperations.cpp" />
     <ClCompile Include="FollowerConstants.cpp" />
     <ClCompile Include="FollowerPathGenerator.cpp" />
     <ClCompile Include="GenerateLatticeTypeExamples.cpp" />
@@ -182,18 +180,12 @@
     <ClCompile Include="DeloneTypeList.cpp" />
     <ClCompile Include="DeloneType.cpp" />
     <ClCompile Include="LatticeConverter.cpp" />
-    <ClCompile Include="LM.cpp" />
     <ClCompile Include="LRL_Cell.cpp" />
     <ClCompile Include="CellInputData.cpp" />
     <ClCompile Include="LRL_Cell_Degrees.cpp" />
     <ClCompile Include="LRL_CoordinateConversionMatrices.cpp" />
     <ClCompile Include="LRL_CreateFileName.cpp" />
-    <ClCompile Include="LRL_inverse.cpp" />
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
-    <ClCompile Include="LRL_MaximaTools.cpp" />
-    <ClCompile Include="LRL_RandTools.cpp" />
-    <ClCompile Include="LRL_StringTools.cpp" />
-    <ClCompile Include="LRL_Vector3.cpp" />
     <ClCompile Include="MatD13.cpp" />
     <ClCompile Include="MatDC7u.cpp" />
     <ClCompile Include="MatricesForOneDeloneType.cpp" />
@@ -221,12 +213,9 @@
     <ClCompile Include="Niggli.cpp" />
     <ClCompile Include="S6_Matrices.cpp" />
     <ClCompile Include="S6_Ordinals.cpp" />
-    <ClCompile Include="Sella.cpp" />
     <ClCompile Include="SellaBuild.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="SVG_Tools.cpp" />
-    <ClCompile Include="TriangleAreaFromSides.cpp" />
     <ClCompile Include="VecN.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -236,16 +225,14 @@
     <ClInclude Include="C3Plot.h" />
     <ClInclude Include="C6.h" />
     <ClInclude Include="ColorTables.h" />
-    <ClInclude Include="ConstSingleton_T.h" />
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="D13.h" />
+    <ClInclude Include="dbscan.h" />
     <ClInclude Include="DC.h" />
     <ClInclude Include="DC7u.h" />
     <ClInclude Include="DeloneFitResults.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
-    <ClInclude Include="DeloneTypeVerietyList.h" />
     <ClInclude Include="Delone_Types.h" />
-    <ClInclude Include="FileOperations.h" />
     <ClInclude Include="FollowerConstants.h" />
     <ClInclude Include="FollowerPathGenerator.h" />
     <ClInclude Include="GenerateLatticeTypeExamples.h" />
@@ -256,34 +243,22 @@
     <ClInclude Include="DeloneTypeList.h" />
     <ClInclude Include="DeloneType.h" />
     <ClInclude Include="LatticeConverter.h" />
-    <ClInclude Include="LM.h" />
     <ClInclude Include="LRL_Cell.h" />
     <ClInclude Include="CellInputData.h" />
     <ClInclude Include="CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_Cell_Degrees.h" />
     <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
-    <ClInclude Include="LRL_DataStreamToString.h" />
-    <ClInclude Include="LRL_DataToSVG.h" />
     <ClInclude Include="LRL_indices.h" />
-    <ClInclude Include="LRL_inverse.h" />
     <ClInclude Include="LRL_LatticeMatcher.h" />
-    <ClInclude Include="LRL_MaximaTools.h" />
-    <ClInclude Include="LRL_MinMaxTools.h" />
-    <ClInclude Include="LRL_RandTools.h" />
-    <ClInclude Include="LRL_StringTools.h" />
-    <ClInclude Include="LRL_ToString.h" />
-    <ClInclude Include="LRL_Vector3.h" />
     <ClInclude Include="MatD13.h" />
     <ClInclude Include="MatDC7u.h" />
     <ClInclude Include="MatricesForOneDeloneType.h" />
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
-    <ClInclude Include="PairReporter.h" />
     <ClInclude Include="ParseData.h" />
     <ClInclude Include="ReadTypedData.h" />
-    <ClInclude Include="rhrand.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6BoundaryTransforms.h" />
     <ClInclude Include="S6Dist.h" />
@@ -309,22 +284,20 @@
     <ClInclude Include="S6M_SellingReduce.h" />
     <ClInclude Include="S6_Matrices.h" />
     <ClInclude Include="S6_Ordinals.h" />
-    <ClInclude Include="Sella.h" />
     <ClInclude Include="SellaBuild.h" />
     <ClInclude Include="Selling.h" />
-    <ClInclude Include="StoreResults.h" />
     <ClInclude Include="svd.h" />
-    <ClInclude Include="SVG_Tools.h" />
-    <ClInclude Include="Theta.h" />
-    <ClInclude Include="TNear.h" />
-    <ClInclude Include="TriangleAreaFromSides.h" />
-    <ClInclude Include="triple.h" />
+    <ClInclude Include="Transformations.h" />
     <ClInclude Include="V7Dist.h" />
     <ClInclude Include="VecN.h" />
-    <ClInclude Include="xLRL_LatticeMatcher.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
+      <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,6 +3,8 @@
 
 #include <complex>
 
+
+
 std::ostream& operator<< (std::ostream& o, const C6& dt) {
    for (size_t i = 0; i < 6; ++i)
       o << dt.m_vec[i];

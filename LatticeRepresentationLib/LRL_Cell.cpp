@@ -14,7 +14,6 @@
 #include "C3.h"
 #include "B4.h"
 #include "D7.h"
-#include "DC7u.h"
 #include "Delone.h"
 #include "G6.h"
 #include "LRL_MinMaxTools.h"
@@ -172,9 +171,7 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    m_cell[0] = a;
    m_cell[1] = b;
    m_cell[2] = c;
-   if ((alpha < 2.*pi && -2.*pi < alpha) 
-     && (beta < 2.*pi && -2.*pi < beta)
-     && (gamma < 2.*pi && -2.*pi < gamma)) {
+   if (alpha < pi && beta < pi && gamma < pi) {
       // radian input
       m_cell[3] = alpha;
       m_cell[4] = beta;
@@ -257,12 +254,6 @@ LRL_Cell::LRL_Cell(const G6& g6)
 }
 
 LRL_Cell::LRL_Cell(const D7& v7)
-   : m_valid(v7.GetValid())
-{
-   (*this) = G6(v7);
-}
-
-LRL_Cell::LRL_Cell(const DC7u& v7)
    : m_valid(v7.GetValid())
 {
    (*this) = G6(v7);
@@ -538,11 +529,6 @@ LRL_Cell operator* (const double d, const LRL_Cell& c) {
 }
 
 LRL_Cell& LRL_Cell::operator= (const D7& v) {
-   *this = LRL_Cell(v);
-   return *this;
-}
-
-LRL_Cell& LRL_Cell::operator= (const DC7u& v) {
    *this = LRL_Cell(v);
    return *this;
 }

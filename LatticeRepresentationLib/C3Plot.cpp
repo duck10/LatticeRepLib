@@ -97,7 +97,7 @@ std::string C3Plot::BuildIntro(const std::string& filename) {
 
    return
    "<svg width=" + swx + " height=" + swy +
-      " viewBox=\"1 0  " + LRL_DataToSVG(m_wx * 1.2, " ", m_wy * 1.2) +
+      " viewBox=\"1 0  " + LRL_DataToSVG(m_wx, " ", m_wy) +
       "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" \nxmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
       "\n<desc>File name  = " + filename + " </desc> """ +
       "\n <g transform=\"scale(0.6)\">\n";

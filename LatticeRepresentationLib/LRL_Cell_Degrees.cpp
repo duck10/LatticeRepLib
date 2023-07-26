@@ -23,7 +23,7 @@ LRL_Cell_Degrees::LRL_Cell_Degrees(const LRL_Cell& cell) {
 
 std::ostream& operator<< (std::ostream& o, const LRL_Cell_Degrees& c) {
    std::streamsize oldPrecision = o.precision();
-   o << std::fixed << std::setprecision(5);
+   o << std::fixed << std::setprecision(3);
    for (size_t i = 0; i < 6; ++i)
       o << std::setw(9) << c.GetVector()[i] << " ";
    o << std::setprecision(oldPrecision);

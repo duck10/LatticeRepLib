@@ -1,25 +1,89 @@
+#include "Radial.h"
 
-#include <iostream>
-
-#include "C3.h"
 #include "G6.h"
-#include "LRL_Cell.h"
-#include "LRL_Cell_Degrees.h"
-#include "LRL_ReadLatticeData.h"
+#include "CS6Dist.h"
+#include "CS6Dist.cpp"
+#include "LatticeConverter.h"
 #include "NCDist.h"
+
 #include "Niggli.h"
 
-#include <complex>
-#include <vector>
 
-double RadialDist(const LRL_Cell& a, const LRL_Cell&b ) {
-   //const std::complex<double> a1(a[0] * (sin(a[3]) + cos(a[3])));
-   //const std::complex<double> a2(a[1] * (sin(a[4]) + cos(a[4])));
-   //const std::complex<double> a3(a[2] * (sin(a[5]) + cos(a[5])));
+std::string Radial::GetRadialParameters() const {
+   std::string out;
+   const std::string xax = xAxisType == Xaxis::Polar ? "Polar" : "G6-Euc";
+   const std::string yax = yAxisType == Yaxis::NCDist ? "NCDist" : "CS6Dist";
+   const std::string isReduced = IsReducedXaxis() ? "reduced" : "not_reduced";
+   out += "xaxis_" + xax + "_yaxis_" + yax + "_xaxis_is_" + isReduced;
+   return out;
+}
 
-   //const std::complex<double> b1(a[0] * (sin(b[3]) + cos(b[3])));
-   //const std::complex<double> b2(a[1] * (sin(b[4]) + cos(b[4])));
-   //const std::complex<double> b3(a[2] * (sin(b[5]) + cos(b[5])));
+
+Radial::Radial() {
+   xAxisType = Xaxis::Polar;
+   xAxisReduced = XaxisReduced::reduced;
+   yAxisType = Yaxis::NCDist;
+}
+
+//std::vector<std::complex<double> > Radial::ComputePolarCoordinate(const LRL_Cell& cell) const {
+//   std::vector<std::complex<double> > out(3);
+//   for (size_t i = 0; i < 3; ++i) {
+//      out[i] = cell[i] * std::complex<double>(cos(cell[i + 3]), sin(cell[i + 3]));
+//   }
+//   return out;
+//}
+
+void Radial::SetBaseCell(const std::string& lattice, const LRL_Cell& cell) {
+   if (xAxisReduced == XaxisReduced::notreduced) {
+      m_baseCell = cell;
+      m_baseG6 = cell;
+      m_lattice = lattice;
+   }
+   else
+   {
+      // need to reduce the cell
+      const LRL_Cell red = LatticeConverter::NiggliReduceCell(lattice, cell);
+      m_baseCell = red;
+      m_baseG6 = red;
+      m_lattice = "P";
+   }
+}
+
+double Radial::XAxisDist(const std::string& latticeb, const LRL_Cell& b) const {
+   const LRL_Cell a = m_baseCell;
+   if (xAxisType == Xaxis::Polar) {
+      if (xAxisReduced == XaxisReduced::reduced) {
+         return RadialDist(a, LatticeConverter::NiggliReduceCell(latticeb, b));
+      }
+      return RadialDist(a, b);
+   }
+   else if (xAxisType == Xaxis::G6) {
+      return (G6(a) - G6(LatticeConverter::NiggliReduceCell(latticeb, b))).norm();
+   }
+   else
+   {
+      throw (R"(undocumented type)");
+   }
+   return double();
+}
+
+double Radial::YAxisDist(const std::string& latticeb, const LRL_Cell& b) const {
+   const LRL_Cell& a = m_baseCell;
+   const std::string& latticea = m_lattice;
+   if (yAxisType == Yaxis::NCDist) {
+      return NCDist(G6(LatticeConverter::NiggliReduceCell(latticea, a)).data(),
+         G6(LatticeConverter::NiggliReduceCell(latticeb, b)).data());
+   }
+   else if (yAxisType == Yaxis::CS6Dist) {
+      return CS6Dist(LatticeConverter::DeloneReduceCell(latticea, a).data(),
+         LatticeConverter::DeloneReduceCell(latticeb, b).data());
+   }
+   else {
+      throw (R"(not an allowed type)");
+   }
+}
+
+double Radial::RadialDist(const LRL_Cell& a, const LRL_Cell& b) {
 
    const double a1r = a[0] * sin(a[3]);
    const double a2r = a[1] * sin(a[4]);
@@ -46,30 +110,5 @@ double RadialDist(const LRL_Cell& a, const LRL_Cell&b ) {
       (a1i - b1i) * (a1i - b1i) +
       (a2i - b2i) * (a2i - b2i) +
       (a3i - b3i) * (a3i - b3i);
-      return sqrt(dsq);
-}
-
-G6 Reduce(const LRL_Cell& in) {
-   G6 out;
-   const G6 gin(in);
-   Niggli::Reduce(gin, out);
-   return out;
-}
-
-int main()
-{
-   std::cout << "; Radial distances from first cell, radial dist (rd), ncdist (nc)" << std::endl;
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   const LRL_Cell& baseCell = inputList[0].GetCell();
-   const C3 baseC3(baseCell);
-   const G6 baseG6 = Reduce(baseCell);
-   std::cout << "; first input cell  " << LRL_Cell_Degrees(baseCell) << std::endl;
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      const LRL_Cell currentCell = inputList[i].GetCell();
-      const C3 currentC3(currentCell);
-      const G6 currentG6(Reduce(currentCell).data());
-      std::cout << "rd " << RadialDist(baseCell, currentCell) << "  nc " <<
-         NCDist(baseG6.data(), currentG6.data()) << "  --  cell " <<
-         LRL_Cell_Degrees(currentCell) << std::endl;
-   }
+   return sqrt(dsq);
 }

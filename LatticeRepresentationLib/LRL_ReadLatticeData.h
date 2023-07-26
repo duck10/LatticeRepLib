@@ -12,6 +12,7 @@ public:
    LRL_ReadLatticeData read();
    LRL_ReadLatticeData CreateLatticeData(const std::string& s);
    std::vector<LRL_ReadLatticeData> ReadLatticeData();
+   void CellReaderA(const std::string& s);
    void CellReader(const std::string& s);
    void CellReader(const std::string& lattice, const std::string& cell);
    std::vector<double> GetFieldsForCellFromString(const std::string& s);
@@ -23,17 +24,17 @@ public:
       GetIncomingSemicolons (void) const { return m_incomingSemicolons; }
 protected:
    GenerateRandomLattice<S6> generator;
-   std::pair<std::vector<double>, std::vector<double> > SplitFields(const int n, const std::vector<double>& fields);
+   static std::pair<std::vector<double>, std::vector<double> > SplitFields(const int n, const std::vector<double>& fields);
 
    bool SetRandomCell( const std::string& inputDataType );
-   bool SetG6Data( const std::string& inputDataType, const std::vector<double>& fields );
-   bool SetD7Data( const std::string& inputDataType, const std::vector<double>& fields );
-   bool SetS6Data( const std::string& inputDataType, const std::vector<double>& fields );
-   bool SetC3Data( const std::string& inputDataType, const std::vector<double>& fields );
-   bool SetUData( const std::string& inputDataType, const std::vector<double>& fields );
-   bool SetUnitCellTypeData( const std::string& inputDataType, const std::pair<std::vector<double>, std::vector<double> >& params );
-   bool IsLatticeName(const std::string inputName, const std::vector<std::string>& nameList);
-   bool IsLatticeName(const std::vector<std::string>& nameList, const std::string inputName);
+   bool SetG6Data( const std::vector<double>& fields );
+   bool SetD7Data( const std::vector<double>& fields );
+   bool SetS6Data(  const std::vector<double>& fields );
+   bool SetC3Data( const std::vector<double>& fields);
+   bool SetB4Data( const std::vector<double>& fields);
+   bool SetUnitCellTypeData( const std::pair<std::vector<double>, std::vector<double> >& params );
+   static bool IsLatticeName(const std::string inputName, const std::vector<std::string>& nameList);
+   static bool IsLatticeName(const std::vector<std::string>& nameList, const std::string inputName);
 
    std::string m_incomingSemicolons;
 };

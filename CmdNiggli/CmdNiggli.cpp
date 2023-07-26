@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "LatticeConverter.h"
+#include"LatticeConverter.h"
 #include "LRL_ReadLatticeData.h"
 #include "G6.h"
 #include "Niggli.h"

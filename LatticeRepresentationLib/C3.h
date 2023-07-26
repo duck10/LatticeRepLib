@@ -60,10 +60,13 @@ public:
    C3(const std::complex<double>& c1, const std::complex<double>& c2, const std::complex<double>& c3);
    ~C3(void) {}
 
+   static C3 c3_s1(const C3& a);
 
    static std::complex<double>  Exchange(const std::complex<double>& cin) {
       return std::complex<double>(cin.imag(), cin.real());
    }
+
+   static void Test_C3();
 
 
    C3& operator= (const C3& v);
@@ -296,8 +299,14 @@ private:
    static std::complex<double> Zero(const std::complex<double>& in);
 };
 
-//class MatC3 : public LRL_MatrixBase<D7, MatC3> {
-//
-//};
+class MatC3 {
+public:
+   //MatC3() {
+   //   m_functs[0] = c3_Minus_Real;
+   //}
+
+private:
+   std::vector<std::complex<double>  (*) (const C3&)> m_functs;
+};
 
 #endif // C3_H

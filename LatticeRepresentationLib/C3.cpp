@@ -34,6 +34,62 @@ std::ostream& operator<< (std::ostream& o, const C3& v) {
    return o;
 }
 
+
+static std::complex<double> c3_Minus_Real(std::complex<double>& a) {
+   const std::complex<double> c = { -a.real(), -a.real() + a.imag() };
+   return c;
+}
+
+static std::complex<double> c3_Minus_Imag(const std::complex<double>& a) {
+   const std::complex<double> c = {a.real() - a.imag(), -a.imag()};
+   return c;
+}
+
+static std::complex<double> c3_Plus_Real(const std::complex<double>& a) {
+   const std::complex<double> c = {a.real(), a.real()};
+   return c;
+}
+
+static std::complex<double> c3_Plus_Imag(const std::complex<double>& a) {
+   const std::complex<double> c = { a.imag(), a.imag() };
+   return c;
+}
+
+static double c3_Real(const std::complex<double>& a) {
+   return a.real();
+}
+
+static double c3_Imag(const std::complex<double>& a) {
+   return a.imag();
+}
+
+static std::complex<double> c3_I_Times_Real(const std::complex<double>& c) {
+   return { 0, c.real() };
+}
+
+static std::complex<double> c3_I_Times_Imag(const std::complex<double>& c) {
+   return { 0, c.imag()};
+}
+
+C3 C3::c3_s1(const C3& a) {
+   C3 c;
+   c[0] = c3_Minus_Real(a[0]);
+   //std::cout << "c3_Plus_Real(a[0]) " << c3_Plus_Real(a[0]) << std::endl;
+   //std::cout << "c3_Real(a[1]) " << c3_Real(a[1]) << std::endl;
+   //std::cout << "c3_I_Times_Real(a[2]) " << c3_I_Times_Real(a[2]) << std::endl;
+   c[1] = c3_Plus_Real(a[0]) + c3_Real(a[1]) + c3_I_Times_Real(a[2]);
+   c[2] = c3_Plus_Real(a[0]) + c3_Imag(a[1]) + c3_I_Times_Imag(a[2]);
+   return c;
+}
+
+//Operator Usage Result Name
+//Mr Mr(cj) (−xj, −xj + yj) Minus real
+//Mi Mi(cj) (xj − yj, −yj) Minus imag
+//Pr Pr(cj) (xj, xj) Plus real
+//Pi Pi(cj) (yj, yj) Plus imag
+//R R(cj) xj Real
+//I I(cj) yj Imaginary
+
 C3::C3(void)
    : m_valid(false)
 {
@@ -68,7 +124,7 @@ C3::C3(const D7& v7)
    C3::m_reductionFunctions = C3::SetReduceFunctions();   (*this) = G6(v7);
 }
 
-C3::C3( const B4& del )
+C3::C3(const B4& del)
    : m_valid(del.GetValid())
 {
    C3::m_reductionFunctions = C3::SetReduceFunctions();  (*this) = S6(del);
@@ -124,7 +180,7 @@ C3::C3(const std::vector<double>& v)
       m_c.resize(3);
       m_valid = true;
       for (size_t i = 0; i < C3::size(); ++i)
-         m_c[i] = std::complex<double>(v[2*i], v[2*i + 1]);
+         m_c[i] = std::complex<double>(v[2 * i], v[2 * i + 1]);
    }
 }
 
@@ -165,7 +221,7 @@ std::complex<double>& C3::operator[] (const size_t n) {
    return m_c[n];
 }
 
-C3& C3::operator= ( const C3& v ) {
+C3& C3::operator= (const C3& v) {
    m_c = v.m_c;
    m_valid = v.m_valid;
    return *this;
@@ -229,13 +285,13 @@ bool C3::operator!= (const C3& C3) const {
 }
 
 C3& C3::operator/= (const double d) {
-   for (size_t i=0; i<C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       (*this).m_c[i] /= d;
    return *this;
 }
 
 C3& C3::operator*= (const double d) {
-   for (size_t i = 0; i<C3::size(); ++i)
+   for (size_t i = 0; i < C3::size(); ++i)
       (*this).m_c[i] *= d;
    return *this;
 }
@@ -273,7 +329,7 @@ C3 operator* (const double d, const C3& c3) { // friend
 }
 
 double C3::norm(void) const {
-   return sqrt(std::abs(m_c[0])*std::abs(m_c[0]) + std::abs(m_c[1])*std::abs(m_c[1]) + std::abs(m_c[2])*std::abs(m_c[2]));
+   return sqrt(std::abs(m_c[0]) * std::abs(m_c[0]) + std::abs(m_c[1]) * std::abs(m_c[1]) + std::abs(m_c[2]) * std::abs(m_c[2]));
 }
 
 double C3::norm(const C3& c3) const {
@@ -315,15 +371,15 @@ C3 C3::randDeloneUnreduced() {
 }
 
 C3 C3::rand(const double d) {
-   return d*rand() / LRL_Cell::randomLatticeNormalizationConstantSquared;
+   return d * rand() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 C3 C3::randDeloneReduced(const double d) {
-   return d*randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
+   return d * randDeloneReduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 C3 C3::randDeloneUnreduced(const double d) {
-   return d*randDeloneUnreduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
+   return d * randDeloneUnreduced() / LRL_Cell::randomLatticeNormalizationConstantSquared;
 }
 
 C3 C3::Refl1(const C3& c) {
@@ -364,7 +420,7 @@ C3 C3::Refl7(const C3& c) {
    SwapRealImag(c3[2]);
    return c3;
 }
-C3 C3::Refl8(const C3&c) {
+C3 C3::Refl8(const C3& c) {
    C3 c3(Refl6(c));
    SwapRealImag(c3[1]);
    SwapRealImag(c3[2]);
@@ -499,7 +555,7 @@ std::complex<double> C3Matrices::Mr(const std::complex<double>& in) {
 }
 std::complex<double> C3Matrices::Mi(const std::complex<double>& in) {
    std::cout << "mI" << in << std::endl;
-   return std::complex<double>(-real(in), -real(in)+imag(in));
+   return std::complex<double>(-real(in), -real(in) + imag(in));
 }
 std::complex<double> C3Matrices::Pr(const std::complex<double>& in) {
    std::cout << "Pr" << in << std::endl;
@@ -507,7 +563,7 @@ std::complex<double> C3Matrices::Pr(const std::complex<double>& in) {
 }
 std::complex<double> C3Matrices::Pi(const std::complex<double>& in) {
    std::cout << "Pi" << in << std::endl;
-   return std::complex<double>(0,1) * std::complex<double>(real(in), real(in));
+   return std::complex<double>(0, 1) * std::complex<double>(real(in), real(in));
 }
 
 std::complex<double> C3Matrices::Zero(const std::complex<double>& in) {
@@ -637,3 +693,29 @@ C3 C3::SortC3(const C3& c3in) {
    }
    return c3;
 }
+
+void C3::Test_C3() {
+   std::complex<double> t{ 1,7 };
+   std::cout << " Mr " << c3_Minus_Real(t) << std::endl;
+   std::cout << " Mi " << c3_Minus_Imag(t) << std::endl;
+   std::cout << " Pr " << c3_Plus_Real(t) << std::endl;
+   std::cout << " Pi " << c3_Plus_Imag(t) << std::endl;
+   std::cout << " R " << c3_Real(t) << std::endl;
+   std::cout << " I " << c3_Imag(t) << std::endl;
+   std::cout << " iR " << c3_I_Times_Real(t) << std::endl;
+   std::cout << " iI " << c3_I_Times_Imag(t) << std::endl;
+
+   const C3 cin({ 1,2 }, { 3,4 }, { 5,6 });
+   std::cout << "cin " << cin << std::endl;
+   const C3 c3 = C3::c3_s1(cin);
+   std::cout << " c3_s1 times cin " << c3 << std::endl;
+   exit(0);
+}
+
+//MatC3::MatC3() {
+//   m_functs[0] = (c3_Minus_Real, 0, 0);
+//   m_functs[1] = (c3_Plus_Real, c3_I_Times(c3_Real), c3_Real);
+//   m_functs[2] = (c3_Plus_Real, 0, 0);
+//   C3 c;
+//   std::complex<double>  xxxx = m_functs[0](c);
+//}

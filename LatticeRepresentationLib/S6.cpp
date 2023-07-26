@@ -19,7 +19,6 @@ static const double randomLatticeNormalizationConstantSquared = randomLatticeNor
 #include "rhrand.h"
 #include "S6.h"
 #include "Selling.h"
-#include "LRL_indices.h"
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
 
@@ -99,10 +98,10 @@ S6::S6(const D7& v7)
 S6::S6( const B4& del )
    : S6()
 {
-   const Vector_3 a = del[B4_Avec_idx];
-   const Vector_3 b = del[B4_Bvec_idx];
-   const Vector_3 c = del[B4_Cvec_idx];
-   const Vector_3 d = del[B4_Dvec_idx];
+   const Vector_3 a = del[0UL];
+   const Vector_3 b = del[1UL];
+   const Vector_3 c = del[2UL];
+   const Vector_3 d = del[3UL];
    double& p = (*this)[0];
    double& q = (*this)[1];
    double& r = (*this)[2];
@@ -366,9 +365,12 @@ S6 S6::operator- (const S6& v) const {
 
 std::ostream& operator<< (std::ostream& o, const S6& dc) {
    std::streamsize oldPrecision = o.precision();
-   o << std::fixed << std::setprecision(5);
-   for( size_t i = 0; i < dc.size(); ++i)
-      o << std::setw(9) << dc[i] << " ";
+   o << std::fixed << std::setprecision(3);
+   const size_t n = dc.size();
+   for (size_t i = 0; i < n; ++i) {
+      const double d = dc[i];
+      o << std::setw(9) << d << " ";
+   }
    o << std::setprecision(oldPrecision);
    o.unsetf(std::ios::floatfield);
    return o;
