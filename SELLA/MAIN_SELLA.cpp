@@ -421,6 +421,132 @@ static const std::vector<std::string> heirarchy{
    "aP"};
 
 
+std::vector<std::vector<std::string> > CreateBravaisChains()
+{
+   std::vector<std::vector<std::string> > v;
+   v.push_back({ "aP", "mP", "oP", "tP", "cP" });
+   v.push_back({ "aP", "mP", "oS", "tP", "cP" });
+   v.push_back({ "aP", "mS", "oS", "tP", "cP" });
+   v.push_back({ "aP", "mS", "hR", "cP" });
+
+   v.push_back({ "aP", "mP", "oS", "hP" });
+   v.push_back({ "aP", "mS", "oS", "hP" });
+
+   v.push_back({ "aP", "mS", "hR", "cI" });
+   v.push_back({ "aP", "mS", "oF", "tI", "cI" });
+   v.push_back({ "aP", "mS", "oI", "tI", "cI" });
+
+   v.push_back({ "aP", "mS", "oI", "tI", "cF" });
+   v.push_back({ "aP", "mS", "oF", "tI", "cF" });
+   v.push_back({ "aP", "mS", "hR", "cF" });
+   return v;
+}
+
+bool CheckOneBravaisChain(
+   const std::vector<std::string>& bravaisChain,
+   const std::vector<DeloneFitResults>& v,
+   std::map<std::string, double>& valueMap)
+{
+
+   bool okCheck = true;
+   std::vector<std::string> foundErrors;
+   for (size_t i = 0; i < bravaisChain.size() - 1; ++i)
+   {
+      const std::string name1 = bravaisChain[i];
+      if (name1 == "aP") continue;
+      const std::string name2 = bravaisChain[i + 1];
+      double value1 = valueMap[name1];
+      double ddddd = sqrt(value1);
+      double value2 = valueMap[name2];
+      if (value1 < 1.0E-3) value1 = 0;
+      if (value2 < 1.0E-3) value2 = 0;
+      if ((value2 - value1) < -0.0001)
+      {
+         const std::string error = name1 + name2;
+         if (std::find(foundErrors.begin(), foundErrors.end(), error) == foundErrors.end()) {
+            okCheck = false;
+            std::cout << std::endl << "################value error  "
+               << name1 << " " << value1 << " "
+               << name2 << " " << value2 << "  \ts6 "
+               << v[i].GetOriginalInput() << "\tP "
+               << LRL_Cell_Degrees(v[i].GetOriginalInput()) << std::endl;
+            foundErrors.emplace_back(error);
+         }
+      }
+   }
+
+   return okCheck;
+}
+
+std::map<std::string, DeloneFitResults>  CreateMapForBestExamples(
+   const std::vector<DeloneFitResults>& vDeloneFitResults)
+{
+   std::map<std::string, DeloneFitResults>  bravaisMap;
+
+   for (size_t i = 0; i < vDeloneFitResults.size(); ++i) {
+      std::string name = vDeloneFitResults[i].GetGeneralType();
+      //if (name == "oC") name = "oS";
+      const double& delta = vDeloneFitResults[i].GetDifference().norm();
+
+      auto mapElement = bravaisMap.find(name);
+      if (mapElement == bravaisMap.end())
+         bravaisMap.insert(std::make_pair(name, vDeloneFitResults[i]));
+      else
+         if (delta < (*mapElement).second.GetDifference().norm())
+            (*mapElement).second = vDeloneFitResults[i];
+   }
+   return bravaisMap;
+}
+
+std::map<std::string, double> GetBestOfEachBravaisType(
+   const std::vector<DeloneFitResults>& vDeloneFitResults)
+{
+
+   std::map<std::string, DeloneFitResults> msdfr = CreateMapForBestExamples(vDeloneFitResults);
+   std::map<std::string, double>  bravaisMap;
+   //std::map<std::string, double>  bravaisMap = CreateBasicBravaisMap();
+
+   //for (size_t i = 0; i < vDeloneFitResults.size(); ++i) {
+   //   std::string name = vDeloneFitResults[i].GetGeneralType();
+   //   //if (name == "oC") name = "oS";
+   //   const double& delta = vDeloneFitResults[i].GetDifference().norm();
+
+   //   auto mapElement = bravaisMap.find(name);
+   //   if (mapElement == bravaisMap.end()) 
+   //      bravaisMap.insert(std::make_pair(name, delta));
+   //   else
+   //      if (delta < (*mapElement).second)
+   //         (*mapElement).second = delta;
+   //}
+
+   for (auto it = msdfr.begin(); it != msdfr.end(); ++it) {
+      bravaisMap.insert(make_pair((*it).first, (*it).second.GetDifference().norm()));
+   }
+   return bravaisMap;
+}
+
+
+bool CheckBravaisChains(const std::vector<DeloneFitResults>& v)
+{
+   //for (size_t i = 0; i < v.size(); ++i)
+   //{
+   //   std::cout << "CheckBravaisChains  DeloneFitResults= " << v[i].GetGeneralType() << " " << v[i].GetRawFit() << std::endl;
+   //}
+
+
+   std::map<std::string, double> valueMap = GetBestOfEachBravaisType(v);
+   bool okCheck = true;
+   static const std::vector<std::vector<std::string> > bravaisChains = CreateBravaisChains();
+   for (size_t i = 0; i < bravaisChains.size() - 1; ++i)
+   {
+      if (!CheckOneBravaisChain(bravaisChains[i], v, valueMap)) {
+         okCheck = false;
+      }
+   }
+   return okCheck;
+}
+
+
 void ReportTypeHeirachy(const std::vector<DeloneFitResults>& vDeloneFitResults) {
    for (size_t i = 0; i < heirarchy.size(); ++i) {
       size_t kkbest = 0;
@@ -501,10 +627,12 @@ void NiggliMatchLatticeType(const DeloneFitResults& vDeloneFitResults) {
           << " type=" << pt->GetBravaisType()
           << " d=" << d << std::endl
           << " ratio " << d / probe.norm() << "\n"
-          << "perp       " << perpV << "\n"
+          //<< "perp       " << perpV << "\n"
           << "projected  " << LRL_Cell_Degrees(pt->GetPrj() * probe) << "\n";
 
-       std::cout << "centered " << LRL_Cell_Degrees(pt->GetToCenter() * probe) << std::endl << std::endl;
+       std::cout << "centered " << LRL_Cell_Degrees(pt->GetToCenter() * probe)
+          << pt->GetBravaisType() << " d=" << d
+          << std::endl << std::endl;
     }
 }
 
@@ -529,12 +657,12 @@ int main()
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit( sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
-      for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
-         const double d = vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm();
-          if (vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm() < g_maxDeltaForMatch) {
-              NiggliMatchLatticeType(vDeloneFitResults[kk]);
-          }
-      }
+      //for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
+      //   const double d = vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm();
+      //    //if (vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm() < g_maxDeltaForMatch) {
+      //        NiggliMatchLatticeType(vDeloneFitResults[kk]);
+      //    //}
+      //}
 
       std::cout << std::endl << "reported distances and zscores (in A^2)" << std::endl;
 
@@ -546,6 +674,11 @@ int main()
       //std::cout << vDeloneFitResults.size() << std::endl;
       ReportTypeHeirachy(vDeloneFitResults);
       const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
+
+
+
+      const bool check = CheckBravaisChains(vDeloneFitResults);
+
 
       //std::cout << std::endl << std::endl << "lat " << lat << std::endl << std::endl << std::endl;
       /*std::cout << */BravaisHeirarchy::ProduceSVG(

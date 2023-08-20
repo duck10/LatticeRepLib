@@ -1,9 +1,9 @@
 #include "Sella.h"
 
 
-#include "GenerateRandomLattice.h"
 #include "DeloneTypeList.h"
 #include "DeloneType.h"
+#include "LRL_Cell_Degrees.h"
 #include "LRL_ToString.h"
 #include "LRL_MaximaTools.h"
 #include "LRL_StringTools.h"
@@ -119,14 +119,25 @@ DeloneFitResults Sella::SellaFitXXXXXX(
 
    for (size_t i = 0; i < perps.size(); ++i) {
       const S6 perpv = perps[i] * s6;
-      //if (name == "O4") {
+      //if (name == "T1" || name == "T2" || name == "C3" || name == "O1A") {
       //   std::cout << std::endl;
       //   std::cout << i << " " << name << std::endl;
-      //   std::cout << perpv <<"\n";
+      //   std::cout << "prep s6 " << perpv << "\n";
+      //   std::cout << "prj s6 " << prjs[i] * s6 << std::endl;
+      //   std::cout << "prj cell " << LRL_Cell_Degrees(prjs[i] * s6) << std::endl;
+      //   std::cout << "input s6 " << s6 << std::endl;
+      //   std::cout << "input cell " << LRL_Cell_Degrees(s6) << std::endl;
       //   std::cout << perps[i] << std::endl;
       //}
       const double testFit = perpv.norm();
-      if (bestFit > testFit) {
+
+      //std::cout << i << " " << sptype->GetBravaisType() << " " <<
+      //   testFit << " " << name << std::endl;
+
+
+
+
+      if (bestFit > testFit && LRL_Cell_Degrees(prjs[i] * s6).IsValid()) {
          nBest = i;
          bestFit = testFit;
       }

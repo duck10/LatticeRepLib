@@ -380,7 +380,6 @@ void Niggli::MKnormWithoutMatrices(const G6& vi, G6& vout, const double delta) {
 //              standard one
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
-
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -419,6 +418,7 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
    bool again = true;
    int mkCycleCount = 0;
    MatG6 mat = MatG6::Eye();
+   MatG6 accumulator = mat;
    G6 vin;
    m = MatG6::Eye();
 
@@ -437,6 +437,7 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
             delta + 1.e-12 * (fabs(vin[3]) + fabs(vin[4]))))
       { // SP1
          mat = sp1;
+         accumulator = mat * accumulator;
          again = true;
          sptext = "SP1";
       }
@@ -446,6 +447,7 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
             delta + 1.e-12 * (fabs(vin[4]) + fabs(vin[5]))))
       { // SP2
          mat = sp2;
+         accumulator = mat * accumulator;
          again = true;
          sptext = "SP2";
       }
@@ -481,32 +483,38 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
    case 0:  /*  +++  */
    {
       mat = spnull;
+      accumulator = mat * accumulator;
       sptext2 = "no_mknorm_action_sp1,sp2-0";
       break;
    }
    case 1:  /* ++- -> --- */
    {
       mat = sp34a;
+      accumulator = mat * accumulator;
       sptext2 = "SP34a-1";
       break;
    }
    case 2:  /* +-+ -> --- */
    {
       mat = sp34b;
+      accumulator = mat * accumulator;
       sptext2 = "SP34b-2";
       break;
    }
    case 3:  /* +-- -> +++, but +0- -> -0- and +-0 -> --0 and +00 -> -00 */
    {
       mat = sp34c;
+      accumulator = mat * accumulator;
       sptext2 = "SP34c-3";
       if ((bZeroPattern & 2) == 2) {
          mat = sp34a;
+         accumulator = mat * accumulator;
          sptext2 = "SP34a-3";
          break;
       }
       if ((bZeroPattern & 1) == 1) {
          mat = sp34b;
+         accumulator = mat * accumulator;
          sptext2 = "SP34b-3";
          break;
       }
@@ -515,20 +523,24 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
    case 4:  /* -++ -> --- */
    {
       mat = sp34c;
+      accumulator = mat * accumulator;
       sptext2 = "SP34c-4";
       break;
    }
    case 5:  /* -+- -> +++, but 0+- -> 0-- and -+0 -> --0 and 0+0 -> 0-0 */
    {
       mat = sp34b;
+      accumulator = mat * accumulator;
       sptext2 = "SP34b-5";
       if ((bZeroPattern & 4) == 4) {
          mat = sp34a;
+         accumulator = mat * accumulator;
          sptext2 = "SP34a-5";
          break;
       }
       if ((bZeroPattern & 1) == 1) {
          mat = sp34c;
+         accumulator = mat * accumulator;
          sptext2 = "SP34c-5";
          break;
       }
@@ -537,14 +549,17 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
    case 6:  /* --+ - > +++, but 0-+ -> 0-- and -0+ - > -0- and 00+ -> 00- */
    {
       mat = sp34a;
+      accumulator = mat * accumulator;
       sptext2 = "SP34a-6";
       if ((bZeroPattern & 4) == 4) {
          mat = sp34b;
+         accumulator = mat * accumulator;
          sptext2 = "SP34b-5";
          break;
       }
       if ((bZeroPattern & 2) == 2) {
          mat = sp34c;
+         accumulator = mat * accumulator;
          sptext2 = "SP34c-5";
          break;
       }
@@ -553,6 +568,7 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
    case 7:
    {
       mat = spnull;
+      accumulator = mat * accumulator;
       sptext2 = "no_mknorm_action_sp1,sp2-7";
       break;
    }
@@ -560,13 +576,11 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
 
    // Accumulate the total transformation from the input vector into vout and
    // the total transformation itself into matrix m.
-   const MatG6 mtemp = mat * m;
-   m = mtemp;
    vout = mat * vin;
    //   DEBUG_REPORT_STRING(LRL_ToString( "      MKNORM input  "+sptext2+"  ", vi));;
    //   DEBUG_REPORT_STRING(LRL_ToString( "      MKNORM output "+sptext2+"  ", vout));;
-   std::cout << std::flush;
-   Reporter(sptext2, vin, vout, mat);
+   //std::cout << std::flush;
+   Reporter(sptext2, vin, vout, accumulator);
 }  // end MKnorm
 
 bool Niggli::Reduce(const G6& vi, G6& vout) {
@@ -905,6 +919,8 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
 bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
 {
 
+   MatG6 accumulator = MatG6::Eye();
+
    if (IsNiggli(vi)) {
       vout = vi;
       return true;
@@ -985,7 +1001,9 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
    // floating point rounding or algorithm issues) there might be a
    // case of an infinite loop. The designations R5-R12 are from
    // Andrews and Bernstein, 1988
+   m1 = MatG6::Eye();
    MKnorm(vin, m1, vout, delta);
+   accumulator = m1 * accumulator;
    vin = vout;
    while (again && count < maxCycle)
    {
@@ -999,40 +1017,36 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
       if (fabs(vin[3]) > fabs(vin[1]) + delta)
       { // R5
          m1 = (vin[3] <= 0.0) ? R5_Minus : R5_Plus;
+         accumulator = m1 * accumulator;
          again = true;
          ////         DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R5-m1\n", m1,"\n"));;
-         const MatG6 m2 = m1 * m;
-         m = m2;
          vout = m1 * vin;
          Reporter("R5", vin, vout, m1);
       }
       else if (fabs(vin[4]) > fabs(vin[0]) + delta)
       { // R6
          m1 = (vin[4] <= 0.0) ? R6_Minus : R6_Plus;
+         accumulator = m1 * accumulator;
          again = true;
          //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R6-m1\n", m1,"\n"));;
-         const MatG6 m2 = m1 * m;
-         m = m2;
          vout = m1 * vin;
          Reporter("R6", vin, vout, m1);
       }
       else if (fabs(vin[5]) > fabs(vin[0]) + delta)
       { // R7
          m1 = (vin[5] <= 0.0) ? R7_Minus : R7_Plus;
+         accumulator = m1 * accumulator;
          again = true;
          //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R7-m1\n", m1,"\n"));;
-         const MatG6 m2 = m1 * m;
-         m = m2;
          vout = m1 * vin;
          Reporter("R7", vin, vout, m1);
       }
       else if (vin[3] + vin[4] + vin[5] + fabs(vin[0]) + fabs(vin[1]) + delta < 0.0)
       { //R8
          m1 = R8;
+         accumulator = m1 * accumulator;
          again = true;
          //         DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R8-m1\n", m1,"\n"));;
-         const MatG6 m2 = m1 * m;
-         m = m2;
          vout = m1 * vin;
          Reporter("R8", vin, vout, m1);
       }
@@ -1041,10 +1055,9 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
             vin[5] < 0.0))
       { // R9  There is an error in the paper says "2g5<g5" should be "2g5<g6"
          m1 = (vin[3] <= 0.0) ? R9_Minus : R9_Plus;
+         accumulator = m1 * accumulator;
          again = true;
          //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R9-m1\n", m1,"\n"));;
-         const MatG6 m2 = m1 * m;
-         m = m2;
          vout = m1 * vin;
          Reporter("R9", vin, vout, m1);
       }
@@ -1053,12 +1066,11 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
             vin[5] < 0.0))
       { //R10 (LAST=15 in ITERATE)
          m1 = (vin[4] <= 0.0) ? R10_Minus : R10_Plus;
+         accumulator = m1 * accumulator;
          again = true;
-         const MatG6 m2 = m1 * m;
          //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-m\n", m,"\n"));
          //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-m1\n", m1,"\n"));
          //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-m2=m1*m\n", m2,"\n"));
-         m = m2;
          vout = m1 * vin;
          Reporter("R10", vin, vout, m1);
          //        DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R10-in  ", vin));
@@ -1069,19 +1081,18 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
             vin[4] < 0.0)) // paper says g6<0, but it seems wrong
       { // R11
          m1 = (vin[5] <= 0.0) ? R11_Minus : R11_Plus;
+         accumulator = m1 * accumulator;
          again = true;
          //         DEBUG_REPORT_STRING(LRL_ToString( "REDUCE 1-m1\n", m1,"\n"));;
-         const MatG6 m2 = m1 * m;
          vout = m1 * vin;
          Reporter("R11", vin, vout, m1);
       }
       else if (fabs(vin[3] + vin[4] + vin[5] + fabs(vin[0]) + fabs(vin[1])) <= delta && (2.0 * (fabs(vin[0]) + vin[4]) + vin[5] > delta))
       { //R12 (same as R8)
          m1 = R12;
+         accumulator = m1 * accumulator;
          again = true;
          //         DEBUG_REPORT_STRING(LRL_ToString( "REDUCE R12-m1\n", m1,"\n"));;
-         const MatG6 m2 = m1 * m;
-         m = m2;
          vout = m1 * vin;
          Reporter("R12", vin, vout, m1);
       }
@@ -1094,6 +1105,7 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
       // probably don't need to do this group of code when again==false !!!!!!!!!!!!!!
       m1 = MatG6::Eye();
       MKnorm(vout, m1, vin, delta);
+      //accumulator = m1 * accumulator;
       const MatG6 mtemp = m1 * m;
       m = mtemp;
       Reporter("vout after MKnorm at end of reduced m_ReductionCycleCount", vout, vin, m1);
@@ -1129,7 +1141,9 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
       //         std::cout << "\tvout " << vout << std::endl;
       //         std::cout << vout[0] - vout[1] << " " << vout[0] - vout[2] << " " << vout[1] - vout[2] << std::endl;
       //      }
+      m1 = MatG6::Eye();
       MKnorm(vout, m1, vin, delta);
+      accumulator = m1 * accumulator;
 
       //std::cout << "in Niggli::Reduce  end of cycle " << count << " in reduced\n";
       //std::cout << "in Niggli::Reduce  m \n"<< m <<std::endl;
@@ -1149,6 +1163,7 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
       }
    }
    m_ReductionCycleCount = count;
+   m = accumulator;
    return (count < maxCycle) || isNearReduced;
 
 } // end of Reduce
