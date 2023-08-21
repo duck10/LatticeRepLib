@@ -60,6 +60,13 @@ public:
    C3(const std::complex<double>& c1, const std::complex<double>& c2, const std::complex<double>& c3);
    ~C3(void) {}
 
+   static std::complex<double> c3_Minus_Real(std::complex<double>& a);
+   static std::complex<double> c3_Minus_Imag(const std::complex<double>& a);
+   static std::complex<double> c3_Plus_Real(const std::complex<double>& a);
+   static std::complex<double> c3_Plus_Imag(const std::complex<double>& a);
+   static double c3_Real(const std::complex<double>& a);
+   static double c3_Imag(const std::complex<double>& a);
+
    static C3 c3_s1(const C3& a);
 
    static std::complex<double>  Exchange(const std::complex<double>& cin) {

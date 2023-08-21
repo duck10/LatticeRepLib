@@ -517,8 +517,7 @@ std::set<S6> SellaBuild::Xpand2(const std::string& label, const std::set<S6>& vs
 
 std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s, const MatS6& toCanon) {
    std::set<S6> out;
-   std::vector<size_t> vZeros = FindS6Zeros(s);
-   if (vZeros.empty()) vZeros = {0,1,2};
+   const std::vector<size_t> vZeros = FindS6Zeros(s);
    if (vZeros.size() < 3) {
       return Xpand2(label, s, toCanon);
    }

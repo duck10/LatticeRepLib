@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "rhrand.h"
+#include "VecN.h"
 
 class LRL_Cell;
 class C3;

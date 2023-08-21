@@ -1,11 +1,9 @@
-
-
-
 #include "LRL_Cell.h"
 #include "G6.h"
 #include "S6.h"
 #include "B4.h"
 #include "D7.h"
+#include "DC7u.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_RandTools.h"
@@ -44,6 +42,10 @@ const std::vector<std::string> vC3_names(C3_names, C3_names + sizeof(C3_names) /
 const std::string B4_names[] = { "B ", "B4 " };
 const std::vector<std::string> vB4_names(B4_names, B4_names + sizeof(B4_names) / sizeof(B4_names[0]));
 
+const std::string U_names[] = { "U ", "DC7u " };
+const std::vector<std::string> vU_names(U_names, U_names + sizeof(U_names) / sizeof(U_names[0]));
+
+
 const std::string lattice_names[] = { "A ", "B ", "C ", "P ", "R ", "F ", "I ", "H ",
    "a ", "b ", "c ", "p ", "r ", "f ", "h ", "h " };
 const std::vector<std::string> vlattice_names(lattice_names, lattice_names + sizeof(lattice_names) / sizeof(lattice_names[0]));
@@ -80,7 +82,7 @@ bool HasLatticeParams7( const std::string& s ) {
 }
 
 std::pair<std::vector<double>, std::vector<double> > LRL_ReadLatticeData::SplitFields( const int n, const std::vector<double>& fields) {
-   // if there are more than 6 fields, try to assume that the rest are standard deviations
+   // if there are more than n fields, try to assume that the rest are standard deviations
    std::vector<double> v1;
    std::vector<double> v2;
    if (n <= fields.size( ))
@@ -149,6 +151,17 @@ bool LRL_ReadLatticeData::SetB4Data(const std::vector<double>& fields) {
    return test;
 }
 
+bool LRL_ReadLatticeData::SetUData( const std::vector<double>& fields ) {
+   const bool test = IsLatticeName( m_inputDataType, vU_names );
+   if (test) {
+      DC7u dc7u=DC7u(fields);
+      m_cell = LRL_Cell( G6( dc7u ) );
+      m_lattice = "P";
+   }
+   return test;
+}
+
+
 bool LRL_ReadLatticeData::SetS6Data( const std::vector<double>& fields ) {
    const bool test = IsLatticeName( m_inputDataType, vS6_names );
    if (test) {
@@ -215,6 +228,7 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
          SetS6Data(fields) ||
          SetC3Data(fields) ||
          SetB4Data(fields) ||
+         SetUData(fields) ||
          SetUnitCellTypeData(params);
 
       if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES

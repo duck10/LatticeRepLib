@@ -1,6 +1,7 @@
 #include "Sella.h"
 
 
+#include "GenerateRandomLattice.h"
 #include "DeloneTypeList.h"
 #include "DeloneType.h"
 #include "LRL_Cell_Degrees.h"

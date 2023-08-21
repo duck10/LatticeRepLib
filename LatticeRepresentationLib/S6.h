@@ -87,6 +87,11 @@ public:
    static std::string GetName(void) { return "S6"; }
    static S6 InvertCoord(const size_t n, const S6& din);
    S6 InvertCoord(const size_t n) const;
+   static S6 ReZeroScalars(const double delta, const S6& din);
+   static S6 ReZeroScalars(const S6& din);
+   S6 ReZeroScalars(const double delta);
+   S6 ReZeroScalars(void);
+
    static std::string Signature(const S6& s6);
 
    static std::vector<std::pair<MatS6, MatS6> > SetUnreductionMatrices();

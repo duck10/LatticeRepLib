@@ -34,9 +34,18 @@ std::ostream& operator<< (std::ostream& o, const C3& v) {
    return o;
 }
 
+inline std::complex<double> c3_Minus_Real2(std::complex<double> a) {
+   std::complex<double> c = { -a.real(), -a.real() + a.imag() };
+   return c;
+}
 
 static std::complex<double> c3_Minus_Real(std::complex<double>& a) {
    const std::complex<double> c = { -a.real(), -a.real() + a.imag() };
+   return c;
+}
+
+inline std::complex<double> c3_Minus_Imag2(const std::complex<double>& a) {
+   const std::complex<double> c = {a.real() - a.imag(), -a.imag()};
    return c;
 }
 
@@ -45,8 +54,18 @@ static std::complex<double> c3_Minus_Imag(const std::complex<double>& a) {
    return c;
 }
 
+inline std::complex<double> c3_Plus_Real2(const std::complex<double>& a) {
+   const std::complex<double> c = {a.real(), a.real()};
+   return c;
+}
+
 static std::complex<double> c3_Plus_Real(const std::complex<double>& a) {
    const std::complex<double> c = {a.real(), a.real()};
+   return c;
+}
+
+inline std::complex<double> c3_Plus_Imag2(const std::complex<double>& a) {
+   const std::complex<double> c = { a.imag(), a.imag() };
    return c;
 }
 
@@ -55,16 +74,32 @@ static std::complex<double> c3_Plus_Imag(const std::complex<double>& a) {
    return c;
 }
 
+inline double c3_Real2(const std::complex<double>& a) {
+   return a.real();
+}
+
 static double c3_Real(const std::complex<double>& a) {
    return a.real();
+}
+
+inline double c3_Imag2(const std::complex<double>& a) {
+   return a.imag();
 }
 
 static double c3_Imag(const std::complex<double>& a) {
    return a.imag();
 }
 
+inline std::complex<double> c3_I_Times_Real2(const std::complex<double>& c) {
+   return { 0, c.real() };
+}
+
 static std::complex<double> c3_I_Times_Real(const std::complex<double>& c) {
    return { 0, c.real() };
+}
+
+inline std::complex<double> c3_I_Times_Imag2(const std::complex<double>& c) {
+   return { 0, c.imag()};
 }
 
 static std::complex<double> c3_I_Times_Imag(const std::complex<double>& c) {
@@ -72,13 +107,10 @@ static std::complex<double> c3_I_Times_Imag(const std::complex<double>& c) {
 }
 
 C3 C3::c3_s1(const C3& a) {
-   C3 c;
-   c[0] = c3_Minus_Real(a[0]);
-   //std::cout << "c3_Plus_Real(a[0]) " << c3_Plus_Real(a[0]) << std::endl;
-   //std::cout << "c3_Real(a[1]) " << c3_Real(a[1]) << std::endl;
-   //std::cout << "c3_I_Times_Real(a[2]) " << c3_I_Times_Real(a[2]) << std::endl;
-   c[1] = c3_Plus_Real(a[0]) + c3_Real(a[1]) + c3_I_Times_Real(a[2]);
-   c[2] = c3_Plus_Real(a[0]) + c3_Imag(a[1]) + c3_I_Times_Imag(a[2]);
+   const C3 c;
+   c[0] = c3_Minus_Real2(a[0]);
+   c[1] = c3_Plus_Real2(a[0]) + c3_Real2(a[1]) + c3_I_Times_Real2(a[2]);
+   c[2] = c3_Plus_Real2(a[0]) + c3_Imag2(a[1]) + c3_I_Times_Imag2(a[2]);
    return c;
 }
 
@@ -696,12 +728,12 @@ C3 C3::SortC3(const C3& c3in) {
 
 void C3::Test_C3() {
    std::complex<double> t{ 1,7 };
-   std::cout << " Mr " << c3_Minus_Real(t) << std::endl;
-   std::cout << " Mi " << c3_Minus_Imag(t) << std::endl;
-   std::cout << " Pr " << c3_Plus_Real(t) << std::endl;
-   std::cout << " Pi " << c3_Plus_Imag(t) << std::endl;
-   std::cout << " R " << c3_Real(t) << std::endl;
-   std::cout << " I " << c3_Imag(t) << std::endl;
+   std::cout << " Mr " << c3_Minus_Real2(t) << std::endl;
+   std::cout << " Mi " << c3_Minus_Imag2(t) << std::endl;
+   std::cout << " Pr " << c3_Plus_Real2(t) << std::endl;
+   std::cout << " Pi " << c3_Plus_Imag2(t) << std::endl;
+   std::cout << " R " << c3_Real2(t) << std::endl;
+   std::cout << " I " << c3_Imag2(t) << std::endl;
    std::cout << " iR " << c3_I_Times_Real(t) << std::endl;
    std::cout << " iI " << c3_I_Times_Imag(t) << std::endl;
 
@@ -712,10 +744,3 @@ void C3::Test_C3() {
    exit(0);
 }
 
-//MatC3::MatC3() {
-//   m_functs[0] = (c3_Minus_Real, 0, 0);
-//   m_functs[1] = (c3_Plus_Real, c3_I_Times(c3_Real), c3_Real);
-//   m_functs[2] = (c3_Plus_Real, 0, 0);
-//   C3 c;
-//   std::complex<double>  xxxx = m_functs[0](c);
-//}

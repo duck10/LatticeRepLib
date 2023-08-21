@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "S6.h"
 #include "LabeledSellaMatrices.h"
 #include "MatS6.h"
 #include "S6_Ordinals.h"
@@ -81,7 +82,7 @@ private:
    MatS6 ProjectorFromVector(const std::string& label, const T& t) const {
       MatS6 m;
       m = m.Zero();
-      const S6 s = ReZeroScalars(S6(t));
+      const S6 s = S6::ReZeroScalars(S6(t));
 
       for (size_t j = 0; j < 6; ++j) {
          for (size_t k = j; k < 6; ++k) {

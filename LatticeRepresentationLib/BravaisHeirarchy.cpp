@@ -297,6 +297,8 @@ std::string BravaisHeirarchy::ProduceSVG(
          BravaisHeirarchy::ScoreLabels(scores) +
          BravaisHeirarchy::BoilerPlate_2();
 
+   ;
+
    SendSellaToFile(s);
    return s;
    }

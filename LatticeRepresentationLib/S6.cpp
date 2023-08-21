@@ -1,8 +1,6 @@
 static const double randomLatticeNormalizationConstant = 10.0;
 static const double randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant*randomLatticeNormalizationConstant;
 
-
-
 #include <cmath>
 #include <iomanip>
 #include <sstream>
@@ -19,6 +17,7 @@ static const double randomLatticeNormalizationConstantSquared = randomLatticeNor
 #include "rhrand.h"
 #include "S6.h"
 #include "Selling.h"
+#include "LRL_indices.h"
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
 
@@ -98,10 +97,10 @@ S6::S6(const D7& v7)
 S6::S6( const B4& del )
    : S6()
 {
-   const Vector_3 a = del[0UL];
-   const Vector_3 b = del[1UL];
-   const Vector_3 c = del[2UL];
-   const Vector_3 d = del[3UL];
+   const Vector_3 a = del[B4_Avec_idx];
+   const Vector_3 b = del[B4_Bvec_idx];
+   const Vector_3 c = del[B4_Cvec_idx];
+   const Vector_3 d = del[B4_Dvec_idx];
    double& p = (*this)[0];
    double& q = (*this)[1];
    double& r = (*this)[2];
@@ -365,7 +364,7 @@ S6 S6::operator- (const S6& v) const {
 
 std::ostream& operator<< (std::ostream& o, const S6& dc) {
    std::streamsize oldPrecision = o.precision();
-   o << std::fixed << std::setprecision(3);
+   o << std::fixed << std::setprecision(5);
    const size_t n = dc.size();
    for (size_t i = 0; i < n; ++i) {
       const double d = dc[i];
@@ -397,6 +396,77 @@ S6 S6::InvertCoord(const size_t n) const {
    temp[n] = -temp[n];
    return temp;
 }
+
+S6 S6::ReZeroScalars(const double delta, const S6& din) {
+  S6 temp(din);
+  if (temp[0] >= -delta && temp[0] <= delta) temp[0]=0.;
+  if (temp[1] >= -delta && temp[1] <= delta) temp[1]=0.;
+  if (temp[2] >= -delta && temp[2] <= delta) temp[2]=0.;
+  if (temp[3] >= -delta && temp[3] <= delta) temp[3]=0.;
+  if (temp[4] >= -delta && temp[4] <= delta) temp[4]=0.;
+  if (temp[5] >= -delta && temp[5] <= delta) temp[5]=0.;
+  return temp;
+}
+
+S6 S6::ReZeroScalars(const S6& din) {
+  double delta, tdelta;
+  S6 temp(din);
+  delta = (temp[0]>0.)?temp[0]:-temp[0];
+  tdelta = (temp[1]>0.)?temp[1]:-temp[1];
+  if (tdelta > delta) delta=tdelta;
+  tdelta = (temp[2]>0.)?temp[2]:-temp[2];
+  if (tdelta > delta) delta=tdelta;
+  tdelta = (temp[3]>0.)?temp[3]:-temp[3];
+  if (tdelta > delta) delta=tdelta;
+  tdelta = (temp[4]>0.)?temp[4]:-temp[4];
+  if (tdelta > delta) delta=tdelta;
+  tdelta = (temp[5]>0.)?temp[5]:-temp[5];
+  if (tdelta > delta) delta=tdelta;
+  delta *= 1.e-9;
+  if (temp[0] >= -delta && temp[0] <= delta) temp[0]=0.;
+  if (temp[1] >= -delta && temp[1] <= delta) temp[1]=0.;
+  if (temp[2] >= -delta && temp[2] <= delta) temp[2]=0.;
+  if (temp[3] >= -delta && temp[3] <= delta) temp[3]=0.;
+  if (temp[4] >= -delta && temp[4] <= delta) temp[4]=0.;
+  if (temp[5] >= -delta && temp[5] <= delta) temp[5]=0.;
+  return temp;
+}
+
+S6 S6::ReZeroScalars(const double delta) {
+  S6 temp(*this);
+  if (temp[0] >= -delta && temp[0] <= delta) temp[0]=0.;
+  if (temp[1] >= -delta && temp[1] <= delta) temp[1]=0.;
+  if (temp[2] >= -delta && temp[2] <= delta) temp[2]=0.;
+  if (temp[3] >= -delta && temp[3] <= delta) temp[3]=0.;
+  if (temp[4] >= -delta && temp[4] <= delta) temp[4]=0.;
+  if (temp[5] >= -delta && temp[5] <= delta) temp[5]=0.;
+  return temp;
+}
+
+S6 S6::ReZeroScalars(void) {
+  double delta, tdelta;
+  S6 temp(*this);
+  delta = (temp[0]>0.)?temp[0]:-temp[0];
+  tdelta = (temp[1]>0.)?temp[1]:-temp[1];
+  if (tdelta > delta) delta=tdelta;
+  tdelta = (temp[2]>0.)?temp[2]:-temp[2];
+  if (tdelta > delta) delta=tdelta;
+  tdelta = (temp[3]>0.)?temp[3]:-temp[3];
+  if (tdelta > delta) delta=tdelta;
+  tdelta = (temp[4]>0.)?temp[4]:-temp[4];
+  if (tdelta > delta) delta=tdelta;
+  tdelta = (temp[5]>0.)?temp[5]:-temp[5];
+  if (tdelta > delta) delta=tdelta;
+  delta *= 1.e-9;
+  if (temp[0] >= -delta && temp[0] <= delta) temp[0]=0.;
+  if (temp[1] >= -delta && temp[1] <= delta) temp[1]=0.;
+  if (temp[2] >= -delta && temp[2] <= delta) temp[2]=0.;
+  if (temp[3] >= -delta && temp[3] <= delta) temp[3]=0.;
+  if (temp[4] >= -delta && temp[4] <= delta) temp[4]=0.;
+  if (temp[5] >= -delta && temp[5] <= delta) temp[5]=0.;
+  return temp;
+}
+
 std::string S6::Signature(const S6& s6) {
    std::string s;
    for (size_t i = 0; i < 6; ++i) {
