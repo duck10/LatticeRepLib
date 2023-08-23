@@ -119,8 +119,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RadialCluster", "RadialClus
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CheckInput", "CheckInput\CheckInput.vcxproj", "{FA01AE9E-4F38-4684-8F1A-BD45E65924AD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "posix", "posix\posix.vcxproj", "{26F19590-E575-4C54-BE0B-BFF68DF1E034}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
