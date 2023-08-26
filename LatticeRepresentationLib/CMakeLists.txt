@@ -50,7 +50,7 @@ set(SRC_FILES
     C3.cpp
     CellInputData.cpp
     D7.cpp
-    D7_boundary.cpp
+    D7_Boundary.cpp
     D7_BoundaryList.cpp
     D7_ClassifySubboundaries.cpp
     D7_Subboundary.cpp
