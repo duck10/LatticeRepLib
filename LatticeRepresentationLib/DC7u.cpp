@@ -89,115 +89,6 @@ DC7u::DC7u(const std::vector<double>& v)
   m_cellIsValid = IsValid();
 }
 
-
-DC7u::DC7u(const B4& v)
-  : DC7u()
-{  G6 red;
-   S6 s=S6(v);
-   double delta;
-   int ii, error;
-   const bool b = Niggli::Reduce(G6(s), red);
-   m_vec.resize(7);
-   m_vec[DC7u_AA_idx] = red[G6_AA_idx];
-   m_vec[DC7u_BB_idx] = red[G6_BB_idx];
-   m_vec[DC7u_CC_idx] = red[G6_CC_idx];
-   m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx]+red[G6_CC_idx]-std::fabs(red[G6_2BC_idx]);
-   m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx]+red[G6_CC_idx]-std::fabs(red[G6_2AC_idx]);
-   m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]-std::fabs(red[G6_2AB_idx]);
-   m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
-     -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
-   delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
-   error=0;
-   for (ii=0; ii < 7; ii++) {
-     if (m_vec[ii] < delta) error++;
-   }
-   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
-   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
-      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
-   }
-   m_cellIsValid = IsValid();
-}
-
-DC7u::DC7u(const C3& v)
-{  G6 red;
-   S6 s=S6(v);
-   double delta;
-   int ii, error;
-   const bool b = Niggli::Reduce(G6(s), red);
-   m_vec.resize(7);
-   m_vec[DC7u_AA_idx] = red[G6_AA_idx];
-   m_vec[DC7u_BB_idx] = red[G6_BB_idx];
-   m_vec[DC7u_CC_idx] = red[G6_CC_idx];
-   m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx]+red[G6_CC_idx]-std::fabs(red[G6_2BC_idx]);
-   m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx]+red[G6_CC_idx]-std::fabs(red[G6_2AC_idx]);
-   m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]-std::fabs(red[G6_2AB_idx]);
-   m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
-     -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
-   delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
-   error=0;
-   for (ii=0; ii < 7; ii++) {
-     if (m_vec[ii] < delta) error++;
-   }
-   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
-   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
-      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
-   }
-   m_cellIsValid = IsValid();
-}
-
-DC7u::DC7u(const G6& v)
-{  G6 red;
-   double delta;
-   int ii, error;
-   const bool b = Niggli::Reduce(v, red);
-   m_vec.resize(7);
-   m_vec[DC7u_AA_idx] = red[G6_AA_idx];
-   m_vec[DC7u_BB_idx] = red[G6_BB_idx];
-   m_vec[DC7u_CC_idx] = red[G6_CC_idx];
-   m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx]+red[G6_CC_idx]-std::fabs(red[G6_2BC_idx]);
-   m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx]+red[G6_CC_idx]-std::fabs(red[G6_2AC_idx]);
-   m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]-std::fabs(red[G6_2AB_idx]);
-   m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
-     -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
-   delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
-   error=0;
-   for (ii=0; ii < 7; ii++) {
-     if (m_vec[ii] < delta) error++;
-   }
-   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
-   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
-      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
-   }
-   m_cellIsValid = IsValid();
-}
-
-DC7u::DC7u(const D7& v)
-{  G6 red;
-   S6 s=S6(v);
-   double delta;
-   int ii, error;
-   const bool b = Niggli::Reduce(G6(s), red);
-   m_vec.resize(7);
-   m_vec[DC7u_AA_idx] = red[G6_AA_idx];
-   m_vec[DC7u_BB_idx] = red[G6_BB_idx];
-   m_vec[DC7u_CC_idx] = red[G6_CC_idx];
-   m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx]+red[G6_CC_idx]-std::fabs(red[G6_2BC_idx]);
-   m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx]+red[G6_CC_idx]-std::fabs(red[G6_2AC_idx]);
-   m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]-std::fabs(red[G6_2AB_idx]);
-   m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
-     -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
-   delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
-   error=0;
-   for (ii=0; ii < 7; ii++) {
-     if (m_vec[ii] < delta) error++;
-   }
-   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
-   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
-      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
-   }
-   m_cellIsValid = IsValid();
-}
-
 DC7u::DC7u(const std::string& t)
 {
    const std::string strInput = t;
@@ -303,30 +194,30 @@ DC7u DC7u::operator- (const DC7u& v) const {
    return d;
 }
 
-DC7u& DC7u::operator= (const G6& v) {
-   *this = DC7u(LRL_Cell(v));
-   return *this;
-}
-
-DC7u& DC7u::operator= (const S6& v) {
-   *this = DC7u(LRL_Cell(v));
-   return *this;
-}
-
-DC7u& DC7u::operator= (const C3& v) {
-   *this = DC7u(LRL_Cell(v));
-   return *this;
-}
-
-DC7u& DC7u::operator= (const D7& v) {
-   *this = DC7u(LRL_Cell(v));
-   return *this;
-}
-
-DC7u& DC7u::operator= (const B4& v) {
-   *this = DC7u(LRL_Cell(v));
-   return *this;
-}
+//DC7u& DC7u::operator= (const G6& v) {
+//   *this = DC7u(LRL_Cell(v));
+//   return *this;
+//}
+//
+//DC7u& DC7u::operator= (const S6& v) {
+//   *this = DC7u(LRL_Cell(v));
+//   return *this;
+//}
+//
+//DC7u& DC7u::operator= (const C3& v) {
+//   *this = DC7u(LRL_Cell(v));
+//   return *this;
+//}
+//
+//DC7u& DC7u::operator= (const D7& v) {
+//   *this = DC7u(LRL_Cell(v));
+//   return *this;
+//}
+//
+//DC7u& DC7u::operator= (const B4& v) {
+//   *this = DC7u(LRL_Cell(v));
+//   return *this;
+//}
 
 double DistanceBetween(const DC7u& v1, const DC7u& v2) {
    return (v1 - v2).Norm();

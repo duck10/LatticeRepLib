@@ -10,23 +10,53 @@
 #include "LRL_ToString.h"
 #include "LRL_Vector3.h"
 #include "LRL_indices.h"
+#include "Niggli.h"
 
-class DC7u : private BasisBase<DC7u, double> {
+class DC7u {
 public:
    const static std::vector<Vector_3> vertices;
 public:
    friend std::ostream& operator<< (std::ostream&, const DC7u&);
+   template<typename T> explicit DC7u(const T& t)
+      : m_dim(7)
+      , m_cell(LRL_Cell(t))
+      , m_lattice("P") //LCA assumes primitive
+   {
+      G6 red;
+      double delta;
+      int error;
+      const bool b = Niggli::Reduce(G6(t).data(), red);
+      m_vec.resize(7);
+      m_vec[DC7u_AA_idx] = red[G6_AA_idx];
+      m_vec[DC7u_BB_idx] = red[G6_BB_idx];
+      m_vec[DC7u_CC_idx] = red[G6_CC_idx];
+      m_vec[DC7u_MIN_BC_diagsq_idx] = red[G6_BB_idx] + red[G6_CC_idx] - std::fabs(red[G6_2BC_idx]);
+      m_vec[DC7u_MIN_AC_diagsq_idx] = red[G6_AA_idx] + red[G6_CC_idx] - std::fabs(red[G6_2AC_idx]);
+      m_vec[DC7u_MIN_AB_diagsq_idx] = red[G6_AA_idx] + red[G6_BB_idx] - std::fabs(red[G6_2AB_idx]);
+      m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx] + red[G6_BB_idx] + red[G6_CC_idx]
+         - std::fabs(red[G6_2BC_idx]) - std::fabs(red[G6_2AC_idx]) - std::fabs(red[G6_2AB_idx]);
+      delta = std::fabs(m_vec[DC7u_AA_idx]) * 1.e-10;
+      error = 0;
+      for (size_t ii = 0; ii < 7; ii++) {
+         if (m_vec[ii] < delta) error++;
+      }
+      if (error > 0) throw std::invalid_argument("invalid unsorted DC7 cell");
+      if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta) {
+         m_vec[DC7u_MIN_ABC_diagsq_idx] += 2. * std::min(std::min(red[G6_2BC_idx], red[G6_2AC_idx]), red[G6_2AB_idx]);
+      }
+      m_cellIsValid = m_cell.IsValid();
+   }
+
+   template<typename T> DC7u operator=(const T& t) {
+      *this = t;
+   }
+
 
    DC7u(void) ;
    DC7u(const DC7u& v);
    DC7u(const double v[7]);
    DC7u(const LRL_Cell& cell);
    DC7u(const VecN& v);
-   DC7u(const G6& v);
-   DC7u(const S6& v);
-   DC7u(const C3& v);
-   DC7u(const D7& v);
-   DC7u(const B4& v);
    DC7u(const std::string& t);
    DC7u(const std::vector<double>& v);
    DC7u& operator= (const DC7u& v);
@@ -78,11 +108,11 @@ public:
    LRL_Cell GetCell() const { return m_cell; }
 
 private:
+   size_t m_dim;
    LRL_Cell m_cell;
    std::string m_lattice;
    bool m_cellIsValid;
    VecN m_dirCellAreas;
-   size_t m_dim;
    std::vector<std::pair<int, std::pair<std::vector<int>, double> > > m_hashedAreaList;
    VecN m_vec;
 
