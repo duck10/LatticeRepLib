@@ -1,3 +1,4 @@
+#include "LRL_CoordinateConversionMatrices.h"
 #include "MatDC7u.h"
 #include "MatMN.h"
 #include "MatN.h"
@@ -14,6 +15,36 @@
 MatDC7u::MatDC7u(void)
    : m_mat(49)
 {}
+
+
+MatDC7u& MatDC7u::operator= (const MatB4& m) {
+   m_mat.resize(49);
+   throw("we don't know how to do this");
+   return *this;
+}
+
+MatDC7u& MatDC7u::operator= (const MatG6& m) {
+   throw ("how to do this");
+   return *this;
+}
+
+MatDC7u& MatDC7u::operator= (const MatS6& m) {
+   MatMN mn = LRL_CoordinateConversionMatrices::G6_FROM_S6 * m * LRL_CoordinateConversionMatrices::S6_FROM_G6;
+   m_mat.SetVector(mn.GetVector());
+   return *this;
+}
+
+MatDC7u& MatDC7u::operator= (const MatDC7u& m) {
+   m_mat.resize(49);
+   m_mat = m.m_mat;
+   return *this;
+}
+
+MatDC7u& MatDC7u::operator= (const MatD7& m) {
+   MatMN mn = LRL_CoordinateConversionMatrices::G6_FROM_D7 * m * LRL_CoordinateConversionMatrices::D7_FROM_G6;
+   m_mat.SetVector(mn.GetVector());
+   return *this;
+}
 
 MatDC7u& MatDC7u::operator+= (const MatDC7u& d) {
    for (size_t i = 0; i < 49; ++i) m_mat[i] += d[i];
@@ -121,6 +152,10 @@ double MatDC7u::Norm(const MatDC7u& t) const {
 }
 
 
+double MatDC7u::DistanceBetween(const MatDC7u& v1, const MatDC7u& v2) {
+   return ((v1 - v2).norm());
+}
+
 bool MatDC7u::IsUnit() const {
    long row = -1;
    for (size_t i = 0; i < 49; ++i) {
@@ -154,7 +189,7 @@ MatDC7u MatDC7u::transpose(const MatDC7u& m2) const {
    const int size = 7;
    MatDC7u m;
    for (int count = 0; count<size*size; ++count) {
-      const int transposeIndex = count / size + size*(count%size); //'=int(rowindex/6) +6*colIndex)
+      const int transposeIndex = count / size + size*(count%size); //'=int(rowindex/7) +7*colIndex)
       if (count >= transposeIndex) {
          m[transposeIndex] = m2[count];
          m[count] = m2[transposeIndex];
@@ -169,7 +204,7 @@ void MatDC7u::transpose(void) {
    MatDC7u& m(*this);
    MatDC7u m2(*this);
    for (int count = 0; count<size*size; ++count) {
-      const int transposeIndex = count / size + size*(count%size); //'=int(rowindex/6) +6*colIndex)
+      const int transposeIndex = count / size + size*(count%size); //'=int(rowindex/7) +7*colIndex)
       if (count >= transposeIndex) {
          m[transposeIndex] = m2[count];
          m[count] = m2[transposeIndex];
@@ -177,16 +212,16 @@ void MatDC7u::transpose(void) {
    }
 }
 
-std::ostream& operator<< (std::ostream& o, const MatDC7u& dc) {
-   std::streamsize oldPrecision = o.precision();
-   o << std::fixed << std::setprecision(5);
-   for (size_t i = 0; i < dc.size(); ++i) {
-      if (i % 7 == 0) o << std::endl;
-      o << int(dc[i]) << " ";
-      //o << std::setw(9) << dc[i] << " ";
-   }
-   o << std::setprecision(oldPrecision);
-   o.unsetf(std::ios::floatfield);
-   return o;
-}
+//std::ostream& operator<< (std::ostream& o, const MatDC7u& dc) {
+//   std::streamsize oldPrecision = o.precision();
+//   o << std::fixed << std::setprecision(5);
+//   for (size_t i = 0; i < dc.size(); ++i) {
+//      if (i % 7 == 0) o << std::endl;
+//      o << dc[i] << " ";
+//      //o << std::setw(9) << dc[i] << " ";
+//   }
+//   o << std::setprecision(oldPrecision);
+//   o.unsetf(std::ios::floatfield);
+//   return o;
+//}
 

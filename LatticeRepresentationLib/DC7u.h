@@ -57,6 +57,7 @@ public:
    DC7u(const double v[7]);
    DC7u(const LRL_Cell& cell);
    DC7u(const VecN& v);
+   explicit DC7u( char const * ch); // access to construct as std::string
    DC7u(const std::string& t);
    DC7u(const std::vector<double>& v);
    DC7u& operator= (const DC7u& v);

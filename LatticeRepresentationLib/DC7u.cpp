@@ -89,6 +89,10 @@ DC7u::DC7u(const std::vector<double>& v)
   m_cellIsValid = IsValid();
 }
 
+DC7u::DC7u(char const* ch) {
+   *this = DC7u(std::string(ch));
+}
+
 DC7u::DC7u(const std::string& t)
 {
    const std::string strInput = t;
