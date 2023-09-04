@@ -107,6 +107,7 @@ public:
    size_t size() const { return m_vec.size(); }
 
    LRL_Cell GetCell() const { return m_cell; }
+   size_t GetDim() const { return m_dim; }
 
 private:
    size_t m_dim;

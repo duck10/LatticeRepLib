@@ -188,10 +188,14 @@ DC7u DC7u::operator/ (const double d) const {
 }
 
 DC7u DC7u::operator+ (const DC7u& ds) const {
-   DC7u v;
-   for (size_t i = 0; i < ds.size(); ++i)
-      v[i] = (*this)[i] + ds[i];
-   return v;
+   DC7u d(ds);
+   if ((*this).m_cellIsValid && ds.m_cellIsValid) {
+      d.m_vec = m_vec + ds.m_vec;
+   }
+   else {
+      d.m_cellIsValid = false;
+   }
+   return d;
 }
 
 DC7u DC7u::operator- (const DC7u& v) const {
