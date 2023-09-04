@@ -17,6 +17,7 @@ public:
    const static std::vector<Vector_3> vertices;
 public:
    friend std::ostream& operator<< (std::ostream&, const DC7u&);
+   friend DC7u operator* (const double d, const DC7u& dc7u);
    template<typename T> explicit DC7u(const T& t)
       : m_dim(7)
       , m_cell(LRL_Cell(t))

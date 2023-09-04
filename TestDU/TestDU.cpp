@@ -97,7 +97,8 @@ int main()
    //std::cout << "d1  " << d1 << std::endl;
    //std::cout << "d2  " << d2 << std::endl;
    //std::cout << "minus  " << d2 - d1 << std::endl;
-   CheckDC7u(d2 - d1, __LINE__);
+   CheckDC7u(5.* d1, __LINE__);
    //std::cout << "plus   " << d2 + d1 << std::endl;
-   CheckDC7u(d2 + d1, __LINE__);
+   CheckDC7u(d2*5., __LINE__);
+   CheckDC7u(d2/5., __LINE__);
 }

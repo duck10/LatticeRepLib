@@ -238,3 +238,6 @@ double DistanceBetween(const DC7u& v1, const DC7u& v2) {
    return (v1 - v2).Norm();
 }
 
+DC7u operator* (const double d, const DC7u& dc7u) {
+   return dc7u * d;
+}
