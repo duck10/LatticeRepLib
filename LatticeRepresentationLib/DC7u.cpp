@@ -33,7 +33,7 @@ double HashV3(const T& v) {
 void DC7u::FromCellToDC7u(const LRL_Cell& cell) {
    G6 red;
    double delta;
-   int ii, error;
+   int error;
    const bool b = Niggli::Reduce(G6(cell), red);
    m_vec.resize(7);
    m_vec[DC7u_AA_idx] = red[G6_AA_idx];
@@ -46,50 +46,56 @@ void DC7u::FromCellToDC7u(const LRL_Cell& cell) {
      -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
    delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
    error=0;
-   for (ii=0; ii < 7; ii++) {
+   for (size_t ii=0; ii < 7; ii++) {
      if (m_vec[ii] < delta) error++;
    }
    if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
    if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
       m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
    }
+   m_dim = 7;
 }
 
 DC7u::DC7u(const LRL_Cell& cell)
    : m_cell(cell)
-   , m_lattice("P")
    , m_cellIsValid(cell.IsValid())
+   , m_dim(7)
 {
    FromCellToDC7u(cell);
+   m_lattice = "P";
 }
 
 DC7u::DC7u(const DC7u& u)
    : m_cellIsValid(u.m_cellIsValid)
    , m_vec(u.m_vec)
+   , m_dim(7)
 {
-   m_cellIsValid = IsValid();;
+   m_cellIsValid = IsValid();
 }
 
 DC7u::DC7u( void )
+   : m_cellIsValid(false)
+   , m_dim(0)
 {
-  m_cellIsValid=false;
+   m_vec.resize(7);
 }
 
 DC7u::DC7u(const VecN& v)
-  : m_vec(v)
-  , m_cellIsValid(false)
+   : m_vec(v)
+   , m_dim(7)
 {
   m_cellIsValid = IsValid();
 }
 
 DC7u::DC7u(const std::vector<double>& v)
-  : m_vec(v)
-  , m_cellIsValid(false)
+   : m_vec(v)
+   , m_dim(7)
 {
   m_cellIsValid = IsValid();
 }
 
-DC7u::DC7u(char const* ch) {
+DC7u::DC7u(char const* ch) 
+{
    *this = DC7u(std::string(ch));
 }
 
@@ -110,6 +116,7 @@ DC7u::DC7u(const std::string& t)
       FromCellToDC7u(x_cell);
    }
    m_cellIsValid = x_cell.IsValid();
+   m_dim = 7;
 }
 
 DC7u& DC7u::operator= (const LRL_Cell& v) {
