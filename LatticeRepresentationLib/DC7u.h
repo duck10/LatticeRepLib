@@ -50,6 +50,7 @@ public:
 
    template<typename T> DC7u operator=(const T& t) {
       *this = t;
+      return *this;
    }
 
 
