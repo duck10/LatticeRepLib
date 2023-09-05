@@ -21,7 +21,7 @@ double DC7uReflDist(const DC7u& dc_1, const DC7u dc_2) {
    const double dist = minNC(d1, d2, d3, d4, d5, d6);
    //std::cout << dc7_1 << std::endl;
    //std::cout << dc7_2 << std::endl;
-   return dist;
+   return sqrt(dist);
 }
 
 static bool CheckDC7u( const DC7u& dc7, const int& line=0) {
@@ -122,5 +122,5 @@ int main()
    DC7u dc7_2 = 2 * dc7_1;
    std::cout << "dc7_1 " << dc7_1 << std::endl;
    std::cout << "dc7_2 " << dc7_2 << std::endl;
-   std::cout << DC7uReflDist(dc7_1, dc7_2) << std::endl;
+   std::cout << "DC7uReflDist " << DC7uReflDist(dc7_1, dc7_2) << std::endl;
 }
