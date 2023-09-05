@@ -169,6 +169,7 @@
     <ClCompile Include="dbscan.cpp" />
     <ClCompile Include="DC.cpp" />
     <ClCompile Include="DC7u.cpp" />
+    <ClCompile Include="DC7uBoundaryMatrices.cpp" />
     <ClCompile Include="DeloneFitResults.cpp" />
     <ClCompile Include="Delone_Types.cpp" />
     <ClCompile Include="FollowerConstants.cpp" />
@@ -196,7 +197,7 @@
     <ClCompile Include="S6Dist.cpp" />
     <ClCompile Include="D7.cpp" />
     <ClCompile Include="D7Dist.c" />
-    <ClCompile Include="D7_boundary.cpp" />
+    <ClCompile Include="D7_Boundary.cpp" />
     <ClCompile Include="D7_BoundaryList.cpp" />
     <ClCompile Include="D7_ClassifySubboundaries.cpp" />
     <ClCompile Include="D7_Subboundary.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="dbscan.h" />
     <ClInclude Include="DC.h" />
     <ClInclude Include="DC7u.h" />
+    <ClInclude Include="DC7uBoundaryMatrices.h" />
     <ClInclude Include="DeloneFitResults.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
     <ClInclude Include="Delone_Types.h" />

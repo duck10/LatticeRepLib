@@ -53,7 +53,6 @@ public:
       return *this;
    }
 
-
    DC7u(void) ;
    DC7u(const DC7u& v);
    DC7u(const double v[7]);

@@ -7,7 +7,7 @@
 #include "MatDC7u.h"
 #include <vector>
 
-static bool CheckDC7u(const DC7u& dc7, const int& line=0) {
+static bool CheckDC7u( DC7u& dc7, const int& line=0) {
    bool good = true;
    std::string s(line!=0?LRL_ToString(" line=",line) : "");
    std::string issues;
