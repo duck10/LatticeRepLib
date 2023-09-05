@@ -1,13 +1,30 @@
 
 #include <iostream>
 
+#include "LRL_MinMaxTools.h"
 #include "LRL_ToString.h"
 #include "LRL_ReadLatticeData.h"
 #include "DC7u.h"
 #include "MatDC7u.h"
 #include <vector>
 
-static bool CheckDC7u( DC7u& dc7, const int& line=0) {
+template<typename T>
+double sqr(const T a) { return a * a; }
+
+double DC7uReflDist(const DC7u& dc_1, const DC7u dc_2) {
+   const double d1 = sqrt(sqr(dc_1[0] - dc_2[0]) + sqr(dc_1[1] - dc_2[1]) + sqr(dc_1[2] - dc_2[2]) + sqr(dc_1[3] - dc_2[3]) + sqr(dc_1[4] - dc_2[4]) + sqr(dc_1[5] - dc_2[5]) + sqr(dc_1[6] - dc_2[6]));
+   const double d2 = sqrt(sqr(dc_1[0] - dc_2[0]) + sqr(dc_1[1] - dc_2[2]) + sqr(dc_1[1] - dc_2[1]) + sqr(dc_1[3] - dc_2[3]) + sqr(dc_1[4] - dc_2[5]) + sqr(dc_1[5] - dc_2[4]) + sqr(dc_1[6] - dc_2[6]));
+   const double d3 = sqrt(sqr(dc_1[0] - dc_2[1]) + sqr(dc_1[1] - dc_2[0]) + sqr(dc_1[1] - dc_2[2]) + sqr(dc_1[3] - dc_2[4]) + sqr(dc_1[4] - dc_2[3]) + sqr(dc_1[5] - dc_2[5]) + sqr(dc_1[6] - dc_2[6]));
+   const double d4 = sqrt(sqr(dc_1[0] - dc_2[1]) + sqr(dc_1[1] - dc_2[2]) + sqr(dc_1[1] - dc_2[0]) + sqr(dc_1[3] - dc_2[4]) + sqr(dc_1[4] - dc_2[5]) + sqr(dc_1[5] - dc_2[3]) + sqr(dc_1[6] - dc_2[6]));
+   const double d5 = sqrt(sqr(dc_1[0] - dc_2[2]) + sqr(dc_1[1] - dc_2[0]) + sqr(dc_1[1] - dc_2[1]) + sqr(dc_1[3] - dc_2[5]) + sqr(dc_1[4] - dc_2[3]) + sqr(dc_1[5] - dc_2[4]) + sqr(dc_1[6] - dc_2[6]));
+   const double d6 = sqrt(sqr(dc_1[0] - dc_2[2]) + sqr(dc_1[1] - dc_2[1]) + sqr(dc_1[1] - dc_2[0]) + sqr(dc_1[3] - dc_2[5]) + sqr(dc_1[4] - dc_2[4]) + sqr(dc_1[5] - dc_2[3]) + sqr(dc_1[6] - dc_2[6]));
+   const double dist = minNC(d1, d2, d3, d4, d5, d6);
+   //std::cout << dc7_1 << std::endl;
+   //std::cout << dc7_2 << std::endl;
+   return dist;
+}
+
+static bool CheckDC7u( const DC7u& dc7, const int& line=0) {
    bool good = true;
    std::string s(line!=0?LRL_ToString(" line=",line) : "");
    std::string issues;
@@ -89,16 +106,21 @@ int main()
    //std::cout << xxxx << std::endl;
    CheckDC7u(xxxx, __LINE__);
 
-   DC7u d1(G6("100 100 100 0 0 0"));
-   CheckDC7u(d1, __LINE__);
-   DC7u d2(G6("200 200 200 0 0 10"));
-   CheckDC7u(d2);
+   DC7u dc1(G6("100 100 100 0 0 0"));
+   CheckDC7u(dc1, __LINE__);
+   DC7u dc2(G6("200 200 200 0 0 10"));
+   CheckDC7u(dc2);
 
    //std::cout << "d1  " << d1 << std::endl;
    //std::cout << "d2  " << d2 << std::endl;
    //std::cout << "minus  " << d2 - d1 << std::endl;
-   CheckDC7u(5.* d1, __LINE__);
-   //std::cout << "plus   " << d2 + d1 << std::endl;
-   CheckDC7u(d2*5., __LINE__);
-   CheckDC7u(d2/5., __LINE__);
+   CheckDC7u(5.* dc1, __LINE__);
+   ////std::cout << "plus   " << d2 + d1 << std::endl;
+   CheckDC7u(dc2*5., __LINE__);
+
+   DC7u dc7_1(LRL_Cell("10 10 10 90 90 90"));
+   DC7u dc7_2 = 2 * dc7_1;
+   std::cout << "dc7_1 " << dc7_1 << std::endl;
+   std::cout << "dc7_2 " << dc7_2 << std::endl;
+   std::cout << DC7uReflDist(dc7_1, dc7_2) << std::endl;
 }
