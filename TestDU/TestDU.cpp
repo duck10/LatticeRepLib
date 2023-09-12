@@ -246,7 +246,7 @@ int main()
       const DC7u dcRed(gRed);
       std::cout << "gRed " << gRed << std::endl;
       for (size_t k = 0; k < vmat.size(); ++k) {
-         std::cout << "start k = " << k << std::endl;
+         //std::cout << "start k = " << k << std::endl;
          //if (k == 16 || k == 17 || k == 18) {
          //   std::cout << "skipping k = " << k << std::endl;
          //   continue;
@@ -255,12 +255,12 @@ int main()
          const G6 g2(dcMod);
          G6 g2Red;
          Niggli::Reduce(g2, g2Red);
-         std::cout << "g2Red " << g2Red << std::endl;
-         if ((gRed - g2Red).norm() > 1.0e-6) {
-            std::cout << " input " << i << " matrix " << k << std::endl;
-            std::cout << " difference = " << (gRed - g2Red).norm() << std::endl << std::endl;
+         //std::cout << "g2Red " << g2Red << std::endl;
+         if ((gRed - g2Red).norm() > -1.0e-6) {
+            //std::cout << " input " << i << " matrix " << k << std::endl;
+            std::cout << " i,k " << i << " " << k << " difference " << (gRed - g2Red).norm() << std::endl;
          }
-         std::cout << "finished i,k " << i << " " << k << std::endl;
+         //std::cout << "finished i,k " << i << " " << k << std::endl;
       }
    }
 
