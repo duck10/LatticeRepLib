@@ -18,6 +18,8 @@ public:
    //}
 
    MatDC7u();
+   MatDC7u(const std::string& s);
+   MatDC7u(const std::vector<double>& v);
 
    MatDC7u& operator= (const MatB4& m);
    MatDC7u& operator= (const MatG6& m);

@@ -16,6 +16,21 @@ MatDC7u::MatDC7u(void)
    : m_mat(49)
 {}
 
+MatDC7u::MatDC7u(const std::string& s)
+: MatDC7u()
+{
+   MatN mn(m_mat.FromString(s));
+   (*this).m_mat = mn;
+}
+
+
+MatDC7u::MatDC7u(const std::vector<double>& v)
+   : MatDC7u()
+{
+   for (size_t i = 0; i < 49; ++i) {
+      m_mat[i] = v[i];
+   }
+}
 
 MatDC7u& MatDC7u::operator= (const MatB4& m) {
    m_mat.resize(49);

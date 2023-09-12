@@ -170,9 +170,9 @@ G6::G6(const DC7u& dc7u) {
    if (dc7u[DC7u_AA_idx] > dc7u[DC7u_BB_idx]+delta ||
        dc7u[DC7u_BB_idx] > dc7u[DC7u_CC_idx]+delta ) error++;
    if (error > 0) {
-     throw std::invalid_argument( "invalid unsorted DC7 cell" );
-     m_valid=false;
-   } else {
+     std::cout <<  "unreduced DC7 cell" << std::endl;
+     //m_valid=false;
+   } 
      m_vec[G6_AA_idx]=dc7u[DC7u_AA_idx];
      m_vec[G6_BB_idx]=dc7u[DC7u_BB_idx];
      m_vec[G6_CC_idx]=dc7u[DC7u_CC_idx];
@@ -231,8 +231,7 @@ G6::G6(const DC7u& dc7u) {
         }
         m_valid=true;
       }
-    }
-  }
+}
 
 G6::G6(const std::string& s) {
    m_vec.resize(6);
