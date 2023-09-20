@@ -423,6 +423,8 @@ void VerifyBoundaryTransforms(const G6& g6) {
 
       std::cout << std::endl;
       std::cout << vm[i].GetName() << "  G6(vm[i] * dcRed) " << G6(vm[i] * dcRed) << std::endl;
+      std::cout << vm[i].GetDescr() << std::endl;
+      std::cout << "Ftype symbol for +++ --- 000" << vm[i].GetFtype() << std::endl;
       std::cout << "vm[i]*dcRed " << vm[i] * dcRed << std::endl;
       G6 g6red2;
       Niggli::Reduce(G6(vm[i] * dcRed), g6red2);
