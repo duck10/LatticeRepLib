@@ -30,12 +30,16 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
    const std::string descr1("//M1_g6  { boundary transform from --- to --- or +++ to +++ at g6[g6_A2]=g6[G6_B2]\n   "
       "//matrix ([ 0,1,0,0,0,0, 1,0,0,0,0,0, 0,0,1,0,0,0, 0,0,0,0,1,0, 0,0,0,1,0,0, 0,0,0,0,0,1])\n  //M1_g6.[r,r,t,u,v,w]:\n  // matrix [r],[r],[t],[v],[u],[w])");
    vmat.back().SetDescr(descr1);
+   vmat.back().SetName("M1a");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, -1, 1, 1, -1, 1, 0 })));
    vmat.back().SetDescr(descr1);
+   vmat.back().SetName("M1b");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 1, 1, -1, 1, 1, 0 })));
    vmat.back().SetDescr(descr1);
+   vmat.back().SetName("M1c");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, -1, 1, 1, -1, 0 })));
    vmat.back().SetDescr(descr1);
+   vmat.back().SetName("M1d");
 
 
    ////M2_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from --- to --- or +++ to +++ at g6[g6_B2]=g6[g6_C2]"
@@ -47,12 +51,16 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "//M2_g6.[r,s,s,u,v,w]:\n  // ([r],[s],[s],[u],[w],[v])");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, -1, -1, 1, 1, 1, 0 })));
    vmat.back().SetDescr(descr2);
+   vmat.back().SetName("M2a");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 1, 1, -1, 1, 1, 0 })));
    vmat.back().SetDescr(descr2);
+   vmat.back().SetName("M2b");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, -1, 1, 1, -1, 0 })));
    vmat.back().SetDescr(descr2);
+   vmat.back().SetName("M2c");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, -1, 1, 1, -1, 1, 0 })));
    vmat.back().SetDescr(descr2);
+   vmat.back().SetName("M2d");
 
    const std::string descr3("//M3_g6 matrix boundary transform from --- to +++ for g6[g6_2BC]=0\n  "
       "//matrix([1,0,0,0,0,0,  0,1,0,0,0,0,  0,0,1,0,0,0,  0,0,1.0E-15,1,0,0,  0,0,0,0,-1,0,  0,0,0,0,0,-1])\n  "
@@ -65,7 +73,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
    ////M3_dc7upmm
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 1.999999999999999, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0, -1.0, -0.999999999999999, 1.0, 1.0, 1.0, 0.0 })));
    vmat.back().SetDescr(descr3);
-      
+   vmat.back().SetName("M3");
+
    const std::string descr4("//M4_g6 matrix boundary transform from --- to +++ for g6[g6_2AC]=0\n  "
       "//matrix([1,0,0,0,0,0,  0,1,0,0,0,0,  0,0,1,0,0,0,  0,0,0,-1,0,0,  0,0,1.0E-15,0,1,0,  0,0,0,0,0,-1])\n  "
       "//M4_g6.[r,s,t,u,0,w]:\n  // ([r],[s],[t],[-u],[1.0E-15*t],[-w])\n  "
@@ -78,6 +87,7 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
    ////M4_dc7umpm
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 1.999999999999999, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0, -1.0, -0.999999999999999, 1.0, 1.0, 1.0, 0.0 })));
    vmat.back().SetDescr(descr4);
+   vmat.back().SetName("M4");
    ////M5_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from --- to +++ for g6[g6_2AB]=0
    //// matrix 1,0,0,0,0,0,  0,1,0,0,0,0,  0,0,1,0,0,0,  0,0,0,-1,0,0,  0,0,0,0,-1,0,  0,0,1.0E-15,0,0,1)
    ////M5_g6.[r,s,t,u,v,0]:
@@ -92,6 +102,7 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "//M5_dc7ummp");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 2.0, 2.0, -1.0E-15, 0.0, 0.0, -1.0, 0.0, -1.0, -1.0, -0.999999999999999, 1.0, 1.0, 1.0, 0.0 })));
    vmat.back().SetDescr(descr5);
+   vmat.back().SetName("M5");
 
    ////M6_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from +++ to --- for g6[g6_B2]=g6[g6_2BC], g6[g6_2AC]>=g6[g6_2AB]
    //// matrix 1,0,0,0,0,0,  0,1,0,0,0,0,  0,1,1,-1,0,0,  0,-2,0,1,0,0,  0,0,0,0,-1,1,  0,0,0,0,0,-1)
@@ -105,6 +116,7 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "//M6_dc7ummm");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, -1, 1, 1, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0 })));
    vmat.back().SetDescr(descr6);
+   vmat.back().SetName("M6");
 
    ////M7_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from +++ to --- for g6[g6_B2]=g6[g6_2BC], g6[g6_2AC]<g6[g6_2AB]
    //// matrix 1,0,0,0,0,0,  0,1,0,0,0,0,  0,1,1,-1,0,0,  0,2,0,-1,0,0,  0,0,0,0,-1,1,  0,0,0,0,0,1)
@@ -121,7 +133,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
 
       vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -1, 1, 1, -1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0 })));
       vmat.back().SetDescr(descr7);
-      
+      vmat.back().SetName("M7");
+
       
    ////M8_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from --- to +++ for  g6[g6_B2]=-g6[g6_2BC]
    //// matrix 1,0,0,0,0,0,  0,1,0,0,0,0,  0,1,1,1,0,0,  0,2,0,1,0,0,  0,0,0,0,-1,-1,  0,0,0,0,0,-1)
@@ -135,6 +148,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
          "// M8_dc7ummp");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, -1, -1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 2, 0, -1, 0, 0 })));
    vmat.back().SetDescr(descr8);
+   vmat.back().SetFtype('-');
+   vmat.back().SetName("M8");
 
    const std::string descr9("//M9_g6 matrix boundary transform from +++ to --- for  g6[g6_A2]=g6[g6_2AC], g6[g6_2BC] >= g6[g6_AB]\n  "
       "// ([1,0,0,0,0,0,  0,1,0,0,0,0,  1,0,1,0,1,0,  0,0,0,-1,0,1,  -2,0,0,0,1,0,  0,0,0,0,0,-1])\n  "
@@ -144,6 +159,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "//mat_g6ppp2dc7ummo");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1,0,0,0,0,0,0, 0,1,0,0,0,0,0, 0,0,0,0,1,0,0, 1,1,-1,1,1,-1,0, 4,0,1,0,0,0,0, 0,0,0,0,0,1,0, 6,2,0,1,0,-2,0 })));   //vmat.emplace_back(MatDC7u(std::vector<double>({ 1,0,0,0,0,0,0, 0,1,0,0,0,0,0, 0,0,0,0,1,0,0, -1,0,1,-1,0,1,0, -3,0,-1,0,1,0,0, 1,1,0,0,0,-1,0 })));
    vmat.back().SetDescr(descr9);
+   vmat.back().SetFtype('+');
+   vmat.back().SetName("M9");
    //vmat.back().SetDescr(descr9);
 
    ////M9_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from +++ to --- for  g6[g6_A2]=g6[g6_2AC], g6[g6_2BC] >= g6[g6_AB]
@@ -166,6 +183,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "// MA_dc7upmm:");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 1, 1, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0 })));
    vmat.back().SetDescr(descrA);
+   vmat.back().SetFtype('+');
+   vmat.back().SetName("MA");
 
    ////MB_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from --- to +++ for  g6[g6_A2]=-g6[g6_2AC]
    //// matrix 1,0,0,0,0,0,  0,1,0,0,0,0,  1,0,1,0,1,0,  0,0,0,-1,0,-1,  2,0,0,0,1,0,  0,0,0,0,0,-1)
@@ -179,6 +198,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "//MB_dc7ummp");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, -1, -1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -2, -2, 1, 2, 2, 0 })));
    vmat.back().SetDescr(descrB);
+   vmat.back().SetFtype('-');
+   vmat.back().SetName("MB");
 
 
    ////MC_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from +++ to --- for  g6[g6_A2]=g6[g6_2AB], g6[g6_2BC] >= g6[g6_2AC]"
@@ -195,6 +216,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "// MC_dc7upmm");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, -1, 1, 1, -1, 1, 1, 0, 2, 0, 2, 0, -1, 0, 0, 2, -1, 0, 0, 0, 2, 0, 4, -2, 2, 1, -2, 2, 0 })));
    vmat.back().SetDescr(descrC);
+   vmat.back().SetFtype('+');
+   vmat.back().SetName("MC");
 
    ////MD_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from +++ to +++ for  g6[g6_A2]=g6[g6_2AB], g6[g6_2BC] < g6[g6_2AC]
    //// matrix 1,0,0,0,0,0,  1,1,0,0,0,-1,  0,0,1,0,0,0,  0,0,0,-1,1,0,  0,0,0,0,1,0,  2,0,0,0,0,-1)
@@ -209,6 +232,9 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "// MD_dc7upmm");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0, 0, 3, 1, 1, 1, -1, -1, 0, 2, 0, 2, 0, -1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 2, -1, 0, 0, 0 })));
    vmat.back().SetDescr(descrD);
+   vmat.back().SetFtype('+');
+   vmat.back().SetName("MD");
+
    ////ME_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from --- to +++ for  g6[g6_A2]=-g6[g6_2AB]
    //// matrix 1,0,0,0,0,0,  1,1,0,0,0,1,  0,0,1,0,0,0,  0,0,0,-1,-1,0,  0,0,0,0,-1,0,  2,0,0,0,0,1)
    ////ME_g6.[r,s,t,u,v,-r]:
@@ -221,6 +247,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "//ME_dc7umpm");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, -1, -1, -1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 })));
    vmat.back().SetDescr(descrE);
+   vmat.back().SetFtype('-');
+   vmat.back().SetName("ME");
 
    ////MF_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from --- to --- for  g6[g6_A2]+g6[g6_B2]+g6[g6_C2]+g6[g6_2BC]+g6[g6_2AC]+g6[g6_2AB]=g6[g6_C2]
    //// matrix 1,0,0,0,0,0,  0,1,0,0,0,1,  1,1,1,1,1,1,  0,-2,0,-1,0,-1,  -2,0,0,0,-1,-1,  0,0,0,0,0,1)
@@ -235,11 +263,28 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "// MF_dc7ummm:");
    vmat.emplace_back(MatDC7u(std::vector<double>({ 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, -1, -1, -1, 1, 1, 1, 0, -1, -1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, -1, -1, 0, 0, 0, 2, 0, -1, -1, 1, 0, 0, 1, 0 })));
    vmat.back().SetDescr(descrF);
+   vmat.back().SetFtype('-');
+   vmat.back().SetName("MF");
 
 
    return vmat;
 }
 
+template<typename T> 
+bool IsPlusPlusPlus(const T& t) {
+   const G6 g6(t);
+   return (g6[3] > 0) && (g6[4] > 0) && (g6[5] > 0);
+}
+
+bool MatDC7u::ShouldApply(const G6& g) const
+{
+   const MatDC7u& m(*this);
+   const char& ftype = m.m_Ftype;
+
+   return (ftype == '0') ||
+      (ftype == '+' && IsPlusPlusPlus(g)) ||
+      (ftype == '-' && !IsPlusPlusPlus(g));
+}
 
 MatDC7u::MatDC7u(void)
    : m_mat(49)
@@ -251,7 +296,6 @@ MatDC7u::MatDC7u(const std::string& s)
    MatN mn(m_mat.FromString(s));
    (*this).m_mat = mn;
 }
-
 
 MatDC7u::MatDC7u(const std::vector<double>& v)
    : MatDC7u()

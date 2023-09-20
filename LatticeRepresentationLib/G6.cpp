@@ -203,8 +203,8 @@ G6::G6(const DC7u& dc7u)
       if (dc7u[DC7u_AA_idx]>dc7u[DC7u_BB_idx]+delta ||
         dc7u[DC7u_BB_idx]>dc7u[DC7u_CC_idx]+delta ) error++;
       if (error > 0) {
-        for (ii=0;ii<6;ii++) m_vec[ii]=0.;
-         m_valid=false;
+        //for (ii=0;ii<6;ii++) m_vec[ii]=0.;
+        // m_valid=false;
       } else {
         m_vec[G6_AA_idx]=dc7u[DC7u_AA_idx];
         m_vec[G6_BB_idx]=dc7u[DC7u_BB_idx];

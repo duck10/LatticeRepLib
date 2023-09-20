@@ -74,7 +74,6 @@ public:
    MatDC7u unit(void);
    static MatDC7u unit(const MatDC7u& m);
    MatN GetMatrix(void) const { return m_mat; }
-   static std::string GetName() { return "MatDC7u"; }
 
    char GetFtype() const { return m_Ftype; }
    void SetFtype(const char c) { m_Ftype = c; }
@@ -82,17 +81,20 @@ public:
    void SetDescr(const std::string& s) { m_descr = s; }
 
    static std::vector<MatDC7u> MakeBoundaryMatrices();
-
+   bool ShouldApply(const G6& g) const;
+   std::string GetName() const { return m_name; }
+   void SetName(const std::string& s) { m_name = s; }
 
 private:
    MatN m_mat;
    static std::vector<MatDC7u> vDU_Refl;
    bool m_cellIsValid;
-   char m_Ftype = '\0'; // 3 choices can be used
+   char m_Ftype = '0'; // 3 choices can be used
                         // '+'  for +++ matrix that applies to cells
                         // '-'  for --- matrix that applies to cells
-                        // '\0' for matrices that can be used with both
+                        // '0' for matrices that can be used with both
    std::string m_descr;
+   std::string m_name;
 };
 
 

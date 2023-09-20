@@ -396,6 +396,11 @@ double  TestDistanceWithBoundaryMatrices(const double dist,
 
 }
 
+double ResetNearZero(const double d) {
+   if (d < 1.0E-8) return 0.0;
+   return d;
+}
+
 void VerifyBoundaryTransforms(const G6& g6) {
    const DC7u dcInput(g6);
    G6 red;
@@ -403,18 +408,28 @@ void VerifyBoundaryTransforms(const G6& g6) {
    const DC7u dcRed(red);
    const std::vector<MatDC7u> vm = MatDC7u::MakeBoundaryMatrices();
 
+   //for (size_t i = 0; i < vm.size(); ++i) {
+   //   std::cout << vm[i].GetDescr() << std::endl;
+   //   std::cout << vm[i] << std::endl;
+   //   std::cout << std::endl;
+   //}
+
+   DC7u afterMultiply;
+   std::cout << "input G6 " << g6 << std::endl;
    for (size_t i = 0; i < vm.size(); ++i) {
-      std::cout << vm[i].GetDescr() << std::endl;
-      std::cout << vm[i] << std::endl;
+      if (!vm[i].ShouldApply(g6)) {
+         continue;
+      }
+
       std::cout << std::endl;
-   }
-
-   for (size_t i = 0; i < vm.size(); ++i) {
-      if (vm[i].size() != 49) std::cout << "matrix size wrong " << vm[i].size() << std::endl;
-
+      std::cout << vm[i].GetName() << "  G6(vm[i] * dcRed) " << G6(vm[i] * dcRed) << std::endl;
+      std::cout << "vm[i]*dcRed " << vm[i] * dcRed << std::endl;
       G6 g6red2;
       Niggli::Reduce(G6(vm[i] * dcRed), g6red2);
-      const DC7u afterMultiply = vm[i] * dcRed;
+      std::cout << "g6red2 " << g6red2 << std::endl;
+      std::cout << "dcRed " << dcRed << std::endl;
+      if (vm[i].ShouldApply(g6red2)) {
+      afterMultiply = vm[i] * dcRed;
       if (!afterMultiply.IsValid()) {
          std::cout << std::endl;
          std::cout << "invalid DC7u after reduction " << std::endl;
@@ -422,6 +437,7 @@ void VerifyBoundaryTransforms(const G6& g6) {
          std::cout << "dcRed " << dcRed << std::endl;
 
          std::cout << "afterMultiply " << afterMultiply << std::endl << std::endl;
+      }
       }
 
 
@@ -442,9 +458,9 @@ void VerifyBoundaryTransforms(const G6& g6) {
          std::cout << "red " << red << std::endl;
          std::cout << "g6red2 " << g6red2 << std::endl;
          std::cout
-            << "DC7u dist = " << distDC7u
-            << "  niggli dist = " << distNiggli
-            << "  NCDist = " << distNCDist << std::endl;
+            << "DC7u dist = " << ResetNearZero(distDC7u)
+            << "  niggli dist = " << ResetNearZero(distNiggli)
+            << "  NCDist = " << ResetNearZero(distNCDist) << std::endl;
       }
    }
 }
@@ -462,7 +478,7 @@ int main()
 
    StoreResults<double, G6> store(5);
 
-   for (size_t i = 0; i < inputList.size(); ++i) {
+   for (size_t i = 0; i < 1; ++i) {
       std::cout << " ======" << std::endl;
       LRL_Cell cell = inputList[i].GetCell();
       VerifyBoundaryTransforms(cell);
