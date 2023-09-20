@@ -142,7 +142,8 @@ std::vector<MatDC7u> MatDC7u::MakeBoundaryMatrices() {
       "// ([r],[s],[t+2*r],[w-u],[-r],[-w])\n  "
       "//M9_dc7ummp:\n  "
       "//mat_g6ppp2dc7ummo");
-   //vmat.emplace_back(MatDC7u(std::vector<double>({ 1,0,0,0,0,0,0, 0,1,0,0,0,0,0, 0,0,0,0,1,0,0, -1,0,1,-1,0,1,0, -3,0,-1,0,1,0,0, 1,1,0,0,0,-1,0 })));
+   vmat.emplace_back(MatDC7u(std::vector<double>({ 1,0,0,0,0,0,0, 0,1,0,0,0,0,0, 0,0,0,0,1,0,0, 1,1,-1,1,1,-1,0, 4,0,1,0,0,0,0, 0,0,0,0,0,1,0, 6,2,0,1,0,-2,0 })));   //vmat.emplace_back(MatDC7u(std::vector<double>({ 1,0,0,0,0,0,0, 0,1,0,0,0,0,0, 0,0,0,0,1,0,0, -1,0,1,-1,0,1,0, -3,0,-1,0,1,0,0, 1,1,0,0,0,-1,0 })));
+   vmat.back().SetDescr(descr9);
    //vmat.back().SetDescr(descr9);
 
    ////M9_g6    vmat.emplace_back(MatDC7u(std::vector<double>({ boundary transform from +++ to --- for  g6[g6_A2]=g6[g6_2AC], g6[g6_2BC] >= g6[g6_AB]
