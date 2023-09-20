@@ -157,7 +157,9 @@ G6::G6(const D7& v7) {
    m_dim = 6;
 }
 
-G6::G6(const DC7u& dc7u) {
+G6::G6(const DC7u& dc7u)
+: m_dim(6)
+{
    double delta;
    double u, v, w, testsign;
    int error, ii;

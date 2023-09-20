@@ -241,3 +241,15 @@ double DistanceBetween(const DC7u& v1, const DC7u& v2) {
 DC7u operator* (const double d, const DC7u& dc7u) {
    return dc7u * d;
 }
+
+bool DC7u::IsReduced() const {
+   const DC7u& dc7u = *this;
+   int error = 0;
+   const double delta = std::fabs(dc7u[DC7u_AA_idx]) * 1.e-10;
+   for (size_t ii = 0; ii < 7; ii++) {
+      if (dc7u[ii] < delta) error++;
+   }
+   if (dc7u[DC7u_AA_idx] > dc7u[DC7u_BB_idx] + delta ||
+      dc7u[DC7u_BB_idx] > dc7u[DC7u_CC_idx] + delta) error++;
+   return error == 0;
+}

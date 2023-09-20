@@ -12,6 +12,9 @@
 #include "LRL_indices.h"
 #include "Niggli.h"
 
+
+double DistanceBetween(const DC7u& v1, const DC7u& v2);
+
 class DC7u {
 public:
    const static std::vector<Vector_3> vertices;
@@ -84,7 +87,6 @@ public:
 
    double operator[](const size_t n) const { return m_vec[n]; }
    double& operator[](const size_t n) { return m_vec[n]; }
-   friend double DistanceBetween( const DC7u& v1, const DC7u& v2 );
    double norm() const { return m_vec.norm(); }
    double norm(const DC7u& dc7u) const { return norm(dc7u); }
    double Norm() const { return m_vec.norm(); }
@@ -97,6 +99,7 @@ public:
    void SetValid(const bool b) { m_cellIsValid = b; }
    bool IsValid(void) const { return m_cellIsValid; }
    bool IsValid(const DC7u& dc7u) const { return dc7u.m_cellIsValid; }
+   bool IsReduced() const;
 
    std::vector<Vector_3 > GetIndices() const {
       return vertices; 
