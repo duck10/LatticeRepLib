@@ -18,5 +18,11 @@
     <ClCompile Include="TestDU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Test3_VS_NCDist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Test3_VS_NCDIst.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

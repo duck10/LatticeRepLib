@@ -16,11 +16,176 @@
 #include "rhrand.h"
 #include "S6.h"
 
+#include "Test3_VS_NCDIst.h"
+#include "DC7u.h"
+#include "LRL_Cell.h"
+#include "NCDist.h"
+#include "Niggli.h"
+
+#include <cmath>
+#include <ostream>
+
+;
+
+std::vector<Test3Results> Test5_VS_NCDist() {
+   std::cout << "DC7u testing Test5 " << std::endl;
+   const size_t nsteps = 30;
+   std::vector<Test3Results> results;
+   Test3Results result;
+
+   G6::rand();
+   G6::rand();
+   G6::rand();
+   const G6 gp1(G6::rand());
+   const G6 gp2(G6::rand());
+   G6 gp2Red;
+   Niggli::Reduce(gp2, gp2Red);
+   const G6 step = (gp2 - gp1) / double(nsteps - 1);
+  
+
+   for (size_t i = 0; i < nsteps; ++i) {
+      const G6 g1(gp1 + i * step);
+      G6 g1Red;
+      Niggli::Reduce(g1, g1Red);
+      const std::vector<MatDC7u> vm = TestDistance::SelectMatrices(g1Red);
+
+      const double ncdist = NCDist(g1Red.data(), gp2Red.data());
+      const double dist = TestDistance::BestDistance(g1Red, gp2Red, vm);
+
+      std::cout << "dist " << dist << "  ncdist " << ncdist
+         << " ratio " << dist / ncdist << std::endl;
+      result.SetDist(dist);
+      result.SetNCDist(ncdist);
+      result.SetG1(gp1);;
+      result.SetG2(gp2);;
+      result.SetMatrices(vm);
+
+      results.emplace_back(result);
+   }
+   return results;
+}
+
+std::vector<Test3Results> Test4_VS_NCDist() {
+   const size_t ntest = 10;
+   std::vector<Test3Results> results;
+   Test3Results result;
+
+   const G6 gp1 = TestDistance::G6_rand_reduced();
+   const G6 gp2 = 10 * TestDistance::G6_rand_reduced();
+   const G6 step = (gp2 - gp1) / double(ntest-1);
+
+   for (size_t i = 0; i < ntest; ++i) {
+      const G6 g2(gp2);
+      const G6 g1(gp1 + i * step);
+      const std::vector<MatDC7u> vm = TestDistance::SelectMatrices(g1);
+
+      const double ncdist = NCDist(g1.data(), g2.data());
+      const double dist = TestDistance::BestDistance(g1, g2, vm);
+
+      std::cout << "dist " << dist << "  ncdist " << ncdist
+         << " ratio " << dist / ncdist << std::endl;
+      result.SetDist(dist);
+      result.SetNCDist(ncdist);
+      result.SetG1(g1);;
+      result.SetG2(g2);;
+      result.SetMatrices(vm);
+
+      results.emplace_back(result);
+   }
+   return results;
+}
+
+
+
+
+std::vector<Test3Results> TestDistance::Test3_VS_NCDist() {
+
+   const size_t ntest = 30;
+   std::vector<Test3Results> results;
+   Test3Results result;
+
+   //TestDistance testD;
+   for (size_t i = 0; i < ntest; ++i) {
+      const G6 g1 = TestDistance::G6_rand_reduced();
+      const G6 g2 = 10 * TestDistance::G6_rand_reduced();
+      const std::vector<MatDC7u> vm = TestDistance::SelectMatrices(g1);
+
+      const double ncdist = NCDist(g1.data(), g2.data());
+      const double dist = TestDistance::BestDistance(g1, g2, vm);
+
+      std::cout << "dist " << dist << "  ncdist " << ncdist
+         << " ratio " << dist / ncdist << std::endl;
+      result.SetDist(dist);
+      result.SetNCDist(ncdist);
+      result.SetG1(g1);;
+      result.SetG2(g2);;
+      result.SetMatrices(vm);;
+
+      results.emplace_back(result);
+   }
+   return results;
+}
+
+
+std::vector<MatDC7u>  TestDistance::SelectMatrices(const G6& g) {
+   static const std::vector<MatDC7u> vm = MatDC7u::MakeBoundaryMatrices();
+   std::vector<MatDC7u> out;
+
+   for (size_t i = 0; i < vm.size(); ++i) {
+      const bool b = vm[i].ShouldApply(g);
+      if (b) out.emplace_back(vm[i]);
+   }
+   return out;
+}
+
+G6 TestDistance::G6_rand_reduced() {
+   const G6 g6rand = G6::rand();
+
+   int count = 0;
+   do {
+      ++count;
+      G6 temp(G6::rand());
+      G6 red;
+      const bool b = Niggli::Reduce(temp, red);
+      if (b && LRL_Cell(g6rand).IsValid()) return red;
+   } while (count < 100);
+
+   return G6();
+}
+
+double TestDistance::BestDistance(const G6& g1, const G6& g2, const std::vector<MatDC7u>& vm) {
+
+   double dist = (DC7u(g1)-DC7u(g2)).norm();
+   for (size_t i = 0; i < vm.size(); ++i) {
+      const double test = DistanceBetween(DC7u(g1), vm[i] * DC7u(g2));
+      //std::cout << i << " " << test << std::endl;
+      dist = std::min(dist, test);
+   }
+   return dist;
+}
+
+std::ostream& operator<< (std::ostream& o, const Test3Results& t) {
+   o << "DC7u dist. " << t.m_DC7uDistance << "\n";
+   o << "ncdist dist " << t.m_NCDist << "\n";
+   o << "ratio of distances " << t.m_DC7uDistance / t.m_NCDist << "\n";
+   o << "g1 " << t.m_g1 << "\n";
+   o << "g2 " << t.m_g2 << "\n";
+   o << "dc7u1 " << DC7u(t.m_g1) << "\n";
+   o << "dc7u2 " << DC7u(t.m_g2) << "\n";
+   o << "no. of matrices " << t.m_vm.size() << "\n";
+   //o << t.m_vm << "\n";
+   return o;
+}
+
+
+;
+
+;
 template<typename T>
 double sqr(const T a) { return a * a; }
 
 RHrand ran;
-
+;
 template<typename T>
 T CreateTotallyRandom_Unit_OrthogonalComponent(const T& t) {
    // assume t is not null and rand is not parallel to t
@@ -157,14 +322,14 @@ double DC7uReflDist(const DC7u& dc_1, const DC7u dc_2) {
    return sqrt(dist);
 }
 
-static bool CheckDC7u( const DC7u& dc7, const int& line=0) {
+static bool CheckDC7u(const DC7u& dc7, const int& line = 0) {
    bool good = true;
-   std::string s(line!=0?LRL_ToString(" line=",line) : "");
+   std::string s(line != 0 ? LRL_ToString(" line=", line) : "");
    std::string issues;
    if (dc7.GetVector().size() != 7) {
       good = false;
-      issues.append(LRL_ToString("   vector size equal to  ", 
-         dc7.GetVector().size(),"\n"));
+      issues.append(LRL_ToString("   vector size equal to  ",
+         dc7.GetVector().size(), "\n"));
    }
    if (dc7.GetDim() != 7) {
       good = false;
@@ -175,7 +340,7 @@ static bool CheckDC7u( const DC7u& dc7, const int& line=0) {
    if (dc7.GetCell().GetVector().size() != 6) {
       good = false;
       issues.append(LRL_ToString("   cell dim not 6 ",
-         dc7.GetCell().GetVector().size(),"\n"));
+         dc7.GetCell().GetVector().size(), "\n"));
    }
    if (dc7.norm() == 0.0) {
       good = false;
@@ -275,6 +440,7 @@ void TestBoundaryMatrices(const std::vector<LRL_ReadLatticeData>& inputList) {
    }
 }
 
+static const double divisor = 100.0;
 DC7u GenerateReducedPerturbation(const G6& g6) {
    const DC7u dcInput(g6);
    if (!dcInput.IsReduced()) std::cout << "unreduced A" << std::endl;
@@ -282,14 +448,14 @@ DC7u GenerateReducedPerturbation(const G6& g6) {
    //DC7u perturbed;
    int count = 0;
    //do{
-      const DC7u unitPerturbation =
-         CreateTotallyRandom_Unit_OrthogonalComponent(dcInput);
+   const DC7u unitPerturbation =
+      CreateTotallyRandom_Unit_OrthogonalComponent(dcInput);
    //   if (count != 0) std::cout << count << std::endl;
    //   perturbed = dcInput + unitPerturbation * dcInput.norm() / 100.0;
    //   ++count;
    //} while (!perturbed.IsReduced() && count < 10);
 
-   const DC7u perturbed = dcInput + unitPerturbation * dcInput.norm() / 100.0;
+   const DC7u perturbed = dcInput + unitPerturbation * dcInput.norm() / divisor;
    if (!perturbed.IsReduced()) std::cout << "unreduced G" << std::endl;
 
    G6 g6Red;
@@ -301,10 +467,12 @@ DC7u GenerateReducedPerturbation(const G6& g6) {
 
 void TestDistanceBetween() {
    StoreResults<double, G6> store(5);
-
+   const size_t test = 10000000;
+   std::cout << " TestDistanceBetween a vector and a perturbed version\n"
+      " done " << test << " times" << std::endl;
+   std::cout << " The fractional perturbation is " << 1.0 / divisor << std::endl;
    store.SetTitle("DC7u distance to norm ratio as the Key, the data is " + G6::GetName());
 
-   const size_t test = 420000;
    G6 g6randReduced;
    for (size_t i = 0; i < test; ++i) {
       const G6 g6rand = G6::rand();
@@ -314,12 +482,14 @@ void TestDistanceBetween() {
       if (!perturbed.IsReduced()) std::cout << "unred D" << std::endl;
       if (!perturbed.IsReduced()) continue;
 
+      if (!perturbed.IsValid()) continue;
       Niggli::Reduce(g6rand, g6randReduced);
       const DC7u dc7uRed(g6randReduced);
       const double dist = DistanceBetween(dc7uRed, perturbed);
+      const double ncdist = NCDist(G6(g6randReduced).data(), G6(perturbed).data());
 
       if (!DC7u(g6rand).IsReduced()) std::cout << "unred D" << std::endl;
-      const double ratio = dist /DC7u(g6rand).norm();
+      const double ratio = dist / DC7u(g6rand).norm();
       if (ratio < 0.0001 || ratio > 0.5) {
          std::cout << "odd ratio i= " << i << std::endl;
          std::cout << "dist = " << dist << std::endl;
@@ -371,7 +541,7 @@ void TestDistanceBetween(const std::vector<LRL_ReadLatticeData>& inputList) {
    store.ShowResults();
 }
 
-double  TestDistanceWithBoundaryMatrices(const double dist, 
+double  TestDistanceWithBoundaryMatrices(const double dist,
    const G6& g6_1, const G6& g6_2) {
    static std::vector<MatDC7u> bounds = MatDC7u::MakeBoundaryMatrices();
 
@@ -379,7 +549,7 @@ double  TestDistanceWithBoundaryMatrices(const double dist,
    const DC7u dc2(g6_2);
    //const double dist = DistanceBetween(dc1, dc2);
 
-   double newDist =  DBL_MAX;
+   double newDist = DBL_MAX;
    for (size_t i = 0; i < bounds.size(); ++i) {
       const double d = DistanceBetween(bounds[i] * dc1, dc2);
       newDist = std::min(newDist, d);
@@ -392,7 +562,7 @@ double  TestDistanceWithBoundaryMatrices(const double dist,
    //   std::cout << "no improvement" << std::endl;
    //}
 
-   return std::min(dist,newDist);
+   return std::min(dist, newDist);
 
 }
 
@@ -402,7 +572,6 @@ double ResetNearZero(const double d) {
 }
 
 void VerifyBoundaryTransforms(const G6& g6) {
-   const DC7u dcInput(g6);
    G6 red;
    Niggli::Reduce(g6, red);
    const DC7u dcRed(red);
@@ -422,24 +591,33 @@ void VerifyBoundaryTransforms(const G6& g6) {
       }
 
       std::cout << std::endl;
+      std::cout << " dcRed " << dcRed << std::endl;
       std::cout << vm[i].GetName() << "  G6(vm[i] * dcRed) " << G6(vm[i] * dcRed) << std::endl;
       std::cout << vm[i].GetDescr() << std::endl;
-      std::cout << "Ftype symbol for +++ --- 000" << vm[i].GetFtype() << std::endl;
+      std::cout << "Ftype symbol for +++ --- 000 inputs =   '" << vm[i].GetFtype()
+         << "'" << std::endl;
       std::cout << "vm[i]*dcRed " << vm[i] * dcRed << std::endl;
       G6 g6red2;
-      Niggli::Reduce(G6(vm[i] * dcRed), g6red2);
+      const G6 g6afterMultiply = G6(vm[i] * dcRed);
+      Niggli::Reduce(g6afterMultiply, g6red2);
       std::cout << "g6red2 " << g6red2 << std::endl;
+
+      if (!g6red2.IsValid() || !LRL_Cell(g6red2).IsValid()) {
+         std::cout << "$ " << vm[i].GetName() << " invalid after 2nd reduction " << std::endl;
+         continue;
+      }
+
       std::cout << "dcRed " << dcRed << std::endl;
       if (vm[i].ShouldApply(g6red2)) {
-      afterMultiply = vm[i] * dcRed;
-      if (!afterMultiply.IsValid()) {
-         std::cout << std::endl;
-         std::cout << "invalid DC7u after reduction " << std::endl;
-         std::cout << "g6red2 " << g6red2 << std::endl;
-         std::cout << "dcRed " << dcRed << std::endl;
+         afterMultiply = vm[i] * dcRed;
+         if (!afterMultiply.IsValid()) {
+            std::cout << std::endl;
+            std::cout << "invalid DC7u after reduction " << std::endl;
+            std::cout << "g6red2 " << g6red2 << std::endl;
+            std::cout << "dcRed " << dcRed << std::endl;
 
-         std::cout << "afterMultiply " << afterMultiply << std::endl << std::endl;
-      }
+            std::cout << "afterMultiply " << afterMultiply << std::endl << std::endl;
+         }
       }
 
 
@@ -452,18 +630,55 @@ void VerifyBoundaryTransforms(const G6& g6) {
          std::cout << "afterMultiply " << afterMultiply << std::endl << std::endl;
          std::cout << std::endl << vm[i] << std::endl;
       }
-      else 
+      else
       {
          double distDC7u = DistanceBetween(dcRed, DC7u(g6red2));
          double distNiggli = (red - g6red2).norm();
          double distNCDist = NCDist(red.data(), g6red2.data());
          std::cout << "red " << red << std::endl;
          std::cout << "g6red2 " << g6red2 << std::endl;
-         std::cout
-            << "DC7u dist = " << ResetNearZero(distDC7u)
+         std::cout << "$ " << vm[i].GetName()
+            << "  DC7u dist = " << ResetNearZero(distDC7u)
             << "  niggli dist = " << ResetNearZero(distNiggli)
             << "  NCDist = " << ResetNearZero(distNCDist) << std::endl;
       }
+   }
+}
+
+void Test6() {
+   const G6 ran(G6::rand());
+   G6 red;
+   Niggli::Reduce(ran, red);
+
+   const DC7u dctest(red);
+
+   std::cout << "input G6 is reduced " << std::endl;
+   std::cout << "random vector input to all G6 " << red << std::endl;
+   std::cout << "random vector input to all DC7u " << dctest << std::endl;
+   std::cout << std::endl;
+
+   std::vector<MatDC7u> vmbound = MatDC7u::MakeBoundaryProjectors();
+   for (MatDC7u vm : vmbound) {
+
+      double factor = 0.0;
+      const std::string name = vm.GetName();
+      if (name == "M1a" || name == "M1d" || name == "M2a" ||
+         name == "M2b" || name == "M7" || name == "MA" ||
+         name == "MD" || name == "MF") factor = 7.0;
+
+      if (name == "M1b" || name == "M1c" || name == "M2c" ||
+         name == "M2d" || name == "M6" || name == "M8" ||
+         name == "M9" || name == "MB" || name == "MC" ||
+         name == "ME") factor = 10;
+
+      if (name == "M3" || name == "M4" || name == "M5") factor = 12;
+
+      std::cout << "Projector " << vm.GetName() << std::endl;
+      std::cout << vm << std::endl << std::endl;
+      std::cout << " matrix times factor = " << factor << std::endl << factor * vm << std::endl << std::endl;
+      std::cout << "projected DC7u  " << vm * dctest << std::endl;
+      std::cout << "projected G6  " << G6(vm * dctest) << std::endl;
+      std::cout << std::endl;
    }
 }
 
@@ -472,15 +687,38 @@ int main()
 {
    std::cout << "; Test DC7unsrt" << std::endl;
 
-   //TestDistanceBetween();
+   Test6();
+   exit(0);
+
+   const std::vector<Test3Results> results5 = Test5_VS_NCDist();
+   for (size_t i = 0; i < results5.size(); ++i) {
+      auto xxxx = results5[i].GetMatrices();
+      std::cout << results5[i] << std::endl << std::endl;
+   }
+   exit(0);
+
+   const std::vector<Test3Results> results4 = Test4_VS_NCDist();
+   for (size_t i = 0; i < results4.size(); ++i) {
+      auto xxxx = results4[i].GetMatrices();
+      std::cout << results4[i] << std::endl << std::endl;
+   }
    //exit(0);
+
+   const std::vector<Test3Results> results3 = TestDistance::Test3_VS_NCDist();
+   for (size_t i = 0; i < results3.size(); ++i) {
+      auto xxxx = results3[i].GetMatrices();
+      std::cout << results3[i] << std::endl << std::endl;
+   }
+
+   TestDistanceBetween();
+   exit(0);
 
    LRL_ReadLatticeData reader;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
 
    StoreResults<double, G6> store(5);
 
-   for (size_t i = 0; i < 1; ++i) {
+   for (size_t i = 0; i < inputList.size(); ++i) {
       std::cout << " ======" << std::endl;
       LRL_Cell cell = inputList[i].GetCell();
       VerifyBoundaryTransforms(cell);
