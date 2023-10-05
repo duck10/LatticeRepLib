@@ -85,8 +85,7 @@ int main(int argc, char* argv[])
       }
    }
 
-   std::cout << "; Perturb vectors, perturbed in S6, perturbed by (ppt) " << delta
-      << "  ngen = " << ngen << std::endl;
+   std::cout << "; Perturb vectors" << std::endl;;
 
    LRL_ReadLatticeData reader;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
@@ -95,6 +94,6 @@ int main(int argc, char* argv[])
    }
 
    std::cout << "; "+LRL_ToString(reader.GetIncomingSemicolons()) << std::endl;
-   std::cout << LRL_ToString("; CmdPerturb ngen = ", ngen,
-      " orthogonal delta = ", delta, " of 1000\n\n");
+   std::cout << LRL_ToString("; CmdPerturb: number of cells to produce = ", ngen,
+      " orthogonal perturbation of ", delta, "/1000\n\n");
 }
