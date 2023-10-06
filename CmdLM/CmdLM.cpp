@@ -27,7 +27,7 @@ std::string ListOutput(const std::vector<S6>& vs,
    std::ostringstream ostr;
    for (size_t i2 = 0; i2 < vs.size(); ++i2) {
       ostr << referenceLattice + "  " << LRL_Cell_Degrees(vs[i2]);
-      ostr << LRL_ToString("(", angles[i2], " degrees)");
+      ostr << LRL_ToString("(", angles[i2], " degrees in S6)");
       if (i2 == 0) {
          ostr << "   REFERENCE";
       }

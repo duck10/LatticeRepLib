@@ -15,8 +15,8 @@
 
 int main()
 {
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    std::cout << "; CmdDists, calculate distances" << std::endl;
+   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    std::vector<S6> s6Cells;
    for (int i = 0; i < inputList.size(); ++i) {
       s6Cells.push_back(inputList[i].GetCell());
@@ -34,7 +34,6 @@ int main()
    for (size_t i = 0; i < inputList.size(); ++i) {
       const std::string lattice = inputList[i].GetLattice();
       const LRL_Cell cell = inputList[i].GetCell();
-      std::cout << "Cell " << cell << std::endl;
 
       vcells.push_back(cell);
       vg6Red.push_back(G6(LatticeConverter().NiggliReduceCell(lattice, cell)));
@@ -44,7 +43,7 @@ int main()
       //std::cout << S6(LatticeConverter().SellingReduceCell(lattice, cell)) << std::endl;
    }
 
-   std::cout << " ordinals  G6-Euclidean  NCDist CS6Dist  input cell" << std::endl;
+   std::cout << "; ordinals  G6-Euclidean  NCDist CS6Dist  input cell" << std::endl;
    for (size_t i = 0; i < inputList.size()-1; ++i) {
       const double dG6 = NCDist (vg6Red[i].data(), vg6Red[i + 1].data());
       const double dS6 = CS6Dist(vs6Red[i].data(), vs6Red[i + 1].data());
@@ -57,13 +56,16 @@ int main()
       //std::cout << "vs6Red" << vs6Red[i] << std::endl;
       //std::cout << "vs6Red" << vs6Red[i+1] << std::endl;
 
-      std::cout << std::fixed << std::setprecision(3) 
+      std::cout << "; " << std::fixed << std::setprecision(3)
          << i+1 << " to " << i + 2 << "   " 
          << dEu << " " << dG6 << " " << dS6 << std::endl;
    }
 
-   //std::cout << std::fixed << std::setprecision(3) 
-   //   << "                                      "
-   //   << LRL_Cell_Degrees(vcells[vcells.size() - 1]) << std::endl;
+   std::cout << std::endl;
+   for (size_t i = 0; i < vcells.size(); ++i) {
+      std::cout << ";    " << i+1 << std::fixed << std::setprecision(3)
+         << "          "
+         << LRL_Cell_Degrees(vcells[i]) << std::endl;
+   }
 
 }
