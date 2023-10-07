@@ -35,12 +35,9 @@ int main()
       const std::string lattice = inputList[i].GetLattice();
       const LRL_Cell cell = inputList[i].GetCell();
 
-      vcells.push_back(cell);
-      vg6Red.push_back(G6(LatticeConverter().NiggliReduceCell(lattice, cell)));
-      const S6 s6temp = LatticeConverter().SellingReduceCell(lattice, cell);
-      vs6Red.push_back(s6temp);
-      //std::cout << "vs6Red.back() " << vs6Red.back() << std::endl;
-      //std::cout << S6(LatticeConverter().SellingReduceCell(lattice, cell)) << std::endl;
+      vcells.emplace_back(cell);
+      vg6Red.emplace_back(G6(LatticeConverter::NiggliReduceCell (lattice, cell)));
+      vs6Red.emplace_back(S6(LatticeConverter::SellingReduceCell(lattice, cell)));
    }
 
    std::cout << ";   ordinals  G6-Euclidean   NCDist   CS6Dist" << std::endl;
@@ -48,13 +45,6 @@ int main()
       const double dG6 = NCDist (vg6Red[i].data(), vg6Red[i + 1].data());
       const double dS6 = CS6Dist(vs6Red[i].data(), vs6Red[i + 1].data());
       const double dEu = (G6(vcells[i]) - G6(vcells[i + 1])).norm();
-
-      //std::cout << "vcell" << vcells[i] << std::endl;
-      //std::cout << "vcell" << vcells[i+1] << std::endl;
-      //std::cout << "vg6Red" << vg6Red[i] << std::endl << std::endl;
-      //std::cout << "vg6Red" << vg6Red[i+1] << std::endl;
-      //std::cout << "vs6Red" << vs6Red[i] << std::endl;
-      //std::cout << "vs6Red" << vs6Red[i+1] << std::endl;
 
       std::cout << ";   " << std::fixed << std::setprecision(3)
          << i+1 << " to " << i + 2 << "       " 
