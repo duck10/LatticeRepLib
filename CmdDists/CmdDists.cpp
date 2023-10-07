@@ -28,8 +28,8 @@ int main()
    }
 
    std::vector<LRL_Cell> vcells;
-   std::vector<S6> vg6Red;
-   std::vector<G6> vs6Red;
+   std::vector<G6> vg6Red;
+   std::vector<S6> vs6Red;
 
    for (size_t i = 0; i < inputList.size(); ++i) {
       const std::string lattice = inputList[i].GetLattice();
