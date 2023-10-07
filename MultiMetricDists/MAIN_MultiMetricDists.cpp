@@ -74,9 +74,9 @@ void PrintModifiedTable(const PrintTable& tbl, const bool labelColumns, const bo
 
 void ReduceAll(const LRL_ReadLatticeData& cellDataList, S6& s6, D7& d7, G6& g6) {
    LatticeConverter converter;
-   g6 = converter.NiggliReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
-   d7 = converter.DeloneReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
-   s6 = converter.SellingReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
+   g6 = LatticeConverter::NiggliReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
+   d7 = LatticeConverter::DeloneReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
+   s6 = LatticeConverter::SellingReduceCell(cellDataList.GetLattice(), cellDataList.GetCell());
 }
 
 std::vector<LRL_ReadLatticeData> GetInputCells(void) {
