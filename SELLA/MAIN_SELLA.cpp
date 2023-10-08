@@ -445,11 +445,11 @@ std::vector<std::vector<std::string> > CreateBravaisChains()
 bool CheckOneBravaisChain(
    const std::vector<std::string>& bravaisChain,
    const std::vector<DeloneFitResults>& v,
-   std::map<std::string, double>& valueMap)
+   std::map<std::string, double>& valueMap,
+   std::vector<std::string>& errorList )
 {
 
    bool okCheck = true;
-   std::vector<std::string> foundErrors;
    for (size_t i = 0; i < bravaisChain.size() - 1; ++i)
    {
       const std::string name1 = bravaisChain[i];
@@ -460,18 +460,18 @@ bool CheckOneBravaisChain(
       double value2 = valueMap[name2];
       if (value1 < 1.0E-3) value1 = 0;
       if (value2 < 1.0E-3) value2 = 0;
-      if ((value2 - value1) < -0.0001)
+      const std::string error = name1 + name2;
+      if ((value2 - value1) < -0.01 && 
+         std::find(errorList.begin(), errorList.end(), error) == errorList.end())
       {
-         const std::string error = name1 + name2;
-         if (std::find(foundErrors.begin(), foundErrors.end(), error) == foundErrors.end()) {
+         errorList.emplace_back(error);
             okCheck = false;
             std::cout << std::endl << "################value error  "
                << name1 << " " << value1 << " "
                << name2 << " " << value2 << "  \ts6 "
                << v[i].GetOriginalInput() << "\tP "
                << LRL_Cell_Degrees(v[i].GetOriginalInput()) << std::endl;
-            foundErrors.emplace_back(error);
-         }
+            errorList.emplace_back(error);
       }
    }
 
@@ -533,13 +533,13 @@ bool CheckBravaisChains(const std::vector<DeloneFitResults>& v)
    //   std::cout << "CheckBravaisChains  DeloneFitResults= " << v[i].GetGeneralType() << " " << v[i].GetRawFit() << std::endl;
    //}
 
-
+   std::vector<std::string> errorList;
    std::map<std::string, double> valueMap = GetBestOfEachBravaisType(v);
    bool okCheck = true;
    static const std::vector<std::vector<std::string> > bravaisChains = CreateBravaisChains();
    for (size_t i = 0; i < bravaisChains.size() - 1; ++i)
    {
-      if (!CheckOneBravaisChain(bravaisChains[i], v, valueMap)) {
+      if (!CheckOneBravaisChain(bravaisChains[i], v, valueMap, errorList)) {
          okCheck = false;
       }
    }
@@ -638,7 +638,7 @@ void NiggliMatchLatticeType(const DeloneFitResults& vDeloneFitResults) {
 
 int main()
 {
-   std::cout << "SELLA\n";
+   std::cout << "; SELLA\n";
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
 

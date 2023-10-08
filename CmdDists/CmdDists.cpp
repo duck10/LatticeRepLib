@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 #include "CS6Dist.h"
 #include "CS6Dist.cpp"
@@ -27,6 +28,7 @@ int main()
       exit(99);
    }
 
+   std::vector<std::string> vLattices;
    std::vector<LRL_Cell> vcells;
    std::vector<G6> vg6Red;
    std::vector<S6> vs6Red;
@@ -36,8 +38,9 @@ int main()
       const LRL_Cell cell = inputList[i].GetCell();
 
       vcells.emplace_back(cell);
-      vg6Red.emplace_back(G6(LatticeConverter::NiggliReduceCell (lattice, cell)));
-      vs6Red.emplace_back(S6(LatticeConverter::SellingReduceCell(lattice, cell)));
+      vLattices.emplace_back(lattice);
+      vg6Red.emplace_back(LatticeConverter::NiggliReduceCell (lattice, cell));
+      vs6Red.emplace_back(LatticeConverter::SellingReduceCell(lattice, cell));
    }
 
    std::cout << ";   ordinals  G6-Euclidean   NCDist   CS6Dist" << std::endl;
@@ -54,7 +57,7 @@ int main()
    std::cout << std::endl;
    for (size_t i = 0; i < vcells.size(); ++i) {
       std::cout << ";    " << i+1 << std::fixed << std::setprecision(3)
-         << "  "
+         << "  " << " " + vLattices[i]
          << LRL_Cell_Degrees(vcells[i]) << std::endl;
    }
 

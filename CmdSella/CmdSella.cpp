@@ -1,4 +1,4 @@
-
+#include <algorithm>
 #include <iostream>
 
 #include "DeloneFitResults.h"
@@ -137,7 +137,8 @@ std::vector<std::vector<std::string> > CreateBravaisChains()
 bool CheckOneBravaisChain(
    const std::vector<std::string>& bravaisChain, 
    const std::vector<DeloneFitResults>& v,
-    std::map<std::string, double>& valueMap)
+   std::map<std::string, double>& valueMap,
+   std::vector<std::string>& errorList)
 {
 
    bool okCheck = true;
@@ -151,8 +152,11 @@ bool CheckOneBravaisChain(
       double value2 = valueMap[name2];
       if (value1 < 1.0E-3) value1 = 0;
       if (value2 < 1.0E-3) value2 = 0;
-      if ((value2 - value1) < -0.0001)
+      const std::string error = name1 + name2;
+      if ((value2 - value1) < -0.0001 && 
+         std::find(errorList.begin(),errorList.end(), error)==errorList.end())
       {
+         errorList.emplace_back(error);
          okCheck = false;
          std::cout << "value error  " 
             << name1 << " " << value1 << " "
@@ -169,13 +173,13 @@ bool CheckBravaisChains(const std::vector<DeloneFitResults>& v)
    //   std::cout << "CheckBravaisChains  DeloneFitResults= " << v[i].GetGeneralType() << " " << v[i].GetRawFit() << std::endl;
    //}
 
-
+   std::vector<std::string> errorList;
    std::map<std::string, double> valueMap = GetBestOfEachBravaisType(v);
    bool okCheck = true;
    static const std::vector<std::vector<std::string> > bravaisChains = CreateBravaisChains();
    for (size_t i = 0; i < bravaisChains.size() - 1; ++i)
    {
-      if (!CheckOneBravaisChain(bravaisChains[i], v, valueMap)) {
+      if (!CheckOneBravaisChain(bravaisChains[i], v, valueMap, errorList)) {
          okCheck = false;
       }
    }

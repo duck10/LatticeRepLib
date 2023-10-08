@@ -154,6 +154,9 @@ DeloneTypeList::DeloneTypeList(const bool build)
    static const std::vector<std::pair<std::string, std::vector<MatS6> > >   perp = CreateAllPerps( );
    static const std::vector<std::pair<std::string, std::vector<MatS6> > >   toCanon = CreateAllToCanon( );
 
+
+
+
    static std::vector<std::pair<std::string, MatricesForOneDeloneType> > matrices;
 
    if (build) {
