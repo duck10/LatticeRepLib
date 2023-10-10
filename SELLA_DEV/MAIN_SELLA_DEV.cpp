@@ -1,12 +1,6 @@
-// SELLA.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-//#include <iostream>
-//#include <set>
-//#include <string>
-
+// SELLA_DEV -- writes the code for Delone type
+// matrices used in SELLA and CmdSella
 #include "SellaBuild.h"
-
 
 int main()
 {
