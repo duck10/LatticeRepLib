@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include "BravaisHeirarchy.h"
 #include "DeloneFitResults.h"
 #include "LRL_ReadLatticeData.h"
 #include "LatticeConverter.h"
@@ -28,6 +29,31 @@ std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeD
    }
 
    return v;
+}
+
+std::vector<std::pair<std::string, double> > DeloneFitToScores(std::vector< DeloneFitResults>& fits) {
+
+   std::map<std::string, std::pair<std::string, double> > best;
+
+   for (size_t i = 0; i < fits.size(); ++i) {
+      auto test = best.find(fits[i].GetType());
+      if (test == best.end()) {
+         fits[i].GetZscore();
+         best.insert(std::make_pair(fits[i].GetType(), std::make_pair(fits[i].GetType(), fits[i].GetRawFit())));
+      }
+      else
+      {
+         const double previous = (*test).second.second;
+         if (fits[i].GetRawFit() < previous) {
+            best[fits[i].GetType()] = std::make_pair(fits[i].GetType(), fits[i].GetRawFit());
+         }
+      }
+   }
+   std::vector<std::pair<std::string, double> > out;
+   for (auto i = best.begin(); i != best.end(); ++i) {
+      out.push_back((*i).second);
+   }
+   return out;
 }
 
 std::vector<S6> CreateS6Errors(const std::vector< S6>& vs) {
@@ -153,14 +179,17 @@ bool CheckOneBravaisChain(
       if (value1 < 1.0E-3) value1 = 0;
       if (value2 < 1.0E-3) value2 = 0;
       const std::string error = name1 + name2;
-      if ((value2 - value1) < -0.0001 && 
-         std::find(errorList.begin(),errorList.end(), error)==errorList.end())
+      if ((value2 - value1) < -0.01 && 
+         std::find(errorList.begin(), errorList.end(), error) == errorList.end())
       {
          errorList.emplace_back(error);
          okCheck = false;
-         std::cout << "value error  " 
-            << name1 << " " << value1 << " "
-            << name2 << " " << value2 << std::endl;
+            std::cout << std::endl << "################ Bravais chain failure  "
+               << name1 << " " << value1 << " "
+               << name2 << " " << value2 << "  \ts6 "
+               << v[i].GetOriginalInput() << "\tP "
+               << LRL_Cell_Degrees(v[i].GetOriginalInput()) << std::endl;
+            errorList.emplace_back(error);
       }
    }
    return okCheck;
@@ -223,7 +252,7 @@ int main(int argc, char* argv[])
          if (d != 0.0) g_maxDeltaForMatch = atof(argv[2]);
       }
    }
-   std::cout << ";SELLA\n";
+   std::cout << "; SELLA\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
    std::vector<MatS6> reductionMatrices;
@@ -236,12 +265,12 @@ int main(int argc, char* argv[])
       GenerateDeloneBase().Select(selectBravaisCase);
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      const std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
+      std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
 
       const bool okCheck = CheckBravaisChains(vDeloneFitResults);
       if (!okCheck) {
-         std::cout << "Bravais chain values check failed, input = " << inputList[lat].GetStrCell() << std::endl;
+         //std::cout << "Bravais chain values check failed, input = " << inputList[lat].GetStrCell() << std::endl;
          g_valueErrors.push_back(inputList[lat].GetStrCell());
       }
       const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResults);
@@ -255,13 +284,19 @@ int main(int argc, char* argv[])
             //std::cout << dfr.GetType() << " " << LRL_Cell_Degrees(dfr.GetBestFit()) << std::endl;
             NiggliMatchLatticeType(vFilteredDeloneFitResults[kk]);
          }
-      }
+      }      const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
+
+	        /*std::cout << */BravaisHeirarchy::ProduceSVG(
+         inputList[lat], vLat[lat], scores);
+
    }
 
    if (!g_valueErrors.empty()) {
-      std::cout << "Bravais chain failures\n";
-      for (size_t i = 0; i < g_valueErrors.size(); ++i) {
-         std::cout << g_valueErrors[i] << std::endl;
-      }
+      //for (size_t i = 0; i < g_valueErrors.size(); ++i) {
+      //   std::cout << g_valueErrors[i] << std::endl;
+      //}
+      //std::cout << std::endl << std::endl << "lat " << lat << std::endl << std::endl << std::endl;
+      ///*std::cout << */BravaisHeirarchy::ProduceSVG(
+      //   inputList[lat], vLat[lat], scores);
    }
 }

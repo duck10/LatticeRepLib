@@ -25,12 +25,13 @@
 #include "Selling.h"
 #include "StoreResults.h"
 
+static double g_maxDeltaForMatch = 0.02;
+std::string selectBravaisCase = "";
+
 
 static const std::string Letters(void) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
 }
-
-static const double g_maxDeltaForMatch = 0.02;
 
 std::vector<LRL_ReadLatticeData> GetInputCells(void) {
    const std::string letters = Letters();
@@ -466,7 +467,7 @@ bool CheckOneBravaisChain(
       {
          errorList.emplace_back(error);
             okCheck = false;
-            std::cout << std::endl << "################value error  "
+            std::cout << std::endl << "################ Bravais chain failure  "
                << name1 << " " << value1 << " "
                << name2 << " " << value2 << "  \ts6 "
                << v[i].GetOriginalInput() << "\tP "
@@ -636,8 +637,15 @@ void NiggliMatchLatticeType(const DeloneFitResults& vDeloneFitResults) {
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+   if (argc > 1) {
+      selectBravaisCase = argv[1];
+      if (argc > 2) {
+         const double d = atof(argv[2]);
+         if (d != 0.0) g_maxDeltaForMatch = atof(argv[2]);
+      }
+   }
    std::cout << "; SELLA\n";
 
    const std::vector<LRL_ReadLatticeData> input = GetInputCells();
@@ -651,11 +659,11 @@ int main()
 
 //-----------------------------------------------------------------------------------
    std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =
-      GenerateDeloneBase().Select("");
+      GenerateDeloneBase().Select(selectBravaisCase);
 
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit( sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
+      std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
       //for (size_t kk = 0; kk < vDeloneFitResults.size(); ++kk) {
       //   const double d = vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm();
