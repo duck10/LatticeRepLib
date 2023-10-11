@@ -6,6 +6,7 @@
 #include "LRL_Cell.h"
 #include "Niggli.h"
 #include "GenerateLatticeTypeExamples.h"
+#include "S6BoundaryTransforms.h"
 
 // how many examples of each type to generate
 static int ngen = 1;
@@ -38,15 +39,15 @@ G6 TryToGetAGoodProjection(const T& pt,
    const MatG6& projector, const int trials = 500) {
    G6 probe;
    probe.SetValid(false);
-int count = 0;
-while ((!LRL_Cell(probe).IsValid()) || (count > trials) || (!pt->IsMember(probe))) {
-   const G6 start = G6::randDeloneReduced();
-   Niggli::Reduce(start, probe);
-   probe = projector * probe;
-   Niggli::Reduce(probe, probe);
-   ++count;
-}
-return probe;
+   int count = 0;
+   while ((!LRL_Cell(probe).IsValid()) || (count > trials) || (!pt->IsMember(probe))) {
+      const G6 start = G6::randDeloneReduced();
+      Niggli::Reduce(start, probe);
+      probe = projector * probe;
+      Niggli::Reduce(probe, probe);
+      ++count;
+   }
+   return probe;
 }
 
 template<typename T>
@@ -128,6 +129,18 @@ static const std::string g_Complex("X x");
 
 int main(int argc, char* argv[])
 {
+   const S6BoundaryTransforms s6bt;
+   const std::vector<MatS6>  vbt1 = s6bt.GetVector(0);
+   const std::vector<MatS6>  vbt2 = s6bt.GetVector(2);
+
+   S6 s6test(1, 2, 3, 4, 5, 6);
+   for (size_t i = 0; i < vbt1.size(); ++i) {
+      std::cout << vbt1[i] * s6test << std::endl;
+   }
+   std::cout << std::endl;
+   for (size_t i = 0; i < vbt2.size(); ++i) {
+      std::cout << vbt2[i] * s6test << std::endl;
+   }
    int test = 0;
    if (argc > 1) {
       test = atoi(argv[1]);

@@ -5,7 +5,6 @@
 #include "DeloneTypeList.h"
 #include "DeloneType.h"
 #include "LRL_Cell_Degrees.h"
-#include "LRL_ToString.h"
 #include "LRL_MaximaTools.h"
 #include "LRL_StringTools.h"
 #include "LabeledSellaMatrices.h"

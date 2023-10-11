@@ -29,6 +29,9 @@
     <ClCompile Include="..\LatticeRepresentationLib\LabeledDeloneTypeMatrices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CellErrorsFromS6.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.h">

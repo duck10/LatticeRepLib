@@ -163,6 +163,7 @@
     <ClCompile Include="..\LatticeRepresentationLib\LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\LRL_CoordinateConversionMatrices.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
+    <ClCompile Include="CellErrorsFromS6.cpp" />
     <ClCompile Include="MAIN_SELLA.cpp" />
   </ItemGroup>
   <ItemGroup>
