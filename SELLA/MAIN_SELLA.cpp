@@ -37,19 +37,19 @@ std::string selectBravaisCase = "";
 //   return v;
 //}
 
-//std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLatticeData>& input, std::vector<MatS6>& vmat ) {
-//   std::vector<S6> v;
-//   MatS6 m;
-//   vmat.clear( );
-//
-//   for (size_t i = 0; i < input.size(); ++i) {
-//      const S6 s6 = LatticeConverter::SellingReduceCell(input[i].GetLattice(), input[i].GetCell(), m);
-//      v.push_back(s6);
-//      vmat.push_back(m);
-//   }
-//
-//   return v;
-//}
+std::vector<S6> GetInputSellingReducedVectors( const std::vector<LRL_ReadLatticeData>& input, std::vector<MatS6>& vmat ) {
+   std::vector<S6> v;
+   MatS6 m;
+   vmat.clear( );
+
+   for (size_t i = 0; i < input.size(); ++i) {
+      const S6 s6 = LatticeConverter::SellingReduceCell(input[i].GetLattice(), input[i].GetCell(), m);
+      v.push_back(s6);
+      vmat.push_back(m);
+   }
+
+   return v;
+}
 //
 //std::string Trim(const std::string type) {
 //   for ( size_t i=0; i<type.size(); ++i ) {
@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
       //    //}
       //}
 
-      std::cout << std::endl << "reported distances and zscores (in A^2)" << std::endl;
+      std::cout << std::endl << "; reported distances and zscores (in A^2)" << std::endl;
 
       const bool check = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResults);
 
