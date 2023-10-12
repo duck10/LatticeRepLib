@@ -1,7 +1,8 @@
 
+LRL_WEB_BINDEST ?= $(HOME)/public_html/cgi-bin/
+
 COMMANDS  =  \
 	CheckInput \
-	CmdCmplx \
 	CmdDelone \
 	CmdDists \
 	CmdLM \
@@ -20,12 +21,111 @@ COMMANDS  =  \
 	CmdToU \
 	CmdVolume
 
+SOURCES  =  \
+	CheckInput/CheckInput.cpp \
+	CmdDelone/CmdDelone.cpp \
+	CmdDists/CmdDists.cpp \
+	CmdLM/CmdLM.cpp \
+	CmdNiggli/CmdNiggli.cpp \
+	CmdPath/CmdPath.cpp \
+	CmdPerturb/CmdPerturb.cpp \
+	CmdS6Refl/CmdS6Refl.cpp \
+	CmdSella/CmdSella.cpp  \
+	CmdToB4/CmdToB4.cpp \
+	CmdToC3/CmdToC3.cpp \
+	CmdToCell/CmdToCell.cpp \
+	CmdToD13/CmdToD13.cpp \
+	CmdToDC/CmdToDC.cpp \
+	CmdToG6/CmdToG6.cpp \
+	CmdToS6/CmdToS6.cpp \
+	CmdToU/CmdToU.cpp \
+	CmdVolume/CmdVolume.cpp
+
+BINS  =  \
+	CheckInput/CheckInput \
+	CmdDelone/CmdDelone \
+	CmdDists/CmdDists \
+	CmdLM/CmdLM \
+	CmdNiggli/CmdNiggli \
+	CmdPath/CmdPath \
+	CmdPerturb/CmdPerturb \
+	CmdS6Refl/CmdS6Refl \
+	CmdSella/CmdSella  \
+	CmdToB4/CmdToB4 \
+	CmdToC3/CmdToC3 \
+	CmdToCell/CmdToCell \
+	CmdToD13/CmdToD13 \
+	CmdToDC/CmdToDC \
+	CmdToG6/CmdToG6 \
+	CmdToS6/CmdToS6 \
+	CmdToU/CmdToU \
+	CmdVolume/CmdVolume
+
 BIN	= $(PWD)/bin
 
-all:	$(COMMANDS)
+
+all:	$(BIN) $(COMMANDS) $(LRL_WEB_BINDEST)
+	cp $(BIN)/* $(LRL_WEB_BINDEST)
 
 $(BIN):
 	mkdir -p $(BIN)
 
-$(COMMANDS):  $(BIN)/$@
-	(cd $@; make all; mv $@ $(BIN))
+CheckInput/CheckInput:  CheckInput/CheckInput.cpp $(BIN)
+	(cd CheckInput;  make all; cp CheckInput $(BIN))
+
+CmdDelone/CmdDelone:  CmdDelone/CmdDelone.cpp $(BIN)
+	  (cd CmdDelone;  make all; cp CmdDelone $(BIN))
+
+CmdDists/CmdDists:  CmdDists/CmdDists.cpp $(BIN)
+	  (cd CmdDists;  make all; cp CmdDists $(BIN))
+
+CmdLM/CmdLM:  CmdLM/CmdLM.cpp $(BIN)
+	  (cd CmdLM;  make all; cp CmdLM $(BIN))
+
+CmdNiggli/CmdNiggli:  CmdNiggli/CmdNiggli.cpp $(BIN)
+	  (cd CmdNiggli;  make all; cp CmdNiggli $(BIN))
+
+CmdPath/CmdPath:  CmdPath/CmdPath.cpp $(BIN)
+	  (cd CmdPath;  make all; cp CmdPath $(BIN))
+
+CmdPerturb/CmdPerturb:  CmdPerturb/CmdPerturb.cpp $(BIN)
+	  (cd CmdPerturb;  make all; cp CmdPerturb $(BIN))
+
+CmdS6Refl/CmdS6Refl:  CmdS6Refl/CmdS6Refl.cpp $(BIN)
+	  (cd CmdS6Refl;  make all; cp CmdS6Refl $(BIN))
+
+CmdSella/CmdSella:  CmdSella/CmdSella.cpp $(BIN)
+	  (cd CmdSella;  make all; cp CmdSella $(BIN))
+
+CmdToB4/CmdToB4:  CmdToB4/CmdToB4.cpp $(BIN)
+	  (cd CmdToB4;  make all; cp CmdToB4 $(BIN))
+
+CmdToC3/CmdToC3:  CmdToC3/CmdToC3.cpp $(BIN)
+	  (cd CmdToC3;  make all; cp CmdToC3 $(BIN))
+
+CmdToCell/CmdToCell:  CmdToCell/CmdToCell.cpp $(BIN)
+	  (cd CmdToCell;  make all; cp CmdToCell $(BIN))
+
+CmdToD13/CmdToD13:  CmdToD13/CmdToD13.cpp $(BIN)
+	  (cd CmdToD13;  make all; cp CmdToD13 $(BIN))
+
+CmdToDC/CmdToDC:  CmdToDC/CmdToDC.cpp $(BIN)
+	  (cd CmdToDC;  make all; cp CmdToDC $(BIN))
+
+CmdToG6/CmdToG6:  CmdToG6/CmdToG6.cpp $(BIN)
+	  (cd CmdToG6;  make all; cp CmdToG6 $(BIN))
+
+CmdToS6/CmdToS6:  CmdToS6/CmdToS6.cpp $(BIN)
+	  (cd CmdToS6;  make all; cp CmdToS6 $(BIN))
+
+CmdToU/CmdToU:  CmdToU/CmdToU.cpp $(BIN)
+	  (cd CmdToU;  make all; cp CmdToU $(BIN))
+
+CmdVolume/CmdVolume:  CmdVolume/CmdVolume.cpp $(BIN)
+	  (cd CmdVolume;  make all; cp CmdVolume $(BIN))
+
+$(LRL_WEB_BINDEST):
+	mkdir -p $(LRL_WEB_BINDEST)
+
+$(COMMANDS):  $(BIN) $(BINS)
+	(cd $@; make all; cp $@ $(BIN))

@@ -4,7 +4,8 @@ COMMAND = CmdSella
 all:	$(COMMAND)
 
 $(COMMAND):	$(COMMAND).cpp \
-        ../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
+        ../LatticeRepresentationLib/B4.cpp \
+        ../LatticeRepresentationLib/BravaisHeirarchy.cpp ../LatticeRepresentationLib/C3.cpp \
         ../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/DC7u.cpp \
 	../LatticeRepresentationLib/D13.cpp \
@@ -12,7 +13,7 @@ $(COMMAND):	$(COMMAND).cpp \
         ../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
         ../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
-        ../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
+        ../LRL_Tools/FileOperations.cpp ../LRL_Tools/LRL_CreateFileName.cpp ../LatticeRepresentationLib/G6.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
 	../LatticeRepresentationLib/LabeledSellaMatrices.cpp \
         ../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
@@ -27,7 +28,8 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/Sella.cpp \
         ../LatticeRepresentationLib/VecN.cpp ../LRL_Tools/LRL_Vector3.cpp
 	$(CXX) -I ../LatticeRepresentationLib -I ../LRL_Tools -o $(COMMAND) $(COMMAND).cpp \
-	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
+	../LatticeRepresentationLib/B4.cpp \
+        ../LatticeRepresentationLib/BravaisHeirarchy.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/DC7u.cpp \
 	../LatticeRepresentationLib/D13.cpp \
@@ -35,7 +37,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
-	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
+	../LRL_Tools/FileOperations.cpp ../LRL_Tools/LRL_CreateFileName.cpp ../LatticeRepresentationLib/G6.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
 	../LatticeRepresentationLib/LabeledSellaMatrices.cpp \
 	../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
