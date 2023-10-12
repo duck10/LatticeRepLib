@@ -27,7 +27,7 @@
     <ClCompile Include="CS6Dist.cpp" />
     <ClCompile Include="D7.cpp" />
     <ClCompile Include="D7Dist.c" />
-    <ClCompile Include="D7_boundary.cpp" />
+    <ClCompile Include="D7_Boundary.cpp" />
     <ClCompile Include="D7_BoundaryList.cpp" />
     <ClCompile Include="D7_ClassifySubboundaries.cpp" />
     <ClCompile Include="D7_Subboundary.cpp" />
@@ -81,7 +81,7 @@
     <ClInclude Include="D7.h" />
     <ClInclude Include="D7Dist.h" />
     <ClInclude Include="D7Dist_.hpp" />
-    <ClInclude Include="D7_boundary.h" />
+    <ClInclude Include="D7_Boundary.h" />
     <ClInclude Include="D7_BoundaryList.h" />
     <ClInclude Include="D7_ClassifySubboundaries.h" />
     <ClInclude Include="D7_Subboundary.h" />

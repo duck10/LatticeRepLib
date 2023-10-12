@@ -35,7 +35,7 @@
     <ClCompile Include="D7.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D7_boundary.cpp">
+    <ClCompile Include="D7_Boundary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D7_BoundaryList.cpp">
@@ -187,7 +187,7 @@
     <ClInclude Include="D7.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="D7_boundary.h">
+    <ClInclude Include="D7_Boundary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D7_BoundaryList.h">

@@ -108,7 +108,7 @@
     <ClInclude Include="triple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="D7_boundary.h">
+    <ClInclude Include="D7_Boundary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LRL_MaximaTools.h">
@@ -227,7 +227,7 @@
     <ClCompile Include="MatB4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D7_boundary.cpp">
+    <ClCompile Include="D7_Boundary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LRL_MaximaTools.cpp">
