@@ -15,6 +15,7 @@ public:
    DeloneFitResults(const double fit, const S6& bestApprox, const S6& perpv, const MatS6& toCanon);
    void SetZscore(const double score) { m_zscore = score; }
    void SetLatticeType(const std::string& s) { m_latticeType = s; }
+   void SetDeloneType(const std::string& s) { m_DeloneType = s; }
    double GetRawFit(void) const { return m_rawFit; }
    double GetZscore(void) const { return m_zscore; }
    S6 GetBestFit(void) const { return m_bestFit; }
@@ -22,6 +23,7 @@ public:
    void SetDifference(const S6& s) { m_difference = s; }
    MatS6 GetToCanon(void) const { return m_toCanonicalDeloneType; }
    std::string GetLatticeType(void) const { return m_latticeType; }
+   std::string GetDeloneType(void) const { return m_DeloneType; }
    void SetReductionMatrix(const MatS6& matrix) { m_reductionMatrix = matrix; }
    MatS6 GetReductionMatrix() const { return m_reductionMatrix; }
    void SetOriginalInput(const S6& s6) { m_originalInput = s6; }
@@ -34,6 +36,7 @@ public:
 protected:
    std::string m_latticeType;
    std::string m_generalLatticeType;
+   std::string m_DeloneType;
    std::string m_type;
    double m_rawFit;
    double m_zscore;

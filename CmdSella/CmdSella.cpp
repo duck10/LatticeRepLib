@@ -12,6 +12,7 @@
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LatticeConverter.h"
 #include "LRL_ReadLatticeData.h"
+#include "LatticeConverter.h"
 #include "MatS6.h"
 #include "Niggli.h"
 #include "S6.h"
@@ -58,7 +59,7 @@ std::vector<std::pair<std::string, double> > DeloneFitToScores(std::vector< Delo
    }
    std::vector<std::pair<std::string, double> > out;
    for (auto i = best.begin(); i != best.end(); ++i) {
-      out.push_back((*i).second);
+      out.emplace_back((*i).second);
    }
    return out;
 }
@@ -171,6 +172,8 @@ int main(int argc, char* argv[])
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
+
+      std::cout << std::endl << "; reported distances and zscores (in A^2)" << std::endl;
 
       const bool okCheck = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResults);
       if (!okCheck) {

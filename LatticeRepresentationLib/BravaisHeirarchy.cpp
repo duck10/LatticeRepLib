@@ -214,7 +214,7 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
 }
 
 void SendSellaToFile(const std::string& s) {
-   std::cout << "Send Sella Plot To File " << std::endl;
+   std::cout << ";Send Sella Plot To File " << std::endl;
    std::string filename = LRL_CreateFileName::Create("SEL_", "svg");
    std::cout << filename << std::endl;
    std::ofstream fileout;
@@ -304,7 +304,7 @@ bool BravaisHeirarchy::CheckOneBravaisChain(
       {
          errorList.emplace_back(error);
          okCheck = false;
-         std::cout << std::endl << "################ Bravais chain failure  "
+         std::cout << std::endl << ";################ Bravais chain failure  "
             << name1 << " " << value1 << " "
             << name2 << " " << value2 << "  \ts6 "
             << v[i].GetOriginalInput() << "\tP "
@@ -391,12 +391,17 @@ std::map<std::string, double> BravaisHeirarchy::GetBestOfEachBravaisType(
    return bravaisMap;
 }
 
+void AnalyseDeloneFitResultsForBravaisChainErrors
+(const std::vector<DeloneFitResults>& v) {
+
+}
 
 bool BravaisHeirarchy::CheckBravaisChains(const std::vector<DeloneFitResults>& v)
 {
    //for (size_t i = 0; i < v.size(); ++i)
    //{
-   //   std::cout << "CheckBravaisChains  DeloneFitResults= " << v[i].GetGeneralType() << " " << v[i].GetRawFit() << std::endl;
+   //   std::cout << "CheckBravaisChains  DeloneFitResults= \n" << v[i]
+   //      << std::endl;
    //}
 
    std::vector<std::string> errorList;

@@ -190,6 +190,7 @@ std::vector<DeloneFitResults> Sella::SellaFit(
          const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
          fit.SetZscore(zscore);
          fit.SetLatticeType(sptypes[i]->GetBravaisType());
+         fit.SetDeloneType(sptypes[i]->GetBravaisType());
          fit.SetReductionMatrix(reductionMatrix);
          fit.SetType(sptypes[i]->GetBravaisType());
          fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());

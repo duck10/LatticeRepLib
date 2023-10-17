@@ -65,6 +65,7 @@ std::ostream& operator<< ( std::ostream& o, const DeloneFitResults& dfr) {
    o << "\tm_latticeType           " << dfr.m_latticeType <<
       ",  " << dfr.GetType() << std::endl;
    o << "\tm_rawFit                " << dfr.m_rawFit << std::endl;
+   o << "\tm_DeloneType            " << dfr.m_DeloneType << std::endl;
    o << "\tm_zscore                " << dfr.m_zscore << std::endl;
    o << "\tm_bestFit               " << dfr.m_bestFit << std::endl;
    o << "\tm_difference            " << dfr.m_difference << std::endl;
