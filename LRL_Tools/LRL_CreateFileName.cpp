@@ -10,7 +10,17 @@
 ///////////////////////////////////////////////////////////////////////
 // Create a unique file name from the date and time
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-/*static*/ std::string LRL_CreateFileName::Create( const std::string& prefix, 
+
+
+
+/*static*/ std::string LRL_CreateFileName::Create(const std::string& prefix, const std::string& suffix,
+   const std::string& extension, const bool includeTimestamp/* = true*/) 
+{
+   const std::string test = Create(prefix, "") + suffix + "." + extension;
+   return test;
+}
+
+/*static*/ std::string LRL_CreateFileName::Create( const std::string& prefix,
    const std::string& extension, const bool includeTimestamp/*=true*/ )
 //---------------------------------------------------------------------
 {

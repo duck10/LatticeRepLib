@@ -365,11 +365,15 @@ std::vector<LRL_ReadLatticeData> LRL_ReadLatticeData::ReadLatticeData() {
    std::vector<LRL_ReadLatticeData> inputList;
    LRL_ReadLatticeData readData;
    LRL_ReadLatticeData  input;
+   size_t ordinal = 1;
    while (input.GetLattice() != "EOF") {
       input = read();
-      if (input.IsValid()) inputList.push_back(input);
-//      std::cout << "number of cells read " << inputList.size() << std::endl;
-      const size_t n = inputList.size();
+      if (input.IsValid()) {
+         input.SetOrdinal(ordinal);
+         inputList.push_back(input);
+         ++ordinal;
+      }
+
    }
    return inputList;
 }

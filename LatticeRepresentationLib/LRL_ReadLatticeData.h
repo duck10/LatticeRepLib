@@ -22,6 +22,9 @@ public:
    static std::vector<CellInputData> ReadAllLatticeDataAndMakePrimitive(const int seed);
   std::string
       GetIncomingSemicolons (void) const { return m_incomingSemicolons; }
+
+  void SetOrdinal(const size_t n) { m_ordinal = n; }
+  size_t GetOrdinal() const { return m_ordinal; }
 protected:
    GenerateRandomLattice<S6> generator;
    static std::pair<std::vector<double>, std::vector<double> > SplitFields(const int n, const std::vector<double>& fields);
@@ -38,6 +41,7 @@ protected:
    static bool IsLatticeName(const std::vector<std::string>& nameList, const std::string inputName);
 
    std::string m_incomingSemicolons;
+   size_t m_ordinal;
 };
 
 #endif // LRL_READLATTICEDATA_H

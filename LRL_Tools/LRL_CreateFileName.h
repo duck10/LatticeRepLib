@@ -6,7 +6,9 @@
 class LRL_CreateFileName
 {
 public:
-   static std::string Create( const std::string& prefix, const std::string& extension, const bool includeTimestamp = true );
+   static std::string Create(const std::string& prefix, const std::string& extension, const bool includeTimestamp = true);
+   static std::string Create(const std::string& prefix, const std::string& suffix, 
+      const std::string& extension, const bool includeTimestamp = true);
 };
 
 

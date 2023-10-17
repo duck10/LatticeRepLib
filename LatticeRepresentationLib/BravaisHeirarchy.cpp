@@ -2,6 +2,7 @@
 #include "DeloneFitResults.h"
 #include "FileOperations.h"
 #include "LRL_CreateFileName.h"
+#include "LRL_DataToSVG.h"
 #include "LRL_ToString.h"
 #include "S6.h"
 #include "S6BoundaryTransforms.h"
@@ -213,20 +214,25 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
       ;
 }
 
-void SendSellaToFile(const std::string& s) {
+void SendSellaToFile(const std::string& s, const size_t ordinal) {
    std::cout << ";Send Sella Plot To File " << std::endl;
-   std::string filename = LRL_CreateFileName::Create("SEL_", "svg");
-   std::cout << filename << std::endl;
+   //std::string filename = LRL_CreateFileName::Create("SEL_", "svg");
+   //std::cout << filename << std::endl;
    std::ofstream fileout;
    int count = 0;
 
-   while ( !FileOperations::OpenOutputFile(fileout, filename) ||
-      (filename == LRL_CreateFileName::Create("SEL_", "svg") && count < 100000))
-   {
-      filename = LRL_CreateFileName::Create("SEL_", "svg");
-      //std::cout << filename << "  " << count << "\n";
-      ++count;
-   }
+   const std::string suffix = LRL_DataToSVG(ordinal);
+   const std::string filename = LRL_CreateFileName::Create("SEL_", suffix, "svg", true);
+   std::cout << filename << std::endl;
+
+
+   //while ( !FileOperations::OpenOutputFile(fileout, filename) ||
+   //   (filename == LRL_CreateFileName::Create("SEL_", "svg") && count < 100000))
+   //{
+   //   filename = LRL_CreateFileName::Create("SEL_", "svg");
+   //   //std::cout << filename << "  " << count << "\n";
+   //   ++count;
+   //}
       FileOperations::OpenOutputFile(fileout, filename);
 
    if (fileout.is_open())
@@ -329,15 +335,13 @@ std::string BravaisHeirarchy::ProduceSVG(
 
    std::string s =
       BravaisHeirarchy::BoilerPlate_1() +
-         inputText +
-         reduced +
-         FormatCellData(input, reducedCell) +
-         BravaisHeirarchy::ScoreLabels(scores) +
-         BravaisHeirarchy::BoilerPlate_2();
+      inputText +
+      reduced +
+      FormatCellData(input, reducedCell) +
+      BravaisHeirarchy::ScoreLabels(scores) +
+      BravaisHeirarchy::BoilerPlate_2();
 
-   ;
-
-   SendSellaToFile(s);
+   SendSellaToFile(s, input.GetOrdinal());
    return s;
    }
 
