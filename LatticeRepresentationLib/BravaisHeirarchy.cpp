@@ -215,7 +215,7 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
 }
 
 void SendSellaToFile(const std::string& s, const size_t ordinal) {
-   std::cout << ";Send Sella Plot To File " << std::endl;
+   std::cout << std::endl << ";Send Sella Plot To File " << std::endl;
    //std::string filename = LRL_CreateFileName::Create("SEL_", "svg");
    //std::cout << filename << std::endl;
    std::ofstream fileout;
@@ -343,7 +343,7 @@ std::string BravaisHeirarchy::ProduceSVG(
 
    SendSellaToFile(s, input.GetOrdinal());
    return s;
-   }
+}
 
 
 
@@ -418,6 +418,7 @@ bool BravaisHeirarchy::CheckBravaisChains(const std::vector<DeloneFitResults>& v
          okCheck = false;
       }
    }
+
    return okCheck;
 }
 

@@ -105,8 +105,7 @@ double Sella::GetFitForDeloneType(const std::string& type, const S6& s6) {
 
 DeloneFitResults Sella::SellaFitXXXXXX(
    const std::shared_ptr<GenerateDeloneBase>& sptype,
-   const S6& s6,
-   const MatS6& reductionMatrix) {
+   const S6& s6) {
 
    const std::string name = sptype->GetName();
    size_t nBest = 0;
@@ -132,28 +131,9 @@ DeloneFitResults Sella::SellaFitXXXXXX(
 
    if (errors != 0) throw("prjs[i] count != perps[i] count");
 
-
-
-
    for (size_t i = 0; i < perps.size(); ++i) {
       const S6 perpv = perps[i] * s6;
-      //if (name == "T1" || name == "T2" || name == "C3" || name == "O1A") {
-      //   std::cout << std::endl;
-      //   std::cout << i << " " << name << std::endl;
-      //   std::cout << "prep s6 " << perpv << "\n";
-      //   std::cout << "prj s6 " << prjs[i] * s6 << std::endl;
-      //   std::cout << "prj cell " << LRL_Cell_Degrees(prjs[i] * s6) << std::endl;
-      //   std::cout << "input s6 " << s6 << std::endl;
-      //   std::cout << "input cell " << LRL_Cell_Degrees(s6) << std::endl;
-      //   std::cout << perps[i] << std::endl;
-      //}
       const double testFit = perpv.norm();
-
-      //std::cout << i << " " << sptype->GetBravaisType() << " " <<
-      //   testFit << " " << name << std::endl;
-
-
-
 
       if (bestFit > testFit && LRL_Cell_Degrees(prjs[i] * s6).IsValid()) {
          nBest = i;
@@ -175,17 +155,17 @@ double Sella::Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatri
 }
 
 std::vector<DeloneFitResults> Sella::SellaFit(
-   const std::vector<std::shared_ptr<GenerateDeloneBase> >& sptypes,
+   const std::string& selectBravaisCase,
    const S6& s6,
    const S6& errors,
    const MatS6& reductionMatrix) {
 
    std::vector<DeloneFitResults> vDeloneFitResults;
+   static const std::vector<std::shared_ptr<GenerateDeloneBase> > sptypes =
+      GenerateDeloneBase().Select(selectBravaisCase);
 
    for (size_t i = 0; i < sptypes.size(); ++i) {
-      const std::string name = sptypes[i]->GetName();
-      /*if (type.empty() || name.find(type) != std::string::npos) */ {  // LCA make type UC
-         DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6, reductionMatrix);
+         DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6);
 
          const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
          fit.SetZscore(zscore);
@@ -198,7 +178,6 @@ std::vector<DeloneFitResults> Sella::SellaFit(
          fit.SetDifference(s6 - fit.GetBestFit());
          fit.SetOriginalInput(s6);
          vDeloneFitResults.push_back(fit);
-      }
    }
    return vDeloneFitResults;
 }

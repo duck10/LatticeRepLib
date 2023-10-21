@@ -158,44 +158,45 @@ int main(int argc, char* argv[])
       }
    }
    std::cout << "; SELLA\n";
+   std::cout << "; SELLA is deprecated! Use CmdSella" << std::endl;
 
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   //const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
-   std::vector<MatS6> reductionMatrices;
+   //std::vector<MatS6> reductionMatrices;
 
-   const std::vector<S6> vLat = GetInputSellingReducedVectors(inputList, reductionMatrices);
-   const std::vector<S6> errors = CreateS6Errors(vLat);
+   //const std::vector<S6> vLat = GetInputSellingReducedVectors(inputList, reductionMatrices);
+   //const std::vector<S6> errors = CreateS6Errors(vLat);
 
-   //-----------------------------------------------------------------------------------
-   std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =
-      GenerateDeloneBase().Select(selectBravaisCase);
+   ////-----------------------------------------------------------------------------------
+   //std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =
+   //   GenerateDeloneBase().Select(selectBravaisCase);
 
-   for (size_t lat = 0; lat < vLat.size(); ++lat) {
-      std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
+   //for (size_t lat = 0; lat < vLat.size(); ++lat) {
+   //   std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(sptest, vLat[lat], errors[lat], reductionMatrices[lat]);
 
 
-      std::cout << std::endl << "; reported distances and zscores (in A^2)" << std::endl;
+   //   std::cout << std::endl << "; reported distances and zscores (in A^2)" << std::endl;
 
-      const bool okCheck = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResults);
-      if (!okCheck) {
-         //std::cout << "; Bravais chain values check failed, input = " << inputList[lat].GetStrCell() << std::endl;
-         g_valueErrors.push_back(inputList[lat].GetStrCell());
-      }
-      const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResults);
+   //   const bool okCheck = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResults);
+   //   if (!okCheck) {
+   //      //std::cout << "; Bravais chain values check failed, input = " << inputList[lat].GetStrCell() << std::endl;
+   //      g_valueErrors.push_back(inputList[lat].GetStrCell());
+   //   }
+   //   const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResults);
 
-      std::cout << "; " << inputList[lat].GetStrCell() << " input data" << std::endl;
-      for (size_t kk = 0; kk < vFilteredDeloneFitResults.size(); ++kk) {
-         const DeloneFitResults& dfr = vFilteredDeloneFitResults[kk];
-         if (dfr.GetType()[0] == 'a') continue;
-         //const double d = vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm();
-         if (vFilteredDeloneFitResults[kk].GetRawFit() / vLat[lat].norm() < g_maxDeltaForMatch) {
-            NiggliMatchLatticeType(vFilteredDeloneFitResults[kk]);
-         }
-      }
-      const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
+   //   std::cout << "; " << inputList[lat].GetStrCell() << " input data" << std::endl;
+   //   for (size_t kk = 0; kk < vFilteredDeloneFitResults.size(); ++kk) {
+   //      const DeloneFitResults& dfr = vFilteredDeloneFitResults[kk];
+   //      if (dfr.GetType()[0] == 'a') continue;
+   //      //const double d = vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm();
+   //      if (vFilteredDeloneFitResults[kk].GetRawFit() / vLat[lat].norm() < g_maxDeltaForMatch) {
+   //         NiggliMatchLatticeType(vFilteredDeloneFitResults[kk]);
+   //      }
+   //   }
+   //   const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
 
-	        /*std::cout << */BravaisHeirarchy::ProduceSVG(
-         inputList[lat], vLat[lat], scores);
+	  //      /*std::cout << */BravaisHeirarchy::ProduceSVG(
+   //      inputList[lat], vLat[lat], scores);
 
-   }
+   //}
 }

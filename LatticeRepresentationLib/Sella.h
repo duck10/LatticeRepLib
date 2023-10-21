@@ -88,16 +88,15 @@ public:
    void GetDeloneTypesForCrystalType();
    void GetCrystalTypesForDeloneType();
 
-   std::vector<DeloneFitResults> SellaFit(
-      const std::vector<std::shared_ptr<GenerateDeloneBase> >& sptypes,
+   static std::vector<DeloneFitResults> SellaFit(
+      const std::string& selectBravaisCase,
       const S6& s6,
       const S6& errors,
       const MatS6& reductionMatrix);
 
-   DeloneFitResults SellaFitXXXXXX(
+   static DeloneFitResults SellaFitXXXXXX(
       const std::shared_ptr<GenerateDeloneBase>& sptype,
-      const S6& s6,
-      const MatS6& reductionMatrix);
+      const S6& s6);
 
    static double Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix);
 
