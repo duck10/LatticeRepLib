@@ -130,7 +130,7 @@ void NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
 
    for (size_t i = 0; i < vglb.size(); ++i) {
       const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
-      if (pt->GetBravaisType()[0] == 'a') continue;
+      //if (pt->GetBravaisType()[0] == 'a') continue;
       G6 probe;
       Niggli::Reduce(G6(bestFit), probe);
       const G6 perpV = pt->GetPerp() * probe;

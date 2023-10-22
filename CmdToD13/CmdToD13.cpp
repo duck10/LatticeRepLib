@@ -143,6 +143,7 @@ void FollowerStyleTest(const S6& s1, const S6& s2, const size_t cycles) {
 
 int main()
 {
+   std::cout << "; To DC13\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    LRL_Cell cell1 = inputList[0].GetCell();
    //LRL_Cell cell2;

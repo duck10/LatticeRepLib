@@ -60,18 +60,19 @@ void OutputPerturbedCell(const std::string& lattice, const S6& perturbed,
 
 void HandleOneInputCell(const LRL_ReadLatticeData& inputlattice) {
    const S6 inputCell(inputlattice.GetCell());
+   const std::string lattice = inputlattice.GetLattice();
    const double scale = 1000.0 / inputCell.Norm();
    const S6 base = inputCell * scale;
 
    const std::string strcel = inputlattice.GetStrCell();
 
-   std::cout << "\n;" << strcel << "    original inputCell" << std::endl;
+   std::cout << "\n; " << strcel << "    original inputCell" << std::endl;
 
    const size_t pos = strcel.find("IT#");
    const std::string label = (pos != std::string::npos) ? strcel.substr(pos) : "";
    for (size_t k = 0; k < ngen; ++k) {
       const G6 perturbed2 = PerturbOneVector(strcel[0], inputCell, label);
-      OutputPerturbedCell(strcel.substr(0,1), perturbed2, label);
+      OutputPerturbedCell(lattice, perturbed2, label);
    }
 }
 
