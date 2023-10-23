@@ -23,7 +23,15 @@ bool LRL_StringTools::space(const char c) {
 std::string LRL_StringTools::strToupper(const std::string& s) {
    std::string ss(s);
    for (size_t i = 0; i < ss.length(); ++i)
-	   ss[i] = static_cast<char>(toupper(ss[i]));
+      ss[i] = static_cast<char>(toupper(ss[i]));
+   return(ss);
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+std::string LRL_StringTools::strLower(const std::string& s) {
+   std::string ss(s);
+   for (size_t i = 0; i < ss.length(); ++i)
+      ss[i] = static_cast<char>(tolower(ss[i]));
    return(ss);
 }
 

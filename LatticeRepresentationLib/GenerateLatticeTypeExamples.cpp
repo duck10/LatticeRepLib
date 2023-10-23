@@ -8,6 +8,7 @@
 #include "Niggli.h"
 #include "LRL_Cell.h"
 #include "MatG6.h"
+#include "LRL_StringTools.h"
 
 std::ostream& operator<< (std::ostream& o, const GenerateLatticesBase&) {
    o << "operator<< for GenerateLatticesBase" << std::endl;
@@ -1629,8 +1630,8 @@ GenerateNiggliBase::Select(const std::string& s/* = ""*/) const {
    else if (s.size() == 2 && s[1] == 'S') {
       return RetrieveByGeneralBravaisType(s, vglb);
    }
-   else if (xtals.find(s[0]) != std::string::npos) {
-      return RetrieveByXtalType(s, vglb);
+   else if (xtals.find(LRL_StringTools::strLower(s)) != std::string::npos) {
+      return RetrieveByXtalType(LRL_StringTools::strLower(s), vglb);
    }
    else {
       return vglb;

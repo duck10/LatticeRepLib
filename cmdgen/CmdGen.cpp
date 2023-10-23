@@ -129,18 +129,8 @@ static const std::string g_Complex("X x");
 
 int main(int argc, char* argv[])
 {
-   const S6BoundaryTransforms s6bt;
-   const std::vector<MatS6>  vbt1 = s6bt.GetVector(0);
-   const std::vector<MatS6>  vbt2 = s6bt.GetVector(2);
+   std::cout << "; Generate cells" << std::endl;
 
-   S6 s6test(1, 2, 3, 4, 5, 6);
-   for (size_t i = 0; i < vbt1.size(); ++i) {
-      std::cout << vbt1[i] * s6test << std::endl;
-   }
-   std::cout << std::endl;
-   for (size_t i = 0; i < vbt2.size(); ++i) {
-      std::cout << vbt2[i] * s6test << std::endl;
-   }
    int test = 0;
    if (argc > 1) {
       test = atoi(argv[1]);
@@ -176,25 +166,7 @@ int main(int argc, char* argv[])
          GenerateNiggliBase().Select(name);
       std::cout << "; Niggli lattice type requested " << std::endl;
       ForNiggliInput(NiggiTypes);
+      if (NiggiTypes.empty()) std::cout << "; unable to match type \"" << name << "\"" << std::endl;
    }
 
-
-
-   //std::cout << "; generate examples  ngen = " << ngen << "  lattice type selection = """ << name << std::endl;
-   //const std::vector<std::shared_ptr<GenerateNiggliBase> >
-   //   vglb = GenerateNiggliBase().Select(name);
-
-   //for (size_t lat = 0; lat < vglb.size(); ++lat) {
-   //   const std::shared_ptr<GenerateNiggliBase> pt = vglb[lat];
-   //   std::cout << "; lattice type = " << pt->GetITNumber() << std::endl;
-   //   for (size_t i = 0; i < ngen; ++i) {
-   //      const G6 g = Generate(vglb[lat]);
-   //      std::cout << "G6 "
-   //         << g << " "
-   //         << " IT# = " << pt->GetITNumber() << "  "
-   //         << pt->GetBravaisType()
-   //         << std::endl;
-   //   }
-   //   std::cout << ";" << std::endl;
-   //}
 }
