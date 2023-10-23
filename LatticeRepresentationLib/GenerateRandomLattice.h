@@ -74,12 +74,18 @@ public:
          s2.SetValid(false);
 
          t = BinarySearchExtreme(s1, s2, 12);
-         //if (!LRL_Cell_Degrees(t).GetValid()) {
+         LRL_Cell celld = t;
+         const bool cellValid = LRL_Cell_Degrees(t).GetValid();
+         const bool b5 = 
+            (celld[3] + celld[4] + celld[5] - 2.0 * maxNC(celld[3], celld[4], celld[5])) 
+            >= 0.0 - 0.00001;
+
+         //if (!LRL_Cell_Degrees(t).GetValid() || !t.GetValid() || !b5) {
          //   std::cout << "in GenerateExtreme  " << t.GetValid() << "  " << t.IsValid() << "   "
-         //      << LRL_Cell_Degrees(t).GetValid() << "  " << t << "     "
+         //      << cellValid << "  " << t << "     "
          //      << LRL_Cell_Degrees(t) << std::endl;
          //}
-         again = !(S6::CountPositive(S6(t)) > 0 && G6(t).GetValid() && t.GetValid());
+         again = !(S6::CountPositive(S6(t)) > 0 && G6(t).GetValid() && t.GetValid() && b5);
          ++count;
       }
       return t;
@@ -308,7 +314,13 @@ private:
       for (size_t i = 0; i < 6; ++i) s6delta[i] = s2[i] - s1[i];
       const double diff = s6delta.norm();
       S6 midpoint = s1 + 0.5 * s6delta;
-      const bool bmid = LRL_Cell(midpoint).GetValid();
+
+      const LRL_Cell_Degrees celld(midpoint);
+      const bool bmid = celld.GetValid();
+      const bool b5 =
+         (celld[3] + celld[4] + celld[5] - 2.0 * maxNC(celld[3], celld[4], celld[5]))
+         >= 0.0 - 0.00001;
+
       midpoint.SetValid(bmid);
 
       if (bmid) {
