@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <complex>
 #include <cmath>
+#include <regex>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -320,22 +321,8 @@ LRL_ReadLatticeData LRL_ReadLatticeData::CreateLatticeData(const std::string& s)
 }
 
 std::string replaceTabsAndCommas(std::string str) {
-   // Create a new string to store the result.
-   std::string newStr;
-
-   // Iterate through the original string.
-   for (char c : str) {
-      // If the character is a tab or a comma, replace it with a space.
-      if (c == '\t' || c == ',') {
-         newStr += ' ';
-      }
-      else {
-         newStr += c;
-      }
-   }
-
-   // Return the new string.
-   return newStr;
+   std::regex reg("[^a-zA-Z0-9.; ]");
+   return std::regex_replace(str, reg, " ");
 }
 
 
@@ -343,10 +330,8 @@ LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
    m_strCell.clear();
    m_cell.SetValid(false);
    std::getline(std::cin, m_strCell);
-   if (m_strCell.find(',')==std::string::npos || m_strCell.find('\t')==std::string::npos) {
-      const std::string temp = replaceTabsAndCommas(m_strCell);
-      m_strCell = temp;
-   }
+   const std::string temp = replaceTabsAndCommas(m_strCell);
+   m_strCell = temp;
 
    if (m_strCell.length() > 0 && m_strCell[0] == ';') {
       m_incomingSemicolons += "\n" + m_strCell;
