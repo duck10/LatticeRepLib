@@ -1,4 +1,4 @@
-
+﻿
 #include <iostream>
 #include <map>
 
@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
       std::cout << "; Delone lattice type requested " << std::endl;
       ForDeloneInput(DeloneTypes);
    }
-   else if ((g_LatticeTypes.find(name) != std::string::npos) && (name != "")) {
+   else if (name.size()==2 && (g_LatticeTypes.find(name) != std::string::npos) && (name != "")) {
       std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
          GenerateDeloneBase().Select(name);
       std::cout << "; Delone lattice type requested " << std::endl;

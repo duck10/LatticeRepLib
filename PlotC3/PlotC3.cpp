@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
       svgOutput += plotc3;;
    }
 
-   std::cout << "; Graphical output SVG file =" + filename << std::endl;
+   std::cout << "; Graphical output SVG file = " + filename << std::endl;
    c3plot.SendFrameToFile(filename, svgOutput + c3plot.GetFoot());
 }
 
