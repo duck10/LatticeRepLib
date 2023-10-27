@@ -32,7 +32,6 @@ Obviously, these two parameters could be made into input command
 parameters. Values 5 cI would be obvious, but what is 10 15 
 supposed to mean?
 */
-static std::string name = ""; // blank or unrecognized gives all types
 
 template<typename T>
 G6 TryToGetAGoodProjection(const T& pt,
@@ -129,6 +128,8 @@ static const std::string g_Complex("X x");
 
 int main(int argc, char* argv[])
 {
+   static std::string name = ""; // blank or unrecognized gives all types
+
    std::cout << "; Generate cells" << std::endl;
 
    int test = 0;
@@ -138,8 +139,6 @@ int main(int argc, char* argv[])
       if (argc > 2) {
          const std::string strtest = argv[2];
          name = strtest;
-         //const std::string translated = TranslateDeloneToIT(name);
-         //if (translated != "") name = translated;
       }
    }
 
@@ -156,8 +155,6 @@ int main(int argc, char* argv[])
       ForDeloneInput(DeloneTypes);
    }
    else if ((g_Complex.find(name) != std::string::npos) && (name != "")) {
-   //   std::vector<std::shared_ptr<GenerateComplexBase> > ComplexTypes =
-   //      GenerateComplexBase().Select(name);
       std::cout << ";Complex S6 requested " << std::endl;
    //   ForComplexInput(ComplexType);
    }
