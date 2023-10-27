@@ -259,6 +259,10 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
    const std::string strupper = LRL_StringTools::strToupper(s.substr(0, 5));
    std::vector<double> fields = GetFieldsForCellFromString(s);
    if (s[0] == ';') m_incomingSemicolons += "\n" +m_strCell;
+   if (fields.empty() && s.length() != 0 && s[0] != ';') {
+      std::cout << "; input line rejected(E), insufficient data  " << std::endl;
+      return;
+   }
    if (fields.empty() || s.length() == 0 || s[0] == ';') return;
    if (!fields.empty() && fields.size() < 6 && strupper !="RANDO") {
       std::cout << fields.size() << " " << s << std::endl;
