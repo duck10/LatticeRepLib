@@ -201,6 +201,10 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
       m_inputDataType = LRL_StringTools::strToupper(m_inputDataType);
       m_lattice = m_inputDataType[0];
       double onefield;
+      if (m_inputDataType == "RANDOM") {
+         toReturn.emplace_back(m_inputDataType != "RANDOM");
+         return toReturn;
+      }
       while (iss) {
          iss >> onefield;
          if (iss) toReturn.push_back(onefield);
@@ -326,7 +330,7 @@ LRL_ReadLatticeData LRL_ReadLatticeData::CreateLatticeData(const std::string& s)
 }
 
 std::string replaceTabsAndCommas(std::string str) {
-   std::regex reg("[^a-zA-Z0-9.; ]");
+   std::regex reg("-[^a-zA-Z0-9.; ]");
    return std::regex_replace(str, reg, " ");
 }
 
