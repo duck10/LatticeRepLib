@@ -244,40 +244,40 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
    return valid;
 }
 
-void LRL_ReadLatticeData::CellReaderA(const std::string& strInput) {
-   const std::vector<std::string> 
-      fields = LRL_StringTools::SplitBetweenBlanks(strInput);
-
-   if (fields.size() >= 7
-      && !IsLatticeName(fields[0] + " ", vlattice_names)
-      && IsLatticeName(fields[6] + " ", vlattice_names)) {
-      CellReader(fields[6] + " " + strInput);
-   }
-   else {
-      CellReader(strInput);
-   }
-}
+//void LRL_ReadLatticeData::CellReaderA(const std::string& strInput) {
+//   const std::vector<std::string> 
+//      fields = LRL_StringTools::SplitBetweenBlanks(strInput);
+//
+//   if (fields.size() >= 7
+//      && !IsLatticeName(fields[0] + " ", vlattice_names)
+//      && IsLatticeName(fields[6] + " ", vlattice_names)) {
+//      CellReader(fields[6] + " " + strInput);
+//   }
+//   else {
+//      CellReader(strInput);
+//   }
+//}
 
 void LRL_ReadLatticeData::CellReader(const std::string& s) {
 
-   const std::string strupper = LRL_StringTools::strToupper(s.substr(0, 5));
+   //const std::string strupper = LRL_StringTools::strToupper(s.substr(0, 5));
    std::vector<double> fields = GetFieldsForCellFromString(s);
    if (s[0] == ';') m_incomingSemicolons += "\n" +m_strCell;
    if (fields.empty() && s.length() != 0 && s[0] != ';') {
-      std::cout << "; input line rejected(E), insufficient data  " << std::endl;
+      std::cout << "; input line rejected(F)" << std::endl;
       return;
    }
-   if (fields.empty() || s.length() == 0 || s[0] == ';') return;
-   if (!fields.empty() && fields.size() < 6 && strupper !="RANDO") {
-      std::cout << fields.size() << " " << s << std::endl;
-      std::cout << ";input line rejected (C), insufficient data  " << s << std::endl;
-      return;
-   }
+   //if (fields.empty() || s.length() == 0 || s[0] == ';') return;
+   //if (!fields.empty() && fields.size() < 6 && strupper !="RANDO") {
+   //   std::cout << fields.size() << " " << s << std::endl;
+   //   std::cout << ";input line rejected (C), insufficient data  " << s << std::endl;
+   //   return;
+   //}
 
    bool valid = StringToCell(fields);
-   if (fields.empty()) return;
+   //if (fields.empty()) return;
    //std::string::find_first_not_of
-   if (s[0] == ';') m_incomingSemicolons += "\n"+s;
+   //if (s[0] == ';') m_incomingSemicolons += "\n"+s;
    if (!valid || !m_cell.GetValid()) {
       if (s[0] != ';' && (!s.empty()) && s != " ")
          std::cout << ";input line rejected (D), invalid cell (B): " << s << std::endl;
@@ -302,10 +302,10 @@ std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeData(const int see
    return celldata;
 }
 
-std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(const int seed){
+std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimitive(const int seed) {
    std::vector<CellInputData> cellData = ReadAllLatticeData(seed);
-   for ( size_t i=0; i<cellData.size(); ++i ) {
-      if ( cellData[i].GetLattice() != "P") {
+   for (size_t i = 0; i < cellData.size(); ++i) {
+      if (cellData[i].GetLattice() != "P") {
          LRL_Cell cell = LatticeConverter::MakePrimitiveCell(cellData[i].GetLattice(), cellData[i].GetCell());
          cellData[i].SetCell(cell);
          cellData[i].SetLattice("P");
@@ -314,8 +314,8 @@ std::vector<CellInputData> LRL_ReadLatticeData::ReadAllLatticeDataAndMakePrimiti
    return cellData;
 }
 
-LRL_ReadLatticeData::LRL_ReadLatticeData(const int seed )
-: generator(seed) {
+LRL_ReadLatticeData::LRL_ReadLatticeData(const int seed)
+   : generator(seed) {
    S6::SetSeed(seed);
 }
 
@@ -330,23 +330,126 @@ LRL_ReadLatticeData LRL_ReadLatticeData::CreateLatticeData(const std::string& s)
 }
 
 std::string replaceTabsAndCommas(std::string str) {
-   std::regex reg("-[^a-zA-Z0-9.; ]");
+   const  std::regex reg("[^a-zA-Z0-9.; +\-]");
    return std::regex_replace(str, reg, " ");
 }
 
+void Process(const std::string& lattice, const std::vector<std::string>& params) {
+   std::cout << "in Process" << std::endl;
+   std::cout << "lattice symbols " << lattice << std::endl;
+   std::cout << " parameters " << std::endl;
+   std::cout << LRL_ToString(params) << std::endl << std::endl;
+}
+
+bool isNumber(const std::string& s) {
+   const std::regex reg("^-?(?:\d+|\d*\.\d+)([eE][-+]?\d+)?$");
+   return  std::regex_match(s, reg);
+}
+
+using namespace std;
+
+bool is_valid_float(string str) {
+   regex regex("^([-+]?(((\d+)|\d*\.\d+)([eE][-]?\d+)?)|(\d*\.\d+))");
+   return regex_match(str, regex);
+}
+
+bool CheckParameters( std::vector<std::string>::iterator it ) {
+   for (size_t i = 0; i < 6; ++i ) {
+      {
+         std::cout << i << " " << *it << std::endl;
+         if (!is_valid_float(*it))  return false;
+      }
+      ++it;
+   }
+   return true;
+}
+
+void fromBard()
+{
+   std::string str = "10";
+   if (is_valid_float(str)) {
+      std::cout << "The string " << str << " is a valid floating point number." << std::endl;
+   }
+   else {
+      std::cout << "The string " << str << " is not a valid floating point number." << std::endl;
+   }
+}
+
+static const std::string allowedLatticeSymbols("A B C F G H I P R S U V ");
+
+std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
+   //fromBard();
+   if (strcell.empty() || strcell[0] == ';') return ""; // ignore lines starting with semicolon or are empty
+   if (strcell.find_first_not_of(" ") == std::string::npos) return ""; // ignore lines that are only blanks
+
+   const std::string cleaned = LRL_StringTools::strToupper(replaceTabsAndCommas(strcell));
+   if (cleaned.find_first_not_of(" ") == std::string::npos) return "";
+   std::vector<std::string> fields = LRL_StringTools::SplitBetweenBlanks(cleaned);
+
+   if (fields[0] == "RANDOM") return fields[0];
+
+   if (fields.size() < 7) {
+      std::cout << "not enough data" << std::endl;
+      return "";
+   }
+
+   if (allowedLatticeSymbols.find(fields[0]) != std::string::npos &&
+      allowedLatticeSymbols.find(fields[6]) != std::string::npos) {
+      std::cout << "invalid input data" << std::endl;
+      return "";
+   }
+
+   std::string lattice;
+   std::vector<std::string>::iterator it;
+   std::vector<std::string> parameters;
+   if (allowedLatticeSymbols.find(fields[0]) != std::string::npos) {
+      lattice = fields[0];
+      it = fields.begin()+1;
+      //const bool b = CheckParameters(it);
+      //if (!b) {
+      //   std::cout << "invalid cell parameter" << std::endl;
+      //   return "";
+      //}
+      for (size_t i = 1; i < 7; ++i) {
+         parameters.emplace_back(fields[i]);
+      }
+   }
+   else if (parameters.empty() && allowedLatticeSymbols.find(fields[6]) != std::string::npos) {
+      lattice = fields[6];
+      it = fields.begin();
+      //const bool b = CheckParameters(it);
+      //if (!b) {
+      //   std::cout << "invalid cell parameter" << std::endl;
+      //   return "";
+      //}
+      for (size_t i = 0; i < 6; ++i) {
+         parameters.emplace_back(fields[i]);
+      }
+   }
+   else {
+      std::cout << "; no valid lattice type" << std::endl;
+      return "";
+   }
+
+   return lattice + " " + LRL_ToString(parameters);
+
+   Process(lattice, parameters);
+
+}
 
 LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
    m_strCell.clear();
    m_cell.SetValid(false);
    std::getline(std::cin, m_strCell);
-   const std::string temp = replaceTabsAndCommas(m_strCell);
-   m_strCell = temp;
+   //const std::string temp = replaceTabsAndCommas(m_strCell);
+   //m_strCell = temp;
 
-   if (m_strCell.length() > 0 && m_strCell[0] == ';') {
+   /*if (m_strCell.length() > 0 && m_strCell[0] == ';') {
       m_incomingSemicolons += "\n" + m_strCell;
    }
-   else if (std::cin && (LRL_StringTools::strToupper(m_strCell.substr(0, 3)) != std::string("END"))) {
-      CellReaderA(m_strCell);
+   else */if (std::cin && (LRL_StringTools::strToupper(m_strCell.substr(0, 3)) != std::string("END"))) {
+      m_strCell = CellReaderB(m_strCell);
+      CellReader(m_strCell);
    }
    else {
       m_lattice = "EOF";
