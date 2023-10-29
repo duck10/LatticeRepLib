@@ -375,7 +375,7 @@ bool CheckParameters( std::vector<std::string>::iterator it ) {
 //   }
 //}
 
-static const std::string allowedLatticeSymbols("A B C F G H I P R S U V ");
+static const std::string allowedLatticeSymbols("A B C F G H I P R S U V G6 S6 DC DC7U");
 
 std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
    //fromBard();
