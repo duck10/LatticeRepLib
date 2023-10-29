@@ -364,16 +364,16 @@ bool CheckParameters( std::vector<std::string>::iterator it ) {
    return true;
 }
 
-void fromBard()
-{
-   std::string str = "10";
-   if (is_valid_float(str)) {
-      std::cout << "The string " << str << " is a valid floating point number." << std::endl;
-   }
-   else {
-      std::cout << "The string " << str << " is not a valid floating point number." << std::endl;
-   }
-}
+//void fromBard()
+//{
+//   std::string str = "10";
+//   if (is_valid_float(str)) {
+//      std::cout << "The string " << str << " is a valid floating point number." << std::endl;
+//   }
+//   else {
+//      std::cout << "The string " << str << " is not a valid floating point number." << std::endl;
+//   }
+//}
 
 static const std::string allowedLatticeSymbols("A B C F G H I P R S U V ");
 
