@@ -1,0 +1,32 @@
+--- -	2023-10-08 10:36:50.256264496 -0400
++++ lrl_web.m4	2023-10-08 10:34:19.633780556 -0400
+@@ -1,4 +1,7 @@
+-#include <iostream>
++changequote(`[[[',`]]]')dnl
++ifdef([[[cgicpp]]],define([[[prefix]]],[[[std::cout << ]]]))dnl
++define([[[epilogue]]],[[[ << std::endl;]]])dnl 
++ifdef([[[cgicpp]]],[[[#include <iostream>
+ #include <fstream>
+ #include <vector>
+ #include <string>
+@@ -1309,10 +1312,8 @@
+     std::cout << "Updated 5 October 2023." << std::endl;
+     std::cout << "</font>" << std::endl;
+  }
+-
+-
+-
+-<!DOCTYPE HTML>
++]]],
++[[[<!DOCTYPE HTML>
+ <html>
+ <HEAD>
+ 	<meta charset="utf-8">
+@@ -2287,6 +2288,6 @@
+ Updated 5 October 2023.
+ </font>
+ </body>
+-</html>
++</html>]]])
+ 
+ 
