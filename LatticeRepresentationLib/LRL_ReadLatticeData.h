@@ -13,6 +13,7 @@ public:
    LRL_ReadLatticeData CreateLatticeData(const std::string& s);
    std::vector<LRL_ReadLatticeData> ReadLatticeData();
    void CellReaderA(const std::string& s);
+   std::string CellReaderB(std::string& strcell) const;
    void CellReader(const std::string& s);
    void CellReader(const std::string& lattice, const std::string& cell);
    std::vector<double> GetFieldsForCellFromString(const std::string& s);
