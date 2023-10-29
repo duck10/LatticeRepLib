@@ -1,0 +1,976 @@
+<!DOCTYPE HTML>
+<html>
+<HEAD>
+	<meta charset="utf-8">
+	
+ <script  type="text/javascript">
+ const EventListenerMode = {capture: true};
+
+function preventGlobalMouseEvents () {
+  document.body.style['pointer-events'] = 'none';
+  return true;
+}
+
+function restoreGlobalMouseEvents () {
+  document.body.style['pointer-events'] = 'auto';
+  return;
+}
+
+function mousemoveListener (e) {
+  e.stopPropagation ();
+  // do whatever is needed while the user is moving the cursor around
+  return true;
+}
+
+function mouseupListener (e) {
+  restoreGlobalMouseEvents ();
+  document.removeEventListener ('mouseup',   mouseupListener,   EventListenerMode);
+  document.removeEventListener ('mousemove', mousemoveListener, EventListenerMode);
+  e.stopPropagation ();
+  return true;
+}
+
+function captureMouseEvents (e) {
+  preventGlobalMouseEvents ();
+  document.addEventListener ('mouseup',   mouseupListener,   EventListenerMode);
+  document.addEventListener ('mousemove', mousemoveListener, EventListenerMode);
+  e.preventDefault ();
+  e.stopPropagation ();
+  return true;
+}
+
+function twodig(myint) {
+  if (myint<10) {
+    return "0"+myint;
+  } else {
+    return ""+myint;
+  }
+}
+
+function setchaininput(row){
+    let rownum=parseInt(row);
+    if (rownum < 2) {
+      let firstrow=document.getElementById("chain_01");
+      if (!(firstrow.value==="new_input")){
+        alert("Request for data prior to row 1 ignored");
+      }
+      firstrow.value="new_input";
+      document.getElementById("block_01").style="display:inline";
+      document.getElementById("block_01a").style="display:inline";
+      document.getElementById("block_01b").style="display:inline";
+      document.getElementById("block_01c").style="display:inline";
+      return true;
+    } else if (rownum > 10) {
+      alert("Request for data after row 10 ignored");
+      return false;
+    }
+    let priornum=rownum-1;
+    if (document.getElementById("chain_"+twodig(rownum)).value=="chain_input") {
+      document.getElementById("block_"+twodig(priornum)+"c").style="display:inline";
+      document.getElementById("block_"+twodig(rownum)+"b").style="display:none";
+    } else {
+      document.getElementById("block_"+twodig(rownum)+"b").style="display:inline"; 
+    }
+    document.getElementById("block_"+twodig(rownum)).style="display:inline";
+    document.getElementById("block_"+twodig(rownum)+"a").style="display:inline";
+    document.getElementById("block_"+twodig(rownum)+"c").style="display:inline";
+    return true;
+}
+
+function changenumops(){
+  var ii;
+  let mynumops=parseInt(document.getElementById("numops").value);
+  if (mynumops < 1) mynumops=1;
+  if (mynumops > 10) mynumops=10;
+  document.getElementById("numops").value=mynumops.toString();
+  for (ii=1; ii<mynumops+1;ii++) {
+    // alert("enable block_"+twodig(ii));
+    let mychain=document.getElementById("chain_"+twodig(ii)).value;
+    document.getElementById("block_"+twodig(ii)).style="display:inline";
+    document.getElementById("block_"+twodig(ii)+"a").style="display:inline";
+    if (mychain!="chain_input") {
+      document.getElementById("block_"+twodig(ii)+"b").style="display:inline";
+    } else {
+      document.getElementById("block_"+twodig(ii)+"b").style="display:none";
+    }
+    document.getElementById("block_"+twodig(ii)+"c").style="display:inline";
+  }
+  if (mynumops < 10) {
+  for (ii=mynumops+1; ii<11;ii++) {
+    // alert("disable block_"+twodig(ii));
+    document.getElementById("block_"+twodig(ii)).style="display:none";
+    document.getElementById("block_"+twodig(ii)+"a").style="display:none";
+    document.getElementById("block_"+twodig(ii)+"b").style="display:none";
+    document.getElementById("block_"+twodig(ii)+"c").style="display:none";
+  }
+  }
+  return true;
+
+}
+
+function pfloat(pfield){
+    // validate for non-negative float
+    var charsAllowed="0123456789.+";
+    var allowed;
+    var plusfound;
+    var dotfound;
+    plusfound = 0;
+    dotfound = 0;
+    for(var i=0;i<pfield.value.length;i++){
+        allowed=false;
+        for(var j=0;j<charsAllowed.length;j++){
+            if( pfield.value.charAt(i)==charsAllowed.charAt(j) ){ 
+               allowed=true;
+               if (j == 11) {
+                 plusfound++;
+                 allowed=false;
+                 plusfound--;
+                 break;
+               } else if (j == 10) {
+                 dotfound++;
+                 if (dotfound > 1) {
+                   allowed=false;
+                   dotfound--;
+                   break;
+                 }
+               } 
+               break;
+            }
+        }
+        if(allowed==false){ pfield.value = pfield.value.replace(pfield.value.charAt(i),""); i--; }
+    }
+    return true;
+}
+
+function gfloat(field){
+    // validate for float   
+    var charsAllowed="0123456789.+-";
+    var allowed;
+    var plusminusfound;
+    var dotfound;
+    plusminusfound = 0;
+    dotfound = 0;
+    otherfound = 0;
+    for(var i=0;i<field.value.length;i++){       
+        allowed=false;
+        for(var j=0;j<charsAllowed.length;j++){
+            if( field.value.charAt(i)==charsAllowed.charAt(j) ){ 
+               allowed=true;
+               if (j == 11 || j == 12) {
+                 if (otherfound>0 || dotfound>0 || plusminusfound>0) {
+                   allowed=false;
+                 } else {
+                 plusminusfound++;
+                 }
+               } else if (j == 10) {
+                 if (dotfound>0) {
+                   allowed=false;
+                 } else {
+                 dotfound++;
+                 } 
+               } else {
+                 otherfound++;
+               } 
+            }
+        }
+        if(allowed==false){ field.value = field.value.replace(field.value.charAt(i),""); i--; }
+    }
+    return true;
+}
+
+</script>
+
+<TITLE>
+LRL_WEB Lattice Representation Library Tool Web Page
+</TITLE> 
+</HEAD> 
+
+
+<BODY onload="changenumops()">
+<font face="Arial,Helvetica,Times" size="3">
+<hr />
+<center>
+<img src="http://blondie.arcib.org:8083/~yaya/images/dragon1a.gif" />
+<H2> LRL_WEB, Lattice Representation Library Tool Web Page</H2>
+<br /> by
+<br /> Lawrence C. Andrews, Herbert J. Bernstein, Ronin Institute for Independent Scholarship,
+<br /><A HREF=mailto:lawrence.andrews@ronininstitute.org>lawrence.andrews@ronininstitute.org</A>
+<a href=mailto:yayahjb@gmail.com>yayahjb@gmail.com</a><br />
+<FORM method=POST ACTION="http://blondie.arcib.org:8083/~yaya/cgi-bin/lrl_web.cgi">
+<br />
+Assorted tools to do various calculations for crystallographic lattices.
+<br />
+<STRONG>
+Please read the <a href="#notice">NOTICE</a> below before use of this web page
+</STRONG>
+<p>
+<a name="search"></a>
+<INPUT type="submit">
+<INPUT type="reset">
+<br />
+<input type=hidden name="OutputStyle" value="TEXT" />
+<table border=2>
+<tr><td valign=top>
+  <table>
+  <tr>
+  <td colspan=3 align="center">
+  <label for="numops">Number of operation windows: </label>
+  <select name="numops" id="numops" onchange="changenumops()" size="1">
+  <option selected value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="6">6</option>
+  <option value="7">7</option>
+  <option value="8">8</option>
+  <option value="9">9</option>
+  <option value="10">10</option>
+  </select>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_01" style="display:inline"> 
+  <label for="chain_01">Source of data:</label><br/>
+  <select name="chain_01" id="chain_01" size="1" onchange="setchaininput('1')">
+  <option selected value="new_input">use new input</option>
+  <option value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_01a" style="display:inline"> 
+  <label for="operation_01">Select an operation:</label><br/>
+  <select name="operation_01" id="operation_01" size="19">
+  <option value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_01b" style="display:inline"> 
+  <label for="lrl_web_data_01">Input data:</label><br />
+  <textarea name="lrl_web_data_01" id="lrl_web_data_01"  rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_01c" style="display:inline">
+  <br />
+  <label for="lrl_web_output_01">Tool Output:</label><br />
+  <textarea name="lrl_web_output_01" id="lrl_web_output_01" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_02" style="display:none"> 
+  <label for="chain_02">Source of data:</label><br/>
+  <select name="chain_02" id="chain_02" size="1" onchange="setchaininput('2')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_02a" style="display:none"> 
+  <label for="operation_02">Select an operation:</label><br/>
+  <select name="operation_02" id="operation_02" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_02b" style="display:none"> 
+  <label for="lrl_web_data_02">Input data:</label><br />
+  <textarea name="lrl_web_data_02" id="lrl_web_data_02" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_02c" style="display:none">
+  <br />
+  <label for="lrl_web_output_02">Tool Output:</label><br />
+  <textarea name="lrl_web_output_02" id="lrl_web_output_02" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_03" style="display:none"> 
+  <label for="chain_03">Source of data:</label><br/>
+  <select name="chain_03" id="chain_03" size="1" onchange="setchaininput('3')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_03a" style="display:none"> 
+  <label for="operation_03">Select an operation:</label><br/>
+  <select name="operation_03" id="operation_03" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_03b" style="display:none"> 
+  <label for="lrl_web_data_03">Input data:</label><br />
+  <textarea name="lrl_web_data_03" id="lrl_web_data_03" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_03c" style="display:none">
+  <br />
+  <label for="lrl_web_output_03">Tool Output:</label><br />
+  <textarea name="lrl_web_output_03" id="lrl_web_output_03" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_04" style="display:none"> 
+  <label for="chain_04">Source of data:</label><br/>
+  <select name="chain_04" id="chain_04" size="1" onchange="setchaininput('4')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_04a" style="display:none"> 
+  <label for="operation_04">Select an operation:</label><br/>
+  <select name="operation_04" id="operation_04" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_04b" style="display:none"> 
+  <label for="lrl_web_data_04">Input data:</label><br />
+  <textarea name="lrl_web_data_04" id="lrl_web_data_04" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_04c" style="display:none">
+  <br />
+  <label for="lrl_web_output_04">Tool Output:</label><br />
+  <textarea name="lrl_web_output_04" id="lrl_web_output_04" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_05" style="display:none"> 
+  <label for="chain_05">Source of data:</label><br/>
+  <select name="chain_05" id="chain_05" size="1" onchange="setchaininput('5')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_05a" style="display:none"> 
+  <label for="operation_05">Select an operation:</label><br/>
+  <select name="operation_05" id="operation_05" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_05b" style="display:none"> 
+  <label for="lrl_web_data_05">Input data:</label><br />
+  <textarea name="lrl_web_data_05" id="lrl_web_data_05" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_05c" style="display:none">
+  <br />
+  <label for="lrl_web_output_05">Tool Output:</label><br />
+  <textarea name="lrl_web_output_05" id="lrl_web_output_05" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_06" style="display:none"> 
+  <label for="chain_06">Source of data:</label><br/>
+  <select name="chain_06" id="chain_06" size="1" onchange="setchaininput('6')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_06a" style="display:none"> 
+  <label for="operation_06">Select an operation:</label><br/>
+  <select name="operation_06" id="operation_06" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_06b" style="display:none"> 
+  <label for="lrl_web_data_06">Input data:</label><br />
+  <textarea name="lrl_web_data_06" id="lrl_web_data_06" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_06c" style="display:none">
+  <br />
+  <label for="lrl_web_output_06">Tool Output:</label><br />
+  <textarea name="lrl_web_output_06" id="lrl_web_output_06" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_07" style="display:none"> 
+  <label for="chain_07">Source of data:</label><br/>
+  <select name="chain_07" id="chain_07" size="1" onchange="setchaininput('7')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_07a" style="display:none"> 
+  <label for="operation_07">Select an operation:</label><br/>
+  <select name="operation_07" id="operation_07" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_07b" style="display:none"> 
+  <label for="lrl_web_data_07">Input data:</label><br />
+  <textarea name="lrl_web_data_07" id="lrl_web_data_07" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_07c" style="display:none">
+  <br />
+  <label for="lrl_web_output_07">Tool Output:</label><br />
+  <textarea name="lrl_web_output_07" id="lrl_web_output_07" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_08" style="display:none"> 
+  <label for="chain_08">Source of data:</label><br/>
+  <select name="chain_08" id="chain_08" size="1" onchange="setchaininput('8')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_08a" style="display:none"> 
+  <label for="operation_08">Select an operation:</label><br/>
+  <select name="operation_08" id="operation_08" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_08b" style="display:none"> 
+  <label for="lrl_web_data_08">Input data:</label><br />
+  <textarea name="lrl_web_data_08" id="lrl_web_data_08" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_08c" style="display:none">
+  <br />
+  <label for="lrl_web_output_08">Tool Output:</label><br />
+  <textarea name="lrl_web_output_08" id="lrl_web_output_08" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  <tr>
+  <td>
+  <div id="block_09" style="display:none"> 
+  <label for="chain_09">Source of data:</label><br/>
+  <select name="chain_09" id="chain_09" size="1" onchange="setchaininput('9')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_09a" style="display:none"> 
+  <label for="operation_09">Select an operation:</label><br/>
+  <select name="operation_09" id="operation_09" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_09b" style="display:none"> 
+  <label for="lrl_web_data_09">Input data:</label><br />
+  <textarea name="lrl_web_data_09" id="lrl_web_data_09" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_09c" style="display:none">
+  <br />
+  <label for="lrl_web_output_09">Tool Output:</label><br />
+  <textarea name="lrl_web_output_09" id="lrl_web_output_09" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td> 
+  </tr>
+  <tr>
+  <td>
+  <div id="block_10" style="display:none"> 
+  <label for="chain_10">Source of data:</label><br/>
+  <select name="chain_10" id="chain_10" size="1" onchange="setchaininput('10')">
+  <option value="new_input">use new input</option>
+  <option selected value="chain_input">use prior output</option>
+  </select>
+  </div>
+  </td>
+  <td  align=left>
+  <div id="block_10a" style="display:none"> 
+  <label for="operation_10">Select an operation:</label><br/>
+  <select name="operation_10" id="operation_10" size="19">
+  <option selected value="NoOp">Check Input</option>
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdSella"> apply Sella algorithm</option>
+  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
+  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
+  <option value="CmdToG6"> compute G6 version of cells</option>
+  <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </select>
+  </div>
+  </td>
+  <td align=left>
+  <div id="block_10b" style="display:none"> 
+  <label for="lrl_web_data_10">Input data:</label><br />
+  <textarea name="lrl_web_data_10" id="lrl_web_data_10" rows="9" cols="100">p 10 10 10 90 90 90
+  end
+  </textarea>
+  </div>
+  <div id="block_10c" style="display:none">
+  <br />
+  <label for="lrl_web_output_10">Tool Output:</label><br />
+  <textarea name="lrl_web_output_10" id="lrl_web_output_10" rows="9" cols="100">
+  Press submit to process data
+  </textarea>
+  </div>
+  </td>
+  </tr>
+  </table>
+</td>
+<tr>
+<td>
+<center>
+<INPUT type="hidden" NAME="Flush" VALUE="DUMMY">
+<INPUT type="submit">
+<INPUT type="reset">
+</Form> <hr>
+</center>
+</td>
+</tr>
+<tr>
+<td>
+<a name="notice"><H2 align="center">NOTICE</H2></a>
+<center>
+<table border=0>
+<tr><td width=160>
+<font size="2">
+<P>
+You may redistribute this program under the terms of the <a href="gpl.txt">GPL</a>.
+<p>
+Alternatively you may redistribute the functions
+and subroutines of this program as an API under the
+terms of the <a href="lgpl.txt">LGPL</a>.
+<p>
+</td>
+<td>
+<div style="width:800px;height:150px;overflow:scroll;border:2px solid #0000FF;">
+<font size="2">
+<table border=2>
+<tr>
+<th align="center">GPL NOTICES</th>
+<th align="center">LGPL NOTICES</th></tr>
+<tr><td><font size="2">
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of
+(the License, or (at your option) any later version.
+<p>
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+<p>
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+02111-1307  USA</font>
+</td>
+<td><font size="2">
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+<p>
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+<p>
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free
+Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
+MA  02110-1301  USA</font>
+</td>
+</tr>
+</table>
+
+
+<P>
+<STRONG>
+
+Some of the software and documents included within this software package are the intellectual property of 
+various parties, and placement in this package does not in anyway imply that any such rights have in any 
+way been waived or diminished.
+
+<P>
+
+With respect to any software or documents for which a copyright exists, ALL RIGHTS ARE RESERVED TO THE 
+OWNERS OF SUCH COPYRIGHT.
+
+<P>
+
+Even though the authors of the various documents and software found here have made a good faith effort to 
+ensure that the documents are correct and that the software performs according to its documentation, and 
+we would greatly appreciate hearing of any problems you may encounter, the programs and documents any 
+files created by the programs are provided **AS IS** without any warrantee as to correctness, 
+merchantability or fitness for any particular or general use.
+
+<P>
+
+THE RESPONSIBILITY FOR ANY ADVERSE CONSEQUENCES FROM THE USE OF PROGRAMS OR DOCUMENTS OR ANY FILE OR FILES 
+CREATED BY USE OF THE PROGRAMS OR DOCUMENTS LIES SOLELY WITH THE USERS OF THE PROGRAMS OR DOCUMENTS OR 
+FILE OR FILES AND NOT WITH AUTHORS OF THE PROGRAMS OR DOCUMENTS.
+
+</STRONG>
+</font>
+</div>
+</td>
+</tr>
+</table>
+</center>
+<P>
+<hr>
+</font>
+<a name="source"></a>
+<H2>Access to the source of LRL_WEB</H2>
+
+<p>
+<h2>History</h2>
+<p>Human fascination with crystals has a long history. 105,000 years ago, someone had a collection 
+of calcite crystals (Iceland spar) <a href="#Wilkins2021">[Wilkins <i>et al.</i> 2021]</a>. 
+Theophrastus (ca. 372-287 B.C.), a 
+student of Plato and successor to Aristotle, wrote the first known treatise on gems (“On Stones”) 
+<a href="#Wikipedia2022">[Wikipedia contributors 2022]</a>.
+
+Figure 1 notes a few key events in cataloging crystal properties. We start with <a href="#Kepler1611">[Kepler 1611]</a> 
+(translated in <a href="#Kepler1966">[Kepler <i>et al.</i> 1966]) and Steno (see <a href="#Authier2013">[Authier 2013]</a> who conjectured on the structures 
+of crystals. <a name="Hauey1800">[Ha&uuml;y 1800]</a> created the first catalog of minerals.
+<p>
+<center>
+<img src=/~yaya/images/timeline.jpg />
+<p>
+Fig. 1. Some key dates in the history of modern crystallography
+</center>
+<p>
+
+<h2>References to Sources for Information about the Calculations</h2>
+<ol>
+<li>Check Input: simply check the input for errors</li>
+<li>compute Selling-reduced primitive cells: Delone/Delaunay/Selling reduction <a href="#Delaunay1933">[Delaunay 1933]</a>
+<a href="#Delone1975">[Delone <i>et al.</i> 1975]</a> <a href="#Andrews2019a">[Andrews <i>et al.</i> 2019a]</a></li>
+<li>compute NCDist and CS6Dist distances <a href="#Andrews2014">[Andrews and Bernstein 2014]</a>
+<a href="#Andrews2019b">[Andrews <i>et al.</i> 2019b]</a></li>
+<li>apply Lattice Matching algorithm to listed cells <a href="#Mighell2002">[Mighell 2002]</a>
+<a href="#Andrews2021">[Andrews and Bernstein 2021]</a></li>
+<li>compute Niggli-reduced primitive cells <a href="#Niggli1928">[Niggli 1928]</a></li>
+<li>compute path between pairs of cells
+<a href="#Andrews2023a">[Andrews and Bernstein 2023a]</a></li>
+<li>compute perturbed versions of input cells <a href="#Andrews2022">[Andrews and Bernstein 2022]</a></li>
+<li>apply S6 reflections to input cells <a href="#Andrews2019b">[Andrews <i>et al.</i> 2019b]</a></li>
+<li>apply Sella algorithm <a href="#Andrews2023b">[Andrews <i>et al.</i> 2023b]</a></li>
+<li>compute Bravais tetrahedron (B4) <a href="#Delone1975">[Delone <i>et al.</i> 1975]</a></li>
+<li>compute Selling-reduced complex cell presentation (C3) <a href="#Andrews2019b">[Andrews <i>et al.</i> 2019b]</li>
+<li>compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</li>
+<li>compute raw Dirichlet cells (DC13)</li>
+<li>computed sorted Dirichlet cells (DC) <a href=#Andrews2021>[Andrews and Bernstein 2021]</li>
+<li>compute G6 version of cells (G6) <a href=#Andrews1988>[Andrews and Bernstein 1988]</a></li>
+<li>compute Selling-reduced cells (S6)</li>
+<li>compute unsorted Dirichlet cells (dc7unsrt) <a href="Bernstein2023">[Bernstein <i>et al.</i> 2023]</a></li>
+<li>compute volumes of listed cells</li>
+</ol>
+
+<p>
+<a name="references"></a>
+<h2>References</h2>
+<p>
+<a name="Andrews1988">[Andrews and Bernstein 1988]</a> L. C. Andrews and H. J. Bernstein (1988) Lattices and reduced cells as points in 
+6-space and selection of Bravais lattice type by projections. Acta Cryst., A44:6 1009 -- 1018.<br />
+<p>
+<a name="Andrews2014">[Andrews and Bernstein 2014]</a> L. C. Andrews and H. J. Bernstein (2014). 
+The geometry of Niggli reduction: BGAOL–embedding Niggli reduction and analysis of boundaries.
+J. Appl. Cryst., 47(1), 346 -- 359.
+<p>
+<a name="Andrews2021">[Andrews and Bernstein 2021]</a> L. C. Andrews and H. J. Bernstein (2021). 
+DC 7, a very efficient lattice comparison metric. Acta Cryst. A77(a2), C809.
+<p>
+<a name="Andrews2022">[Andrews and Bernstein 2022]</a> L. C. Andrews and H. J. Bernstein (2022).
+Generating random unit cells.  J. Appl. Cryst. 55(4) 782 -- 786.
+<p>
+<a name="Andrews2023a">[Andrews and Bernstein 2023a]</a> L. C. Andrews and H. J. Bernstein (2023).  
+The Follower algorithm and a program using it to explore spaces, Cambridge Open Engage preprint
+<a href=
+"https://web.archive.org/web/20230308145808id_/https://www.cambridge.org/engage/api-gateway/coe/assets/orp/resource/item/63f41c579da0bc6b3344e7f3/original/the-follower-algorithm-and-a-program-using-it-to-explore-spaces.pdf">
+https://web.archive.org/web/20230308145808id_/https://www.cambridge.org/engage/api-gateway/coe/assets/orp/resource/item/63f41c579da0bc6b3344e7f3/original/the-follower-algorithm-and-a-program-using-it-to-explore-spaces.pdf</a>
+<p>
+<a name="Andrews2019a">[Andrews <i>et al.</i> 2019a]</a> L. C. Andrews, H. J. Bernstein, H. J. and N. K. Sauter (2019).
+Selling reduction versus Niggli reduction for crystallographic lattices. Acta Cryst.  A75, 115 -- 120.
+<p>
+<a name="Andrews2019b">[Andrews <i>et al.</i> 2019b]</a> L. C. Andrews, H. J. Bernstein and N. K.Sauter (2019).
+A space for lattice representation and clustering. Acta Cryst. A75(3), 593 -- 599. 
+<p>
+<a name="Andrews2023b">[Andrews <i>et al.</i> 2023b]</a> L. C. Andrews, H. J. Bernstein and N. K. Sauter (2023).
+SELLA - A Program for Determining Bravais Lattice Types. arXiv preprint
+<a href="https://arxiv.org/pdf/2303.03122.pdf">
+https://arxiv.org/pdf/2303.03122.pdf</a>.
+<p>
+<a name="Authier2013">[Authier 2013]</a> A. Authier  (2013). Early days of X-ray crystallography. OUP Oxford.
+<p>
+<a name="Bernstein2023">[Bernstein <i>et al.</i> 2023]</a> H. J. Bernstein, L. C. Andrews and M. Xerri (2023).
+An invertible seven-dimensional Dirichlet cell characterization of lattices. Acta Cryst. A79(4), 369 -- 380.
+<p>
+<a name="Delaunay1933">[Delaunay 1933]</a> B. N. Delaunay (1933).
+Neue Darstellung der geometrischen Kristallographie: Erste Abhandlung.
+ Z. Krist. 84, 109 -- 149.
+<p>
+<a name="Delone1975">[Delone <i>et al.</i> 1975]</a> B. N. Delone, R. V. Galiulin and M. I. Shtogrin, (1975).
+On the Bravais types of lattices.
+ J. Sov. Math. 4(1), 79 -- 156.
+<p>
+<a name="Hauey1800">[Ha&uuml;y 1800]</a>  R. J. Ha&uuml;y (1800). Addition au m&eacute;moire sur l’arragonite: 
+ins&eacute;r&eacute; dans le tome XI des annnales (p. 241 et suiv.).
+<p>
+<a name="Kepler1611">[Kepler 1611]</a> Kepler, J. (1611). Strena Seude Niue Sexangula. Godefridum Tampach.
+<p>
+<a name="Kepler1966">[Kepler <i>et al.</i> 1966]</a> J. Kepler,C. G. Hardie, B. J. Mason and L. L. Whyte  (1966). 
+The Six-cornered Snowflake.[Edited and Translated by Colin Hardie. With Essays by L. L. Whyte and B. J. Mason. 
+With Illustrations.] Lat. & Eng. Clarendon Press.
+<p>
+<a name="Mighell2002">[Mighell 2002]</a> A. D. Mighell (2002).
+Lattice Matching (LM) -- Prevention of Inadvertent Duplicate Publications of Crystal Structures.
+J. Res. Natl. Inst. Stand. Technol. 107(5), 425 – 430.
+<p>
+<a name="Niggli1928">[Niggli 1928]</a> P. Niggli (1928). Krystallographische und Strukturtheoretische Grundbegriffe, 
+Handbuch der Experimentalphysik, Vol. 7, part 1. Akademische Verlagsgesellschaft, Leipzig.
+<p>
+<a name="Wikipedia2022">[Wikipedia contributors 2022]</a> Wikipedia contributors, (2022). Theophrastus — Wikipedia, the 
+free encyclopedia. [Online; accessed 17-October-2022]. https://en.wikipedia.org/w/index.php?title=Theophrastus&oldid=1114534722
+<p>
+<a name="Wilkins2021">[Wilkins <i>et al.</i> 2021]</a> J. Wilkins, B. J. Schoville, R. Pickering, L. Gliganic, B. Collins,
+K. S.  Brown, J. von der Meden, W. Khumalo, M. C. Meyer, S. Maape, and A. F. Blackwood,  2021. Innovative 
+Homo sapiens behaviours 105,000 years ago in a wetter Kalahari. Nature, 592(7853), 248 -- 252.
+<p>
+<a name="Zimmermann1985">[Zimmermann and Burzlaff 1985]</a> H. Zimmermann and H. Burzlaff. DELOS A computer program for the 
+determination of a unique conventional cell. Zeitschrift f&uuml;r Kristallographie, 170:241 246, 1985.
+
+<p>
+<hr />
+Updated 5 October 2023.
+</font>
+</body>
+</html>
+
+
