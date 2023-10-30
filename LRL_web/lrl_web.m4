@@ -961,6 +961,9 @@ int main(int argc,
     std::cout << "  </td>" << std::endl;
     std::cout << "  </tr>" << std::endl;
     std::string currentoutput=string("");
+    char * prevoutbuf = (char *)malloc(1);
+    size_t prevoutbuflen = 1;
+    prevoutbuf[0] = 0;
     for (numop=1; numop <=NUMOPS_MAX; numop++) {
       std::string chain;
       std::string operation;
@@ -980,10 +983,11 @@ int main(int argc,
       }
       if (chain.compare("new_input")==0 || numop < 2) {
         lrl_web_data_iter = formData.getElement("lrl_web_data_"+twodig_array[numop]);
+        lrl_web_data_data = lrl_web_data_iter->getValue();
       } else {
         lrl_web_data_iter = formData.getElement("lrl_web_output_"+twodig_array[numop-1]);
+        lrl_web_data_data = std::string(prevoutbuf);
       }
-      lrl_web_data_data = lrl_web_data_iter->getValue();
       std::string at=std::string("");
       std::string path=std::string(tmp_lrl_web+"/lrl_web_data_"+twodig_array[numop]);
       if(string_to_file(at.c_str(), path.c_str(), lrl_web_data_data.c_str())) exit(-1);
@@ -1091,18 +1095,26 @@ int main(int argc,
         << std::endl;
       string processed_output=string(std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/do_exec_to_buffer.bash")+" "+lrl_web_output);
       if (outlen > 0) {
+        size_t ip;
         char outputbuf[outlen+1];
         do_exec_to_buffer(processed_output.c_str(),outputbuf,outlen);
         outputbuf[outlen]=0;
         std::cout << std::string(outputbuf) << std::endl;
         std::cout << "end" << std::endl;
+        if (prevoutbuflen > 0 && prevoutbuf ) {
+           free(prevoutbuf);
+        }
+        prevoutbuf=(char*)malloc(outlen+1);
+        for (ip=0; ip<outlen+1; ip++) prevoutbuf[ip]=outputbuf[ip];
+        prevoutbuflen = outlen+1;
       }
       std::cout << "  </textarea>" << std::endl;
       //std::cout << "<tr><td colspan=\"3\">"+processed_output+"</td></tr>"<<std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  </tr>" << std::endl;
-   }
+    }
+    if (prevoutbuflen > 0 && prevoutbuf) free(prevoutbuf);
 
     std::cout << "    </table>" << std::endl;
     std::cout << "</td>" << std::endl;
@@ -1342,7 +1354,7 @@ int main(int argc,
     std::cout << "" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 5 October 2023." << std::endl;
+    std::cout << "Updated 29 October 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
 ]]],
