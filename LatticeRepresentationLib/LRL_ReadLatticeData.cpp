@@ -330,7 +330,7 @@ LRL_ReadLatticeData LRL_ReadLatticeData::CreateLatticeData(const std::string& s)
 }
 
 std::string replaceTabsAndCommas(std::string str) {
-   const  std::regex reg("[^a-zA-Z0-9.; +\-]");
+   const  std::regex reg("[^a-zA-Z0-9.; +-]");
    return std::regex_replace(str, reg, " ");
 }
 
@@ -349,14 +349,14 @@ bool isNumber(const std::string& s) {
 using namespace std;
 
 bool is_valid_float(string str) {
-   regex regex("^([-+]?(((\d+)|\d*\.\d+)([eE][-]?\d+)?)|(\d*\.\d+))");
+   regex regex("^([-+]?((([0-9]+)|[0-9]*\.([0-9]+)?)([\e?\E][-+]?[0-9]+)?)|([0-9]*\.[0-9]+))");
    return regex_match(str, regex);
 }
 
 bool CheckParameters( std::vector<std::string>::iterator it ) {
    for (size_t i = 0; i < 6; ++i ) {
       {
-         std::cout << i << " " << *it << std::endl;
+         //std::cout << i << " " << *it << std::endl;
          if (!is_valid_float(*it))  return false;
       }
       ++it;
@@ -375,7 +375,7 @@ bool CheckParameters( std::vector<std::string>::iterator it ) {
 //   }
 //}
 
-static const std::string allowedLatticeSymbols("A B C F G H I P R S U V G6 S6 DC DC7U");
+static const std::string allowedLatticeSymbols("A B C F G H I P R S U V G6 S6 DC DC7U U DU");
 
 std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
    //fromBard();
@@ -405,11 +405,11 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
    if (allowedLatticeSymbols.find(fields[0]) != std::string::npos) {
       lattice = fields[0];
       it = fields.begin()+1;
-      //const bool b = CheckParameters(it);
-      //if (!b) {
-      //   std::cout << "invalid cell parameter" << std::endl;
-      //   return "";
-      //}
+      const bool b = CheckParameters(it);
+      if (!b) {
+         std::cout << "; invalid cell parameter" << std::endl;
+         return "";
+      }
       for (size_t i = 1; i < 7; ++i) {
          parameters.emplace_back(fields[i]);
       }
@@ -417,11 +417,11 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
    else if (parameters.empty() && allowedLatticeSymbols.find(fields[6]) != std::string::npos) {
       lattice = fields[6];
       it = fields.begin();
-      //const bool b = CheckParameters(it);
-      //if (!b) {
-      //   std::cout << "invalid cell parameter" << std::endl;
-      //   return "";
-      //}
+      const bool b = CheckParameters(it);
+      if (!b) {
+         std::cout << "invalid cell parameter" << std::endl;
+         return "";
+      }
       for (size_t i = 0; i < 6; ++i) {
          parameters.emplace_back(fields[i]);
       }
