@@ -392,12 +392,28 @@ int main(int argc,
 
     std::cout << "<hr />" << std::endl;
     std::cout << "<center>" << std::endl;
-    std::cout << "<img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/dragon1a.gif\" />" <<std::endl;
+    std::cout << "<table border=0>" <<std::endl;
+    std::cout << "<tr>" <<std::endl;
+    std::cout << "<td align=left valign=top><a name=\"celticknots\"><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/leftcorner.gif\" /></a></td>" <<std::endl;
+    std::cout << "<td width=150>&nbsp;</td>" <<std::endl;
+    std::cout << "<td align=center><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/dragon1a.gif\" /></td>" <<std::endl;
+    std::cout << "<td width=150>&nbsp;</td>" <<std::endl;
+    std::cout << "<td align=right valign=top><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/rightcorner.gif\" /></td>" <<std::endl;
+    std::cout << "</tr>" <<std::endl;
+    std::cout << "</table>" <<std::endl;
     std::cout << h2(" LRL_WEB, Lattice Representation Library Tool Web Page") << std::endl;
     std::cout << "<br /> by" << std::endl;
     std::cout << "<br /> Lawrence C. Andrews, Herbert J. Bernstein, Ronin Institute for Independent Scholarship," << std::endl;
     std::cout << "<br /><A HREF=mailto:lawrence.andrews@ronininstitute.org>lawrence.andrews@ronininstitute.org</A>" << std::endl;
     std::cout << "<a href=mailto:yayahjb@gmail.com>yayahjb@gmail.com</a><br />" << std::endl;
+    std::cout << "<P>" << std::endl;
+    std::cout << "<tr>" << std::endl;
+    std::cout << "<td colspan=3 align=center><font size=\"-1\">" << std::endl;
+    std::cout << "<a href=\"#timeline\">Timeline image</a> by Elizabeth Kincaid, Elizabeth Kincaid Watercolors, <br />" << std::endl;
+    std::cout << "<a href=\"#celticknot\">Celtic knots</a> by Susan Jones Davis, Blue Seahorse Studio, <br />" << std::endl;
+    std::cout << "Sleeping Dragon line art image by Gordon Dylan Johnson, " << std::endl;
+    std::cout << "<a href=\"https://openclipart.org/detail/226147/sleeping-dragon-line-art\">https://openclipart.org/detail/226147/sleeping-dragon-line-art</a></font></td>" << std::endl;
+    std::cout << "</tr>" << std::endl;
     xactstr=std::string("<FORM method=POST ACTION=\"http://"+LRL_WEB_HOST+"/~");
     xactstr+=LRL_WEB_USER;
     xactstr+=std::string("/cgi-bin/lrl_web.cgi\">");
@@ -938,6 +954,9 @@ int main(int argc,
     std::cout << "  </td>" << std::endl;
     std::cout << "  </tr>" << std::endl;
     std::string currentoutput=string("");
+    char * prevoutbuf = (char *)malloc(1);
+    size_t prevoutbuflen = 1;
+    prevoutbuf[0] = 0;
     for (numop=1; numop <=NUMOPS_MAX; numop++) {
       std::string chain;
       std::string operation;
@@ -957,10 +976,11 @@ int main(int argc,
       }
       if (chain.compare("new_input")==0 || numop < 2) {
         lrl_web_data_iter = formData.getElement("lrl_web_data_"+twodig_array[numop]);
+        lrl_web_data_data = lrl_web_data_iter->getValue();
       } else {
         lrl_web_data_iter = formData.getElement("lrl_web_output_"+twodig_array[numop-1]);
+        lrl_web_data_data = std::string(prevoutbuf);
       }
-      lrl_web_data_data = lrl_web_data_iter->getValue();
       std::string at=std::string("");
       std::string path=std::string(tmp_lrl_web+"/lrl_web_data_"+twodig_array[numop]);
       if(string_to_file(at.c_str(), path.c_str(), lrl_web_data_data.c_str())) exit(-1);
@@ -1068,18 +1088,26 @@ int main(int argc,
         << std::endl;
       string processed_output=string(std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/do_exec_to_buffer.bash")+" "+lrl_web_output);
       if (outlen > 0) {
+        size_t ip;
         char outputbuf[outlen+1];
         do_exec_to_buffer(processed_output.c_str(),outputbuf,outlen);
         outputbuf[outlen]=0;
         std::cout << std::string(outputbuf) << std::endl;
         std::cout << "end" << std::endl;
+        if (prevoutbuflen > 0 && prevoutbuf ) {
+           free(prevoutbuf);
+        }
+        prevoutbuf=(char*)malloc(outlen+1);
+        for (ip=0; ip<outlen+1; ip++) prevoutbuf[ip]=outputbuf[ip];
+        prevoutbuflen = outlen+1;
       }
       std::cout << "  </textarea>" << std::endl;
       //std::cout << "<tr><td colspan=\"3\">"+processed_output+"</td></tr>"<<std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  </tr>" << std::endl;
-   }
+    }
+    if (prevoutbuflen > 0 && prevoutbuf) free(prevoutbuf);
 
     std::cout << "    </table>" << std::endl;
     std::cout << "</td>" << std::endl;
@@ -1190,6 +1218,15 @@ int main(int argc,
     std::cout << "<a name=\"source\"></a>" << std::endl;
     std::cout << "<H2>Access to the source of LRL_WEB</H2>" << std::endl;
     std::cout << "" << std::endl;
+    std::cout << "This open sorce software is maintained on github:" << std::endl;
+    std::cout << "<p>" << std::endl;
+    std::cout << "<center>" << std::endl;
+    std::cout << "<a href=\"http://github.com/duck10/LatticeRepLib\">http://github.com/duck10/LatticeRepLib</a>" << std::endl;
+    std::cout << "</center>" << std::endl;
+    std::cout << "<p>" << std::endl;
+    std::cout << "If you are interested in contributing, please make your own fork and writeup an issue when" << std::endl;
+    std::cout << "you think you have something to suggest for a pull request." << std::endl;
+    std::cout << "" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<h2>History</h2>" << std::endl;
     std::cout << "<p>Human fascination with crystals has a long history. 105,000 years ago, someone had a collection " << std::endl;
@@ -1203,7 +1240,7 @@ int main(int argc,
     std::cout << "of crystals. <a name=\"Hauey1800\">[Ha&uuml;y 1800]</a> created the first catalog of minerals." << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<center>" << std::endl;
-    std::cout << "<img src=/~yaya/images/timeline.jpg />" << std::endl;
+    std::cout << "<a name=\"timeline\"><img src=/~yaya/images/timeline.jpg /></a>" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "Fig. 1. Some key dates in the history of modern crystallography" << std::endl;
     std::cout << "</center>" << std::endl;
@@ -1310,7 +1347,7 @@ int main(int argc,
     std::cout << "" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 5 October 2023." << std::endl;
+    std::cout << "Updated 29 October 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
 
