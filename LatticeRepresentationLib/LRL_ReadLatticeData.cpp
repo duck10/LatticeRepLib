@@ -346,11 +346,9 @@ bool isNumber(const std::string& s) {
    return  std::regex_match(s, reg);
 }
 
-using namespace std;
-
-bool is_valid_float(string str) {
-   regex regex("^([-+]?((([0-9]+)|[0-9]*\\.([0-9]+)?)([e?E][-+]?[0-9]+)?)|([0-9]*\\.[0-9]+))");
-   return regex_match(str, regex);
+bool is_valid_float(const std::string str) {
+   const std::regex regex("^([-+]?((([0-9]+)|[0-9]*\\.([0-9]+)?)([e?E][-+]?[0-9]+)?)|([0-9]*\\.[0-9]+))");
+   return std::regex_match(str, regex);
 }
 
 bool CheckParameters( std::vector<std::string>::iterator it ) {
@@ -414,6 +412,8 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
       for (size_t i = 1; i < 7; ++i) {  //LCA fix for type DC7u
          parameters.emplace_back(fields[i]);
       }
+      return lattice + " " + LRL_ToString(parameters);
+
    }
    else if (parameters.empty() && allowedLatticeSymbols.find(fields[6]) != std::string::npos) {  //LCA fix for type DC7u
       lattice = fields[6];  //LCA fix for type DC7u
