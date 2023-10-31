@@ -209,7 +209,7 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
          iss >> onefield;
          if (iss) toReturn.push_back(onefield);
       }
-      if (toReturn.size() < 6 && m_inputDataType != "RANDOM") {
+      if (toReturn.size() < 6 && m_inputDataType != "RANDOM") {  //LCA fix for type DC7u
          toReturn.clear();
          //if ( m_lattice != ";" && (!s.empty()) && s != " ")
          //   std::cout << ";input line rejected, invalid cell (A): " << s << std::endl;
@@ -342,19 +342,19 @@ void Process(const std::string& lattice, const std::vector<std::string>& params)
 }
 
 bool isNumber(const std::string& s) {
-   const std::regex reg("^-?(?:\d+|\d*\.\d+)([eE][-+]?\d+)?$");
+   const std::regex reg("^-?(?:[0-9]+|[0-9]*\\.[0-9]+)([eE][-+]?[0-9]+)?$");
    return  std::regex_match(s, reg);
 }
 
 using namespace std;
 
 bool is_valid_float(string str) {
-   regex regex("^([-+]?((([0-9]+)|[0-9]*\.([0-9]+)?)([\e?\E][-+]?[0-9]+)?)|([0-9]*\.[0-9]+))");
+   regex regex("^([-+]?((([0-9]+)|[0-9]*\\.([0-9]+)?)([e?E][-+]?[0-9]+)?)|([0-9]*\\.[0-9]+))");
    return regex_match(str, regex);
 }
 
 bool CheckParameters( std::vector<std::string>::iterator it ) {
-   for (size_t i = 0; i < 6; ++i ) {
+   for (size_t i = 0; i < 6; ++i ) {  //LCA fix for type DC7u
       {
          //std::cout << i << " " << *it << std::endl;
          if (!is_valid_float(*it))  return false;
@@ -394,12 +394,13 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
    }
 
    if (allowedLatticeSymbols.find(fields[0]) != std::string::npos &&
-      allowedLatticeSymbols.find(fields[6]) != std::string::npos) {
+      allowedLatticeSymbols.find(fields[6]) != std::string::npos) {  //LCA fix for type DC7u
       std::cout << "invalid input data" << std::endl;
       return "";
    }
 
    std::string lattice;
+   size_t latticeFields;
    std::vector<std::string>::iterator it;
    std::vector<std::string> parameters;
    if (allowedLatticeSymbols.find(fields[0]) != std::string::npos) {
@@ -410,19 +411,19 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
          std::cout << "; invalid cell parameter" << std::endl;
          return "";
       }
-      for (size_t i = 1; i < 7; ++i) {
+      for (size_t i = 1; i < 7; ++i) {  //LCA fix for type DC7u
          parameters.emplace_back(fields[i]);
       }
    }
-   else if (parameters.empty() && allowedLatticeSymbols.find(fields[6]) != std::string::npos) {
-      lattice = fields[6];
+   else if (parameters.empty() && allowedLatticeSymbols.find(fields[6]) != std::string::npos) {  //LCA fix for type DC7u
+      lattice = fields[6];  //LCA fix for type DC7u
       it = fields.begin();
       const bool b = CheckParameters(it);
       if (!b) {
          std::cout << "invalid cell parameter" << std::endl;
          return "";
       }
-      for (size_t i = 0; i < 6; ++i) {
+      for (size_t i = 0; i < 6; ++i) {  //LCA fix for type DC7u
          parameters.emplace_back(fields[i]);
       }
    }
