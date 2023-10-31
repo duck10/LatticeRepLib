@@ -252,38 +252,53 @@ std::string FormatCellData(
 {
    std::string inputText;
 
+ //  inputText +=
+ //      "<text x=\"700\" y=\"235\" font-size=\"20\" >S6 Length:  "+
+	//LRL_ToString(sqrt(reducedCell.norm())) +
+ //     " </text>\n";
+
+
+
+ //  inputText +=
+ //     "<text x=\"700\" y=\"325\" font-size=\"20\" >INPUT:  </text>\n"
+ //     "<text x=\"720\" y=\"350\" font-size=\"12\" >" +
+ //     input.GetStrCell() + "</text>\n" +
+ //     "<text x=\"720\" y=\"375\" font-size=\"12\" >" +
+ //     LRL_ToString("Cell ", LRL_Cell_Degrees(input.GetCell())) + "</text>\n" +
+ //     "<text x=\"720\" y=\"400\" font-size=\"12\" >" +
+ //     LRL_ToString("G6 ", G6(LRL_Cell_Degrees(input.GetCell()))) + "</text>\n" +
+ //     "<text x=\"720\" y=\"425\" font-size=\"12\" >" +
+ //     LRL_ToString("S6 ",S6(LRL_Cell_Degrees(input.GetCell()))) + "</text>\n";
+
+ //
+ //
+ //  inputText +=
+ //     "<text x=\"700\" y=\"450\" font-size=\"20\" >SELLING REDUCED:  </text>\n"
+ //     "<text x=\"720\" y=\"475\" font-size=\"12\" >" +
+ //     LRL_ToString("Cell ", LRL_Cell_Degrees(reducedCell)) + "</text>\n" +
+ //     "<text x=\"720\" y=\"500\" font-size=\"12\" >" +
+ //     LRL_ToString("G6 ", G6((reducedCell))) + "</text>\n" +
+ //     "<text x=\"720\" y=\"525\" font-size=\"12\" >" +
+ //     LRL_ToString("S6 ", S6((reducedCell))) + "</text>\n";
+ //
+ //  std::cout << inputText << std::endl;
    inputText +=
-       "<text x=\"700\" y=\"235\" font-size=\"20\" >S6 Length:  "+
-	LRL_ToString(sqrt(reducedCell.norm())) +
-      " </text>\n";
+      "INPUT:\n" +
+      input.GetStrCell() + "\n" +
+      LRL_ToString("Cell ", LRL_Cell_Degrees(input.GetCell())) + "\n" +
+      LRL_ToString("G6 ", G6(LRL_Cell_Degrees(input.GetCell()))) + "\n" +
+      LRL_ToString("S6 ",S6(LRL_Cell_Degrees(input.GetCell()))) + "\n";
 
 
 
    inputText +=
-      "<text x=\"700\" y=\"325\" font-size=\"20\" >INPUT:  </text>\n"
-      "<text x=\"720\" y=\"350\" font-size=\"12\" >" +
-      input.GetStrCell() + "</text>\n" +
-      "<text x=\"720\" y=\"375\" font-size=\"12\" >" +
-      LRL_ToString("Cell ", LRL_Cell_Degrees(input.GetCell())) + "</text>\n" +
-      "<text x=\"720\" y=\"400\" font-size=\"12\" >" +
-      LRL_ToString("G6 ", G6(LRL_Cell_Degrees(input.GetCell()))) + "</text>\n" +
-      "<text x=\"720\" y=\"425\" font-size=\"12\" >" +
-      LRL_ToString("S6 ",S6(LRL_Cell_Degrees(input.GetCell()))) + "</text>\n";
+      "\nSELLING REDUCED:\n" +
+      LRL_ToString("Cell ", LRL_Cell_Degrees(reducedCell)) + "\n" +
+      LRL_ToString("G6 ", G6((reducedCell))) + "\n" +
+      LRL_ToString("S6 ", S6((reducedCell))) + "\n";
 
- 
- 
-   inputText +=
-      "<text x=\"700\" y=\"450\" font-size=\"20\" >SELLING REDUCED:  </text>\n"
-      "<text x=\"720\" y=\"475\" font-size=\"12\" >" +
-      LRL_ToString("Cell ", LRL_Cell_Degrees(reducedCell)) + "</text>\n" +
-      "<text x=\"720\" y=\"500\" font-size=\"12\" >" +
-      LRL_ToString("G6 ", G6((reducedCell))) + "</text>\n" +
-      "<text x=\"720\" y=\"525\" font-size=\"12\" >" +
-      LRL_ToString("S6 ", S6((reducedCell))) + "</text>\n";
- 
- 
- 
-   return inputText;
+   std::cout << inputText << std::endl;
+   return std::string();
 }
 
 bool BravaisHeirarchy::CheckOneBravaisChain(
