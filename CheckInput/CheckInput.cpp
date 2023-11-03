@@ -13,4 +13,8 @@ int main()
       std::cout << inputList[i].GetLattice() << ""
          << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
    }
+
+   if (inputList.empty()) {
+      std::cout << " no valid data found " << std::endl;
+   }
 }

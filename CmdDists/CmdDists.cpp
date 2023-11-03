@@ -43,22 +43,31 @@ int main()
       vs6Red.emplace_back(LatticeConverter::SellingReduceCell(lattice, cell));
    }
 
-   std::cout << ";   ordinals  G6-Euclidean   NCDist   CS6Dist" << std::endl;
+   std::cout << ";   ordinals  G6-Euclidean     NCDist     CS6Dist ___  NCDist     CS6Dist"
+      "    ordinals"<< std::endl;
+   double* dG6_0 = vg6Red[0].data();
+   double* dS6_0 = vs6Red[0].data();
    for (size_t i = 0; i < inputList.size()-1; ++i) {
       const double dG6 = NCDist (vg6Red[i].data(), vg6Red[i + 1].data());
       const double dS6 = CS6Dist(vs6Red[i].data(), vs6Red[i + 1].data());
       const double dEu = (G6(vcells[i]) - G6(vcells[i + 1])).norm();
 
+      const double dG6A = NCDist(dG6_0, vg6Red[i + 1].data());
+      const double dS6A = CS6Dist(dS6_0, vs6Red[i + 1].data());
+
       std::cout << ";   " << std::fixed << std::setprecision(3)
          << i+1 << " to " << i + 2 << "       " 
-         << dEu << "       " << dG6 << "    " << dS6 << std::endl;
+         << dEu << "       " << dG6 << "    " << dS6
+         <<  " ___   " << dG6A << "    " << dS6A
+         << "  " <<  1 << " to " << i + 2 << "       "
+         << std::endl;
    }
 
    std::cout << std::endl;
    for (size_t i = 0; i < vcells.size(); ++i) {
-      std::cout << ";    " << i+1 << std::fixed << std::setprecision(3)
-         << "  " << " " + vLattices[i]
-         << LRL_Cell_Degrees(vcells[i]) << std::endl;
+      std::cout  << std::fixed << std::setprecision(3)
+         << "  " + vLattices[i]
+         << LRL_Cell_Degrees(vcells[i]) << "    " << i + 1 << std::endl;
    }
 
 }

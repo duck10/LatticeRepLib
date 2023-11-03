@@ -19,8 +19,8 @@
 
    bool DirichletConstants::timestamp = true;
 
-   std::string DirichletConstants::hiddenLineColor = LRL_StringTools::strToupper( "lightgray" );
-   std::string DirichletConstants::faceColor       = LRL_StringTools::strToupper( "none" );
+   std::string DirichletConstants::hiddenLineColor = LRL_StringTools::strToupper( "gray" );
+   std::string DirichletConstants::faceColor       = LRL_StringTools::strToupper( "cyan" );
    std::string DirichletConstants::fileNamePrefix  = LRL_StringTools::strToupper( "DC" );
    std::string DirichletConstants::sellingNiggli   = LRL_StringTools::strToupper( "NIGGLI" );
 
