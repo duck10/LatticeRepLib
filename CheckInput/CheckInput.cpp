@@ -15,6 +15,6 @@ int main()
    }
 
    if (inputList.empty()) {
-      std::cout << " no valid data found " << std::endl;
+      std::cout << "; no valid data found " << std::endl;
    }
 }
