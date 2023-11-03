@@ -161,6 +161,41 @@ std::vector<std::string> DrawDirichletRings( const ANGLESFORFACES& newRinged) {
 
    double maxCoord = -DBL_MAX;
    const ANGLESFORFACES faces(RotateAllFaces(m1, sorted));
+
+   // Create a new method for ordering drawing
+   // first draw the forground using polyline fill
+   // next draw the background, no fill, gray lines
+   // finally draw the forground again, no fill, black lines
+
+   //<g transform = "translate(250,90) scale(1 1)" >
+   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "15.7855, -15.2339  19.17, 75.8979  77.7555, 92.6984  79.5926, 91.5267  76.2081, 0.394895  17.6225, -16.4057  " / >
+   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "-40.2248, 0.394895  -36.8404, 91.5267  19.17, 75.8979  15.7855, -15.2339  " / >
+   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "79.1793, 95.3843  81.0163, 94.2125  79.5926, 91.5267  77.7555, 92.6984  " / >
+   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "36.831, -51.0131  17.6225, -16.4057  76.2081, 0.394895  95.4166, -34.2125  " / >
+   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "-35.4166, 94.2125  23.169, 111.013  79.1793, 95.3843  77.7555, 92.6984  19.17, 75.8979  -36.8404, 91.5267  " / >
+   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "-21.0163, -34.2125  -40.2248, 0.394895  15.7855, -15.2339  17.6225, -16.4057  36.831, -51.0131  -19.1793, -35.3843  " / >
+   //   <polygon fill = "CYAN " stroke = "black" stroke - width = "2" points = "96.8404, -31.5267  95.4166, -34.2125  76.2081, 0.394895  79.5926, 91.5267  81.0163, 94.2125  100.225, 59.6051  " / >
+   //   <polygon fill = "NONE " stroke = "GRAY" stroke - width = "1" points = "-19.5926, -31.5267  -16.2081, 59.6051  -35.4166, 94.2125  -36.8404, 91.5267  -40.2248, 0.394895  -21.0163, -34.2125  " / >
+   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "42.3775, 76.4057  44.2145, 75.2339  100.225, 59.6051  81.0163, 94.2125  79.1793, 95.3843  23.169, 111.013  " / >
+   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "-17.7555, -32.6984  -19.1793, -35.3843  36.831, -51.0131  95.4166, -34.2125  96.8404, -31.5267  40.83, -15.8979  " / >
+   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "-16.2081, 59.6051  42.3775, 76.4057  23.169, 111.013  -35.4166, 94.2125  " / >
+   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "-19.5926, -31.5267  -21.0163, -34.2125  -19.1793, -35.3843  -17.7555, -32.6984  " / >
+   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "40.83, -15.8979  96.8404, -31.5267  100.225, 59.6051  44.2145, 75.2339  " / >
+   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "-19.5926, -31.5267  -17.7555, -32.6984  40.83, -15.8979  44.2145, 75.2339  42.3775, 76.4057  -16.2081, 59.6051  " / >
+   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "15.7855, -15.2339  19.17, 75.8979  77.7555, 92.6984  79.5926, 91.5267  76.2081, 0.394895  17.6225, -16.4057  " / >
+   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "-40.2248, 0.394895  -36.8404, 91.5267  19.17, 75.8979  15.7855, -15.2339  " / >
+   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "79.1793, 95.3843  81.0163, 94.2125  79.5926, 91.5267  77.7555, 92.6984  " / >
+   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "36.831, -51.0131  17.6225, -16.4057  76.2081, 0.394895  95.4166, -34.2125  " / >
+   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "-35.4166, 94.2125  23.169, 111.013  79.1793, 95.3843  77.7555, 92.6984  19.17, 75.8979  -36.8404, 91.5267  " / >
+   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "-21.0163, -34.2125  -40.2248, 0.394895  15.7855, -15.2339  17.6225, -16.4057  36.831, -51.0131  -19.1793, -35.3843  " / >
+   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "96.8404, -31.5267  95.4166, -34.2125  76.2081, 0.394895  79.5926, 91.5267  81.0163, 94.2125  100.225, 59.6051  " / >
+   //   < / g>
+
+
+
+
+
+
    for (size_t face = 0; face < faces.size(); ++face) {
       const ANGLELIST& thisFace = faces[face];
       for (size_t face = 0; face < thisFace.size(); ++face) {
@@ -177,11 +212,11 @@ std::vector<std::string> DrawDirichletRings( const ANGLESFORFACES& newRinged) {
       m = m2 * m;
       for (size_t pass = 0; pass < 2; ++pass) {
 
-         for (size_t face = 0; face < faces.size(); ++face) {
-            const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(faces[face]);
+         for (size_t thisFace = 0; thisFace < faces.size(); ++thisFace) {
+            const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(faces[thisFace]);
             const double dotToZAxis = cm.Dot(Vector_3(0, 0, 1));
             if ((pass == 0 && dotToZAxis > 0.0) ||( pass == 1 && dotToZAxis <= 0.0))
-               vs.push_back(DrawOneDirichletRing(scale, faces[face], face));
+               vs.push_back(DrawOneDirichletRing(scale, faces[thisFace], thisFace));
          }
       }
    }
