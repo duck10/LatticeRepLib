@@ -1,6 +1,7 @@
 changequote(`[[[',`]]]')dnl
 define([[[LRLWEBHOST]]],[[[lrl_web_host]]])dnl
 define([[[LRLWEBUSER]]],[[[lrl_web_user]]])dnl
+define([[[LRLWEBCHECKINPUT]]],[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.$1---  RANDOM: Random (valid) unit cell;$1---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);$1---  semicolon: lines beginning with a semicolon are treated as comments$1---  Vector Input: g (or v or g6) for G6 vectors; d (or d7) for D7 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.$1---  END: ends the data input section$1$1Examples of unit cell inputs$1$1P 10 20 30 90 111 90$1G 100 400 900 0 -215.02 0$1S6 0 -107.51 0 7.51 -400 -792.49 ; this is a comment$1end]]]]]])dnl
 ifdef([[[lrlwebhost]]],define([[[LRLWEBHOST]]],[[[lrlwebhost]]]))dnl
 ifdef([[[lrlwebuser]]],define([[[LRLWEBUSER]]],[[[lrlwebuser]]]))dnl
 ifdef([[[cgicpp]]],define([[[prefix]]],[[[std::cout << ]]]))dnl
@@ -108,6 +109,7 @@ int main(int argc,
       std::cout << "      document.getElementById(\"block_01a\").style=\"display:inline\";" << std::endl;
       std::cout << "      document.getElementById(\"block_01b\").style=\"display:inline\";" << std::endl;
       std::cout << "      document.getElementById(\"block_01c\").style=\"display:inline\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_01d\").style=\"display:inline\";" << std::endl;
       std::cout << "      return true;" << std::endl;
       std::cout << "    } else if (rownum > "<<NUMOPS_MAX<<") {" << std::endl;
       std::cout << "      alert(\"Request for data after row "<<NUMOPS_MAX<<" ignored\");" << std::endl;
@@ -123,6 +125,7 @@ int main(int argc,
       std::cout << "    document.getElementById(\"block_\"+twodig(rownum)).style=\"display:inline\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(rownum)+\"a\").style=\"display:inline\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(rownum)+\"c\").style=\"display:inline\";" << std::endl;
+      std::cout << "    document.getElementById(\"block_\"+twodig(rownum)+\"d\").style=\"display:inline\";" << std::endl;
       std::cout << "    return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
@@ -143,6 +146,7 @@ int main(int argc,
       std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
       std::cout << "    }" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:inline\";" << std::endl;
+      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:inline\";" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  if (mynumops < "<<NUMOPS_MAX<<") {" << std::endl;
       std::cout << "  for (ii=mynumops+1; ii<"<<NUMOPS_MAX+1<<";ii++) {" << std::endl;
@@ -151,6 +155,7 @@ int main(int argc,
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"a\").style=\"display:none\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:none\";" << std::endl;
+      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:none\";" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  return true;" << std::endl;
@@ -392,7 +397,7 @@ int main(int argc,
 
     numops_iter = formData.getElement("numops");
     if (numops_iter == formData.getElements().end()) {
-      numops = 0;
+      numops = 1;
     } else {
       numops = (size_t)atol(numops_iter->getValue().c_str());
     }
@@ -402,11 +407,13 @@ int main(int argc,
     std::cout << "<table border=0>" <<std::endl;
     std::cout << "<tr>" <<std::endl;
     std::cout << "<td align=left valign=top><a name=\"celticknots\"><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/leftcorner.gif\" /></a></td>" <<std::endl;
-    std::cout << "<td width=150>&nbsp;</td>" <<std::endl;
-    std::cout << "<td align=center><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/dragon1a.gif\" /></td>" <<std::endl;
-    std::cout << "<td width=150>&nbsp;</td>" <<std::endl;
+    std::cout << "<td width=150 rowspan=\"2\">&nbsp;</td>" <<std::endl;
+    std::cout << "<td align=center rowspan=\"2\"><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/dragon1a.gif\" /></td>" <<std::endl;
+    std::cout << "<td width=150 rowspan=\"2\">&nbsp;</td>" <<std::endl;
     std::cout << "<td align=right valign=top><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/rightcorner.gif\" /></td>" <<std::endl;
     std::cout << "</tr>" <<std::endl;
+    std::cout << "<tr> <td align=left valign=bottom><img src=\"http://blondie.arcib.org:8083/~yaya/images/leftbottomcorner.gif\" /></td>" <<std::endl;
+    std::cout << "<td align=right valign=bottom><img src=\"http://blondie.arcib.org:8083/~yaya/images/rightbottomcorner.gif\" /></td></tr>" <<std::endl;
     std::cout << "</table>" <<std::endl;
     std::cout << h2(" LRL_WEB, Lattice Representation Library Tool Web Page") << std::endl;
     std::cout << "<br /> by" << std::endl;
@@ -977,7 +984,11 @@ int main(int argc,
       if(numop > numops) active=std::string("\"display:none\"");
       chain_iter =  formData.getElement("chain_"+twodig_array[numop]);
       if (chain_iter == formData.getElements().end()) {
-        chain = "";
+        if (numop < 2 ) {
+          chain = "new_input";
+        } else {
+          chain = "chain_input";
+        }
       } else {
         chain = chain_iter->getValue();
       }
@@ -994,7 +1005,7 @@ int main(int argc,
       lrl_web_output_iter = formData.getElement("lrl_web_output"+twodig_array[numop]);
       operation_iter = formData.getElement("operation_"+twodig_array[numop]);
       if (operation_iter == formData.getElements().end()) {
-        operation = "";
+        operation = "NoOp";
       } else {
         operation = operation_iter->getValue();
       }
@@ -1027,6 +1038,10 @@ int main(int argc,
       selected=chain.compare("chain_input")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"chain_input\">use prior output</option>" << std::endl;
       std::cout << "  </select>" << std::endl;
+      std::cout << "  <br />" << std::endl;
+      std::cout << "  <br />" << std::endl;
+      std::cout << "  <label for=\"submit_"+twodig_array[numop]+"\">Submit all data:</label><br/>" << std::endl;
+      std::cout << "  <INPUT type=\"submit\">" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  <td align=left>" << std::endl;
@@ -1039,6 +1054,8 @@ int main(int argc,
       std::cout << "  <option "+selected+"value=\"CmdDelone\">compute Selling-reduced primitive cells</option>" << std::endl;
       selected=operation.compare("CmdDists")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdDists\">compute NCDist and CS6Dist distances</option>" << std::endl;
+      selected=operation.compare("CmdGen")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdGen\">Generate cells of a particular type or types</option>" << std::endl;
       selected=operation.compare("CmdLM")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdLM\">apply Lattice Matching algorithm to listed cells</option>" << std::endl;
       selected=operation.compare("CmdNiggli")==0?"selected ":"";
@@ -1109,13 +1126,20 @@ int main(int argc,
         prevoutbuflen = outlen+1;
       }
       std::cout << "  </textarea>" << std::endl;
-      //std::cout << "<tr><td colspan=\"3\">"+processed_output+"</td></tr>"<<std::endl;
+      std::cout << "  </div>" << std::endl;
+      std::cout << "  <div id=\"block_"+twodig_array[numop]+"d"+"\" style="+active+">" << std::endl;
+      std::cout << "  <br />" << std::endl;
+      std::cout << "  <label for=\"lrl_web_help_"+twodig_array[numop]+"\">Tool Help:</label><br />" << std::endl;
+      std::cout << "  <textarea name=\"lrl_web_help_"+twodig_array[numop]+"\" id=\"lrl_web_help_"+twodig_array[numop]+"\" readonly rows=\"9\" cols=\"100\" readonly`>" << std::endl;
+      std::cout << "]]]LRLWEBCHECKINPUT([[[\n]]])[[[" << std::endl;
+      std::cout << "" << std::endl;
+      std::cout << "  </textarea>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  </tr>" << std::endl;
+      //std::cout << "<tr><td colspan=\"3\">"+processed_output+"</td></tr>"<<std::endl;
     }
     if (prevoutbuflen > 0 && prevoutbuf) free(prevoutbuf);
-
     std::cout << "    </table>" << std::endl;
     std::cout << "</td>" << std::endl;
     std::cout << "<tr>" << std::endl;
@@ -1354,7 +1378,7 @@ int main(int argc,
     std::cout << "" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 29 October 2023." << std::endl;
+    std::cout << "Updated 31 October 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
 ]]],
@@ -1362,7 +1386,7 @@ int main(int argc,
 <html>
 <HEAD>
 	<meta charset="utf-8">
-	
+
  <script  type="text/javascript">
  const EventListenerMode = {capture: true};
 
@@ -1419,6 +1443,7 @@ function setchaininput(row){
       document.getElementById("block_01a").style="display:inline";
       document.getElementById("block_01b").style="display:inline";
       document.getElementById("block_01c").style="display:inline";
+      document.getElementById("block_01d").style="display:inline";
       return true;
     } else if (rownum > 10) {
       alert("Request for data after row 10 ignored");
@@ -1427,6 +1452,7 @@ function setchaininput(row){
     let priornum=rownum-1;
     if (document.getElementById("chain_"+twodig(rownum)).value=="chain_input") {
       document.getElementById("block_"+twodig(priornum)+"c").style="display:inline";
+      document.getElementById("block_"+twodig(priornum)+"d").style="display:inline";
       document.getElementById("block_"+twodig(rownum)+"b").style="display:none";
     } else {
       document.getElementById("block_"+twodig(rownum)+"b").style="display:inline"; 
@@ -1434,6 +1460,7 @@ function setchaininput(row){
     document.getElementById("block_"+twodig(rownum)).style="display:inline";
     document.getElementById("block_"+twodig(rownum)+"a").style="display:inline";
     document.getElementById("block_"+twodig(rownum)+"c").style="display:inline";
+    document.getElementById("block_"+twodig(rownum)+"d").style="display:inline";
     return true;
 }
 
@@ -1454,6 +1481,7 @@ function changenumops(){
       document.getElementById("block_"+twodig(ii)+"b").style="display:none";
     }
     document.getElementById("block_"+twodig(ii)+"c").style="display:inline";
+    document.getElementById("block_"+twodig(ii)+"d").style="display:inline";
   }
   if (mynumops < 10) {
   for (ii=mynumops+1; ii<11;ii++) {
@@ -1462,6 +1490,7 @@ function changenumops(){
     document.getElementById("block_"+twodig(ii)+"a").style="display:none";
     document.getElementById("block_"+twodig(ii)+"b").style="display:none";
     document.getElementById("block_"+twodig(ii)+"c").style="display:none";
+    document.getElementById("block_"+twodig(ii)+"d").style="display:none";
   }
   }
   return true;
@@ -1553,11 +1582,13 @@ LRL_WEB Lattice Representation Library Tool Web Page
 <table border=0>
 <tr>
 <td align=left valign=top><a name="celticknots"><img src=http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/leftcorner.gif /></a></td>
-<td width=150>&nbsp;</td>
-<td align=center><img src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/dragon1a.gif" /></td>
-<td width=150>&nbsp;</td>
+<td width=150 rowspan="2">&nbsp;</td>
+<td align=center rowspan="2"><img src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/dragon1a.gif" /></td>
+<td width=150 rowspan="2">&nbsp;</td>
 <td align=right valign=top><img src=http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/rightcorner.gif /></td>
 </tr>
+<tr> <td align=left valign=bottom><img src=http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/leftbottomcorner.gif /></td>
+<td align=right valign=bottom><img src=http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/rightbottomcorner.gif /></td></tr>
 </table>
 <H2> LRL_WEB, Lattice Representation Library Tool Web Page</H2>
 <br /> by
@@ -1613,6 +1644,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="new_input">use new input</option>
   <option value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_01>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -1622,6 +1657,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -1654,6 +1690,14 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_01d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_01">Tool Help:</label><br />
+  <textarea name="lrl_web_help_01" id="lrl_web_help_01" rows="9" cols="100" readonly>
+  ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
   </td>
   </tr>
   <tr>
@@ -1664,6 +1708,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_02>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -1673,6 +1721,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -1705,6 +1754,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_02d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_02">Tool Help:</label><br />
+  <textarea name="lrl_web_help_02" id="lrl_web_help_02" rows="9" cols="100" readonly>
+    ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td>
   </tr>
   <tr>
@@ -1715,6 +1773,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_03>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -1724,6 +1786,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -1756,6 +1819,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_03d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_03">Tool Help:</label><br />
+  <textarea name="lrl_web_help_03" id="lrl_web_help_03" rows="9" cols="100" readonly>
+    ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td>
   </tr>
   <tr>
@@ -1766,6 +1838,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_04>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -1775,6 +1851,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -1807,6 +1884,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_04d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_04">Tool Help:</label><br />
+  <textarea name="lrl_web_help_04" id="lrl_web_help_04" rows="9" cols="100" readonly>
+   ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td>
   </tr>
   <tr>
@@ -1817,6 +1903,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_05>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -1826,6 +1916,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -1858,6 +1949,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_05d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_05">Tool Help:</label><br />
+  <textarea name="lrl_web_help_05" id="lrl_web_help_05" rows="9" cols="100" readonly>
+   ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td>
   </tr>
   <tr>
@@ -1868,6 +1968,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_06>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -1877,6 +1981,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -1909,6 +2014,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_06d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_06">Tool Help:</label><br />
+  <textarea name="lrl_web_help_06" id="lrl_web_help_06" rows="9" cols="100" readonly>
+   ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td>
   </tr>
   <tr>
@@ -1919,6 +2033,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_07>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -1928,6 +2046,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -1960,6 +2079,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_07d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_07">Tool Help:</label><br />
+  <textarea name="lrl_web_help_07" id="lrl_web_help_07" rows="9" cols="100" readonly>
+   ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td>
   </tr>
   <tr>
@@ -1970,6 +2098,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_08>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -1979,6 +2111,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -2011,6 +2144,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_08d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_08">Tool Help:</label><br />
+  <textarea name="lrl_web_help_08" id="lrl_web_help_08" rows="9" cols="100" readonly>
+    ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td>
   </tr>
   <tr>
@@ -2021,6 +2163,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_09>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td align=left>
@@ -2030,6 +2176,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -2062,6 +2209,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_09d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_09">Tool Help:</label><br />
+  <textarea name="lrl_web_help_09" id="lrl_web_help_09" rows="9" cols="100" readonly>
+   ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td> 
   </tr>
   <tr>
@@ -2072,6 +2228,10 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
+  <br />
+  <br />
+  <label for=submit_10>Submit all data:</label>
+  <INPUT type="submit">
   </div>
   </td>
   <td  align=left>
@@ -2081,6 +2241,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option selected value="NoOp">Check Input</option>
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
+  <option value="CmdGen">Generate cells of a particular type or types</option>
   <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
   <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
   <option value="CmdPath">compute path between pairs of cells</option>
@@ -2113,6 +2274,15 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
+  <div id="block_10d" style="display:inline">
+  <br />
+  <label for="lrl_web_help_10">Tool Help:</label><br />
+  <textarea name="lrl_web_help_10" id="lrl_web_help_10" rows="9" cols="100" readonly>
+   ]]]LRLWEBCHECKINPUT([[[
+]]])[[[
+  </textarea>
+  </div>
+
   </td>
   </tr>
   </table>
@@ -2258,6 +2428,7 @@ Fig. 1. Some key dates in the history of modern crystallography
 <a href="#Delone1975">[Delone <i>et al.</i> 1975]</a> <a href="#Andrews2019a">[Andrews <i>et al.</i> 2019a]</a></li>
 <li>compute NCDist and CS6Dist distances <a href="#Andrews2014">[Andrews and Bernstein 2014]</a>
 <a href="#Andrews2019b">[Andrews <i>et al.</i> 2019b]</a></li>
+<li>Generate cells of a particular type or types</li>
 <li>apply Lattice Matching algorithm to listed cells <a href="#Mighell2002">[Mighell 2002]</a>
 <a href="#Andrews2021">[Andrews and Bernstein 2021]</a></li>
 <li>compute Niggli-reduced primitive cells <a href="#Niggli1928">[Niggli 1928]</a></li>
@@ -2352,7 +2523,7 @@ determination of a unique conventional cell. Zeitschrift f&uuml;r Kristallograph
 
 <p>
 <hr />
-Updated 29 October 2023.
+Updated 31 October 2023.
 </font>
 </body>
 </html>]]])

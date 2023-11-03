@@ -5,6 +5,7 @@ COMMANDS  =  \
 	CheckInput \
 	CmdDelone \
 	CmdDists \
+	CmdGen \
 	CmdLM \
 	CmdNiggli \
 	CmdPath \
@@ -25,6 +26,7 @@ SOURCES  =  \
 	CheckInput/CheckInput.cpp \
 	CmdDelone/CmdDelone.cpp \
 	CmdDists/CmdDists.cpp \
+	CmdGen/CmdGen.cpp \
 	CmdLM/CmdLM.cpp \
 	CmdNiggli/CmdNiggli.cpp \
 	CmdPath/CmdPath.cpp \
@@ -45,6 +47,7 @@ BINS  =  \
 	CheckInput/CheckInput \
 	CmdDelone/CmdDelone \
 	CmdDists/CmdDists \
+	CmdGen/CmdGen \
 	CmdLM/CmdLM \
 	CmdNiggli/CmdNiggli \
 	CmdPath/CmdPath \
