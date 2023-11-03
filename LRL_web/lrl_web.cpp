@@ -101,6 +101,7 @@ int main(int argc,
       std::cout << "      document.getElementById(\"block_01a\").style=\"display:inline\";" << std::endl;
       std::cout << "      document.getElementById(\"block_01b\").style=\"display:inline\";" << std::endl;
       std::cout << "      document.getElementById(\"block_01c\").style=\"display:inline\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_01d\").style=\"display:inline\";" << std::endl;
       std::cout << "      return true;" << std::endl;
       std::cout << "    } else if (rownum > "<<NUMOPS_MAX<<") {" << std::endl;
       std::cout << "      alert(\"Request for data after row "<<NUMOPS_MAX<<" ignored\");" << std::endl;
@@ -116,6 +117,7 @@ int main(int argc,
       std::cout << "    document.getElementById(\"block_\"+twodig(rownum)).style=\"display:inline\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(rownum)+\"a\").style=\"display:inline\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(rownum)+\"c\").style=\"display:inline\";" << std::endl;
+      std::cout << "    document.getElementById(\"block_\"+twodig(rownum)+\"d\").style=\"display:inline\";" << std::endl;
       std::cout << "    return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
@@ -136,6 +138,7 @@ int main(int argc,
       std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
       std::cout << "    }" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:inline\";" << std::endl;
+      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:inline\";" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  if (mynumops < "<<NUMOPS_MAX<<") {" << std::endl;
       std::cout << "  for (ii=mynumops+1; ii<"<<NUMOPS_MAX+1<<";ii++) {" << std::endl;
@@ -144,6 +147,7 @@ int main(int argc,
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"a\").style=\"display:none\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:none\";" << std::endl;
+      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:none\";" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  return true;" << std::endl;
@@ -385,7 +389,7 @@ int main(int argc,
 
     numops_iter = formData.getElement("numops");
     if (numops_iter == formData.getElements().end()) {
-      numops = 0;
+      numops = 1;
     } else {
       numops = (size_t)atol(numops_iter->getValue().c_str());
     }
@@ -395,11 +399,13 @@ int main(int argc,
     std::cout << "<table border=0>" <<std::endl;
     std::cout << "<tr>" <<std::endl;
     std::cout << "<td align=left valign=top><a name=\"celticknots\"><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/leftcorner.gif\" /></a></td>" <<std::endl;
-    std::cout << "<td width=150>&nbsp;</td>" <<std::endl;
-    std::cout << "<td align=center><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/dragon1a.gif\" /></td>" <<std::endl;
-    std::cout << "<td width=150>&nbsp;</td>" <<std::endl;
+    std::cout << "<td width=150 rowspan=\"2\">&nbsp;</td>" <<std::endl;
+    std::cout << "<td align=center rowspan=\"2\"><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/dragon1a.gif\" /></td>" <<std::endl;
+    std::cout << "<td width=150 rowspan=\"2\">&nbsp;</td>" <<std::endl;
     std::cout << "<td align=right valign=top><img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/images/rightcorner.gif\" /></td>" <<std::endl;
     std::cout << "</tr>" <<std::endl;
+    std::cout << "<tr> <td align=left valign=bottom><img src=\"http://blondie.arcib.org:8083/~yaya/images/leftbottomcorner.gif\" /></td>" <<std::endl;
+    std::cout << "<td align=right valign=bottom><img src=\"http://blondie.arcib.org:8083/~yaya/images/rightbottomcorner.gif\" /></td></tr>" <<std::endl;
     std::cout << "</table>" <<std::endl;
     std::cout << h2(" LRL_WEB, Lattice Representation Library Tool Web Page") << std::endl;
     std::cout << "<br /> by" << std::endl;
@@ -970,7 +976,11 @@ int main(int argc,
       if(numop > numops) active=std::string("\"display:none\"");
       chain_iter =  formData.getElement("chain_"+twodig_array[numop]);
       if (chain_iter == formData.getElements().end()) {
-        chain = "";
+        if (numop < 2 ) {
+          chain = "new_input";
+        } else {
+          chain = "chain_input";
+        }
       } else {
         chain = chain_iter->getValue();
       }
@@ -987,7 +997,7 @@ int main(int argc,
       lrl_web_output_iter = formData.getElement("lrl_web_output"+twodig_array[numop]);
       operation_iter = formData.getElement("operation_"+twodig_array[numop]);
       if (operation_iter == formData.getElements().end()) {
-        operation = "";
+        operation = "NoOp";
       } else {
         operation = operation_iter->getValue();
       }
@@ -1020,6 +1030,10 @@ int main(int argc,
       selected=chain.compare("chain_input")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"chain_input\">use prior output</option>" << std::endl;
       std::cout << "  </select>" << std::endl;
+      std::cout << "  <br />" << std::endl;
+      std::cout << "  <br />" << std::endl;
+      std::cout << "  <label for=\"submit_"+twodig_array[numop]+"\">Submit all data:</label><br/>" << std::endl;
+      std::cout << "  <INPUT type=\"submit\">" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  <td align=left>" << std::endl;
@@ -1032,6 +1046,8 @@ int main(int argc,
       std::cout << "  <option "+selected+"value=\"CmdDelone\">compute Selling-reduced primitive cells</option>" << std::endl;
       selected=operation.compare("CmdDists")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdDists\">compute NCDist and CS6Dist distances</option>" << std::endl;
+      selected=operation.compare("CmdGen")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdGen\">Generate cells of a particular type or types</option>" << std::endl;
       selected=operation.compare("CmdLM")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdLM\">apply Lattice Matching algorithm to listed cells</option>" << std::endl;
       selected=operation.compare("CmdNiggli")==0?"selected ":"";
@@ -1102,13 +1118,20 @@ int main(int argc,
         prevoutbuflen = outlen+1;
       }
       std::cout << "  </textarea>" << std::endl;
-      //std::cout << "<tr><td colspan=\"3\">"+processed_output+"</td></tr>"<<std::endl;
+      std::cout << "  </div>" << std::endl;
+      std::cout << "  <div id=\"block_"+twodig_array[numop]+"d"+"\" style="+active+">" << std::endl;
+      std::cout << "  <br />" << std::endl;
+      std::cout << "  <label for=\"lrl_web_help_"+twodig_array[numop]+"\">Tool Help:</label><br />" << std::endl;
+      std::cout << "  <textarea name=\"lrl_web_help_"+twodig_array[numop]+"\" id=\"lrl_web_help_"+twodig_array[numop]+"\" readonly rows=\"9\" cols=\"100\" readonly`>" << std::endl;
+      std::cout << "LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.\n---  RANDOM: Random (valid) unit cell;\n---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);\n---  semicolon: lines beginning with a semicolon are treated as comments\n---  Vector Input: g (or v or g6) for G6 vectors; d (or d7) for D7 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.\n---  END: ends the data input section\n\nExamples of unit cell inputs\n\nP 10 20 30 90 111 90\nG 100 400 900 0 -215.02 0\nS6 0 -107.51 0 7.51 -400 -792.49 ; this is a comment\nend" << std::endl;
+      std::cout << "" << std::endl;
+      std::cout << "  </textarea>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  </tr>" << std::endl;
+      //std::cout << "<tr><td colspan=\"3\">"+processed_output+"</td></tr>"<<std::endl;
     }
     if (prevoutbuflen > 0 && prevoutbuf) free(prevoutbuf);
-
     std::cout << "    </table>" << std::endl;
     std::cout << "</td>" << std::endl;
     std::cout << "<tr>" << std::endl;
@@ -1347,7 +1370,7 @@ int main(int argc,
     std::cout << "" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 29 October 2023." << std::endl;
+    std::cout << "Updated 31 October 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
 
