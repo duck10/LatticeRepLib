@@ -7,6 +7,7 @@
 #include "Niggli.h"
 #include "GenerateLatticeTypeExamples.h"
 #include "S6BoundaryTransforms.h"
+#include "LRL_StringTools.h"
 
 // how many examples of each type to generate
 static int ngen = 1;
@@ -140,6 +141,10 @@ int main(int argc, char* argv[])
          const std::string strtest = argv[2];
          name = strtest;
       }
+   }
+
+   if (LRL_StringTools::strToupper(name) == "ALL") {
+      name = "";
    }
 
    if (name.length() > 1 && g_DeloneTypes.find(name) != std::string::npos) {
