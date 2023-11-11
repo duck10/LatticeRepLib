@@ -56,7 +56,7 @@ void DC7u::FromCellToDC7u(const LRL_Cell& cell) {
    }
    if (error > 0) 
    {
-      std::cout << "invalid unsorted DC7 cell" << std::endl;;
+      std::cout << "; invalid unsorted DC7 cell" << std::endl;;
       SetValid(false);
    }
    m_dim = 7;
