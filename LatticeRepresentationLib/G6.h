@@ -35,6 +35,7 @@ public:
    G6(const double v[6]);
    G6(const D7& v);
    G6(const DC7u& dc7u);
+   G6(const D13& d13);
    G6(const LRL_Cell& c);
    G6(const VecN& v);
    G6(const S6& ds);

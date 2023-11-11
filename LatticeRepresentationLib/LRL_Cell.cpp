@@ -259,6 +259,11 @@ LRL_Cell::LRL_Cell(const D7& v7)
    (*this) = G6(v7);
 }
 
+LRL_Cell::LRL_Cell(const D13& d13) {
+   std::cout << "; not implemented" << std::endl;
+   m_valid = false;
+}
+
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 // Name: LRL_Cell()
 // Description: destructor

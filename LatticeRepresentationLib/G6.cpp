@@ -157,6 +157,11 @@ G6::G6(const D7& v7) {
    m_dim = 6;
 }
 
+G6::G6(const D13& d13) {
+   std::cout << "; not implemented" << std::endl;
+   m_valid = false;
+}
+
 G6::G6(const DC7u& dc7u)
 : m_dim(6)
 {
@@ -246,7 +251,7 @@ G6::G6(const std::string& s) {
 G6::G6(const std::vector<double>& v) {
    m_vec.resize(6);
    m_dim = v.size();
-   if (m_dim != 6) throw "bad dimension in G6 from a vector";
+   if (m_dim < 6) throw "bad dimension in G6 from a vector";
    m_vec = v;
    m_valid = true;
 }

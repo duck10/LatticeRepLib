@@ -42,6 +42,7 @@ public:
       const double alpha, const double beta, const double gamma);
    LRL_Cell(const G6& v6); // specialized for G6
    LRL_Cell(const D7& v7); // specialized for d7
+   LRL_Cell(const D13& v13); // specialized for DC13
    LRL_Cell(const S6& dt); // specialized for S6
    LRL_Cell(const C3& c3); // specialized for C3
    LRL_Cell(const B4& ds); // specialized for Delone tetrahedron

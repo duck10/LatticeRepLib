@@ -36,10 +36,11 @@ protected:
    bool SetS6Data(  const std::vector<double>& fields );
    bool SetC3Data( const std::vector<double>& fields);
    bool SetB4Data( const std::vector<double>& fields);
-   bool SetUData( const std::vector<double>& fields);
+   bool SetV7Data(const std::vector<double>& fields);
+   bool SetUData(const std::vector<double>& fields);
    bool SetUnitCellTypeData( const std::pair<std::vector<double>, std::vector<double> >& params );
-   static bool IsLatticeName(const std::string inputName, const std::vector<std::string>& nameList);
-   static bool IsLatticeName(const std::vector<std::string>& nameList, const std::string inputName);
+   static bool IsLatticeName(const std::string& inputName, const std::vector<std::string>& nameList);
+   static bool IsLatticeName(const std::vector<std::string>& nameList, const std::string& inputName);
 
    std::string m_incomingSemicolons;
    size_t m_ordinal;

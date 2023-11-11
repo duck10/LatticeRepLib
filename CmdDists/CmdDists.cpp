@@ -59,7 +59,7 @@ int main()
       std::cout << ";   " << std::fixed << std::setprecision(3)
          << i+1 << " to " << i + 2 << "       " 
          << dEu << "       " << dG6 << "    " << dS6
-         << " ___   " << "    " << dG6A << "    " << dS6A
+         << " ___   " << dEuA << "    " << dG6A << "    " << dS6A
          << "  " <<  1 << " to " << i + 2 << "       "
          << std::endl;
    }

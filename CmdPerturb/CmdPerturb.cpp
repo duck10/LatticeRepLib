@@ -51,10 +51,15 @@ G6 PerturbOneVector( const LRL_ReadLatticeData& input, const S6& base,
 
 void OutputPerturbedCell(const std::string& lattice, const S6& perturbed,
    const std::string& label) {
-   if (latticeNames.find(lattice) == std::string::npos)
+   LRL_Cell_Degrees cell(perturbed);
+
+   if (!cell.IsValid()) {
+      std::cout << "; invalid perturbed cell " << std::endl;
+   }
+   else if (latticeNames.find(lattice) == std::string::npos)
       std::cout << "S6 " << perturbed << "  perturbed  " + label << std::endl;
    else {
-      std::cout << lattice+" " << LRL_Cell_Degrees(perturbed) << "  perturbed  " + label << std::endl;
+      std::cout << lattice+" " << cell<< "  perturbed  " + label << std::endl;
    }
 }
 
