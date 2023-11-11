@@ -161,6 +161,6 @@ int main()
    //store.ShowResults();
    //std::cout << "store: unique keys = " << store.size() << std::endl;
    for (size_t i = 0; i < inputList.size(); ++i) {
-      std::cout << D13(inputList[i].GetCell()) << std::endl;
+      std::cout << "DC13 " << D13(inputList[i].GetCell()) << std::endl;
    }
 }

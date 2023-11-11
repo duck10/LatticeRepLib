@@ -45,13 +45,19 @@ void DC7u::FromCellToDC7u(const LRL_Cell& cell) {
    m_vec[DC7u_MIN_ABC_diagsq_idx] = red[G6_AA_idx]+red[G6_BB_idx]+red[G6_CC_idx]
      -std::fabs(red[G6_2BC_idx])-std::fabs(red[G6_2AC_idx])-std::fabs(red[G6_2AB_idx]);
    delta=std::fabs(m_vec[DC7u_AA_idx])*1.e-10;
+   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
+      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
+   }
+
+   SetValid(true);
    error=0;
    for (size_t ii=0; ii < 7; ii++) {
      if (m_vec[ii] < delta) error++;
    }
-   if (error > 0) throw std::invalid_argument( "invalid unsorted DC7 cell" );
-   if (red[G6_2BC_idx] > delta && red[G6_2AC_idx] > delta && red[G6_2AB_idx] > delta ) {
-      m_vec[DC7u_MIN_ABC_diagsq_idx] += 2.*std::min(std::min(red[G6_2BC_idx],red[G6_2AC_idx]),red[G6_2AB_idx]);
+   if (error > 0) 
+   {
+      std::cout << "invalid unsorted DC7 cell" << std::endl;;
+      SetValid(false);
    }
    m_dim = 7;
 }
