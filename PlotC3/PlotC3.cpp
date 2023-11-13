@@ -88,6 +88,17 @@ std::vector<S6> PrepareCells() {
    for (size_t i = 0; i < inputList.size(); ++i) {
       v.push_back(S6(inputList[i].GetCell()));
    }
+   for (size_t i = 0; i < std::min(size_t(5), inputList.size()); ++i) {
+      std::cout << inputList[i].GetLattice() << "  " << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
+   }
+
+   if (inputList.size() > 5) {
+      std::cout << " ..." << std::endl;
+      for (size_t i = inputList.size() - 3; i < inputList.size(); ++i) {
+         std::cout << inputList[i].GetLattice() << "  " << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
+      }
+
+   }
    return v;
 }
 
