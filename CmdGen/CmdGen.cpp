@@ -186,11 +186,14 @@ int main(int argc, char* argv[])
    //   ForComplexInput(ComplexType);
    }
    else {
-      std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
+      const std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
          GenerateNiggliBase().Select(name);
+      const std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
+         GenerateDeloneBase().Select(name);
       std::cout << "; Niggli lattice type requested " << std::endl;
       ForNiggliInput(NiggiTypes);
-      if (NiggiTypes.empty()) std::cout << "; unable to match type \"" << name << "\"" << std::endl;
+      ForDeloneInput(DeloneTypes);
+      if (NiggiTypes.empty() && DeloneTypes.empty()) std::cout << "; unable to match type \"" << name << "\"" << std::endl;
    }
 
 }

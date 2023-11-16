@@ -11,6 +11,6 @@ int main()
    for (size_t i = 0; i < inputList.size(); ++i) {
       const LRL_Cell cell(inputList[i].GetCell());
       const double volume = cell.Volume();
-      std::cout << "input cell " << LRL_Cell_Degrees(cell) << "  Volume " << volume << std::endl;
+      std::cout << "  " << inputList[i].GetLattice() << " " << LRL_Cell_Degrees(cell) << "  Volume = " << volume << std::endl;
    }
 }
