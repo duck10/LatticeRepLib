@@ -75,10 +75,17 @@ int main()
    //std::cout << temp << std::endl;
 
 
-   std::cout << C6(S6(-100, -100, -100, 0, 0, 0)) << std::endl;;
-   std::cout << C6(S6(100, 100, 100, 0, 0, 0)) << std::endl;;
-   std::cout << C6(S6(0, 0, 0, -100, -100, -100)) << std::endl;;
-   std::cout << C6(S6(0, 0, 0, 100, 100, 100)) << std::endl;;
+   std::cout << C6(S6(-100, -100, -100, 0, 0, 0)) << std::endl;
+   std::cout << C6(S6(100, 100, 100, 0, 0, 0)) << std::endl;
+   std::cout << std::endl;
+   std::cout << C6(S6(0, 0, 0, -100, -100, -100)) << std::endl;
+   std::cout << C6(S6(0, 0, 0, 100, 100, 100)) << std::endl;
+   std::cout << std::endl;
+   std::cout << C6(S6(0, 0, 0, -100, -200, -300)) << std::endl;
+   std::cout << C6(S6(0, 0, 0, 100, 200, 300)) << std::endl;;
+   std::cout << std::endl;
+   std::cout << C6(S6(-5, -10, -15, -100, -200, -300)) << std::endl;
+   std::cout << C6(S6(5, 10, 15, 100, 200, 300)) << std::endl;;
 
 
    const int i19191 = 19191;

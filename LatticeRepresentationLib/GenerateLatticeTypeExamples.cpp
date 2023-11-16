@@ -1255,19 +1255,19 @@ Delone_O4::Delone_O4() {
    m_sellaPerps = LabeledSellaMatrices::CreatePerps_O4().GetMatrices();
 }
 
-Delone_O4B::Delone_O4B() {
-   m_name = "O4B";
-   m_bravaisLatticeGeneral = "oS";
-   m_bravaisType = "oC";
-   m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 1 0 0 0 0  0 0 0 0 0 0";
-   m_character = "rs0 tso";
-   m_freeParams = 3;
-   m_prjPrefix = 1.0 / 2.0;
-   m_projector = m_prjPrefix * MatS6(m_strProjector);
-
-   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_O4().GetMatrices();
-   m_sellaPerps = LabeledSellaMatrices::CreatePerps_O4().GetMatrices();
-}
+//Delone_O4B::Delone_O4B() {
+//   m_name = "O4B";
+//   m_bravaisLatticeGeneral = "oS";
+//   m_bravaisType = "oC";
+//   m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 1 0 0 0 0  0 0 0 0 0 0";
+//   m_character = "rs0 tso";
+//   m_freeParams = 3;
+//   m_prjPrefix = 1.0 / 2.0;
+//   m_projector = m_prjPrefix * MatS6(m_strProjector);
+//
+//   m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_O4().GetMatrices();
+//   m_sellaPerps = LabeledSellaMatrices::CreatePerps_O4().GetMatrices();
+//}
 
 Delone_O5::Delone_O5() {
    m_name = "O5";
@@ -1525,7 +1525,7 @@ GenerateLatticeTypeExamples::CreateListOfDeloneTypes()
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O2));
    if (includeUninterestingTypes) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O3));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O4));
-   vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O4B));
+   //vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O4B));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_O5));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M1A));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_M1B));
@@ -1615,7 +1615,7 @@ RetrieveByDeloneName(const std::string& s,
 
 std::vector<std::shared_ptr<GenerateNiggliBase> >
 GenerateNiggliBase::Select(const std::string& s/* = ""*/) const {
-   const std::vector<std::shared_ptr<GenerateNiggliBase> > vglb =
+   static const std::vector<std::shared_ptr<GenerateNiggliBase> > vglb =
       GenerateLatticeTypeExamples::CreateListOfNiggliTypes();
 
    if (s.empty()) {
@@ -1645,7 +1645,7 @@ GenerateNiggliBase::Select(const std::string& s/* = ""*/) const {
 std::vector<std::shared_ptr<GenerateDeloneBase> >
 GenerateDeloneBase::Select(const std::string& s/* = ""*/) const {
 
-   const std::vector<std::shared_ptr<GenerateDeloneBase> > vglb =
+  static const std::vector<std::shared_ptr<GenerateDeloneBase> > vglb =
       GenerateLatticeTypeExamples::CreateListOfDeloneTypes();
 
    if (s.empty()) {

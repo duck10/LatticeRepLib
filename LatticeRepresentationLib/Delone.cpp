@@ -228,7 +228,7 @@ std::vector<std::pair<std::string, MatS6> > Delone::PrivateLoadLabeledLatticeTyp
    vDeloneTypes.push_back(std::make_pair(std::string("O2"), MatS6("1 0 0 0 1 0  0 1 0 1 0 0  0 0 0 0 0 0  0 1 0 1 0 0  1 0 0 0 1 0  0 0 0 0 0 1")));  //    O2  (oI)
    vDeloneTypes.push_back(std::make_pair(std::string("O3"), MatS6("1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0  1 0 0 1 0 0  0 1 0 0 1 0  0 0 0 0 0 0")));  //    O3  (oI)
    vDeloneTypes.push_back(std::make_pair(std::string("O4"), MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 1 0 0 0  0 0 0 1 1 0  0 0 0 1 1 0  0 0 0 0 0 1")));  //    O4  (oS)
-   vDeloneTypes.push_back(std::make_pair(std::string("O4B"), MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 1 0 0 0  0 0 0 1 1 0  0 0 0 1 1 0  0 0 0 0 0 1")));  //    O4B  (oS)
+   //vDeloneTypes.push_back(std::make_pair(std::string("O4B"), MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 1 0 0 0  0 0 0 1 1 0  0 0 0 1 1 0  0 0 0 0 0 1")));  //    O4B  (oS)
    vDeloneTypes.push_back(std::make_pair(std::string("O4C"), MatS6("0 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 1 0  0 0 0 1 1 0  0 0 0 0 0 1")));  //    O4B  (oS)
    vDeloneTypes.push_back(std::make_pair(std::string("O5"), MatS6("0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1")));  //    O5  (oP)
    vDeloneTypes.push_back(std::make_pair(std::string("M1A"), MatS6("1 1 0 0 0 0  1 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 1 0  0 0 0 1 1 0  0 0 0 0 0 1")));  //    M1A (mC)
