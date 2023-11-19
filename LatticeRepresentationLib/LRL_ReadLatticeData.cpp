@@ -432,7 +432,7 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
    }
 
    if (fields.size() < 7) {
-      std::cout << " not enough data" << std::endl;
+      std::cout << "; not enough data" << std::endl;
       return "";
    }
 

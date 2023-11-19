@@ -71,7 +71,7 @@ std::vector<S6> DoSqrt(const std::vector<S6>& vs) {
 
 std::vector<S6> KeepOnlyFirstMin(const std::vector<S6>& vs) {
    std::vector<S6> out;
-   // since all the vectors have the same value, we only the minimum value in one
+   // since all the vectors have the same set of values, we only the minimum value in one
    const std::vector<double> vd = vs[0].GetVector();
    const double dmin = minNC(vd[0], vd[1], vd[2], vd[3], vd[4], vd[5]);
    for (size_t i = 0; i < vs.size(); ++i)
@@ -84,7 +84,7 @@ std::vector<S6> KeepOnlyFirstMin(const std::vector<S6>& vs) {
 
 std::vector<S6> KeepOnlySecondMin(const std::vector<S6>& vs) {
    std::vector<S6> out;
-   // since all the vectors have the same value, we only the minimum value in one
+   // since all the vectors have the same set of values, we only the minimum value in one
    const std::vector<double> vd = vs[0].GetVector();
    const double dmin = minNC(vd[1], vd[2], vd[3], vd[4], vd[5]);
    for (size_t i = 0; i < vs.size(); ++i)
@@ -162,20 +162,10 @@ std::vector<S6> ResortSecondElement(const std::vector<S6>& vs) {
 }
 
 std::vector<S6> ResortElements_1_3(const std::vector<S6>& vs) {
-   //std::cout << "ResortElements_1_3   vs" << std::endl;
-   //OutputVector(vs);
    const std::vector<S6> sort1 = ResortFirstElement(vs);
-   //std::cout << "ResortElements_1_3  sort1" << std::endl;
-   //OutputVector(sort1);
    const std::vector<S6> sort2 = ResortSecondElement(sort1);
-   //std::cout << " ResortElements_1_3 sort2" << std::endl;
-   //OutputVector(sort2);
    const std::vector<S6> sort3 = ResortFirstElement(sort2);
-   //std::cout << " ResortElements_1_3 sort3" << std::endl;
-   //OutputVector(sort3);
    const std::vector<S6> sort4 = ResortFirstElement(sort3);
-   //std::cout << "ResortElements_1_3 sort4" << std::endl;
-   //OutputVector(sort4);
    return sort4;
 }
 
@@ -186,23 +176,6 @@ S6 AllPositive(const S6& s) {
    }
    return out;
 }
-
-//std::vector<S6> MoveMinToFirst(const std::vector<S6>& vs) {
-//   std::vector<S6> out;
-//   const double dmin = minNC(vs[0][0], vs[0][1], vs[0][2], vs[0][3], vs[0][4], vs[0][5]);
-//   for (size_t i = 0; i < vs.size(); ++i) {
-//      const S6& s6 = vs[i];
-//      const std::vector<S6> reflected = GenerateReflections(s6);
-//      if ()
-//   }
-//   return out;
-//}
-//
-//std::vector<S6> MoveSecontMinToSecond(const std::vector<S6>& vs) {
-//   std::vector<S6> out;
-//   const double dmin2 = minNC(vs[0][1], vs[0][2], vs[0][3], vs[0][4], vs[0][5]);
-//   return out;
-//}
 
 int CountZeros(const S6& s6) {
    int count = 0;
@@ -227,7 +200,6 @@ std::string Format_V1(const S6& s) {
    const std::string ss5 = LRL_DataToSVG(s5, ", ");
    const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V1");
    const std::string out(ss1 + ss2 + ss3 + ss4 + ss5 + ss6);
-   std::cout << out << std::endl;
    return out;
 }
 
@@ -240,31 +212,82 @@ std::string Format_V1(const S6& s) {
       const double& s5 = s[4];
       const double& s6 = s[5];
       //; Root Invariant for V2 { 1.62541 ( 2.86617 2.24793 5.37153 ) 4.4525 }
-      const std::string ss2 = LRL_DataToSVG("{", s2, ", ");
-      const std::string ss3 = LRL_DataToSVG("(", s3, ", ");
-      const std::string ss4 = LRL_DataToSVG(s4, ", ");
+      const std::string ss2 = LRL_DataToSVG("(", s2, ", ");
+      const std::string ss3 = LRL_DataToSVG(s3, ", ");
+      const std::string ss4 = LRL_DataToSVG("{", s4, ", ");
       const std::string ss5 = LRL_DataToSVG(s5, "), ");
       const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V2");
-      const std::string out(ss2 + ss3 + ss4 + ss5 + ss6);
-      std::cout << out << std::endl;
+      const std::string out(ss4 + ss2 + ss3 + ss5 + ss6);
       return out;
    }
 
 std::string Format_V4(const S6& s) {
    //std::cout << "; Root Invariant for V2 " << LRL_ToString("{", s6[1], "(", s6[2], s6[3], s6[4], ")", , s6[5], "}") << std::endl;
-   //const double& s1 = s[0];
-   //const double& s2 = s[1];
+   const double& s1 = s[0];
+   const double& s2 = s[1];
    const double& s3 = s[2];
    const double& s4 = s[3];
    const double& s5 = s[4];
    const double& s6 = s[5];
-   //; Root Invariant for V2 { 1.62541 ( 2.86617 2.24793 5.37153 ) 4.4525 }
-   const std::string ss3 = LRL_DataToSVG("{(", s3, ", ");
-   const std::string ss4 = LRL_DataToSVG(s4, ", ");
-   const std::string ss5 = LRL_DataToSVG(s5, "), ");
+   std::vector<double> vd{ s3, s4, s5 };
+   std::sort(vd.begin(), vd.end());
+   S6 out;
+   out[0] = s1;
+   out[1] = s2;
+   out[2] = vd[0];
+   out[3] = vd[1];
+   out[4] = vd[2];
+   out[5] = s6;
+   //; Root Invariant for V4
+   const std::string ss3 = LRL_DataToSVG("{(", out[2], ", ");
+   const std::string ss4 = LRL_DataToSVG(out[3], ", ");
+   const std::string ss5 = LRL_DataToSVG(out[4], "), ");
    const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V4");
-   const std::string out(ss3 + ss4 + ss5 + ss6);
-   std::cout << out << std::endl;
+   const std::string strout(ss3 + ss4 + ss5 + ss6);
+   return strout;
+}
+
+S6 Resort_V1(const S6& s6) {
+
+   S6 out(s6);
+   if (abs(out[0] - out[3]) < 1.0E-5 && out[3] > out[4])
+   {
+      std::swap(out[3], out[4]);
+
+   }
+   else if (abs(out[1] - out[4]) < 1.0E-5 && out[4] > out[5])
+   {
+      std::swap(out[4], out[5]);
+   }
+   return out;
+}
+
+S6 Resort_V2(const S6& s6) {
+
+   S6 out;
+   std::cout << " s6 entering Resort_V2  " << s6 << std::endl;
+   std::vector<double> vd{ s6[1], s6[2], s6[4] };
+   std::sort(vd.begin(), vd.end());
+   std::cout << "vd in Resort_V2 " << LRL_ToString(vd ) << std::endl;
+   out[0] = s6[0];
+   out[1] = vd[0]; //this is wrong and incomplete !!!!!!!!!!!!!!!!!!!!!!
+   out[2] = vd[1];
+   out[3] = s6[3];
+   out[4] = vd[2];
+   out[5] = s6[5];
+   std::cout << " final out in Resort_V2 " << out << std::endl << std::endl;
+   return out;
+}
+
+S6 Resort_V3(const S6& s6) {
+
+   S6 out(s6);
+   std::vector<double> vd{ out[1], out[2], out[4], out[5] };
+   std::sort(vd.begin(), vd.end());
+   out[1] = vd[0];
+   out[2] = vd[1];
+   out[4] = vd[2];
+   out[5] = vd[3];
    return out;
 }
 
@@ -281,7 +304,6 @@ std::string Format_V3(const S6& s) {
    const std::string ss5 = LRL_DataToSVG(s5, ", ");
    const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V3");
    const std::string out(ss3 + ss4 + ss5 + ss6);
-   std::cout << out << std::endl;
    return out;
 }
 
@@ -297,52 +319,57 @@ std::string Format_V5(const S6& s) {
    const std::string ss5 = LRL_DataToSVG(s5, ", ");
    const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V5");
    const std::string out(ss4 + ss5 + ss6);
-   std::cout << out << std::endl;
    return out;
 }
 
 void OutputRootInvariants(const S6& s6) {
    const int zeroCount = CountZeros(s6);
+   std::string out;
    if (zeroCount == 0) {
-      // Root invaiant for V1
-      //std::cout << "; Root Invariant for V1 " << LRL_ToString(s6) << std::endl;
-      Format_V1(s6);
+      out = Format_V1(s6);
       }
    else if (zeroCount == 1) {
-      // Root Invariant for V2
-      //std::cout << "; Root Invariant for V2 " << LRL_ToString("{", s6[1], "(", s6[2], s6[3], s6[4], ")",, s6[5], "}") << std::endl;
-      Format_V2(s6);
+      out = Format_V2(Resort_V2(s6));
       }
    else if (zeroCount == 2 && s6[1] == 0.0) {
-      //std::cout << "; Root Invariant for V4 " << LRL_ToString(s6[2],s6[3],s6[4],s6[5]) << std::endl;
-      Format_V4(s6);
+      out = Format_V4(s6);
    }
    else if (zeroCount == 2) {
-      //std::cout << "; Root Invariant for V3 " << LRL_ToString(s6[1], s6[2], s6[4], s6[5]) << std::endl;
-      Format_V3(s6);
+      out = Format_V3(s6);
    }
    else if (zeroCount == 3) {
-      //std::cout << "; Root Invariant for V5 " << LRL_ToString(s6[3], s6[4], s6[5]) << std::endl;
-      Format_V5(s6);
+      out = Format_V5(s6);
    }
    else {
       throw; "not supposed to happen";
    }
+   std::cout << out << std::endl;
 }
+
+//S6 MakeRI(const S6& s6) {
+//   // generate 24 reflections
+//   const std::vector<S6> allRefls = GenerateReflections(s6);
+//   const std::vector<S6> sqrted = DoSqrt(allRefls);
+//   const std::vector<S6> resetZeros1 = ResetZeros(sqrted);
+//   // remove unsort examples
+//   const std::vector<S6> firstElementDmin = KeepDminFirst(resetZeros1);
+//   const std::vector<S6> secondElement = KeepSecondMin(firstElementDmin);
+//   // set near zeros to zero (probably not needed)
+//   const std::vector<S6> resetZeros2 = ResetZeros(secondElement);
+//   // remove actual near duplicates
+//   const std::vector<S6> allSorted = ResortElements_1_3(resetZeros2);
+//   // remove actual near duplicates, because sorting values can generate them
+//   const std::vector<S6> noDups2 = EliminateDuplicates(allSorted);
+//   const std::vector<S6>& likeRI = noDups2;
+//   return likeRI;
+//}
 
 int main()
 {
-   //std::vector<S6> sv(3);
-   //sv[0] = S6::rand();
-   //sv[1] = sv[0];
-   //sv[2] = sv[0];
-   //const std::vector<S6> out = EliminateDuplicates(sv);
-   //OutputVector(out);
-   //exit(0);
-
-
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    std::cout << "; To S6Linear" << std::endl;
+
+   std::vector<S6> summary;
 
    for (size_t i = 0; i < inputList.size(); ++i) {
       const LRL_Cell cell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
@@ -357,39 +384,42 @@ int main()
       const std::vector<S6> sqrted = DoSqrt(allRefls);
       const std::vector<S6> resetZeros1 = ResetZeros(sqrted);
       // remove unsort examples
-      //OutputVector(allRefls);
       const std::vector<S6> firstElementDmin = KeepDminFirst(resetZeros1);
-      //std::cout << std::endl;
-      //OutputVector(firstElementDmin);
-      //std::cout << std::endl;
       const std::vector<S6> secondElement = KeepSecondMin(firstElementDmin);
-      //std::cout << " cleaned " << std::endl;
-      //OutputVector(cleaned);
-      // set near zeros to zero
+      // set near zeros to zero (probably not needed)
       const std::vector<S6> resetZeros2 = ResetZeros(secondElement);
       // remove actual near duplicates
-      //const std::vector<S6> noDups = EliminateDuplicates(resetZeros);
-      // remove from list those with 1st element not min
       const std::vector<S6> allSorted = ResortElements_1_3(resetZeros2);
-      // remove from list those with 2nd element not 2nd min
-      // if s1==s2, choose so s4,s5 are sorted
-      // if s2==s3, choose so s5,s6 are sorted
-      //std::cout << " all sorted " << std::endl;
-      // OutputVector(allSorted);
-      // remove actual near duplicates
+      // remove actual near duplicates, because sorting values can generate them
       const std::vector<S6> noDups2 = EliminateDuplicates(allSorted);
-      //std::cout << " noDups after sorting " << std::endl;
-      //OutputVector(noDups2);
-      //const std::vector<S6> sortedSecondElement = ResortSecondElement(noDups2);
-      //const std::vector<S6> noDups3 = EliminateDuplicates(sortedSecondElement);
-      // sqrt at some point !!!!!!
-      const std::vector<S6> likeRI = DoSqrt(noDups2);
-      //std::cout << " after DoSqrt" << std::endl;
-      // OutputVector(likeRI);
+      std::vector<S6> likeRI(noDups2);
 
-      //for (size_t i = 0; i < likeRI.size(); ++i) {
-      //   std::cout << "; SL " << likeRI[i] << std::endl;
-      //}
+      for (size_t i = 0; i < likeRI.size(); ++i) {
+         std::cout << "; SL " << likeRI[i] << std::endl;
+      }
+
+      if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && likeRI[0][3] == 0) {
+         const S6 s6 = Resort_V3(likeRI[0]);
+         likeRI.clear();
+         likeRI.emplace_back(s6);
+      }
+      else if (likeRI.size() > 1 && CountZeros(likeRI[0]) == 0) {
+         const S6 s6 = Resort_V1(likeRI[0]);
+         likeRI.clear();
+         likeRI.emplace_back(s6);
+      }
+      else if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && CountZeros(likeRI[0]) == 1) {
+         const S6 s6 = Resort_V2(likeRI[0]);
+         likeRI.clear();
+         likeRI.emplace_back(s6);
+      }
+
+      if (likeRI.size() > 1 || likeRI.empty()) {
+         std::cout << inputList[i].GetStrCell() << std::endl;
+         OutputVector(likeRI);
+         throw; "bad likeRI";
+      }
+      summary.emplace_back(likeRI[0]);
 
       for (size_t i = 0; i < likeRI.size(); ++i) {
          OutputRootInvariants(likeRI[i]);
