@@ -1,9 +1,20 @@
 changequote(`[[[',`]]]')dnl
 define([[[LRLWEBHOST]]],[[[lrl_web_host]]])dnl
 define([[[LRLWEBUSER]]],[[[lrl_web_user]]])dnl
-define([[[LRLWEBCHECKINPUT]]],[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.$1---  RANDOM: Random (valid) unit cell;$1---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);$1---  semicolon: lines beginning with a semicolon are treated as comments$1---  Vector Input: g (or v or g6) for G6 vectors; d (or d7) for D7 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.$1---  END: ends the data input section$1$1Examples of unit cell inputs$1$1P 10 20 30 90 111 90$1G 100 400 900 0 -215.02 0$1S6 0 -107.51 0 7.51 -400 -792.49 ; this is a comment$1end]]]]]])dnl
+define([[[LRLWEBCGI]]],[[[lrl_web.cgi]]])dnl
+define([[[LRLWEBTMP]]],[[[tmp]]])dnl
+define([[[LRLWEBCHECKINPUT]]],[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.$1---  RANDOM: Random (valid) unit cell;$1---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);$1---  semicolon: lines beginning with a semicolon are treated as comments$1---  Vector Input: g (or v or g6) for G6 vectors; d (or d7) for D7 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.$1---  END: ends the data input section$1$1Examples of unit cell inputs$1$1P 10 20 30 90 111 90$1G 100 400 900 0 -215.02 0$1S6 0 -107.51 0 7.51 -400 -792.49 ; this is a comment$1end]]]]]])dnl
+define([[[LRLWEBRUNNING]]],[[[[[[
+$1<div name=$2"block_$4_running$2" id=$2"block_$4_running$2" style=$2"display:none$2">$3
+$1<label for=$2"progress_img_$4$2">Running:</label><br />$3
+$1<img src=$2"http://$5/images/progress.gif$2" id=$2"progress_img_$4$2" alt=$2"running$2" />$3
+$1<br />$3
+$1</div>$3
+]]]]]])dnl
 ifdef([[[lrlwebhost]]],define([[[LRLWEBHOST]]],[[[lrlwebhost]]]))dnl
 ifdef([[[lrlwebuser]]],define([[[LRLWEBUSER]]],[[[lrlwebuser]]]))dnl
+ifdef([[[lrlwebcgi]]],define([[[LRLWEBCGI]]],[[[lrlwebcgi]]]))dnl
+ifdef([[[lrlwebtmp]]],define([[[LRLWEBTMP]]],[[[lrlwebtmp]]]))dnl
 ifdef([[[cgicpp]]],define([[[prefix]]],[[[std::cout << ]]]))dnl
 ifdef([[[cgicpp]]],define([[[epilogue]]],[[[ << std::endl;]]]))dnl
 ifdef([[[cgicpp]]],[[[#include <iostream>
@@ -24,7 +35,8 @@ ifdef([[[cgicpp]]],[[[#include <iostream>
 #define NUMOPS_MAX 10
 #define LRL_WEB_HOST std::string("]]]LRLWEBHOST[[[")
 #define LRL_WEB_USER std::string("]]]LRLWEBUSER[[[")
-
+#define LRL_WEB_CGI std::string("]]]LRLWEBCGI[[[")
+#define LRL_WEB_TMP std::string("]]]LRLWEBTMP[[[")
 using namespace std;
 using namespace cgicc;
 
@@ -38,7 +50,7 @@ int main(int argc,
 {
    char buf[1024];
    std::string xbufstr;
-   xbufstr=std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/make_lrl_web_prefix.bash");
+   xbufstr=std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/make_lrl_web_prefix_2.bash "+LRL_WEB_USER+" "+LRL_WEB_TMP);
    if (do_exec_to_buffer(xbufstr.c_str(),buf,1024)!=0)
        exit(-1);
    tmp_lrl_web=std::string(buf);
@@ -48,7 +60,8 @@ int main(int argc,
       // Send HTTP header
       std::cout << HTTPHTMLHeader() << std::endl;
 
-      // Set up the HTML document" << std::endl;
+      // Set up the HTML document"
+      std::cout << cgicc::HTMLDoctype() << std::endl;
       std::cout << html() << std::endl;
       std::cout << "<HEAD>" << std::endl;
       std::cout << "	<meta charset=\"utf-8\">" << std::endl;
@@ -118,6 +131,7 @@ int main(int argc,
       std::cout << "    let priornum=rownum-1;" << std::endl;
       std::cout << "    if (document.getElementById(\"chain_\"+twodig(rownum)).value==\"chain_input\") {" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+twodig(priornum)+\"c\").style=\"display:inline\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(priornum)+\"d\").style=\"display:inline\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+twodig(rownum)+\"b\").style=\"display:none\";" << std::endl;
       std::cout << "    } else {" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+twodig(rownum)+\"b\").style=\"display:inline\";" << std::endl;
@@ -147,19 +161,63 @@ int main(int argc,
       std::cout << "    }" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:inline\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:inline\";" << std::endl;
+      std::cout << "    if (ii > 1) {" << std::endl;
+      std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:inline\";" << std::endl;
+      std::cout << "    }" << std::endl;
+      std::cout << "    changeoperation(twodig(ii));" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  if (mynumops < "<<NUMOPS_MAX<<") {" << std::endl;
       std::cout << "  for (ii=mynumops+1; ii<"<<NUMOPS_MAX+1<<";ii++) {" << std::endl;
       std::cout << "    // alert(\"disable block_\"+twodig(ii));" << std::endl;
+      std::cout << "    if (ii > 1) {" << std::endl;
+      std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "    }" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)).style=\"display:none\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"a\").style=\"display:none\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:none\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:none\";" << std::endl;
+      std::cout << "    if (ii > 1) {" << std::endl;
+      std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "    }" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  return true;" << std::endl;
       std::cout << "" << std::endl;
+      std::cout << "}" << std::endl;
+      std::cout << "" << std::endl;
+      std::cout << "function running(rownum) {" << std::endl;
+      std::cout << "  var ii;" << std::endl;
+      std::cout << "  let mynumops=parseInt(document.getElementById(\"numops\").value);" << std::endl;
+      std::cout << "  if (mynumops < 1) mynumops=1;" << std::endl;
+      std::cout << "  if (mynumops > 10) mynumops=10;" << std::endl;
+      std::cout << "  document.getElementById(\"numops\").value=mynumops.toString();" << std::endl;
+      std::cout << "  document.getElementById(\"submit_00\").disabled=true;" << std::endl;
+      std::cout << "  document.getElementById(\"submit_000\").disabled=true;" << std::endl;
+      std::cout << "  for (ii=1; ii<mynumops+1;ii++) {" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"_running\").style=\"display:inline\";" << std::endl;
+      std::cout << "      document.getElementById(\"submit_\"+twodig(ii)).disabled=true;" << std::endl;
+      std::cout << "      document.getElementById(\"running_img\"+twodig(ii)).src=\"http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/progress.gif\";";
+      std::cout << std::endl;
+      std::cout << "  }" << std::endl;
+      std::cout << "  document.getElementById(\"ScrollTo\").value=rownum;" << std::endl;
+      std::cout << "  return true;" << std::endl;
+      std::cout << "}" << std::endl;
+      std::cout << "" << std::endl;
+      std::cout << "function changeoperation(rownum) {" << std::endl;
+      std::cout << " var ii;"  << std::endl;
+      std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
+      std::cout << " if (operation==\"CmdGen\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
+      std::cout << " } else {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
       std::cout << "function pfloat(pfield){" << std::endl;
@@ -240,7 +298,17 @@ int main(int argc,
       std::cout << "</HEAD> " << std::endl;
       std::cout << "" << std::endl;
       std::cout << "" << std::endl;
-      std::cout << "<BODY>" << std::endl;
+
+      cgicc::const_form_iterator scrollto_iter;
+      std::string scrollto;
+      scrollto_iter = cgi.getElement("ScrollTo");
+      if (scrollto_iter == cgi.getElements().end()) {
+        scrollto = std::string("submit_01");
+      } else {
+        scrollto = std::string("submit_")+scrollto_iter->getValue();
+      }
+
+      std::cout << "<BODY onload=\"document.getElementById('"+scrollto+"').scrollIntoView();changenumops();changeoperation('01');changeoperation('02');changeoperation('03');changeoperation('04');changeoperation('05');changeoperation('06');changeoperation('07');changeoperation('08');changeoperation('09');changeoperation('10');\">" << std::endl;
       std::cout << "<font face=\"Arial,Helvetica,Times\" size=\"3\">" << std::endl;
       std::cout << "<hr />" << std::endl;
       std::cout << "<center>" << std::endl;
@@ -262,8 +330,7 @@ int main(int argc,
 }
 
 // Convert line breaks and special characters to HTML 
- std::string plaintext2html(std::string & dst, std::string src)
-{
+std::string plaintext2html(std::string & dst, std::string src){
     size_t dstlen, srclen, ii;
     char c;
     srclen=src.length();
@@ -276,10 +343,10 @@ int main(int argc,
       c=src[ii];
       switch (c) {
         case('\n'):
-          dst.append("<br/>");
+          dst.append("<br />");
           break;
         case('\r'):
-          dst.append("<br/>");
+          dst.append("<br />");
           if(ii<srclen-1 && src[ii+1]=='\n') ii++;
           break;
         case('&'):
@@ -332,6 +399,10 @@ int main(int argc,
     cgicc::const_form_iterator lrl_web_output_iter;
     cgicc::const_form_iterator chain_iter;
     cgicc::const_form_iterator operation_iter;
+    cgicc::const_form_iterator lrl_web_data_cmdgen_ngen_iter;
+    cgicc::const_form_iterator lrl_web_data_cmdgen_ltype_iter;
+    cgicc::const_form_iterator lrl_web_data_cmdperturb_npert_iter;
+    cgicc::const_form_iterator lrl_web_data_cmdperturb_ppk_iter;
     ofstream lrl_web_data_file;
     std::string lrl_web_data_data;
     std::string chain;
@@ -430,7 +501,7 @@ int main(int argc,
     std::cout << "</tr>" << std::endl;
     xactstr=std::string("<FORM method=POST ACTION=\"http://"+LRL_WEB_HOST+"/~");
     xactstr+=LRL_WEB_USER;
-    xactstr+=std::string("/cgi-bin/lrl_web.cgi\">");
+    xactstr+=std::string("/cgi-bin/"+LRL_WEB_CGI+"\" onsubmit=\"return running('00')\" >");
     std::cout << xactstr  << std::endl;
     std::cout << "<br />" << std::endl;
     std::cout << "Assorted tools to do various calculations for crystallographic lattices." << std::endl;
@@ -440,15 +511,10 @@ int main(int argc,
     std::cout << "</STRONG>" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<a name=\"search\"></a>" << std::endl;
-    std::cout << "<INPUT type=\"submit\">" << std::endl;
+    std::cout << "<INPUT type=\"submit\" id=\"submit_00\" onsubmit=\"running('00')\">" << std::endl;
     std::cout << "<INPUT type=\"reset\">" << std::endl;
     std::cout << "<br />" << std::endl;
-    std::cout << "<input type=hidden name=\"OutputStyle\" value=\"TEXT\" />" << std::endl;
-    std::cout << "<table border=2>" << std::endl;
-    std::cout << "<tr><td valign=top>" << std::endl;
-    std::cout << "  <table>" << std::endl;
-    std::cout << "  <tr>" << std::endl;
-    std::cout << "  <td colspan=3 align=\"center\">" << std::endl;
+    std::cout << "<center>" << std::endl;
     std::cout << "  <label for=\"numops\">Number of operation windows: </label>" << std::endl;
     std::cout << "  <select name=\"numops\" id=\"numops\" onchange=\"changenumops()\" size=\"1\">" << std::endl;
     if (numops==1) {
@@ -965,8 +1031,17 @@ int main(int argc,
     }
 #endif
     std::cout << "  </select>" << std::endl;
+    std::cout << "</center>" << std::endl;
+    std::cout << "<br />" << std::endl;
+    std::cout << "<input type=hidden name=\"OutputStyle\" value=\"TEXT\" />" << std::endl;
+    std::cout << "<input type=hidden name=\"ScrollTo\" value=\"000\" />" << std::endl;
+    std::cout << "  <tr>" << std::endl;
+    std::cout << "  <td colspan=3 align=\"center\">" << std::endl;
     std::cout << "  </td>" << std::endl;
     std::cout << "  </tr>" << std::endl;
+    std::cout << "<table border=2>" << std::endl;
+    std::cout << "<tr><td valign=top>" << std::endl;
+    std::cout << "  <table>" << std::endl;
     std::string currentoutput=string("");
     char * prevoutbuf = (char *)malloc(1);
     size_t prevoutbuflen = 1;
@@ -975,12 +1050,16 @@ int main(int argc,
       std::string chain;
       std::string operation;
       std::string selected;
-      std::string active=std::string("\"display:inline\"");
       std::string lrl_web_data=string(tmp_lrl_web+"/lrl_web_data_"+twodig_array[numop]);
       std::string lrl_web_output=string(tmp_lrl_web+"/lrl_web_output_"+twodig_array[numop]);
       std::string lwd=string(tmp_lrl_web+"lwd_"+twodig_array[numop]);
       std::string prioroutput=currentoutput;
       std::string currentoutput=lrl_web_output;
+      std::string lrl_web_data_cmdgen_ngen;
+      std::string lrl_web_data_cmdgen_ltype;
+      std::string lrl_web_data_cmdperturb_npert;
+      std::string lrl_web_data_cmdperturb_ppk;
+      std::string active=std::string("\"display:inline\"");
       if(numop > numops) active=std::string("\"display:none\"");
       chain_iter =  formData.getElement("chain_"+twodig_array[numop]);
       if (chain_iter == formData.getElements().end()) {
@@ -1001,6 +1080,7 @@ int main(int argc,
       }
       std::string at=std::string("");
       std::string path=std::string(tmp_lrl_web+"/lrl_web_data_"+twodig_array[numop]);
+      std::string opmod=std::string("");
       if(string_to_file(at.c_str(), path.c_str(), lrl_web_data_data.c_str())) exit(-1);
       lrl_web_output_iter = formData.getElement("lrl_web_output"+twodig_array[numop]);
       operation_iter = formData.getElement("operation_"+twodig_array[numop]);
@@ -1009,8 +1089,27 @@ int main(int argc,
       } else {
         operation = operation_iter->getValue();
       }
+      lrl_web_data_cmdgen_ngen=std::string("1");
+      lrl_web_data_cmdgen_ltype=std::string("all");
+      lrl_web_data_cmdperturb_npert=std::string("20");
+      lrl_web_data_cmdperturb_ppk=std::string("1");
+      if (operation=="CmdGen") {
+        lrl_web_data_cmdgen_ngen_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen");
+        lrl_web_data_cmdgen_ltype_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdgen_ltype");
+        lrl_web_data_cmdgen_ngen = (lrl_web_data_cmdgen_ngen_iter==formData.getElements().end())?std::string("1"):lrl_web_data_cmdgen_ngen_iter->getValue();
+        lrl_web_data_cmdgen_ltype = (lrl_web_data_cmdgen_ltype_iter==formData.getElements().end())?std::string("all"):lrl_web_data_cmdgen_ltype_iter->getValue();
+        opmod=(std::string(" ")+lrl_web_data_cmdgen_ngen+std::string(" ")+lrl_web_data_cmdgen_ltype);
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="CmdPerturb") {
+        lrl_web_data_cmdperturb_npert_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert");
+        lrl_web_data_cmdperturb_ppk_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdperturb_ppk");
+        lrl_web_data_cmdperturb_npert = (lrl_web_data_cmdperturb_npert_iter==formData.getElements().end())?std::string("20"):lrl_web_data_cmdperturb_npert_iter->getValue();
+        lrl_web_data_cmdperturb_ppk = (lrl_web_data_cmdperturb_ppk_iter==formData.getElements().end())?std::string("1"):lrl_web_data_cmdperturb_ppk_iter->getValue();
+        opmod=(std::string(" ")+lrl_web_data_cmdperturb_npert+std::string(" ")+lrl_web_data_cmdperturb_ppk);
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      }
       std::string oppath=std::string(tmp_lrl_web+"/operation_"+twodig_array[numop]);
-      if(string_to_file(at.c_str(), oppath.c_str(), operation.c_str())) {
+      if(string_to_file(at.c_str(), oppath.c_str(), (operation+opmod).c_str())) {
          std::cout << "<tr><td colspan=\"3\">string_to_file of"+tmp_lrl_web+"/operation_"+twodig_array[numop]+" failed</td></tr>"<<std::endl;
       }
       std::string xprocess_next_output=
@@ -1027,10 +1126,15 @@ int main(int argc,
       // std::cout << "<tr><td colspan=\"3\">" << xprocess_next_output << "</td></tr>" << std::endl;
       // std::cout << "<tr><td colspan=\"3\">" << outlen << "</td></tr>" << std::endl;
       selected = "";
+      if (numop > 1) {
+        std::cout << "    <tr><td colspan=3><div name=\"hrule_"+twodig_array[numop]+"\" id=\"hrule_"+twodig_array[numop]+"\" style="+active+">" << std::endl;
+        std::cout << "    <hr />" << std::endl;
+        std::cout << "    </div></tr></tr>" << std::endl;
+      }
       std::cout << "  <tr>" << std::endl;
       std::cout << "  <td>" << std::endl;
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"\" style="+active+">" << std::endl; 
-      std::cout << "  <label for=\"chain_"+twodig_array[numop]+"\">Source of data:</label><br/>" << std::endl;
+      std::cout << "  <label for=\"chain_"+twodig_array[numop]+"\">Source of data:</label><br />" << std::endl;
       std::cout << "  <select name=\"chain_"+twodig_array[numop]+"\" id=\"chain_"+twodig_array[numop]+
           "\" size=\"1\" onchange=\"setchaininput('" << numop << "')\">" << std::endl;
       selected=chain.compare("new_input")==0?"selected ":"";
@@ -1040,34 +1144,32 @@ int main(int argc,
       std::cout << "  </select>" << std::endl;
       std::cout << "  <br />" << std::endl;
       std::cout << "  <br />" << std::endl;
-      std::cout << "  <label for=\"submit_"+twodig_array[numop]+"\">Submit all data:</label><br/>" << std::endl;
-      std::cout << "  <INPUT type=\"submit\">" << std::endl;
+      std::cout << "  <label for=\"submit_"+twodig_array[numop]+"\">Submit all data:</label><br />" << std::endl;
+      std::cout << "  <INPUT type=\"submit\" id=\"submit_"+twodig_array[numop]+"\" onsubmit=\"return running('"+twodig_array[numop]+"')\">" << std::endl;
+      std::cout << "  <br />" << std::endl;
+      std::cout << "  <br />" << std::endl;
       std::cout << "  </div>" << std::endl;
+LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+twodig_array[numop]+"]]],LRLWEBHOST/~LRLWEBUSER)
       std::cout << "  </td>" << std::endl;
       std::cout << "  <td align=left>" << std::endl;
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"a\" style="+active+">" << std::endl; 
-      std::cout << "  <label for=\"operation_"+twodig_array[numop]+"\">Select an operation:</label><br/>" << std::endl;
-      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"19\">" << std::endl;
+      std::cout << "  <label for=\"operation_"+twodig_array[numop]+"\">Select an operation:</label><br />" << std::endl;
+      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"25\" onchange=\"changeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
+      std::cout << "  <optgroup label=\"Information\">" << std::endl;
       selected=operation.compare("NoOp")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"NoOp\">Check Input</option>" << std::endl;
-      selected=operation.compare("CmdDelone")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdDelone\">compute Selling-reduced primitive cells</option>" << std::endl;
       selected=operation.compare("CmdDists")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdDists\">compute NCDist and CS6Dist distances</option>" << std::endl;
-      selected=operation.compare("CmdGen")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdGen\">Generate cells of a particular type or types</option>" << std::endl;
-      selected=operation.compare("CmdLM")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdLM\">apply Lattice Matching algorithm to listed cells</option>" << std::endl;
-      selected=operation.compare("CmdNiggli")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdNiggli\">compute Niggli-reduced primitive cells</option>" << std::endl;
-      selected=operation.compare("CmdPath")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdPath\">compute path between pairs of cells</option>" << std::endl;
-      selected=operation.compare("CmdPerturb")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdPerturb\">compute perturbed versions of input cells</option>" << std::endl;
-      selected=operation.compare("CmdS6Refl")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdS6Refl\">apply S6 reflections to input cells</option>" << std::endl;
+      selected=(operation.compare("CmdVolume")==0)?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdVolume\"> compute volumes of listed cells</option>" << std::endl;
       selected=operation.compare("CmdSella")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdSella\"> apply Sella algorithm</option>" << std::endl;
+      std::cout << "  </optgroup>" << std::endl;
+      std::cout << "  <optgroup label=\"Output Only\">"  << std::endl;
+      selected=operation.compare("CmdGen")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdGen\">Generate cells of a particular type or types</option>" << std::endl;
+      std::cout << "  </optgroup>" << std::endl;
+      std::cout << "  <optgroup label=\"Type Conversion\">" << std::endl;
       selected=operation.compare("CmdToB4")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToB4\"> compute Bravais tetrahedron (B4)</option>" << std::endl;
       selected=operation.compare("CmdToC3")==0?"selected ":"";
@@ -1084,12 +1186,53 @@ int main(int argc,
       std::cout << "  <option "+selected+"value=\"CmdToS6\"> compute S6 version of cells</option>" << std::endl;
       selected=operation.compare("CmdToU")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToU\"> compute unsorted Dirichlet cells (dc7unsrt)</option>" << std::endl;
-      selected=(operation.compare("CmdVolume")==0)?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdVolume\"> compute volumes of listed cells</option>" << std::endl;
+      std::cout << "  </optgroup>" << std::endl;
+      std::cout << "  <optgroup label=\"Reduction\">" << std::endl;
+      selected=operation.compare("CmdDelone")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdDelone\">compute Selling-reduced primitive cells</option>" << std::endl;
+      selected=operation.compare("CmdNiggli")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdNiggli\">compute Niggli-reduced primitive cells</option>" << std::endl;
+      std::cout << "  </optgroup>" << std::endl;
+      std::cout << "  <optgroup label=\"Modify Input\">" << std::endl;
+      selected=operation.compare("CmdLM")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdLM\">apply Lattice Matching algorithm to listed cells</option>" << std::endl;
+      selected=operation.compare("CmdPath")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdPath\">compute path between pairs of cells</option>" << std::endl;
+      selected=operation.compare("CmdPerturb")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdPerturb\">compute perturbed versions of input cells</option>" << std::endl;
+      selected=operation.compare("CmdS6Refl")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdS6Refl\">apply S6 reflections to input cells</option>" << std::endl;
+      std::cout << "  </optgroup>" << std::endl;
       std::cout << "  </select>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  <td align=left>" << std::endl;
+      if (operation.compare("CmdGen")==0) {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdgen\" style=\"display:inline\">"  <<  std::endl;
+      } else {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdgen\" style=\"display:none\">"  <<  std::endl;
+      }
+      std::cout << "  <label for=\"lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen\">Number of each type:</label>&nbsp;"  <<  std::endl;
+      std::cout << "  <input id=\"lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen\" name=\"lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen\" type=\"text\" value=\""
+        +lrl_web_data_cmdgen_ngen+"\" number />&nbsp;&nbsp;"  <<  std::endl;
+      std::cout << "  <label for=\"lrl_web_data_"+twodig_array[numop]+"_cmdgen_ltype\">Lattice type:</label>&nbsp;"  <<  std::endl;
+      std::cout << "  <input id=\"lrl_web_data_"+twodig_array[numop]+"_cmdgen_ltype\" name=\"lrl_web_data_"+twodig_array[numop]+"_cmdgen_ltype\" type=\"text\" value=\""
+        +lrl_web_data_cmdgen_ltype+"\" />"  <<  std::endl;
+      std::cout << "  <br />"  <<  std::endl;
+      std::cout << "  </div>"  <<  std::endl;
+      if (operation.compare("CmdPerturb")==0) {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdperturb\" style=\"display:inline\">"  <<  std::endl;
+      } else {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdperturb\" style=\"display:none\">"  <<  std::endl;
+      }
+      std::cout << "  <label for=\"lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert\">Number of perturbations:</label>&nbsp;"  <<  std::endl;
+      std::cout << "  <input id=\"lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert\" name=\"lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert\" type=\"text\" value=\""
+        +lrl_web_data_cmdperturb_npert+"\" number min=\"1\"/>&nbsp;&nbsp;" <<  std::endl;
+      std::cout << "  <label for=\"lrl_web_data_"+twodig_array[numop]+"_cmdperturb_ppk\">Parts per 1000:</label>&nbsp;"  <<  std::endl;
+      std::cout << "  <input id=\"lrl_web_data_"+twodig_array[numop]+"_cmdperturb_ppk\" name=\"lrl_web_data_"+twodig_array[numop]+"_cmdperturb_ppk\" type=\"text\" value=\""
+        +lrl_web_data_cmdperturb_ppk+"\" number min=\"1\" max=\"1000\"/>"  <<  std::endl;
+      std::cout << "  <br />"  << std::endl;
+      std::cout << "  </div>"  << std::endl;
       if (chain.compare("new_input")==0 || numop < 2) {
         std::cout << "  <div id=\"block_"+twodig_array[numop]+"b"+"\" style="+active+"> " << std::endl;
       } else {
@@ -1146,7 +1289,7 @@ int main(int argc,
     std::cout << "<td>" << std::endl;
     std::cout << "<center>" << std::endl;
     std::cout << "<INPUT type=\"hidden\" NAME=\"Flush\" VALUE=\"DUMMY\">" << std::endl;
-    std::cout << "<INPUT type=\"submit\">" << std::endl;
+    std::cout << "<INPUT type=\"submit\" id=\"submit_000\" onsubmit=\"return running('000')\">" << std::endl;
     std::cout << "<INPUT type=\"reset\">" << std::endl;
     std::cout << "</Form> <hr>" << std::endl;
     std::cout << "</center>" << std::endl;
@@ -1378,7 +1521,7 @@ int main(int argc,
     std::cout << "" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 31 October 2023." << std::endl;
+    std::cout << "Updated 19 November 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
 ]]],
@@ -1482,8 +1625,12 @@ function changenumops(){
     }
     document.getElementById("block_"+twodig(ii)+"c").style="display:inline";
     document.getElementById("block_"+twodig(ii)+"d").style="display:inline";
+    document.getElementById("block_"+twodig(ii)+"_running").style="display:none";
+    if (ii > 1) {
+      document.getElementById("hrule_"+twodig(ii)).style="display:inline";
+    }
+    changeoperation(twodig(ii));
   }
-  if (mynumops < 10) {
   for (ii=mynumops+1; ii<11;ii++) {
     // alert("disable block_"+twodig(ii));
     document.getElementById("block_"+twodig(ii)).style="display:none";
@@ -1491,10 +1638,45 @@ function changenumops(){
     document.getElementById("block_"+twodig(ii)+"b").style="display:none";
     document.getElementById("block_"+twodig(ii)+"c").style="display:none";
     document.getElementById("block_"+twodig(ii)+"d").style="display:none";
-  }
+    document.getElementById("block_"+twodig(ii)+"_running").style="display:none";
+    if (ii > 1) {
+      document.getElementById("hrule_"+twodig(ii)).style="display:none";
+    }
   }
   return true;
+}
 
+function running(rownum) {
+  var ii;
+  let mynumops=parseInt(document.getElementById("numops").value);
+  if (mynumops < 1) mynumops=1;
+  if (mynumops > 10) mynumops=10;
+  document.getElementById("numops").value=mynumops.toString();
+  document.getElementById("submit_00").disabled=true;
+  document.getElementById("submit_000").disabled=true;
+  for (ii=1; ii<mynumops+1;ii++) {
+      document.getElementById("block_"+twodig(ii)+"_running").style="display:inline";      
+      document.getElementById("submit_"+twodig(ii)).disabled=true;
+      document.getElementById("running_img"+twodig(ii)).src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/progress.gif";      
+  }
+  document.getElementById("ScrollTo").value=rownum;
+  return true;
+}
+
+function changeoperation(rownum) {
+  var ii;
+  let operation=document.getElementById("operation_"+rownum).value;
+  if (operation=="CmdGen") {
+    document.getElementById("block_"+rownum+"b_cmdgen").style="display:inline";
+    document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
+  } else if (operation=="CmdPerturb") {
+    document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdperturb").style="display:inline";
+  } else {
+    document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
+  }
+  return true;
 }
 
 function pfloat(pfield){
@@ -1575,7 +1757,7 @@ LRL_WEB Lattice Representation Library Tool Web Page
 </HEAD> 
 
 
-<BODY onload="changenumops()">
+<BODY onload="document.getElementById(submit_00).scrollIntoView();changenumops();changeoperation('01');changeoperation('02');changeoperation('03');changeoperation('04');changeoperation('05');changeoperation('06');changeoperation('07');changeoperation('08');changeoperation('09');changeoperation('10');">
 <font face="Arial,Helvetica,Times" size="3">
 <hr />
 <center>
@@ -1603,7 +1785,8 @@ LRL_WEB Lattice Representation Library Tool Web Page
 Sleeping Dragon line art image by Gordon Dylan Johnson, 
 <a href="https://openclipart.org/detail/226147/sleeping-dragon-line-art">https://openclipart.org/detail/226147/sleeping-dragon-line-art</a></font></td>
 </tr>
-<FORM method=POST ACTION="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/cgi-bin/lrl_web.cgi">
+<FORM method=POST onsubmit="return running('00')" 
+  ACTION="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/cgi-bin/]]]LRLWEBCGI[[[">
 <br />
 Assorted tools to do various calculations for crystallographic lattices.
 <br />
@@ -1612,58 +1795,60 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 </STRONG>
 <p>
 <a name="search"></a>
-<INPUT type="submit">
+<INPUT type="submit" id="submit_00" onsubmit="return running('00')">
 <INPUT type="reset">
 <br />
+<center>
+<label for="numops">Number of operation windows: </label>
+<select name="numops" id="numops" onchange="changenumops()" size="1">
+<option selected value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+<option value="9">9</option>
+<option value="10">10</option>
+</select>
+</center>
 <input type=hidden name="OutputStyle" value="TEXT" />
+<br />
 <table border=2>
 <tr><td valign=top>
   <table>
   <tr>
-  <td colspan=3 align="center">
-  <label for="numops">Number of operation windows: </label>
-  <select name="numops" id="numops" onchange="changenumops()" size="1">
-  <option selected value="1">1</option>
-  <option value="2">2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-  <option value="5">5</option>
-  <option value="6">6</option>
-  <option value="7">7</option>
-  <option value="8">8</option>
-  <option value="9">9</option>
-  <option value="10">10</option>
-  </select>
-  </td>
-  </tr>
-  <tr>
   <td>
   <div id="block_01" style="display:inline"> 
-  <label for="chain_01">Source of data:</label><br/>
+  <label for="chain_01">Source of data:</label><br />
   <select name="chain_01" id="chain_01" size="1" onchange="setchaininput('1')">
   <option selected value="new_input">use new input</option>
   <option value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_01>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_01>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_01" onsubmit="return running('01')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_01a" style="display:inline"> 
-  <label for="operation_01">Select an operation:</label><br/>
-  <select name="operation_01" id="operation_01" size="19">
+  <label for="operation_01">Select an operation:</label><br />
+  <select name="operation_01" id="operation_01" size="25" onchange="changeoperation('01')">
+  <optgroup label="Information">
   <option value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -1672,11 +1857,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_01b_cmdgen" style="display:none">
+  <label for="lrl_web_data_01_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_01_cmdgen_ngen" name="lrl_web_data_01_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_01_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_01_cmdgen_ltype" name="lrl_web_data_01_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_01b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_01_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_01_cmdperturb_npert" name="lrl_web_data_01_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_01_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_01_cmdperturb_ppk" name="lrl_web_data_01_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_01b" style="display:inline"> 
   <label for="lrl_web_data_01">Input data:</label><br />
   <textarea name="lrl_web_data_01" id="lrl_web_data_01"  rows="9" cols="100">p 10 10 10 90 90 90
@@ -1694,40 +1903,45 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_01">Tool Help:</label><br />
   <textarea name="lrl_web_help_01" id="lrl_web_help_01" rows="9" cols="100" readonly>
-  ]]]LRLWEBCHECKINPUT([[[
+]]]LRLWEBCHECKINPUT([[[
 ]]])[[[
   </textarea>
   </div>
   </td>
   </tr>
-  <tr>
-  <td>
+  <tr><td colspan=3><div name="hrule_02" id="hrule_02" style="display:none">
+  <hr />
+  </div></td></tr>
+  <tr>  <td>
   <div id="block_02" style="display:none"> 
-  <label for="chain_02">Source of data:</label><br/>
+  <label for="chain_02">Source of data:</label><br />
   <select name="chain_02" id="chain_02" size="1" onchange="setchaininput('2')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_02>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_02>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_02" onsubmit="return running('02')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_02a" style="display:none"> 
-  <label for="operation_02">Select an operation:</label><br/>
-  <select name="operation_02" id="operation_02" size="19">
-  <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <label for="operation_02">Select an operation:</label><br />
+  <select name="operation_02" id="operation_02" size="25" onchange="changeoperation('02')">
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -1736,11 +1950,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_02b_cmdgen" style="display:none">
+  <label for="lrl_web_data_02_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_02_cmdgen_ngen" name="lrl_web_data_02_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_02_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_02_cmdgen_ltype" name="lrl_web_data_02_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_02b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_02_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_02_cmdperturb_npert" name="lrl_web_data_02_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_02_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_02_cmdperturb_ppk" name="lrl_web_data_02_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_02b" style="display:none"> 
   <label for="lrl_web_data_02">Input data:</label><br />
   <textarea name="lrl_web_data_02" id="lrl_web_data_02" rows="9" cols="100">p 10 10 10 90 90 90
@@ -1754,7 +1992,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_02d" style="display:inline">
+  <div id="block_02d" style="display:none">
   <br />
   <label for="lrl_web_help_02">Tool Help:</label><br />
   <textarea name="lrl_web_help_02" id="lrl_web_help_02" rows="9" cols="100" readonly>
@@ -1762,37 +2000,42 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 ]]])[[[
   </textarea>
   </div>
-
   </td>
   </tr>
+  <tr><td colspan=3><div name="hrule_03" id="hrule_03" style="display:none">
+  <hr />
+  </div></td></tr>
   <tr>
   <td>
   <div id="block_03" style="display:none"> 
-  <label for="chain_03">Source of data:</label><br/>
+  <label for="chain_03">Source of data:</label><br />
   <select name="chain_03" id="chain_03" size="1" onchange="setchaininput('3')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_03>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_03>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_03" onsubmit="return running('03')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_03a" style="display:none"> 
-  <label for="operation_03">Select an operation:</label><br/>
-  <select name="operation_03" id="operation_03" size="19">
-  <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <label for="operation_03">Select an operation:</label><br />
+  <select name="operation_03" id="operation_03" size="25" onchange=changeoperation('03')">
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -1801,11 +2044,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_03b_cmdgen" style="display:none">
+  <label for="lrl_web_data_03_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_03_cmdgen_ngen" name="lrl_web_data_03_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_03_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_03_cmdgen_ltype" name="lrl_web_data_03_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_03b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_03_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_03_cmdperturb_npert" name="lrl_web_data_03_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_03_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_03_cmdperturb_ppk" name="lrl_web_data_03_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_03b" style="display:none"> 
   <label for="lrl_web_data_03">Input data:</label><br />
   <textarea name="lrl_web_data_03" id="lrl_web_data_03" rows="9" cols="100">p 10 10 10 90 90 90
@@ -1819,7 +2086,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_03d" style="display:inline">
+  <div id="block_03d" style="display:none">
   <br />
   <label for="lrl_web_help_03">Tool Help:</label><br />
   <textarea name="lrl_web_help_03" id="lrl_web_help_03" rows="9" cols="100" readonly>
@@ -1827,37 +2094,42 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 ]]])[[[
   </textarea>
   </div>
-
   </td>
   </tr>
+  <tr><td colspan=3><div name=hrule_04" id="hrule_04" style="display:none">
+  <hr />
+  </div></td></tr>
   <tr>
   <td>
   <div id="block_04" style="display:none"> 
-  <label for="chain_04">Source of data:</label><br/>
+  <label for="chain_04">Source of data:</label><br />
   <select name="chain_04" id="chain_04" size="1" onchange="setchaininput('4')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_04>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_04>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_04" /onsubmit="return running('04')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_04a" style="display:none"> 
-  <label for="operation_04">Select an operation:</label><br/>
-  <select name="operation_04" id="operation_04" size="19">
-  <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <label for="operation_04">Select an operation:</label><br />
+  <select name="operation_04" id="operation_04" size="25" onchange="changeoperation('04')">
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -1866,11 +2138,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_04b_cmdgen" style="display:none">
+  <label for="lrl_web_data_04_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_04_cmdgen_ngen" name="lrl_web_data_04_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_04_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_04_cmdgen_ltype" name="lrl_web_data_04_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_04b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_04_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_04_cmdperturb_npert" name="lrl_web_data_04_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_04_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_04_cmdperturb_ppk" name="lrl_web_data_04_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_04b" style="display:none"> 
   <label for="lrl_web_data_04">Input data:</label><br />
   <textarea name="lrl_web_data_04" id="lrl_web_data_04" rows="9" cols="100">p 10 10 10 90 90 90
@@ -1884,7 +2180,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_04d" style="display:inline">
+  <div id="block_04d" style="display:none">
   <br />
   <label for="lrl_web_help_04">Tool Help:</label><br />
   <textarea name="lrl_web_help_04" id="lrl_web_help_04" rows="9" cols="100" readonly>
@@ -1892,37 +2188,42 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 ]]])[[[
   </textarea>
   </div>
-
   </td>
   </tr>
+  <tr><td colspan=3><div name="hrule_05" id="hrule_05" style="display:none">
+  <hr />
+  </div></td></tr>
   <tr>
   <td>
   <div id="block_05" style="display:none"> 
-  <label for="chain_05">Source of data:</label><br/>
+  <label for="chain_05">Source of data:</label><br />
   <select name="chain_05" id="chain_05" size="1" onchange="setchaininput('5')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_05>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_05>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_05"  onsubmit="return running('05')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_05a" style="display:none"> 
-  <label for="operation_05">Select an operation:</label><br/>
-  <select name="operation_05" id="operation_05" size="19">
-  <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <label for="operation_05">Select an operation:</label><br />
+  <select name="operation_05" id="operation_05" size="25" onchange="changeoperation('05')">
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -1931,11 +2232,36 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
+  <option selected value="NoOp">Check Input</option>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_05b_cmdgen" style="display:none">
+  <label for="lrl_web_data_05_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_05_cmdgen_ngen" name="lrl_web_data_05_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_05_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_05_cmdgen_ltype" name="lrl_web_data_05_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_05b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_05_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_05_cmdperturb_npert" name="lrl_web_data_05_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_05_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_05_cmdperturb_ppk" name="lrl_web_data_05_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_05b" style="display:none"> 
   <label for="lrl_web_data_05">Input data:</label><br />
   <textarea name="lrl_web_data_05" id="lrl_web_data_05" rows="9" cols="100">p 10 10 10 90 90 90
@@ -1949,7 +2275,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_05d" style="display:inline">
+  <div id="block_05d" style="display:none">
   <br />
   <label for="lrl_web_help_05">Tool Help:</label><br />
   <textarea name="lrl_web_help_05" id="lrl_web_help_05" rows="9" cols="100" readonly>
@@ -1957,37 +2283,42 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 ]]])[[[
   </textarea>
   </div>
-
   </td>
   </tr>
+  <tr><td colspan=3><div name="hrule_06" id="hrule_06" style="display:none">
+  <hr />
+  </div></td></tr>
   <tr>
   <td>
   <div id="block_06" style="display:none"> 
-  <label for="chain_06">Source of data:</label><br/>
+  <label for="chain_06">Source of data:</label><br />
   <select name="chain_06" id="chain_06" size="1" onchange="setchaininput('6')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_06>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_06">Submit all data:</label><br />
+  <INPUT type="submit" id="submit_06" onsubmit="return running('06')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_06a" style="display:none"> 
-  <label for="operation_06">Select an operation:</label><br/>
-  <select name="operation_06" id="operation_06" size="19">
-  <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <label for="operation_06">Select an operation:</label><br />
+  <select name="operation_06" id="operation_06" size="25" onchange="changeoperation('06')">
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -1996,11 +2327,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_06b_cmdgen" style="display:none">
+  <label for="lrl_web_data_06_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_06_cmdgen_ngen" name="lrl_web_data_06_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_06_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_06_cmdgen_ltype" name="lrl_web_data_06_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_06b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_06_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_06_cmdperturb_npert" name="lrl_web_data_06_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_06_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_06_cmdperturb_ppk" name="lrl_web_data_06_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_06b" style="display:none"> 
   <label for="lrl_web_data_06">Input data:</label><br />
   <textarea name="lrl_web_data_06" id="lrl_web_data_06" rows="9" cols="100">p 10 10 10 90 90 90
@@ -2014,7 +2369,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_06d" style="display:inline">
+  <div id="block_06d" style="display:none">
   <br />
   <label for="lrl_web_help_06">Tool Help:</label><br />
   <textarea name="lrl_web_help_06" id="lrl_web_help_06" rows="9" cols="100" readonly>
@@ -2022,37 +2377,42 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 ]]])[[[
   </textarea>
   </div>
-
   </td>
   </tr>
+  <tr><td colspan=3><div name="hrule_07" id="hrule_07" style="display:none">
+  <hr />
+  </div></td></tr>
   <tr>
   <td>
   <div id="block_07" style="display:none"> 
-  <label for="chain_07">Source of data:</label><br/>
+  <label for="chain_07">Source of data:</label><br />
   <select name="chain_07" id="chain_07" size="1" onchange="setchaininput('7')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_07>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_07>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_07" onsubmit="return running('07')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_07a" style="display:none"> 
-  <label for="operation_07">Select an operation:</label><br/>
-  <select name="operation_07" id="operation_07" size="19">
-  <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <label for="operation_07">Select an operation:</label><br />
+  <select name="operation_07" id="operation_07" size="25" onchange="changeoperation('07')">
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -2061,11 +2421,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_07b_cmdgen" style="display:none">
+  <label for="lrl_web_data_07_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_07_cmdgen_ngen" name="lrl_web_data_07_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_07_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_07_cmdgen_ltype" name="lrl_web_data_07_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_07b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_07_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_07_cmdperturb_npert" name="lrl_web_data_07_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_07_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_07_cmdperturb_ppk" name="lrl_web_data_07_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_07b" style="display:none"> 
   <label for="lrl_web_data_07">Input data:</label><br />
   <textarea name="lrl_web_data_07" id="lrl_web_data_07" rows="9" cols="100">p 10 10 10 90 90 90
@@ -2079,7 +2463,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_07d" style="display:inline">
+  <div id="block_07d" style="display:none">
   <br />
   <label for="lrl_web_help_07">Tool Help:</label><br />
   <textarea name="lrl_web_help_07" id="lrl_web_help_07" rows="9" cols="100" readonly>
@@ -2087,37 +2471,44 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 ]]])[[[
   </textarea>
   </div>
-
   </td>
   </tr>
+  <tr><td colspan=3>
+  <div name="hrule_08" id="hrule_08" style="display:none">
+  <hr />
+  </div></td></tr>
   <tr>
   <td>
   <div id="block_08" style="display:none"> 
-  <label for="chain_08">Source of data:</label><br/>
+  <label for="chain_08">Source of data:</label><br />
   <select name="chain_08" id="chain_08" size="1" onchange="setchaininput('8')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_08>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_08>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_08" onsubmit="return running('08')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_08a" style="display:none"> 
-  <label for="operation_08">Select an operation:</label><br/>
-  <select name="operation_08" id="operation_08" size="19">
+  <label for="operation_08">Select an operation:</label><br />
+  <select name="operation_08" id="operation_08" size="25" onchange="changeoperation('08')">
   <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -2126,11 +2517,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_08b_cmdgen" style="display:none">
+  <label for="lrl_web_data_08_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_08_cmdgen_ngen" name="lrl_web_data_08_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_08_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_08_cmdgen_ltype" name="lrl_web_data_08_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_08b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_08_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_08_cmdperturb_npert" name="lrl_web_data_08_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_08_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_08_cmdperturb_ppk" name="lrl_web_data_08_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_08b" style="display:none"> 
   <label for="lrl_web_data_08">Input data:</label><br />
   <textarea name="lrl_web_data_08" id="lrl_web_data_08" rows="9" cols="100">p 10 10 10 90 90 90
@@ -2144,7 +2559,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_08d" style="display:inline">
+  <div id="block_08d" style="display:none">
   <br />
   <label for="lrl_web_help_08">Tool Help:</label><br />
   <textarea name="lrl_web_help_08" id="lrl_web_help_08" rows="9" cols="100" readonly>
@@ -2152,37 +2567,44 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 ]]])[[[
   </textarea>
   </div>
-
   </td>
   </tr>
+  <tr><td colspan=3>
+  <div name="hrule_09" id="hrule_09" style="display:none">
+  <hr />
+  </div></td></tr>
   <tr>
   <td>
   <div id="block_09" style="display:none"> 
-  <label for="chain_09">Source of data:</label><br/>
+  <label for="chain_09">Source of data:</label><br />
   <select name="chain_09" id="chain_09" size="1" onchange="setchaininput('9')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_09>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_09>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_09" onsubmit="return running('09')">
+  <br />
+  <br />
   </div>
+LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_09a" style="display:none"> 
-  <label for="operation_09">Select an operation:</label><br/>
-  <select name="operation_09" id="operation_09" size="19">
+  <label for="operation_09">Select an operation:</label><br />
+  <select name="operation_09" id="operation_09" size="25" onchange="changeoperation('09')">
   <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -2191,11 +2613,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_09b_cmdgen" style="display:none">
+  <label for="lrl_web_data_09_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_09_cmdgen_ngen" name="lrl_web_data_09_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_09_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_09_cmdgen_ltype" name="lrl_web_data_09_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_09b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_09_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_09_cmdperturb_npert" name="lrl_web_data_09_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_09_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_09_cmdperturb_ppk" name="lrl_web_data_09_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_09b" style="display:none"> 
   <label for="lrl_web_data_09">Input data:</label><br />
   <textarea name="lrl_web_data_09" id="lrl_web_data_09" rows="9" cols="100">p 10 10 10 90 90 90
@@ -2209,7 +2655,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_09d" style="display:inline">
+  <div id="block_09d" style="display:none">
   <br />
   <label for="lrl_web_help_09">Tool Help:</label><br />
   <textarea name="lrl_web_help_09" id="lrl_web_help_09" rows="9" cols="100" readonly>
@@ -2217,37 +2663,43 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 ]]])[[[
   </textarea>
   </div>
-
   </td> 
   </tr>
+  <tr><td colspan=3>
+  <div name="hrule_10" id="hrule_10" style="display:none">
+  <hr />
+  </div></td></tr>
   <tr>
   <td>
   <div id="block_10" style="display:none"> 
-  <label for="chain_10">Source of data:</label><br/>
+  <label for="chain_10">Source of data:</label><br />
   <select name="chain_10" id="chain_10" size="1" onchange="setchaininput('10')">
   <option value="new_input">use new input</option>
   <option selected value="chain_input">use prior output</option>
   </select>
   <br />
   <br />
-  <label for=submit_10>Submit all data:</label>
-  <INPUT type="submit">
+  <label for=submit_10>Submit all data:</label><br />
+  <INPUT type="submit" id="submit_10" onsubmit="return running('10')">
+  <br />
+  <br />
   </div>
   </td>
   <td  align=left>
   <div id="block_10a" style="display:none"> 
-  <label for="operation_10">Select an operation:</label><br/>
-  <select name="operation_10" id="operation_10" size="19">
+  <label for="operation_10">Select an operation:</label><br />
+  <select name="operation_10" id="operation_10" size="25" onchange="changeoperation('10')">
   <option selected value="NoOp">Check Input</option>
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <optgroup label="Information">
+  <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdGen">Generate cells of a particular type or types</option>
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdNiggli">compute Niggli-reduced primitive cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
+  </optgroup>
+  <optgroup label="Output Only">
+  <option value="CmdGen">Generate cells of a particular type or types</option>
+  </optgroup>
+  <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
   <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
@@ -2256,11 +2708,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Reduction">
+  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  </optgroup>
+  <optgroup label="Modify Input">
+  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath">compute path between pairs of cells</option>
+  <option value="CmdPerturb">compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
+  </optgroup>
   </select>
   </div>
   </td>
   <td align=left>
+  <div id="block_10b_cmdgen" style="display:none">
+  <label for="lrl_web_data_10_cmdgen_ngen">Number of each type:</label>&nbsp;
+  <input id="lrl_web_data_10_cmdgen_ngen" name="lrl_web_data_10_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <label for="lrl_web_data_10_cmdgen_ltype">Lattice type:</label>&nbsp;
+  <input id="lrl_web_data_10_cmdgen_ltype" name="lrl_web_data_10_cmdgen_ltype" type="text" value="all" />
+  <br />
+  </div>
+  <div id="block_10b_cmdperturb" style="display:none">
+  <label for="lrl_web_data_10_cmdperturb_npert">Number of perturbations:</label>&nbsp;
+  <input id="lrl_web_data_10_cmdperturb_npert" name="lrl_web_data_10_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <label for="lrl_web_data_10_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
+  <input id="lrl_web_data_10_cmdperturb_ppk" name="lrl_web_data_10_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
   <div id="block_10b" style="display:none"> 
   <label for="lrl_web_data_10">Input data:</label><br />
   <textarea name="lrl_web_data_10" id="lrl_web_data_10" rows="9" cols="100">p 10 10 10 90 90 90
@@ -2274,7 +2750,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   Press submit to process data
   </textarea>
   </div>
-  <div id="block_10d" style="display:inline">
+  <div id="block_10d" style="display:none">
   <br />
   <label for="lrl_web_help_10">Tool Help:</label><br />
   <textarea name="lrl_web_help_10" id="lrl_web_help_10" rows="9" cols="100" readonly>
@@ -2291,7 +2767,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 <td>
 <center>
 <INPUT type="hidden" NAME="Flush" VALUE="DUMMY">
-<INPUT type="submit">
+<INPUT type="submit" id="submit_000" onsubmit="return running('000')>
 <INPUT type="reset">
 </Form> <hr>
 </center>
@@ -2523,7 +2999,7 @@ determination of a unique conventional cell. Zeitschrift f&uuml;r Kristallograph
 
 <p>
 <hr />
-Updated 31 October 2023.
+Updated 19 November 2023.
 </font>
 </body>
 </html>]]])
