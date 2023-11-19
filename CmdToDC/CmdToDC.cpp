@@ -70,7 +70,7 @@ void  Test1() {
 
 int main()
 {
-   std::cout << "; To DC" << std::endl;
+   std::cout << "; To DC (squares)" << std::endl;
    //test2();
    //Test1();
    //DC a("10 10 10  90 90 90");
@@ -110,7 +110,7 @@ int main()
    for (size_t i = 0; i < inputList.size(); ++i)
    {
       const DC dcA(inputList[i].GetCell());
-      std::cout << dcA << std::endl;
+      std::cout << "DC " << dcA << std::endl;
    }
 
    //std::clock_t start = std::clock();

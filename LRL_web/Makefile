@@ -13,10 +13,14 @@ do_posix_spawn.o: do_posix_spawn.c
 	gcc -g -c do_posix_spawn.c
 
 lrl_web.cpp: lrl_web.m4
-	m4 --define cgicpp=1 --define lrlwebuser=$(USER) --define lrlwebhost=$(HOST) lrl_web.m4 > lrl_web.cpp 
+	m4 --define cgicpp=1 --define lrlwebuser=$(USER) --define lrlwebhost=$(HOST) \
+	   --define lrlwebcgi=lrl_web.cgi --define lrlwebtmp=tmp \
+          lrl_web.m4 > lrl_web.cpp 
 
 lrl_web.html: lrl_web.m4
-	m4 --define lrlwebuser=$(USER) --define lrlwebhost=$(HOST) lrl_web.m4 > lrl_web.html 
+	m4 --define lrlwebuser=$(USER) --define lrlwebhost=$(HOST) \
+	  --define lrlwebcgi=lrl_web.cgi --define lrlwebtmp=tmp \
+	  lrl_web.m4 > lrl_web.html 
 
 clean:
 	rm -rf  lrl_web.cgi lrl_web.cpp lrl_web.html

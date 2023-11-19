@@ -82,6 +82,9 @@ CmdDelone/CmdDelone:  CmdDelone/CmdDelone.cpp $(BIN)
 CmdDists/CmdDists:  CmdDists/CmdDists.cpp $(BIN)
 	  (cd CmdDists;  make all; cp CmdDists $(BIN))
 
+CmdGen/CmdGen:  CmdGen/CmdGen.cpp $(BIN)
+	  (cd CmdGen;  make all; cp CmdGen $(BIN))
+
 CmdLM/CmdLM:  CmdLM/CmdLM.cpp $(BIN)
 	  (cd CmdLM;  make all; cp CmdLM $(BIN))
 
