@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
          GenerateNiggliBase().Select(name);
       const std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
          GenerateDeloneBase().Select(name);
-      std::cout << "; Niggli lattice type requested " << std::endl;
+      std::cout << "; Niggli and Delone lattice types requested " << std::endl;
       ForNiggliInput(NiggiTypes);
       ForDeloneInput(DeloneTypes);
       if (NiggiTypes.empty() && DeloneTypes.empty()) std::cout << "; unable to match type \"" << name << "\"" << std::endl;

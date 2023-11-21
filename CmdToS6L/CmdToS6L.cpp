@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 #include "LRL_DataToSVG.h"
 #include "LatticeConverter.h"
@@ -11,7 +12,6 @@
 #include "LRL_ToString.h"
 #include "S6.h"
 #include "Selling.h"
-#include <vector>
 
 static const std::vector<MatS6> refl_one = MatS6::GetReflections();
 
@@ -193,13 +193,14 @@ std::string Format_V1(const S6& s) {
    const double& s5 = s[4];
    const double& s6 = s[5];
    //; Root Invariant for V2 { 1.62541 ( 2.86617 2.24793 5.37153 ) 4.4525 }
+   const std::string descr = " Root Invariant for V1 ";
    const std::string ss1 = LRL_DataToSVG("{", s1, ", ");
    const std::string ss2 = LRL_DataToSVG(s2, ", ");
    const std::string ss3 = LRL_DataToSVG(s3, ", ");
    const std::string ss4 = LRL_DataToSVG(s4, ", ");
    const std::string ss5 = LRL_DataToSVG(s5, ", ");
-   const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V1");
-   const std::string out(ss1 + ss2 + ss3 + ss4 + ss5 + ss6);
+   const std::string ss6 = LRL_DataToSVG(s6, "}");
+   const std::string out(descr + ss1 + ss2 + ss3 + ss4 + ss5 + ss6);
    return out;
 }
 
@@ -212,12 +213,13 @@ std::string Format_V1(const S6& s) {
       const double& s5 = s[4];
       const double& s6 = s[5];
       //; Root Invariant for V2 { 1.62541 ( 2.86617 2.24793 5.37153 ) 4.4525 }
+      const std::string descr = " Root Invariant for V2 ";
       const std::string ss2 = LRL_DataToSVG("(", s2, ", ");
       const std::string ss3 = LRL_DataToSVG(s3, ", ");
       const std::string ss4 = LRL_DataToSVG("{", s4, ", ");
       const std::string ss5 = LRL_DataToSVG(s5, "), ");
-      const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V2");
-      const std::string out(ss4 + ss2 + ss3 + ss5 + ss6);
+      const std::string ss6 = LRL_DataToSVG(s6, "}");
+      const std::string out(descr + ss4 + ss2 + ss3 + ss5 + ss6);
       return out;
    }
 
@@ -239,11 +241,12 @@ std::string Format_V4(const S6& s) {
    out[4] = vd[2];
    out[5] = s6;
    //; Root Invariant for V4
+   const std::string descr = " Root Invariant for V4 ";
    const std::string ss3 = LRL_DataToSVG("{(", out[2], ", ");
    const std::string ss4 = LRL_DataToSVG(out[3], ", ");
    const std::string ss5 = LRL_DataToSVG(out[4], "), ");
-   const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V4");
-   const std::string strout(ss3 + ss4 + ss5 + ss6);
+   const std::string ss6 = LRL_DataToSVG(s6, "}");
+   const std::string strout(descr + ss3 + ss4 + ss5 + ss6);
    return strout;
 }
 
@@ -265,17 +268,17 @@ S6 Resort_V1(const S6& s6) {
 S6 Resort_V2(const S6& s6) {
 
    S6 out;
-   std::cout << " s6 entering Resort_V2  " << s6 << std::endl;
+   //std::cout << " s6 entering Resort_V2  " << s6 << std::endl;
    std::vector<double> vd{ s6[1], s6[2], s6[4] };
    std::sort(vd.begin(), vd.end());
-   std::cout << "vd in Resort_V2 " << LRL_ToString(vd ) << std::endl;
+   //std::cout << "vd in Resort_V2 " << LRL_ToString(vd ) << std::endl;
    out[0] = s6[0];
    out[1] = vd[0]; //this is wrong and incomplete !!!!!!!!!!!!!!!!!!!!!!
    out[2] = vd[1];
    out[3] = s6[3];
    out[4] = vd[2];
    out[5] = s6[5];
-   std::cout << " final out in Resort_V2 " << out << std::endl << std::endl;
+   //std::cout << " final out in Resort_V2 " << out << std::endl << std::endl;
    return out;
 }
 
@@ -292,37 +295,37 @@ S6 Resort_V3(const S6& s6) {
 }
 
 std::string Format_V3(const S6& s) {
-   //std::cout << "; Root Invariant for V2 " << LRL_ToString("{", s6[1], "(", s6[2], s6[3], s6[4], ")", , s6[5], "}") << std::endl;
    //const double& s1 = s[0];
    const double& s2 = s[1];
    const double& s3 = s[2];
    const double& s5 = s[4];
    const double& s6 = s[5];
-   //; Root Invariant for V2 { 1.62541 ( 2.86617 2.24793 5.37153 ) 4.4525 }
+   //; Root Invariant for V3
+   const std::string descr = " Root Invariant for V3 ";
    const std::string ss3 = LRL_DataToSVG("{", s2, ", ");
    const std::string ss4 = LRL_DataToSVG(s3, ", ");
    const std::string ss5 = LRL_DataToSVG(s5, ", ");
-   const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V3");
-   const std::string out(ss3 + ss4 + ss5 + ss6);
+   const std::string ss6 = LRL_DataToSVG(s6, "}");
+   const std::string out(descr + ss3 + ss4 + ss5 + ss6);
    return out;
 }
 
 std::string Format_V5(const S6& s) {
-   //std::cout << "; Root Invariant for V2 " << LRL_ToString("{", s6[1], "(", s6[2], s6[3], s6[4], ")", , s6[5], "}") << std::endl;
    //const double& s1 = s[0];
    //const double& s2 = s[1];
    const double& s4 = s[3];
    const double& s5 = s[4];
    const double& s6 = s[5];
    //; Root Invariant for V2 { 1.62541 ( 2.86617 2.24793 5.37153 ) 4.4525 }
+   const std::string descr = " Root Invariant for V5 ";
    const std::string ss4 = LRL_DataToSVG("{", s4, ", ");
    const std::string ss5 = LRL_DataToSVG(s5, ", ");
-   const std::string ss6 = LRL_DataToSVG(s6, "} Root Invariant for V5");
-   const std::string out(ss4 + ss5 + ss6);
+   const std::string ss6 = LRL_DataToSVG(s6, "}");
+   const std::string out(descr + ss4 + ss5 + ss6);
    return out;
 }
 
-void OutputRootInvariants(const S6& s6) {
+std::string  OutputRootInvariants(const S6& s6) {
    const int zeroCount = CountZeros(s6);
    std::string out;
    if (zeroCount == 0) {
@@ -343,7 +346,8 @@ void OutputRootInvariants(const S6& s6) {
    else {
       throw; "not supposed to happen";
    }
-   std::cout << out << std::endl;
+   //std::cout << out << std::endl;
+   return out;
 }
 
 //S6 MakeRI(const S6& s6) {
@@ -394,9 +398,9 @@ int main()
       const std::vector<S6> noDups2 = EliminateDuplicates(allSorted);
       std::vector<S6> likeRI(noDups2);
 
-      for (size_t i = 0; i < likeRI.size(); ++i) {
-         std::cout << "; SL " << likeRI[i] << std::endl;
-      }
+      //for (size_t i = 0; i < likeRI.size(); ++i) {
+      //   std::cout << "; SL " << likeRI[i] << std::endl;
+      //}
 
       if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && likeRI[0][3] == 0) {
          const S6 s6 = Resort_V3(likeRI[0]);
@@ -422,7 +426,9 @@ int main()
       summary.emplace_back(likeRI[0]);
 
       for (size_t i = 0; i < likeRI.size(); ++i) {
-         OutputRootInvariants(likeRI[i]);
+         const std::string RI = OutputRootInvariants(likeRI[i]);
+         const std::string line = "; SL " + LRL_ToString(likeRI[i], RI);
+         std::cout << line << std::endl;
       }
    }
 }
