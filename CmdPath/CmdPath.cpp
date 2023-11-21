@@ -47,7 +47,15 @@ int main(int argc, char* argv[])
     if (s6Cells.size() == 1) {
        const std::string lattice = inputList[0].GetLattice();
        const G6 g6red = LatticeConverter().NiggliReduceCell(lattice, s6Cells[0]);
-       s6Cells.push_back(g6red);
+
+       if (G6(s6Cells[0] - g6red).norm() > 1.0) {
+          s6Cells.emplace_back(g6red);
+          std::cout << "; Path Generator found only one point. Using Niggli reduced input for 2nd point" << std::endl;
+       }
+       else {
+          std::cout << "; Path Generator found only one point. Using random cell for 2nd point" << std::endl;
+          s6Cells.emplace_back(S6::rand());
+       }
     }
 
    std::vector<S6> path;

@@ -902,7 +902,8 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
    bool isNearReduced = Niggli::NearRed(vout, delta);
    if (reduceCycleCount >= maxCycle) {
       if (isNearReduced) {
-         std::cout << "THERE IS A REDUCE PROBLEM, m_ReductionCycleCount " << reduceCycleCount << std::endl;
+         std::cout << "THERE IS A REDUCE PROBLEM (B), m_ReductionCycleCount " << reduceCycleCount << std::endl;
+         std::cout << vout << std::endl;
       }
    }
    m_ReductionCycleCount = reduceCycleCount;
@@ -1159,7 +1160,8 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
    bool isNearReduced = NearRed(vout, delta);
    if (count >= maxCycle) {
       if (!isNearReduced) {
-         std::cout << "THERE IS A REDUCE PROBLEM, m_ReductionCycleCount " << count << std::endl;
+         std::cout << " vi " << vi << std::endl;
+         std::cout << "THERE IS A REDUCE PROBLEM (A), m_ReductionCycleCount " << count << std::endl;
       }
    }
    m_ReductionCycleCount = count;
