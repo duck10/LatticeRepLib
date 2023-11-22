@@ -413,10 +413,12 @@ int main(int argc, char* argv[]) {
 
    std::cout << "; To Linearized S6 and root invariants" << std::endl;
 
+   static const std::string allowedLetters = "SLR";
    int test = 0;
    if (argc > 1) {
       name = argv[1];
       name = LRL_StringTools::strToupper(name);
+      if (allowedLetters.find(name[0]) == std::string::npos) name.clear();
    }
 
 
