@@ -448,7 +448,7 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
    }
 
    if (allowedLatticeSymbols.find(newFields[0]) == std::string::npos) {  //LCA fix for type DC7u
-      std::cout << "invalid input data" << std::endl;
+      std::cout << "; invalid input data" << std::endl;
       return "";
    }
 

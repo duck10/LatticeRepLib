@@ -86,6 +86,7 @@ void SetGlobalValue( const std::string& dataType,
                      const std::vector<std::string>& values, 
                      const std::string& wholeLine,
                      void* pData ) {
+   if (values.size() < 2) return;
    if (dataType == "bool") {
       *(bool*)pData = GetBoolData(values[1]);
    }

@@ -2,6 +2,7 @@
 //
 
 #include "C3Plot.h"
+#include "ColorTables.h"
 #include "LRL_ToString.h"
 #include "LRL_DataToSVG.h"
 #include "LRL_CreateFileName.h"
@@ -18,6 +19,7 @@
 #include <vector>
 
 size_t scalar = 19191;
+
 
 std::vector<std::string> allowed{ "seq","C3","RI" };
 
@@ -252,12 +254,14 @@ int main(int argc, char* argv[])
    const std::string filename = LRL_CreateFileName::Create("PLT_", "svg");
 
    C3Plot c3plot(filename, 1800, 800, 500, 500);
+   c3plot.SetColor(100);
 
    std::string svgOutput;
    const std::string intro = c3plot.GetIntro(filename);
    svgOutput += intro;
 
    const std::vector<S6> v = PrepareCells();
+   c3plot.SetColorDelta(255 / (v.size() + 1));
    const std::string legend = PrepareLegend(600, 600, v);
    svgOutput += legend;
 

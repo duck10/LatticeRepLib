@@ -5,6 +5,7 @@
 #include <iomanip>      // std::setfill, std::setw
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "D7.h"
 #include "Dirichlet.h"
@@ -54,11 +55,10 @@ std::string DrawOneDirichletRing(const double scale, const ANGLELIST& ring, cons
    std::string s;
    const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(ring);
 
-   const double dotToZAxis = cm.Dot(Vector_3(0,0,1));
-
    if (ring.size() >= 3) {
-      const std::string color = (dotToZAxis> 0.0) ? DirichletConstants::hiddenLineColor : "black";
-      const std::string polygonStrokeWidth = (dotToZAxis > 0.0) ? "1" : "2";
+      const std::string color = (cm[2]< 0.0) ? "black" : "black";
+      //const std::string color = "black";
+      const std::string polygonStrokeWidth = (cm[2] < 0.0) ? "2" : "2";
       s += "  <polygon fill=\"" + /*colors[nColor]*/  std::string(DirichletConstants::faceColor) + 
          " \" stroke=\"" + color + "\" stroke-width=\"" + polygonStrokeWidth + "\" points=\"";
       for (size_t point = 0; point < ring.size(); ++point) {
@@ -210,15 +210,32 @@ std::vector<std::string> DrawDirichletRings( const ANGLESFORFACES& newRinged) {
    for (size_t cycle = 0; cycle < 1; ++cycle) {
       const ANGLESFORFACES faces(RotateAllFaces(m, sorted));
       m = m2 * m;
-      for (size_t pass = 0; pass < 2; ++pass) {
 
-         for (size_t thisFace = 0; thisFace < faces.size(); ++thisFace) {
-            const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(faces[thisFace]);
-            const double dotToZAxis = cm.Dot(Vector_3(0, 0, 1));
-            if ((pass == 0 && dotToZAxis > 0.0) ||( pass == 1 && dotToZAxis <= 0.0))
-               vs.push_back(DrawOneDirichletRing(scale, faces[thisFace], thisFace));
-         }
+      std::vector<std::pair<double, size_t> >zandindex;
+      for (size_t thisFace = 0; thisFace < faces.size(); ++thisFace) {
+         const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(faces[thisFace]);
+         zandindex.emplace_back(std::make_pair(cm[3], thisFace));
       }
+
+      std::sort(zandindex.begin(), zandindex.end(), std::greater<>());
+
+      for (size_t i = 0; i < zandindex.size(); ++i) {
+         vs.push_back(DrawOneDirichletRing(scale, faces[zandindex[i].second],zandindex[i].second));
+
+      }
+
+
+      //for (size_t pass = 0; pass < 2; ++pass) {
+
+      //   for (size_t thisFace = 0; thisFace < faces.size(); ++thisFace) {
+      //      const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(faces[thisFace]);
+      //      const double dotToZAxis = cm.Dot(Vector_3(0, 0, 1));
+      //      std::cout << " cm " << cm << std::endl;
+      //      std::cout << "dot to Z  " << dotToZAxis << std::endl << std::endl;
+      //      if ((pass == 0 && dotToZAxis > 0.0) ||( pass == 1 && dotToZAxis <= 0.0))
+      //         vs.push_back(DrawOneDirichletRing(scale, faces[thisFace], thisFace));
+      //   }
+      //}
    }
    return vs;
 }
