@@ -1,4 +1,5 @@
 #include "C3Plot.h"
+#include "ColorTables.h"
 #include "FileOperations.h"
 #include "LRL_CreateFileName.h"
 #include "LRL_DataToSVG.h"
@@ -11,6 +12,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
+
 
 
 double C3Plot::CellScale(const std::vector<S6>& v) {
@@ -50,9 +52,8 @@ std::string C3Plot::CreatePolylineFromPoints(const size_t scalar, const std::str
    return svg;
 }
 
-
 std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
-
+   m_color = 1;
    CellScale(v);
    const double cellScale = CellScaleFactor();
    const ScalarProperties sp(scalar);
@@ -62,16 +63,26 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
    std::string transform = "<g transform = \"translate( "
       + LRL_DataToSVG(0) + ", " + LRL_DataToSVG(0)
       +")\" >\n" +  "\n";
+   const int maxColor = 255;
+   const int deltaColor = 255 / v.size();
    for (size_t i = 0; i < v.size(); ++i) {
       const std::string x = LRL_DataToSVG_ToQuotedString(v[i][sp.index1]*cellScale);
       const std::string y = LRL_DataToSVG_ToQuotedString(v[i][sp.index2]*cellScale);
       const std::string radius = LRL_DataToSVG_ToQuotedString( 3);
 
-      const std::string s = std::string("<circle fill=\"none\"  r=\"5\" stroke = \"black\" stroke-width=\"2\"" 
+      int r;
+      int g;
+      int b;
+      ColorTables::GetCividisRGB(GetColor(), r, g, b);
+
+      // fill="rgb(255, 0, 0)"
+      const std::string s = std::string("<circle  r=\"10\" stroke = \"black\" stroke-width=\"2\"" 
+         " fill= \"rgb(" + LRL_ToString(r) + ", " + LRL_ToString(g) + ", " + LRL_ToString(b) + ")\""
          " cx=" + x +
          " cy=" + y + "/>\n" );
       transform += s;
 
+   m_color += m_deltaColor % 256;
 
    }
 

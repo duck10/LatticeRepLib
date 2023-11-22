@@ -9,6 +9,7 @@
 #include "LRL_Cell.h"
 #include "LRL_MinMaxTools.h"
 #include "LRL_ReadLatticeData.h"
+#include "LRL_StringTools.h"
 #include "LRL_ToString.h"
 #include "S6.h"
 #include "Selling.h"
@@ -62,7 +63,7 @@ std::vector<S6> ResetZeros(const std::vector<S6>& vs) {
 std::vector<S6> DoSqrt(const std::vector<S6>& vs) {
    std::vector<S6> out;
    for (size_t i = 0; i < vs.size(); ++i) {
-      S6 s(vs[i]);
+      const S6& s(vs[i]);
       S6 temp(sqrt(s[0]), sqrt(s[1]), sqrt(s[2]), sqrt(s[3]), sqrt(s[4]), sqrt(s[5]));
       out.emplace_back(temp);
    }
@@ -350,85 +351,105 @@ std::string  OutputRootInvariants(const S6& s6) {
    return out;
 }
 
-//S6 MakeRI(const S6& s6) {
-//   // generate 24 reflections
-//   const std::vector<S6> allRefls = GenerateReflections(s6);
-//   const std::vector<S6> sqrted = DoSqrt(allRefls);
-//   const std::vector<S6> resetZeros1 = ResetZeros(sqrted);
-//   // remove unsort examples
-//   const std::vector<S6> firstElementDmin = KeepDminFirst(resetZeros1);
-//   const std::vector<S6> secondElement = KeepSecondMin(firstElementDmin);
-//   // set near zeros to zero (probably not needed)
-//   const std::vector<S6> resetZeros2 = ResetZeros(secondElement);
-//   // remove actual near duplicates
-//   const std::vector<S6> allSorted = ResortElements_1_3(resetZeros2);
-//   // remove actual near duplicates, because sorting values can generate them
-//   const std::vector<S6> noDups2 = EliminateDuplicates(allSorted);
-//   const std::vector<S6>& likeRI = noDups2;
-//   return likeRI;
-//}
 
-int main()
-{
+std::pair<S6, std::string>   MakeRI(const LRL_ReadLatticeData& input, const S6& positiveRed) {
+   //// this is the calculation (at least my attempt) to compute Bright and Kurlin's "Root Invariant"
+
+   // generate 24 reflections
+   const std::vector<S6> allRefls = GenerateReflections(positiveRed);
+   const std::vector<S6> sqrted = DoSqrt(allRefls);
+   const std::vector<S6> resetZeros1 = ResetZeros(sqrted);
+   // remove unsort examples
+   const std::vector<S6> firstElementDmin = KeepDminFirst(resetZeros1);
+   const std::vector<S6> secondElement = KeepSecondMin(firstElementDmin);
+   // set near zeros to zero (probably not needed)
+   const std::vector<S6> resetZeros2 = ResetZeros(secondElement);
+   // remove actual near duplicates
+   const std::vector<S6> allSorted = ResortElements_1_3(resetZeros2);
+   // remove actual near duplicates, because sorting values can generate them
+   const std::vector<S6> noDups2 = EliminateDuplicates(allSorted);
+   std::vector<S6> likeRI(noDups2);
+
+   if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && likeRI[0][3] == 0) {
+      const S6 s6 = Resort_V3(likeRI[0]);
+      likeRI.clear();
+      likeRI.emplace_back(s6);
+   }
+   else if (likeRI.size() > 1 && CountZeros(likeRI[0]) == 0) {
+      const S6 s6 = Resort_V1(likeRI[0]);
+      likeRI.clear();
+      likeRI.emplace_back(s6);
+   }
+   else if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && CountZeros(likeRI[0]) == 1) {
+      const S6 s6 = Resort_V2(likeRI[0]);
+      likeRI.clear();
+      likeRI.emplace_back(s6);
+   }
+
+   if (likeRI.size() > 1 || likeRI.empty()) {
+      std::cout << input.GetStrCell() << std::endl;
+      OutputVector(likeRI);
+      throw; "bad likeRI";
+   }
+   std::vector<S6> summary;
+   //summary.emplace_back(likeRI[0]);
+
+   for (size_t i = 0; i < likeRI.size(); ++i) {
+      const std::string RI = OutputRootInvariants(likeRI[i]);
+      //const std::string line = "; SL " + LRL_ToString(likeRI[i], RI);
+   }
+   const std::pair<S6, std::string> pss = std::make_pair(likeRI[0], OutputRootInvariants(likeRI[0]));
+
+   return pss;
+}
+
+S6  MakeS6L(const S6& s6) {
+   const S6 s(sqrt(s6[0]), sqrt(s6[1]), sqrt(s6[2]), sqrt(s6[3]), sqrt(s6[4]), sqrt(s6[5]));
+   return s;
+}
+
+int main(int argc, char* argv[]) {
+   static std::string name = ""; // blank or unrecognized gives all types
+
+   std::cout << "; To Linearized S6 and root invariants" << std::endl;
+
+   int test = 0;
+   if (argc > 1) {
+      name = argv[1];
+      name = LRL_StringTools::strToupper(name);
+   }
+
+
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   std::cout << "; To S6Linear" << std::endl;
 
    std::vector<S6> summary;
 
+   std::vector<std::pair<S6,std::string> >RIs;
+   std::vector<S6> SLs;
    for (size_t i = 0; i < inputList.size(); ++i) {
       const LRL_Cell cell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
       S6 red;
       const bool b = Selling::Reduce(cell, red);
       const S6 s6(AllPositive(red));
 
-      //// this is the calculation (at least my attempt) to compute Bright and Kurlin's "Root Invariant"
+      // this is the calculation (at least my attempt) to compute Bright and Kurlin's "Root Invariant"
+      RIs.emplace_back(MakeRI(inputList[i], s6));
+      SLs.emplace_back(MakeS6L(s6));
+   }
 
-      // generate 24 reflections
-      const std::vector<S6> allRefls = GenerateReflections(s6);       
-      const std::vector<S6> sqrted = DoSqrt(allRefls);
-      const std::vector<S6> resetZeros1 = ResetZeros(sqrted);
-      // remove unsort examples
-      const std::vector<S6> firstElementDmin = KeepDminFirst(resetZeros1);
-      const std::vector<S6> secondElement = KeepSecondMin(firstElementDmin);
-      // set near zeros to zero (probably not needed)
-      const std::vector<S6> resetZeros2 = ResetZeros(secondElement);
-      // remove actual near duplicates
-      const std::vector<S6> allSorted = ResortElements_1_3(resetZeros2);
-      // remove actual near duplicates, because sorting values can generate them
-      const std::vector<S6> noDups2 = EliminateDuplicates(allSorted);
-      std::vector<S6> likeRI(noDups2);
-
-      //for (size_t i = 0; i < likeRI.size(); ++i) {
-      //   std::cout << "; SL " << likeRI[i] << std::endl;
-      //}
-
-      if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && likeRI[0][3] == 0) {
-         const S6 s6 = Resort_V3(likeRI[0]);
-         likeRI.clear();
-         likeRI.emplace_back(s6);
+   if ( name.empty() || name[0]=='R')
+   {
+      for (size_t i = 0; i < RIs.size(); ++i) {
+         std::cout << "RI " << RIs[i].first << RIs[i].second << std::endl;
       }
-      else if (likeRI.size() > 1 && CountZeros(likeRI[0]) == 0) {
-         const S6 s6 = Resort_V1(likeRI[0]);
-         likeRI.clear();
-         likeRI.emplace_back(s6);
-      }
-      else if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && CountZeros(likeRI[0]) == 1) {
-         const S6 s6 = Resort_V2(likeRI[0]);
-         likeRI.clear();
-         likeRI.emplace_back(s6);
-      }
+   }
 
-      if (likeRI.size() > 1 || likeRI.empty()) {
-         std::cout << inputList[i].GetStrCell() << std::endl;
-         OutputVector(likeRI);
-         throw; "bad likeRI";
-      }
-      summary.emplace_back(likeRI[0]);
+   std::cout << std::endl;
 
-      for (size_t i = 0; i < likeRI.size(); ++i) {
-         const std::string RI = OutputRootInvariants(likeRI[i]);
-         const std::string line = "; SL " + LRL_ToString(likeRI[i], RI);
-         std::cout << line << std::endl;
+   if ( name.empty() || name[0] =='S' || name[0]=='L')
+   {
+      for (size_t i = 0; i < SLs.size(); ++i) {
+         std::cout << "SL " << SLs[i] << std::endl;
       }
    }
 }
