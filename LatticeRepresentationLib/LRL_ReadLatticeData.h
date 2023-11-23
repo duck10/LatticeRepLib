@@ -38,6 +38,7 @@ protected:
    bool SetB4Data( const std::vector<double>& fields);
    bool SetV7Data(const std::vector<double>& fields);
    bool SetUData(const std::vector<double>& fields);
+   bool SetSLData(const std::vector<double>& fields);
    bool SetUnitCellTypeData( const std::pair<std::vector<double>, std::vector<double> >& params );
    static bool IsLatticeName(const std::string& inputName, const std::vector<std::string>& nameList);
    static bool IsLatticeName(const std::vector<std::string>& nameList, const std::string& inputName);

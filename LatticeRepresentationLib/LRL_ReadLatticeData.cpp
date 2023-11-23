@@ -32,7 +32,8 @@ static const int folseed = 19192;
 const std::string G6_names[] = { "G ", "G6 ", " V", "V ", " V "};
 const std::vector<std::string> vG6_names(G6_names, G6_names + sizeof(G6_names) / sizeof(G6_names[0]));
 
-const std::string D7_names[] = { "D ", "D7 " };
+//const std::string D7_names[] = { "D ", "D7 " }; // removed 2023-11-22
+const std::string D7_names[] = { " " };
 const std::vector<std::string> vD7_names(D7_names, D7_names + sizeof(D7_names) / sizeof(D7_names[0]));
 
 const std::string S6_names[] = { "S ", "S6 " };
@@ -44,21 +45,26 @@ const std::vector<std::string> vC3_names(C3_names, C3_names + sizeof(C3_names) /
 const std::string B4_names[] = { "B ", "B4 " };
 const std::vector<std::string> vB4_names(B4_names, B4_names + sizeof(B4_names) / sizeof(B4_names[0]));
 
-const std::string U_names[] = { "U ", "DC7U ", "DU "};
+const std::string U_names[] = { "U ", "DC7U ", "DU " };
 const std::vector<std::string> vU_names(U_names, U_names + sizeof(U_names) / sizeof(U_names[0]));
+
+const std::string SL_names[] = { "SL ", "RI " };
+const std::vector<std::string> vSL_names(SL_names, SL_names + sizeof(SL_names) / sizeof(SL_names[0]));
 
 
 
 static const std::string symbols6(" A B C F G H I P R S G6 S6 V "); // ALL BLANKS ARE NOT OPTIONAL
 static const std::string symbols7(" DC DC7U U DU  ");
 static const std::string symbols13(" /*DC13*/ ");
-static const std::string allowedLatticeSymbols = symbols6 + symbols7 + symbols13;
+static const std::string symbolsSL(" RI SL ");
+static const std::string allowedLatticeSymbols = symbols6 + symbols7 + symbols13 + symbolsSL;
 
 
 size_t SizeForLatticeType(const std::string& lattice) {
    if (symbols6.find(" " + lattice + " ") != std::string::npos) return 6;
    if (symbols7.find(" " + lattice + " ") != std::string::npos) return 7;
    if (symbols13.find(" " + lattice + " ") != std::string::npos) return 13;
+   if (symbolsSL.find(" " + lattice + " ") != std::string::npos) return 6;
    throw " in SizeForLatticeType, got unrecognized lattice " + lattice;
 }
 
@@ -149,6 +155,17 @@ bool LRL_ReadLatticeData::SetC3Data(const std::vector<double>& fields) {
    return test;
 }
 
+bool LRL_ReadLatticeData::SetSLData(const std::vector<double>& fields) {
+   const bool test = IsLatticeName(m_inputDataType, vSL_names);
+   if (test) {
+      const S6 s6(-fields[0] * fields[0], -fields[1] * fields[1], -fields[2] * fields[2], -fields[3] * fields[3],
+         -fields[4] * fields[4], -fields[5] * fields[5]);
+      m_cell = s6;
+      m_lattice = "P";
+   }
+   return test;
+}
+
 bool LRL_ReadLatticeData::SetB4Data(const std::vector<double>& fields) {
    if (fields.size() < 12) return false;
    const bool test = IsLatticeName(m_inputDataType, vB4_names);
@@ -190,11 +207,10 @@ bool LRL_ReadLatticeData::SetV7Data(const std::vector<double>& fields) {
    return test;
 }
 
-
-bool LRL_ReadLatticeData::SetS6Data( const std::vector<double>& fields ) {
-   const bool test = IsLatticeName( m_inputDataType, vS6_names );
+bool LRL_ReadLatticeData::SetS6Data(const std::vector<double>& fields) {
+   const bool test = IsLatticeName(m_inputDataType, vS6_names);
    if (test) {
-      m_cell = LRL_Cell( S6( fields ) );
+      m_cell = LRL_Cell(S6(fields));
       m_lattice = "P";
    }
    return test;
@@ -265,6 +281,7 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
          SetC3Data(fields) ||
          SetB4Data(fields) ||
          SetUData(fields) ||
+         SetSLData(fields) ||
          SetUnitCellTypeData(params);
 
       if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
@@ -396,7 +413,10 @@ std::vector<std::string> IsLattice(const std::vector<std::string>& fields) {
       return RearrangeFields(fields, 7);
    }
    else if (fields.size() > 13 && symbols13.find(" " + fields[13] + " ") != std::string::npos) {
-     return RearrangeFields(fields, 13);
+      return RearrangeFields(fields, 13);
+   }
+   else if (fields.size() > 6 && symbolsSL.find(" " + fields[6] + " ") != std::string::npos) {
+      return RearrangeFields(fields, 6);
    }
 
    return out;
