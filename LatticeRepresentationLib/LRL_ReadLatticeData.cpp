@@ -504,9 +504,9 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
       return "";
    }
 
-   return lattice + " " + LRL_ToString(parameters);
+   // Process(lattice, parameters);
 
-   Process(lattice, parameters);
+   return lattice + " " + LRL_ToString(parameters);
 
 }
 

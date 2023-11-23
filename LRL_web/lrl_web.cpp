@@ -142,29 +142,35 @@ int main(int argc,
       std::cout << "    }" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:inline\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:inline\";" << std::endl;
+      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"_running\").style=\"display:none\";" << std::endl;
       std::cout << "    if (ii > 1) {" << std::endl;
       std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:inline\";" << std::endl;
       std::cout << "    }" << std::endl;
       std::cout << "    changeoperation(twodig(ii));" << std::endl;
       std::cout << "  }" << std::endl;
+      std::cout << "  document.getElementById(\"ScrollTo\").value=twodig(ParseInt((mynumops+1)/2));" << std::endl;
       std::cout << "  if (mynumops < "<<NUMOPS_MAX<<") {" << std::endl;
-      std::cout << "  for (ii=mynumops+1; ii<"<<NUMOPS_MAX+1<<";ii++) {" << std::endl;
-      std::cout << "    // alert(\"disable block_\"+twodig(ii));" << std::endl;
-      std::cout << "    if (ii > 1) {" << std::endl;
-      std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "    for (ii=mynumops+1; ii<"<<NUMOPS_MAX+1<<";ii++) {" << std::endl;
+      std::cout << "      // alert(\"disable block_\"+twodig(ii));" << std::endl;
+      std::cout << "      if (ii > 1) {" << std::endl;
+      std::cout << "        document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "      }" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"a\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"_running\").style=\"display:none\";" << std::endl;
+      std::cout << "      if (ii > 1) {" << std::endl;
+      std::cout << "        document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "      }" << std::endl;
       std::cout << "    }" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)).style=\"display:none\";" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"a\").style=\"display:none\";" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:none\";" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:none\";" << std::endl;
-      std::cout << "    if (ii > 1) {" << std::endl;
-      std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
-      std::cout << "    }" << std::endl;
-      std::cout << "  }" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  return true;" << std::endl;
+      std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
+      std::cout << "function noop(){" << std::endl;
+      std::cout << "  return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
       std::cout << "function running(rownum) {" << std::endl;
@@ -178,10 +184,9 @@ int main(int argc,
       std::cout << "  for (ii=1; ii<mynumops+1;ii++) {" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"_running\").style=\"display:inline\";" << std::endl;
       std::cout << "      document.getElementById(\"submit_\"+twodig(ii)).disabled=true;" << std::endl;
-      std::cout << "      document.getElementById(\"running_img\"+twodig(ii)).src=\"http://blondie.arcib.org:8083/~yaya/images/progress.gif\";";
-      std::cout << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  document.getElementById(\"ScrollTo\").value=rownum;" << std::endl;
+      std::cout << "  let timerId = setTimeout(noop,500);" << std::endl;
       std::cout << "  return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
@@ -190,13 +195,29 @@ int main(int argc,
       std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
       std::cout << " if (operation==\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << " } else if (operation==\"CmdPath\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:inline\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
       std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << " } else if (operation==\"CmdToS6L\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:inline\";" << std::endl;
       std::cout << " } else {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
       std::cout << " }" << std::endl;
       std::cout << " return true;" << std::endl;
       std::cout << "}" << std::endl;
@@ -284,12 +305,13 @@ int main(int argc,
       std::string scrollto;
       scrollto_iter = cgi.getElement("ScrollTo");
       if (scrollto_iter == cgi.getElements().end()) {
-        scrollto = std::string("submit_01");
+        scrollto = std::string("mark_01");
       } else {
-        scrollto = std::string("submit_")+scrollto_iter->getValue();
+        scrollto = std::string("mark_")+scrollto_iter->getValue();
       }
 
       std::cout << "<BODY onload=\"document.getElementById('"+scrollto+"').scrollIntoView();changenumops();changeoperation('01');changeoperation('02');changeoperation('03');changeoperation('04');changeoperation('05');changeoperation('06');changeoperation('07');changeoperation('08');changeoperation('09');changeoperation('10');\">" << std::endl;
+      std::cout << "<a name=\"mark_00\" id=\"mark_00\" />" << std::endl;
       std::cout << "<font face=\"Arial,Helvetica,Times\" size=\"3\">" << std::endl;
       std::cout << "<hr />" << std::endl;
       std::cout << "<center>" << std::endl;
@@ -382,8 +404,10 @@ std::string plaintext2html(std::string & dst, std::string src){
     cgicc::const_form_iterator operation_iter;
     cgicc::const_form_iterator lrl_web_data_cmdgen_ngen_iter;
     cgicc::const_form_iterator lrl_web_data_cmdgen_ltype_iter;
+    cgicc::const_form_iterator lrl_web_data_cmdpath_npath_iter;
     cgicc::const_form_iterator lrl_web_data_cmdperturb_npert_iter;
     cgicc::const_form_iterator lrl_web_data_cmdperturb_ppk_iter;
+    cgicc::const_form_iterator lrl_web_data_cmdtos6l_type_iter;
     ofstream lrl_web_data_file;
     std::string lrl_web_data_data;
     std::string chain;
@@ -476,7 +500,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<tr>" << std::endl;
     std::cout << "<td colspan=3 align=center><font size=\"-1\">" << std::endl;
     std::cout << "<a href=\"#timeline\">Timeline image</a> by Elizabeth Kincaid, Elizabeth Kincaid Watercolors, <br />" << std::endl;
-    std::cout << "<a href=\"#celticknot\">Celtic knots</a> by Susan Jones Davis, Blue Seahorse Studio, <br />" << std::endl;
+    std::cout << "<a href=\"#celticknot\">Celtic knots</a> by Susan Jones Davis, <br />" << std::endl;
     std::cout << "Sleeping Dragon line art image by Gordon Dylan Johnson, " << std::endl;
     std::cout << "<a href=\"https://openclipart.org/detail/226147/sleeping-dragon-line-art\">https://openclipart.org/detail/226147/sleeping-dragon-line-art</a></font></td>" << std::endl;
     std::cout << "</tr>" << std::endl;
@@ -492,7 +516,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "</STRONG>" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<a name=\"search\"></a>" << std::endl;
-    std::cout << "<INPUT type=\"submit\" id=\"submit_00\" onsubmit=\"running('00')\">" << std::endl;
+    std::cout << "<INPUT type=\"submit\" id=\"submit_00\" onsubmit=\"return running('00')\">" << std::endl;
     std::cout << "<INPUT type=\"reset\">" << std::endl;
     std::cout << "<br />" << std::endl;
     std::cout << "<center>" << std::endl;
@@ -1015,7 +1039,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "</center>" << std::endl;
     std::cout << "<br />" << std::endl;
     std::cout << "<input type=hidden name=\"OutputStyle\" value=\"TEXT\" />" << std::endl;
-    std::cout << "<input type=hidden name=\"ScrollTo\" value=\"000\" />" << std::endl;
+    std::cout << "<input type=hidden name=\"ScrollTo\" value=\""+twodig_array[numops]+"\" />" << std::endl;
     std::cout << "  <tr>" << std::endl;
     std::cout << "  <td colspan=3 align=\"center\">" << std::endl;
     std::cout << "  </td>" << std::endl;
@@ -1038,8 +1062,10 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::string currentoutput=lrl_web_output;
       std::string lrl_web_data_cmdgen_ngen;
       std::string lrl_web_data_cmdgen_ltype;
+      std::string lrl_web_data_cmdpath_npath;
       std::string lrl_web_data_cmdperturb_npert;
       std::string lrl_web_data_cmdperturb_ppk;
+      std::string lrl_web_data_cmdtos6l_type;
       std::string active=std::string("\"display:inline\"");
       if(numop > numops) active=std::string("\"display:none\"");
       chain_iter =  formData.getElement("chain_"+twodig_array[numop]);
@@ -1074,6 +1100,8 @@ std::string plaintext2html(std::string & dst, std::string src){
       lrl_web_data_cmdgen_ltype=std::string("all");
       lrl_web_data_cmdperturb_npert=std::string("20");
       lrl_web_data_cmdperturb_ppk=std::string("1");
+      lrl_web_data_cmdpath_npath=std::string("20");
+      lrl_web_data_cmdtos6l_type=std::string("S6L");
       if (operation=="CmdGen") {
         lrl_web_data_cmdgen_ngen_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen");
         lrl_web_data_cmdgen_ltype_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdgen_ltype");
@@ -1081,6 +1109,11 @@ std::string plaintext2html(std::string & dst, std::string src){
         lrl_web_data_cmdgen_ltype = (lrl_web_data_cmdgen_ltype_iter==formData.getElements().end())?std::string("all"):lrl_web_data_cmdgen_ltype_iter->getValue();
         opmod=(std::string(" ")+lrl_web_data_cmdgen_ngen+std::string(" ")+lrl_web_data_cmdgen_ltype);
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="CmdPath") {
+        lrl_web_data_cmdpath_npath_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath");
+        lrl_web_data_cmdpath_npath = (lrl_web_data_cmdpath_npath_iter==formData.getElements().end())?std::string("20"):lrl_web_data_cmdpath_npath_iter->getValue();
+        opmod=(std::string(" ")+lrl_web_data_cmdpath_npath);
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath" << (opmod).c_str() <<"</td></tr>" << std::endl;
       } else if (operation=="CmdPerturb") {
         lrl_web_data_cmdperturb_npert_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert");
         lrl_web_data_cmdperturb_ppk_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdperturb_ppk");
@@ -1088,6 +1121,11 @@ std::string plaintext2html(std::string & dst, std::string src){
         lrl_web_data_cmdperturb_ppk = (lrl_web_data_cmdperturb_ppk_iter==formData.getElements().end())?std::string("1"):lrl_web_data_cmdperturb_ppk_iter->getValue();
         opmod=(std::string(" ")+lrl_web_data_cmdperturb_npert+std::string(" ")+lrl_web_data_cmdperturb_ppk);
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="CmdToS6L") {
+        lrl_web_data_cmdtos6l_type_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type");
+        lrl_web_data_cmdtos6l_type = (lrl_web_data_cmdtos6l_type_iter==formData.getElements().end())?std::string("S6L"):lrl_web_data_cmdtos6l_type_iter->getValue();
+        opmod=(std::string(" ")+lrl_web_data_cmdtos6l_type);
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type" << (opmod).c_str() <<"</td></tr>" << std::endl;
       }
       std::string oppath=std::string(tmp_lrl_web+"/operation_"+twodig_array[numop]);
       if(string_to_file(at.c_str(), oppath.c_str(), (operation+opmod).c_str())) {
@@ -1113,8 +1151,13 @@ std::string plaintext2html(std::string & dst, std::string src){
         std::cout << "    </div></tr></tr>" << std::endl;
       }
       std::cout << "  <tr>" << std::endl;
-      std::cout << "  <td>" << std::endl;
-      std::cout << "  <div id=\"block_"+twodig_array[numop]+"\" style="+active+">" << std::endl; 
+      std::cout << "  <td valign=top>" << std::endl;
+      std::cout << "  <a name=\"mark_"+twodig_array[numop]+"\" id=\"mark_"+twodig_array[numop]+"\" />" << std::endl;
+      if (numop ==NUMOPS_MAX) {
+        std::cout << "  <a name=\"mark_000\" id=\"mark_000\" />" << std::endl;
+      }
+      std::cout << "  <div id=\"block_"+twodig_array[numop]+"\" style="+active+">" << std::endl;
+      std::cout << "  <h1 align=left>"<<twodig_array[numop]<<"</h1><br />" << std::endl;  
       std::cout << "  <label for=\"chain_"+twodig_array[numop]+"\">Source of data:</label><br />" << std::endl;
       std::cout << "  <select name=\"chain_"+twodig_array[numop]+"\" id=\"chain_"+twodig_array[numop]+
           "\" size=\"1\" onchange=\"setchaininput('" << numop << "')\">" << std::endl;
@@ -1133,7 +1176,7 @@ std::string plaintext2html(std::string & dst, std::string src){
 
       std::cout << "  <div name=\"block_"+twodig_array[numop]+"_running\" id=\"block_"+twodig_array[numop]+"_running\" style=\"display:none\">" << std::endl;
       std::cout << "  <label for=\"progress_img_"+twodig_array[numop]+"\">Running:</label><br />" << std::endl;
-      std::cout << "  <img src=\"http://blondie.arcib.org:8083/~yaya/images/progress.gif\" id=\"progress_img_"+twodig_array[numop]+"\" alt=\"running\" />" << std::endl;
+      std::cout << "  <img src=\"http://blondie.arcib.org:8083/~yaya/images/progress_small.gif\" id=\"progress_img_"+twodig_array[numop]+"\" alt=\"running\" />" << std::endl;
       std::cout << "  <br />" << std::endl;
       std::cout << "  </div>" << std::endl;
 
@@ -1160,17 +1203,15 @@ std::string plaintext2html(std::string & dst, std::string src){
       selected=operation.compare("CmdToB4")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToB4\"> compute Bravais tetrahedron (B4)</option>" << std::endl;
       selected=operation.compare("CmdToC3")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToC3\"> compute Selling-reduced complex cell presentation (C3)</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToC3\"> compute complex cell presentation (C3)</option>" << std::endl;
       selected=operation.compare("CmdToCell")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToCell\"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>" << std::endl;
-      selected=operation.compare("CmdToD13")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToD13\"> compute raw Dirichlet cells (DC13)</option>" << std::endl;
-      selected=operation.compare("CmdToDC")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToDC\"> computed sorted Dirichlet cells (DC)</option>" << std::endl;
       selected=operation.compare("CmdToG6")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToG6\"> compute G6 version of cells</option>" << std::endl;
       selected=operation.compare("CmdToS6")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToS6\"> compute S6 version of cells</option>" << std::endl;
+      selected=operation.compare("CmdToS6L")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdToS6L\"> compute linearized S6 or Root Invariant version of cells</option>" << std::endl;
       selected=operation.compare("CmdToU")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToU\"> compute unsorted Dirichlet cells (dc7unsrt)</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
@@ -1194,6 +1235,7 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  <td align=left>" << std::endl;
+
       if (operation.compare("CmdGen")==0) {
         std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdgen\" style=\"display:inline\">"  <<  std::endl;
       } else {
@@ -1207,6 +1249,18 @@ std::string plaintext2html(std::string & dst, std::string src){
         +lrl_web_data_cmdgen_ltype+"\" />"  <<  std::endl;
       std::cout << "  <br />"  <<  std::endl;
       std::cout << "  </div>"  <<  std::endl;
+
+      if (operation.compare("CmdPath")==0) {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdpath\" style=\"display:inline\">"  <<  std::endl;
+      } else {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdpath\" style=\"display:none\">"  <<  std::endl;
+      }
+      std::cout << "  <label for=\"lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath\">Number of steps in path:</label>&nbsp;"  <<  std::endl;
+      std::cout << "  <input id=\"lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath\" name=\"lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath\" type=\"text\" value=\""
+        +lrl_web_data_cmdpath_npath+"\" number min=\"1\"/>&nbsp;&nbsp;" <<  std::endl;
+      std::cout << "  <br />"  << std::endl;
+      std::cout << "  </div>"  << std::endl;
+
       if (operation.compare("CmdPerturb")==0) {
         std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdperturb\" style=\"display:inline\">"  <<  std::endl;
       } else {
@@ -1220,6 +1274,32 @@ std::string plaintext2html(std::string & dst, std::string src){
         +lrl_web_data_cmdperturb_ppk+"\" number min=\"1\" max=\"1000\"/>"  <<  std::endl;
       std::cout << "  <br />"  << std::endl;
       std::cout << "  </div>"  << std::endl;
+
+      if (operation.compare("CmdToS6L")==0) {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdtos6l\" style=\"display:inline\">"  <<  std::endl;
+      } else {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdtos6l\" style=\"display:none\">"  <<  std::endl;
+      }
+      std::cout << "  <label for=\"lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type\">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;"  <<  std::endl;
+      std::cout << "  <select id=\"lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type\" name=\"lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type\">&nbsp;&nbsp;" <<  std::endl;
+      if (lrl_web_data_cmdtos6l_type[0]=='S'||lrl_web_data_cmdtos6l_type[0]=='s') {
+      std::cout << "     <option selected value=\"S6L\">linearized S6</option>"  <<  std::endl;
+      std::cout << "     <option value=\"RI\">root invariant</option>"  <<  std::endl;
+      std::cout << "     <option value=\"  \">both S6L and RI</option>"  <<  std::endl;
+      } else if (lrl_web_data_cmdtos6l_type[0]=='R'||lrl_web_data_cmdtos6l_type[0]=='r') {
+      std::cout << "     <option value=\"S6L\">linearized S6</option>"  <<  std::endl;
+      std::cout << "     <option selected value=\"RI\">root invariant</option>"  <<  std::endl;
+      std::cout << "     <option value=\"  \">both S6L and RI</option>"  <<  std::endl;
+      } else {
+      std::cout << "     <option value=\"S6L\">linearized S6</option>"  <<  std::endl;
+      std::cout << "     <option value=\"RI\">root invariant</option>"  <<  std::endl;
+      std::cout << "     <option selectedvalue=\"  \">both S6L and RI</option>"  <<  std::endl;
+      }
+      std::cout << "  </select>"  << std::endl;
+      std::cout << "  <br />"  << std::endl;
+      std::cout << "  </div>"  << std::endl;
+
+
       if (chain.compare("new_input")==0 || numop < 2) {
         std::cout << "  <div id=\"block_"+twodig_array[numop]+"b"+"\" style="+active+"> " << std::endl;
       } else {
@@ -1261,7 +1341,7 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::cout << "  <br />" << std::endl;
       std::cout << "  <label for=\"lrl_web_help_"+twodig_array[numop]+"\">Tool Help:</label><br />" << std::endl;
       std::cout << "  <textarea name=\"lrl_web_help_"+twodig_array[numop]+"\" id=\"lrl_web_help_"+twodig_array[numop]+"\" readonly rows=\"9\" cols=\"100\" readonly`>" << std::endl;
-      std::cout << "LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.\n---  RANDOM: Random (valid) unit cell;\n---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);\n---  semicolon: lines beginning with a semicolon are treated as comments\n---  Vector Input: g (or v or g6) for G6 vectors; d (or d7) for D7 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.\n---  END: ends the data input section\n\nExamples of unit cell inputs\n\nP 10 20 30 90 111 90\nG 100 400 900 0 -215.02 0\nS6 0 -107.51 0 7.51 -400 -792.49 ; this is a comment\nend" << std::endl;
+      std::cout << "LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.\n---  RANDOM: Random (valid) unit cell;\n---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);\n---  semicolon: lines beginning with a semicolon are treated as comments\n---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.\n---  END: ends the data input section\n\nExamples of unit cell inputs\n\nP 10 20 30 90 111 90\nG 100 400 900 0 -215.02 0\nS6 0 -107.51 0 7.51 -400 -792.49 \n; this is a comment\nend" << std::endl;
       std::cout << "" << std::endl;
       std::cout << "  </textarea>" << std::endl;
       std::cout << "  </div>" << std::endl;
@@ -1423,7 +1503,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<li>apply S6 reflections to input cells <a href=\"#Andrews2019b\">[Andrews <i>et al.</i> 2019b]</a></li>" << std::endl;
     std::cout << "<li>apply Sella algorithm <a href=\"#Andrews2023b\">[Andrews <i>et al.</i> 2023b]</a></li>" << std::endl;
     std::cout << "<li>compute Bravais tetrahedron (B4) <a href=\"#Delone1975\">[Delone <i>et al.</i> 1975]</a></li>" << std::endl;
-    std::cout << "<li>compute Selling-reduced complex cell presentation (C3) <a href=\"#Andrews2019b\">[Andrews <i>et al.</i> 2019b]</li>" << std::endl;
+    std::cout << "<li>compute complex cell presentation (C3) <a href=\"#Andrews2019b\">[Andrews <i>et al.</i> 2019b]</li>" << std::endl;
     std::cout << "<li>compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</li>" << std::endl;
     std::cout << "<li>compute raw Dirichlet cells (DC13)</li>" << std::endl;
     std::cout << "<li>computed sorted Dirichlet cells (DC) <a href=#Andrews2021>[Andrews and Bernstein 2021]</li>" << std::endl;
@@ -1508,7 +1588,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 19 November 2023." << std::endl;
+    std::cout << "Updated 23 November 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
 
