@@ -3,11 +3,11 @@ define([[[LRLWEBHOST]]],[[[lrl_web_host]]])dnl
 define([[[LRLWEBUSER]]],[[[lrl_web_user]]])dnl
 define([[[LRLWEBCGI]]],[[[lrl_web.cgi]]])dnl
 define([[[LRLWEBTMP]]],[[[tmp]]])dnl
-define([[[LRLWEBCHECKINPUT]]],[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.$1---  RANDOM: Random (valid) unit cell;$1---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);$1---  semicolon: lines beginning with a semicolon are treated as comments$1---  Vector Input: g (or v or g6) for G6 vectors; d (or d7) for D7 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.$1---  END: ends the data input section$1$1Examples of unit cell inputs$1$1P 10 20 30 90 111 90$1G 100 400 900 0 -215.02 0$1S6 0 -107.51 0 7.51 -400 -792.49 ; this is a comment$1end]]]]]])dnl
+define([[[LRLWEBCHECKINPUT]]],[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.$1---  RANDOM: Random (valid) unit cell;$1---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);$1---  semicolon: lines beginning with a semicolon are treated as comments$1---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.$1---  END: ends the data input section$1$1Examples of unit cell inputs$1$1P 10 20 30 90 111 90$1G 100 400 900 0 -215.02 0$1S6 0 -107.51 0 7.51 -400 -792.49 $1; this is a comment$1end]]]]]])dnl
 define([[[LRLWEBRUNNING]]],[[[[[[
 $1<div name=$2"block_$4_running$2" id=$2"block_$4_running$2" style=$2"display:none$2">$3
 $1<label for=$2"progress_img_$4$2">Running:</label><br />$3
-$1<img src=$2"http://$5/images/progress.gif$2" id=$2"progress_img_$4$2" alt=$2"running$2" />$3
+$1<img src=$2"http://$5/images/progress_small.gif$2" id=$2"progress_img_$4$2" alt=$2"running$2" />$3
 $1<br />$3
 $1</div>$3
 ]]]]]])dnl
@@ -161,29 +161,35 @@ int main(int argc,
       std::cout << "    }" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:inline\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:inline\";" << std::endl;
+      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"_running\").style=\"display:none\";" << std::endl;
       std::cout << "    if (ii > 1) {" << std::endl;
       std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:inline\";" << std::endl;
       std::cout << "    }" << std::endl;
       std::cout << "    changeoperation(twodig(ii));" << std::endl;
       std::cout << "  }" << std::endl;
+      std::cout << "  document.getElementById(\"ScrollTo\").value=twodig(ParseInt((mynumops+1)/2));" << std::endl;
       std::cout << "  if (mynumops < "<<NUMOPS_MAX<<") {" << std::endl;
-      std::cout << "  for (ii=mynumops+1; ii<"<<NUMOPS_MAX+1<<";ii++) {" << std::endl;
-      std::cout << "    // alert(\"disable block_\"+twodig(ii));" << std::endl;
-      std::cout << "    if (ii > 1) {" << std::endl;
-      std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "    for (ii=mynumops+1; ii<"<<NUMOPS_MAX+1<<";ii++) {" << std::endl;
+      std::cout << "      // alert(\"disable block_\"+twodig(ii));" << std::endl;
+      std::cout << "      if (ii > 1) {" << std::endl;
+      std::cout << "        document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "      }" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"a\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"_running\").style=\"display:none\";" << std::endl;
+      std::cout << "      if (ii > 1) {" << std::endl;
+      std::cout << "        document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
+      std::cout << "      }" << std::endl;
       std::cout << "    }" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)).style=\"display:none\";" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"a\").style=\"display:none\";" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"b\").style=\"display:none\";" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"c\").style=\"display:none\";" << std::endl;
-      std::cout << "    document.getElementById(\"block_\"+twodig(ii)+\"d\").style=\"display:none\";" << std::endl;
-      std::cout << "    if (ii > 1) {" << std::endl;
-      std::cout << "      document.getElementById(\"hrule_\"+twodig(ii)).style=\"display:none\";" << std::endl;
-      std::cout << "    }" << std::endl;
-      std::cout << "  }" << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  return true;" << std::endl;
+      std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
+      std::cout << "function noop(){" << std::endl;
+      std::cout << "  return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
       std::cout << "function running(rownum) {" << std::endl;
@@ -197,10 +203,9 @@ int main(int argc,
       std::cout << "  for (ii=1; ii<mynumops+1;ii++) {" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+twodig(ii)+\"_running\").style=\"display:inline\";" << std::endl;
       std::cout << "      document.getElementById(\"submit_\"+twodig(ii)).disabled=true;" << std::endl;
-      std::cout << "      document.getElementById(\"running_img\"+twodig(ii)).src=\"http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/progress.gif\";";
-      std::cout << std::endl;
       std::cout << "  }" << std::endl;
       std::cout << "  document.getElementById(\"ScrollTo\").value=rownum;" << std::endl;
+      std::cout << "  let timerId = setTimeout(noop,500);" << std::endl;
       std::cout << "  return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
@@ -209,13 +214,29 @@ int main(int argc,
       std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
       std::cout << " if (operation==\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << " } else if (operation==\"CmdPath\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:inline\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
       std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << " } else if (operation==\"CmdToS6L\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:inline\";" << std::endl;
       std::cout << " } else {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
       std::cout << " }" << std::endl;
       std::cout << " return true;" << std::endl;
       std::cout << "}" << std::endl;
@@ -303,12 +324,13 @@ int main(int argc,
       std::string scrollto;
       scrollto_iter = cgi.getElement("ScrollTo");
       if (scrollto_iter == cgi.getElements().end()) {
-        scrollto = std::string("submit_01");
+        scrollto = std::string("mark_01");
       } else {
-        scrollto = std::string("submit_")+scrollto_iter->getValue();
+        scrollto = std::string("mark_")+scrollto_iter->getValue();
       }
 
       std::cout << "<BODY onload=\"document.getElementById('"+scrollto+"').scrollIntoView();changenumops();changeoperation('01');changeoperation('02');changeoperation('03');changeoperation('04');changeoperation('05');changeoperation('06');changeoperation('07');changeoperation('08');changeoperation('09');changeoperation('10');\">" << std::endl;
+      std::cout << "<a name=\"mark_00\" id=\"mark_00\" />" << std::endl;
       std::cout << "<font face=\"Arial,Helvetica,Times\" size=\"3\">" << std::endl;
       std::cout << "<hr />" << std::endl;
       std::cout << "<center>" << std::endl;
@@ -401,8 +423,10 @@ std::string plaintext2html(std::string & dst, std::string src){
     cgicc::const_form_iterator operation_iter;
     cgicc::const_form_iterator lrl_web_data_cmdgen_ngen_iter;
     cgicc::const_form_iterator lrl_web_data_cmdgen_ltype_iter;
+    cgicc::const_form_iterator lrl_web_data_cmdpath_npath_iter;
     cgicc::const_form_iterator lrl_web_data_cmdperturb_npert_iter;
     cgicc::const_form_iterator lrl_web_data_cmdperturb_ppk_iter;
+    cgicc::const_form_iterator lrl_web_data_cmdtos6l_type_iter;
     ofstream lrl_web_data_file;
     std::string lrl_web_data_data;
     std::string chain;
@@ -495,7 +519,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<tr>" << std::endl;
     std::cout << "<td colspan=3 align=center><font size=\"-1\">" << std::endl;
     std::cout << "<a href=\"#timeline\">Timeline image</a> by Elizabeth Kincaid, Elizabeth Kincaid Watercolors, <br />" << std::endl;
-    std::cout << "<a href=\"#celticknot\">Celtic knots</a> by Susan Jones Davis, Blue Seahorse Studio, <br />" << std::endl;
+    std::cout << "<a href=\"#celticknot\">Celtic knots</a> by Susan Jones Davis, <br />" << std::endl;
     std::cout << "Sleeping Dragon line art image by Gordon Dylan Johnson, " << std::endl;
     std::cout << "<a href=\"https://openclipart.org/detail/226147/sleeping-dragon-line-art\">https://openclipart.org/detail/226147/sleeping-dragon-line-art</a></font></td>" << std::endl;
     std::cout << "</tr>" << std::endl;
@@ -511,7 +535,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "</STRONG>" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<a name=\"search\"></a>" << std::endl;
-    std::cout << "<INPUT type=\"submit\" id=\"submit_00\" onsubmit=\"running('00')\">" << std::endl;
+    std::cout << "<INPUT type=\"submit\" id=\"submit_00\" onsubmit=\"return running('00')\">" << std::endl;
     std::cout << "<INPUT type=\"reset\">" << std::endl;
     std::cout << "<br />" << std::endl;
     std::cout << "<center>" << std::endl;
@@ -1034,7 +1058,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "</center>" << std::endl;
     std::cout << "<br />" << std::endl;
     std::cout << "<input type=hidden name=\"OutputStyle\" value=\"TEXT\" />" << std::endl;
-    std::cout << "<input type=hidden name=\"ScrollTo\" value=\"000\" />" << std::endl;
+    std::cout << "<input type=hidden name=\"ScrollTo\" value=\""+twodig_array[numops]+"\" />" << std::endl;
     std::cout << "  <tr>" << std::endl;
     std::cout << "  <td colspan=3 align=\"center\">" << std::endl;
     std::cout << "  </td>" << std::endl;
@@ -1057,8 +1081,10 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::string currentoutput=lrl_web_output;
       std::string lrl_web_data_cmdgen_ngen;
       std::string lrl_web_data_cmdgen_ltype;
+      std::string lrl_web_data_cmdpath_npath;
       std::string lrl_web_data_cmdperturb_npert;
       std::string lrl_web_data_cmdperturb_ppk;
+      std::string lrl_web_data_cmdtos6l_type;
       std::string active=std::string("\"display:inline\"");
       if(numop > numops) active=std::string("\"display:none\"");
       chain_iter =  formData.getElement("chain_"+twodig_array[numop]);
@@ -1093,6 +1119,8 @@ std::string plaintext2html(std::string & dst, std::string src){
       lrl_web_data_cmdgen_ltype=std::string("all");
       lrl_web_data_cmdperturb_npert=std::string("20");
       lrl_web_data_cmdperturb_ppk=std::string("1");
+      lrl_web_data_cmdpath_npath=std::string("20");
+      lrl_web_data_cmdtos6l_type=std::string("S6L");
       if (operation=="CmdGen") {
         lrl_web_data_cmdgen_ngen_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen");
         lrl_web_data_cmdgen_ltype_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdgen_ltype");
@@ -1100,6 +1128,11 @@ std::string plaintext2html(std::string & dst, std::string src){
         lrl_web_data_cmdgen_ltype = (lrl_web_data_cmdgen_ltype_iter==formData.getElements().end())?std::string("all"):lrl_web_data_cmdgen_ltype_iter->getValue();
         opmod=(std::string(" ")+lrl_web_data_cmdgen_ngen+std::string(" ")+lrl_web_data_cmdgen_ltype);
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="CmdPath") {
+        lrl_web_data_cmdpath_npath_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath");
+        lrl_web_data_cmdpath_npath = (lrl_web_data_cmdpath_npath_iter==formData.getElements().end())?std::string("20"):lrl_web_data_cmdpath_npath_iter->getValue();
+        opmod=(std::string(" ")+lrl_web_data_cmdpath_npath);
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath" << (opmod).c_str() <<"</td></tr>" << std::endl;
       } else if (operation=="CmdPerturb") {
         lrl_web_data_cmdperturb_npert_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert");
         lrl_web_data_cmdperturb_ppk_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdperturb_ppk");
@@ -1107,6 +1140,11 @@ std::string plaintext2html(std::string & dst, std::string src){
         lrl_web_data_cmdperturb_ppk = (lrl_web_data_cmdperturb_ppk_iter==formData.getElements().end())?std::string("1"):lrl_web_data_cmdperturb_ppk_iter->getValue();
         opmod=(std::string(" ")+lrl_web_data_cmdperturb_npert+std::string(" ")+lrl_web_data_cmdperturb_ppk);
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdperturb_npert" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="CmdToS6L") {
+        lrl_web_data_cmdtos6l_type_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type");
+        lrl_web_data_cmdtos6l_type = (lrl_web_data_cmdtos6l_type_iter==formData.getElements().end())?std::string("S6L"):lrl_web_data_cmdtos6l_type_iter->getValue();
+        opmod=(std::string(" ")+lrl_web_data_cmdtos6l_type);
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type" << (opmod).c_str() <<"</td></tr>" << std::endl;
       }
       std::string oppath=std::string(tmp_lrl_web+"/operation_"+twodig_array[numop]);
       if(string_to_file(at.c_str(), oppath.c_str(), (operation+opmod).c_str())) {
@@ -1132,8 +1170,13 @@ std::string plaintext2html(std::string & dst, std::string src){
         std::cout << "    </div></tr></tr>" << std::endl;
       }
       std::cout << "  <tr>" << std::endl;
-      std::cout << "  <td>" << std::endl;
-      std::cout << "  <div id=\"block_"+twodig_array[numop]+"\" style="+active+">" << std::endl; 
+      std::cout << "  <td valign=top>" << std::endl;
+      std::cout << "  <a name=\"mark_"+twodig_array[numop]+"\" id=\"mark_"+twodig_array[numop]+"\" />" << std::endl;
+      if (numop ==NUMOPS_MAX) {
+        std::cout << "  <a name=\"mark_000\" id=\"mark_000\" />" << std::endl;
+      }
+      std::cout << "  <div id=\"block_"+twodig_array[numop]+"\" style="+active+">" << std::endl;
+      std::cout << "  <h1 align=left>"<<twodig_array[numop]<<"</h1><br />" << std::endl;  
       std::cout << "  <label for=\"chain_"+twodig_array[numop]+"\">Source of data:</label><br />" << std::endl;
       std::cout << "  <select name=\"chain_"+twodig_array[numop]+"\" id=\"chain_"+twodig_array[numop]+
           "\" size=\"1\" onchange=\"setchaininput('" << numop << "')\">" << std::endl;
@@ -1173,17 +1216,15 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       selected=operation.compare("CmdToB4")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToB4\"> compute Bravais tetrahedron (B4)</option>" << std::endl;
       selected=operation.compare("CmdToC3")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToC3\"> compute Selling-reduced complex cell presentation (C3)</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToC3\"> compute complex cell presentation (C3)</option>" << std::endl;
       selected=operation.compare("CmdToCell")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToCell\"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>" << std::endl;
-      selected=operation.compare("CmdToD13")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToD13\"> compute raw Dirichlet cells (DC13)</option>" << std::endl;
-      selected=operation.compare("CmdToDC")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToDC\"> computed sorted Dirichlet cells (DC)</option>" << std::endl;
       selected=operation.compare("CmdToG6")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToG6\"> compute G6 version of cells</option>" << std::endl;
       selected=operation.compare("CmdToS6")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToS6\"> compute S6 version of cells</option>" << std::endl;
+      selected=operation.compare("CmdToS6L")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdToS6L\"> compute linearized S6 or Root Invariant version of cells</option>" << std::endl;
       selected=operation.compare("CmdToU")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToU\"> compute unsorted Dirichlet cells (dc7unsrt)</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
@@ -1207,6 +1248,7 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  <td align=left>" << std::endl;
+
       if (operation.compare("CmdGen")==0) {
         std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdgen\" style=\"display:inline\">"  <<  std::endl;
       } else {
@@ -1220,6 +1262,18 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
         +lrl_web_data_cmdgen_ltype+"\" />"  <<  std::endl;
       std::cout << "  <br />"  <<  std::endl;
       std::cout << "  </div>"  <<  std::endl;
+
+      if (operation.compare("CmdPath")==0) {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdpath\" style=\"display:inline\">"  <<  std::endl;
+      } else {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdpath\" style=\"display:none\">"  <<  std::endl;
+      }
+      std::cout << "  <label for=\"lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath\">Number of steps in path:</label>&nbsp;"  <<  std::endl;
+      std::cout << "  <input id=\"lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath\" name=\"lrl_web_data_"+twodig_array[numop]+"_cmdpath_npath\" type=\"text\" value=\""
+        +lrl_web_data_cmdpath_npath+"\" number min=\"1\"/>&nbsp;&nbsp;" <<  std::endl;
+      std::cout << "  <br />"  << std::endl;
+      std::cout << "  </div>"  << std::endl;
+
       if (operation.compare("CmdPerturb")==0) {
         std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdperturb\" style=\"display:inline\">"  <<  std::endl;
       } else {
@@ -1233,6 +1287,32 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
         +lrl_web_data_cmdperturb_ppk+"\" number min=\"1\" max=\"1000\"/>"  <<  std::endl;
       std::cout << "  <br />"  << std::endl;
       std::cout << "  </div>"  << std::endl;
+
+      if (operation.compare("CmdToS6L")==0) {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdtos6l\" style=\"display:inline\">"  <<  std::endl;
+      } else {
+        std::cout << "  <div id=\"block_"+twodig_array[numop]+"b_cmdtos6l\" style=\"display:none\">"  <<  std::endl;
+      }
+      std::cout << "  <label for=\"lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type\">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;"  <<  std::endl;
+      std::cout << "  <select id=\"lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type\" name=\"lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type\">&nbsp;&nbsp;" <<  std::endl;
+      if (lrl_web_data_cmdtos6l_type[0]=='S'||lrl_web_data_cmdtos6l_type[0]=='s') {
+      std::cout << "     <option selected value=\"S6L\">linearized S6</option>"  <<  std::endl;
+      std::cout << "     <option value=\"RI\">root invariant</option>"  <<  std::endl;
+      std::cout << "     <option value=\"  \">both S6L and RI</option>"  <<  std::endl;
+      } else if (lrl_web_data_cmdtos6l_type[0]=='R'||lrl_web_data_cmdtos6l_type[0]=='r') {
+      std::cout << "     <option value=\"S6L\">linearized S6</option>"  <<  std::endl;
+      std::cout << "     <option selected value=\"RI\">root invariant</option>"  <<  std::endl;
+      std::cout << "     <option value=\"  \">both S6L and RI</option>"  <<  std::endl;
+      } else {
+      std::cout << "     <option value=\"S6L\">linearized S6</option>"  <<  std::endl;
+      std::cout << "     <option value=\"RI\">root invariant</option>"  <<  std::endl;
+      std::cout << "     <option selectedvalue=\"  \">both S6L and RI</option>"  <<  std::endl;
+      }
+      std::cout << "  </select>"  << std::endl;
+      std::cout << "  <br />"  << std::endl;
+      std::cout << "  </div>"  << std::endl;
+
+
       if (chain.compare("new_input")==0 || numop < 2) {
         std::cout << "  <div id=\"block_"+twodig_array[numop]+"b"+"\" style="+active+"> " << std::endl;
       } else {
@@ -1436,7 +1516,7 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
     std::cout << "<li>apply S6 reflections to input cells <a href=\"#Andrews2019b\">[Andrews <i>et al.</i> 2019b]</a></li>" << std::endl;
     std::cout << "<li>apply Sella algorithm <a href=\"#Andrews2023b\">[Andrews <i>et al.</i> 2023b]</a></li>" << std::endl;
     std::cout << "<li>compute Bravais tetrahedron (B4) <a href=\"#Delone1975\">[Delone <i>et al.</i> 1975]</a></li>" << std::endl;
-    std::cout << "<li>compute Selling-reduced complex cell presentation (C3) <a href=\"#Andrews2019b\">[Andrews <i>et al.</i> 2019b]</li>" << std::endl;
+    std::cout << "<li>compute complex cell presentation (C3) <a href=\"#Andrews2019b\">[Andrews <i>et al.</i> 2019b]</li>" << std::endl;
     std::cout << "<li>compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</li>" << std::endl;
     std::cout << "<li>compute raw Dirichlet cells (DC13)</li>" << std::endl;
     std::cout << "<li>computed sorted Dirichlet cells (DC) <a href=#Andrews2021>[Andrews and Bernstein 2021]</li>" << std::endl;
@@ -1521,7 +1601,7 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
     std::cout << "" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 19 November 2023." << std::endl;
+    std::cout << "Updated 23 November 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
 ]]],
@@ -1631,18 +1711,28 @@ function changenumops(){
     }
     changeoperation(twodig(ii));
   }
-  for (ii=mynumops+1; ii<11;ii++) {
-    // alert("disable block_"+twodig(ii));
-    document.getElementById("block_"+twodig(ii)).style="display:none";
-    document.getElementById("block_"+twodig(ii)+"a").style="display:none";
-    document.getElementById("block_"+twodig(ii)+"b").style="display:none";
-    document.getElementById("block_"+twodig(ii)+"c").style="display:none";
-    document.getElementById("block_"+twodig(ii)+"d").style="display:none";
-    document.getElementById("block_"+twodig(ii)+"_running").style="display:none";
-    if (ii > 1) {
-      document.getElementById("hrule_"+twodig(ii)).style="display:none";
+  document.getElementById("ScrollTo").value=twodig(ParseInt((mynumops+1)/2));
+  if (mynumops < 10) {
+    for (ii=mynumops+1; ii<11;ii++) {
+      // alert("disable block_"+twodig(ii));
+      if (ii > 1) {
+        document.getElementById("hrule_"+twodig(ii)).style="display:none";
+      }
+      document.getElementById("block_"+twodig(ii)).style="display:none";
+      document.getElementById("block_"+twodig(ii)+"a").style="display:none";
+      document.getElementById("block_"+twodig(ii)+"b").style="display:none";
+      document.getElementById("block_"+twodig(ii)+"c").style="display:none";
+      document.getElementById("block_"+twodig(ii)+"d").style="display:none";
+      document.getElementById("block_"+twodig(ii)+"_running").style="display:none";
+      if (ii > 1) {
+        document.getElementById("hrule_"+twodig(ii)).style="display:none";
+      }
     }
   }
+  return true;
+}
+
+function noop(){
   return true;
 }
 
@@ -1657,9 +1747,9 @@ function running(rownum) {
   for (ii=1; ii<mynumops+1;ii++) {
       document.getElementById("block_"+twodig(ii)+"_running").style="display:inline";      
       document.getElementById("submit_"+twodig(ii)).disabled=true;
-      document.getElementById("running_img"+twodig(ii)).src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/progress.gif";      
   }
   document.getElementById("ScrollTo").value=rownum;
+  let timerId = setTimeout(noop,500);
   return true;
 }
 
@@ -1668,13 +1758,29 @@ function changeoperation(rownum) {
   let operation=document.getElementById("operation_"+rownum).value;
   if (operation=="CmdGen") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:inline";
+    document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
+  } else if (operation=="CmdPath") {
+    document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdpath").style="display:inline";
+    document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
   } else if (operation=="CmdPerturb") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:inline";
+    document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
+  } else if (operation=="CmdToS6L") {
+    document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:inline";
   } else {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
+    document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
   }
   return true;
 }
@@ -1757,22 +1863,23 @@ LRL_WEB Lattice Representation Library Tool Web Page
 </HEAD> 
 
 
-<BODY onload="document.getElementById(submit_00).scrollIntoView();changenumops();changeoperation('01');changeoperation('02');changeoperation('03');changeoperation('04');changeoperation('05');changeoperation('06');changeoperation('07');changeoperation('08');changeoperation('09');changeoperation('10');">
+<BODY onload="document.getElementById('mark_01').scrollIntoView();changenumops();changeoperation('01');changeoperation('02');changeoperation('03');changeoperation('04');changeoperation('05');changeoperation('06');changeoperation('07');changeoperation('08');changeoperation('09');changeoperation('10');">
+<a name="mark_00" id="mark_00" />
 <font face="Arial,Helvetica,Times" size="3">
 <hr />
 <center>
 <table border=0>
 <tr>
-<td align=left valign=top><a name="celticknots"><img src=http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/leftcorner.gif /></a></td>
+<td align=left valign=top><a name="celticknots"><img src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/leftcorner.gif" /></a></td>
 <td width=150 rowspan="2">&nbsp;</td>
 <td align=center rowspan="2"><img src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/dragon1a.gif" /></td>
 <td width=150 rowspan="2">&nbsp;</td>
-<td align=right valign=top><img src=http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/rightcorner.gif /></td>
+<td align=right valign=top><img src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/rightcorner.gif" /></td>
 </tr>
-<tr> <td align=left valign=bottom><img src=http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/leftbottomcorner.gif /></td>
-<td align=right valign=bottom><img src=http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/rightbottomcorner.gif /></td></tr>
+<tr> <td align=left valign=bottom><img src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/leftbottomcorner.gif" /></td>
+<td align=right valign=bottom><img src="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/images/rightbottomcorner.gif" /></td></tr>
 </table>
-<H2> LRL_WEB, Lattice Representation Library Tool Web Page</H2>
+<h2> LRL_WEB, Lattice Representation Library Tool Web Page</h2>
 <br /> by
 <br /> Lawrence C. Andrews, Herbert J. Bernstein, Ronin Institute for Independent Scholarship,
 <br /><A HREF=mailto:lawrence.andrews@ronininstitute.org>lawrence.andrews@ronininstitute.org</A>
@@ -1781,12 +1888,11 @@ LRL_WEB Lattice Representation Library Tool Web Page
 <tr>
 <td colspan=3 align=center><font size="-1">
 <a href="#timeline">Timeline image</a> by Elizabeth Kincaid, Elizabeth Kincaid Watercolors, <br />
-<a href="#celticknot">Celtic knots</a> by Susan Jones Davis, Blue Seahorse Studio, <br />
+<a href="#celticknot">Celtic knots</a> by Susan Jones Davis, <br />
 Sleeping Dragon line art image by Gordon Dylan Johnson, 
 <a href="https://openclipart.org/detail/226147/sleeping-dragon-line-art">https://openclipart.org/detail/226147/sleeping-dragon-line-art</a></font></td>
 </tr>
-<FORM method=POST onsubmit="return running('00')" 
-  ACTION="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/cgi-bin/]]]LRLWEBCGI[[[">
+<FORM method=POST onsubmit="return running('00')" ACTION="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/cgi-bin/]]]LRLWEBCGI[[[">
 <br />
 Assorted tools to do various calculations for crystallographic lattices.
 <br />
@@ -1799,28 +1905,35 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
 <INPUT type="reset">
 <br />
 <center>
-<label for="numops">Number of operation windows: </label>
-<select name="numops" id="numops" onchange="changenumops()" size="1">
-<option selected value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-<option value="6">6</option>
-<option value="7">7</option>
-<option value="8">8</option>
-<option value="9">9</option>
-<option value="10">10</option>
-</select>
+  <label for="numops">Number of operation windows: </label>
+  <select name="numops" id="numops" onchange="changenumops()" size="1">
+  <option selected value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="6">6</option>
+  <option value="7">7</option>
+  <option value="8">8</option>
+  <option value="9">9</option>
+  <option value="10">10</option>
+  </select>
 </center>
-<input type=hidden name="OutputStyle" value="TEXT" />
 <br />
+<input type=hidden name="OutputStyle" value="TEXT" />
+<input type=hidden name="ScrollTo" value="01" />
+  <tr>
+  <td colspan=3 align="center">
+  </td>
+  </tr>
 <table border=2>
 <tr><td valign=top>
   <table>
   <tr>
-  <td>
-  <div id="block_01" style="display:inline"> 
+  <td valign=top>
+  <a name="mark_01" id="mark_01" />
+  <div id="block_01" style="display:inline">
+  <h1 align=left>01</h1><br />
   <label for="chain_01">Source of data:</label><br />
   <select name="chain_01" id="chain_01" size="1" onchange="setchaininput('1')">
   <option selected value="new_input">use new input</option>
@@ -1828,12 +1941,12 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   </select>
   <br />
   <br />
-  <label for=submit_01>Submit all data:</label><br />
+  <label for="submit_01">Submit all data:</label><br />
   <INPUT type="submit" id="submit_01" onsubmit="return running('01')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_01a" style="display:inline"> 
@@ -1850,12 +1963,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -1874,16 +1986,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_01b_cmdgen" style="display:none">
   <label for="lrl_web_data_01_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_01_cmdgen_ngen" name="lrl_web_data_01_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_01_cmdgen_ngen" name="lrl_web_data_01_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_01_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_01_cmdgen_ltype" name="lrl_web_data_01_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
+  <div id="block_01b_cmdpath" style="display:none">
+  <label for="lrl_web_data_01_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_01_cmdpath_npath" name="lrl_web_data_01_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
   <div id="block_01b_cmdperturb" style="display:none">
   <label for="lrl_web_data_01_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_01_cmdperturb_npert" name="lrl_web_data_01_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_01_cmdperturb_npert" name="lrl_web_data_01_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_01_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_01_cmdperturb_ppk" name="lrl_web_data_01_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_01b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_01_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_01_cmdtos6l_type" name="lrl_web_data_01_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_01b" style="display:inline"> 
@@ -1912,8 +2038,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <tr><td colspan=3><div name="hrule_02" id="hrule_02" style="display:none">
   <hr />
   </div></td></tr>
-  <tr>  <td>
-  <div id="block_02" style="display:none"> 
+  <tr>
+  <td valign=top>
+  <a name="mark_02" id="mark_02" />
+  <div id="block_02" style="display:none">
+  <h1 align=left>02</h1><br />
   <label for="chain_02">Source of data:</label><br />
   <select name="chain_02" id="chain_02" size="1" onchange="setchaininput('2')">
   <option value="new_input">use new input</option>
@@ -1921,12 +2050,12 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_02>Submit all data:</label><br />
+  <label for="submit_02">Submit all data:</label><br />
   <INPUT type="submit" id="submit_02" onsubmit="return running('02')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_02a" style="display:none"> 
@@ -1943,12 +2072,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -1967,16 +2095,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_02b_cmdgen" style="display:none">
   <label for="lrl_web_data_02_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_02_cmdgen_ngen" name="lrl_web_data_02_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_02_cmdgen_ngen" name="lrl_web_data_02_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_02_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_02_cmdgen_ltype" name="lrl_web_data_02_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
+  <div id="block_02b_cmdpath" style="display:none">
+  <label for="lrl_web_data_02_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_02_cmdpath_npath" name="lrl_web_data_02_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
   <div id="block_02b_cmdperturb" style="display:none">
   <label for="lrl_web_data_02_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_02_cmdperturb_npert" name="lrl_web_data_02_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_02_cmdperturb_npert" name="lrl_web_data_02_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_02_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_02_cmdperturb_ppk" name="lrl_web_data_02_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_02b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_02_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_02_cmdtos6l_type" name="lrl_web_data_02_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_02b" style="display:none"> 
@@ -2006,8 +2148,10 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <hr />
   </div></td></tr>
   <tr>
-  <td>
+  <td valign=top>
+  <a name="mark_03" id="mark_03" />
   <div id="block_03" style="display:none"> 
+  <h1 align=left>03</h1><br />
   <label for="chain_03">Source of data:</label><br />
   <select name="chain_03" id="chain_03" size="1" onchange="setchaininput('3')">
   <option value="new_input">use new input</option>
@@ -2015,12 +2159,12 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_03>Submit all data:</label><br />
+  <label for="submit_03">Submit all data:</label><br />
   <INPUT type="submit" id="submit_03" onsubmit="return running('03')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_03a" style="display:none"> 
@@ -2037,12 +2181,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -2061,16 +2204,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_03b_cmdgen" style="display:none">
   <label for="lrl_web_data_03_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_03_cmdgen_ngen" name="lrl_web_data_03_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_03_cmdgen_ngen" name="lrl_web_data_03_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_03_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_03_cmdgen_ltype" name="lrl_web_data_03_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
+  <div id="block_03b_cmdpath" style="display:none">
+  <label for="lrl_web_data_03_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_03_cmdpath_npath" name="lrl_web_data_03_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
   <div id="block_03b_cmdperturb" style="display:none">
   <label for="lrl_web_data_03_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_03_cmdperturb_npert" name="lrl_web_data_03_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_03_cmdperturb_npert" name="lrl_web_data_03_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_03_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_03_cmdperturb_ppk" name="lrl_web_data_03_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_03b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_03_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_03_cmdtos6l_type" name="lrl_web_data_03_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_03b" style="display:none"> 
@@ -2100,8 +2257,10 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <hr />
   </div></td></tr>
   <tr>
-  <td>
+  <td valign=top>
+  <a name="mark_04" id="mark_04" />
   <div id="block_04" style="display:none"> 
+  <h1 align=left>04</h1><br />
   <label for="chain_04">Source of data:</label><br />
   <select name="chain_04" id="chain_04" size="1" onchange="setchaininput('4')">
   <option value="new_input">use new input</option>
@@ -2109,12 +2268,12 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_04>Submit all data:</label><br />
+  <label for="submit_04">Submit all data:</label><br />
   <INPUT type="submit" id="submit_04" /onsubmit="return running('04')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_04a" style="display:none"> 
@@ -2131,12 +2290,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -2155,16 +2313,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_04b_cmdgen" style="display:none">
   <label for="lrl_web_data_04_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_04_cmdgen_ngen" name="lrl_web_data_04_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_04_cmdgen_ngen" name="lrl_web_data_04_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_04_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_04_cmdgen_ltype" name="lrl_web_data_04_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
   <div id="block_04b_cmdperturb" style="display:none">
   <label for="lrl_web_data_04_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_04_cmdperturb_npert" name="lrl_web_data_04_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_04_cmdperturb_npert" name="lrl_web_data_04_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_04_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_04_cmdperturb_ppk" name="lrl_web_data_04_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_04b_cmdpath" style="display:none">
+  <label for="lrl_web_data_04_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_04_cmdpath_npath" name="lrl_web_data_04_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
+  <div id="block_04b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_04_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_04_cmdtos6l_type" name="lrl_web_data_04_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_04b" style="display:none"> 
@@ -2194,8 +2366,10 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <hr />
   </div></td></tr>
   <tr>
-  <td>
+  <td valign=top>
+  <a name="mark_05" id="mark_05" />
   <div id="block_05" style="display:none"> 
+  <h1 align=left>05</h1><br />
   <label for="chain_05">Source of data:</label><br />
   <select name="chain_05" id="chain_05" size="1" onchange="setchaininput('5')">
   <option value="new_input">use new input</option>
@@ -2203,12 +2377,12 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_05>Submit all data:</label><br />
+  <label for="submit_05">Submit all data:</label><br />
   <INPUT type="submit" id="submit_05"  onsubmit="return running('05')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_05a" style="display:none"> 
@@ -2225,12 +2399,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -2250,16 +2423,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_05b_cmdgen" style="display:none">
   <label for="lrl_web_data_05_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_05_cmdgen_ngen" name="lrl_web_data_05_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_05_cmdgen_ngen" name="lrl_web_data_05_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_05_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_05_cmdgen_ltype" name="lrl_web_data_05_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
   <div id="block_05b_cmdperturb" style="display:none">
   <label for="lrl_web_data_05_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_05_cmdperturb_npert" name="lrl_web_data_05_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_05_cmdperturb_npert" name="lrl_web_data_05_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_05_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_05_cmdperturb_ppk" name="lrl_web_data_05_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_05b_cmdpath" style="display:none">
+  <label for="lrl_web_data_05_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_05_cmdpath_npath" name="lrl_web_data_05_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
+  <div id="block_05b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_05_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_05_cmdtos6l_type" name="lrl_web_data_05_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_05b" style="display:none"> 
@@ -2289,8 +2476,10 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <hr />
   </div></td></tr>
   <tr>
-  <td>
+  <td valign=top>
+  <a name="mark_06" id="mark_06" />
   <div id="block_06" style="display:none"> 
+  <h1 align=left>06</h1><br />
   <label for="chain_06">Source of data:</label><br />
   <select name="chain_06" id="chain_06" size="1" onchange="setchaininput('6')">
   <option value="new_input">use new input</option>
@@ -2298,12 +2487,12 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_06">Submit all data:</label><br />
+  <label for="submit_06">Submit all data:</label><br />
   <INPUT type="submit" id="submit_06" onsubmit="return running('06')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_06a" style="display:none"> 
@@ -2320,12 +2509,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -2344,16 +2532,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_06b_cmdgen" style="display:none">
   <label for="lrl_web_data_06_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_06_cmdgen_ngen" name="lrl_web_data_06_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_06_cmdgen_ngen" name="lrl_web_data_06_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_06_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_06_cmdgen_ltype" name="lrl_web_data_06_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
   <div id="block_06b_cmdperturb" style="display:none">
   <label for="lrl_web_data_06_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_06_cmdperturb_npert" name="lrl_web_data_06_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_06_cmdperturb_npert" name="lrl_web_data_06_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_06_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_06_cmdperturb_ppk" name="lrl_web_data_06_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_06b_cmdpath" style="display:none">
+  <label for="lrl_web_data_06_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_06_cmdpath_npath" name="lrl_web_data_06_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
+  <div id="block_06b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_06_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_06_cmdtos6l_type" name="lrl_web_data_06_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_06b" style="display:none"> 
@@ -2383,8 +2585,10 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <hr />
   </div></td></tr>
   <tr>
-  <td>
+  <td valign=top>
+  <a name="mark_07" id="mark_07" />
   <div id="block_07" style="display:none"> 
+  <h1 align=left>07</h1><br />
   <label for="chain_07">Source of data:</label><br />
   <select name="chain_07" id="chain_07" size="1" onchange="setchaininput('7')">
   <option value="new_input">use new input</option>
@@ -2392,12 +2596,12 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_07>Submit all data:</label><br />
+  <label for="submit_07">Submit all data:</label><br />
   <INPUT type="submit" id="submit_07" onsubmit="return running('07')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_07a" style="display:none"> 
@@ -2414,12 +2618,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -2438,16 +2641,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_07b_cmdgen" style="display:none">
   <label for="lrl_web_data_07_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_07_cmdgen_ngen" name="lrl_web_data_07_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_07_cmdgen_ngen" name="lrl_web_data_07_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_07_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_07_cmdgen_ltype" name="lrl_web_data_07_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
   <div id="block_07b_cmdperturb" style="display:none">
   <label for="lrl_web_data_07_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_07_cmdperturb_npert" name="lrl_web_data_07_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_07_cmdperturb_npert" name="lrl_web_data_07_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_07_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_07_cmdperturb_ppk" name="lrl_web_data_07_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_07b_cmdpath" style="display:none">
+  <label for="lrl_web_data_07_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_07_cmdpath_npath" name="lrl_web_data_07_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
+  <div id="block_07b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_07_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_07_cmdtos6l_type" name="lrl_web_data_07_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_07b" style="display:none"> 
@@ -2478,8 +2695,10 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <hr />
   </div></td></tr>
   <tr>
-  <td>
+  <td valign=top>
+  <a name="mark_08" id="mark_08" />
   <div id="block_08" style="display:none"> 
+  <h1 align=left>08</h1><br />
   <label for="chain_08">Source of data:</label><br />
   <select name="chain_08" id="chain_08" size="1" onchange="setchaininput('8')">
   <option value="new_input">use new input</option>
@@ -2487,12 +2706,12 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_08>Submit all data:</label><br />
+  <label for="submit_08">Submit all data:</label><br />
   <INPUT type="submit" id="submit_08" onsubmit="return running('08')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_08a" style="display:none"> 
@@ -2510,12 +2729,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -2534,16 +2752,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_08b_cmdgen" style="display:none">
   <label for="lrl_web_data_08_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_08_cmdgen_ngen" name="lrl_web_data_08_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_08_cmdgen_ngen" name="lrl_web_data_08_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_08_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_08_cmdgen_ltype" name="lrl_web_data_08_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
   <div id="block_08b_cmdperturb" style="display:none">
   <label for="lrl_web_data_08_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_08_cmdperturb_npert" name="lrl_web_data_08_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_08_cmdperturb_npert" name="lrl_web_data_08_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_08_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_08_cmdperturb_ppk" name="lrl_web_data_08_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_08b_cmdpath" style="display:none">
+  <label for="lrl_web_data_08_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_08_cmdpath_npath" name="lrl_web_data_08_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
+  <div id="block_08b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_08_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:></label>&nbsp;
+  <select id=lrl_web_data_08_cmdtos6l_type" name="lrl_web_data_08_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_08b" style="display:none"> 
@@ -2574,8 +2806,10 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <hr />
   </div></td></tr>
   <tr>
-  <td>
+  <td valign=top>
+  <a name="mark_09" id="mark_09" />
   <div id="block_09" style="display:none"> 
+  <h1 align=left>09</h1><br />
   <label for="chain_09">Source of data:</label><br />
   <select name="chain_09" id="chain_09" size="1" onchange="setchaininput('9')">
   <option value="new_input">use new input</option>
@@ -2583,12 +2817,12 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_09>Submit all data:</label><br />
+  <label for="submit_09">Submit all data:</label><br />
   <INPUT type="submit" id="submit_09" onsubmit="return running('09')">
   <br />
   <br />
   </div>
-LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
+LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   </td>
   <td align=left>
   <div id="block_09a" style="display:none"> 
@@ -2606,12 +2840,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -2630,16 +2863,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_09b_cmdgen" style="display:none">
   <label for="lrl_web_data_09_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_09_cmdgen_ngen" name="lrl_web_data_09_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_09_cmdgen_ngen" name="lrl_web_data_09_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_09_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_09_cmdgen_ltype" name="lrl_web_data_09_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
   <div id="block_09b_cmdperturb" style="display:none">
   <label for="lrl_web_data_09_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_09_cmdperturb_npert" name="lrl_web_data_09_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_09_cmdperturb_npert" name="lrl_web_data_09_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_09_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
-  <input id="lrl_web_data_09_cmdperturb_ppk" name="lrl_web_data_09_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  rinput id="lrl_web_data_09_cmdperturb_ppk" name="lrl_web_data_09_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_09b_cmdpath" style="display:none">
+  <label for="lrl_web_data_09_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_09_cmdpath_npath" name="lrl_web_data_09_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
+  <div id="block_03b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_09_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_09_cmdtos6l_type" name="lrl_web_data_09_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  r/select>
   <br />
   </div>
   <div id="block_09b" style="display:none"> 
@@ -2670,8 +2917,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   <hr />
   </div></td></tr>
   <tr>
-  <td>
+  <td valign=top>
+  <a name="mark_10" id="mark_10" />
+  <a name="mark_000" id="mark_000" />
   <div id="block_10" style="display:none"> 
+  <h1 align=left>10</h1><br />
   <label for="chain_10">Source of data:</label><br />
   <select name="chain_10" id="chain_10" size="1" onchange="setchaininput('10')">
   <option value="new_input">use new input</option>
@@ -2679,7 +2929,7 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   </select>
   <br />
   <br />
-  <label for=submit_10>Submit all data:</label><br />
+  <label for="submit_10">Submit all data:</label><br />
   <INPUT type="submit" id="submit_10" onsubmit="return running('10')">
   <br />
   <br />
@@ -2701,12 +2951,11 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   </optgroup>
   <optgroup label="Type Conversion">
   <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute Selling-reduced complex cell presentation (C3)</option>
+  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
   <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToD13"> compute raw Dirichlet cells (DC13)</option>
-  <option value="CmdToDC"> computed sorted Dirichlet cells (DC)</option>
   <option value="CmdToG6"> compute G6 version of cells</option>
   <option value="CmdToS6"> compute S6 version of cells</option>
+  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
   </optgroup>
   <optgroup label="Reduction">
@@ -2725,16 +2974,30 @@ LRLWEBRUNNING([[[]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_10b_cmdgen" style="display:none">
   <label for="lrl_web_data_10_cmdgen_ngen">Number of each type:</label>&nbsp;
-  <input id="lrl_web_data_10_cmdgen_ngen" name="lrl_web_data_10_cmdgen_ngen" type="text" value=1 numeric />&nbsp;&nbsp;
+  <input id="lrl_web_data_10_cmdgen_ngen" name="lrl_web_data_10_cmdgen_ngen" type="number" value=1 />&nbsp;&nbsp;
   <label for="lrl_web_data_10_cmdgen_ltype">Lattice type:</label>&nbsp;
   <input id="lrl_web_data_10_cmdgen_ltype" name="lrl_web_data_10_cmdgen_ltype" type="text" value="all" />
   <br />
   </div>
   <div id="block_10b_cmdperturb" style="display:none">
   <label for="lrl_web_data_10_cmdperturb_npert">Number of perturbations:</label>&nbsp;
-  <input id="lrl_web_data_10_cmdperturb_npert" name="lrl_web_data_10_cmdperturb_npert" type="text" value="20" numeric min="1"/>&nbsp;&nbsp;
+  <input id="lrl_web_data_10_cmdperturb_npert" name="lrl_web_data_10_cmdperturb_npert" type="number" value="20" min="1"/>&nbsp;&nbsp;
   <label for="lrl_web_data_10_cmdperturb_ppk">Parts per 1000:</label>&nbsp;
   <input id="lrl_web_data_10_cmdperturb_ppk" name="lrl_web_data_10_cmdperturb_ppk" type="text" value="1" number min="1" max="1000"/>
+  <br />
+  </div>
+  <div id="block_10b_cmdpath" style="display:none">
+  <label for="lrl_web_data_10_cmdpath_npath">Number of steps in the path:</label>&nbsp;
+  <input id="lrl_web_data_10_cmdpath_npath" name="lrl_web_data_10_cmdpath_npath" type="number" value="20" min="1"/>&nbsp;&nbsp;
+  <br />
+  </div>
+  <div id="block_10b_cmdtos6l" style="display:none">
+  <label for="lrl_web_data_10_cmdtos6l_type">Type of linearized S6: S6L, RI or blank for both:</label>&nbsp;
+  <select id=lrl_web_data_10_cmdtos6l_type" name="lrl_web_data_10_cmdtos6l_type">
+  <option selected value=\"S6L\">linearized S6</option>
+  <option value=\"RI\">root invariant</option>
+  <option value=\"  \">both S6L and RI</option>
+  </select>
   <br />
   </div>
   <div id="block_10b" style="display:none"> 
@@ -2999,7 +3262,7 @@ determination of a unique conventional cell. Zeitschrift f&uuml;r Kristallograph
 
 <p>
 <hr />
-Updated 19 November 2023.
+Updated 23 November 2023.
 </font>
 </body>
 </html>]]])
