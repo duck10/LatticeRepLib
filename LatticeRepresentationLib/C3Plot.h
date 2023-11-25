@@ -30,10 +30,6 @@ public:
    std::vector<S6> PrepareCells();
    std::string CreatePolylineFromPoints(const size_t scalarr, const std::string& width, const std::vector<S6>& v);
    void SendFrameToFile(const std::string& sFileName, const std::string& data);
-   int GetColor() const { return m_color; }
-   void SetColor(const int color) { m_color = color; }
-   void SetColorDelta(const int color) { m_deltaColor = color; }
-   int GetColorDelta() const { return m_deltaColor; }
 
 protected:
    const int m_wx;
