@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="ConstSingleton_T.h" />
     <ClInclude Include="FileOperations.h" />
+    <ClInclude Include="HSV.h" />
     <ClInclude Include="LinearAxis.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
     <ClInclude Include="LRL_DataStreamToString.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="LRL_ToString.h" />
     <ClInclude Include="LRL_Vector3.h" />
     <ClInclude Include="PairReporter.h" />
+    <ClInclude Include="RGB.h" />
     <ClInclude Include="rhrand.h" />
     <ClInclude Include="spline_under_tension.hpp" />
     <ClInclude Include="StoreResults.h" />
@@ -174,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileOperations.cpp" />
+    <ClCompile Include="HSV.cpp" />
     <ClCompile Include="LinearAxis.cpp" />
     <ClCompile Include="LRL_CreateFileName.cpp" />
     <ClCompile Include="LRL_inverse.cpp" />
@@ -181,6 +184,7 @@
     <ClCompile Include="LRL_RandTools.cpp" />
     <ClCompile Include="LRL_StringTools.cpp" />
     <ClCompile Include="LRL_Vector3.cpp" />
+    <ClCompile Include="RGB.cpp" />
     <ClCompile Include="spline_under_tension.cpp" />
     <ClCompile Include="SuperFastHash.cpp" />
     <ClCompile Include="SVG_Tools.cpp" />

@@ -1,6 +1,7 @@
 #include "ColorTables.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>     // std::cout, std::endl
@@ -8,18 +9,97 @@
 #include <sstream>
 #include <vector>
 
+
+std::string ColorTables::NumberToHexString(const int n) {
+   std::stringstream ostr;
+   ostr << std::hex << std::setfill('0') << std::setw(6) << n;
+   return ostr.str();
+}
+
+void ColorTables::ConvertHexColorToRGB(const unsigned long color, 
+   unsigned long& red, unsigned long& green, unsigned long& blue) {
+   const std::string hexColor = NumberToHexString(color);
+
+   // Convert hex digits to integers
+//     int red, green, blue;
+   if (hexColor.length() == 6) {
+      red = std::stoi(hexColor.substr(0, 2), nullptr, 16);
+      green = std::stoi(hexColor.substr(2, 2), nullptr, 16);
+      blue = std::stoi(hexColor.substr(4, 2), nullptr, 16);
+   }
+   else {
+      red = std::stoi(hexColor.substr(0, 1), nullptr, 16) * 16 + std::stoi(hexColor.substr(1, 1), nullptr, 16);
+      green = std::stoi(hexColor.substr(1, 1), nullptr, 16) * 16 + std::stoi(hexColor.substr(2, 1), nullptr, 16);
+      blue = std::stoi(hexColor.substr(2, 1), nullptr, 16) * 16 + std::stoi(hexColor.substr(2, 1), nullptr, 16);
+      blue /= 2; // Divide blue by 2 to handle shorthand hex format
+   }
+}
+
 const std::string ColorTables::BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
                   "orange", "blueviolet", "coral", "saddlebrown", "blue", "pink", "violet",
                   "deeppink", "mediumvioletred", "tomato", "greenyellow", "olive" };
 
-ColorRange::ColorRange(const double minv, const double maxv)
-   : m_min(std::min(minv, maxv)), 
-   m_max(std::max(minv, maxv)) 
-{}
+ColorRange::ColorRange(const unsigned long mincol, const unsigned long maxcol)
+   : m_minhex(std::min(mincol, maxcol)), 
+   m_maxhex(std::max(mincol, maxcol)) 
+{
+   std::cout << std::hex << std::setfill('0') << std::setw(6) << mincol << std::endl;;
+   std::cout << std::hex << std::setfill('0') << std::setw(6) << maxcol << std::endl;;
+
+   //unsigned long rmin = 0;
+   //unsigned long gmin = 0;
+   //unsigned long bmin = 0;
+   //ColorTables::ConvertHexColorToRGB(m_minhex, rmin, gmin, bmin);
+
+   //unsigned long rmax = 0;
+   //unsigned long gmax = 0;
+   //unsigned long bmax = 0;
+   //ColorTables::ConvertHexColorToRGB(m_maxhex, rmax, gmax, bmax);
+
+   const CHSV hsvmin(m_minhex);
+   const CHSV hsvmax(m_maxhex);
+   m_maxh = hsvmax.m_nHue;
+   m_maxs = hsvmax.m_nSaturation;
+   m_maxv = hsvmax.m_nValue;
+   m_minh = hsvmin.m_nHue;
+   m_mins = hsvmin.m_nSaturation;
+   m_minv = hsvmin.m_nValue;
+   const int i19191 = 19191;
+}
 
 double ColorRange::ColorFraction(const double color){
-   const double index = (color - m_min) / (m_max - m_min);
+   const double index = (color - m_minhex) / (m_maxhex - m_minhex);
    return index;
+}
+
+int ColorRange::GetColorFromRangeFraction(const double frac) const {
+   return m_minhex + fmod(frac, 1.0) * (m_maxhex - m_minhex);
+}
+
+void ColorRange::GetHSVFromRangeFraction(const double frac, unsigned long& h,
+    unsigned long& s,  unsigned long& v) const
+{
+   h = m_minh + fmod(frac, 1.0) * (m_maxh - m_minh);
+   s = m_mins + fmod(frac, 1.0) * (m_maxs - m_mins);
+   v = m_minv + fmod(frac, 1.0) * (m_maxv - m_minv);
+}
+
+void ColorRange::GetRGBFromRangeFraction(const double frac, unsigned long& r,
+   unsigned long& g, unsigned long& b) const
+{
+   CHSV minhsv;
+   minhsv.m_nHue = m_minh;
+   minhsv.m_nSaturation = m_mins;
+   minhsv.m_nValue = m_minv;
+   CHSV maxhsv;
+   maxhsv.m_nHue = m_maxh;
+   maxhsv.m_nSaturation = m_maxs;
+   maxhsv.m_nValue = m_maxv;
+   const CRGB rgbmin(minhsv);
+   const CRGB rgbmax(maxhsv);
+   r = fmod(frac, 1.0) * (rgbmax.m_nRed - rgbmin.m_nRed) + rgbmin.m_nRed;
+   g = fmod(frac, 1.0) * (rgbmax.m_nGreen - rgbmin.m_nGreen) + rgbmin.m_nGreen;
+   b = fmod(frac, 1.0) * (rgbmax.m_nBlue - rgbmin.m_nBlue) + rgbmin.m_nBlue;
 }
 
 int ColorRange::ColorIndex( const double color ) {

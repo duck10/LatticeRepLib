@@ -84,6 +84,12 @@
     <ClInclude Include="LinearAxis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HSV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RGB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LRL_inverse.cpp">
@@ -120,6 +126,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LinearAxis.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HSV.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RGB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
