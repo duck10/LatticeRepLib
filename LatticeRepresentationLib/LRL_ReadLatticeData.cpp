@@ -451,8 +451,12 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
       return "";;
    }
 
+   if (fields.size() == 1 && fields[0].empty()) {
+      return "";
+   }
+
    if (fields.size() < 7) {
-      std::cout << "; not enough data" << std::endl;
+      std::cout << "; not enough data (B)" << std::endl;
       return "";
    }
 
@@ -463,7 +467,7 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
       std::cout << "; lattice type not recogmized" << std::endl;
    }
    if ( newFields.size() < 7) {
-      std::cout << "; not enough data" << std::endl;
+      std::cout << "; not enough data (A)" << std::endl;
       return "";
    }
 

@@ -152,10 +152,10 @@ m_bIsValid(true)
 	m_nHue = hsv.m_nHue;
 	m_nSaturation = hsv.m_nSaturation;
 	m_nValue = hsv.m_nValue;
-	std::cout << "in CHSV() c= " << c << std::endl;
-	//std::cout << std::hex << std::setfill('0') << std::setw(6) << mincol << std::endl;
-	std::cout << " rgb " << red << " " << green << " " << blue << std::endl;
-	std::cout << " hsv " << m_nHue << " " << m_nSaturation << " " << m_nValue << std::endl;
+	//std::cout << "in CHSV() c= " << c << std::endl;
+	////std::cout << std::hex << std::setfill('0') << std::setw(6) << mincol << std::endl;
+	//std::cout << " rgb " << red << " " << green << " " << blue << std::endl;
+	//std::cout << " hsv " << m_nHue << " " << m_nSaturation << " " << m_nValue << std::endl;
 
 }
 
