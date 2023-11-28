@@ -43,8 +43,8 @@ ColorRange::ColorRange(const unsigned long mincol, const unsigned long maxcol)
    : m_minhex(std::min(mincol, maxcol)), 
    m_maxhex(std::max(mincol, maxcol)) 
 {
-   std::cout << std::hex << std::setfill('0') << std::setw(6) << mincol << std::endl;;
-   std::cout << std::hex << std::setfill('0') << std::setw(6) << maxcol << std::endl;;
+   //std::cout << std::hex << std::setfill('0') << std::setw(6) << mincol << std::endl;;
+   //std::cout << std::hex << std::setfill('0') << std::setw(6) << maxcol << std::endl;;
 
    //unsigned long rmin = 0;
    //unsigned long gmin = 0;
