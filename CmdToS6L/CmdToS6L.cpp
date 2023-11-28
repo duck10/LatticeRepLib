@@ -421,12 +421,12 @@ int main(int argc, char* argv[]) {
 
    std::cout << "; To Linearized S6 and root invariants" << std::endl;
 
-   static const std::string allowedLetters = "SLR";
-   int test = 0;
+   static const std::string nameRootFragment("root");
+   static const std::string nameRootSLFragment("linear");
    if (argc > 1) {
-      name = argv[1];
-      name = LRL_StringTools::strToupper(name);
-      if (allowedLetters.find(name[0]) == std::string::npos) name.clear();
+      const std::string arg(argv[1]);
+      if (arg.find(nameRootFragment) != std::string::npos) name = "R";
+      if (arg.find(nameRootSLFragment) != std::string::npos) name = "S";
    }
 
 
@@ -456,7 +456,7 @@ int main(int argc, char* argv[]) {
 
    std::cout << std::endl;
 
-   if ( name.empty() || name[0] =='S' || name[0]=='L')
+   if ( name.empty() || name[0] =='S')
    {
       for (size_t i = 0; i < SLs.size(); ++i) {
          std::cout << "SL " << ResetZeros(SLs[i]) << std::endl;
