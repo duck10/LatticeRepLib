@@ -53,6 +53,6 @@ int main()
 
    for (size_t i = 0; i < inputList.size(); ++i) {
       const LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
-      std::cout << "V " << V7("P ", pCell) << std::endl;
+      std::cout << "V7 " << V7("P ", pCell) << std::endl;
    }
 }
