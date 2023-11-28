@@ -450,7 +450,7 @@ int main(int argc, char* argv[]) {
    if ( name.empty() || name[0]=='R')
    {
       for (size_t i = 0; i < RIs.size(); ++i) {
-         std::cout << "RI " << RIs[i].first << RIs[i].second << std::endl;
+         std::cout << "RI " << ResetZeros(RIs[i].first) << RIs[i].second << std::endl;
       }
    }
 
