@@ -168,7 +168,7 @@ public:
    std::string GetBravaisLatticeGeneral() const { return m_bravaisLatticeGeneral; }
    std::vector<std::shared_ptr<GenerateComplexBase> >
       Select(const std::string& s = "") const;
-   std::string GetXtalType(const std::string& s) { return m_bravaisType; }
+   std::string GetXtalType(const std::string& s) const { return m_bravaisType; }
    static std::vector<S6>
       Generate(const std::string& s, const size_t n = 1);
    //std::vector<MatS6> GetSellaProjectors() const { return m_sellaProjectors; }
@@ -468,7 +468,7 @@ public:
    std::string GetBravaisLatticeGeneral() const { return m_bravaisLatticeGeneral; }
    std::vector<std::shared_ptr<GenerateDeloneBase> >
       Select(const std::string& s = "") const;
-   std::string GetXtalType(const std::string& s) { return m_bravaisType; }
+   std::string GetXtalType(const std::string& s) const { return m_bravaisType; }
    static std::vector<S6>
       Generate(const std::string& s, const size_t n = 1);
    std::vector<MatS6> GetSellaProjectors() const { return m_sellaProjectors; }

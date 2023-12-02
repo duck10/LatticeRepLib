@@ -17,6 +17,7 @@ typedef std::vector<ANGLELIST> ANGLESFORFACES;
 
 class DirichletCell {
 public:
+   friend std::ostream& operator<< (std::ostream&, const DirichletCell&);
    DirichletCell() {}
    DirichletCell(const std::string& strCellAndLattice);
    DirichletCell(const std::string& lattice, const LRL_Cell& cell);

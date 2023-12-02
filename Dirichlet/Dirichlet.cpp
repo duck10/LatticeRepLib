@@ -317,6 +317,21 @@ DirichletCell::DirichletCell(const std::string& strCellAndLattice)
    ProcessInputCell(rcd.GetLattice(), rcd.GetCell());
 }
 
+//typedef std::pair<double, Vector_3 > ANGLE_COORDS;
+//typedef std::vector< ANGLE_COORDS > ANGLELIST;
+//typedef std::vector<ANGLELIST> ANGLESFORFACES;
+
+std::ostream& operator<< (std::ostream& o, const DirichletCell& dc) {
+   auto xxx = dc.GetAnglesForFaces();
+   for (size_t i = 0; i < xxx.size(); ++i)
+      for (size_t kkk=0; kkk<xxx[i].size(); ++kkk)
+      {
+         o << xxx[i][kkk].first << std::endl;
+         o << xxx[i][kkk].second << std::endl << std::endl;
+      }
+   return o;
+}
+
 DirichletCell::DirichletCell(const std::string& lattice, const LRL_Cell& cell)
    : m_cell(cell)
 {

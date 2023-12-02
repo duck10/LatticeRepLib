@@ -1588,10 +1588,8 @@ RetrieveByGeneralBravaisType(const std::string& s,
    std::vector<std::shared_ptr<T> > out;
    for (size_t i = 0; i < v.size(); ++i) {
       const std::string type = v[i]->GetBravaisLatticeGeneral();
-      if (s.length() == 2 && s == v[i]->GetBravaisLatticeGeneral()) out.push_back(v[i]);
-      if (!out.size() && out.size() < 4) {
-         const int i19191 = 19191;
-      }
+      if (s.length() == 1 && s[0] == v[i]->GetName()[0]) out.push_back(v[i]);
+      else if (s.length() == 2 && s == type) out.push_back(v[i]);
    }
    return out;
 }
@@ -1656,6 +1654,9 @@ GenerateDeloneBase::Select(const std::string& s/* = ""*/) const {
    }
    else if (deloneTypes.find(s[0]) != std::string::npos) {
       return RetrieveByDeloneName(s, vglb);
+   }
+   else if (s.size() == 1 && xtals.find(s[0]) != std::string::npos) {
+      return RetrieveByGeneralBravaisType(s, vglb);
    }
    else if (s.size() == 2 && s[1] == 'S') {
       return RetrieveByGeneralBravaisType(s, vglb);
