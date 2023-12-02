@@ -405,6 +405,8 @@ int main() {
          DirichletConstants::timestamp));
 
    for ( size_t whichCell =0; whichCell<strCells.size(); ++whichCell) {
+      const DirichletCell dc = (strCells[whichCell]);
+      std::cout << dc << std::endl;
       const std::string svg = HandleOneCell(strCells[whichCell]);
       const std::string fileName = basicFilePrefix + LRL_ToString(whichCell) + ".svg";
       if ( ! svg.empty()) FileOperations::Write(fileName, svg);

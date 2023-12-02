@@ -128,12 +128,12 @@ void ForNiggliInput(
 }
 
 void ForDeloneInput(
-   const std::vector<std::shared_ptr<GenerateDeloneBase> >& vglb) {
-   for (size_t lat = 0; lat < vglb.size(); ++lat) {
-      const std::shared_ptr<GenerateDeloneBase> pt = vglb[lat];
+   const std::vector<std::shared_ptr<GenerateDeloneBase> >& ptrDeloneBase) {
+   for (size_t lat = 0; lat < ptrDeloneBase.size(); ++lat) {
+      const std::shared_ptr<GenerateDeloneBase> pt = ptrDeloneBase[lat];
       std::cout << "; lattice type = " << pt->GetName() << std::endl;
       for (size_t i = 0; i < ngen; ++i) {
-         const G6 g = Generate(MatS6((*(vglb[lat])).GetPrj()));
+         const G6 g = Generate(MatS6((*(ptrDeloneBase[lat])).GetPrj()));
          std::cout << "G6 "
             << g << " "
             << " Delone# = " << pt->GetName() << "  "
