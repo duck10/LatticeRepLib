@@ -1,13 +1,50 @@
-﻿
+﻿#include <ctype.h>
 #include <iostream>
 #include <map>
 
 #include "G6.h"
 #include "LRL_Cell.h"
 #include "Niggli.h"
+#include "NumericTools.h"
 #include "GenerateLatticeTypeExamples.h"
 #include "S6BoundaryTransforms.h"
 #include "LRL_StringTools.h"
+/* 
+test commands for CmdGen verification
+CmdGen 1 1
+CmdGen 1 44
+CmdGen 1 -1
+CmdGen 1  66
+
+CmdGen 1 m
+CmdGen 1 h
+
+CmdGen 1 O
+CmdGen 1 S
+CmdGen 1 C
+
+
+CmdGen 1 mP
+CmdGen 1 mS
+CmdGen 1 mC
+CmdGen 1 hR
+CmdGen 1 hP
+
+CmdGen 1 O4
+CmdGen 1 C3
+CmdGen 1 A2
+
+CmdGen 1
+CmdGen 1 
+CmdGen 1 xxxx
+CmdGen
+CmdGen xxx
+
+
+*/
+
+
+
 
 // how many examples of each type to generate
 static int ngen = 1;
@@ -113,7 +150,7 @@ void ForNiggliInput(
    const std::vector<std::shared_ptr<GenerateNiggliBase> >& vglb) {
    for (size_t lat = 0; lat < vglb.size(); ++lat) {
       const std::shared_ptr<GenerateNiggliBase> pt = vglb[lat];
-      std::cout << "; lattice type = " << pt->GetITNumber() << std::endl;
+      //std::cout << "; lattice type = " << pt->GetITNumber() << std::endl;
       for (size_t i = 0; i < ngen; ++i) {
          const G6 g = Generate(vglb[lat]);
          std::cout << "G6 "
@@ -122,7 +159,7 @@ void ForNiggliInput(
             << pt->GetBravaisType()
             << std::endl;
       }
-      std::cout << ";" << std::endl;
+      //std::cout << ";" << std::endl;
    }
 
 }
@@ -131,7 +168,7 @@ void ForDeloneInput(
    const std::vector<std::shared_ptr<GenerateDeloneBase> >& ptrDeloneBase) {
    for (size_t lat = 0; lat < ptrDeloneBase.size(); ++lat) {
       const std::shared_ptr<GenerateDeloneBase> pt = ptrDeloneBase[lat];
-      std::cout << "; lattice type = " << pt->GetName() << std::endl;
+      //std::cout << "; lattice type = " << pt->GetName() << std::endl;
       for (size_t i = 0; i < ngen; ++i) {
          const G6 g = Generate(MatS6((*(ptrDeloneBase[lat])).GetPrj()));
          std::cout << "G6 "
@@ -140,11 +177,12 @@ void ForDeloneInput(
             << pt->GetBravaisType()
             << std::endl;
       }
-      std::cout << ";" << std::endl;
+      //std::cout << ";" << std::endl;
    }
 
 }
 
+static const std::string g_AllowedDelone("CTROMA");
 static const std::string g_DeloneTypes("hR hP oS oC mS mC mS A1 A2 A3 C1 C3 C5 H4 M1A M1B M2A M2B M3 M4 O1A O1B O2 O3 O4 O5 R1 R3 T1 T2 T5");
 static const std::string g_LatticeTypes("aP cF cI cP hP mC mP oF oI oP oS rP tI tP ");
 static const std::string g_Complex("X x");
@@ -165,35 +203,78 @@ int main(int argc, char* argv[])
       }
    }
 
-   if (LRL_StringTools::strToupper(name) == "ALL") {
-      name = "";
+
+
+
+   const int number = getNumber<int>(name);
+   const bool isNumIn_1_44 = isNumber<int>(name) && number >= 1 && number <= 44;
+   const bool badNumber = isNumber<int>(name) && (number < 1 || number > 44);
+
+   bool doNiggli = false;
+   bool doDelone = false;
+
+   if (argc <= 2) doNiggli = doDelone = true;
+   else if (isNumIn_1_44) doNiggli = true;
+   else if (isNumber<int>(name) && badNumber) doNiggli = doDelone = true;
+   else if (isupper(name[0])) doDelone = true;
+   else if (islower(name[0])) doNiggli = doDelone = true;
+   else {
+      const int i19191 = 19191;
+   }
+   if (badNumber) name.clear();
+   if (isupper(name[0]) && g_AllowedDelone.find(name[0]) == std::string::npos)
+   {
+      doNiggli = doDelone = true;
+      name.clear();
    }
 
-   if (name.length() > 1 && g_DeloneTypes.find(name) != std::string::npos) {
-      std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
-         GenerateDeloneBase().Select(name);
-      std::cout << "; Delone lattice type requested " << std::endl;
-      ForDeloneInput(DeloneTypes);
-   }
-   else if (name.size()==2 && (g_LatticeTypes.find(name) != std::string::npos) && (name != "")) {
-      std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
-         GenerateDeloneBase().Select(name);
-      std::cout << "; Delone lattice type requested " << std::endl;
-      ForDeloneInput(DeloneTypes);
-   }
-   else if ((g_Complex.find(name) != std::string::npos) && (name != "")) {
-      std::cout << ";Complex S6 requested " << std::endl;
-   //   ForComplexInput(ComplexType);
-   }
-   else {
+
+   if (doNiggli) {
       const std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
          GenerateNiggliBase().Select(name);
-      const std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
-         GenerateDeloneBase().Select(name);
-      std::cout << "; Niggli and Delone lattice types requested " << std::endl;
+      std::cout << "; Niggli lattice types requested " << std::endl;
       ForNiggliInput(NiggiTypes);
-      ForDeloneInput(DeloneTypes);
-      if (NiggiTypes.empty() && DeloneTypes.empty()) std::cout << "; unable to match type \"" << name << "\"" << std::endl;
    }
+
+   if(doDelone) {
+      std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
+         GenerateDeloneBase().Select(name);
+      std::cout << "; Delone lattice type requested " << std::endl;
+      ForDeloneInput(DeloneTypes);
+   }
+
+
+
+   //if (LRL_StringTools::strToupper(name) == "ALL") {
+   //   name = "";
+   //}
+
+   //if (name.length() > 1 && g_DeloneTypes.find(name) != std::string::npos) {
+   //   std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
+   //      GenerateDeloneBase().Select(name);
+   //   std::cout << "; Delone lattice type requested " << std::endl;
+   //   ForDeloneInput(DeloneTypes);
+   //}
+   //else if (name.size()==2 && (g_LatticeTypes.find(name) != std::string::npos) && (name != "")) {
+   //   std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
+   //      GenerateDeloneBase().Select(name);
+   //   std::cout << "; Delone lattice type requested " << std::endl;
+   //   ForDeloneInput(DeloneTypes);
+   //}
+   //else if ((g_Complex.find(name) != std::string::npos) && (name != "")) {
+   //   std::cout << ";Complex S6 requested " << std::endl;
+   ////   ForComplexInput(ComplexType);
+   //}
+   //else {
+   //   const std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
+   //      GenerateNiggliBase().Select(name);
+   //   std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes;
+   //   if (isupper(name[0]) && !isNumber<int>(name)) DeloneTypes =
+   //      GenerateDeloneBase().Select(name);
+   //   std::cout << "; Niggli and Delone lattice types requested " << std::endl;
+   //   ForNiggliInput(NiggiTypes);
+   //   if (!isNumIn_1_44) ForDeloneInput(DeloneTypes);
+   //   if (NiggiTypes.empty() && DeloneTypes.empty()) std::cout << "; unable to match type \"" << name << "\"" << std::endl;
+   //}
 
 }

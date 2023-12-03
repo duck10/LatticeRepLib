@@ -184,6 +184,7 @@
     <ClCompile Include="LRL_RandTools.cpp" />
     <ClCompile Include="LRL_StringTools.cpp" />
     <ClCompile Include="LRL_Vector3.cpp" />
+    <ClCompile Include="NumericTools.h" />
     <ClCompile Include="RGB.cpp" />
     <ClCompile Include="spline_under_tension.cpp" />
     <ClCompile Include="SuperFastHash.cpp" />
