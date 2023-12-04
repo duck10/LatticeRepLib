@@ -14,6 +14,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
 	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
+	../LRL_Tools/HSV.cpp ../LRL_Tools/HSV.h ../LRL_Tools/RGB.cpp ../LRL_Tools/RGB.h \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
 	../LatticeRepresentationLib/LabeledSellaMatrices.cpp \
 	../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
@@ -39,6 +40,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
 	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
+	../LRL_Tools/HSV.cpp ../LRL_Tools/RGB.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
 	../LatticeRepresentationLib/LabeledSellaMatrices.cpp \
 	../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \

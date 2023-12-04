@@ -14,6 +14,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
 	../LRL_Tools/FileOperations.cpp \
+	../LRL_Tools/HSV.cpp ../LRL_Tools/HSV.h ../LRL_Tools/RGB.cpp ../LRL_Tools/RGB.h \
 	../LatticeRepresentationLib/FollowerConstants.cpp \
 	../LatticeRepresentationLib/G6.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
@@ -40,6 +41,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
 	../LRL_Tools/FileOperations.cpp \
+	../LRL_Tools/HSV.cpp ../LRL_Tools/RGB.cpp  \
 	../LatticeRepresentationLib/FollowerConstants.cpp \
 	../LatticeRepresentationLib/G6.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
