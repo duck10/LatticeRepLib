@@ -212,8 +212,11 @@ int main(int argc, char* argv[])
 
    bool doNiggli = false;
    bool doDelone = false;
-
-   if (argc <= 2) doNiggli = doDelone = true;
+   bool doGruber = false;
+   const std::string temp = argv[1];
+   if (argc > 1 && LRL_StringTools::strToupper(argv[1]) == "GRUBER") doGruber = true;
+   else if (argc > 2 && LRL_StringTools::strToupper(argv[2]) == "GRUBER") doGruber = true;
+   else if (argc <= 2) doNiggli = doDelone = true;
    else if (isNumIn_1_44) doNiggli = true;
    else if (isNumber<int>(name) && badNumber) doNiggli = doDelone = true;
    else if (isupper(name[0])) doDelone = true;
@@ -224,7 +227,7 @@ int main(int argc, char* argv[])
    if (badNumber) name.clear();
    if (isupper(name[0]) && g_AllowedDelone.find(name[0]) == std::string::npos)
    {
-      doNiggli = doDelone = true;
+      doNiggli = doDelone = !doGruber;
       name.clear();
    }
 
@@ -243,38 +246,13 @@ int main(int argc, char* argv[])
       ForDeloneInput(DeloneTypes);
    }
 
-
-
-   //if (LRL_StringTools::strToupper(name) == "ALL") {
-   //   name = "";
-   //}
-
-   //if (name.length() > 1 && g_DeloneTypes.find(name) != std::string::npos) {
-   //   std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
-   //      GenerateDeloneBase().Select(name);
-   //   std::cout << "; Delone lattice type requested " << std::endl;
-   //   ForDeloneInput(DeloneTypes);
-   //}
-   //else if (name.size()==2 && (g_LatticeTypes.find(name) != std::string::npos) && (name != "")) {
-   //   std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
-   //      GenerateDeloneBase().Select(name);
-   //   std::cout << "; Delone lattice type requested " << std::endl;
-   //   ForDeloneInput(DeloneTypes);
-   //}
-   //else if ((g_Complex.find(name) != std::string::npos) && (name != "")) {
-   //   std::cout << ";Complex S6 requested " << std::endl;
-   ////   ForComplexInput(ComplexType);
-   //}
-   //else {
-   //   const std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
-   //      GenerateNiggliBase().Select(name);
-   //   std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes;
-   //   if (isupper(name[0]) && !isNumber<int>(name)) DeloneTypes =
-   //      GenerateDeloneBase().Select(name);
-   //   std::cout << "; Niggli and Delone lattice types requested " << std::endl;
-   //   ForNiggliInput(NiggiTypes);
-   //   if (!isNumIn_1_44) ForDeloneInput(DeloneTypes);
-   //   if (NiggiTypes.empty() && DeloneTypes.empty()) std::cout << "; unable to match type \"" << name << "\"" << std::endl;
-   //}
+   if (doGruber) {
+      std::cout << "; The 5 triclinic Buerger - reduced cell of Gruber, 1973" << std::endl;
+      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., 16., 3., 4.   } ) << std::endl;;// Niggli reduced
+      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., 16., 1., 4.   } ) << std::endl;;
+      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., -16., -1., -3.} ) << std::endl;;
+      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., -15., -1., -4.} ) << std::endl;;
+      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., -13., -3., -4.} ) << std::endl;;
+   }
 
 }
