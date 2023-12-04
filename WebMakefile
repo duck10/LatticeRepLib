@@ -21,6 +21,7 @@ COMMANDS  =  \
 	CmdToS6 \
 	CmdToS6L \
 	CmdToU \
+	CmdToV7 \
 	CmdVolume
 
 SOURCES  =  \
@@ -40,9 +41,11 @@ SOURCES  =  \
 	CmdToD13/CmdToD13.cpp \
 	CmdToDC/CmdToDC.cpp \
 	CmdToG6/CmdToG6.cpp \
+	CmdToV7/CmdToV7.cpp \
 	CmdToS6/CmdToS6.cpp \
 	CmdToS6L/CmdToS6L.cpp \
 	CmdToU/CmdToU.cpp \
+	CmdToV7/CmdToV7.cpp \
 	CmdVolume/CmdVolume.cpp
 
 BINS  =  \
@@ -65,6 +68,7 @@ BINS  =  \
 	CmdToS6/CmdToS6 \
 	CmdToS6L/CmdToS6L \
 	CmdToU/CmdToU \
+	CmdToV7/CmdToV7 \
 	CmdVolume/CmdVolume
 
 BIN	= $(PWD)/bin
@@ -132,6 +136,9 @@ CmdToS6L/CmdToS6L:  CmdToS6L/CmdToS6L.cpp $(BIN)
 
 CmdToU/CmdToU:  CmdToU/CmdToU.cpp $(BIN)
 	  (cd CmdToU;  make all; cp CmdToU $(BIN))
+
+CmdToV/CmdToV:  CmdToV/CmdToV.cpp $(BIN)
+	  (cd CmdToV;  make all; cp CmdToV $(BIN))
 
 CmdVolume/CmdVolume:  CmdVolume/CmdVolume.cpp $(BIN)
 	  (cd CmdVolume;  make all; cp CmdVolume $(BIN))
