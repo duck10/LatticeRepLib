@@ -10,7 +10,8 @@
 #include "S6BoundaryTransforms.h"
 #include "LRL_StringTools.h"
 /* 
-test commands for CmdGen verification
+; test commands for CmdGen verification
+cls
 CmdGen 1 1
 CmdGen 1 44
 CmdGen 1 -1
@@ -35,12 +36,13 @@ CmdGen 1 C3
 CmdGen 1 A2
 
 CmdGen 1
-CmdGen 1 
 CmdGen 1 xxxx
 CmdGen
 CmdGen xxx
 
-
+CmdGen 1 all
+CMdGen 1 all niggli and delone
+;
 */
 
 
@@ -205,7 +207,6 @@ int main(int argc, char* argv[])
 
 
 
-
    const int number = getNumber<int>(name);
    const bool isNumIn_1_44 = isNumber<int>(name) && number >= 1 && number <= 44;
    const bool badNumber = isNumber<int>(name) && (number < 1 || number > 44);
@@ -213,7 +214,16 @@ int main(int argc, char* argv[])
    bool doNiggli = false;
    bool doDelone = false;
    bool doGruber = false;
-   const std::string temp = argv[1];
+
+   if (argc == 1) doNiggli = doDelone = true;
+
+   if (LRL_StringTools::strToupper(name).find("ALL") != std::string::npos)
+   {
+      name.clear();
+      doNiggli = doDelone = true;
+   }
+
+
    if (argc > 1 && LRL_StringTools::strToupper(argv[1]) == "GRUBER") doGruber = true;
    else if (argc > 2 && LRL_StringTools::strToupper(argv[2]) == "GRUBER") doGruber = true;
    else if (argc <= 2) doNiggli = doDelone = true;
@@ -227,7 +237,7 @@ int main(int argc, char* argv[])
    if (badNumber) name.clear();
    if (isupper(name[0]) && g_AllowedDelone.find(name[0]) == std::string::npos)
    {
-      doNiggli = doDelone = !doGruber;
+      doNiggli = doDelone = true;
       name.clear();
    }
 
@@ -247,12 +257,11 @@ int main(int argc, char* argv[])
    }
 
    if (doGruber) {
-      std::cout << "; The 5 triclinic Buerger - reduced cell of Gruber, 1973" << std::endl;
-      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., 16., 3., 4.   } ) << std::endl;;// Niggli reduced
-      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., 16., 1., 4.   } ) << std::endl;;
-      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., -16., -1., -3.} ) << std::endl;;
-      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., -15., -1., -4.} ) << std::endl;;
-      std::cout << "G6 " << G6( std::vector<double>{ 4., 16., 16., -13., -3., -4.} ) << std::endl;;
+      std::cout << G6( std::vector<double>{ 4., 16., 16., 16., 3., 4.   } ) << std::endl;;// Niggli reduced
+      std::cout << G6( std::vector<double>{ 4., 16., 16., 16., 1., 4.   } ) << std::endl;;
+      std::cout << G6( std::vector<double>{ 4., 16., 16., -16., -1., -3.} ) << std::endl;;
+      std::cout << G6( std::vector<double>{ 4., 16., 16., -15., -1., -4.} ) << std::endl;;
+      std::cout << G6( std::vector<double>{ 4., 16., 16., -13., -3., -4.} ) << std::endl;;
    }
 
 }
