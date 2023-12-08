@@ -208,6 +208,7 @@ bool LRL_ReadLatticeData::SetUData(const std::vector<double>& fields) {
 bool LRL_ReadLatticeData::SetV7Data(const std::vector<double>& fields) {
    std::vector<std::string> names{ "V7", " V7 ", " V7", "V7 ", "V", " V ", " V", "V "};
    bool test = IsLatticeName(m_inputDataType, names);
+   if (!test) return false;
    if (fields.size() < 7) return false;
 
    const V7 v7(fields);
