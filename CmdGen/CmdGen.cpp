@@ -42,6 +42,9 @@ CmdGen xxx
 
 CmdGen 1 all
 CMdGen 1 all niggli and delone
+
+CmdGen 1 delone
+CmdGen 1 niggli
 ;
 */
 
@@ -215,7 +218,6 @@ int main(int argc, char* argv[])
    bool doDelone = false;
    bool doGruber = false;
 
-   if (argc == 1) doNiggli = doDelone = true;
 
    if (LRL_StringTools::strToupper(name).find("ALL") != std::string::npos)
    {
@@ -224,12 +226,21 @@ int main(int argc, char* argv[])
    }
 
 
-   if (argc > 1 && LRL_StringTools::strToupper(argv[1]) == "GRUBER") doGruber = true;
+   if (argc == 1) doNiggli = doDelone = true;
+   else if (argc > 1 && LRL_StringTools::strToupper(argv[1]) == "GRUBER") doGruber = true;
    else if (argc > 2 && LRL_StringTools::strToupper(argv[2]) == "GRUBER") doGruber = true;
    else if (argc <= 2) doNiggli = doDelone = true;
    else if (isNumIn_1_44) doNiggli = true;
+   else if (LRL_StringTools::strToupper(name).find("NIGGLI") != std::string::npos) {
+      doNiggli = true;
+      doDelone = false;
+   }
+   else if (LRL_StringTools::strToupper(name).find("DELONE") != std::string::npos) {
+      doNiggli = false;
+      doDelone = true;
+   }
    else if (isNumber<int>(name) && badNumber) doNiggli = doDelone = true;
-   else if (isupper(name[0])) doDelone = true;
+   else if (isupper(name[0])) doDelone = true; // "A??" will incorrectly come here, but doNiggli already set
    else if (islower(name[0])) doNiggli = doDelone = true;
    else {
       const int i19191 = 19191;

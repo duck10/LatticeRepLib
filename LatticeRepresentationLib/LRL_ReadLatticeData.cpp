@@ -5,6 +5,7 @@
 #include "D7.h"
 #include "DC7u.h"
 #include "D13.h"
+#include "V7.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_RandTools.h"
@@ -29,12 +30,16 @@ void LRL_ReadLatticeData::CellReader(const std::string& lattice, const std::stri
 
 static const int folseed = 19192;
 
-const std::string G6_names[] = { "G ", "G6 ", " V", "V ", " V "};
+const std::string G6_names[] = { "G ", "G6 " };
 const std::vector<std::string> vG6_names(G6_names, G6_names + sizeof(G6_names) / sizeof(G6_names[0]));
 
 //const std::string D7_names[] = { "D ", "D7 " }; // removed 2023-11-22
 const std::string D7_names[] = { " " };
 const std::vector<std::string> vD7_names(D7_names, D7_names + sizeof(D7_names) / sizeof(D7_names[0]));
+
+//const std::string D7_names[] = { "D ", "D7 " }; // removed 2023-11-22
+const std::string V7_names[] = { " V V7 " };
+const std::vector<std::string> v7_names(V7_names, V7_names + sizeof(V7_names) / sizeof(V7_names[0]));
 
 const std::string S6_names[] = { "S ", "S6 " };
 const std::vector<std::string> vS6_names(S6_names, S6_names + sizeof(S6_names) / sizeof(S6_names[0]));
@@ -53,8 +58,8 @@ const std::vector<std::string> vSL_names(SL_names, SL_names + sizeof(SL_names) /
 
 
 
-static const std::string symbols6(" A B C F G H I P R S G6 S6 V "); // ALL BLANKS ARE NOT OPTIONAL
-static const std::string symbols7(" DC DC7U U DU  ");
+static const std::string symbols6(" A B C F G H I P R S G6 S6 "); // ALL BLANKS ARE NOT OPTIONAL
+static const std::string symbols7(" V V7  ");
 static const std::string symbols13(" /*DC13*/ ");
 static const std::string symbolsSL(" RI SL ");
 static const std::string allowedLatticeSymbols = symbols6 + symbols7 + symbols13 + symbolsSL;
@@ -74,8 +79,11 @@ const std::string lattice_names[] = { "A ", "B ", "C ", "P ", "R ", "F ", "I ", 
 const std::vector<std::string> vlattice_names(lattice_names, lattice_names + sizeof(lattice_names) / sizeof(lattice_names[0]));
 
 bool LRL_ReadLatticeData::IsLatticeName(const std::string& inputName, const std::vector<std::string>& nameList) {
-   return std::find(nameList.begin(), nameList.end(),
-      LRL_StringTools::strToupper(inputName)) != nameList.end();
+   std::string upperName(LRL_StringTools::strToupper(inputName));
+   if (upperName.back() != ' ') upperName += " ";
+   const bool b =  std::find(nameList.begin(), nameList.end(),
+     upperName) != nameList.end();
+   return b;
 }
 
 bool LRL_ReadLatticeData::IsLatticeName(const std::vector<std::string>& nameList, const std::string& inputName) {
@@ -198,12 +206,14 @@ bool LRL_ReadLatticeData::SetUData(const std::vector<double>& fields) {
 }
 
 bool LRL_ReadLatticeData::SetV7Data(const std::vector<double>& fields) {
-   std::vector<std::string> names{ "V7", " V7 ", " V7"};
+   std::vector<std::string> names{ "V7", " V7 ", " V7", "V7 ", "V", " V ", " V", "V "};
    bool test = IsLatticeName(m_inputDataType, names);
-   if (fields.size() < 7) test = false;
-   if (test) {
-      std::cout << "; V7 input is not implemented (A)" << std::endl;
-   }
+   if (fields.size() < 7) return false;
+
+   const V7 v7(fields);
+   m_cell = V7::ConvertV7ToG6(v7);;
+   test = m_cell.GetValid();
+
    return test;
 }
 
@@ -269,26 +279,24 @@ std::vector<double> LRL_ReadLatticeData::GetFieldsForCellFromString(const std::s
 
 bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
    bool valid = false;
-   {
-      const std::pair<std::vector<double>, std::vector<double> > params = SplitFields(6, fields);
-      m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
-      valid =
-         SetRandomCell(m_inputDataType) ||
-         SetV7Data(fields) ||
-         SetG6Data(fields) ||
-         SetD7Data(fields) ||
-         SetS6Data(fields) ||
-         SetC3Data(fields) ||
-         SetB4Data(fields) ||
-         SetUData(fields) ||
-         SetSLData(fields) ||
-         SetUnitCellTypeData(params);
+   const std::pair<std::vector<double>, std::vector<double> > params = SplitFields(6, fields);
+   m_inputDataType = LRL_StringTools::strToupper(m_inputDataType + " ");
+   valid =
+      SetRandomCell(m_inputDataType) ||
+      SetV7Data(fields) ||
+      SetG6Data(fields) ||
+      //SetD7Data(fields) ||
+      SetS6Data(fields) ||
+      SetC3Data(fields) ||
+      SetB4Data(fields) ||
+      SetUData(fields) ||
+      SetSLData(fields) ||
+      SetUnitCellTypeData(params);
 
-      if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
+   if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
          m_cell.SetSigmas(params.second);
          //return false;
       }
-   }
    return valid;
 }
 
@@ -464,9 +472,14 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
    const std::string newLattice = (newFields.empty()) ? " " : newFields[0];
 
    if (newFields.empty()) {
-      std::cout << "; lattice type not recogmized" << std::endl;
+      std::cout << "; lattice type not recognized" << std::endl;
    }
-   if ( newFields.size() < 7) {
+   else if (LRL_StringTools::strToupper(newFields[0]).find("V7") != std::string::npos
+      && newFields.size() < 8) {
+      std::cout << "; not enough data (A)" << std::endl;
+      return "";
+   }
+   else if ( newFields.size() < 7) {
       std::cout << "; not enough data (A)" << std::endl;
       return "";
    }

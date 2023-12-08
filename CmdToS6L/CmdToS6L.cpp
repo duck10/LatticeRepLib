@@ -427,6 +427,8 @@ int main(int argc, char* argv[]) {
       const std::string arg(argv[1]);
       if (arg.find(nameRootFragment) != std::string::npos) name = "R";
       if (arg.find(nameRootSLFragment) != std::string::npos) name = "S";
+      if (arg.find("R") != std::string::npos) name = "R";
+      if (arg.find("S") != std::string::npos) name = "S";
    }
 
 
