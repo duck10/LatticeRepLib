@@ -99,7 +99,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gen_DC7", "Gen_DC7\Gen_DC7.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FigureGrassmannian", "FigureGrassmannian\FigureGrassmannian.vcxproj", "{89122A3C-BCF4-45FD-AADD-19C91476B317}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdGen", "cmdgen\cmdgen.vcxproj", "{79B30DB3-BF22-476C-862A-B61D3BC9918E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdGen", "CmdGen\cmdgen.vcxproj", "{79B30DB3-BF22-476C-862A-B61D3BC9918E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdPerturb", "CmdPerturb\CmdPerturb.vcxproj", "{B4AE6B73-B554-427A-801A-3D887497927B}"
 EndProject
@@ -124,6 +124,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdToV7", "CmdToV7\CmdToV7.vcxproj", "{AF161A5D-6348-4133-BF06-F734175605D4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdToS6L", "CmdToS6L\CmdToS6L.vcxproj", "{22F5E305-C581-485F-832C-0AA8CFEE3A21}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdInverse", "CmdInverse\CmdInverse.vcxproj", "{234A9040-4020-453E-A308-5A48ACEA09A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -533,6 +535,14 @@ Global
 		{22F5E305-C581-485F-832C-0AA8CFEE3A21}.Release|x64.Build.0 = Release|x64
 		{22F5E305-C581-485F-832C-0AA8CFEE3A21}.Release|x86.ActiveCfg = Release|Win32
 		{22F5E305-C581-485F-832C-0AA8CFEE3A21}.Release|x86.Build.0 = Release|Win32
+		{234A9040-4020-453E-A308-5A48ACEA09A9}.Debug|x64.ActiveCfg = Debug|x64
+		{234A9040-4020-453E-A308-5A48ACEA09A9}.Debug|x64.Build.0 = Debug|x64
+		{234A9040-4020-453E-A308-5A48ACEA09A9}.Debug|x86.ActiveCfg = Debug|Win32
+		{234A9040-4020-453E-A308-5A48ACEA09A9}.Debug|x86.Build.0 = Debug|Win32
+		{234A9040-4020-453E-A308-5A48ACEA09A9}.Release|x64.ActiveCfg = Release|x64
+		{234A9040-4020-453E-A308-5A48ACEA09A9}.Release|x64.Build.0 = Release|x64
+		{234A9040-4020-453E-A308-5A48ACEA09A9}.Release|x86.ActiveCfg = Release|Win32
+		{234A9040-4020-453E-A308-5A48ACEA09A9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -216,6 +216,7 @@
     <ClCompile Include="SellaBuild.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="V7.cpp" />
     <ClCompile Include="VecN.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -288,6 +289,7 @@
     <ClInclude Include="Selling.h" />
     <ClInclude Include="svd.h" />
     <ClInclude Include="Transformations.h" />
+    <ClInclude Include="V7.h" />
     <ClInclude Include="V7Dist.h" />
     <ClInclude Include="VecN.h" />
   </ItemGroup>
