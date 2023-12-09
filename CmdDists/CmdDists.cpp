@@ -45,21 +45,22 @@ int main()
 
    std::cout << ";   ordinals  G6-Euclidean     NCDist     CS6Dist ___  G6-Euclidean  NCDist     CS6Dist"
       "    ordinals"<< std::endl;
-   double* dG6_0 = vg6Red[0].data();
-   double* dS6_0 = vs6Red[0].data();
+   double* dG6_0_data = vg6Red[0].data();
+   double* dS6_0_data = vs6Red[0].data();
+   const G6 g6First = vcells[0];
    for (size_t i = 0; i < inputList.size()-1; ++i) {
-      const double dG6 = NCDist (vg6Red[i].data(), vg6Red[i + 1].data());
-      const double dS6 = CS6Dist(vs6Red[i].data(), vs6Red[i + 1].data());
-      const double dEu = (G6(vcells[i]) - G6(vcells[i + 1])).norm();
+      const double dEuRolling = (G6(vcells[i]) - G6(vcells[i + 1])).norm();
+      const double dG6Rolling = NCDist (vg6Red[i].data(), vg6Red[i + 1].data());
+      const double dS6Rolling = CS6Dist(vs6Red[i].data(), vs6Red[i + 1].data());
 
-      const double dEuA = (G6(vcells[0]) - G6(vcells[i + 1])).norm();
-      const double dG6A = NCDist(dG6_0, vg6Red[i + 1].data());
-      const double dS6A = CS6Dist(dS6_0, vs6Red[i + 1].data());
+      const double dEuToFirst = (g6First - G6(vcells[i + 1])).norm();
+      const double dG6ToFirst = NCDist(dG6_0_data, vg6Red[i + 1].data());
+      const double dS6ToFirst = CS6Dist(dS6_0_data, vs6Red[i + 1].data());
 
       std::cout << ";   " << std::fixed << std::setprecision(3)
          << i+1 << " to " << i + 2 << "       " 
-         << dEu << "       " << dG6 << "    " << dS6
-         << " ___   " << dEuA << "    " << dG6A << "    " << dS6A
+         << dEuRolling << "       " << dG6Rolling << "    " << dS6Rolling
+         << " ___   " << dEuToFirst << "    " << dG6ToFirst << "    " << dS6ToFirst
          << "  " <<  1 << " to " << i + 2 << "       "
          << std::endl;
    }
