@@ -68,8 +68,8 @@ int main(int argc, char* argv[])
 
    std::cout << "; no. of points output is " << path.size() << std::endl;
    for (size_t i = 0; i < path.size(); ++i) {
-      const size_t segmentOrdinal = i % s6Cells.size();
-      if (segmentOrdinal == 0) std::cout << "; path segment " << i/s6Cells.size() + 1 << std::endl;
+      const size_t segmentOrdinal = i % pathLength;
+      if (segmentOrdinal == 0) std::cout << "; path segment " << i / pathLength + 1 << std::endl;
       std::cout << "S  " << path[i] << "   " << i + 1 << "   " << segmentOrdinal + 1 << std::endl;
    }
 
