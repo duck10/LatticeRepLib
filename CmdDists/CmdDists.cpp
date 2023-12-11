@@ -98,7 +98,7 @@ int main()
       table.insert_center(i+1, 2, DoubleToSting(dG6Rolling)+" \0");
       table.insert_center(i+1, 3, DoubleToSting(dS6Rolling)+" ||"); //
 
-      table.insert_center(i+1, 5, "  "+ DoubleToSting(dEuToFirst)); //
+      table.insert_center(i+1, 5,DoubleToSting(dEuToFirst)); //
       table.insert_center(i+1, 6, DoubleToSting(dG6ToFirst)+" "); //
       table.insert_center(i+1, 7, DoubleToSting(dS6ToFirst)+" "); //
       //std::cout << ";   " << std::fixed << std::setprecision(3)
