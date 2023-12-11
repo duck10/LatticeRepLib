@@ -204,7 +204,10 @@ void PrintTable::NumberRowWithRowSeparators( ) {
    const size_t newlinePos = m_colCount* m_colWidth + 1;
    int counter = 0;
    const size_t lineLength = m_table.size( ) / m_rowCount;
-   for ( size_t i = m_table.size( ) - lineLength+2*m_colWidth+m_colSeparator.length()+1; i >= 0; i -= lineLength-m_colSeparator.size() ) {
+   const size_t seplength = m_colSeparator.length();
+   const size_t tablesize = m_table.size();
+   const size_t leng = m_table.size() - lineLength + 2 * m_colWidth + m_colSeparator.length() + 1;
+   for ( int i = m_table.size( ) - lineLength+2*m_colWidth+m_colSeparator.length()+1; i >= 0; i -= lineLength-m_colSeparator.size() ) {
       m_table.insert( i, vs[counter] );
       ++counter;
    }
