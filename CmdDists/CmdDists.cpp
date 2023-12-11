@@ -71,7 +71,7 @@ int main()
    const G6 g6First = vcells[0];
 
    PrintTable table(inputList.size(), 8,12);
-   table.insert_left(0, 0, "ordinals  ");
+   table.insert_left(0, 0, "; ordinals  ");
    table.insert_left(0, 1, "G6-Euclid");
    table.insert_left(0, 2, "NCDist");
    table.insert_left(0, 3, "CS6Dist  |");
@@ -89,7 +89,7 @@ int main()
       const double dG6ToFirst = NCDist(dG6_0_data, vg6Red[i + 1].data());
       const double dS6ToFirst = CS6Dist(dS6_0_data, vs6Red[i + 1].data());
 
-      const std::string ordinal1 = LRL_DataToSVG("", i+1, "", " to ", i + 2);
+      const std::string ordinal1 = LRL_DataToSVG("; ", i+1, "", "to ", i + 2);
       const std::string ordinal2 = LRL_DataToSVG("", "", "", "1 to ", i + 2);
 
       table.insert_center(i + 1, 0, ordinal1);
@@ -116,8 +116,9 @@ int main()
    std::cout << ";.......... input.cells ................"
       "........................ ordinals ....." << std::endl;
    for (size_t i = 0; i < vcells.size(); ++i) {
-      std::cout  << std::fixed << std::setprecision(3)
+      std::cout 
          << "  " + vLattices[i]
+         << std::fixed << std::setprecision(3)
          << LRL_Cell_Degrees(vcells[i]) << "    " << i + 1 << std::endl;
    }
    std::cout << "; </pre>" << std::endl;
