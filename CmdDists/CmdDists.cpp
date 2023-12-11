@@ -74,7 +74,7 @@ int main()
    table.insert_left(0, 0, "; ordinals  ");
    table.insert_left(0, 1, "G6-Euclid");
    table.insert_left(0, 2, "NCDist");
-   table.insert_left(0, 3, "CS6Dist  |");
+   table.insert_left(0, 3, "CS6Dist ||");
    table.insert_left(0, 4, " ordinals");
    table.insert_left(0, 5, "G6-Euclid");
    table.insert_left(0, 6, "NCDist");
@@ -96,7 +96,7 @@ int main()
       table.insert_center(i + 1, 4, ordinal2);
       table.insert_center(i+1, 1, DoubleToSting(dEuRolling)+"\0"); //
       table.insert_center(i+1, 2, DoubleToSting(dG6Rolling)+" \0");
-      table.insert_center(i+1, 3, DoubleToSting(dS6Rolling)+"  |"); //
+      table.insert_center(i+1, 3, DoubleToSting(dS6Rolling)+" ||"); //
 
       table.insert_center(i+1, 5, "  "+ DoubleToSting(dEuToFirst)); //
       table.insert_center(i+1, 6, DoubleToSting(dG6ToFirst)+" "); //
