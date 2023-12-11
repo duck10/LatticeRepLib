@@ -190,6 +190,7 @@
     <ClCompile Include="MatDC7u.cpp" />
     <ClCompile Include="MatricesForOneDeloneType.cpp" />
     <ClCompile Include="Niggli_Types.cpp" />
+    <ClCompile Include="PrintTable.cpp" />
     <ClCompile Include="ReadTypedData.cpp" />
     <ClCompile Include="S6.cpp" />
     <ClCompile Include="S6BoundaryTransforms.cpp" />
@@ -259,6 +260,7 @@
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="ParseData.h" />
+    <ClInclude Include="PrintTable.h" />
     <ClInclude Include="ReadTypedData.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6BoundaryTransforms.h" />

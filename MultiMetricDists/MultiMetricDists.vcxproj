@@ -146,13 +146,11 @@
     <ClCompile Include="D7_BoundaryTests.cpp" />
     <ClCompile Include="MAIN_MultiMetricDists.cpp" />
     <ClCompile Include="NCDist.c" />
-    <ClCompile Include="PrintTable.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h" />
     <ClInclude Include="D7_BoundaryTests.h" />
-    <ClInclude Include="PrintTable.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
