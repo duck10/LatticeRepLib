@@ -145,46 +145,27 @@ void NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
    }
 }
 
-void ListMatchingTypes(const size_t lat, const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
+static int ListMatchingTypes(const size_t lat, const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
    const S6& vLatI) {
+   int toReturn = 0;
    for (size_t kk = 0; kk < vFilteredDeloneFitResults.size(); ++kk) {
       const DeloneFitResults& dfr = vFilteredDeloneFitResults[kk];
       if (dfr.GetType()[0] == 'a') continue;
       //const double d = vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm();
       if (vFilteredDeloneFitResults[kk].GetRawFit() / vLatI.norm() < g_maxDeltaForMatch) {
          NiggliMatchLatticeType(vFilteredDeloneFitResults[kk]);
+         toReturn = 1;
       }
    }
+   return toReturn;
 }
-
-//void SellaProcessOneLattice(const LRL_ReadLatticeData& input, const MatS6& reductionMatrix, 
-//   const S6& s6error, const S6& lattice) {
-//   std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(sptest, input, s6error, reductionMatrix);
-//
-//   std::cout << std::endl << "; reported distances and zscores (in A^2)" << std::endl;
-//
-//   const bool okCheck = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResults);
-//   if (!okCheck) {
-//      //std::cout << "; Bravais chain values check failed, input = " << inputList[lat].GetStrCell() << std::endl;
-//      g_valueErrors.push_back(input.GetStrCell());
-//   }
-//
-//   std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
-//   const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResults);
-//
-//   ListMatchingTypes(vFilteredDeloneFitResults, input);
-//
-//   const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
-//
-//   /*std::cout << */BravaisHeirarchy::ProduceSVG(
-//      inputList[lat], input, scores);
-//}
 
 void ProcessSella(const std::vector<LRL_ReadLatticeData>& inputList) {
    //-----------------------------------------------------------------------------------
    std::vector<MatS6> reductionMatrices;
    const std::vector<S6> vLat = GetInputSellingReducedVectors(inputList, reductionMatrices);
    const std::vector<S6> errors = CreateS6Errors(vLat);
+   int sumBravaisTypesFound = 0;
 
    for (size_t lat = 0; lat < vLat.size(); ++lat) {
       std::vector<DeloneFitResults> vDeloneFitResults = Sella().SellaFit(selectBravaisCase, vLat[lat], errors[lat], reductionMatrices[lat]);
@@ -195,11 +176,14 @@ void ProcessSella(const std::vector<LRL_ReadLatticeData>& inputList) {
 
       std::cout << "; reported distances and zscores (in A^2)" << std::endl;
       const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResults);
-      ListMatchingTypes(lat, vFilteredDeloneFitResults, vLat[lat]);
+      sumBravaisTypesFound += ListMatchingTypes(lat, vFilteredDeloneFitResults, vLat[lat]);
 
       const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResults);
       /*std::cout << */BravaisHeirarchy::ProduceSVG(
          inputList[lat], vLat[lat], scores);
+   }
+   if (sumBravaisTypesFound == 0) {
+      std::cout << "; apparently the input is triclinic--no other Bravais types matched" << std::endl;
    }
 }
 
