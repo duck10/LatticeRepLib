@@ -62,7 +62,8 @@ static const std::string symbols6(" A B C F G H I P R S G6 S6 "); // ALL BLANKS 
 static const std::string symbols7(" V V7  ");
 static const std::string symbols13(" /*DC13*/ ");
 static const std::string symbolsSL(" RI SL ");
-static const std::string allowedLatticeSymbols = symbols6 + symbols7 + symbols13 + symbolsSL;
+static const std::string symbolsC3(" C3 ");
+static const std::string allowedLatticeSymbols = symbols6 + symbols7 + symbols13 + symbolsSL + symbolsC3;
 
 
 size_t SizeForLatticeType(const std::string& lattice) {
@@ -70,6 +71,7 @@ size_t SizeForLatticeType(const std::string& lattice) {
    if (symbols7.find(" " + lattice + " ") != std::string::npos) return 7;
    if (symbols13.find(" " + lattice + " ") != std::string::npos) return 13;
    if (symbolsSL.find(" " + lattice + " ") != std::string::npos) return 6;
+   if (symbolsC3.find(" " + lattice + " ") != std::string::npos) return 6;
    throw " in SizeForLatticeType, got unrecognized lattice " + lattice;
 }
 

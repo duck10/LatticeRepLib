@@ -70,7 +70,7 @@ int main()
    double* dS6_0_data = vs6Red[0].data();  // CS6Dist does not allow const
    const G6 g6First = vcells[0];
 
-   PrintTable table(inputList.size(), 8,12);
+   PrintTable table(inputList.size(), 8, 12);
    table.insert_left(0, 0, "; ordinals  ");
    table.insert_left(0, 1, "G6-Euclid");
    table.insert_left(0, 2, "NCDist");
