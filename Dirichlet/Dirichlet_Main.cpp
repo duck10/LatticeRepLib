@@ -35,16 +35,16 @@ std::vector<T> CircularizeVector(const std::vector<T>& vin) {
 }
 
 template<typename T>
-int roundNo(T num)
+int roundNumber(T num)
 {
    return num < 0 ? int(num - 0.5) :int( num + 0.5);
 }
 
 Vector_3 round(const Vector_3& vin) {
    Vector_3 vout;
-   vout[0] = roundNo(vin[0]);
-   vout[1] = roundNo(vin[1]);
-   vout[2] = roundNo(vin[2]);
+   vout[0] = roundNumber(vin[0]);
+   vout[1] = roundNumber(vin[1]);
+   vout[2] = roundNumber(vin[2]);
    return vout;
 }
 
@@ -349,7 +349,7 @@ std::string CreateStereoSVGText(const DirichletCell& dc) {
 
    const std::vector<Vector_3> indices = DirichletCell::RecoverIndicesOfFaces(dc.GetCartesianMatrix(), ringed);
    const std::string records = FaceRecords(ringed, indices);
-   const std::string constants = ReadGlobalData::GetConstantsAsString();
+   const std::string constants = ReadCellData::GetConstantsAsString();
    const Cell_Faces cellFaces = dc.GetCellFaces();
 
    //std::cout << LRL_ToString(indices) << std::endl;
@@ -396,7 +396,7 @@ std::vector<std::string> GetUpwardSymmetry(const std::string& s) {
 
 int main() {
    //std::cout << LRL_ToString(GetUpwardSymmetry("mS"));
-   ReadGlobalData();
+   ReadCellData();
 
    std::vector<std::string> strCells = RetrieveCellsAsStringsFromDirichletConstants();
 

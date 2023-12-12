@@ -21,7 +21,7 @@
 #include <string>
 #include <utility>
 
-std::string ReadGlobalData::m_constantData = "";
+std::string ReadCellData::m_constantData = "";
 //std::string       FollowerConstants::globalDistanceDisable;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -110,7 +110,7 @@ void SetGlobalValue( const std::string& dataType,
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 // add some small random perturbation
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-G6 ReadGlobalData::GeneratePerturbation(const G6& v, const double perturbationFraction) {
+G6 ReadCellData::GeneratePerturbation(const G6& v, const double perturbationFraction) {
    const G6 random = G6::rand();
    const G6 perturbation = perturbationFraction * random;
    const G6 perturbedVector = v + perturbation;
@@ -120,7 +120,7 @@ G6 ReadGlobalData::GeneratePerturbation(const G6& v, const double perturbationFr
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 // add some small random perturbation
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-G6 ReadGlobalData::GeneratePerturbation(const G6& v) {
+G6 ReadCellData::GeneratePerturbation(const G6& v) {
    const G6 random = G6::rand();
    const G6 perturbation = /*FollowerConstants::globalFractionalAmountToPerturb **/ random;
    const G6 perturbedVector = v + perturbation;
@@ -153,7 +153,7 @@ const std::pair<std::string, void*> FindBestTextMatch( const std::string& string
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-bool ReadGlobalData::GetDataFromCIN( const std::vector<ParseData>& parseData  ) {
+bool ReadCellData::GetDataFromCIN( const std::vector<ParseData>& parseData  ) {
    ThetaMatch<std::string> tMatch;
    char buffer[200];
 
@@ -183,8 +183,8 @@ bool ReadGlobalData::GetDataFromCIN( const std::vector<ParseData>& parseData  ) 
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-ReadGlobalData::ReadGlobalData( ) {
-   std::cout << "Input Global Data, end with \"end\"" << std::endl;
+ReadCellData::ReadCellData( ) {
+   std::cout << "Input Cell Data, end with \"end\"" << std::endl;
    const std::vector<ParseData> inputLabels = DirichletConstants::BuildParseStructure( );
 
    while( std::cin && GetDataFromCIN( inputLabels ) ) { }

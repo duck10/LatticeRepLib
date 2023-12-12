@@ -10,11 +10,11 @@
 #include <utility>
 #include <vector>
 
-class ReadGlobalData {
+class ReadCellData {
 public:
 
-   ReadGlobalData( void );
-   ~ReadGlobalData( void ) {};
+   ReadCellData( void );
+   ~ReadCellData( void ) {};
    static G6 GeneratePerturbation(const G6& v, const double perturbationFraction);
    static G6 GeneratePerturbation(const G6& v);
    static std::string GetFollowerMode(void);
