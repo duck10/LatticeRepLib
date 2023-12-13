@@ -37,7 +37,7 @@ std::vector<T> CircularizeVector(const std::vector<T>& vin) {
 template<typename T>
 int roundNumber(T num)
 {
-   return num < 0 ? int(num - 0.5) :int( num + 0.5);
+   return num < 0 ? int(num - 0.5) : int(num + 0.5);
 }
 
 Vector_3 round(const Vector_3& vin) {
@@ -56,10 +56,10 @@ std::string DrawOneDirichletRing(const double scale, const ANGLELIST& ring, cons
    const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(ring);
 
    if (ring.size() >= 3) {
-      const std::string color = (cm[2]< 0.0) ? "black" : "black";
+      const std::string color = (cm[2] < 0.0) ? "black" : "black";
       //const std::string color = "black";
       const std::string polygonStrokeWidth = (cm[2] < 0.0) ? "2" : "2";
-      s += "  <polygon fill=\"" + /*colors[nColor]*/  std::string(DirichletConstants::faceColor) + 
+      s += "  <polygon fill=\"" + /*colors[nColor]*/  std::string(DirichletConstants::faceColor) +
          " \" stroke=\"" + color + "\" stroke-width=\"" + polygonStrokeWidth + "\" points=\"";
       for (size_t point = 0; point < ring.size(); ++point) {
          const Vector_3& v = ring[point].second;
@@ -70,14 +70,14 @@ std::string DrawOneDirichletRing(const double scale, const ANGLELIST& ring, cons
    else if (ring.size() == 1)
    {
       const double x = ring[0].second[0];
-      const double y=ring[0].second[1];
-      s += "<circle cx = \"" + LRL_ToString(xshift+scale*x) + "\" cy = \"" + 
-         LRL_ToString(yshift+scale*y) + "\" r = \"2\" stroke = \"blue\" stroke-width = \"1\" fill = \"blue\" />\n";
+      const double y = ring[0].second[1];
+      s += "<circle cx = \"" + LRL_ToString(xshift + scale * x) + "\" cy = \"" +
+         LRL_ToString(yshift + scale * y) + "\" r = \"2\" stroke = \"blue\" stroke-width = \"1\" fill = \"blue\" />\n";
    }
    return s;
 }
 
-ANGLELIST RotateOneFace( const Matrix_3x3& m, const ANGLELIST& input) {
+ANGLELIST RotateOneFace(const Matrix_3x3& m, const ANGLELIST& input) {
    ANGLELIST list(input);
    {
       for (size_t point = 0; point < list.size(); ++point)
@@ -119,7 +119,7 @@ ANGLESFORFACES Z_SortAllFaces(const ANGLESFORFACES& newRinged) {
    std::vector<double> vAngles = Z_Angles(vcm);
 
    for (size_t face = 0; face < sorted.size() - 1; ++face) {
-      for (size_t k = face+1; k < sorted.size(); ++k) {
+      for (size_t k = face + 1; k < sorted.size(); ++k) {
          if (vAngles[face] < vAngles[k]) {
             std::swap(vAngles[face], vAngles[k]);
             std::swap(sorted[face], sorted[k]);
@@ -137,11 +137,11 @@ ANGLESFORFACES RotateObject(const Matrix_3x3& m, const ANGLESFORFACES& ring) {
    return list;
 }
 
-std::vector<ANGLESFORFACES> CreateSeriesOfImages(const ANGLESFORFACES& inputRingsOfFace, 
+std::vector<ANGLESFORFACES> CreateSeriesOfImages(const ANGLESFORFACES& inputRingsOfFace,
    const size_t nImages, const Matrix_3x3& initialRotation, const Matrix_3x3& rotationBetween) {
    std::vector<ANGLESFORFACES> vout;
    const ANGLESFORFACES oneImage(RotateObject(initialRotation, inputRingsOfFace));
-   Matrix_3x3 m2(1,0,0,  0,1,0,  0,0,1);
+   Matrix_3x3 m2(1, 0, 0, 0, 1, 0, 0, 0, 1);
    for (size_t face = 0; face < nImages; ++face) {
       vout.push_back(RotateObject(m2, oneImage));
       m2 *= rotationBetween;
@@ -149,14 +149,14 @@ std::vector<ANGLESFORFACES> CreateSeriesOfImages(const ANGLESFORFACES& inputRing
    return vout;
 }
 
-std::vector<std::string> DrawDirichletRings( const ANGLESFORFACES& newRinged) {
+std::vector<std::string> DrawDirichletRings(const ANGLESFORFACES& newRinged) {
    const ANGLESFORFACES sorted = Z_SortAllFaces(newRinged);
 
    static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
 
    std::vector<std::string> vs;
-   const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(20.0/degreesPerRad);
-   const Matrix_3x3 m2 = Vector_3(0, 1, 0).Rotmat(15.0/degreesPerRad);
+   const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(20.0 / degreesPerRad);
+   const Matrix_3x3 m2 = Vector_3(0, 1, 0).Rotmat(15.0 / degreesPerRad);
    Matrix_3x3 m(1, 0, 0, 0, 1, 0, 0, 0, 1);
 
    double maxCoord = -DBL_MAX;
@@ -220,7 +220,7 @@ std::vector<std::string> DrawDirichletRings( const ANGLESFORFACES& newRinged) {
       std::sort(zandindex.begin(), zandindex.end(), std::greater<>());
 
       for (size_t i = 0; i < zandindex.size(); ++i) {
-         vs.push_back(DrawOneDirichletRing(scale, faces[zandindex[i].second],zandindex[i].second));
+         vs.push_back(DrawOneDirichletRing(scale, faces[zandindex[i].second], zandindex[i].second));
 
       }
 
@@ -271,7 +271,7 @@ std::string EdgeLengths(const ANGLELIST& list) {
    }
    std::vector<Vector_3> v(CircularizeVector(vin));
    std::ostringstream ostr;
-   for (size_t i = 0; i < v.size()-1; ++i) {
+   for (size_t i = 0; i < v.size() - 1; ++i) {
       const double d = (v[i] - v[i + 1]).Norm();
       ostr << d << " ";
    }
@@ -282,16 +282,20 @@ static double CleanNearZero(const double d) {
    return (abs(d) < 1.0E-6) ? 0 : d;
 }
 
+static Vector_3 CleanNearZero(const Vector_3& v) {
+   return { CleanNearZero(v[0]), CleanNearZero(v[1]), CleanNearZero(v[2]) };
+}
+
 std::string OneFaceRecord(const ANGLELIST& face, const Vector_3& index) {
    const double area = DirichletCell::AreaOfOneFace(face);
    const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(face);
    std::ostringstream ostr;
-//ostr << std::setw(2) << std::setfill('0') << std::hex << r << g << b;
-ostr << "area= " << area << "   " << " index " << index[0] << " " << index[1] << " " << index[2] <<
-"  Center of mass " <<
-CleanNearZero(cm[0]) << " " << CleanNearZero(cm[1]) << " " << CleanNearZero(cm[2]) << std::endl;
-ostr << "   Edge lengths " << EdgeLengths(face) << std::endl;
-return (ostr.str());
+   //ostr << std::setw(2) << std::setfill('0') << std::hex << r << g << b;
+   ostr << "area= " << area << "   " << " index " << index[0] << " " << index[1] << " " << index[2] <<
+      "  Center of mass " <<
+      CleanNearZero(cm[0]) << " " << CleanNearZero(cm[1]) << " " << CleanNearZero(cm[2]) << std::endl;
+   ostr << "   Edge lengths " << EdgeLengths(face) << std::endl;
+   return (ostr.str());
 }
 
 void PrintOneFaceRecord(const ANGLELIST& face, const Vector_3& index) {
@@ -299,9 +303,9 @@ void PrintOneFaceRecord(const ANGLELIST& face, const Vector_3& index) {
 }
 
 std::string OutputOneFace(const size_t index, const size_t vertices, const std::string& faceRecord) {
-std::ostringstream ostr;
-ostr << "FACE  " << index + 1 << " vertex count= " << vertices << "   " << faceRecord;
-return ostr.str();
+   std::ostringstream ostr;
+   ostr << "FACE  " << index + 1 << " vertex count= " << vertices << "   " << faceRecord;
+   return ostr.str();
 }
 
 std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>& indices) {
@@ -325,10 +329,10 @@ std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>
       double area = DirichletCell::AreaOfOneFace(rings[faceIndex]);
       if (area > 1.0E-4) {
          ++count;
-         std::cout << count << "  " << area << "  " << indices[faceIndex];
+         //std::cout << count << "  " << area << "  " << indices[faceIndex];
       }
    }
-   std::cout << std::endl;
+   //std::cout << std::endl;
 
    ostr << std::endl;
    return ostr.str();
@@ -393,23 +397,36 @@ std::vector<std::string> GetUpwardSymmetry(const std::string& s) {
    else { return std::vector<std::string>(); }
 }
 
+void ListVertices(const DirichletCell& dc) {
+   const std::vector<Vector_3>& vertices = dc.GetVertices();
+
+   for (size_t i = 0; i < vertices.size(); ++i) {
+      std::cout << "; vertex " << i+1 << "  " <<CleanNearZero( vertices[i]) << std::endl;
+   }
+   std::cout << std::endl;
+}
 
 int main() {
-   //std::cout << LRL_ToString(GetUpwardSymmetry("mS"));
+   std::cout << "; Dirichlet (Voinoi) cells" << std::endl;
    ReadCellData();
 
    std::vector<std::string> strCells = RetrieveCellsAsStringsFromDirichletConstants();
 
    const std::string basicFilePrefix =
-      LRL_ToString(LRL_CreateFileName::Create(DirichletConstants::fileNamePrefix, "", 
+      LRL_ToString(LRL_CreateFileName::Create(DirichletConstants::fileNamePrefix, "",
          DirichletConstants::timestamp));
 
-   for ( size_t whichCell =0; whichCell<strCells.size(); ++whichCell) {
+   for (size_t whichCell = 0; whichCell < strCells.size(); ++whichCell) {
       const DirichletCell dc = (strCells[whichCell]);
-      std::cout << dc << std::endl;
+      ListVertices(dc);
+      //std::cout << dc << std::endl;
       const std::string svg = HandleOneCell(strCells[whichCell]);
       const std::string fileName = basicFilePrefix + LRL_ToString(whichCell) + ".svg";
-      if ( ! svg.empty()) FileOperations::Write(fileName, svg);
+      if (!svg.empty())
+      {
+         FileOperations::Write(fileName, svg);
+         std::cout << "; Dirichlet graphics file " << fileName << std::endl;
+      }
    }
-   exit(0); 
+   exit(0);
 }

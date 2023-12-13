@@ -8,7 +8,7 @@
    int    DirichletConstants::numberOfImages = 12;
    int    DirichletConstants::imageHeightPx = 90;
    int    DirichletConstants::yposition = 90;
-   int    DirichletConstants::latticeLimit = 1;
+   int    DirichletConstants::latticeLimit = 2;
    int    DirichletConstants::canvas_x_size = 2000;
    int    DirichletConstants::canvas_y_size = 2000;
    double DirichletConstants::rotateX = 25;
@@ -154,6 +154,6 @@
          const int i19191 = 19191;
       }
 
-      std::cout << s << std::endl;
+      //std::cout << s << std::endl;
       return s;
    }
