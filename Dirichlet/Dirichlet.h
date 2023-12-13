@@ -40,6 +40,7 @@ public:
    std::vector<std::string> ConvertAllVectorIndicesToString(const std::vector<Vector_3>& vin);
    std::string ConvertVectorIndicesToString(const Vector_3& vin);
    std::vector<int> ConvertVectorIndicesToInt(const Vector_3& vin);
+   std::vector<Vector_3> GetVertices() const { return m_vertices; }
 
 private:
    std::string m_strCell;
@@ -51,6 +52,7 @@ private:
    Cell_Faces m_cellFaces;
    Matrix_3x3 m_cart;
    ANGLESFORFACES m_facesWithVertices;
+   std::vector<Vector_3> m_vertices;
    //const CNearTree<Vector_3> tree = CreateTreeOfLatticePoints(cart);
    //std::vector<DirichletFace> dirichletFaces = Cell_Faces::CreateFaces(tree);
 };

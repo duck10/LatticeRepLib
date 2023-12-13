@@ -254,9 +254,10 @@ static std::vector<Vector_3> CreateVectorOfLatticePoints(const Matrix_3x3& m) {
    for (int face = -maxLatticeLimit; face <= maxLatticeLimit; ++face) {
       for (int j = -maxLatticeLimit; j <= maxLatticeLimit; ++j) {
          for (int k = -maxLatticeLimit; k <= maxLatticeLimit; ++k) {
-            double di = face;
-            double dj = j;
-            double dk = k;
+            //if ( face==j==k==0) continue;
+            const double di = face;
+            const double dj = j;
+            const double dk = k;
             Vector_3 v3 = m * Vector_3(di, dj, dk);
             for (size_t pos = 0; pos < 3; ++pos)
                if (abs(v3[pos]) < 1.0E-8) v3[pos] = 0.0;
@@ -324,7 +325,7 @@ DirichletCell::DirichletCell(const std::string& strCellAndLattice)
 std::ostream& operator<< (std::ostream& o, const DirichletCell& dc) {
    auto xxx = dc.GetAnglesForFaces();
    for (size_t i = 0; i < xxx.size(); ++i)
-      for (size_t kkk=0; kkk<xxx[i].size(); ++kkk)
+      for (size_t kkk = 0; kkk < xxx[i].size(); ++kkk)
       {
          o << xxx[i][kkk].first << std::endl;
          o << xxx[i][kkk].second << std::endl << std::endl;
@@ -367,13 +368,13 @@ std::vector<DirichletFace> SortTheFaces(const std::vector<DirichletFace>& dirich
 }
 
 std::vector<DirichletFace> RemoveOppositeVectors(const Matrix_3x3& inv, const std::vector<DirichletFace>& dirichletFaces) {
-   std::vector<DirichletFace> v(1,dirichletFaces[0]);
+   std::vector<DirichletFace> v(1, dirichletFaces[0]);
    for (size_t i = 1; i < dirichletFaces.size(); ++i) {
-      const Vector_3 v1 = inv*dirichletFaces[i-1].GetCoord();
-      const Vector_3 v2 = inv*dirichletFaces[i].GetCoord();
+      const Vector_3 v1 = inv * dirichletFaces[i - 1].GetCoord();
+      const Vector_3 v2 = inv * dirichletFaces[i].GetCoord();
       const Vector_3 vsum = v1 + v2;
       const double diff = vsum.norm();
-      if (diff>1.0E-6) {
+      if (diff > 1.0E-6) {
          v.push_back(dirichletFaces[i]);
       }
    }
@@ -381,18 +382,53 @@ std::vector<DirichletFace> RemoveOppositeVectors(const Matrix_3x3& inv, const st
 }
 
 static double CleanNearZero(const double d) {
-   return (abs(d) < 1.0E-6) ? 0 : d;
+   const double dret = (abs(d) < 1.0E-6) ? 0.0 : d;
+   return dret;
 }
 
-void ListFaces(const Matrix_3x3& m,const std::vector<DirichletFace>& dirichletFaces) {
+static Vector_3 CleanNearZero(const Vector_3& vin) {
+   const double d1 = vin[0];
+   const double d2 = vin[1];
+   const double d3 = vin[2];
+   return Vector_3(CleanNearZero(d1), CleanNearZero(d2), CleanNearZero(d3));
+}
+
+void ListFaces(const Matrix_3x3& m, const std::vector<DirichletFace>& dirichletFaces) {
    const Matrix_3x3 invCart = m.Inver();
    std::vector<DirichletFace> v = RemoveOppositeVectors(invCart, SortTheFaces(dirichletFaces));
-   
+
    for (size_t i = 0; i < v.size(); ++i) {
       Vector_3 indices = invCart * v[i].GetCoord();
       indices = Vector_3(CleanNearZero(indices[0]), CleanNearZero(indices[1]), CleanNearZero(indices[2]));
-      std::cout << v[i].GetDistance() << " " << indices << std::endl;
+      //std::cout << v[i].GetDistance() << " " << indices << std::endl;
    }
+}
+
+//typedef std::pair<double, Vector_3 > ANGLE_COORDS;
+//typedef std::vector< ANGLE_COORDS > ANGLELIST;
+//typedef std::vector<ANGLELIST> ANGLESFORFACES;
+
+std::vector<Vector_3> FindUniqureVertices(const ANGLESFORFACES& AFF) {
+   std::vector<Vector_3> unique;
+   Vector_3 coords;
+   for (size_t aff = 0; aff < AFF.size(); ++aff) {
+      const ANGLELIST& anglelist = AFF[aff];
+      for (size_t al = 0; al < anglelist.size(); ++al) {
+         coords = anglelist[al].second;
+         bool found = false;
+         for (size_t i = 0; i < unique.size(); ++i) {
+            if ((unique[i] - coords).norm() < 1.0E-4) {
+               found = true;
+               //break;
+            }
+         }
+         if (!found) {
+            unique.emplace_back(coords);
+            break;            
+         }
+      }
+   }
+   return unique;
 }
 
 void DirichletCell::ProcessInputCell(const std::string lattice, const LRL_Cell& reducedCell) {
@@ -413,10 +449,11 @@ void DirichletCell::ProcessInputCell(const std::string lattice, const LRL_Cell& 
 
 
 
-
    const ANGLESFORFACES vvPoints = AssignPointsToFaceList(v_Intersections);
 
    m_facesWithVertices = MakeRings(vvPoints, v_Intersections.second);
+
+   m_vertices = FindUniqureVertices(m_facesWithVertices);
    const std::vector<Vector_3> indices = RecoverIndicesOfFaces(GetCartesianMatrix(), m_facesWithVertices);
    m_indices = ConvertAllVectorIndicesToInt(indices);
    m_strIndices = ConvertAllVectorIndicesToString(indices);
