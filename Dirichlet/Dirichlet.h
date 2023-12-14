@@ -21,7 +21,7 @@ public:
    DirichletCell() {}
    DirichletCell(const std::string& strCellAndLattice);
    DirichletCell(const std::string& lattice, const LRL_Cell& cell);
-   void ProcessInputCell(const std::string lattice, const LRL_Cell& cell);
+   void ProcessInputCell(const std::string& lattice, const LRL_Cell& cell);
 
    std::string GetStrCell() const { return m_strCell; }
    LRL_Cell GetCell() const { return m_cell; }

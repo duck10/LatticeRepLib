@@ -315,7 +315,7 @@ DirichletCell::DirichletCell(const std::string& strCellAndLattice)
 {
    LRL_ReadLatticeData rcd;
    rcd.CellReader(strCellAndLattice);
-   ProcessInputCell(rcd.GetLattice(), rcd.GetCell());
+   ProcessInputCell(rcd.GetLattice(), rcd.GetCell()); // LCA ERROR !!!! supposed to be reduced cell
 }
 
 //typedef std::pair<double, Vector_3 > ANGLE_COORDS;
@@ -431,7 +431,7 @@ std::vector<Vector_3> FindUniqureVertices(const ANGLESFORFACES& AFF) {
    return unique;
 }
 
-void DirichletCell::ProcessInputCell(const std::string lattice, const LRL_Cell& reducedCell) {
+void DirichletCell::ProcessInputCell(const std::string& lattice, const LRL_Cell& reducedCell) {
    m_reducedCell = reducedCell;
    ////-------------cell create faces
    m_cart = m_reducedCell.Cart();
