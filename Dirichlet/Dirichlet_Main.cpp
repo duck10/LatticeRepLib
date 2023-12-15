@@ -360,13 +360,13 @@ std::string CreateStereoSVGText(const DirichletCell& dc) {
    //std::cout << LRL_ToString(dc.GetAreas()) << std::endl;
 
    const DirichletSVG dsvg(dc);
+   const std::string strCell = dc.GetStrCell();
    const std::string svg = dsvg.OutputSVG(stereoImages, cellFaces,
       records + "\nGlobal Constants\n" + constants);
    return svg;
 }
 
-std::string HandleOneCell(const std::string& strCell) {
-   DirichletCell dc(strCell);
+std::string HandleOneCell(const DirichletCell& dc) {
    std::string svg = CreateStereoSVGText(dc);
    return svg;
 }
@@ -407,20 +407,19 @@ void ListVertices(const DirichletCell& dc) {
 }
 
 int main() {
+   LRL_ReadLatticeData reader;
    std::cout << "; Dirichlet (Voinoi) cells" << std::endl;
-   ReadCellData();
-
-   std::vector<std::string> strCells = RetrieveCellsAsStringsFromDirichletConstants();
+   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
 
    const std::string basicFilePrefix =
       LRL_ToString(LRL_CreateFileName::Create(DirichletConstants::fileNamePrefix, "",
          DirichletConstants::timestamp));
 
-   for (size_t whichCell = 0; whichCell < strCells.size(); ++whichCell) {
-      const DirichletCell dc = (strCells[whichCell]);
+   for (size_t whichCell = 0; whichCell < inputList.size(); ++whichCell) {
+      const DirichletCell dc = (inputList[whichCell]);
       ListVertices(dc);
       //std::cout << dc << std::endl;
-      const std::string svg = HandleOneCell(strCells[whichCell]);
+      const std::string svg = HandleOneCell(dc);
       const std::string fileName = basicFilePrefix + LRL_ToString(whichCell) + ".svg";
       if (!svg.empty())
       {

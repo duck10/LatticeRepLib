@@ -62,6 +62,7 @@
     <ClCompile Include="DC7uBoundaryMatrices.cpp" />
     <ClCompile Include="V7.cpp" />
     <ClCompile Include="PrintTable.cpp" />
+    <ClCompile Include="RI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -137,6 +138,7 @@
     <ClInclude Include="DC7uBoundaryMatrices.h" />
     <ClInclude Include="V7.h" />
     <ClInclude Include="PrintTable.h" />
+    <ClInclude Include="RI.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

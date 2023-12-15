@@ -4,6 +4,7 @@
 #include "DirichletCellFaces.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
+#include "LRL_ReadLatticeData.h"
 #include "LRL_Vector3.h"
 #include "TNear.h"
 
@@ -20,7 +21,7 @@ public:
    friend std::ostream& operator<< (std::ostream&, const DirichletCell&);
    DirichletCell() {}
    DirichletCell(const std::string& strCellAndLattice);
-   DirichletCell(const std::string& lattice, const LRL_Cell& cell);
+   DirichletCell(const LRL_ReadLatticeData& inputList);
    void ProcessInputCell(const std::string& lattice, const LRL_Cell& cell);
 
    std::string GetStrCell() const { return m_strCell; }
