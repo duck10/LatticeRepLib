@@ -192,6 +192,7 @@
     <ClCompile Include="Niggli_Types.cpp" />
     <ClCompile Include="PrintTable.cpp" />
     <ClCompile Include="ReadTypedData.cpp" />
+    <ClCompile Include="RI.cpp" />
     <ClCompile Include="S6.cpp" />
     <ClCompile Include="S6BoundaryTransforms.cpp" />
     <ClCompile Include="S6Dist.cpp" />
@@ -262,6 +263,7 @@
     <ClInclude Include="ParseData.h" />
     <ClInclude Include="PrintTable.h" />
     <ClInclude Include="ReadTypedData.h" />
+    <ClInclude Include="RI.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6BoundaryTransforms.h" />
     <ClInclude Include="S6Dist.h" />

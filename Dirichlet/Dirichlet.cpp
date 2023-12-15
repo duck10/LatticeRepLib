@@ -313,6 +313,7 @@ double DirichletCell::AreaOfOneFace(const ANGLELIST& face) {
 DirichletCell::DirichletCell(const std::string& strCellAndLattice)
    : m_strCell(strCellAndLattice)
 {
+   throw("this function needs to Niggli reduced the cell, and it shouldn't be doing this call");
    LRL_ReadLatticeData rcd;
    rcd.CellReader(strCellAndLattice);
    ProcessInputCell(rcd.GetLattice(), rcd.GetCell()); // LCA ERROR !!!! supposed to be reduced cell
@@ -333,17 +334,20 @@ std::ostream& operator<< (std::ostream& o, const DirichletCell& dc) {
    return o;
 }
 
-DirichletCell::DirichletCell(const std::string& lattice, const LRL_Cell& cell)
-   : m_cell(cell)
+DirichletCell::DirichletCell(const LRL_ReadLatticeData& rld)
 {
-   if (m_strCell.empty()) m_strCell = LRL_ToString(lattice, LRL_Cell_Degrees(cell));
+   m_cell = rld.GetCell();
+   if (m_strCell.empty()) m_strCell = rld.GetStrCell();
    ////-------------reduce cell
+   const std::string lattice = rld.GetLattice();
+   const LRL_Cell cell = rld.GetCell();
    if (DirichletConstants::sellingNiggli == "SELLING")
       m_reducedCell = LatticeConverter().SellingReduceCell(lattice, cell);
    else
       m_reducedCell = LatticeConverter().NiggliReduceCell(lattice, cell);
+
    if (m_reducedCell.IsValid()) {
-      ProcessInputCell(lattice, m_reducedCell);
+      ProcessInputCell("P", m_reducedCell);
    }
    else {
       std::cout << "In DirichletCell, LatticeConverter().NiggliReducedCell returned " <<
