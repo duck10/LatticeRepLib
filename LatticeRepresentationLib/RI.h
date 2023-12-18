@@ -82,9 +82,9 @@ public:
    bool TestBoundaryDetection(void);
    size_t size(void) const { return 6; }
    double norm() const { return m_vec.norm(); }
-   double norm(const RI& ri) const { return ri.norm(); }
+   static double norm(const RI& ri) { return ri.norm(); }
    double Norm() const { return m_vec.norm(); }
-   double Norm(const RI& ri) const { return ri.norm(); }
+   static double Norm(const RI& ri) { return ri.norm(); }
 
    RI InverseRIVector(void) const;
    RI sort(const RI& ri);

@@ -1,17 +1,17 @@
 
 #include <iostream>
+#include <vector>
 
 #include "LRL_ReadLatticeData.h"
-#include <vector>
+#include "RI.h"
 
 int main()
 {
-   LRL_ReadLatticeData reader;
    std::cout << "; CheckInput" << std::endl;
-   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      std::cout << inputList[i].GetLattice() << ""
-         << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
+   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   for (const auto& input: inputList) {
+      std::cout << input.GetLattice() << " "
+         << LRL_Cell_Degrees(input.GetCell()) << std::endl;
    }
 
    if (inputList.empty()) {

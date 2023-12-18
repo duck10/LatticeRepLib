@@ -68,7 +68,7 @@ public:
    double norm(const V7& v7) const { return v7.norm(); }
    double Norm() const { return m_vec.norm(); }
    double Norm(const V7& v7) const { return v7.norm(); }
-   operator V7() const;
+   //operator V7() const;
    std::vector<double> GetVector(void) const { return m_vec.GetVector(); }
    double* data() const { return const_cast<double*>(m_vec.data()); }
    void SetVector(const std::vector<double>& v) { m_vec = v; }

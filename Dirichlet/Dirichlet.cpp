@@ -404,7 +404,7 @@ void ListFaces(const Matrix_3x3& m, const std::vector<DirichletFace>& dirichletF
    for (size_t i = 0; i < v.size(); ++i) {
       Vector_3 indices = invCart * v[i].GetCoord();
       indices = Vector_3(CleanNearZero(indices[0]), CleanNearZero(indices[1]), CleanNearZero(indices[2]));
-      //std::cout << v[i].GetDistance() << " " << indices << std::endl;
+      std::cout << v[i].GetDistance() << " " << indices << std::endl;
    }
 }
 
