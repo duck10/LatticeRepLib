@@ -28,7 +28,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/S6.cpp ../LatticeRepresentationLib/S6Dist.cpp \
 	../LatticeRepresentationLib/S6_Matrices.cpp ../LatticeRepresentationLib/Selling.cpp \
 	../LatticeRepresentationLib/Sella.cpp \
-	../LatticeRepresentationLib/VecN.cpp ../LRL_Tools/LRL_Vector3.cpp
+	../LatticeRepresentationLib/VecN.cpp  ../LatticeRepresentationLib/V7.cpp ../LRL_Tools/LRL_Vector3.cpp
 	$(CXX) -I ../LatticeRepresentationLib -I ../LRL_Tools -o $(COMMAND) $(COMMAND).cpp \
 	../LatticeRepresentationLib/B4.cpp \
 	../LatticeRepresentationLib/BravaisHeirarchy.cpp ../LatticeRepresentationLib/C3.cpp \
@@ -54,7 +54,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/S6.cpp ../LatticeRepresentationLib/S6Dist.cpp \
 	../LatticeRepresentationLib/S6_Matrices.cpp ../LatticeRepresentationLib/Selling.cpp \
 	../LatticeRepresentationLib/Sella.cpp \
-	../LatticeRepresentationLib/VecN.cpp ../LRL_Tools/LRL_Vector3.cpp
+	../LatticeRepresentationLib/VecN.cpp  ../LatticeRepresentationLib/V7.cpp ../LRL_Tools/LRL_Vector3.cpp
 
 clean:
 	rm -rf $(COMMAND)
