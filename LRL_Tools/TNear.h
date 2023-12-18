@@ -6792,7 +6792,14 @@ void K_Resize( const size_t k, const TNode& t, std::vector<triple<DistanceTypeNo
 //====================================================================================
 public:
     class iterator
-        : public std::iterator< std::random_access_iterator_tag, T, int, T*, T& >
+        /*: public std::iterator<               // before gcc-12
+               std::random_access_iterator_tag, // iterator_category
+               T,                               // value_type
+               int,                             // difference_type
+               T*,                              // pointer
+               T&                               // reference 
+               >
+        */
     {
     public:
         friend class CNearTree< T, DistanceType, distMinValue >;
@@ -6832,13 +6839,27 @@ public:
     private:
         iterator ( const long s, const CNearTree* const nt ) { position = s; parent = nt; }; // constructor
 
+    // iterator traits
+        using difference_type = int;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
+        using iterator_category = std::random_access_iterator_tag;
+
     }; // class iterator
 //====================================================================================
 // end of nested class "iterator"
 //====================================================================================
 
 class const_iterator
-        : public std::iterator< std::random_access_iterator_tag, T, int, T*, T& >
+     /*  : public std::iterator< 
+             std::random_access_iterator_tag,     // iterator_category
+             T,                                   // value_type
+             int,                                 // difference_type
+             T*,                                  // pointer
+             T&                                   // reference
+           >
+     */
     {
     public:
         friend class CNearTree< T, DistanceType, distMinValue >;
@@ -6877,6 +6898,13 @@ class const_iterator
 
     private:
         const_iterator ( const long s, const CNearTree* nt ) { position = s; parent = nt; }; // constructor
+
+    // iterator traits
+        using difference_type = int;
+        using value_type = T;
+        using pointer = T*;
+        using reference = T&;
+        using iterator_category = std::random_access_iterator_tag;
 
     }; // end class const_iterator
 //====================================================================================

@@ -1,5 +1,5 @@
 CXX	?=	g++-9 -g -O3 -std=gnu++17 -fpermissive
-COMMAND = CmdToC3
+COMMAND = CmdToV7
 
 all:	$(COMMAND)
 
@@ -27,8 +27,8 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/S6.cpp ../LatticeRepresentationLib/S6Dist.cpp \
 	../LatticeRepresentationLib/S6_Matrices.cpp ../LatticeRepresentationLib/Selling.cpp \
 	../LatticeRepresentationLib/Sella.cpp \
-	../LatticeRepresentationLib/VecN.cpp  ../LatticeRepresentationLib/V7.cpp ../LRL_Tools/LRL_Vector3.cpp
-	$(CXX) -I ../LatticeRepresentationLib -I ../LRL_Tools -o $(COMMAND) $(COMMAND).cpp \
+	../LatticeRepresentationLib/VecN.cpp ../LatticeRepresentationLib/V7.cpp ../LRL_Tools/LRL_Vector3.cpp
+	$(CXX) -I ../LatticeRepresentationLib -I ../LRL_Tools -I ../MultiMetricDists -o $(COMMAND) $(COMMAND).cpp \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/ColorTables.cpp \
