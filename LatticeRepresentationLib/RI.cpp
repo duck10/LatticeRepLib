@@ -86,8 +86,18 @@ std::vector<S6> RI::GenerateReflections(const S6& s6) {
 RI::RI(const VecN& v) {
    m_dim = 0;
    m_valid = false;
-   if (v.size() == 6) {
-      m_dim = 6;
+   if (v.size() == 7) {
+      m_dim = 7;
+      m_valid = true;
+      m_vec = v;
+   }
+}
+
+RI::RI(const std::vector<double>& v) {
+   m_dim = 0;
+   m_valid = false;
+   if (v.size() == 7) {
+      m_dim = 7;
       m_valid = true;
       m_vec = v;
    }

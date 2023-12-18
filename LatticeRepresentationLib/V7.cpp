@@ -189,9 +189,9 @@ V7 V7::operator- (const V7& v) const {
    return d;
 }
 
-V7::operator V7() const {
-   return ConvertV7ToG6(*this);
-}
+//V7::operator V7() const {
+//   return ConvertV7ToG6(*this);
+//}
 
 
 V7 V7::rand() {
