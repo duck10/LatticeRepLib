@@ -106,8 +106,8 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "\n";
 
       if (scores[i].first == "oF") out +=
-         "   <rect id=\"oF\" x=\"460\" y=\"520\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"oF\" x=\"470\" y=\"540\" font-size=\"18\">" +
+         "   <rect id=\"oF\" x=\"460\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"oF\" x=\"470\" y=\"550\" font-size=\"18\">" +
          strAngstroms +
          " </text>\n"
          "\n";
@@ -152,44 +152,68 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
       "<g\n"
       "   transform=\" translate(-50 -100)   scale( .8 .8)\">\n"
       "\n"
-      "   <line id=\"cI-tP-oP\" x1=\"250\" y1=\"300\" x2=\"250\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"cF-hR\" x1=\"400\" y1=\"300\" x2=\"400\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"cF-tI\" x1=\"400\" y1=\"300\" x2=\"550\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"cP-oI\" x1=\"550\" y1=\"300\" x2=\"550\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cP-tP\" x1=\"250\" y1=\"300\" x2=\"250\" y2=\"450\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"tP-oP\" x1=\"250\" y1=\"450\" x2=\"250\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cF-hR\" x1=\"400\" y1=\"300\" x2=\"400\" y2=\"450\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cF-tI\" x1=\"400\" y1=\"300\" x2=\"550\" y2=\"450\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cI-tI\" x1=\"550\" y1=\"300\" x2=\"550\" y2=\"450\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"tI-oI\" x1=\"550\" y1=\"450\" x2=\"550\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
       "\n"
       "\n"
-      "   <line id=\"cI-hR\" x1=\"250\" y1=\"300\" x2=\"400\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"cP-hR\" x1=\"550\" y1=\"300\" x2=\"400\" y2=\"450\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cI-hR\" x1=\"250\" y1=\"300\" x2=\"400\" y2=\"450\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"cP-hR\" x1=\"550\" y1=\"300\" x2=\"400\" y2=\"450\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
       "\n"
-      "   <line id=\"hP-oS-mP\" x1=\"325\" y1=\"450\" x2=\"323\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"tP-oS\" x1=\"250\" y1=\"450\" x2=\"323\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"oS-mS\" x1=\"323\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"oP-mP\" x1=\"250\" y1=\"600\" x2=\"323\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"hR-mS\" x1=\"400\" y1=\"450\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"tI-oF\" x1=\"550\" y1=\"450\" x2=\"495\" y2=\"575\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"oI-mS\" x1=\"550\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
-      "   <line id=\"oF-mS\" x1=\"495\" y1=\"595\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"hP-oS\" x1=\"325\" y1=\"450\" x2=\"325\" y2=\"600\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"oS-mP\" x1=\"325\" y1=\"600\" x2=\"325\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"tP-oS\" x1=\"250\" y1=\"450\" x2=\"325\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+
+      "   <line id=\"oS-mS\" x1=\"325\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:6\" />\n"
+      "   <line id=\"oS-mS\" x1=\"325\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(255,255,255);stroke-width:2\" />\n"
+
+      "   <line id=\"oP-mP\" x1=\"250\" y1=\"600\" x2=\"325\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:10\" />\n"
+      "   <line id=\"oP-mP\" x1=\"250\" y1=\"600\" x2=\"325\" y2=\"700\" style=\"stroke:rgb(255,255,255); stroke-width:6\" />\n"
+      "   <line id=\"oP-mP\" x1=\"250\" y1=\"600\" x2=\"325\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:2\" />\n"
+
+      "   <line id=\"hR-mS\" x1=\"400\" y1=\"450\" x2=\"495\" y2=\"700\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+      "   <line id=\"tI-oF\" x1=\"550\" y1=\"450\" x2=\"495\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
+
+      "   <line id=\"oI-mS\" x1=\"550\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:10\" />\n"
+      "   <line id=\"oI-mS\" x1=\"550\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(255,255,255);stroke-width:6\" />\n"
+      "   <line id=\"oI-mS\" x1=\"550\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:2\" />\n"
+
+      "   <line id=\"oF-mS\" x1=\"495\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:10\" />\n"
+      "   <line id=\"oF-mS\" x1=\"495\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(255,255,255);stroke-width:6\" />\n"
+      "   <line id=\"oF-mS\" x1=\"495\" y1=\"600\" x2=\"495\" y2=\"700\" style=\"stroke:rgb(0,0,0);stroke-width:2\" />\n"
+
       "   <line id=\"mp-aP\" x1=\"323\" y1=\"700\" x2=\"405\" y2=\"800\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
       "   <line id=\"mS-aP\" x1=\"495\" y1=\"700\" x2=\"405\" y2=\"800\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
 
-      "<circle cx=\"250\" cy=\"300\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
-      "<circle cx=\"400\" cy=\"300\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      //< line x1 = "200" y1 = "500" x2 = "400" y2 = "500" stroke = "black" stroke - width = "10" / >
+      //<line x1 = "200" y1 = "500" x2 = "400" y2 = "500" stroke = "white" stroke - width = "6" / >
+      //<line x1 = "200" y1 = "500" x2 = "400" y2 = "500" stroke = "black" stroke - width = "2" / >
+
+
+      //<line x1 = "200" y1 = "500" x2 = "400" y2 = "500" stroke = "black" stroke - width = "6" / >
+      //<line x1 = "200" y1 = "500" x2 = "400" y2 = "500" stroke = "white" stroke - width = "4" / >
+
+      "<circle id=\"cP\" cx=\"250\" cy=\"300\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"cF\" cx=\"400\" cy=\"300\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
       "<circle cx=\"550\" cy=\"300\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
 
-      "<circle cx=\"250\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
-      "<circle cx=\"325\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
-      "<circle cx=\"400\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
-      "<circle cx=\"550\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"tP\" cx=\"250\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"hP\" cx=\"325\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"hR\" cx=\"400\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"tI\" cx=\"550\" cy=\"450\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
 
-      "<circle cx=\"250\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
-      "<circle cx=\"325\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
-      "<circle id=\"oF\" cx = \"495\" cy=\"575\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
-      "<circle cx=\"550\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"oP\" cx=\"250\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"oS\" cx=\"325\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"oF\" cx = \"495\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"mI\" cx=\"550\" cy=\"600\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
 
-      "<circle cx=\"323\" cy=\"700\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
-      "<circle cx=\"495\" cy=\"700\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"mP\" cx=\"323\" cy=\"700\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"mS\" cx=\"495\" cy=\"700\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
 
-      "<circle cx=\"405\" cy=\"800\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
+      "<circle id=\"aP\" cx=\"405\" cy=\"800\" r=\"20\" fill=\"white\" stroke=\"black\" stroke-width=\"3\"/>\n"
 
       "<text x=\"239\" y=\"307\" font-size=\"25\">cP</text>\n"
       "<text x=\"386\" y=\"308\" font-size=\"25\" >cF</text>\n"
@@ -202,7 +226,7 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
 
       "<text x=\"236\" y=\"608\" font-size=\"25\" >oP</text>\n"
       "<text x=\"310\" y=\"608\" font-size=\"25\" >oS</text>\n"
-      "<text x=\"480\" y=\"583\" font-size=\"25\" >oF</text>\n"
+      "<text x=\"480\" y=\"608\" font-size=\"25\" >oF</text>\n"
       "<text x=\"535\" y=\"608\" font-size=\"25\" >oI</text>\n"
 
       "<text x=\"307\" y=\"708\" font-size=\"25\" >mP</text>\n"
@@ -211,6 +235,15 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
       "<text x=\"392\" y=\"808\" font-size=\"25\" >aP</text>\n"
 
 
+      //Grimmer, Hans. "Partial order among the 14 Bravais 
+      //types of lattices: basics and applications." Acta Crystallographica 
+      //Section A : Foundations and Advances 71, no. 2 (2015) : 143 - 149.
+      "<text x=\"150\" y=\"850\" font-size=\"15\" >Diagram based on:</text>\n"
+      "<text x=\"150\" y=\"870\" font-size=\"15\" >Grimmer, Hans. \"Partial order among the 14 Bravais  </text>\n"
+      "<text x=\"150\" y=\"890\" font-size=\"15\" >types of lattices: basics and applications.\" Acta Crystallographica </text>\n"
+      "<text x=\"150\" y=\"910\" font-size=\"15\" >Section A : Foundations and Advances 71, no. 2 (2015) : 143 - 149.</text>\n"
+
+      "<text x=\"150\" y=\"940\" font-size=\"20\" >The dashed lines indicate \"conjugate\" relatsionships between the types.</text>\n"
       ;
 }
 
