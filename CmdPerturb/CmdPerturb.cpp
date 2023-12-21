@@ -96,7 +96,7 @@ void HandleOneInputCell(const LRL_ReadLatticeData& inputlattice) {
 
    const std::string strcel = inputlattice.GetStrCell();
 
-   std::cout << "\n" << strcel << "    original inputCell" << std::endl;
+   std::cout << "\n" << strcel << "    original input cell" << std::endl;
 
    const size_t pos = strcel.find("IT#");
    const std::string label = (pos != std::string::npos) ? strcel.substr(pos) : "";
