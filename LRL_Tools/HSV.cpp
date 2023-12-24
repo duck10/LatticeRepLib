@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <climits>
 #include "HSV.h"
 
 #ifdef _DEBUG
