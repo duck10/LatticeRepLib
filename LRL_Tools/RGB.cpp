@@ -6,6 +6,7 @@
 
 #include "RGB.h"
 #include <cmath>
+#include <climits>
 
 #ifdef _DEBUG
 #undef THIS_FILE
