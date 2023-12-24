@@ -14,9 +14,6 @@
 #include <cfloat>
 #include <iostream>
 
-
-//std::vector <DeloneType> Sella::m_latticeCharacters;
-
 Sella::Sella()
 {
 }
