@@ -1,9 +1,67 @@
+dnl # lrl_web.m4 m4 source code of LRL_WEB cgi-bin script and web page
+dnl #    (C) Copyright  2023 Herbert J. Bernstein
+dnl #    YOU MAY REDISTRIBUTE THE CBFLIB PACKAGE UNDER THE TERMS OF THE GPL.
+dnl #    ALTERNATIVELY YOU MAY REDISTRIBUTE THE CBFLIB API UNDER THE TERMS OF THE LGPL.
+dnl #
+dnl # m4 macro expansion is controlled by defining the following m4 macros
+dnl #    lrl_web_host -- the web host name (without http:// prefix)
+dnl #            (default blondie.arcb.org:8083)
+dnl #    lrl_web_user -- the username on the web host 
+dnl #            (default yaya)
+dnl #    lrl_web_sdbx -- set to `sandbox' for debugging
+dnl #            default `'
+dnl #    lrl_web_tmp -- temporary directory within ~`lrl_web_user' web page
+dnl #            default `tmp'
+dnl #
+dnl #   SET DEFAULTS
+define(`lwh_undef',`yes')dnl
+ifdef(`lrl_web_host',`define(`lwh_undef',`no')')dnl
+ifelse(`lwh_undef',`yes',`define(`lrl_web_host',`blondie.arcib.org:8083')')dnl
+define(`lwu_undef',`yes')dnl
+ifdef(`lrl_web_user',`define(`lwu_undef',`no')')dnl
+ifelse(`lwu',`yes',`define(`lrl_web_user',`yaya')')dnl
+define(`lws_undef',`yes')dnl
+ifdef(`lrl_web_sdbx',`define(`lws_undef',`no')')dnl
+ifelse(`lws_undef',`yes',`define(`lrl_web_sdbx',`')')dnl
+define(`lwt_undef','yes')dnl
+ifdef(`lrl_web_tmp',`define(`lwt_undef',`no')')dnl
+ifelse(`lwt_undef',`yes',`define(`lrl_web_tmp',`tmp')')dnl
+define(`LRLWEBHOST',`lrl_web_host')dnl
+define(`LRLWEBUSER',`lrl_web_user')dnl
+ifelse(lrl_web_sdbx,sandbox,`define(`LRLWEBCGI',`nlrl_web.cgi')',`define(`LRLWEBCGI',`lrl_web.cgi')')dnl
+ifelse(lrl_web_sdbx,sandbox,`define(`LRLWEBSANDBOX',`sandbox')',`define(`LRLWEBSANDBOX',`')')dnl
+ifelse(lrl_web_sdbx,sandbox,`define(`LRLWEBSBPRFX',`sandbox/')',`define(`LRLWEBSBPRFX',`')')dnl
 changequote(`[[[',`]]]')dnl
-define([[[LRLWEBHOST]]],[[[lrl_web_host]]])dnl
-define([[[LRLWEBUSER]]],[[[lrl_web_user]]])dnl
-define([[[LRLWEBCGI]]],[[[lrl_web.cgi]]])dnl
 define([[[LRLWEBTMP]]],[[[tmp]]])dnl
-define([[[LRLWEBCHECKINPUT]]],[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.$1---  RANDOM: Random (valid) unit cell;$1---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);$1---  semicolon: lines beginning with a semicolon are treated as comments$1---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.$1---  END: ends the data input section$1$1Examples of unit cell inputs$1$1P 10 20 30 90 111 90$1G 100 400 900 0 -215.02 0$1S6 0 -107.51 0 7.51 -400 -792.49 $1; this is a comment$1end]]]]]])dnl
+dnl #
+dnl #  TOOL HELP FILES
+define([[[LRLWEBCHECKINPUT]]],[[[[[[$1]]]]]]dnl
+[[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
+[[[[[[<em>Purpose:</em> Verify input lattice types and parameters$2]]]]]]dnl
+[[[[[[<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
+[[[[[[Warnings are output for invalid inputs.$2]]]]]]dnl
+[[[[[[<em>Parameters:</em> NA$2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
+[[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
+[[[[[[ All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.$2]]]]]]dnl
+[[[[[[---  RANDOM: Random (valid) unit cell;$2]]]]]]dnl
+[[[[[[---  Crystal lattice input: 'A', 'B', 'C',]]]]]]dnl
+[[[[[[ 'P', 'R', 'F', 'I' followed by three axis lengths]]]]]]dnl
+[[[[[[ and three angles (in degrees);$2]]]]]]dnl
+[[[[[[---  semicolon: lines beginning with a semicolon are treated as comments$2]]]]]]dnl
+[[[[[[---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars,]]]]]]dnl
+[[[[[[ C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell),]]]]]]dnl
+[[[[[[ u for unsorted Dirichlet 7-cells.$2]]]]]]dnl
+[[[[[[---  END: ends the data input section$2]]]]]]dnl
+[[[[[[Examples of unit cell inputs$2]]]]]]dnl
+[[[[[[P 10 20 30 90 111 90$2]]]]]]dnl
+[[[[[[G 100 400 900 0 -215.02 0$2]]]]]]dnl
+[[[[[[S6 0 -107.51 0 7.51 -400 -792.49 $2]]]]]]dnl
+[[[[[[; this is a comment$2]]]]]]dnl
+[[[[[[end$3]]]]]]dnl
+dnl
+)dnl--------------------------------------------------
 define([[[LRLWEBRUNNING]]],[[[[[[
 $1<div name=$2"block_$4_running$2" id=$2"block_$4_running$2" style=$2"display:none$2">$3
 $1<label for=$2"progress_img_$4$2">Running:</label><br />$3
@@ -11,13 +69,28 @@ $1<img src=$2"http://$5/images/progress_small.gif$2" id=$2"progress_img_$4$2" al
 $1<br />$3
 $1</div>$3
 ]]]]]])dnl
-ifdef([[[lrlwebhost]]],define([[[LRLWEBHOST]]],[[[lrlwebhost]]]))dnl
-ifdef([[[lrlwebuser]]],define([[[LRLWEBUSER]]],[[[lrlwebuser]]]))dnl
-ifdef([[[lrlwebcgi]]],define([[[LRLWEBCGI]]],[[[lrlwebcgi]]]))dnl
-ifdef([[[lrlwebtmp]]],define([[[LRLWEBTMP]]],[[[lrlwebtmp]]]))dnl
-ifdef([[[cgicpp]]],define([[[prefix]]],[[[std::cout << ]]]))dnl
-ifdef([[[cgicpp]]],define([[[epilogue]]],[[[ << std::endl;]]]))dnl
-ifdef([[[cgicpp]]],[[[#include <iostream>
+include([[[Command_Help.m4]]])dnl
+ifdef([[[lrl_web_host]]],[[[define([[[LRLWEBHOST]]],[[[lrl_web_host]]])]]])dnl
+ifdef([[[lrl_web_user]]],[[[define([[[LRLWEBUSER]]],[[[lrl_web_user]]])]]])dnl
+ifdef([[[lrl_web_cgi]]],[[[define([[[LRLWEBCGI]]],[[[lrl_web_cgi]]])]]])dnl
+ifdef([[[lrlwebtmp]]],[[[define([[[LRLWEBTMP]]],[[[lrl_web_tmp]]])]]])dnl
+ifdef([[[cgicpp]]],[[[define([[[prefix]]],[[[std::cout << ]]])]]])dnl
+ifdef([[[cgicpp]]],[[[define([[[epilogue]]],[[[ << std::endl;]]])]]])dnl
+define([[[nocgicpp]]],[[[yes]]])dnl
+ifdef([[[cgicpp]]],[[[undefine([[[nocgicpp]]])]]])dnl
+ifdef([[[cgicpp]]],[[[dnl
+dnl #
+dnl # SOURCE OF lrl_web.cpp GENERATED FROM lrl_web.m4
+// SOURCE OF lrl_web.cpp GENERATED FROM lrl_web.m4
+// [[[lrl_web_host]]]: lrl_web_host
+// [[[lrl_web_user]]]: lrl_web_user
+// [[[lrl_web_sdbx]]]: lrl_web_sdbx
+// [[[lrl_web_tmp]]]: lrl_web_tmp
+// [[[LRLWEBSANDBOX]]]: LRLWEBSANDBOX
+// [[[LRLWEBSBPRFX]]]: LRLWEBSBPRFX
+// [[[LRLWEBCGI]]]: LRLWEBCGI
+ 
+#include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -39,7 +112,6 @@ ifdef([[[cgicpp]]],[[[#include <iostream>
 #define LRL_WEB_TMP std::string("]]]LRLWEBTMP[[[")
 using namespace std;
 using namespace cgicc;
-
 void  dumpList(const Cgicc& formData); 
 void  process(const Cgicc& formData); 
 
@@ -209,37 +281,95 @@ int main(int argc,
       std::cout << "  return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
+
+
       std::cout << "function changeoperation(rownum) {" << std::endl;
       std::cout << " var ii;"  << std::endl;
       std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
-      std::cout << " if (operation==\"CmdGen\") {" << std::endl;
+      std::cout << " if (operation==\"CmdDelone\") {" << std::endl;
+
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdDelone([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdGen([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdLM\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdLM([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdNiggli\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdNiggli([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdPath\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdPath([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdPerturb([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdS6Refl\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdS6Refl([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdSella\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdSella([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToB4\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToB4([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToC3\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToC3([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToCell\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToCell([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToG6\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToG6([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToS6\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToS6([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToS6L\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:inline\";" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToS6L([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToU\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToU([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToV7\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToV7([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdVolume\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdVolume([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"PlotC3\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_PlotC3([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
       std::cout << " } else {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEBCHECKINPUT([[["<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl;
+
       std::cout << " }" << std::endl;
       std::cout << " return true;" << std::endl;
       std::cout << "}" << std::endl;
+
       std::cout << "" << std::endl;
       std::cout << "function pfloat(pfield){" << std::endl;
       std::cout << "    // validate for non-negative float   " << std::endl;
@@ -1151,7 +1281,7 @@ std::string plaintext2html(std::string & dst, std::string src){
          std::cout << "<tr><td colspan=\"3\">string_to_file of"+tmp_lrl_web+"/operation_"+twodig_array[numop]+" failed</td></tr>"<<std::endl;
       }
       std::string xprocess_next_output=
-        std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/process_next_output.bash")+
+        std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/")]]]+string("LRLWEBSBPRFX")[[[+string("process_next_output.bash")+
         std::string(" ")+lrl_web_output+std::string(" ")+path+std::string(" ")+oppath;
         // std::cout << "<tr><td colspan=\"3\">" << xprocess_next_output <<"</td></tr>" << std::endl;
       char outlength[128];
@@ -1227,6 +1357,8 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <option "+selected+"value=\"CmdToS6L\"> compute linearized S6 or Root Invariant version of cells</option>" << std::endl;
       selected=operation.compare("CmdToU")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToU\"> compute unsorted Dirichlet cells (dc7unsrt)</option>" << std::endl;
+      selected=operation.compare("CmdToV7")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdToV7\"> compute V7 version of cells</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Reduction\">" << std::endl;
       selected=operation.compare("CmdDelone")==0?"selected ":"";
@@ -1331,16 +1463,27 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"c"+"\" style="+active+">" << std::endl;
       std::cout << "  <br />" << std::endl;
       std::cout << "  <label for=\"lrl_web_output_"+twodig_array[numop]+"\">Tool Output:</label><br />" << std::endl;
-      std::cout << "  <textarea name=\"lrl_web_output_"+twodig_array[numop]+"\" id=\"lrl_web_output_"+twodig_array[numop]+"\" rows=\"9\" cols=\"100\">" 
-        << std::endl;
+      std::cout << "  <div name=\"lrl_web_output_"+twodig_array[numop]+"\" id=\"lrl_web_output_"+twodig_array[numop]+"\"" << std::endl;
+      std::cout << "   style=\"overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;\" >" << std::endl;
       string processed_output=string(std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/do_exec_to_buffer.bash")+" "+lrl_web_output);
       if (outlen > 0) {
-        size_t ip;
+        size_t ip, istart, iend;
         char outputbuf[outlen+1];
         do_exec_to_buffer(processed_output.c_str(),outputbuf,outlen);
         outputbuf[outlen]=0;
-        std::cout << std::string(outputbuf) << std::endl;
-        std::cout << "end" << std::endl;
+        istart=0;
+        std::cout << std::string("<font size=\"-1\">");
+        for(iend=0;iend<outlen;iend++){
+          if (outputbuf[iend]=='\n'|| outputbuf[iend]=='\r' || outputbuf[iend]==0) {
+            outputbuf[iend]=0;
+            std::cout << std::string(outputbuf+istart);
+            if (iend < outlen) {
+              std::cout << std::string("<br />") << std::endl;
+            };
+            istart=iend+1;
+          }
+        }
+        std::cout << "<br />end" << std::endl;
         if (prevoutbuflen > 0 && prevoutbuf ) {
            free(prevoutbuf);
         }
@@ -1348,15 +1491,16 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
         for (ip=0; ip<outlen+1; ip++) prevoutbuf[ip]=outputbuf[ip];
         prevoutbuflen = outlen+1;
       }
-      std::cout << "  </textarea>" << std::endl;
+      std::cout << "  </div>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"d"+"\" style="+active+">" << std::endl;
       std::cout << "  <br />" << std::endl;
       std::cout << "  <label for=\"lrl_web_help_"+twodig_array[numop]+"\">Tool Help:</label><br />" << std::endl;
-      std::cout << "  <textarea name=\"lrl_web_help_"+twodig_array[numop]+"\" id=\"lrl_web_help_"+twodig_array[numop]+"\" readonly rows=\"9\" cols=\"100\" readonly`>" << std::endl;
-      std::cout << "]]]LRLWEBCHECKINPUT([[[\n]]])[[[" << std::endl;
+      std::cout << "  <div name=\"lrl_web_help_"+twodig_array[numop]+"\" id=\"lrl_web_help_"+twodig_array[numop]+"\"" << std::endl;
+      std::cout << "  style=\"overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;\" >" << std::endl;
+      std::cout << "]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[" << std::endl;
       std::cout << "" << std::endl;
-      std::cout << "  </textarea>" << std::endl;
+      std::cout << "  </div>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  </tr>" << std::endl;
@@ -1391,7 +1535,7 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
     std::cout << "<p>" << std::endl;
     std::cout << "</td>" << std::endl;
     std::cout << "<td>" << std::endl;
-    std::cout << "<div style=\"width:800px;height:150px;overflow:scroll;border:2px solid #0000FF;\">" << std::endl;
+    std::cout << "<div style=\"width:720px;height:150px;overflow:scroll;border:2px solid #0000FF;\">" << std::endl;
     std::cout << "<font size=\"2\">" << std::endl;
     std::cout << "<table border=2>" << std::endl;
     std::cout << "<tr>" << std::endl;
@@ -1593,7 +1737,7 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
     std::cout << "free encyclopedia. [Online; accessed 17-October-2022]. https://en.wikipedia.org/w/index.php?title=Theophrastus&oldid=1114534722" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<a name=\"Wilkins2021\">[Wilkins <i>et al.</i> 2021]</a> J. Wilkins, B. J. Schoville, R. Pickering, L. Gliganic, B. Collins," << std::endl;
-    std::cout << "K. S.  Brown, J. von der Meden, W. Khumalo, M. C. Meyer, S. Maape, and A. F. Blackwood,  2021. Innovative " << std::endl;
+    std::cout << "K. S.  Brown, J. von der Meden, W. Khumalo, M. C. Meyer, S. Maape, and A. F. Blackwood, `: 2021. Innovative " << std::endl;
     std::cout << "Homo sapiens behaviours 105,000 years ago in a wetter Kalahari. Nature, 592(7853), 248 -- 252." << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<a name=\"Zimmermann1985\">[Zimmermann and Burzlaff 1985]</a> H. Zimmermann and H. Burzlaff. DELOS A computer program for the " << std::endl;
@@ -1604,8 +1748,8 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
     std::cout << "Updated 23 November 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
-]]],
-[[[<!DOCTYPE HTML>
+]]]) dnl end of lrl_web.cpp
+ifdef([[[nocgicpp]]],[[[<!DOCTYPE HTML>
 <html>
 <HEAD>
 	<meta charset="utf-8">
@@ -1752,35 +1896,69 @@ function running(rownum) {
   let timerId = setTimeout(noop,500);
   return true;
 }
-
 function changeoperation(rownum) {
   var ii;
   let operation=document.getElementById("operation_"+rownum).value;
-  if (operation=="CmdGen") {
+  if (operation=="CmdDelone") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdDelone([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdDists") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdDists([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else  if (operation=="CmdGen") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:inline";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
-  } else if (operation=="CmdPath") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdGen([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdLM") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdLM([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdNiggli") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdNiggli([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdPath") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:inline";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdPath([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
   } else if (operation=="CmdPerturb") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:inline";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
-  } else if (operation=="CmdToS6L") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_Cmd_Perturb([[["]]],[[[<br />]]],[[[<br />\n"]]]);
+ } else if (operation=="CmdS6Refl") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdS6Refl([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdSella") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdSella([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdToB4") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToB4([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdToC3") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToC3([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdToCell") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToCell([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdToG6") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToG6([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdToS6") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToS6([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdToS6L") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:inline";
-  } else {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToS6L([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdToU") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToU([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdToV7") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToV7([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdVolume") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdVolume([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdPlotC3") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdPlotC3([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+ } else {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEBCHECKINPUT([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]); 
   }
   return true;
 }
@@ -1969,6 +2147,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2021,17 +2200,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_01c" style="display:inline">
   <br />
   <label for="lrl_web_output_01">Tool Output:</label><br />
-  <textarea name="lrl_web_output_01" id="lrl_web_output_01" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_01" id="lrl_web_output_01" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_01d" style="display:inline">
   <br />
   <label for="lrl_web_help_01">Tool Help:</label><br />
-  <textarea name="lrl_web_help_01" id="lrl_web_help_01" rows="9" cols="100" readonly>
-]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_01" id="lrl_web_help_01" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
   </td>
   </tr>
@@ -2078,6 +2256,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2130,17 +2309,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_02c" style="display:none">
   <br />
   <label for="lrl_web_output_02">Tool Output:</label><br />
-  <textarea name="lrl_web_output_02" id="lrl_web_output_02" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_02" id="lrl_web_output_02" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_02d" style="display:none">
   <br />
   <label for="lrl_web_help_02">Tool Help:</label><br />
-  <textarea name="lrl_web_help_02" id="lrl_web_help_02" rows="9" cols="100" readonly>
-    ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_02" id="lrl_web_help_02" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
   </td>
   </tr>
@@ -2187,6 +2365,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2239,17 +2418,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_03c" style="display:none">
   <br />
   <label for="lrl_web_output_03">Tool Output:</label><br />
-  <textarea name="lrl_web_output_03" id="lrl_web_output_03" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_03" id="lrl_web_output_03" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_03d" style="display:none">
   <br />
   <label for="lrl_web_help_03">Tool Help:</label><br />
-  <textarea name="lrl_web_help_03" id="lrl_web_help_03" rows="9" cols="100" readonly>
-    ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_03" id="lrl_web_help_03" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
   </td>
   </tr>
@@ -2296,6 +2474,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2348,17 +2527,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_04c" style="display:none">
   <br />
   <label for="lrl_web_output_04">Tool Output:</label><br />
-  <textarea name="lrl_web_output_04" id="lrl_web_output_04" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_04" id="lrl_web_output_04" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_04d" style="display:none">
   <br />
   <label for="lrl_web_help_04">Tool Help:</label><br />
-  <textarea name="lrl_web_help_04" id="lrl_web_help_04" rows="9" cols="100" readonly>
-   ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_04" id="lrl_web_help_04" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
   </td>
   </tr>
@@ -2405,6 +2583,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2458,17 +2637,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_05c" style="display:none">
   <br />
   <label for="lrl_web_output_05">Tool Output:</label><br />
-  <textarea name="lrl_web_output_05" id="lrl_web_output_05" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_05" id="lrl_web_output_05" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_05d" style="display:none">
   <br />
   <label for="lrl_web_help_05">Tool Help:</label><br />
-  <textarea name="lrl_web_help_05" id="lrl_web_help_05" rows="9" cols="100" readonly>
-   ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_05" id="lrl_web_help_05" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
   </td>
   </tr>
@@ -2515,6 +2693,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2567,16 +2746,15 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_06c" style="display:none">
   <br />
   <label for="lrl_web_output_06">Tool Output:</label><br />
-  <textarea name="lrl_web_output_06" id="lrl_web_output_06" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_06" id="lrl_web_output_06" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_06d" style="display:none">
   <br />
   <label for="lrl_web_help_06">Tool Help:</label><br />
-  <textarea name="lrl_web_help_06" id="lrl_web_help_06" rows="9" cols="100" readonly>
-   ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
+  <div name="lrl_web_help_06" id="lrl_web_help_06" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
   </textarea>
   </div>
   </td>
@@ -2624,6 +2802,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2676,17 +2855,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_07c" style="display:none">
   <br />
   <label for="lrl_web_output_07">Tool Output:</label><br />
-  <textarea name="lrl_web_output_07" id="lrl_web_output_07" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_07" id="lrl_web_output_07" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_07d" style="display:none">
   <br />
   <label for="lrl_web_help_07">Tool Help:</label><br />
-  <textarea name="lrl_web_help_07" id="lrl_web_help_07" rows="9" cols="100" readonly>
-   ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_07" id="lrl_web_help_07" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
   </td>
   </tr>
@@ -2735,6 +2913,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2787,17 +2966,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_08c" style="display:none">
   <br />
   <label for="lrl_web_output_08">Tool Output:</label><br />
-  <textarea name="lrl_web_output_08" id="lrl_web_output_08" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_08" id="lrl_web_output_08" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_08d" style="display:none">
   <br />
   <label for="lrl_web_help_08">Tool Help:</label><br />
-  <textarea name="lrl_web_help_08" id="lrl_web_help_08" rows="9" cols="100" readonly>
-    ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_08" id="lrl_web_help_08" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
   </td>
   </tr>
@@ -2846,6 +3024,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -2898,17 +3077,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_09c" style="display:none">
   <br />
   <label for="lrl_web_output_09">Tool Output:</label><br />
-  <textarea name="lrl_web_output_09" id="lrl_web_output_09" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_09" id="lrl_web_output_09" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_09d" style="display:none">
   <br />
   <label for="lrl_web_help_09">Tool Help:</label><br />
-  <textarea name="lrl_web_help_09" id="lrl_web_help_09" rows="9" cols="100" readonly>
-   ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_09" id="lrl_web_help_09" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
   </td> 
   </tr>
@@ -2957,6 +3135,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdToS6"> compute S6 version of cells</option>
   <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
   <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"> compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
   <option value="CmdDelone">compute Selling-reduced primitive cells</option>
@@ -3009,17 +3188,16 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[09]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_10c" style="display:none">
   <br />
   <label for="lrl_web_output_10">Tool Output:</label><br />
-  <textarea name="lrl_web_output_10" id="lrl_web_output_10" rows="9" cols="100">
-  Press submit to process data
-  </textarea>
+  <div name="lrl_web_output_10" id="lrl_web_output_10" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+  <font size=-1>Press submit to process data</font>
+  </div>
   </div>
   <div id="block_10d" style="display:none">
   <br />
   <label for="lrl_web_help_10">Tool Help:</label><br />
-  <textarea name="lrl_web_help_10" id="lrl_web_help_10" rows="9" cols="100" readonly>
-   ]]]LRLWEBCHECKINPUT([[[
-]]])[[[
-  </textarea>
+  <div name="lrl_web_help_10" id="lrl_web_help_10" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;">
+]]]LRLWEBCHECKINPUT([[[<font size=-1>]]],[[[<br />]]],[[[</font>]]])[[[
+  </div>
   </div>
 
   </td>
@@ -3052,7 +3230,7 @@ terms of the <a href="lgpl.txt">LGPL</a>.
 <p>
 </td>
 <td>
-<div style="width:800px;height:150px;overflow:scroll;border:2px solid #0000FF;">
+<div style="width:720px;height:150px;overflow:scroll;border:2px solid #0000FF;">
 <font size="2">
 <table border=2>
 <tr>
@@ -3266,5 +3444,3 @@ Updated 23 November 2023.
 </font>
 </body>
 </html>]]])
-
-

@@ -1,3 +1,13 @@
+
+// SOURCE OF lrl_web.cpp GENERATED FROM lrl_web.m4
+// lrl_web_host: blondie.arcib.org:8083
+// lrl_web_user: yaya
+// lrl_web_sdbx: 
+// lrl_web_tmp: tmp
+// LRLWEBSANDBOX: 
+// LRLWEBSBPRFX
+// LRLWEBCGI: lrl_web.cgi
+ 
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -20,7 +30,6 @@
 #define LRL_WEB_TMP std::string("tmp")
 using namespace std;
 using namespace cgicc;
-
 void  dumpList(const Cgicc& formData); 
 void  process(const Cgicc& formData); 
 
@@ -190,37 +199,577 @@ int main(int argc,
       std::cout << "  return true;" << std::endl;
       std::cout << "}" << std::endl;
       std::cout << "" << std::endl;
+
+
       std::cout << "function changeoperation(rownum) {" << std::endl;
       std::cout << " var ii;"  << std::endl;
       std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
-      std::cout << " if (operation==\"CmdGen\") {" << std::endl;
+      std::cout << " if (operation==\"CmdDelone\") {" << std::endl;
+
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1><strong>Command: compute Selling-reduced primitive cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> Perform Selling/Delone reduction on input cells<br />")
+      +std::string("<em><u>Output type:</u></em> S<sup>6</sup> form of the reduced cells of input. The Delone-reduced<br />")
+      +std::string("cell has only non-acute interaxial angles.<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: Generate cells of a particular type or types</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> To Create valid unit cells of various user-chosen types<br />")
+      +std::string("<em><u>Output type:</u></em> Output cells are reported in G<sup>6</sup> form, randomly chosen cell<br />")
+      +std::string("parameters for the various selected types. Lattice types are shown following <br />")
+      +std::string("the numerical parameters.<br />")
+      +std::string("<em><u>Parameters:</u></em> (default values in parentheses)<br />")
+      +std::string("--- The number of cells of each type to be generated (1)<br />")
+      +std::string("--- The type(s) of selected output requested. Examples are<br />")
+      +std::string("--- &quot;all&quot; (default) -- produces examples of each of the 44 Niggli types <br />")
+      +std::string("(see the International Tables) and also each of the 24 Delone types (all)<br />")
+      +std::string("--- a number between 1 and 44 will generate examples of that Niggli type. For instance,<br />")
+      +std::string("24 will create Niggli type 24 (which is hR). {allowed values: 1-44}<br />")
+      +std::string("--- &quot;m&quot; generates monoclinic examples {allowed types: c, t, h, o, m, a}<br />")
+      +std::string("--- &quot;mC&quot; generates C-centered monoclinic examples {mP, mS, mC, hR, hP, tP, tI, cF, cI, cP, aP}<br />")
+      +std::string("--- &quot;A1&quot; generates a general triclinic Delone type with no S<sup>6</sup> zero scalars.<br />")
+      +std::string("--- &quot;O4&quot; generates the centered orthorhombic Delone type with signature {00r sst}.<br />")
+      +std::string("--- &quot;O&quot; will generate all orthorhombic Delone types {allowed types: C, T, H, O, M, A}<br />")
+      +std::string("--- Unrecognized input will generate all types<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdLM\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: apply Lattice Matching algorithm to listed cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> Taking the first input cells as the &quot;REFERENCE&quot;, the alternative cells of<br />")
+      +std::string("each succeeding cell are examined to find a closest match to the reference lattice. <br />")
+      +std::string("<p style=margin-left:40px>Andrews, Lawrence C., Herbert J. Bernstein, and Nicholas K. Sauter. <br />")
+      +std::string("&quot;Approximating lattice similarity.&quot; Acta Crystallographica Section A: Foundations and Advances 79.5, 480-484 (2023).</p> <em><u>Output type:</u></em> a, b, c &alpha;, &beta;, &gamma;, with the lattice centering<br />")
+      +std::string("chosen to be the same as that of the reference cell.<br />")
+      +std::string("<em><u>Example:</u></em><br />")
+      +std::string("f 10 10 10 90 90 90<br />")
+      +std::string("p 7 7.1 6.9 59 60 61<br />")
+      +std::string("end<br />")
+      +std::string("; Lattice Matching<br />")
+      +std::string("F 10.000 10.000 10.000 90.000 90.000 90.000 ( 0 degrees in S6) REFERENCE<br />")
+      +std::string("F 10.050 9.821 9.832 89.143 92.094 88.781 ( 3.07179 degrees in S6)<br />")
+      +std::string("end<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdNiggli\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute Niggli-reduced primitive cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> Perform Niggli reduction on input cells. The result has<br />")
+      +std::string("the shortest edge lengths of the lattice and is the &quot;most orthogonal&quot; unit cell.<br />")
+      +std::string("<em><u>Output type:</u></em> G<sup>6</sup> form of the reduced cells of input<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdPath\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute path between pairs of cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> A series of points is computed between each pair of input cells. The<br />")
+      +std::string("computation is done in S<sup>6</sup>. For n input cells, n-1 paths will be<br />")
+      +std::string("generated. The individual points are labeled with their ordinals and each <br />")
+      +std::string("segment is labeled (after the 6 parameters).<br />")
+      +std::string("<em><u>Output type:</u></em> S<sup>6</sup><br />")
+      +std::string("<em><u>Parameters:</u></em> The number of points in -each- path (20)<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute perturbed versions of input cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> For each input cell, compute slight altered versions<br />")
+      +std::string("<em><u>Output type:</u></em> unit cell edge lengths and angles<br />")
+      +std::string("<em><u>Parameters:</u></em> The number of perturbations of each input cell (20) and the amount of<br />")
+      +std::string("perturbation in parts-per-thousand (ppt) (1 ppt). The calculation is done S<sup>6</sup>,<br />")
+      +std::string("and the perturbation is in a direction orthogonal to the S<sup>6</sup> vector..<br />")
+      +std::string("<em><u>Example:</u></em> requesting 10 perturbations and 10 ppt (1%) perturbations.<br />")
+      +std::string("f 10 10 10 90 90 90<br />")
+      +std::string("end<br />")
+      +std::string("; Perturb vectors<br />")
+      +std::string("<br />")
+      +std::string("F 10 10 10 90 90 90 original input cell<br />")
+      +std::string("F 9.940 9.916 9.884 89.573 89.357 89.565 perturbed <br />")
+      +std::string("F 10.016 10.029 9.960 89.567 90.358 90.109 perturbed <br />")
+      +std::string("F 9.956 9.921 9.929 89.938 89.497 89.452 perturbed <br />")
+      +std::string("F 9.896 9.992 10.053 90.576 89.709 89.376 perturbed <br />")
+      +std::string("F 9.969 9.989 9.984 90.509 89.490 89.668 perturbed <br />")
+      +std::string("F 9.963 9.984 9.904 89.655 89.147 90.336 perturbed <br />")
+      +std::string("F 10.015 9.928 9.962 89.793 90.276 89.394 perturbed <br />")
+      +std::string("F 10.019 9.922 9.884 89.295 89.772 89.926 perturbed <br />")
+      +std::string("F 9.914 9.918 9.909 89.327 89.348 89.820 perturbed <br />")
+      +std::string("F 10.020 9.978 10.119 90.295 90.410 89.960 perturbed <br />")
+      +std::string("<br />")
+      +std::string("; CmdPerturb: number of cells to produce = 10 orthogonal perturbation of 10 /1000<br />")
+      +std::string("end<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdS6Refl\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: apply S6 reflections to input cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> The 24 permutations of the S<sup>6</sup> cell vectors. Duplicates are removed.<br />")
+      +std::string("<em><u>Output type:</u></em> S<sup>6</sup><br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string("<em><u>Example:</u></em><br />")
+      +std::string("f 10 10 10 90 90 90<br />")
+      +std::string("end<br />")
+      +std::string("; S6 reflections<br />")
+      +std::string("S6 0.00000 0.00000 0.00000 -100.00000 -100.00000 -100.00000 0<br />")
+      +std::string("S6 0.00000 -100.00000 -100.00000 -100.00000 0.00000 0.00000 1<br />")
+      +std::string("S6 -100.00000 0.00000 -100.00000 0.00000 -100.00000 0.00000 2<br />")
+      +std::string("S6 -100.00000 -100.00000 0.00000 0.00000 0.00000 -100.00000 3<br />")
+      +std::string("<br />")
+      +std::string("or presenting those as unit cells (not output by the command):<br />")
+      +std::string("P 10.000 10.000 10.000 90.000 90.000 90.000 <br />")
+      +std::string("P 17.321 10.000 10.000 90.000 125.264 125.264 <br />")
+      +std::string("P 10.000 17.321 10.000 125.264 90.000 125.264 <br />")
+      +std::string("P 10.000 10.000 17.321 125.264 125.264 90.000 <br />")
+      +std::string("<br />")
+      +std::string("The values of 17.321 are from the Delone &quot;d&quot; vector, d=-(a+b+c)<br />")
+      +std::string("<br />")
+      +std::string("But Niggli reduction of those 4 cells gives:<br />")
+      +std::string("G6 100.000 100.000 100.000 0.000 0.000 0.000 <br />")
+      +std::string("G6 100.000 100.000 100.000 0.000 0.000 0.000 <br />")
+      +std::string("G6 100.000 100.000 100.000 0.000 0.000 0.000 <br />")
+      +std::string("G6 100.000 100.000 100.000 0.000 0.000 0.000 <br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdSella\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: apply Sella algorithm</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> Determine potentially higher symmetry for input cells<br />")
+      +std::string("<em><u>Output type:</u></em> agreement factors for each of the Bravais lattice types<br />")
+      +std::string("that fill well and reduced cell information for the input cells. Also the name<br />")
+      +std::string("of the graphical output file.<br />")
+      +std::string("<em><u>Graphical output:</u></em> the figure of the hierarchy of Bravais lattice types <br />")
+      +std::string("with numerical agreement determined by Sella.<br />")
+      +std::string("<p  style=margin-left:40px> Grimmer, H., &amp; Nespolo, M. (2006). <br />")
+      +std::string("Geminography: the crystallography of twins. Zeitschrift<br />")
+      +std::string("f&uuml;r Kristallographie-Crystalline Materials, 221(1), 28-50.)</p>  <em><u>Parameters:</u></em> choices if only some outputs are needed (all)<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToB4\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute Bravais tetrahedron (B4)</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> computes the edge vectors of the unit cell and their negative sum. These 4<br />")
+      +std::string("vectors also define the Bravais tetrahedron Delone, B. N., Galiulin, R. V., <br />")
+      +std::string("&amp; Shtogrin, M. I. (1975). On the Bravais types of <br />")
+      +std::string("lattices. Journal of Soviet Mathematics, 4(1), 79-156.<br />")
+      +std::string("<em><u>Output type:</u></em> echoes the input cell as a, b, c, &alpha;, &beta;, &gamma;, <br />")
+      +std::string("followed by the vector representations of the unit cell edges and their vector sum,<br />")
+      +std::string("and then a listing of their lengths.<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToC3\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute complex cell presentation (C</strong><strong><sup>3</sup></strong><strong>)</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> presents input cells as C<sup>3</sup><br />")
+      +std::string("<em><u>Output type:</u></em> the C<sup>3</sup> version of the input (note that lattice centering is not removed)<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string("<em><u>Example:</u></em><br />")
+      +std::string("; To C3<br />")
+      +std::string("g 100 110 120 0 1 2<br />")
+      +std::string("end<br />")
+      +std::string("C3 (0.000,-101.500) (0.500,-111.000) (1.000,-120.500) <br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToCell\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> converts input cell representations to cell parameters &lt;br&gt;<br />")
+      +std::string("(note that lattice centering is not removed)<br />")
+      +std::string("<em><u>Output type:</u></em> a, b, c, &alpha, &beta;, &gamma;. If the input cell is not in <br />")
+      +std::string("cell parameters already, then primitive is assumed.<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToG6\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command:compute G</strong><strong><sup>6</sup></strong><strong> version of cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> convert to G<sup>6</sup> representation (note that lattice centering is not removed)<br />")
+      +std::string("<em><u>Output type:</u></em> G<sup>6</sup><br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToS6\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute S<sup>6</sup> version of cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> convert to S<sup>6</sup> representation (note that lattice centering is not removed)<br />")
+      +std::string("<em><u>Output type:</u></em> S<sup>6</sup><br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToS6L\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:inline\";" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute linearized S</strong><strong><sup>6</sup></strong><strong> or Root Invariant version of cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> Both of the output choices are 6-space vectors of positive numbers.<br />")
+      +std::string("The values are derived by first applying Selling/Delone reduction so that all of <br />")
+      +std::string("the S<sup>6</sup> values are non-positive. Then the square roots of the negative <br />")
+      +std::string("of those values are used to create the result (linearized S<sup>6</sup>). The<br />")
+      +std::string("root invariant is generated by applying sorting rules of Bright, Cooper, and Kurlin. <P style=margin-left:40px>Bright, M., Cooper, A. I., &amp; Kurlin, V. (2021). <br />")
+      +std::string("Welcome to a continuous world of 3-dimensional lattices. <br />")
+      +std::string("arXiv preprint arxiv:2109.11538, 2.</p> <em><u>Output type:</u></em> The type followed by the parameters.<br />")
+      +std::string("<em><u>Parameters:</u></em> &quotall&quot or blank for output of both types, &quot;R&quot; for root invariant, and S for linearized S<sup>6</sup> <br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToU\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute unsorted Dirichlet cells (dc7unsrt)</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> convert to the 7 parameter form related to the Dirichlet<br />")
+      +std::string("(also known as Vornoi or Wigner-Seitz) unit cell. (note that lattice centering is not removed)<br />")
+      +std::string("Bernstein and Andrews, 2023.<br />")
+      +std::string("<em><u>Output type:</u></em> DC7u<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdToV7\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute V<sup>7</sup> version of cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> convert to the 7 parameter vector of Andrews, Bernstein, Pelletier, 1980.<br />")
+      +std::string("The vector is define in terms of the Niggli reduced cell a,b,c and the Niggli reduced<br />")
+      +std::string("reciprocal cell 1/a*, 1/b*, 1/c*, and the cube root of the reduced cell volume.<br />")
+      +std::string(" (note that lattice centering is not removed). Note that all 7 scalars are in the units of Angstroms.<br />")
+      +std::string("<em><u>Output type:</u></em> V<sup>7</sup><br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdVolume\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute volumes of listed cells</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> compute volumes of listed cells<br />")
+      +std::string("<em><u>Output type:</u></em> Lattice centering, then cell parameters (a, b, c, &alpha;, &beta;, &gamma;), <br />")
+      +std::string("followed by the volume<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"PlotC3\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> dnl Command:  PlotC3 <strong>Command: [PlotC3</strong>]<br />")
+      +std::string("<em><u>Purpose:</u></em> Graphical output of multiple unit cells in C<sup>3</sup><br />")
+      +std::string("<em><u>Output type:</u></em> Name of the file containing the plots<br />")
+      +std::string("<em><u>Graphical output:</u></em> 2-D plots of the 3 complex coordinates in C<sup>3</sup><br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string("The 3 (2-D) coordinates are plotted in a single row. The all-negative quadrants <br />")
+      +std::string("are shown. A consequence is that if the unit cells have not been Selling/Delone<br />")
+      +std::string("reduced, then points will plot outside of that quadrant.<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl; 
       std::cout << " } else {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>")+std::string(";") << std::endl;
+
       std::cout << " }" << std::endl;
       std::cout << " return true;" << std::endl;
       std::cout << "}" << std::endl;
+
       std::cout << "" << std::endl;
       std::cout << "function pfloat(pfield){" << std::endl;
       std::cout << "    // validate for non-negative float   " << std::endl;
@@ -1132,7 +1681,7 @@ std::string plaintext2html(std::string & dst, std::string src){
          std::cout << "<tr><td colspan=\"3\">string_to_file of"+tmp_lrl_web+"/operation_"+twodig_array[numop]+" failed</td></tr>"<<std::endl;
       }
       std::string xprocess_next_output=
-        std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/process_next_output.bash")+
+        std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/")+string("")+string("process_next_output.bash")+
         std::string(" ")+lrl_web_output+std::string(" ")+path+std::string(" ")+oppath;
         // std::cout << "<tr><td colspan=\"3\">" << xprocess_next_output <<"</td></tr>" << std::endl;
       char outlength[128];
@@ -1214,6 +1763,8 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::cout << "  <option "+selected+"value=\"CmdToS6L\"> compute linearized S6 or Root Invariant version of cells</option>" << std::endl;
       selected=operation.compare("CmdToU")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdToU\"> compute unsorted Dirichlet cells (dc7unsrt)</option>" << std::endl;
+      selected=operation.compare("CmdToV7")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdToV7\"> compute V7 version of cells</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Reduction\">" << std::endl;
       selected=operation.compare("CmdDelone")==0?"selected ":"";
@@ -1318,16 +1869,27 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"c"+"\" style="+active+">" << std::endl;
       std::cout << "  <br />" << std::endl;
       std::cout << "  <label for=\"lrl_web_output_"+twodig_array[numop]+"\">Tool Output:</label><br />" << std::endl;
-      std::cout << "  <textarea name=\"lrl_web_output_"+twodig_array[numop]+"\" id=\"lrl_web_output_"+twodig_array[numop]+"\" rows=\"9\" cols=\"100\">" 
-        << std::endl;
+      std::cout << "  <div name=\"lrl_web_output_"+twodig_array[numop]+"\" id=\"lrl_web_output_"+twodig_array[numop]+"\"" << std::endl;
+      std::cout << "   style=\"overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;\" >" << std::endl;
       string processed_output=string(std::string("/home/")+LRL_WEB_USER+std::string("/public_html/cgi-bin/do_exec_to_buffer.bash")+" "+lrl_web_output);
       if (outlen > 0) {
-        size_t ip;
+        size_t ip, istart, iend;
         char outputbuf[outlen+1];
         do_exec_to_buffer(processed_output.c_str(),outputbuf,outlen);
         outputbuf[outlen]=0;
-        std::cout << std::string(outputbuf) << std::endl;
-        std::cout << "end" << std::endl;
+        istart=0;
+        std::cout << std::string("<font size=\"-1\">");
+        for(iend=0;iend<outlen;iend++){
+          if (outputbuf[iend]=='\n'|| outputbuf[iend]=='\r' || outputbuf[iend]==0) {
+            outputbuf[iend]=0;
+            std::cout << std::string(outputbuf+istart);
+            if (iend < outlen) {
+              std::cout << std::string("<br />") << std::endl;
+            };
+            istart=iend+1;
+          }
+        }
+        std::cout << "<br />end" << std::endl;
         if (prevoutbuflen > 0 && prevoutbuf ) {
            free(prevoutbuf);
         }
@@ -1335,15 +1897,16 @@ std::string plaintext2html(std::string & dst, std::string src){
         for (ip=0; ip<outlen+1; ip++) prevoutbuf[ip]=outputbuf[ip];
         prevoutbuflen = outlen+1;
       }
-      std::cout << "  </textarea>" << std::endl;
+      std::cout << "  </div>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"d"+"\" style="+active+">" << std::endl;
       std::cout << "  <br />" << std::endl;
       std::cout << "  <label for=\"lrl_web_help_"+twodig_array[numop]+"\">Tool Help:</label><br />" << std::endl;
-      std::cout << "  <textarea name=\"lrl_web_help_"+twodig_array[numop]+"\" id=\"lrl_web_help_"+twodig_array[numop]+"\" readonly rows=\"9\" cols=\"100\" readonly`>" << std::endl;
-      std::cout << "LRL_Web Data Inputs:  There are 5 types of input lines Except for “END”, they can be combined in any order. All these are case-insensitive. If a particular input lattice is invalid, it is rejected with a message.\n---  RANDOM: Random (valid) unit cell;\n---  Crystal lattice input: “A”, “B”, “C”, “P”, “R”, “F”, “I” followed by three axis lengths and three angles (in degrees);\n---  semicolon: lines beginning with a semicolon are treated as comments\n---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses or commas, “C” would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.\n---  END: ends the data input section\n\nExamples of unit cell inputs\n\nP 10 20 30 90 111 90\nG 100 400 900 0 -215.02 0\nS6 0 -107.51 0 7.51 -400 -792.49 \n; this is a comment\nend" << std::endl;
+      std::cout << "  <div name=\"lrl_web_help_"+twodig_array[numop]+"\" id=\"lrl_web_help_"+twodig_array[numop]+"\"" << std::endl;
+      std::cout << "  style=\"overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin;\" >" << std::endl;
+      std::cout << "<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>" << std::endl;
       std::cout << "" << std::endl;
-      std::cout << "  </textarea>" << std::endl;
+      std::cout << "  </div>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </td>" << std::endl;
       std::cout << "  </tr>" << std::endl;
@@ -1378,7 +1941,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<p>" << std::endl;
     std::cout << "</td>" << std::endl;
     std::cout << "<td>" << std::endl;
-    std::cout << "<div style=\"width:800px;height:150px;overflow:scroll;border:2px solid #0000FF;\">" << std::endl;
+    std::cout << "<div style=\"width:720px;height:150px;overflow:scroll;border:2px solid #0000FF;\">" << std::endl;
     std::cout << "<font size=\"2\">" << std::endl;
     std::cout << "<table border=2>" << std::endl;
     std::cout << "<tr>" << std::endl;
@@ -1580,7 +2143,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "free encyclopedia. [Online; accessed 17-October-2022]. https://en.wikipedia.org/w/index.php?title=Theophrastus&oldid=1114534722" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<a name=\"Wilkins2021\">[Wilkins <i>et al.</i> 2021]</a> J. Wilkins, B. J. Schoville, R. Pickering, L. Gliganic, B. Collins," << std::endl;
-    std::cout << "K. S.  Brown, J. von der Meden, W. Khumalo, M. C. Meyer, S. Maape, and A. F. Blackwood,  2021. Innovative " << std::endl;
+    std::cout << "K. S.  Brown, J. von der Meden, W. Khumalo, M. C. Meyer, S. Maape, and A. F. Blackwood, `: 2021. Innovative " << std::endl;
     std::cout << "Homo sapiens behaviours 105,000 years ago in a wetter Kalahari. Nature, 592(7853), 248 -- 252." << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<a name=\"Zimmermann1985\">[Zimmermann and Burzlaff 1985]</a> H. Zimmermann and H. Burzlaff. DELOS A computer program for the " << std::endl;
@@ -1591,6 +2154,4 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "Updated 23 November 2023." << std::endl;
     std::cout << "</font>" << std::endl;
  }
-
-
-
+ 
