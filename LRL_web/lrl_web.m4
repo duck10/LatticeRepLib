@@ -287,15 +287,16 @@ int main(int argc,
       std::cout << " var ii;"  << std::endl;
       std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
       std::cout << " if (operation==\"CmdDelone\") {" << std::endl;
-
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdDelone([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
+      std::cout << " } else if (operation==\"CmdDists\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdDists([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
-
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdGen([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdLM\") {" << std::endl;
