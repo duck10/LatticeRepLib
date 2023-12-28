@@ -205,11 +205,42 @@ int main(int argc,
       std::cout << " var ii;"  << std::endl;
       std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
       std::cout << " if (operation==\"CmdDelone\") {" << std::endl;
-
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1><strong>Command: compute Selling-reduced primitive cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> Perform Selling/Delone reduction on input cells<br />")
       +std::string("<em><u>Output type:</u></em> S<sup>6</sup> form of the reduced cells of input. The Delone-reduced<br />")
       +std::string("cell has only non-acute interaxial angles.<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string(" <hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
+      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl;
+      std::cout << " } else if (operation==\"CmdDists\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute NCDist and CS6Dist distances</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> For a group of input cells, distances are reported in 3 different calculations:<br />")
+      +std::string("the simple Euclidean distance, the NCDist (G<sup>6</sup>) distance, and the CS6Dist<br />")
+      +std::string("(S<sup>6</sup>) distances. Distances are calculated in 2 different ways. The first<br />")
+      +std::string("is the rolling calculation of pairs in the list. The second is the distance of each <br />")
+      +std::string("cell from the first input cell.<br />")
+      +std::string("<em><u>Output type:</u></em> The distances for each input are output on a single line, starting with a <br />")
+      +std::string("semicolon so that it will be ignored by succeeding programs. The input cells are echoed<br />")
+      +std::string("to the output line as primitive and a, b, c &alpha;, &beta;, &gamma;, so that they <br />")
+      +std::string("can be used for further input. Each output cell is followed<br />")
+      +std::string("by its ordinal number, and the distance calculations list the ordinals for the<br />")
+      +std::string("cells used of each calculation.<br />")
       +std::string("<em><u>Parameters:</u></em> NA<br />")
       +std::string(" <hr><strong>Command: Check Input</strong><br />")
       +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
@@ -234,7 +265,6 @@ int main(int argc,
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
-
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: Generate cells of a particular type or types</strong><br />")
       +std::string("<em><u>Purpose:</u></em> To Create valid unit cells of various user-chosen types<br />")
       +std::string("<em><u>Output type:</u></em> Output cells are reported in G<sup>6</sup> form, randomly chosen cell<br />")
@@ -563,7 +593,7 @@ int main(int argc,
       +std::string("; this is a comment<br />")
       +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToG6\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command:compute G</strong><strong><sup>6</sup></strong><strong> version of cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute G</strong><strong><sup>6</sup></strong><strong> version of cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> convert to G<sup>6</sup> representation (note that lattice centering is not removed)<br />")
       +std::string("<em><u>Output type:</u></em> G<sup>6</sup><br />")
       +std::string("<em><u>Parameters:</u></em> NA<br />")

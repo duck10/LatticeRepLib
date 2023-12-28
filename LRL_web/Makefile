@@ -14,13 +14,13 @@ lrl_web.o: lrl_web.cpp
 do_posix_spawn.o: do_posix_spawn.c
 	gcc -g -c do_posix_spawn.c
 
-lrl_web.cpp: lrl_web.m4
+lrl_web.cpp: lrl_web.m4 Command_Help.m4
 	m4 --define cgicpp=1 --define lrl_web_user=$(USER) \
 	  --define lrl_web_host=$(HOST)  --define lrl_web_cgi=nlrl_web.cgi \
 	  --define lrl_web_tmp=tmp --define lrl_web_sdbx=sandbox \
 	  lrl_web.m4 > lrl_web.cpp
 
-nlrl_web.html: lrl_web.m4
+nlrl_web.html: lrl_web.m4 Command_Help.m4
 	m4 --define lrl_web_user=$(USER) --define lrl_web_host=$(HOST) \
 	  --define lrl_web_cgi=nlrl_web.cgi --define lrl_web_tmp=tmp \
 	  --define lrl_web_sdbx=sandbox \

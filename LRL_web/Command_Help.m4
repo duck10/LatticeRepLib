@@ -668,7 +668,7 @@ dnl
 dnl Command:  CmdToG6
 dnl -------------------
 define([[[LRLWEB_CmdToG6]]],[[[[[[$1 ]]]]]]dnl
-[[[[[[<strong>Command:compute G</strong><strong><sup>6</sup></strong><strong> version of ]]]]]]dnl
+[[[[[[<strong>Command: compute G</strong><strong><sup>6</sup></strong><strong> version of ]]]]]]dnl
 [[[[[[cells</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> convert to G<sup>6</sup> ]]]]]]dnl
 [[[[[[representation (note that lattice centering is not removed)$2]]]]]]dnl
