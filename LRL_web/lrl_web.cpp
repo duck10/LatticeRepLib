@@ -5,7 +5,7 @@
 // lrl_web_sdbx: 
 // lrl_web_tmp: tmp
 // LRLWEBSANDBOX: 
-// LRLWEBSBPRFX
+// LRLWEBSBPRFX: 
 // LRLWEBCGI: lrl_web.cgi
  
 #include <iostream>
@@ -206,7 +206,7 @@ int main(int argc,
       std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
       std::cout << " if (operation==\"CmdDelone\") {" << std::endl;
 
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1><strong>Command: compute Selling-reduced primitive cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1><strong>Command: compute Selling-reduced primitive cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> Perform Selling/Delone reduction on input cells<br />")
       +std::string("<em><u>Output type:</u></em> S<sup>6</sup> form of the reduced cells of input. The Delone-reduced<br />")
       +std::string("cell has only non-acute interaxial angles.<br />")
@@ -228,14 +228,14 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
 
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: Generate cells of a particular type or types</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: Generate cells of a particular type or types</strong><br />")
       +std::string("<em><u>Purpose:</u></em> To Create valid unit cells of various user-chosen types<br />")
       +std::string("<em><u>Output type:</u></em> Output cells are reported in G<sup>6</sup> form, randomly chosen cell<br />")
       +std::string("parameters for the various selected types. Lattice types are shown following <br />")
@@ -270,9 +270,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdLM\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: apply Lattice Matching algorithm to listed cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: apply Lattice Matching algorithm to listed cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> Taking the first input cells as the &quot;REFERENCE&quot;, the alternative cells of<br />")
       +std::string("each succeeding cell are examined to find a closest match to the reference lattice. <br />")
       +std::string("<p style=margin-left:40px>Andrews, Lawrence C., Herbert J. Bernstein, and Nicholas K. Sauter. <br />")
@@ -304,9 +304,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdNiggli\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute Niggli-reduced primitive cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute Niggli-reduced primitive cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> Perform Niggli reduction on input cells. The result has<br />")
       +std::string("the shortest edge lengths of the lattice and is the &quot;most orthogonal&quot; unit cell.<br />")
       +std::string("<em><u>Output type:</u></em> G<sup>6</sup> form of the reduced cells of input<br />")
@@ -328,13 +328,13 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdPath\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute path between pairs of cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute path between pairs of cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> A series of points is computed between each pair of input cells. The<br />")
       +std::string("computation is done in S<sup>6</sup>. For n input cells, n-1 paths will be<br />")
       +std::string("generated. The individual points are labeled with their ordinals and each <br />")
@@ -358,13 +358,13 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl;
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute perturbed versions of input cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute perturbed versions of input cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> For each input cell, compute slight altered versions<br />")
       +std::string("<em><u>Output type:</u></em> unit cell edge lengths and angles<br />")
       +std::string("<em><u>Parameters:</u></em> The number of perturbations of each input cell (20) and the amount of<br />")
@@ -406,9 +406,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdS6Refl\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: apply S6 reflections to input cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: apply S6 reflections to input cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> The 24 permutations of the S<sup>6</sup> cell vectors. Duplicates are removed.<br />")
       +std::string("<em><u>Output type:</u></em> S<sup>6</sup><br />")
       +std::string("<em><u>Parameters:</u></em> NA<br />")
@@ -451,9 +451,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdSella\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: apply Sella algorithm</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: apply Sella algorithm</strong><br />")
       +std::string("<em><u>Purpose:</u></em> Determine potentially higher symmetry for input cells<br />")
       +std::string("<em><u>Output type:</u></em> agreement factors for each of the Bravais lattice types<br />")
       +std::string("that fill well and reduced cell information for the input cells. Also the name<br />")
@@ -480,9 +480,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToB4\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute Bravais tetrahedron (B4)</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute Bravais tetrahedron (B4)</strong><br />")
       +std::string("<em><u>Purpose:</u></em> computes the edge vectors of the unit cell and their negative sum. These 4<br />")
       +std::string("vectors also define the Bravais tetrahedron Delone, B. N., Galiulin, R. V., <br />")
       +std::string("&amp; Shtogrin, M. I. (1975). On the Bravais types of <br />")
@@ -508,9 +508,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToC3\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute complex cell presentation (C</strong><strong><sup>3</sup></strong><strong>)</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute complex cell presentation (C</strong><strong><sup>3</sup></strong><strong>)</strong><br />")
       +std::string("<em><u>Purpose:</u></em> presents input cells as C<sup>3</sup><br />")
       +std::string("<em><u>Output type:</u></em> the C<sup>3</sup> version of the input (note that lattice centering is not removed)<br />")
       +std::string("<em><u>Parameters:</u></em> NA<br />")
@@ -536,9 +536,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToCell\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</strong><br />")
       +std::string("<em><u>Purpose:</u></em> converts input cell representations to cell parameters &lt;br&gt;<br />")
       +std::string("(note that lattice centering is not removed)<br />")
       +std::string("<em><u>Output type:</u></em> a, b, c, &alpha, &beta;, &gamma;. If the input cell is not in <br />")
@@ -561,9 +561,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToG6\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command:compute G</strong><strong><sup>6</sup></strong><strong> version of cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command:compute G</strong><strong><sup>6</sup></strong><strong> version of cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> convert to G<sup>6</sup> representation (note that lattice centering is not removed)<br />")
       +std::string("<em><u>Output type:</u></em> G<sup>6</sup><br />")
       +std::string("<em><u>Parameters:</u></em> NA<br />")
@@ -584,9 +584,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToS6\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute S<sup>6</sup> version of cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute S<sup>6</sup> version of cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> convert to S<sup>6</sup> representation (note that lattice centering is not removed)<br />")
       +std::string("<em><u>Output type:</u></em> S<sup>6</sup><br />")
       +std::string("<em><u>Parameters:</u></em> NA<br />")
@@ -607,13 +607,13 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToS6L\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:inline\";" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute linearized S</strong><strong><sup>6</sup></strong><strong> or Root Invariant version of cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute linearized S</strong><strong><sup>6</sup></strong><strong> or Root Invariant version of cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> Both of the output choices are 6-space vectors of positive numbers.<br />")
       +std::string("The values are derived by first applying Selling/Delone reduction so that all of <br />")
       +std::string("the S<sup>6</sup> values are non-positive. Then the square roots of the negative <br />")
@@ -639,9 +639,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToU\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute unsorted Dirichlet cells (dc7unsrt)</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute unsorted Dirichlet cells (dc7unsrt)</strong><br />")
       +std::string("<em><u>Purpose:</u></em> convert to the 7 parameter form related to the Dirichlet<br />")
       +std::string("(also known as Vornoi or Wigner-Seitz) unit cell. (note that lattice centering is not removed)<br />")
       +std::string("Bernstein and Andrews, 2023.<br />")
@@ -664,9 +664,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToV7\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute V<sup>7</sup> version of cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute V<sup>7</sup> version of cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> convert to the 7 parameter vector of Andrews, Bernstein, Pelletier, 1980.<br />")
       +std::string("The vector is define in terms of the Niggli reduced cell a,b,c and the Niggli reduced<br />")
       +std::string("reciprocal cell 1/a*, 1/b*, 1/c*, and the cube root of the reduced cell volume.<br />")
@@ -690,9 +690,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdVolume\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> <strong>Command: compute volumes of listed cells</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute volumes of listed cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> compute volumes of listed cells<br />")
       +std::string("<em><u>Output type:</u></em> Lattice centering, then cell parameters (a, b, c, &alpha;, &beta;, &gamma;), <br />")
       +std::string("followed by the volume<br />")
@@ -714,9 +714,9 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"PlotC3\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1> dnl Command:  PlotC3 <strong>Command: [PlotC3</strong>]<br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1> dnl Command:  PlotC3 <strong>Command: [PlotC3</strong>]<br />")
       +std::string("<em><u>Purpose:</u></em> Graphical output of multiple unit cells in C<sup>3</sup><br />")
       +std::string("<em><u>Output type:</u></em> Name of the file containing the plots<br />")
       +std::string("<em><u>Graphical output:</u></em> 2-D plots of the 3 complex coordinates in C<sup>3</sup><br />")
@@ -741,13 +741,13 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl; 
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("<font size=-1><strong>Command: Check Input</strong><br />")
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("\"<font size=-1><strong>Command: Check Input</strong><br />")
       +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
       +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
       +std::string("Warnings are output for invalid inputs.<br />")
@@ -764,7 +764,7 @@ int main(int argc,
       +std::string("G 100 400 900 0 -215.02 0<br />")
       +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
       +std::string("; this is a comment<br />")
-      +std::string("end<br /></font>")+std::string(";") << std::endl;
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl;
 
       std::cout << " }" << std::endl;
       std::cout << " return true;" << std::endl;
