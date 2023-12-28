@@ -110,7 +110,7 @@ int main()
 
 
    }
-   std::cout << "; <pre>";
+   std::cout << "; <pre style=\"font-size: 100%x; line-height: 1.0;  \">";
    PrintModifiedTable(table, false, false,'\0', " ");
 
    std::cout << ";.......... input.cells ................"
