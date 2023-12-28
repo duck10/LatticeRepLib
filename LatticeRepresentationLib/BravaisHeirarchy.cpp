@@ -240,7 +240,7 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
       "<text x=\"150\" y=\"890\" font-size=\"15\" >types of lattices: basics and applications.\" Acta Crystallographica </text>\n"
       "<text x=\"150\" y=\"910\" font-size=\"15\" >Section A : Foundations and Advances 71, no. 2 (2015) : 143 - 149.</text>\n"
 
-      "<text x=\"150\" y=\"940\" font-size=\"20\" >The dashed lines indicate \"conjugate\" relatsionships between the types.</text>\n"
+      "<text x=\"150\" y=\"940\" font-size=\"20\" >The dashed lines indicate \"conjugate\" relationships between the types.</text>\n"
       ;
 }
 
@@ -250,7 +250,7 @@ std::string FormatCellData(
 {
    std::string inputText;
    inputText +=
-      "INPUT:\n" +
+      "\nINPUT:\n" +
       input.GetStrCell() + "\n" +
       LRL_ToString("Cell ", LRL_Cell_Degrees(input.GetCell())) + "\n" +
       LRL_ToString("G6 ", G6(LRL_Cell_Degrees(input.GetCell()))) + "\n" +
@@ -268,12 +268,13 @@ std::string FormatCellData(
 
 bool BravaisHeirarchy::CheckOneBravaisChain(
    const std::vector<std::string>& bravaisChain,
-   const std::vector<DeloneFitResults>& v,
+   const std::vector<DeloneFitResults>& vDeloneFitResultsForOneLattice,
    std::map<std::string, double>& valueMap,
    std::vector<std::string>& errorList)
 {
 
    bool okCheck = true;
+   if (vDeloneFitResultsForOneLattice.size() == 1) return okCheck;
    for (size_t i = 0; i < bravaisChain.size() - 1; ++i)
    {
       const std::string name0 = (i > 0) ? bravaisChain[i - 1] : "aP";
@@ -296,8 +297,8 @@ bool BravaisHeirarchy::CheckOneBravaisChain(
             << name0 << " " << value0 << " "
             << name1 << " " << value1 << " "
             << name2 << " " << value2 
-            << "\n;##  \ts6 " << v[i].GetOriginalInput() 
-            << "\n;##\tP " << LRL_Cell_Degrees(v[i].GetOriginalInput()) << std::endl;
+            << "\n;##  \ts6 " << vDeloneFitResultsForOneLattice[i].GetOriginalInput()
+            << "\n;##\tP " << LRL_Cell_Degrees(vDeloneFitResultsForOneLattice[i].GetOriginalInput()) << std::endl;
          std::cout << std::endl;
 
          errorList.emplace_back(error);
@@ -363,15 +364,15 @@ std::map<std::string, double> BravaisHeirarchy::GetBestOfEachBravaisType(
    return bravaisMap;
 }
 
-bool BravaisHeirarchy::CheckBravaisChains(const std::vector<DeloneFitResults>& v)
+bool BravaisHeirarchy::CheckBravaisChains(const std::vector<DeloneFitResults>& vDeloneFitResultsForOneLattice)
 {
    std::vector<std::string> errorList;
-   std::map<std::string, double> valueMap = GetBestOfEachBravaisType(v);
+   std::map<std::string, double> valueMap = GetBestOfEachBravaisType(vDeloneFitResultsForOneLattice);
    bool okCheck = true;
    static const std::vector<std::vector<std::string> > bravaisChains = CreateBravaisChains();
    for (size_t i = 0; i < bravaisChains.size() - 1; ++i)
    {
-      if (!BravaisHeirarchy::CheckOneBravaisChain(bravaisChains[i], v, valueMap, errorList)) {
+      if (!BravaisHeirarchy::CheckOneBravaisChain(bravaisChains[i], vDeloneFitResultsForOneLattice, valueMap, errorList)) {
          okCheck = false;
       }
    }
