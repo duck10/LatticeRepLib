@@ -288,83 +288,83 @@ int main(int argc,
       std::cout << " let operation=document.getElementById(\"operation_\"+rownum).value;" << std::endl;
       std::cout << " if (operation==\"CmdDelone\") {" << std::endl;
 
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdDelone([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdDelone([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
 
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdGen([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdGen([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdLM\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdLM([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdLM([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdNiggli\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdNiggli([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdNiggli([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdPath\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdPath([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdPath([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdPerturb([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdPerturb([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdS6Refl\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdS6Refl([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdS6Refl([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdSella\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdSella([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdSella([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToB4\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToB4([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdToB4([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToC3\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToC3([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdToC3([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToCell\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToCell([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdToCell([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToG6\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToG6([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdToG6([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToS6\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToS6([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdToS6([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToS6L\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:inline\";" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToS6L([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdToS6L([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToU\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToU([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdToU([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToV7\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdToV7([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdToV7([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdVolume\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_CmdVolume([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_CmdVolume([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"PlotC3\") {" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEB_PlotC3([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl; 
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEB_PlotC3([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+rownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
-      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string(LRLWEBCHECKINPUT([[["<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>")]]])+std::string(";") << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+rownum).innerHTML=")+std::string("LRLWEBCHECKINPUT([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
 
       std::cout << " }" << std::endl;
       std::cout << " return true;" << std::endl;
@@ -1900,59 +1900,59 @@ function changeoperation(rownum) {
   var ii;
   let operation=document.getElementById("operation_"+rownum).value;
   if (operation=="CmdDelone") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdDelone([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdDelone([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdDists") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdDists([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdDists([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else  if (operation=="CmdGen") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:inline";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdGen([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdGen([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdLM") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdLM([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdLM([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdNiggli") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdNiggli([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdNiggli([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdPath") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:inline";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdPath([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdPath([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
   } else if (operation=="CmdPerturb") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:inline";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:none";
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_Cmd_Perturb([[["]]],[[[<br />]]],[[[<br />\n"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_Cmd_Perturb([[["]]],[[[<br />]]],[[[<br />"]]]);
  } else if (operation=="CmdS6Refl") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdS6Refl([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdS6Refl([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdSella") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdSella([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdSella([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdToB4") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToB4([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToB4([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdToC3") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToC3([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToC3([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdToCell") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToCell([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToCell([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdToG6") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToG6([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToG6([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdToS6") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToS6([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToS6([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdToS6L") {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdtos6l").style="display:inline";
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToS6L([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToS6L([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdToU") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToU([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToU([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdToV7") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToV7([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdToV7([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdVolume") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdVolume([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
- } else if (operation=="CmdPlotC3") {
-    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdPlotC3([[["<font size=-1>]]],[[[<br />\n]]],[[[<br /></font>"]]]);
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_CmdVolume([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
+ } else if (operation=="PlotC3") {
+    document.getElementById("lrl_web_help_"+rownum).innerHTML=LRLWEB_PlotC3([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else {
     document.getElementById("block_"+rownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+rownum+"b_cmdpath").style="display:none";
