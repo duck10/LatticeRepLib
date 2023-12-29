@@ -13,10 +13,10 @@ int main()
       const LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
       const DC7u du(pCell);
       if (du.GetValid()) {
-         std::cout << "u " << DC7u(pCell) << std::endl;
+         std::cout << "U " << DC7u(pCell) << std::endl;
       }
       else {
-         std::cout << "; u invalid " << DC7u(pCell) << std::endl;
+         std::cout << "; U invalid " << DC7u(pCell) << std::endl;
       }
    }
 }
