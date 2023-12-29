@@ -252,13 +252,13 @@ std::string FormatCellData(
    inputText +=
       "\nINPUT:\n" +
       input.GetStrCell() + "\n" +
-      LRL_ToString("Cell ", LRL_Cell_Degrees(input.GetCell())) + "\n" +
+      LRL_ToString(";Cell ", LRL_Cell_Degrees(input.GetCell())) + "\n" +
       LRL_ToString("G6 ", G6(LRL_Cell_Degrees(input.GetCell()))) + "\n" +
       LRL_ToString("S6 ",S6(LRL_Cell_Degrees(input.GetCell()))) + "\n";
 
    inputText +=
       "\nSELLING REDUCED:\n" +
-      LRL_ToString("Cell ", LRL_Cell_Degrees(reducedCell)) + "\n" +
+      LRL_ToString(";Cell ", LRL_Cell_Degrees(reducedCell)) + "\n" +
       LRL_ToString("G6 ", G6((reducedCell))) + "\n" +
       LRL_ToString("S6 ", S6((reducedCell))) + "\n";
 
