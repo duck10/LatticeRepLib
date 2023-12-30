@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
    {
       for (size_t i = 0; i < RIs.size(); ++i) {
          std::cout << "RI " << RI::ResetZeros(RIs[i].first) << std::endl
-            << ": " << RIs[i].second << std::endl;
+            << "; " << RIs[i].second << std::endl;
       }
    }
 
