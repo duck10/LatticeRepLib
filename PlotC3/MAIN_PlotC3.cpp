@@ -6,6 +6,7 @@
 #include "LRL_ToString.h"
 #include "LRL_DataToSVG.h"
 #include "LRL_CreateFileName.h"
+#include "LRL_MinMaxTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "S6.h"
 #include "LRL_Vector3.h"
@@ -162,6 +163,18 @@ std::string PrepareLegend(const double x, const double y, const std::vector<S6>&
    return "";
 }
 
+std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
+   double mins6 = DBL_MAX;
+   double maxs6 = -mins6;
+
+   for (size_t i = 0; i < v.size(); ++i) {
+      const S6& vv = v[i];
+      mins6 = minNC(vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]);
+      maxs6 = maxNC(vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]);
+   }
+   return { mins6,maxs6 };
+}
+
 int main(int argc, char* argv[])
 {
    std::cout << "; PlotC3" << std::endl;
@@ -175,6 +188,7 @@ int main(int argc, char* argv[])
 
    const std::vector<S6> v = PrepareCells();
    const std::string legend = PrepareLegend(600, 600, v);
+   const std::pair<double, double> minmax = GetMinMaxS6(v);
    svgOutput += legend;
 
    for (size_t whichPlot = 1; whichPlot < 4; ++whichPlot) {
@@ -196,6 +210,7 @@ int main(int argc, char* argv[])
       svgOutput += plotc3;;
    }
 
+   std::cout << "The S6 data range is " << minmax.first << " to " << minmax.second << std::endl;
    std::cout << "; Graphical output SVG file = " + filename << std::endl;
    c3plot.SendFrameToFile(filename, svgOutput + c3plot.GetFoot());
 }

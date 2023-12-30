@@ -70,7 +70,10 @@ int main(int argc, char* argv[])
    for (size_t i = 0; i < path.size(); ++i) {
       const size_t segmentOrdinal = i % pathLength;
       if (segmentOrdinal == 0) std::cout << "; path segment " << i / pathLength + 1 << std::endl;
-      std::cout << "S  " << path[i] << "  segment " << i/pathLength + 1 << "  point " << segmentOrdinal + 1 << std::endl;
+      std::cout << "S  " << path[i] 
+         << "  segment " << i/pathLength + 1 
+         << "  point " << segmentOrdinal + 1 
+         << " count " << i + 1 << std::endl;
    }
 
 }
