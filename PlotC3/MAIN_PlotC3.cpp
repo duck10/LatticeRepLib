@@ -178,7 +178,7 @@ std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
 int main(int argc, char* argv[])
 {
    std::cout << "; PlotC3" << std::endl;
-   const std::string filename = LRL_CreateFileName::Create("PLT_", "svg");
+   const std::string filename = LRL_CreateFileName::Create("PLT", "svg");
 
    C3Plot c3plot(filename, 1400, 600, 500, 500);
 
