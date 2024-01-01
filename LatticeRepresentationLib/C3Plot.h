@@ -11,8 +11,8 @@ class C3Plot {
 public:
    C3Plot(const std::string& filename, const int wx, const int wy, const int gx, const int gy);
 
-   std::string GetIntro(const std::string& filename) { return m_svgIntro; }
-   std::string GetFoot() { return m_svgFoot; }
+   std::string GetIntro(const std::string& filename) const { return m_svgIntro; }
+   std::string GetFoot() const { return m_svgFoot; }
    double CellScale(const std::vector<S6>& v);
    double CellScaleFactor();
    std::string DrawCells(const size_t scalar, const std::vector<S6>& v);

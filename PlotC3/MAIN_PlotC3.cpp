@@ -175,6 +175,15 @@ std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
    return { mins6,maxs6 };
 }
 
+static std::string AddTextAtBottom(const int x, const int y, const std::string& dataRange) {
+   //"<text   x = \"-480\" y = \"-20\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -s </text>\n"
+      const std::string s = "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y) + "\""
+         " font-size = \"20\" " +
+      " font-family = \"Arial, Helvetica, sans-serif \">" + LRL_DataToSVG(dataRange) + "</text>\n";
+      //<text x = "1000" y = "550" font - family = "Arial, Helvetica, sans-serif"> The S6 data range is - 39.3227  to  18.2384 < / text >
+         return s;
+}
+
 int main(int argc, char* argv[])
 {
    std::cout << "; PlotC3" << std::endl;
@@ -187,9 +196,13 @@ int main(int argc, char* argv[])
    svgOutput += intro;
 
    const std::vector<S6> v = PrepareCells();
-   const std::string legend = PrepareLegend(600, 600, v);
    const std::pair<double, double> minmax = GetMinMaxS6(v);
+   const std::string dataRange = LRL_ToString(" The S6 data range is ", minmax.first, " to ", minmax.second);
+   const std::string legend = PrepareLegend(600, 600, v) + AddTextAtBottom(500, 550, dataRange);
+
    svgOutput += legend;
+
+   //svgOutput += dataRange;
 
    for (size_t whichPlot = 1; whichPlot < 4; ++whichPlot) {
 
@@ -207,10 +220,12 @@ int main(int argc, char* argv[])
       if (whichPlot == 3)
          plotc3 = PlotC3(whichPlot, 1700, 500, line + "  " + cells);
 
-      svgOutput += plotc3;;
+      svgOutput += plotc3;
    }
+   std::cout << svgOutput << std::endl;
 
-   std::cout << "The S6 data range is " << minmax.first << " to " << minmax.second << std::endl;
+
+   std::cout << dataRange << std::endl;
    std::cout << "; Graphical output SVG file = " + filename << std::endl;
    c3plot.SendFrameToFile(filename, svgOutput + c3plot.GetFoot());
 }
