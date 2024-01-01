@@ -39,11 +39,13 @@ class RI /*: private BasisBase<RI> */{
 public:
    friend std::ostream& operator<< (std::ostream&, const RI&);
    friend RI operator* (const double d, const RI& v);
+   friend RI operator/ (const double d, const RI& v);
    friend class S6;
 
    RI(void);
    RI(const RI& v);
    RI(const double v[6]);
+   RI(const double d1, const double d2, const double d3, const double d4, const double d5, const double d6);
    RI(const D7& v);
    RI(const DC7u& dc7u);
    RI(const D13& d13);
@@ -96,6 +98,7 @@ public:
    void SetValid(const bool b) { m_valid = b; }
 
    double at(const size_t n) const { return m_vec[n]; }
+   static std::string GetName(void) { return "RI"; }
 
    static RI rand();
    static RI randDeloneReduced();

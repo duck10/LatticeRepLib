@@ -31,6 +31,7 @@ class V7 /*: private BasisBase<V7>*/
 public:
    friend std::ostream& operator<< (std::ostream&, const V7&);
    friend V7 operator* (const double d, const V7& v);
+   friend V7 operator/ (const double d, const V7& v);
    V7(void);
    V7(const G6& v);
    V7(const LRL_Cell& cell);
