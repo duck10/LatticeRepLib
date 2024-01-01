@@ -51,6 +51,10 @@ V7::V7(const LRL_Cell& cell) {
    *this = ConvertG6ToV7(g6);
 }
 
+V7::V7(const S6& s6) {
+   *this = ConvertG6ToV7(s6);
+}
+
 
 V7::V7(const std::vector<double>& v)
    : m_dim(v.size())
@@ -247,4 +251,9 @@ G6 V7::ConvertV7ToG6(const V7& v) {
       a* a, b* b, c* c,
          2.0 * b * c * cosAlpha, 2.0 * a * c * cosBeta, 2.0 * a * b * cosGamma});
    return g6;
+}
+
+
+V7 operator*(const double d, const V7& v7) {
+   return v7*d;
 }

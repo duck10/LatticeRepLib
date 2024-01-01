@@ -42,16 +42,22 @@ RI::RI(const RI& v)
 RI::RI(const double v[6])
    : RI()
 {
-   m_dim = 7;
-   m_vec.resize(7);
+   m_dim = 6;
+   m_vec.resize(6);
    throw; // "needs to implemented"
+}
+
+RI::RI(const double d1, const double d2, const double d3, const double d4, const double d5, const double d6)
+   :m_dim(6)
+{
+   m_vec = std::vector<double>{ d1,d2,d3,d4,d5,d6 };
 }
 
 RI::RI(const LRL_Cell& c) {
    static const double pi = 4.0 * atan(1.0);
    static const double twopi = 2.0 * pi;
-   m_dim = 7;
-   m_vec.resize(7);
+   m_dim = 6;
+   m_vec.resize(6);
    throw; // "needs to implemented"
 
    bool b1 = c.GetValid();
@@ -64,15 +70,14 @@ RI::RI(const LRL_Cell& c) {
 }
 
 RI::RI(const S6& ds)
-   : RI()
+   : RI(
+      -ds[0] * ds[0], 
+      -ds[1] * ds[1], 
+      -ds[2] * ds[2], 
+      -ds[3] * ds[3], 
+      -ds[4] * ds[4], 
+      -ds[5] * ds[5] )
 {
-   const double& p = ds[0];
-   const double& q = ds[1];
-   const double& r = ds[2];
-   const double& s = ds[3];
-   const double& t = ds[4];
-   const double& u = ds[5];
-   throw; // "needs to implemented"
 }
 
 std::vector<S6> RI::GenerateReflections(const S6& s6) {
@@ -86,8 +91,8 @@ std::vector<S6> RI::GenerateReflections(const S6& s6) {
 RI::RI(const VecN& v) {
    m_dim = 0;
    m_valid = false;
-   if (v.size() == 7) {
-      m_dim = 7;
+   if (v.size() == 6) {
+      m_dim = 6;
       m_valid = true;
       m_vec = v;
    }
@@ -96,8 +101,8 @@ RI::RI(const VecN& v) {
 RI::RI(const std::vector<double>& v) {
    m_dim = 0;
    m_valid = false;
-   if (v.size() == 7) {
-      m_dim = 7;
+   if (v.size() == 6) {
+      m_dim = 6;
       m_valid = true;
       m_vec = v;
    }
@@ -465,3 +470,36 @@ S6 RI::Resort_V2(const S6& s6) {
    //std::cout << " final out in Resort_V2 " << out << std::endl << std::endl;
    return out;
 }
+
+
+
+RI RI::operator* (const double d) const {
+   RI RI(*this);
+   RI.m_vec *= d;
+   return RI;
+}
+
+RI RI::operator/ (const double d) const {
+   RI RI(*this);
+   RI.m_vec /= d;
+   return RI;
+}
+
+RI operator*(const double d, const RI& ri) {
+   return ri*d;
+}
+
+RI operator/(const double d, const RI& ri) {
+   return ri / d;
+}
+
+std::ostream& operator<< (std::ostream& o, const RI& v) {
+   std::streamsize oldPrecision = o.precision();
+   o << std::fixed << std::setprecision(3);
+   for (size_t i = 0; i < v.size(); ++i)
+      o << std::setw(9) << v[i] << " ";
+   o << std::setprecision(oldPrecision);
+   o.unsetf(std::ios::floatfield);
+   return o;
+}
+

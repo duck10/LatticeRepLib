@@ -58,6 +58,7 @@ public:
 
    DC7u(void) ;
    DC7u(const DC7u& v);
+   DC7u(const S6& v);
    DC7u(const double v[7]);
    DC7u(const LRL_Cell& cell);
    DC7u(const VecN& v);
