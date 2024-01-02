@@ -28,67 +28,48 @@ static T Scale(const double scale, const T& t) {
 }
 
 template<typename T>
-static void Output(const double scaleFactor, const T& t) {
-   std::cout << T::GetName() + " " << Scale<T>(scaleFactor, t) << std::endl;
+static void Output(const double scaleFactor, const T& t, const std::string& label) {
+   std::cout << T::GetName() + " " << Scale<T>(scaleFactor, t) << " " + label << std::endl;
 }
 
-static std::pair<double, std::string> GetArgs(const int argc, char* argv[]) {
-   const std::vector<std::string> allowedTypes{ "S6","V7","U","DC7U","RI","S6L" };
+static std::string GetArgs(const int argc, char* argv[]) {
+   const std::vector<std::string> allowedTypes{ "S6","V7","U","DC7U","RI"/*,"S6L"*/ };
 
-   double scaleFactor = 1000;
    std::string type = "S6";
    if (argc == 1) {
       // values of parameters already set
    }
-   else if (argc == 2) {
+   else {
       const std::string arg(argv[1]);
-      if (isValidScale(arg) > 0.0) scaleFactor = atof(argv[1]);
-      else type = LRL_StringTools::strToupper(argv[1]);
+     if (std::find(allowedTypes.begin(), allowedTypes.end(), arg) != allowedTypes.end()) type = arg;
    }
-   else if (argc == 3) {
-      const std::string arg1(argv[1]);
-      const std::string arg2(argv[2]);
 
-      if (isValidScale(arg1) > 0.0) {
-         scaleFactor = atof(argv[1]);
-         const std::string testType = LRL_StringTools::strToupper(arg2);
-         if (std::find(allowedTypes.begin(), allowedTypes.end(), testType) != allowedTypes.end()) type = testType;
-      }
-      else if (isValidScale(arg2) > 0.0) {
-         scaleFactor = atof(argv[2]);
-         const std::string testType = LRL_StringTools::strToupper(arg1);
-         if (std::find(allowedTypes.begin(), allowedTypes.end(), testType) != allowedTypes.end()) type = testType;
-      }
-      else {
-         // accept defaults
-      }
-   }
-   return std::make_pair(scaleFactor, type);
+   return type;
 }
 
 int main(int argc, char* argv[])
 {
-   const std::pair<double, std::string> args = GetArgs(argc, argv);
-   const std::string& type = args.second;
-   const double& scaleFactor = args.first;
+   const std::string type = GetArgs(argc, argv);
 
    std::cout << "; Scale Vectors" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
+   const double scaleFactor = (inputList.empty()) ? 0.0 : (S6(inputList[0].GetCell())).norm();
+
    for (size_t i = 0; i < inputList.size(); ++i) {
       const S6 s6(inputList[i].GetCell());
-
+      const std::string label = (i == 0) ? "REFERENCE" : "scaled";
       if (type == "S6")
-         Output<S6>(scaleFactor, s6);
+         Output<S6>(scaleFactor, s6, label);
       else if (type == "RI")
-         Output<RI>(scaleFactor, s6);
+         Output<RI>(scaleFactor, s6, label);
       else if (type == "V7")
-         Output<V7>(scaleFactor, s6);
+         Output<V7>(scaleFactor, s6, label);
       else if (type == "U" || type == "DC7U")
-         Output<DC7u>(scaleFactor, s6);
+         Output<DC7u>(scaleFactor, s6, label);
       //else if (type == "S6L")S6L is not implemented as a class yet (2024-01-01)
-      //            Output<S6L>(scaleFactor, s6);
+      //            Output<S6L>(scaleFactor, s6, label);
       else 
-         Output<S6>(scaleFactor, s6);
+         Output<S6>(scaleFactor, s6, label);
    }
 }
