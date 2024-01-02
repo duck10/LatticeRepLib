@@ -97,9 +97,10 @@ void ColorRange::GetRGBFromRangeFraction(const double frac, unsigned long& r,
    maxhsv.m_nValue = m_maxv;
    const CRGB rgbmin(minhsv);
    const CRGB rgbmax(maxhsv);
-   r = fmod(frac, 1.0) * (rgbmax.m_nRed - rgbmin.m_nRed) + rgbmin.m_nRed;
-   g = fmod(frac, 1.0) * (rgbmax.m_nGreen - rgbmin.m_nGreen) + rgbmin.m_nGreen;
-   b = fmod(frac, 1.0) * (rgbmax.m_nBlue - rgbmin.m_nBlue) + rgbmin.m_nBlue;
+   const double newFrac = std::min(1.0, std::max(0.0, frac));
+   r = newFrac * (rgbmax.m_nRed - rgbmin.m_nRed) + rgbmin.m_nRed;
+   g = newFrac * (rgbmax.m_nGreen - rgbmin.m_nGreen) + rgbmin.m_nGreen;
+   b = newFrac * (rgbmax.m_nBlue - rgbmin.m_nBlue) + rgbmin.m_nBlue;
 }
 
 int ColorRange::ColorIndex( const double color ) {

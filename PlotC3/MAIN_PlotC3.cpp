@@ -191,7 +191,7 @@ std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int y
    const size_t nguides = 9;
    std::string out;
 
-   for ( size_t i=0; i<nguides; ++i ) 
+   for ( size_t i=0; i<=nguides; ++i ) 
    {
       const double frac = double(i) / double(nguides);
       c3plot.GetColorRange().GetRGBFromRangeFraction(frac, r, g, b);
