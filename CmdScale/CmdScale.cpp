@@ -34,14 +34,13 @@ static void Output(const double scaleFactor, const T& t, const std::string& labe
 
 static std::string GetArgs(const int argc, char* argv[]) {
    const std::vector<std::string> allowedTypes{ "S6","V7","U","DC7U","RI"/*,"S6L"*/ };
-   std::string type("S6");
    if (argc > 1)
    {
       const std::string arg(LRL_StringTools::strToupper(argv[1]));
-      if (std::find(allowedTypes.begin(), allowedTypes.end(), arg) != allowedTypes.end()) type = arg;
+      return (std::find(allowedTypes.begin(), allowedTypes.end(), arg) != allowedTypes.end()) ?
+         arg : "S6";
    }
-
-   return type;
+   return "S6";
 }
 
 int main(int argc, char* argv[])
