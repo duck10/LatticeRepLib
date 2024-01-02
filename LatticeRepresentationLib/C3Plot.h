@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "ColorTables.h"
 #include "S6.h"
 #include "LRL_Vector3.h"
 
@@ -30,6 +31,7 @@ public:
    std::vector<S6> PrepareCells();
    std::string CreatePolylineFromPoints(const size_t scalarr, const std::string& width, const std::vector<S6>& v);
    void SendFrameToFile(const std::string& sFileName, const std::string& data);
+   ColorRange GetColorRange() const { return m_colRange; }
 
 protected:
    const int m_wx;
@@ -46,6 +48,7 @@ protected:
 private:
    std::string BuildIntro(const std::string& filename);
    double m_maxScalar;
+   ColorRange m_colRange;
 
 };
 

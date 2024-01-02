@@ -80,7 +80,7 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
    //const ColorRange colRange(0xFFFF00, 0x0000FF); // should be yellow to orange
    //const ColorRange colRange(0xFFFF00, 0x00BFFF); // should be yellow to deep sky blue
    //const ColorRange colRange(0xFFFF00, 0x1589FF); // should be yellow to Neon Blue
-   const ColorRange colRange(0xFFFF00, 0x1589FF); // should be yellow to Neon Blue
+   //const ColorRange colRange(0xFFFF00, 0x1589FF); // should be yellow to Neon Blue
 
    const std::string scale = LRL_ToString(1);
    std::string transform = "<g transform = \"translate( "
@@ -96,7 +96,7 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
       unsigned long g;
       unsigned long b;
       const double frac = double(i) / double(v.size());
-      colRange.GetRGBFromRangeFraction(frac, r, g, b);
+      m_colRange.GetRGBFromRangeFraction(frac, r, g, b);
 
       //// fill="rgb(255, 0, 0)"
       //const std::string hexColor = NumberToHexString(color);
@@ -137,6 +137,7 @@ C3Plot::C3Plot(const std::string& filename, const int wx, const int wy, const in
    , m_gy(gy)
    , m_svgIntro(BuildIntro(filename))
    , m_svgFoot("\n</g> <!--end of scale=0.6-->\n</svg>")
+   , m_colRange(0xFFFF00, 0x1589FF) // should be yellow to Neon Blue
 {
 }
 

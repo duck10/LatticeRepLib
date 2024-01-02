@@ -19,7 +19,7 @@
 #include <utility>
 #include <vector>
 
-std::string PlotC3( const size_t whichPlot, const int wx, const int wy, const std::string& s) {
+static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, const std::string& s) {
    const std::string sScaler = LRL_ToString(whichPlot);
    const std::string sScalerP3 = LRL_ToString(whichPlot+3);
    //<g transform = "translate(150,975) scale(1 -1)">
@@ -69,7 +69,7 @@ std::string PlotC3( const size_t whichPlot, const int wx, const int wy, const st
    return plotc3;;
 }
 
-std::string WrapSVG(const std::string& fileName,
+static std::string WrapSVG(const std::string& fileName,
    const int wx = 1400, const int wy = 600, const std::string& s = "") {
    const std::string swx = LRL_DataToSVG_ToQuotedString(wx);
    const std::string swy = LRL_DataToSVG_ToQuotedString(wy);
@@ -78,7 +78,7 @@ std::string WrapSVG(const std::string& fileName,
    return    "\n\n" + s + "." + "</g>";
 }
 
-std::vector<S6> PrepareCells() {
+static std::vector<S6> PrepareCells() {
    std::vector<S6> v;
    LRL_ReadLatticeData reader;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
@@ -99,7 +99,7 @@ std::vector<S6> PrepareCells() {
    return v;
 }
 
-std::string CellPrecision2(const S6& s) {
+static std::string CellPrecision2(const S6& s) {
    std::stringstream os;
    const LRL_Cell_Degrees cell(s);
    os << std::fixed << std::setprecision(2);
@@ -109,7 +109,7 @@ std::string CellPrecision2(const S6& s) {
    return os.str();
 }
 
-std::string PrepareLegend(const double x, const double y, const std::vector<S6>& v) {
+static std::string PrepareLegend(const double x, const double y, const std::vector<S6>& v) {
 
    //out += commandLine;
    std::string out;
@@ -163,7 +163,7 @@ std::string PrepareLegend(const double x, const double y, const std::vector<S6>&
    return "";
 }
 
-std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
+static std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
    double mins6 = DBL_MAX;
    double maxs6 = -mins6;
 
@@ -184,6 +184,29 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
          return s;
 }
 
+std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int yint) {
+   unsigned long r;
+   unsigned long g;
+   unsigned long b;
+   const size_t nguides = 9;
+   std::string out;
+
+   for ( size_t i=0; i<nguides; ++i ) 
+   {
+      const double frac = double(i) / double(nguides);
+      c3plot.GetColorRange().GetRGBFromRangeFraction(frac, r, g, b);
+      const std::string circle = "";
+      const std::string x = LRL_ToString(xint + i * 15);
+      const std::string y = LRL_ToString(yint);
+      const std::string s = std::string("<circle  r=\"10\" stroke = \"black\" stroke-width=\"0.5\""
+         " fill= \"rgb(" + LRL_ToString(r) + ", " + LRL_ToString(g) + ", " + LRL_ToString(b) + ")\""
+         " cx=\"" + x + "\""
+         " cy=\"" + y + "\"/>\n");
+      out += s;
+   }
+   return out;
+}
+
 int main(int argc, char* argv[])
 {
    std::cout << "; PlotC3" << std::endl;
@@ -198,7 +221,10 @@ int main(int argc, char* argv[])
    const std::vector<S6> v = PrepareCells();
    const std::pair<double, double> minmax = GetMinMaxS6(v);
    const std::string dataRange = LRL_ToString(" The S6 data range is ", minmax.first, " to ", minmax.second);
-   const std::string legend = PrepareLegend(600, 600, v) + AddTextAtBottom(500, 550, dataRange);
+   const std::string legend = PrepareLegend(600, 600, v) + AddTextAtBottom(350, 550, dataRange) +
+      PrepareColorGuide(c3plot, 850, 550);
+
+
 
    svgOutput += legend;
 
@@ -222,8 +248,6 @@ int main(int argc, char* argv[])
 
       svgOutput += plotc3;
    }
-   std::cout << svgOutput << std::endl;
-
 
    std::cout << dataRange << std::endl;
    std::cout << "; Graphical output SVG file = " + filename << std::endl;
