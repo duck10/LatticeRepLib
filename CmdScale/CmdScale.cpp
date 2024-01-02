@@ -15,13 +15,6 @@
 #include "utility"
 #include <vector>
 
-static double isValidScale(const std::string& str) {
-   std::istringstream iss(str);
-   double d;
-   iss >> d >> std::ws;  // Extract value and ignore trailing whitespace
-   return d; 
-}
-
 template<typename T>
 static T Scale(const double scale, const T& t) {
    return scale * t / t.norm();
