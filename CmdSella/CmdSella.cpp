@@ -260,12 +260,12 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
 }
 
 void SendSellaToFile(const std::string& svg, const size_t ordinal) {
-   std::cout << std::endl << ";Send Sella Plot To File " << std::endl;
    std::ofstream fileout;
 
    const std::string suffix = LRL_DataToSVG(ordinal);
    const std::string filename = LRL_CreateFileName::Create("SEL_", suffix, "svg", true);
-   std::cout << filename << std::endl;
+   std::cout << std::endl << "; Send Sella Plot To File "
+    " " + filename << std::endl;
 
    FileOperations::OpenOutputFile(fileout, filename);
 

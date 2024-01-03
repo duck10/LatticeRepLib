@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-std::string NumberToHexString(const int n) {
+static std::string NumberToHexString(const int n) {
    std::stringstream ostr;
    ostr << std::hex << std::setfill('0') << std::setw(6) << n;
    return ostr.str();
@@ -31,7 +31,7 @@ double C3Plot::CellScale(const std::vector<S6>& v) {
    return maxs;
 }
 
-double C3Plot::CellScaleFactor() {
+double C3Plot::CellScaleFactor() const {
    return 0.9 * m_gx / m_maxScalar;
 }
 
@@ -141,7 +141,7 @@ C3Plot::C3Plot(const std::string& filename, const int wx, const int wy, const in
 {
 }
 
-std::string C3Plot::BuildIntro(const std::string& filename) {
+std::string C3Plot::BuildIntro(const std::string& filename) const {
    const std::string swx = LRL_DataToSVG_ToQuotedString(m_wx);
    const std::string swy = LRL_DataToSVG_ToQuotedString(m_wy);
 
@@ -154,17 +154,17 @@ std::string C3Plot::BuildIntro(const std::string& filename) {
 }
 
 
-std::vector<S6> C3Plot::PrepareCells() {
+std::vector<S6> C3Plot::PrepareCells() const {
    std::vector<S6> v;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    for (size_t i = 0; i < inputList.size(); ++i) {
-      v.push_back(S6(inputList[i].GetCell()));
+      v.emplace_back(S6(inputList[i].GetCell()));
    }
    return v;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-void C3Plot::SendFrameToFile(const std::string& sFileName, const std::string& data) {
+void C3Plot::SendFrameToFile(const std::string& sFileName, const std::string& data) const {
    std::ofstream fileout;
    FileOperations::OpenOutputFile(fileout, sFileName.c_str());
 
@@ -174,7 +174,7 @@ void C3Plot::SendFrameToFile(const std::string& sFileName, const std::string& da
          fileout << data << std::endl;
    }
    else
-      std::cout << "Could not open file " << sFileName << " for write in SVGWriter.h" << std::endl;
+      std::cout << "; Could not open file " << sFileName << " for write in SVGWriter.h" << std::endl;
 
    fileout.close();
 }

@@ -64,7 +64,7 @@ std::vector<DirichletFace> Cell_Faces::CreateFaces(const CNearTree<Vector_3>& tr
    for (size_t i = 0; i < tree.size(); ++i) {
       DirichletFace face;
       const double normFace = tree[i].Norm();
-      if (std::abs(normFace) > 1.0E-4) {
+      if (std::abs(normFace) > 1.0E-4) {  // eliminates the origin
          face.SetNormal(tree[i] / normFace);
          face.SetDistance(normFace);
          vFaces.push_back(face);
