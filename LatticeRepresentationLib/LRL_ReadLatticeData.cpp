@@ -136,7 +136,7 @@ bool LRL_ReadLatticeData::SetRandomCell( const std::string& inputDataType) {
    const G6 g6Cell = generator.SetLengthLimits( 10.0, 100.0 ).GenerateExtreme( );
    m_cell = LRL_Cell( g6Cell );
    m_cell.SetSigmas(LRL_Cell( 0.1 * m_cell[0], 0.1 * m_cell[1], 0.1 * m_cell[2], 0.1 * m_cell[3], 0.1 * m_cell[4], 0.1 * m_cell[5] ));
-   m_strCell = std::string("RANDOM (P ") + LRL_ToString( LRL_Cell_Degrees(m_cell )) + std::string(")");
+   m_strCell = std::string(";RANDOM (P ") + LRL_ToString( LRL_Cell_Degrees(m_cell )) + std::string(")");
    return true;
 }
 
