@@ -119,9 +119,9 @@ static std::string PrepareLegend(const double x, const double y, const std::vect
 
    const std::string fileLabel = sourceFile + "\n";
 
-   const std::string count =  "Number of points: " + LRL_ToString(v.size()) + "\n\n";
+   const std::string count =  "; Number of points: " + LRL_ToString(v.size()) + "\n\n";
 
-   const std::string date = LRL_CreateFileName::Create("Created ", "\n");
+   const std::string date = LRL_CreateFileName::Create("; Created ", "\n");
 
    out += fileLabel;
    out += date;
@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
       svgOutput += plotc3;
    }
 
-   std::cout << dataRange << std::endl;
+   std::cout << ": " + dataRange << std::endl;
    std::cout << "; Graphical output SVG file = " + filename << std::endl;
    c3plot.SendFrameToFile(filename, svgOutput + c3plot.GetFoot());
 }
