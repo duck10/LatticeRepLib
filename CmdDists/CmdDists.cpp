@@ -110,7 +110,7 @@ int main()
 
 
    }
-   std::cout << "; <pre style=\"font-size: 100%x; line-height: 1.0;  \">";
+   std::cout << "<pre style=\"font-size: 105%; line-height: 60%; display:inline;\" >;";
    PrintModifiedTable(table, false, false,'\0', " ");
 
    std::cout << ";.......... input.cells ................"
@@ -121,5 +121,5 @@ int main()
          << std::fixed << std::setprecision(3)
          << LRL_Cell_Degrees(vcells[i]) << "    " << i + 1 << std::endl;
    }
-   std::cout << "; </pre>" << std::endl;
+   std::cout << ";</pre>" << std::endl;
 }
