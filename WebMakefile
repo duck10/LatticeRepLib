@@ -22,7 +22,8 @@ COMMANDS  =  \
 	CmdToS6L \
 	CmdToU \
 	CmdToV7 \
-	CmdVolume
+	CmdVolume \
+	PlotC3
 
 SOURCES  =  \
 	CheckInput/CheckInput.cpp \
@@ -46,7 +47,8 @@ SOURCES  =  \
 	CmdToS6L/CmdToS6L.cpp \
 	CmdToU/CmdToU.cpp \
 	CmdToV7/CmdToV7.cpp \
-	CmdVolume/CmdVolume.cpp
+	CmdVolume/CmdVolume.cpp \
+	MAIN_PlotC3.cpp
 
 BINS  =  \
 	CheckInput/CheckInput \
@@ -69,7 +71,8 @@ BINS  =  \
 	CmdToS6L/CmdToS6L \
 	CmdToU/CmdToU \
 	CmdToV7/CmdToV7 \
-	CmdVolume/CmdVolume
+	CmdVolume/CmdVolume\
+	PlotC3/PlotC3
 
 BIN	= $(PWD)/bin
 
@@ -142,6 +145,9 @@ CmdToV/CmdToV:  CmdToV/CmdToV.cpp $(BIN)
 
 CmdVolume/CmdVolume:  CmdVolume/CmdVolume.cpp $(BIN)
 	  (cd CmdVolume;  make all; cp CmdVolume $(BIN))
+
+PlotC3/PlotC3:  PlotC3/MAIN_PlotC3.cpp $(BIN)
+	  (cd PlotC3; make akk; cp PlotC3 $(BIN))
 
 $(LRL_WEB_BINDEST):
 	mkdir -p $(LRL_WEB_BINDEST)
