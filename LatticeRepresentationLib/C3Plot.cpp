@@ -95,7 +95,7 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
       unsigned long r;
       unsigned long g;
       unsigned long b;
-      const double frac = double(i) / double(v.size());
+      const double frac = double(i) / double(v.size()-1);
       m_colRange.GetRGBFromRangeFraction(frac, r, g, b);
 
       //// fill="rgb(255, 0, 0)"

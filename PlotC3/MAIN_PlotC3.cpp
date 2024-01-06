@@ -181,7 +181,7 @@ std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int y
 
    for ( size_t i=0; i<=nguides; ++i ) 
    {
-      const double frac = double(i) / double(nguides);
+      const double frac = double(i) / double(nguides-1);
       c3plot.GetColorRange().GetRGBFromRangeFraction(frac, r, g, b);
       const std::string circle = "";
       const std::string x = LRL_ToString(xint + i * 15);
