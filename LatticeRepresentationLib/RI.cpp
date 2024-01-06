@@ -70,14 +70,24 @@ RI::RI(const LRL_Cell& c) {
 }
 
 RI::RI(const S6& ds)
-   : RI(
-      -ds[0] * ds[0], 
-      -ds[1] * ds[1], 
-      -ds[2] * ds[2], 
-      -ds[3] * ds[3], 
-      -ds[4] * ds[4], 
-      -ds[5] * ds[5] )
 {
+   throw; // this needs to be implemented differently
+   // here is the S6L code
+   //S6L::S6L(const S6 & ds)
+   //   :m_dim(6)
+   //   , m_valid(true)
+   //{
+   //   S6 s6out;
+   //   const bool b = Selling::Reduce(ds, (s6out));
+   //   const double s1 = sqrt(-s6out[0]);
+   //   const double s2 = sqrt(-s6out[1]);
+   //   const double s3 = sqrt(-s6out[2]);
+   //   const double s4 = sqrt(-s6out[3]);
+   //   const double s5 = sqrt(-s6out[4]);
+   //   const double s6 = sqrt(-s6out[5]);
+   //   m_vec = std::vector<double>{ s1, s2, s3, s4, s5, s6 };
+   //}
+
 }
 
 std::vector<S6> RI::GenerateReflections(const S6& s6) {

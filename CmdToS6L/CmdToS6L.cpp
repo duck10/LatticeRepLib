@@ -13,6 +13,7 @@
 #include "LRL_ToString.h"
 #include "RI.h"
 #include "S6.h"
+#include "S6L.h"
 #include "Selling.h"
 
 static const std::vector<MatS6> refl_one = MatS6::GetReflections();
@@ -51,7 +52,7 @@ int main(int argc, char* argv[]) {
    std::vector<S6> summary;
 
    std::vector<std::pair<S6,std::string> >RIs;
-   std::vector<S6> SLs;
+   std::vector<S6L> SLs;
    for (size_t i = 0; i < inputList.size(); ++i) {
       const LRL_Cell cell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
       S6 red;
@@ -60,7 +61,7 @@ int main(int argc, char* argv[]) {
 
       // this is the calculation (at least my attempt) to compute Bright and Kurlin's "Root Invariant"
       RIs.emplace_back(RI::MakeRI(inputList[i], s6));
-      SLs.emplace_back(MakeS6L(s6));
+      SLs.emplace_back(red);
    }
 
    if ( name.empty() || name[0]=='R')
@@ -76,7 +77,8 @@ int main(int argc, char* argv[]) {
    if ( name.empty() || name[0] =='S')
    {
       for (size_t i = 0; i < SLs.size(); ++i) {
-         std::cout << "SL " << RI::ResetZeros(SLs[i]) << std::endl;
+         S6L::ResetZeros(SLs[i]);
+         std::cout << "SL " << S6L::ResetZeros(SLs[i]) << std::endl;
       }
    }
 }

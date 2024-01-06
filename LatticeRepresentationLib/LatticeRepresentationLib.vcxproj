@@ -213,6 +213,7 @@
     <ClCompile Include="MatN.cpp" />
     <ClCompile Include="LRL_ReadLatticeData.cpp" />
     <ClCompile Include="Niggli.cpp" />
+    <ClCompile Include="S6L.cpp" />
     <ClCompile Include="S6_Matrices.cpp" />
     <ClCompile Include="S6_Ordinals.cpp" />
     <ClCompile Include="SellaBuild.cpp" />
@@ -286,6 +287,7 @@
     <ClInclude Include="LRL_MatrixBase.h" />
     <ClInclude Include="LRL_ReadLatticeData.h" />
     <ClInclude Include="Niggli.h" />
+    <ClInclude Include="S6L.h" />
     <ClInclude Include="S6M_SellingReduce.h" />
     <ClInclude Include="S6_Matrices.h" />
     <ClInclude Include="S6_Ordinals.h" />
