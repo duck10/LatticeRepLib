@@ -89,11 +89,11 @@ int main()
       const double dG6ToFirst = NCDist(dG6_0_data, vg6Red[i + 1].data());
       const double dS6ToFirst = CS6Dist(dS6_0_data, vs6Red[i + 1].data());
 
-      const std::string ordinal1 = LRL_DataToSVG("; ", i+1, "", "to ", i + 2);
-      const std::string ordinal2 = LRL_DataToSVG("", "", "", "1 to ", i + 2);
+      const std::string ordinal1 = LRL_DataToSVG("; ", i+1) + "-" +LRL_DataToSVG( i + 2);
+      const std::string ordinal2 = LRL_DataToSVG("1-", i + 2);
 
-      table.insert_center(i + 1, 0, ordinal1);
-      table.insert_center(i + 1, 4, ordinal2);
+      table.insert_center(i+1, 0, ordinal1);
+      table.insert_center(i+1, 4, ordinal2);
       table.insert_center(i+1, 1, DoubleToSting(dEuRolling)+"\0"); //
       table.insert_center(i+1, 2, DoubleToSting(dG6Rolling)+" \0");
       table.insert_center(i+1, 3, DoubleToSting(dS6Rolling)+" ||"); //
