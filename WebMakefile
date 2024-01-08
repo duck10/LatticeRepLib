@@ -11,6 +11,7 @@ COMMANDS  =  \
 	CmdPath \
 	CmdPerturb \
 	CmdS6Refl \
+	CmdScale \
 	CmdSella  \
 	CmdToB4 \
 	CmdToC3 \
@@ -35,6 +36,7 @@ SOURCES  =  \
 	CmdPath/CmdPath.cpp \
 	CmdPerturb/CmdPerturb.cpp \
 	CmdS6Refl/CmdS6Refl.cpp \
+	CmdScale/CmdScale.cpp \
 	CmdSella/CmdSella.cpp  \
 	CmdToB4/CmdToB4.cpp \
 	CmdToC3/CmdToC3.cpp \
@@ -48,7 +50,7 @@ SOURCES  =  \
 	CmdToU/CmdToU.cpp \
 	CmdToV7/CmdToV7.cpp \
 	CmdVolume/CmdVolume.cpp \
-	MAIN_PlotC3.cpp
+	PlotC3/MAIN_PlotC3.cpp
 
 BINS  =  \
 	CheckInput/CheckInput \
@@ -60,6 +62,7 @@ BINS  =  \
 	CmdPath/CmdPath \
 	CmdPerturb/CmdPerturb \
 	CmdS6Refl/CmdS6Refl \
+	CmdScale/CmdScale \
 	CmdSella/CmdSella  \
 	CmdToB4/CmdToB4 \
 	CmdToC3/CmdToC3 \
@@ -110,6 +113,9 @@ CmdPerturb/CmdPerturb:  CmdPerturb/CmdPerturb.cpp $(BIN)
 CmdS6Refl/CmdS6Refl:  CmdS6Refl/CmdS6Refl.cpp $(BIN)
 	  (cd CmdS6Refl;  make all; cp CmdS6Refl $(BIN))
 
+CmdScale/CmdScale:  CmdScale/CmdScale.cpp $(BIN)
+	  (cd CmdScale;  make all; cp CmdScale $(BIN))
+
 CmdSella/CmdSella:  CmdSella/CmdSella.cpp $(BIN)
 	  (cd CmdSella;  make all; cp CmdSella $(BIN))
 
@@ -147,7 +153,7 @@ CmdVolume/CmdVolume:  CmdVolume/CmdVolume.cpp $(BIN)
 	  (cd CmdVolume;  make all; cp CmdVolume $(BIN))
 
 PlotC3/PlotC3:  PlotC3/MAIN_PlotC3.cpp $(BIN)
-	  (cd PlotC3; make akk; cp PlotC3 $(BIN))
+	  (cd PlotC3; make all; cp PlotC3 $(BIN))
 
 $(LRL_WEB_BINDEST):
 	mkdir -p $(LRL_WEB_BINDEST)

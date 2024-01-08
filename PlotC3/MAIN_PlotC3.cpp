@@ -199,6 +199,26 @@ int main(int argc, char* argv[])
 {
    std::cout << "; PlotC3" << std::endl;
    const std::string filename = LRL_CreateFileName::Create("PLT", "svg");
+   std::string host=std::string("");
+   std::string rawprefix=std::string("");
+   std::string htmlprefix=std::string("");
+   int ii;
+   for(ii=1;ii<argc;ii++){
+       // std::cout << "argv[" << ii <<"] = "<< argv[ii] << std::endl;
+       if (std::string(argv[ii]).compare(std::string("--help"))==0) {
+           std::cout << "; PlotC3 [--help ] [--host hostname] [--rawprefix prefix] [--htmlprefix htmlprefix]" << std::endl;
+       } else if (std::string(argv[ii]).compare(std::string("--host"))==0) {
+           host = std::string(argv[++ii]);
+           // std::cout << "host: " << host;
+       } else if (std::string(argv[ii]).compare(std::string("--rawprefix"))==0) {
+           rawprefix = std::string(argv[++ii]);
+           // std::cout << "rawprefix: " << rawprefix;
+       } else if (std::string(argv[ii]).compare(std::string("--htmlprefix"))==0) {
+           htmlprefix = std::string(argv[++ii]);
+           // std::cout << "htmlprefix: " << htmlprefix;
+       } 
+   }
+  
 
    C3Plot c3plot(filename, 1400, 600, 500, 500);
 
@@ -211,8 +231,6 @@ int main(int argc, char* argv[])
    const std::string dataRange = LRL_ToString(" The S6 data range is ", minmax.first, " to ", minmax.second);
    const std::string legend = PrepareLegend(600, 600, v) + AddTextAtBottom(350, 550, dataRange) +
       PrepareColorGuide(c3plot, 850, 550);
-
-
 
    svgOutput += legend;
 
@@ -238,7 +256,18 @@ int main(int argc, char* argv[])
    }
 
    std::cout << ": " + dataRange << std::endl;
-   std::cout << "; Graphical output SVG file = " + filename << std::endl;
-   c3plot.SendFrameToFile(filename, svgOutput + c3plot.GetFoot());
+   if(htmlprefix.compare(std::string(""))==0) {
+     std::cout << std::string("; Graphical output SVG file = ")
+       + rawprefix+filename << std::endl;
+   } else {
+     if(host.compare(std::string(""))==0) {
+       std::cout << std::string("; Graphical output SVG file = <a href=\"")
+         +  htmlprefix+filename+std::string("\" target=\"_blank\">")+filename+std::string("</a>") << std::endl;
+     } else {
+       std::cout << std::string("; Graphical output SVG file = <a href=\"http://")
+         +  host+std::string("/")+htmlprefix+filename+std::string("\" target=\"_blank\">")+filename+std::string("</a>") << std::endl;
+     }
+   }
+   c3plot.SendFrameToFile(rawprefix+filename, svgOutput + c3plot.GetFoot());
 }
 
