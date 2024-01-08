@@ -86,10 +86,11 @@ S6L::S6L(const S6& ds)
 }
 
 S6L& S6L::operator= (const S6L& s6l) {
-   S6L out(s6l[0], s6l[1], s6l[2], s6l[3], s6l[4], s6l[5]);
-   out.SetValid(true);
-   out.m_dim = 6;
-   return out;
+   const  S6L out(s6l[0], s6l[1], s6l[2], s6l[3], s6l[4], s6l[5]);
+   m_vec = out.m_vec;
+   m_dim = out.m_dim;
+   m_valid = out.m_valid;
+   return *this;
 }
 
 std::vector<S6> S6L::GenerateReflections(const S6& s6) {
