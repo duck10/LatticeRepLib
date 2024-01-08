@@ -78,13 +78,7 @@ static std::string WrapSVG(const std::string& fileName,
    return    "\n\n" + s + "." + "</g>";
 }
 
-static std::vector<S6> PrepareCells() {
-   std::vector<S6> v;
-   LRL_ReadLatticeData reader;
-   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      v.push_back(S6(inputList[i].GetCell()));
-   }
+static void ListInput(const std::vector<LRL_ReadLatticeData>& inputList) {
    for (size_t i = 0; i < std::min(size_t(5), inputList.size()); ++i) {
       std::cout << inputList[i].GetLattice() << "  " << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
    }
@@ -95,6 +89,14 @@ static std::vector<S6> PrepareCells() {
          std::cout << inputList[i].GetLattice() << "  " << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
       }
 
+   }
+}
+
+static std::vector<S6> ConvertInputToS6(const std::vector<LRL_ReadLatticeData>& inputList) {
+   std::vector<S6> v;
+
+   for (size_t i = 0; i < inputList.size(); ++i) {
+      v.push_back(S6(inputList[i].GetCell()));
    }
    return v;
 }
@@ -147,8 +149,7 @@ static std::string PrepareLegend(const double x, const double y, const std::vect
    const std::string ypos = LRL_ToString(y + 3400);
    const std::string commandLine = LRL_ToString("\n edit SVG file to insert command line text\n");
 
-   std::cout << out << std::endl;
-   return "";
+   return out;
 }
 
 static std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
@@ -226,10 +227,13 @@ int main(int argc, char* argv[])
    const std::string intro = c3plot.GetIntro(filename);
    svgOutput += intro;
 
-   const std::vector<S6> v = PrepareCells();
+   LRL_ReadLatticeData reader;
+   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
+
+   const std::vector<S6> v = ConvertInputToS6(inputList);
    const std::pair<double, double> minmax = GetMinMaxS6(v);
    const std::string dataRange = LRL_ToString(" The S6 data range is ", minmax.first, " to ", minmax.second);
-   const std::string legend = PrepareLegend(600, 600, v) + AddTextAtBottom(350, 550, dataRange) +
+   const std::string legend = AddTextAtBottom(350, 550, dataRange) +
       PrepareColorGuide(c3plot, 850, 550);
 
    svgOutput += legend;
@@ -255,19 +259,25 @@ int main(int argc, char* argv[])
       svgOutput += plotc3;
    }
 
-   std::cout << ": " + dataRange << std::endl;
+   std::stringstream out;
+ //  out << ": " + dataRange << std::endl;
    if(htmlprefix.compare(std::string(""))==0) {
-     std::cout << std::string("; Graphical output SVG file = ")
+     out << std::string("; Graphical output SVG file = ")
        + rawprefix+filename << std::endl;
    } else {
      if(host.compare(std::string(""))==0) {
-       std::cout << std::string("; Graphical output SVG file = <a href=\"")
+       out << std::string("; Graphical output SVG file = <a href=\"")
          +  htmlprefix+filename+std::string("\" target=\"_blank\">")+filename+std::string("</a>") << std::endl;
      } else {
-       std::cout << std::string("; Graphical output SVG file = <a href=\"http://")
+       out << std::string("; Graphical output SVG file = <a href=\"http://")
          +  host+std::string("/")+htmlprefix+filename+std::string("\" target=\"_blank\">")+filename+std::string("</a>") << std::endl;
      }
    }
+
+
+   std::cout << out.str() << dataRange << std::endl << std::endl;
+   ListInput(inputList);
    c3plot.SendFrameToFile(rawprefix+filename, svgOutput + c3plot.GetFoot());
+   std::cout << PrepareLegend(600, 600, v);
 }
 
