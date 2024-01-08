@@ -64,6 +64,7 @@
     <ClCompile Include="PrintTable.cpp" />
     <ClCompile Include="RI.cpp" />
     <ClCompile Include="S6L.cpp" />
+    <ClCompile Include="LRL_GetCommandArgs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="PrintTable.h" />
     <ClInclude Include="RI.h" />
     <ClInclude Include="S6L.h" />
+    <ClInclude Include="LRL_GetCommandArgs.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
