@@ -29,6 +29,8 @@
 #include "NCDist.h"
 #include "Niggli.h"
 #include "PairReporter.h"
+#include "rhrand.h"
+#include "RI.h"
 #include "S6.h"
 #include "S6Dist.h"
 #include "TNear.h"
@@ -1336,9 +1338,45 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
       exit(0);
    }
 
+   static void TestRI() {
+
+/*      */{
+         std::vector<double> vtest;
+         RI ri1 = RI(vtest);
+         vtest.resize(5);
+         RI ri2 = RI(vtest);
+         vtest.resize(6);
+         RI ri3 = RI(vtest);
+         vtest.resize(6);
+         RI ri4 = RI(vtest);
+         S6 s6l;
+         RI ri5 = (s6l);
+         G6 g6x;
+         RI ri6 = (g6x);
+         std::cout << "ri1 " << ri1 << std::endl;
+         std::cout << "ri2 " << ri2 << std::endl;
+         std::cout << "ri3 " << ri3 << std::endl;
+         std::cout << "ri4 " << ri4 << std::endl;
+         std::cout << "ri5" << ri5 << std::endl;
+      }
+
+
+      std::cout << "---------------------------" << std::endl;
+      std::vector<S6> vs6;
+      for (size_t i = 0; i < 10; ++i) {
+         vs6.emplace_back(S6::randDeloneReduced());
+      }
+      for (size_t i = 0; i < vs6.size(); ++i) {
+         std::cout << RI(vs6[i]) << std::endl;
+      }
+
+      exit(0);
+   }
+
+
    int main(int argc, char* argv[])
    {
-
+      TestRI();
       C3::Test_C3();
 
       TestNiggli();
