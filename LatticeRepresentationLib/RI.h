@@ -52,6 +52,7 @@ public:
    RI(const LRL_Cell& c);
    RI(const VecN& v);
    RI(const S6& ds);
+   RI(const G6& ds);
    RI(const C3& c3);
    RI(const B4& dt);
    RI(const std::string& s);

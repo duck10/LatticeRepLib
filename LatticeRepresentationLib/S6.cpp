@@ -485,10 +485,16 @@ S6 S6::rand(const double d) {
    // the constants are chosen from results for 
    // random generation of valid cells !!!!!!!!!!!!!!!!
    // but they are somewhat random and can be adjusted.
-   if (choice < 0.055) return s6;
-   else if (choice < 0.68) return S6::RandomUnreduceOne(s6);
-   else if ( choice < 0.995) return S6::RandomUnreduceTwo(s6);
-   else return S6::RandomUnreduceThree(s6);
+
+   const S6 returner0 = s6;
+   const S6 returner1 = S6::RandomUnreduceOne(s6);
+   const S6 returner2 = S6::RandomUnreduceTwo(s6);
+   const S6 returner3 = S6::RandomUnreduceThree(s6);
+
+   if (choice < 0.055) return returner0;
+   else if (choice < 0.68) return returner1;
+   else if ( choice < 0.995) return returner2;
+   else return returner3;
 }
 
 S6 S6::randDeloneReduced(const double d) {
