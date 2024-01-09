@@ -18,6 +18,7 @@
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
+#include "LRL_GetCommandArgs.h"
 #include "LRL_LatticeMatcher.h"
 #include "LRL_MaximaTools.h"
 #include "LRL_MinMaxTools.h"
@@ -970,79 +971,79 @@ void TestOneToCentered(const size_t samples, const std::string& str) {
    }
 }
 
-   void TestToCentered() {
-      TestOneToCentered(1,""); // blank for all lattices.
-      exit(0);
+void TestToCentered() {
+   TestOneToCentered(1, ""); // blank for all lattices.
+   exit(0);
+}
+
+void TestGeneratedTypes() {
+   //std::vector<std::shared_ptr<GenerateNiggliBase> > vglb;
+   //std::vector<std::shared_ptr<GenerateNiggliBase> > vx;
+   //std::vector<std::shared_ptr<GenerateNiggliBase> > vy;
+   //std::vector<std::shared_ptr<GenerateNiggliBase> > vout;
+
+   std::vector<G6> vg;
+   vg = GenerateNiggliBase::Generate("", 10);
+   std::cout << std::endl << std::endl;
+   vg = GenerateNiggliBase::Generate("3", 10);
+   std::cout << std::endl << std::endl;
+   vg = GenerateNiggliBase::Generate("55A", 10);
+   std::cout << std::endl << std::endl;
+   vg = GenerateNiggliBase::Generate("o", 10);
+   std::cout << std::endl << std::endl;
+   vg = GenerateNiggliBase::Generate("mC", 10);
+   std::cout << std::endl << std::endl;
+   vg = GenerateNiggliBase::Generate("oS", 10);
+
+
+   //vglb = GenerateNiggliBase().Select("");
+   //vglb.clear();
+   //vglb = GenerateNiggliBase().Select("3");
+   //vx = GenerateNiggliBase().Select("1");
+   //vout = GenerateLatticesBase::VecAdd(vglb, vx);
+   //vglb.clear();
+   //vglb = GenerateNiggliBase().Select("33");
+   //vglb.clear();
+   //vglb = GenerateNiggliBase().Select("o");
+   //vglb.clear();
+   //vglb = GenerateNiggliBase().Select("mC");
+   //vglb.clear();
+
+   exit(0);
+}
+
+void MatchLatticeType(const G6& g) {
+   std::cout << "GenerateLatticesBase " << g << std::endl;
+   static const std::vector<std::shared_ptr<GenerateNiggliBase> >
+      vglb = GenerateNiggliBase().Select("");
+   for (size_t i = 0; i < vglb.size(); ++i) {
+      const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
+      G6 probe = g;
+      //Niggli::Reduce(g, probe);
+      const G6 perpV = pt->GetPerp() * probe;
+      double d = perpV.norm();
+      if (d < 1.0E-8) d = 0.0;
+
+      std::cout
+         << pt->GetITNumber() << " "
+         << pt->GetBravaisType() << " "
+         << d << std::endl;
    }
+}
 
-   void TestGeneratedTypes() {
-      //std::vector<std::shared_ptr<GenerateNiggliBase> > vglb;
-      //std::vector<std::shared_ptr<GenerateNiggliBase> > vx;
-      //std::vector<std::shared_ptr<GenerateNiggliBase> > vy;
-      //std::vector<std::shared_ptr<GenerateNiggliBase> > vout;
-
-      std::vector<G6> vg;
-      vg = GenerateNiggliBase::Generate("", 10);
-      std::cout << std::endl << std::endl;
-      vg = GenerateNiggliBase::Generate("3", 10);
-      std::cout << std::endl << std::endl;
-      vg = GenerateNiggliBase::Generate("55A", 10);
-      std::cout << std::endl << std::endl;
-      vg = GenerateNiggliBase::Generate("o", 10);
-      std::cout << std::endl << std::endl;
-      vg = GenerateNiggliBase::Generate("mC", 10);
-      std::cout << std::endl << std::endl;
-      vg = GenerateNiggliBase::Generate("oS", 10);
-
-
-      //vglb = GenerateNiggliBase().Select("");
-      //vglb.clear();
-      //vglb = GenerateNiggliBase().Select("3");
-      //vx = GenerateNiggliBase().Select("1");
-      //vout = GenerateLatticesBase::VecAdd(vglb, vx);
-      //vglb.clear();
-      //vglb = GenerateNiggliBase().Select("33");
-      //vglb.clear();
-      //vglb = GenerateNiggliBase().Select("o");
-      //vglb.clear();
-      //vglb = GenerateNiggliBase().Select("mC");
-      //vglb.clear();
-
-      exit(0);
+void TestMatchLatticeType() {
+   const std::vector<std::shared_ptr<GenerateNiggliBase> >
+      vglb = GenerateNiggliBase().Select("");
+   const G6 g(G6::randDeloneReduced());
+   G6 preProbe;
+   const bool b = Niggli::Reduce(g, preProbe);
+   for (size_t i = 0; i < vglb.size(); ++i) {
+      const G6 probe = vglb[i]->GetPrj() * preProbe;
+      std::cout << "Match to " << vglb[i]->GetITNumber() << " " << probe << std::endl;
+      MatchLatticeType(probe);
    }
-
-   void MatchLatticeType(const G6& g) {
-      std::cout << "GenerateLatticesBase " << g << std::endl;
-      static const std::vector<std::shared_ptr<GenerateNiggliBase> >
-         vglb = GenerateNiggliBase().Select("");
-      for (size_t i = 0; i < vglb.size(); ++i) {
-         const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
-         G6 probe= g;
-         //Niggli::Reduce(g, probe);
-         const G6 perpV = pt->GetPerp() * probe;
-         double d = perpV.norm();
-         if (d < 1.0E-8) d = 0.0;
-
-         std::cout
-            << pt->GetITNumber() << " " 
-            << pt->GetBravaisType() << " "
-            << d <<std::endl;
-      }
-   }
-
-   void TestMatchLatticeType() {
-      const std::vector<std::shared_ptr<GenerateNiggliBase> >
-         vglb = GenerateNiggliBase().Select("");
-      const G6 g(G6::randDeloneReduced());
-      G6 preProbe;
-      const bool b = Niggli::Reduce(g, preProbe);
-      for (size_t i = 0; i < vglb.size(); ++i) {
-         const G6 probe = vglb[i]->GetPrj() * preProbe;
-         std::cout << "Match to " << vglb[i]->GetITNumber() << " " << probe << std::endl;
-         MatchLatticeType(probe);
-      }
-      exit(0);
-   }
+   exit(0);
+}
 
 class SellaSearchResult {
 public:
@@ -1128,7 +1129,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
    std::vector<SellaResult> sellaResult;
 
    void NiggliSearchForCenteredCell(
-      const std::shared_ptr<GenerateNiggliBase>& pt, const G6& red ) {
+      const std::shared_ptr<GenerateNiggliBase>& pt, const G6& red) {
       const G6 proj = pt->GetPrj() * red;
       const double dtest = proj.norm();
       const double dist = (pt->GetPerp() * red).norm() *
@@ -1252,7 +1253,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
          for (size_t lat = 0; lat < vglb.size(); ++lat) {
             NiggliSearchForCenteredCell(vglb[lat], red);
             vglb[lat]->GetToCenter()* red;
-            std::cout << "generated and centered " << 
+            std::cout << "generated and centered " <<
                LRL_Cell_Degrees(vglb[lat]->GetToCenter() * red) << std::endl;
          }
       }
@@ -1301,7 +1302,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
       //const LRL_Cell_Degrees referenceCell(G6("109.004	115.054	147.436	83.538	46.654	85.14"));
       const G6 referenceG6(referenceCell);
       const double referenceNorm = referenceG6.norm();
-      std::cout << "Reference" << referenceG6 << "   " << 
+      std::cout << "Reference" << referenceG6 << "   " <<
          LRL_Cell_Degrees(referenceCell) << std::endl << std::endl;
 
       for (size_t i = 0; i < 30000000; ++i) {
@@ -1309,7 +1310,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
          const G6 ran(G6::rand());
 
          G6 redTest;
-         MatG6 m= MatG6::Eye();
+         MatG6 m = MatG6::Eye();
          const bool b = Niggli::Reduce(ran, m, redTest, 0.001);
          std::cout << "m after Niggli::Reduce\n" << m << std::endl << std::endl;
          if (!b) break;
@@ -1318,7 +1319,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
          const size_t count = Niggli::GetCycles();
          const double dist = (scaledReducedRan - referenceG6).norm() / referenceNorm;
          if (dist < 0.2 && dist != 0 && count > 4) {
-            std::cout << i << " " << count << "  " << dist 
+            std::cout << i << " " << count << "  " << dist
                << "\n in main, scaled reduced ran    " << scaledReducedRan
                << "\n  ran as cell   " << LRL_Cell_Degrees(ran) << std::endl << std::endl;
             std::cout << m << std::endl << std::endl;
@@ -1326,7 +1327,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
             std::cout << " m * ran  " << m * ran << std::endl;
             std::cout << " reduced  " << redTest << std::endl << std::endl;
          }
-         if (count >20) {
+         if (count > 20) {
             std::cout << i << " " << count << "  " << dist << "     " << ran
                << "     " << LRL_Cell_Degrees(ran) << std::endl;
             std::cout << "after Niggli::Reduce\n" << m << std::endl << std::endl;
@@ -1340,7 +1341,7 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
 
    static void TestRI() {
 
-/*      */{
+      /*      */ {
          std::vector<double> vtest;
          RI ri1 = RI(vtest);
          vtest.resize(5);
@@ -1373,9 +1374,21 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
       exit(0);
    }
 
+static void TestCommandArgs(int argc, char* argv[]) {
+   const LRL_GetCommandArgs commandArgs(argc, argv);
+
+   std::cout << "arg count  " << commandArgs.GetArgc() << std::endl;
+   std::cout << "first arg " << commandArgs.GetArgv(0) << std::endl;
+   std::cout << "host  " << commandArgs.GetHost() << std::endl;
+   std::cout << "raw prefix  " << commandArgs.GetRawPrefix() << std::endl;
+   std::cout << "html prefix  " << commandArgs.GetHtmlPrefix() << std::endl;
+   std::cout << "help  " << commandArgs.GetHelp() << std::endl;
+   exit(0);
+}
 
    int main(int argc, char* argv[])
    {
+      TestCommandArgs(argc, argv);
       TestRI();
       C3::Test_C3();
 
@@ -1383,14 +1396,14 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
 
 
 
-      std::vector<std::shared_ptr<GenerateDeloneBase> > sptest = 
+      std::vector<std::shared_ptr<GenerateDeloneBase> > sptest =
          GenerateLatticeTypeExamples::CreateListOfDeloneTypes();
       for (size_t i = 0; i < sptest.size(); ++i) {
          std::cout << *sptest[i] << std::endl;
       }
       // 10 14 17 20 25 27 28 29 30 37 39 41 43 (FAILS 17 43, fixed by multiple sampling,
       // some projections were invalid lattices)
-      const std::vector<G6> vg = MakeSellaSamples(1,"57C");
+      const std::vector<G6> vg = MakeSellaSamples(1, "57C");
       TestSellaTypeSearch(vg);
       exit(0);
       TestMatchLatticeType();

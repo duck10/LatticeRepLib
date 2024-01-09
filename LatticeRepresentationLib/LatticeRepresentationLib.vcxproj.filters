@@ -64,7 +64,6 @@
     <ClCompile Include="PrintTable.cpp" />
     <ClCompile Include="RI.cpp" />
     <ClCompile Include="S6L.cpp" />
-    <ClCompile Include="LRL_GetCommandArgs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
