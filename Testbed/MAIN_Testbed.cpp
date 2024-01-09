@@ -1383,6 +1383,16 @@ static void TestCommandArgs(int argc, char* argv[]) {
    std::cout << "raw prefix = " << commandArgs.GetRawPrefix() << std::endl;
    std::cout << "html prefix = " << commandArgs.GetHtmlPrefix() << std::endl;
    std::cout << "help = " << commandArgs.GetHelp() << std::endl;
+
+   for (size_t i = 0; i < commandArgs.size(); ++i) {
+      std::cout << " int = " << commandArgs.GetIntFromArgv(i) << std::endl;;
+   }
+   for (size_t i = 0; i < commandArgs.size(); ++i) {
+      std::cout << " double = " << commandArgs.GetDoubleFromArgv(i) << std::endl;
+   }
+   for (size_t i = 0; i < commandArgs.size(); ++i) {
+      std::cout << " string = " << commandArgs.GetStringFromArgv(i) << std::endl;
+   }
    exit(0);
 }
 
