@@ -15,14 +15,16 @@ class LRL_GetCommandArgs {
    // THUS, the key values occur in TWO PLACES in this function !!!!!!!
    const std::vector<std::string> keywordList{ "--host", "--rawprefix", "--htmlprefix", "--help" };
 public:
-   LRL_GetCommandArgs(int argc, char* argv[]) : m_argc(argc), m_argv(argv) {
+   LRL_GetCommandArgs(int argc, char* argv[]) 
+      : m_argc(argc)
+      , m_args(std::vector<std::string>{ argv, argv + argc }) // Create vector from argv
+   {
       std::unordered_map<std::string, std::string> argMap;
 
-      for (int i = 1; i < argc; ++i) {
-         const std::string& arg = argv[i];
-         for (std::string key : keywordList) {
-            if (startsWith(arg, key)) {
-               argMap[key] = arg;
+      for (auto arg: m_args) {
+         for (std::string keyword : keywordList) {
+            if (startsWith(arg, keyword)) {
+               argMap[keyword] = arg;
                break;
             }
          }
@@ -35,33 +37,33 @@ public:
    }
 
    // Access functions for private members
-   size_t size() const { return GetArgc(); }
+   size_t size() const { return m_argc; }
    int GetArgc() const { return m_argc; }
-   char** GetArgv() const { return m_argv; }
-   char* GetArgv(const int n) const { return m_argv[n]; }
+   std::vector<std::string> GetArgv() const { return m_args; }
+   std::string GetArgv(const int n) const { return m_args[n]; }
    std::string GetHost() const { return m_host; }
    std::string GetRawPrefix() const { return m_rawprefix; }
    std::string GetHtmlPrefix() const { return m_htmlprefix; }
    std::string GetHelp() const { return m_help; }
 
    double GetDoubleFromArgv(const size_t n) const {
-      const std::string arg1 = m_argv[n];
+      const std::string arg1 = m_args[n];
       return std::atof(arg1.c_str());
    }
 
    int GetIntFromArgv(const size_t n) const {
-      const std::string arg1 = m_argv[n];
+      const std::string arg1 = m_args[n];
       return std::atoi(arg1.c_str());
    }
 
    std::string GetStringFromArgv(const size_t n) const {
-      const std::string arg = m_argv[n];
+      const std::string arg = m_args[n];
       return arg;
    }
 
 private:
    int m_argc;
-   char** m_argv;
+   std::vector<std::string> m_args;
    std::string m_host;
    std::string m_rawprefix;
    std::string m_htmlprefix;
