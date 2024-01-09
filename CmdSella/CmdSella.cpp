@@ -231,7 +231,8 @@ static int ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDelon
    return toReturn;
 }
 
-std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLatticeData& input) {
+std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLatticeData& input,
+   const std::string& filename) {
    MatS6 oneReductionMatrix;
    const std::vector<LRL_ReadLatticeData> oneInput(1, input);
    const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
@@ -243,6 +244,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    if (doProduceSellaGraphics) BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
 
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
+   std::cout << "; Graphics output will go to file " << filename << std::endl;
 
    std::cout << "; reported distances and zscores (in A^2)" << std::endl;
    if (!vDeloneFitResultsForOneLattice.empty()) std::cout << "; projected best fits" << std::endl;
@@ -259,13 +261,8 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
       input, oneLattice, scores);
 }
 
-void SendSellaToFile(const std::string& svg, const size_t ordinal) {
+std::string SendSellaToFile(const std::string& svg, const std::string& filename) {
    std::ofstream fileout;
-
-   const std::string suffix = LRL_DataToSVG(ordinal);
-   const std::string filename = LRL_CreateFileName::Create("SEL_", suffix, "svg", true);
-   std::cout << std::endl << "; Send Sella Plot To File "
-    " " + filename << std::endl;
 
    FileOperations::OpenOutputFile(fileout, filename);
 
@@ -278,6 +275,17 @@ void SendSellaToFile(const std::string& svg, const size_t ordinal) {
       std::cout << "Could not open file " << filename << " for write in SendSellaToFile.h" << std::endl;
 
    fileout.close();
+   return filename;
+}
+
+static std::vector<std::string> CreateAllFileNames(const size_t n) {
+   std::vector<std::string> out;
+
+   for (size_t i = 0; i < n; ++i) {
+   const std::string filename = LRL_CreateFileName::Create("SEL", LRL_DataToSVG(i+1), "svg", true);
+   out.emplace_back(filename);
+   }
+   return out;
 }
 
 int main(int argc, char* argv[])
@@ -309,11 +317,21 @@ int main(int argc, char* argv[])
 p 10 10 10  90 90 91
 end
 */
-   for ( size_t i=0; i<inputList.size(); ++i )
-   {
-      const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i]);
-      if (doProduceSellaGraphics) SendSellaToFile(svgOutput, i);
 
+   const std::vector<std::string> names = CreateAllFileNames(inputList.size());
+   for (size_t i = 0; i < inputList.size(); ++i)
+   {
+      std::cout << std::endl << "; Send Sella Plot for case " << i+1 << " To File " + names[i];
+   }
+   std::cout << std::endl;
+   std::cout << std::endl;
+
+   for (size_t i = 0; i < inputList.size(); ++i)
+   {
+      std::cout << "----------------------------------------------------------" << std::endl;
+      std::cout << "; SELLA results for input case " << i + 1 << std::endl;
+      const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i], names[i]);
+      if (doProduceSellaGraphics) SendSellaToFile(svgOutput, names[i]);
    }
 
 }
