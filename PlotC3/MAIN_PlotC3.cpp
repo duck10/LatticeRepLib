@@ -165,11 +165,9 @@ static std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
 }
 
 static std::string AddTextAtBottom(const int x, const int y, const std::string& dataRange) {
-   //"<text   x = \"-480\" y = \"-20\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -s </text>\n"
       const std::string s = "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y) + "\""
          " font-size = \"20\" " +
       " font-family = \"Arial, Helvetica, sans-serif \">" + LRL_DataToSVG(dataRange) + "</text>\n";
-      //<text x = "1000" y = "550" font - family = "Arial, Helvetica, sans-serif"> The S6 data range is - 39.3227  to  18.2384 < / text >
          return s;
 }
 
@@ -238,8 +236,6 @@ int main(int argc, char* argv[])
 
    svgOutput += legend;
 
-   //svgOutput += dataRange;
-
    for (size_t whichPlot = 1; whichPlot < 4; ++whichPlot) {
 
       std::string line;
@@ -260,7 +256,6 @@ int main(int argc, char* argv[])
    }
 
    std::stringstream out;
- //  out << ": " + dataRange << std::endl;
    if(htmlprefix.compare(std::string(""))==0) {
      out << std::string("; Graphical output SVG file = ")
        + rawprefix+filename << std::endl;
