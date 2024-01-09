@@ -1377,12 +1377,12 @@ std::ostream& operator<< (std::ostream& o, const SellaSearchResult& sr) {
 static void TestCommandArgs(int argc, char* argv[]) {
    const LRL_GetCommandArgs commandArgs(argc, argv);
 
-   std::cout << "arg count  " << commandArgs.GetArgc() << std::endl;
-   std::cout << "first arg " << commandArgs.GetArgv(0) << std::endl;
-   std::cout << "host  " << commandArgs.GetHost() << std::endl;
-   std::cout << "raw prefix  " << commandArgs.GetRawPrefix() << std::endl;
-   std::cout << "html prefix  " << commandArgs.GetHtmlPrefix() << std::endl;
-   std::cout << "help  " << commandArgs.GetHelp() << std::endl;
+   std::cout << "arg count = " << commandArgs.GetArgc() << std::endl;
+   std::cout << "first arg = " << commandArgs.GetArgv(0) << std::endl;
+   std::cout << "host = " << commandArgs.GetHost() << std::endl;
+   std::cout << "raw prefix = " << commandArgs.GetRawPrefix() << std::endl;
+   std::cout << "html prefix = " << commandArgs.GetHtmlPrefix() << std::endl;
+   std::cout << "help = " << commandArgs.GetHelp() << std::endl;
    exit(0);
 }
 
