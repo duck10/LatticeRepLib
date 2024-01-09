@@ -185,7 +185,6 @@
     <ClCompile Include="CellInputData.cpp" />
     <ClCompile Include="LRL_Cell_Degrees.cpp" />
     <ClCompile Include="LRL_CoordinateConversionMatrices.cpp" />
-    <ClCompile Include="LRL_GetCommandArgs.cpp" />
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
     <ClCompile Include="MatD13.cpp" />
     <ClCompile Include="MatDC7u.cpp" />
