@@ -154,12 +154,12 @@ static std::string PrepareLegend(const double x, const double y, const std::vect
 
 static std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
    double mins6 = DBL_MAX;
-   double maxs6 = -mins6;
+   double maxs6 = -DBL_MAX;
 
    for (size_t i = 0; i < v.size(); ++i) {
       const S6& vv = v[i];
-      mins6 = minNC(vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]);
-      maxs6 = maxNC(vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]);
+      mins6 = minNC(mins6, vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]);
+      maxs6 = maxNC(maxs6, vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]);
    }
    return { mins6,maxs6 };
 }
