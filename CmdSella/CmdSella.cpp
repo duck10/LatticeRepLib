@@ -318,11 +318,15 @@ p 10 10 10  90 90 91
 end
 */
 
-   const std::vector<std::string> names = CreateAllFileNames(inputList.size());
-   for (size_t i = 0; i < inputList.size(); ++i)
-   {
-      std::cout << std::endl << "; Send Sella Plot for case " << i+1 << " To File " + names[i];
+   const std::vector<std::string> filenames =
+      LRL_CreateFileName::CreateListOfFilenames(inputList.size(), "SEL", "svg");
+
+   for (size_t whichCell = 0; whichCell < inputList.size(); ++whichCell) {
+      std::cout << "; Send Sella Plot to graphics file " 
+         << filenames[whichCell]<< " for case " 
+         << whichCell+1 << std::endl;
    }
+
    std::cout << std::endl;
    std::cout << std::endl;
 
@@ -330,8 +334,8 @@ end
    {
       std::cout << "----------------------------------------------------------" << std::endl;
       std::cout << "; SELLA results for input case " << i + 1 << std::endl;
-      const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i], names[i]);
-      if (doProduceSellaGraphics) SendSellaToFile(svgOutput, names[i]);
+      const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i], filenames[i]);
+      if (doProduceSellaGraphics) SendSellaToFile(svgOutput, filenames[i]);
    }
 
 }

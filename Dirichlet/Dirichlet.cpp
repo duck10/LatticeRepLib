@@ -217,7 +217,7 @@ static std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections(co
             Intersection intersection = Intersection::FindIntersectionForThreeFaces(dirichletFaces[i1], dirichletFaces[i2], dirichletFaces[i3]);
 
             const double d = intersection.GetCoord()[0];
-            std::cout << i1 << " " << i2 << " " << i3 << "    "<< intersection.GetCoord() << "    " << d << std::endl;
+            //std::cout << i1 << " " << i2 << " " << i3 << "    "<< intersection.GetCoord() << "    " << d << std::endl;
             const bool b1 = !(d <= 0.0);
             const bool b2 = !(d > 0.0);
             const bool b_both = b1 && b2; // for test for indefinite value
@@ -448,7 +448,7 @@ void DirichletCell::ProcessInputCell(const std::string& lattice, const LRL_Cell&
    const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(tree);
 
 
-   ListFaces(m_cart, dirichletFaces);
+   //ListFaces(m_cart, dirichletFaces);
 
 
 
