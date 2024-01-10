@@ -12,14 +12,14 @@ public:
 
    size_t size() { return m_tree.size(); }
 
-   static std::vector<MatS6> Investigate_S6_Boundaries::CreateS6ReductionMatrices();
-   void Investigate_S6_Boundaries::CreateS6ReductionMatrices24();
+   static std::vector<MatS6> CreateS6ReductionMatrices();
+   void CreateS6ReductionMatrices24();
 
    template<typename T>
    CNearTree<S6> Unique(const T& tree) const {
       CNearTree<S6> newTree(m_tree);
 
-      for (size_t i = 0; i < tree.size()) {
+      for (size_t i = 0; i < tree.size(); ++i) {
          if (m_tree.NearestNeighbor(tree[i], m_radiusOfConfusion) == m_tree.end()) {
             newTree.insert(tree[i]);
          }
