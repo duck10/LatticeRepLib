@@ -23,7 +23,7 @@ public:
 
       for (auto arg: m_args) {
          for (std::string keyword : keywordList) {
-            if (startsWith(arg, keyword)) {
+            if (arg.starts_with( keyword)) {
                argMap[keyword] = arg;
                break;
             }

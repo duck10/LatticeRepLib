@@ -740,25 +740,25 @@ Matrix_3x3 MakeMatrix(const LRL_Cell_Degrees& reference, const LRL_Cell_Degrees&
 }
 
 void Matrices() {
-   const std::vector<MatS6>  vm = MatS6::GetReflections();
-   const LRL_Cell cell("1 7 20 66 77 88:");
+   //const std::vector<MatS6>  vm = MatS6::GetReflections();
+   //const LRL_Cell cell("1 7 20 66 77 88:");
 
-   for (size_t i = 0; i < vm.size(); ++i) {
-      const LRL_Cell_Degrees cd = vm[i] * S6(cell);
-      const Matrix_3x3 m = MakeMatrix(cell, cd);
-      const double d = m[0] + 19191;
-      const bool b = m[0] == -19191;
-      if (m[0] != -19191) {
-         std::cout << cd << std::endl;
-         std::cout << vm[i] << std::endl;
-         std::cout << m << std::endl;
-         const std::string st = LRL_MaximaTools::MaximaFromMat(m);
-         //std::cout << LRL_MaximaTools::MaximaFromMat(m) << std::endl;
-      }
-      else {
-         const int i19191 = 19191;
-      }
-   }
+   //for (size_t i = 0; i < vm.size(); ++i) {
+   //   const LRL_Cell_Degrees cd = vm[i] * S6(cell);
+   //   const Matrix_3x3 m = MakeMatrix(cell, cd);
+   //   const double d = m[0] + 19191;
+   //   const bool b = m[0] == -19191;
+   //   if (m[0] != -19191) {
+   //      std::cout << cd << std::endl;
+   //      std::cout << vm[i] << std::endl;
+   //      std::cout << m << std::endl;
+   //      const std::string st = LRL_MaximaTools::MaximaFromMat(m);
+   //      //std::cout << LRL_MaximaTools::MaximaFromMat(m) << std::endl;
+   //   }
+   //   else {
+   //      const int i19191 = 19191;
+   //   }
+   //}
    exit(0);
 }
 
@@ -1448,9 +1448,9 @@ static void TestCommandArgs(int argc, char* argv[]) {
       CountCycles();
       ConvertCellsToC3_Assym();
 
-      const S6 s1 = C3("-10 -11- -90 -1190 -190 -190");
-      const S6 s2 = C3("-10 -100 -200 -100 -200-200");
-      TestDistance(s1.data(), s2.data());
+      //const S6 s1 = C3("-10 -11- -90 -1190 -190 -190");
+      //const S6 s2 = C3("-10 -100 -200 -100 -200-200");
+      //TestDistance(s1.data(), s2.data());
       MakeBoundaryTransforms();
       //ComplexCell(S6(" 0 0 0 200  0 100"));
       //ComplexCell(S6(" 0 0 0 100 100 100"));
