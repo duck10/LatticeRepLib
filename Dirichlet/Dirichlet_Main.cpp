@@ -149,6 +149,27 @@ std::vector<ANGLESFORFACES> CreateSeriesOfImages(const ANGLESFORFACES& inputRing
    return vout;
 }
 
+std::vector<Vector_3> GetVerticesFromFaces(const ANGLESFORFACES& faces) {
+   CNearTree<Vector_3> tree;
+   double maxCoord = -DBL_MAX;
+   std::vector<Vector_3> unique;
+
+   for (size_t face = 0; face < faces.size(); ++face) {
+      const ANGLELIST& thisFace = faces[face];
+      for (size_t face = 0; face < thisFace.size(); ++face) {
+         const ANGLE_COORDS thisVertex = thisFace[face];  //this needs to move out of here so scale doesn't change with rotation
+         maxCoord = std::max(maxCoord, thisVertex.second[0]);
+         maxCoord = std::max(maxCoord, thisVertex.second[1]);
+         maxCoord = std::max(maxCoord, thisVertex.second[2]);
+         if (tree.NearestNeighbor(1.0E-4, thisVertex.second) == tree.end()) {
+            tree.insert(thisVertex.second);
+            unique.emplace_back(thisVertex.second);
+         }
+      }
+   }
+   return unique;
+}
+
 std::vector<std::string> DrawDirichletRings(const ANGLESFORFACES& newRinged) {
    const ANGLESFORFACES sorted = Z_SortAllFaces(newRinged);
 
@@ -162,44 +183,10 @@ std::vector<std::string> DrawDirichletRings(const ANGLESFORFACES& newRinged) {
    double maxCoord = -DBL_MAX;
    const ANGLESFORFACES faces(RotateAllFaces(m1, sorted));
 
-   // Create a new method for ordering drawing
-   // first draw the forground using polyline fill
-   // next draw the background, no fill, gray lines
-   // finally draw the forground again, no fill, black lines
-
-   //<g transform = "translate(250,90) scale(1 1)" >
-   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "15.7855, -15.2339  19.17, 75.8979  77.7555, 92.6984  79.5926, 91.5267  76.2081, 0.394895  17.6225, -16.4057  " / >
-   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "-40.2248, 0.394895  -36.8404, 91.5267  19.17, 75.8979  15.7855, -15.2339  " / >
-   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "79.1793, 95.3843  81.0163, 94.2125  79.5926, 91.5267  77.7555, 92.6984  " / >
-   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "36.831, -51.0131  17.6225, -16.4057  76.2081, 0.394895  95.4166, -34.2125  " / >
-   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "-35.4166, 94.2125  23.169, 111.013  79.1793, 95.3843  77.7555, 92.6984  19.17, 75.8979  -36.8404, 91.5267  " / >
-   //   <polygon fill = "CYAN " stroke = "black" stroke - opacity = "0.1" stroke - width = "2" points = "-21.0163, -34.2125  -40.2248, 0.394895  15.7855, -15.2339  17.6225, -16.4057  36.831, -51.0131  -19.1793, -35.3843  " / >
-   //   <polygon fill = "CYAN " stroke = "black" stroke - width = "2" points = "96.8404, -31.5267  95.4166, -34.2125  76.2081, 0.394895  79.5926, 91.5267  81.0163, 94.2125  100.225, 59.6051  " / >
-   //   <polygon fill = "NONE " stroke = "GRAY" stroke - width = "1" points = "-19.5926, -31.5267  -16.2081, 59.6051  -35.4166, 94.2125  -36.8404, 91.5267  -40.2248, 0.394895  -21.0163, -34.2125  " / >
-   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "42.3775, 76.4057  44.2145, 75.2339  100.225, 59.6051  81.0163, 94.2125  79.1793, 95.3843  23.169, 111.013  " / >
-   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "-17.7555, -32.6984  -19.1793, -35.3843  36.831, -51.0131  95.4166, -34.2125  96.8404, -31.5267  40.83, -15.8979  " / >
-   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "-16.2081, 59.6051  42.3775, 76.4057  23.169, 111.013  -35.4166, 94.2125  " / >
-   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "-19.5926, -31.5267  -21.0163, -34.2125  -19.1793, -35.3843  -17.7555, -32.6984  " / >
-   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "40.83, -15.8979  96.8404, -31.5267  100.225, 59.6051  44.2145, 75.2339  " / >
-   //   <polygon fill = "NONE" stroke = "GRAY" stroke - width = "1" points = "-19.5926, -31.5267  -17.7555, -32.6984  40.83, -15.8979  44.2145, 75.2339  42.3775, 76.4057  -16.2081, 59.6051  " / >
-   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "15.7855, -15.2339  19.17, 75.8979  77.7555, 92.6984  79.5926, 91.5267  76.2081, 0.394895  17.6225, -16.4057  " / >
-   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "-40.2248, 0.394895  -36.8404, 91.5267  19.17, 75.8979  15.7855, -15.2339  " / >
-   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "79.1793, 95.3843  81.0163, 94.2125  79.5926, 91.5267  77.7555, 92.6984  " / >
-   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "36.831, -51.0131  17.6225, -16.4057  76.2081, 0.394895  95.4166, -34.2125  " / >
-   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "-35.4166, 94.2125  23.169, 111.013  79.1793, 95.3843  77.7555, 92.6984  19.17, 75.8979  -36.8404, 91.5267  " / >
-   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "-21.0163, -34.2125  -40.2248, 0.394895  15.7855, -15.2339  17.6225, -16.4057  36.831, -51.0131  -19.1793, -35.3843  " / >
-   //   <polygon fill = "NONE" stroke = "black" stroke - opacity = "0." stroke - width = "2" points = "96.8404, -31.5267  95.4166, -34.2125  76.2081, 0.394895  79.5926, 91.5267  81.0163, 94.2125  100.225, 59.6051  " / >
-   //   < / g>
-
-
-
-
-
-
    for (size_t face = 0; face < faces.size(); ++face) {
       const ANGLELIST& thisFace = faces[face];
       for (size_t face = 0; face < thisFace.size(); ++face) {
-         const ANGLE_COORDS& thisVertex = thisFace[face];  //this needs to move out of here so scale doesn't change with rotation
+         const ANGLE_COORDS thisVertex = thisFace[face];  //this needs to move out of here so scale doesn't change with rotation
          maxCoord = std::max(maxCoord, thisVertex.second[0]);
          maxCoord = std::max(maxCoord, thisVertex.second[1]);
          maxCoord = std::max(maxCoord, thisVertex.second[2]);
@@ -223,22 +210,10 @@ std::vector<std::string> DrawDirichletRings(const ANGLESFORFACES& newRinged) {
          vs.push_back(DrawOneDirichletRing(scale, faces[zandindex[i].second], zandindex[i].second));
 
       }
-
-
-      //for (size_t pass = 0; pass < 2; ++pass) {
-
-      //   for (size_t thisFace = 0; thisFace < faces.size(); ++thisFace) {
-      //      const Vector_3 cm = DirichletCell::CenterOfMassForOneFace(faces[thisFace]);
-      //      const double dotToZAxis = cm.Dot(Vector_3(0, 0, 1));
-      //      std::cout << " cm " << cm << std::endl;
-      //      std::cout << "dot to Z  " << dotToZAxis << std::endl << std::endl;
-      //      if ((pass == 0 && dotToZAxis > 0.0) ||( pass == 1 && dotToZAxis <= 0.0))
-      //         vs.push_back(DrawOneDirichletRing(scale, faces[thisFace], thisFace));
-      //   }
-      //}
    }
    return vs;
 }
+
 
 std::vector<std::string> DrawSeriesOfObjects(const std::vector<ANGLESFORFACES>& series) {
    std::vector<std::string> s;
@@ -350,7 +325,7 @@ std::string CreateStereoSVGText(const DirichletCell& dc) {
    const std::vector<ANGLESFORFACES> rings = CreateSeriesOfImages(ringed, DirichletConstants::numberOfImages, m1, m2);
    const std::vector<std::string> series = DrawSeriesOfObjects(rings);
    const std::vector<std::string> stereoImages = MadeStereo(series);
-
+   const auto vertices = GetVerticesFromFaces(ringed);
    const std::vector<Vector_3> indices = DirichletCell::RecoverIndicesOfFaces(dc.GetCartesianMatrix(), ringed);
    const std::string records = FaceRecords(ringed, indices);
    const std::string constants = ReadCellData::GetConstantsAsString();
@@ -398,38 +373,68 @@ std::vector<std::string> GetUpwardSymmetry(const std::string& s) {
 }
 
 void ListVertices(const DirichletCell& dc) {
-   const std::vector<Vector_3>& vertices = dc.GetVertices();
 
+   const ANGLESFORFACES ringed = dc.GetAnglesForFaces();;
+   const auto vertices = GetVerticesFromFaces(ringed);
+
+   std::cout << "; vertices" << std::endl;
    for (size_t i = 0; i < vertices.size(); ++i) {
-      std::cout << "; vertex " << i+1 << "  " <<CleanNearZero( vertices[i]) << std::endl;
+      std::cout << i+1 << "  " << vertices[i] << std::endl;
    }
    std::cout << std::endl;
+
 }
 
 int main() {
 
 
    LRL_ReadLatticeData reader;
-   std::cout << "; Dirichlet (Voinoi) cells" << std::endl;
+   std::cout << "; Dirichlet (Vorinoi) cells" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
    const std::vector<std::string> filenames = 
       LRL_CreateFileName::CreateListOfFilenames(inputList.size(), "DC","svg");
 
    for (size_t whichCell = 0; whichCell < inputList.size(); ++whichCell) {
-      std::cout << "; Dirichlet graphics file " << filenames[whichCell] << std::endl;
+      std::cout << "; Dirichlet graphics file " 
+         << filenames[whichCell] << " for input cell " << whichCell+1 << std::endl;
    }
+   std::cout << std::endl;
+
 
    for (size_t whichCell = 0; whichCell < inputList.size(); ++whichCell) {
+      std::cout << "; input case " << whichCell+1 << " ------------" << std::endl;
       const DirichletCell dc = (inputList[whichCell]);
-      //ListVertices(dc);
-      //std::cout << dc << std::endl;
+      //std::cout << "; vertices for input cell " << whichCell + 1 << std::endl;
+      std::cout << inputList[whichCell].GetStrCell() << std::endl;
+      ListVertices(dc);
       const std::string svg = HandleOneCell(dc);
       const std::string& fileName(filenames[whichCell]);
       if (!svg.empty())
       {
          FileOperations::Write(fileName, svg);
       }
-      std::cout << inputList[whichCell].GetStrCell() << std::endl;
    }
    exit(0);
 }
+
+// 24 vertices in a Tetrakaidecahedron. It's a 14-sided polyhedron
+
+/*
+Bard.google.com says: (which is wrong for cubic)
+Truncated Octahedron (Simple Cubic and FCC Lattices): 24 vertices
+Rhombic Dodecahedron (BCC Lattice): 14 vertices
+Hexagonal Prism (HCP Lattice): 14 vertices
+Tetrakaidecahedron (Kelvin Cell, Diamond Lattice): 24 vertices
+
+wikipedia
+FCC The truncated octahedron has 14 faces (8 regular hexagons and 6 squares), 36 edges, and 24 vertices. 
+
+the rhombic dodecahedron is a convex polyhedron with 12 congruent rhombic faces. It has 24 edges, and 14 vertices of 2 types.
+
+Hexagonal Prism 12 vertices
+
+i got 14 for FCC
+i got 8 for hexagonal prism
+i got 14 for random
+i got 6 for P cubic
+*/

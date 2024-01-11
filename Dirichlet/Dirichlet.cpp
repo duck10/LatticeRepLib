@@ -374,13 +374,16 @@ std::vector<DirichletFace> SortTheFaces(const std::vector<DirichletFace>& dirich
 
 std::vector<DirichletFace> RemoveOppositeVectors(const Matrix_3x3& inv, const std::vector<DirichletFace>& dirichletFaces) {
    std::vector<DirichletFace> v(1, dirichletFaces[0]);
-   for (size_t i = 1; i < dirichletFaces.size(); ++i) {
-      const Vector_3 v1 = inv * dirichletFaces[i - 1].GetCoord();
-      const Vector_3 v2 = inv * dirichletFaces[i].GetCoord();
-      const Vector_3 vsum = v1 + v2;
-      const double diff = vsum.norm();
-      if (diff > 1.0E-6) {
-         v.push_back(dirichletFaces[i]);
+   for (size_t i = 0; i < dirichletFaces.size() - 1; ++i) {
+      for (size_t kk = 0; kk < dirichletFaces.size(); ++kk) {
+         const Vector_3 v1 = inv * dirichletFaces[i].GetCoord();
+         const Vector_3 v2 = inv * dirichletFaces[kk].GetCoord();
+         const Vector_3 vsum = v1 + v2;
+         const double diff = vsum.norm();
+         if (diff > 1.0E-6) {
+            v.push_back(dirichletFaces[i]);
+            break;
+         }
       }
    }
    return v;
@@ -402,11 +405,13 @@ void ListFaces(const Matrix_3x3& m, const std::vector<DirichletFace>& dirichletF
    const Matrix_3x3 invCart = m.Inver();
    std::vector<DirichletFace> v = RemoveOppositeVectors(invCart, SortTheFaces(dirichletFaces));
 
+   std::cout << "Dirichlet faces" << std::endl;
    for (size_t i = 0; i < v.size(); ++i) {
       Vector_3 indices = invCart * v[i].GetCoord();
       indices = Vector_3(CleanNearZero(indices[0]), CleanNearZero(indices[1]), CleanNearZero(indices[2]));
-      std::cout << v[i].GetDistance() << " " << indices << std::endl;
+      std::cout << i+1 << "   " << v[i].GetDistance() << " " << indices << std::endl;
    }
+   std::cout << "end of Dirichlet faces" << std::endl;
 }
 
 //typedef std::pair<double, Vector_3 > ANGLE_COORDS;
@@ -415,21 +420,16 @@ void ListFaces(const Matrix_3x3& m, const std::vector<DirichletFace>& dirichletF
 
 std::vector<Vector_3> FindUniqureVertices(const ANGLESFORFACES& AFF) {
    std::vector<Vector_3> unique;
-   Vector_3 coords;
+
+   CNearTree<Vector_3> tree;
    for (size_t aff = 0; aff < AFF.size(); ++aff) {
       const ANGLELIST& anglelist = AFF[aff];
       for (size_t al = 0; al < anglelist.size(); ++al) {
-         coords = anglelist[al].second;
-         bool found = false;
-         for (size_t i = 0; i < unique.size(); ++i) {
-            if ((unique[i] - coords).norm() < 1.0E-4) {
-               found = true;
-               //break;
-            }
-         }
-         if (!found) {
+         const Vector_3& coords = anglelist[al].second;
+         if (tree.NearestNeighbor(1.03-2, coords) == tree.end()) {
             unique.emplace_back(coords);
-            break;            
+            tree.insert(coords);
+            break;
          }
       }
    }
@@ -448,7 +448,6 @@ void DirichletCell::ProcessInputCell(const std::string& lattice, const LRL_Cell&
    const std::pair<POINT_LIST, std::vector<Intersection> > v_Intersections = ComputeIntersections(tree);
 
 
-   //ListFaces(m_cart, dirichletFaces);
 
 
 
