@@ -174,9 +174,28 @@ function running(rownum) {
 
 function changeoperation(rownum) {
   var tdrownum=twodig(rownum);
+  var outdivid=document.getElementById("lrl_web_output_"+tdrownum);
   document.getElementById("lrl_web_help_"+tdrownum).scrollTop="0";
+  outdivid.scrollTop = "0";
   let operation=document.getElementById("operation_"+tdrownum).value;
-  if (operation=="CmdDelone") {
+  if (operation!="CmdGen") {
+    document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
+  }
+  if (operation!="CmdPath") {
+    document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:none";
+  }
+  if (operation!="CmdPerturb") {
+    document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
+  }
+  if (operation!="CmdScale") {
+    document.getElementById("block_"+tdrownum+"b_cmdscale").style="display:none";
+  }
+  if (operation!="CmdToS6L") {
+    document.getElementById("block_"+tdrownum+"b_cmdtos6l").style="display:none";
+  }
+  if (operation=="Dirichlet") {
+    document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1><strong>Command: Dirichlet</strong><br /><em><u>Purpose:</u></em> draw Dirichlet cells of listed cells<br />The Dirichlet cell (also known as Voronoi domain, Voronoi cell, Delaunay domain, or Wigner-Seitz cell) is the 3-D analog of Delaunay triangulation. It is the points nearest to a particular lattice point, usually the origin, rather than other lattice points.<br /><em><u>Output type:</u></em> images of Dirichlet cells in multiple orientations <br /><em><u>Parameters:</u></em> --blockorigin blkorig (0) and --blocksize blksz(10) <br />limit the portion of the listed cells drawn to prevent overload<br /><hr><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
+ } else if (operation=="CmdDelone") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1><strong>Command: compute Selling-reduced primitive cells</strong><br /><em><u>Purpose:</u></em> Perform Selling/Delone reduction on input cells<br /><em><u>Output type:</u></em> S<sup>6</sup> form of the reduced cells of input. The Delone-reduced<br />cell has only non-acute interaxial angles.<br /><em><u>Parameters:</u></em> NA<br /> <hr><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
  } else if (operation=="CmdDists") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1> <strong>Command: compute NCDist and CS6Dist distances</strong><br /><em><u>Purpose:</u></em> For a group of input cells, distances are reported in 3 different calculations:<br />the simple Euclidean distance, the NCDist (G<sup>6</sup>) distance, and the CS6Dist<br />(S<sup>6</sup>) distances. Distances are calculated in 2 different ways. The first<br />is the rolling calculation of pairs in the list. The second is the distance of each <br />cell from the first input cell.<br /><em><u>Output type:</u></em> The distances for each input are output on a single line, starting with a <br />semicolon so that it will be ignored by succeeding programs. The input cells are echoed<br />to the output line as primitive and a, b, c &alpha;, &beta;, &gamma;, so that they <br />can be used for further input. Each output cell is followed<br />by its ordinal number, and the distance calculations list the ordinals for the<br />cells used of each calculation.<br /><em><u>Parameters:</u></em> NA<br /> <hr><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
@@ -234,7 +253,7 @@ function changeoperation(rownum) {
     document.getElementById("block_"+tdrownum+"b_cmdtos6l").style="display:inline";
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1> <strong>Command: compute linearized S</strong><strong><sup>6</sup></strong><strong> or Root Invariant version of cells</strong><br /><em><u>Purpose:</u></em> Both of the output choices are 6-space vectors of positive numbers.<br />The values are derived by first applying Selling/Delone reduction so that all of <br />the S<sup>6</sup> values are non-positive. Then the square roots of the negative <br />of those values are used to create the result (linearized S<sup>6</sup>). The<br />root invariant is generated by applying sorting rules of Bright, Cooper, and Kurlin. <P style=margin-left:40px>Bright, M., Cooper, A. I., &amp; Kurlin, V. (2021). <br />Welcome to a continuous world of 3-dimensional lattices. <br />arXiv preprint arxiv:2109.11538, 2.</p> <em><u>Output type:</u></em> The type followed by the parameters.<br /><em><u>Parameters:</u></em> &quotall&quot or blank for output of both types, &quot;R&quot; for root invariant, and S for linearized S<sup>6</sup> <br /> <hr><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
  } else if (operation=="CmdToU") {
-    document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1> <strong>Command: compute unsorted Dirichlet cells (dc7unsrt)</strong><br /><em><u>Purpose:</u></em> convert to the 7 parameter form related to the Dirichlet<br />(also known as Vornoi or Wigner-Seitz) unit cell. (note that lattice centering is not removed)<br />Bernstein and Andrews, 2023.<br /><em><u>Output type:</u></em> DC7u<br /><em><u>Parameters:</u></em> NA<br /> <hr><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
+    document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1> <strong>Command: compute unsorted Dirichlet cells (dc7unsrt)</strong><br /><em><u>Purpose:</u></em> convert to the 7 parameter form related to the Dirichlet<br />(also known as Voronoi or Wigner-Seitz) unit cell. (note that lattice centering is not removed)<br />Bernstein and Andrews, 2023.<br /><em><u>Output type:</u></em> DC7u<br /><em><u>Parameters:</u></em> NA<br /> <hr><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
  } else if (operation=="CmdToV7") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1> <strong>Command: compute V<sup>7</sup> version of cells</strong><br /><em><u>Purpose:</u></em> convert to the 7 parameter vector of Andrews, Bernstein, Pelletier, 1980.<br />The vector is define in terms of the Niggli reduced cell a,b,c and the Niggli reduced<br />reciprocal cell 1/a*, 1/b*, 1/c*, and the cube root of the reduced cell volume.<br /> (note that lattice centering is not removed). Note that all 7 scalars are in the units of Angstroms.<br /><em><u>Output type:</u></em> V<sup>7</sup><br /><em><u>Parameters:</u></em> NA<br /> <hr><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
  } else if (operation=="CmdVolume") {
@@ -247,7 +266,7 @@ function changeoperation(rownum) {
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdscale").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdtos6l").style="display:none";
-    document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>"; 
+    document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>"; 
   }
   return true;
 }
@@ -419,13 +438,14 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <td align=left>
   <div id="block_01a" style="display:inline"> 
   <label for="operation_01">Select an operation:</label><br />
-  <select name="operation_01" id="operation_01" size="26" onchange="changeoperation('01')">
+  <select name="operation_01" id="operation_01" size="28" onchange="changeoperation('01')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -508,7 +528,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_01">Tool Help:</label><br />
   <div name="lrl_web_help_01" id="lrl_web_help_01" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;">
-<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
+<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
   </div>
   </div>
   </td>
@@ -544,13 +564,14 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <td align=left>
   <div id="block_02a" style="display:none"> 
   <label for="operation_02">Select an operation:</label><br />
-  <select name="operation_02" id="operation_02" size="26" onchange="changeoperation('02')">
+  <select name="operation_02" id="operation_02" size="28" onchange="changeoperation('02')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -633,7 +654,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_02">Tool Help:</label><br />
   <div name="lrl_web_help_02" id="lrl_web_help_02" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;">
-<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
+<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
   </div>
   </div>
   </td>
@@ -669,13 +690,14 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <td align=left>
   <div id="block_03a" style="display:none"> 
   <label for="operation_03">Select an operation:</label><br />
-  <select name="operation_03" id="operation_03" size="26" onchange="changeoperation('03')">
+  <select name="operation_03" id="operation_03" size="28" onchange="changeoperation('03')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -758,7 +780,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_03">Tool Help:</label><br />
   <div name="lrl_web_help_03" id="lrl_web_help_03" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;">
-<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
+<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
   </div>
   </div>
   </td>
@@ -794,13 +816,14 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <td align=left>
   <div id="block_04a" style="display:none"> 
   <label for="operation_04">Select an operation:</label><br />
-  <select name="operation_04" id="operation_04" size="26" onchange="changeoperation('04')">
+  <select name="operation_04" id="operation_04" size="28" onchange="changeoperation('04')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -883,7 +906,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_04">Tool Help:</label><br />
   <div name="lrl_web_help_04" id="lrl_web_help_04" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;">
-<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
+<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
   </div>
   </div>
   </td>
@@ -919,13 +942,14 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <td align=left>
   <div id="block_05a" style="display:none"> 
   <label for="operation_05">Select an operation:</label><br />
-  <select name="operation_05" id="operation_05" size="26" onchange="changeoperation('05')">
+  <select name="operation_05" id="operation_05" size="28" onchange="changeoperation('05')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -1008,7 +1032,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_05">Tool Help:</label><br />
   <div name="lrl_web_help_05" id="lrl_web_help_05" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;">
-<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
+<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
   </div>
   </div>
   </td>
@@ -1044,13 +1068,14 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <td align=left>
   <div id="block_06a" style="display:none"> 
   <label for="operation_06">Select an operation:</label><br />
-  <select name="operation_06" id="operation_06" size="26" onchange="changeoperation('06')">
+  <select name="operation_06" id="operation_06" size="28" onchange="changeoperation('06')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -1133,7 +1158,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_06">Tool Help:</label><br />
   <div name="lrl_web_help_06" id="lrl_web_help_06" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;">
-<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
+<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
   </div>
   </div>
   </td>
@@ -1169,13 +1194,14 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <td align=left>
   <div id="block_07a" style="display:none"> 
   <label for="operation_07">Select an operation:</label><br />
-  <select name="operation_07" id="operation_07" size="26" onchange="changeoperation('07')">
+  <select name="operation_07" id="operation_07" size="28" onchange="changeoperation('07')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -1268,7 +1294,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_07">Tool Help:</label><br />
   <div name="lrl_web_help_07" id="lrl_web_help_07" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;">
-<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
+<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
   </div>
   </div>
   </td>
@@ -1305,7 +1331,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <td align=left>
   <div id="block_08a" style="display:none"> 
   <label for="operation_08">Select an operation:</label><br />
-  <select name="operation_08" id="operation_08" size="26" onchange="changeoperation('08')">
+  <select name="operation_08" id="operation_08" size="28" onchange="changeoperation('08')">
   <option selected value="NoOp">Check Input</option>
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
@@ -1313,6 +1339,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -1395,7 +1422,7 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <br />
   <label for="lrl_web_help_08">Tool Help:</label><br />
   <div name="lrl_web_help_08" id="lrl_web_help_08" style="overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;">
-<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
+<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>
   </div>
   </div>
   </td>

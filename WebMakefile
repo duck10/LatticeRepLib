@@ -83,6 +83,9 @@ BIN	= $(PWD)/bin
 all:	$(BIN) $(COMMANDS) $(LRL_WEB_BINDEST)
 	cp $(BIN)/* $(LRL_WEB_BINDEST)
 
+sandbox:  $(BIN) $(COMMANDS) $(LRL_WEB_BINDEST)
+	cp $(BIN)/* $(LRL_WEB_BINDEST)/sandbox/
+
 $(BIN):
 	mkdir -p $(BIN)
 
