@@ -13,7 +13,6 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-
 /*static*/ std::string LRL_CreateFileName::Create(const std::string& prefix, const std::string& suffix,
    const std::string& extension, const bool includeTimestamp/* = true*/) 
 {
@@ -59,16 +58,90 @@
    return(prefix + "_" + std::string(buft) + "." + extension);
 }
 
-std::vector<std::string> LRL_CreateFileName::CreateListOfFilenames(const int nFiles,
+/*static*/ std::vector<std::string> LRL_CreateFileName::CreateListOfFilenames(
+   const size_t nFiles,
    const std::string& prefix,
-   const std::string& extension, const bool includeTimestamp)
+   const std::string& extension, 
+   const bool includeTimestamp /*=true*/ )
 {
    std::vector<std::string> out;
 
    for (size_t i = 0; i < nFiles; ++i) {
       const std::string filename = LRL_CreateFileName::Create
-      (prefix, LRL_DataToSVG(i + 1), extension, includeTimestamp);
+      (prefix, LRL_DataToSVG(i), extension, includeTimestamp);
       out.emplace_back(filename);
    }
    return out;
 }
+
+/*static*/ std::vector<std::string> LRL_CreateFileName::CreateListOfFilenames(
+   const size_t nFiles,
+   const std::string& prefix,
+   const std::string& extension, 
+   const bool includeTimestamp /*= true*/,
+   const size_t block_start /*= 0*/,
+   const size_t block_size /*= 20*/)
+{
+   std::vector<std::string> out;
+
+   for (size_t i = block_start; (i < nFiles) && (i < block_start+block_size); ++i) {
+      const std::string filename = LRL_CreateFileName::Create
+      (prefix, LRL_DataToSVG(i), extension, includeTimestamp);
+      out.emplace_back(filename);
+   }
+   return out;
+}
+
+/*static*/ std::vector<std::string> LRL_CreateFileName::CreateRawListOfFilenames(
+    const std::vector<std::string>& basicFileNameList,
+    const std::string& raw_prefix)
+{
+    std::vector<std::string> out;
+
+    for (size_t i=0; i < basicFileNameList.size(); ++i) {
+       out.emplace_back(raw_prefix+basicFileNameList[i]);
+    }
+    return out;
+}
+    
+
+/*static*/ std::vector<std::string> LRL_CreateFileName::CreateHTMLListOfFilenames(
+    const std::vector<std::string>& basicFileNameList,
+    const std::string& host,
+    const std::string& html_prefix,
+    const bool use_https /*=false*/,
+    const bool use_target /*=true*/ )
+{
+    std::string filename;
+    std::vector<std::string> out;
+
+    if (host.compare(std::string(""))==0) {
+      for (size_t i=0; i < basicFileNameList.size(); ++i) {
+          filename=basicFileNameList[i];
+          out.emplace_back(std::string("<a href=\"")
+              + html_prefix+filename
+              + (use_target?std::string("\" target=\"_blank\""):
+                  std::string(""))
+              + std::string(">")+filename+std::string("</a>"));
+      }
+    } else {
+      std::string host_string;
+      if (use_https) {
+          host_string=std::string("<a href=\"https://")+host+std::string("/");
+      } else {
+          host_string=std::string("<a href=\"http://")+host+std::string("/");
+      }
+      for(size_t i=0; i < basicFileNameList.size(); ++i) {
+         filename=basicFileNameList[i];
+         out.emplace_back(host_string
+              + html_prefix+filename
+              + (use_target?std::string("\" target=\"_blank\""):
+                  std::string(""))
+              + std::string(">")+filename+std::string("</a>"));
+      }
+
+    }
+
+    return out;
+}
+    

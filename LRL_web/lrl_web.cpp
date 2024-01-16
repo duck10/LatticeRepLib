@@ -2,7 +2,7 @@
 // SOURCE OF lrl_web.cpp GENERATED FROM lrl_web.m4
 // lrl_web_host: blondie.arcib.org:8083
 // lrl_web_user: yaya
-// lrl_web_sdbx: 
+// lrl_web_sdbx: lrl_web_sdbx
 // lrl_web_tmp: tmp
 // LRLWEBSANDBOX: 
 // LRLWEBSBPRFX: 
@@ -239,10 +239,52 @@ int main(int argc,
 
 
       std::cout << "function changeoperation(rownum) {" << std::endl;
-      std::cout << " var tdrownum=twodig(rownum);" << std::endl;
+      std::cout << std::string("   var tdrownum=twodig(rownum);") << std::endl;
+      std::cout << std::string("   var outdivid=document.getElementById(\"lrl_web_output_\"+tdrownum);") << std::endl;
+      std::cout << std::string("   outdivid.scrollTop = \"0\";") << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).scrollTop=\"0\";")<< std::endl;
       std::cout << " let operation=document.getElementById(\"operation_\"+tdrownum).value;" << std::endl;
-      std::cout << " if (operation==\"CmdDelone\") {" << std::endl;
+      std::cout << " if (operation!=\"CmdGen\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation!=\"CmdPath\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation!=\"CmdPerturb\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation!=\"CmdScale\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdscale\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation!=\"CmdToS6L\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation==\"Dirichlet\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("\"<font size=-1><strong>Command: Dirichlet</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> draw Dirichlet cells of listed cells<br />")
+      +std::string("The Dirichlet cell (also known as Voronoi domain, Voronoi cell, Delaunay domain, or Wigner-Seitz cell) is the 3-D analog of Delaunay triangulation. It is the points nearest to a particular lattice point, usually the origin, rather than other lattice points.<br />")
+      +std::string("<em><u>Output type:</u></em> images of Dirichlet cells in multiple orientations <br />")
+      +std::string("<em><u>Parameters:</u></em> --blockorigin blkorig (0) and --blocksize blksz(10) <br />")
+      +std::string("limit the portion of the listed cells drawn to prevent overload<br />")
+      +std::string("<hr><strong>Command: Check Input</strong><br />")
+      +std::string("<em><u>Purpose:</u></em> Verify input lattice types and parameters<br />")
+      +std::string("<em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("Warnings are output for invalid inputs.<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
+      +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
+      +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
+      +std::string("---  RANDOM: Random (valid) unit cell;<br />")
+      +std::string("---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />")
+      +std::string("---  semicolon: lines beginning with a semicolon are treated as comments<br />")
+      +std::string("---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />")
+      +std::string("---  END: ends the data input section<br />")
+      +std::string("Examples of unit cell inputs<br />")
+      +std::string("P 10 20 30 90 111 90<br />")
+      +std::string("G 100 400 900 0 -215.02 0<br />")
+      +std::string("S6 0 -107.51 0 7.51 -400 -792.49 <br />")
+      +std::string("; this is a comment<br />")
+      +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdDelone\") {" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("\"<font size=-1><strong>Command: compute Selling-reduced primitive cells</strong><br />")
       +std::string("<em><u>Purpose:</u></em> Perform Selling/Delone reduction on input cells<br />")
       +std::string("<em><u>Output type:</u></em> S<sup>6</sup> form of the reduced cells of input. The Delone-reduced<br />")
@@ -531,7 +573,8 @@ int main(int argc,
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: Scale unit cells data to single size</strong><br />")
       +std::string("<em><u>Purpose:</u></em><br />")
-      +std::string("<em><u>Output Chosen vector type (one of S6, V7, DC7u, RI (root invariant)) <em><u>Parameters:</u></em> Vector type to scale and output(S6)<br />")
+      +std::string("<em><u>Output type:</u></em> Chosen vector type (one of S6, V7, DC7u, RI (root invariant))<br />")
+      +std::string(" <em><u>Parameters:</u></em> Vector type to scale and output(S6)<br />")
       +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
       +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
       +std::string("---  RANDOM: Random (valid) unit cell;<br />")
@@ -737,7 +780,7 @@ int main(int argc,
       std::cout << " } else if (operation==\"CmdToU\") {" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: compute unsorted Dirichlet cells (dc7unsrt)</strong><br />")
       +std::string("<em><u>Purpose:</u></em> convert to the 7 parameter form related to the Dirichlet<br />")
-      +std::string("(also known as Vornoi or Wigner-Seitz) unit cell. (note that lattice centering is not removed)<br />")
+      +std::string("(also known as Voronoi or Wigner-Seitz) unit cell. (note that lattice centering is not removed)<br />")
       +std::string("Bernstein and Andrews, 2023.<br />")
       +std::string("<em><u>Output type:</u></em> DC7u<br />")
       +std::string("<em><u>Parameters:</u></em> NA<br />")
@@ -810,11 +853,6 @@ int main(int argc,
       +std::string("; this is a comment<br />")
       +std::string("end<br /></font>\"")+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"PlotC3\") {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdscale\").style=\"display:none\";" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("\"<font size=-1> <strong>Command: [PlotC3</strong>]<br />")
       +std::string("<em><u>Purpose:</u></em> Graphical output of multiple unit cells in C<sup>3</sup><br />")
       +std::string("<em><u>Output type:</u></em> Name of the file containing the plots<br />")
@@ -848,10 +886,10 @@ int main(int argc,
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdscale\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("\"<font size=-1><strong>Command: Check Input</strong><br />")
-      +std::string("<em>Purpose:</em> Verify input lattice types and parameters<br />")
-      +std::string("<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
+      +std::string("<em><u>Purpose:</u></em> Verify input lattice types and parameters<br />")
+      +std::string("<em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />")
       +std::string("Warnings are output for invalid inputs.<br />")
-      +std::string("<em>Parameters:</em> NA<br />")
+      +std::string("<em><u>Parameters:</u></em> NA<br />")
       +std::string("<hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br />")
       +std::string(" All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />")
       +std::string("---  RANDOM: Random (valid) unit cell;<br />")
@@ -1722,7 +1760,11 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::string lrl_web_data_cmdperturb_npert;
       std::string lrl_web_data_cmdperturb_ppk;
       std::string lrl_web_data_cmdscale_type;
+      std::string lrl_web_data_cmdsella_rawprefix;
+      std::string lrl_web_data_cmdsella_htmlprefix;
       std::string lrl_web_data_cmdtos6l_type;
+      std::string lrl_web_data_dirichlet_rawprefix;
+      std::string lrl_web_data_dirichlet_htmlprefix;
       std::string lrl_web_data_plotc3_rawprefix;
       std::string lrl_web_data_plotc3_htmlprefix;
       std::string active=std::string("\"display:inline\"");
@@ -1762,7 +1804,11 @@ std::string plaintext2html(std::string & dst, std::string src){
       lrl_web_data_cmdperturb_ppk=std::string("1");
       lrl_web_data_cmdpath_npath=std::string("20");
       lrl_web_data_cmdscale_type=std::string("S6");
+      lrl_web_data_cmdsella_rawprefix=tmp_lrl_web+std::string("/");
+      lrl_web_data_cmdsella_htmlprefix=html_tmp_lrl_web+std::string("/");;
       lrl_web_data_cmdtos6l_type=std::string("S6L");
+      lrl_web_data_dirichlet_rawprefix=tmp_lrl_web+std::string("/");
+      lrl_web_data_dirichlet_htmlprefix=html_tmp_lrl_web+std::string("/");;
       lrl_web_data_plotc3_rawprefix=tmp_lrl_web+std::string("/");
       lrl_web_data_plotc3_htmlprefix=html_tmp_lrl_web+std::string("/");;
       if (operation=="CmdGen") {
@@ -1789,6 +1835,13 @@ std::string plaintext2html(std::string & dst, std::string src){
         lrl_web_data_cmdscale_type = (lrl_web_data_cmdscale_type_iter==formData.getElements().end())?std::string("S6"):lrl_web_data_cmdscale_type_iter->getValue();
         opmod=(std::string(" ")+lrl_web_data_cmdscale_type);
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdscale_type" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="CmdSella") {
+        lrl_web_data_cmdsella_rawprefix = tmp_lrl_web+std::string("/");
+        lrl_web_data_cmdsella_htmlprefix = html_tmp_lrl_web+std::string("/");
+        opmod=(std::string(" --host blondie.arcib.org:8083 ")
+          +std::string(" --rawprefix ")+std::string(lrl_web_data_cmdsella_rawprefix)
+          +std::string(" --htmlprefix ")+std::string(lrl_web_data_cmdsella_htmlprefix));
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdsella_prefixes" << (opmod).c_str() <<"</td></tr>" << std::endl;
       } else if (operation=="CmdToS6L") {
         lrl_web_data_cmdtos6l_type_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type");
         lrl_web_data_cmdtos6l_type = (lrl_web_data_cmdtos6l_type_iter==formData.getElements().end())?std::string("S6L"):lrl_web_data_cmdtos6l_type_iter->getValue();
@@ -1801,6 +1854,13 @@ std::string plaintext2html(std::string & dst, std::string src){
           +std::string(" --rawprefix ")+std::string(lrl_web_data_plotc3_rawprefix)
           +std::string(" --htmlprefix ")+std::string(lrl_web_data_plotc3_htmlprefix));
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_plotc3_prefixes" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="Dirichlet") {
+        lrl_web_data_dirichlet_rawprefix = tmp_lrl_web+std::string("/");
+        lrl_web_data_dirichlet_htmlprefix = html_tmp_lrl_web+std::string("/");
+        opmod=(std::string(" --host blondie.arcib.org:8083 ")
+          +std::string(" --rawprefix ")+std::string(lrl_web_data_dirichlet_rawprefix)
+          +std::string(" --htmlprefix ")+std::string(lrl_web_data_dirichlet_htmlprefix));
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_dirichlet_prefixes" << (opmod).c_str() <<"</td></tr>" << std::endl;
       }
       std::string oppath=std::string(tmp_lrl_web+"/operation_"+twodig_array[numop]);
       if(string_to_file(at.c_str(), oppath.c_str(), (operation+opmod).c_str())) {
@@ -1861,7 +1921,7 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::cout << "  <td align=left>" << std::endl;
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"a\" style="+active+">" << std::endl; 
       std::cout << "  <label for=\"operation_"+twodig_array[numop]+"\">Select an operation:</label><br />" << std::endl;
-      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"26\" onchange=\"changeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
+      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"28\" onchange=\"changeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
       std::cout << "  <optgroup label=\"Information\">" << std::endl;
       selected=operation.compare("NoOp")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"NoOp\">Check Input</option>" << std::endl;
@@ -1873,6 +1933,8 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::cout << "  <option "+selected+"value=\"CmdSella\"> apply Sella algorithm</option>" << std::endl;
       selected=operation.compare("PlotC3")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"PlotC3\"> draw C3 plot of listed cells</option>" << std::endl;
+      selected=operation.compare("Dirichlet")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"Dirichlet\"> draw Dirichlet cells of listed cells</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Output Only\">"  << std::endl;
       selected=operation.compare("CmdGen")==0?"selected ":"";
@@ -2089,7 +2151,7 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::cout << "  <label for=\"lrl_web_help_"+twodig_array[numop]+"\">Tool Help:</label><br />" << std::endl;
       std::cout << "  <div name=\"lrl_web_help_"+twodig_array[numop]+"\" id=\"lrl_web_help_"+twodig_array[numop]+"\"" << std::endl;
       std::cout << "  style=\"overflow-y: auto;text-align: left;height: 108px;width:720px; border-style: solid; border-width: thin; resize: both;\" >" << std::endl;
-      std::cout << "<font size=-1><strong>Command: Check Input</strong><br /><em>Purpose:</em> Verify input lattice types and parameters<br /><em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em>Parameters:</em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>" << std::endl;
+      std::cout << "<font size=-1><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end</font>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "  </div>" << std::endl;
       std::cout << "" << std::endl;
