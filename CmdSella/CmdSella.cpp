@@ -233,20 +233,22 @@ static int ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDelon
 
 std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLatticeData& input,
    const std::string& filename) {
+
+   std::string out;
    MatS6 oneReductionMatrix;
-   const std::vector<LRL_ReadLatticeData> oneInput(1, input);
    const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
    const S6 oneErrors = 0.1 * input.GetCell();
    int sumBravaisTypesFound = 0;
 
    std::vector<DeloneFitResults> vDeloneFitResultsForOneLattice = Sella().SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
 
-   if (doProduceSellaGraphics) BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
+   out += BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
+   const auto result = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
 
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
    std::cout << "; Graphics output will go to file " << filename << std::endl;
 
-   std::cout << "; reported distances and zscores (in A^2)" << std::endl;
+   std::cout << "; reported distances (in A^2)" << std::endl;
    if (!vDeloneFitResultsForOneLattice.empty()) std::cout << "; projected best fits" << std::endl;
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneLattice);
    sumBravaisTypesFound += ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
@@ -256,6 +258,8 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    if (sumBravaisTypesFound == 0 && doProduceSellaGraphics) {
       std::cout << "; apparently the input is triclinic--no other Bravais types matched" << std::endl;;
    }
+
+    std::cout << out << std::endl;
 
    return  BravaisHeirarchy::ProduceSVG(
       input, oneLattice, scores);
@@ -310,7 +314,7 @@ int main(int argc, char* argv[])
       doProduceSellaGraphics = false;
    }
 
-   std::cout << "; CmdSELLA\n";
+   std::cout << "; SELLA method symmetry searching\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    /*
    p 10 20 30  90 90 90
@@ -327,7 +331,6 @@ end
          << whichCell+1 << std::endl;
    }
 
-   std::cout << std::endl;
    std::cout << std::endl;
 
    for (size_t i = 0; i < inputList.size(); ++i)
