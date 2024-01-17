@@ -37,10 +37,10 @@ dnl #
 dnl #  TOOL HELP FILES
 define([[[LRLWEBCHECKINPUT]]],[[[[[[$1]]]]]]dnl
 [[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
-[[[[[[<em>Purpose:</em> Verify input lattice types and parameters$2]]]]]]dnl
-[[[[[[<em>Output type:</em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
 [[[[[[Warnings are output for invalid inputs.$2]]]]]]dnl
-[[[[[[<em>Parameters:</em> NA$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> NA$2]]]]]]dnl
 [[[[[[<hr />]]]]]]dnl
 [[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
 [[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
@@ -321,10 +321,30 @@ int main(int argc,
 
 
       std::cout << "function changeoperation(rownum) {" << std::endl;
-      std::cout << " var tdrownum=twodig(rownum);" << std::endl;
+      std::cout << std::string("   var tdrownum=twodig(rownum);") << std::endl;
+      std::cout << std::string("   var outdivid=document.getElementById(\"lrl_web_output_\"+tdrownum);") << std::endl;
+      std::cout << std::string("   outdivid.scrollTop = \"0\";") << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).scrollTop=\"0\";")<< std::endl;
       std::cout << " let operation=document.getElementById(\"operation_\"+tdrownum).value;" << std::endl;
-      std::cout << " if (operation==\"CmdDelone\") {" << std::endl;
+      std::cout << " if (operation!=\"CmdGen\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation!=\"CmdPath\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation!=\"CmdPerturb\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation!=\"CmdScale\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdscale\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation!=\"CmdToS6L\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
+      std::cout << " if (operation==\"Dirichlet\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_Dirichlet([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"CmdDelone\") {" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdDelone([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdDists\") {" << std::endl;
@@ -407,11 +427,6 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdVolume([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"PlotC3\") {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdscale\").style=\"display:none\";" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdtos6l\").style=\"display:none\";" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_PlotC3([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else {" << std::endl;
@@ -1279,7 +1294,11 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::string lrl_web_data_cmdperturb_npert;
       std::string lrl_web_data_cmdperturb_ppk;
       std::string lrl_web_data_cmdscale_type;
+      std::string lrl_web_data_cmdsella_rawprefix;
+      std::string lrl_web_data_cmdsella_htmlprefix;
       std::string lrl_web_data_cmdtos6l_type;
+      std::string lrl_web_data_dirichlet_rawprefix;
+      std::string lrl_web_data_dirichlet_htmlprefix;
       std::string lrl_web_data_plotc3_rawprefix;
       std::string lrl_web_data_plotc3_htmlprefix;
       std::string active=std::string("\"display:inline\"");
@@ -1319,7 +1338,11 @@ std::string plaintext2html(std::string & dst, std::string src){
       lrl_web_data_cmdperturb_ppk=std::string("1");
       lrl_web_data_cmdpath_npath=std::string("20");
       lrl_web_data_cmdscale_type=std::string("S6");
+      lrl_web_data_cmdsella_rawprefix=tmp_lrl_web+std::string("/");
+      lrl_web_data_cmdsella_htmlprefix=html_tmp_lrl_web+std::string("/");;
       lrl_web_data_cmdtos6l_type=std::string("S6L");
+      lrl_web_data_dirichlet_rawprefix=tmp_lrl_web+std::string("/");
+      lrl_web_data_dirichlet_htmlprefix=html_tmp_lrl_web+std::string("/");;
       lrl_web_data_plotc3_rawprefix=tmp_lrl_web+std::string("/");
       lrl_web_data_plotc3_htmlprefix=html_tmp_lrl_web+std::string("/");;
       if (operation=="CmdGen") {
@@ -1346,6 +1369,13 @@ std::string plaintext2html(std::string & dst, std::string src){
         lrl_web_data_cmdscale_type = (lrl_web_data_cmdscale_type_iter==formData.getElements().end())?std::string("S6"):lrl_web_data_cmdscale_type_iter->getValue();
         opmod=(std::string(" ")+lrl_web_data_cmdscale_type);
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdscale_type" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="CmdSella") {
+        lrl_web_data_cmdsella_rawprefix = tmp_lrl_web+std::string("/");
+        lrl_web_data_cmdsella_htmlprefix = html_tmp_lrl_web+std::string("/");
+        opmod=(std::string(" --host ]]]LRLWEBHOST[[[ ")
+          +std::string(" --rawprefix ")+std::string(lrl_web_data_cmdsella_rawprefix)
+          +std::string(" --htmlprefix ")+std::string(lrl_web_data_cmdsella_htmlprefix));
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_cmdsella_prefixes" << (opmod).c_str() <<"</td></tr>" << std::endl;
       } else if (operation=="CmdToS6L") {
         lrl_web_data_cmdtos6l_type_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdtos6l_type");
         lrl_web_data_cmdtos6l_type = (lrl_web_data_cmdtos6l_type_iter==formData.getElements().end())?std::string("S6L"):lrl_web_data_cmdtos6l_type_iter->getValue();
@@ -1358,6 +1388,13 @@ std::string plaintext2html(std::string & dst, std::string src){
           +std::string(" --rawprefix ")+std::string(lrl_web_data_plotc3_rawprefix)
           +std::string(" --htmlprefix ")+std::string(lrl_web_data_plotc3_htmlprefix));
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_plotc3_prefixes" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="Dirichlet") {
+        lrl_web_data_dirichlet_rawprefix = tmp_lrl_web+std::string("/");
+        lrl_web_data_dirichlet_htmlprefix = html_tmp_lrl_web+std::string("/");
+        opmod=(std::string(" --host ]]]LRLWEBHOST[[[ ")
+          +std::string(" --rawprefix ")+std::string(lrl_web_data_dirichlet_rawprefix)
+          +std::string(" --htmlprefix ")+std::string(lrl_web_data_dirichlet_htmlprefix));
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_dirichlet_prefixes" << (opmod).c_str() <<"</td></tr>" << std::endl;
       }
       std::string oppath=std::string(tmp_lrl_web+"/operation_"+twodig_array[numop]);
       if(string_to_file(at.c_str(), oppath.c_str(), (operation+opmod).c_str())) {
@@ -1412,7 +1449,7 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <td align=left>" << std::endl;
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"a\" style="+active+">" << std::endl; 
       std::cout << "  <label for=\"operation_"+twodig_array[numop]+"\">Select an operation:</label><br />" << std::endl;
-      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"26\" onchange=\"changeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
+      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"28\" onchange=\"changeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
       std::cout << "  <optgroup label=\"Information\">" << std::endl;
       selected=operation.compare("NoOp")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"NoOp\">Check Input</option>" << std::endl;
@@ -1424,6 +1461,8 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <option "+selected+"value=\"CmdSella\"> apply Sella algorithm</option>" << std::endl;
       selected=operation.compare("PlotC3")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"PlotC3\"> draw C3 plot of listed cells</option>" << std::endl;
+      selected=operation.compare("Dirichlet")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"Dirichlet\"> draw Dirichlet cells of listed cells</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Output Only\">"  << std::endl;
       selected=operation.compare("CmdGen")==0?"selected ":"";
@@ -2593,9 +2632,28 @@ function running(rownum) {
 
 function changeoperation(rownum) {
   var tdrownum=twodig(rownum);
+  var outdivid=document.getElementById("lrl_web_output_"+tdrownum);
   document.getElementById("lrl_web_help_"+tdrownum).scrollTop="0";
+  outdivid.scrollTop = "0";
   let operation=document.getElementById("operation_"+tdrownum).value;
-  if (operation=="CmdDelone") {
+  if (operation!="CmdGen") {
+    document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
+  }
+  if (operation!="CmdPath") {
+    document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:none";
+  }
+  if (operation!="CmdPerturb") {
+    document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
+  }
+  if (operation!="CmdScale") {
+    document.getElementById("block_"+tdrownum+"b_cmdscale").style="display:none";
+  }
+  if (operation!="CmdToS6L") {
+    document.getElementById("block_"+tdrownum+"b_cmdtos6l").style="display:none";
+  }
+  if (operation=="Dirichlet") {
+    document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_Dirichlet([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
+ } else if (operation=="CmdDelone") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdDelone([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdDists") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdDists([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
@@ -2832,13 +2890,14 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_01a" style="display:inline"> 
   <label for="operation_01">Select an operation:</label><br />
-  <select name="operation_01" id="operation_01" size="26" onchange="changeoperation('01')">
+  <select name="operation_01" id="operation_01" size="28" onchange="changeoperation('01')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -2951,13 +3010,14 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_02a" style="display:none"> 
   <label for="operation_02">Select an operation:</label><br />
-  <select name="operation_02" id="operation_02" size="26" onchange="changeoperation('02')">
+  <select name="operation_02" id="operation_02" size="28" onchange="changeoperation('02')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -3070,13 +3130,14 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_03a" style="display:none"> 
   <label for="operation_03">Select an operation:</label><br />
-  <select name="operation_03" id="operation_03" size="26" onchange="changeoperation('03')">
+  <select name="operation_03" id="operation_03" size="28" onchange="changeoperation('03')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -3189,13 +3250,14 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_04a" style="display:none"> 
   <label for="operation_04">Select an operation:</label><br />
-  <select name="operation_04" id="operation_04" size="26" onchange="changeoperation('04')">
+  <select name="operation_04" id="operation_04" size="28" onchange="changeoperation('04')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -3308,13 +3370,14 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_05a" style="display:none"> 
   <label for="operation_05">Select an operation:</label><br />
-  <select name="operation_05" id="operation_05" size="26" onchange="changeoperation('05')">
+  <select name="operation_05" id="operation_05" size="28" onchange="changeoperation('05')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -3427,13 +3490,14 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_06a" style="display:none"> 
   <label for="operation_06">Select an operation:</label><br />
-  <select name="operation_06" id="operation_06" size="26" onchange="changeoperation('06')">
+  <select name="operation_06" id="operation_06" size="28" onchange="changeoperation('06')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -3546,13 +3610,14 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_07a" style="display:none"> 
   <label for="operation_07">Select an operation:</label><br />
-  <select name="operation_07" id="operation_07" size="26" onchange="changeoperation('07')">
+  <select name="operation_07" id="operation_07" size="28" onchange="changeoperation('07')">
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
   <option value="CmdDists">compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
@@ -3676,7 +3741,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_08a" style="display:none"> 
   <label for="operation_08">Select an operation:</label><br />
-  <select name="operation_08" id="operation_08" size="26" onchange="changeoperation('08')">
+  <select name="operation_08" id="operation_08" size="28" onchange="changeoperation('08')">
   <option selected value="NoOp">Check Input</option>
   <optgroup label="Information">
   <option value="NoOp">Check Input</option>
@@ -3684,6 +3749,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="CmdVolume"> compute volumes of listed cells</option>
   <option value="CmdSella"> apply Sella algorithm</option>
   <option value="PlotC3"> draw C3 plot of listed cells</option>
+  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen">Generate cells of a particular type or types</option>
