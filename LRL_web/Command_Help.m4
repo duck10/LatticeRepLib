@@ -10,8 +10,7 @@ define([[[LRLWEB_CmdDelone]]],[[[[[[$1]]]]]]dnl
 [[[[[[compute Selling-reduced primitive cells</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> ]]]]]]dnl
 [[[[[[Perform Selling/Delone reduction on input cells$2]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[type:</u></em> S<sup>6</sup> form of the reduced cells of input. The ]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> S<sup>6</sup> form of the reduced cells of input. The ]]]]]]dnl
 [[[[[[Delone-reduced$2]]]]]]dnl
 [[[[[[cell has only non-acute interaxial ]]]]]]dnl
 [[[[[[angles.$2]]]]]]dnl
@@ -60,8 +59,7 @@ define([[[LRLWEB_CmdDists]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[calculation of pairs in the list. The second is the distance of each ]]]]]]dnl
 [[[[[[$2]]]]]]dnl
 [[[[[[cell from the first input cell.$2]]]]]]dnl
-[[[[[[<em><u>Output type:</u></em> ]]]]]]dnl
-[[[[[[The distances for each input are output on a single line, starting ]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> The distances for each input are output on a single line, starting ]]]]]]dnl
 [[[[[[with a $2]]]]]]dnl
 [[[[[[semicolon so that it will be ignored by succeeding ]]]]]]dnl
 [[[[[[programs. The input cells are echoed$2]]]]]]dnl
@@ -110,8 +108,7 @@ define([[[LRLWEB_CmdGen]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[Generate cells of a particular type or types</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> ]]]]]]dnl
 [[[[[[To Create valid unit cells of various user-chosen types$2]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[type:</u></em> Output cells are reported in G<sup>6</sup> form, ]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Output cells are reported in G<sup>6</sup> form, ]]]]]]dnl
 [[[[[[randomly chosen cell$2]]]]]]dnl
 [[[[[[parameters for the various selected types. ]]]]]]dnl
 [[[[[[Lattice types are shown following $2]]]]]]dnl
@@ -189,8 +186,7 @@ define([[[LRLWEB_CmdLM]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[lattice similarity.&quot; ]]]]]]dnl
 [[[[[[Acta Crystallographica Section A: ]]]]]]dnl
 [[[[[[Foundations and Advances 79.5, 480-484 (2023).</p> ]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[type:</u></em> a, b, c &alpha;, &beta;, &gamma;, with the ]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> a, b, c &alpha;, &beta;, &gamma;, with the ]]]]]]dnl
 [[[[[[lattice centering$2]]]]]]dnl
 [[[[[[chosen to be the same as that of the reference ]]]]]]dnl
 [[[[[[cell.$2]]]]]]dnl
@@ -328,8 +324,7 @@ define([[[LRLWEB_CmdPerturb]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[compute perturbed versions of input cells</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> ]]]]]]dnl
 [[[[[[For each input cell, compute slight altered versions$2]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[type:</u></em> unit cell edge lengths and angles$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> unit cell edge lengths and angles$2]]]]]]dnl
 [[[[[[<em><u>Parameters:</u></em> ]]]]]]dnl
 [[[[[[The number of perturbations of each input cell (20) and the amount of$2]]]]]]dnl
 [[[[[[perturbation in parts-per-thousand (ppt) (1 ppt). The calculation is done in S<sup>6</sup>,$2]]]]]]dnl
@@ -464,8 +459,7 @@ define([[[LRLWEB_CmdScale]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[<strong>Command: ]]]]]]dnl
 [[[[[[Scale unit cells data to single size</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em>$2]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[Chosen vector type (one of S6, V7, DC7u, RI (root invariant)) ]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Chosen vector type (one of S6, V7, DC7u, RI (root invariant))$2 ]]]]]]dnl
 [[[[[[<em><u>Parameters:</u></em> Vector type to scale and output(S6)$2]]]]]]dnl
 [[[[[[<hr />]]]]]]dnl
 [[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
@@ -495,8 +489,7 @@ define([[[LRLWEB_CmdSella]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[apply Sella algorithm</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> ]]]]]]dnl
 [[[[[[Determine potentially higher symmetry for input cells$2]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[type:</u></em> agreement factors for each of the Bravais lattice ]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> agreement factors for each of the Bravais lattice ]]]]]]dnl
 [[[[[[types$2]]]]]]dnl
 [[[[[[that fill well and reduced cell information for the input ]]]]]]dnl
 [[[[[[cells. Also the name$2]]]]]]dnl
@@ -646,8 +639,7 @@ define([[[LRLWEB_CmdToCell]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> converts input ]]]]]]dnl
 [[[[[[cell representations to cell parameters$2]]]]]]dnl
 [[[[[[(note that lattice centering is not removed)$2]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[type:</u></em> a, b, c, &alpha;, &beta;, &gamma;. If the ]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> a, b, c, &alpha;, &beta;, &gamma;. If the ]]]]]]dnl
 [[[[[[input cell is not in $2]]]]]]dnl
 [[[[[[cell parameters already, then primitive is ]]]]]]dnl
 [[[[[[assumed.$2]]]]]]dnl
@@ -687,8 +679,7 @@ define([[[LRLWEB_CmdToG6]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[cells</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> convert to G<sup>6</sup> ]]]]]]dnl
 [[[[[[representation (note that lattice centering is not removed)$2]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[type:</u></em> G<sup>6</sup>$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> G<sup>6</sup>$2]]]]]]dnl
 [[[[[[<em><u>Parameters:</u></em> ]]]]]]dnl
 [[[[[[NA$2 ]]]]]]dnl
 [[[[[[<hr>]]]]]]dnl
@@ -724,8 +715,7 @@ define([[[LRLWEB_CmdToS6]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[<strong>Command: compute S<sup>6</sup> version of cells</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> convert to S<sup>6</sup> ]]]]]]dnl
 [[[[[[representation (note that lattice centering is not removed)$2]]]]]]dnl
-[[[[[[<em><u>Output ]]]]]]dnl
-[[[[[[type:</u></em> S<sup>6</sup>$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> S<sup>6</sup>$2]]]]]]dnl
 [[[[[[<em><u>Parameters:</u></em> ]]]]]]dnl
 [[[[[[NA$2 ]]]]]]dnl
 [[[[[[<hr>]]]]]]dnl
@@ -816,7 +806,7 @@ define([[[LRLWEB_CmdToU]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[<strong>Command: compute unsorted Dirichlet cells (dc7unsrt)</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> ]]]]]]dnl
 [[[[[[convert to the 7 parameter form related to the Dirichlet$2]]]]]]dnl
-[[[[[[(also known as Vornoi or Wigner-Seitz) unit cell. (note that ]]]]]]dnl
+[[[[[[(also known as Voronoi or Wigner-Seitz) unit cell. (note that ]]]]]]dnl
 [[[[[[lattice centering is not removed)$2]]]]]]dnl
 [[[[[[Bernstein and Andrews, 2023.$2]]]]]]dnl
 [[[[[[<em><u>Output type:</u></em> DC7u$2]]]]]]dnl
@@ -906,6 +896,48 @@ define([[[LRLWEB_CmdVolume]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[followed by the volume$2]]]]]]dnl
 [[[[[[<em><u>Parameters:</u></em> ]]]]]]dnl
 [[[[[[NA$2 ]]]]]]dnl
+[[[[[[<hr>]]]]]]dnl
+[[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
+[[[[[[Warnings are output for invalid inputs.$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> NA$2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
+[[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
+[[[[[[ All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.$2]]]]]]dnl
+[[[[[[---  RANDOM: Random (valid) unit cell;$2]]]]]]dnl
+[[[[[[---  Crystal lattice input: 'A', 'B', 'C',]]]]]]dnl
+[[[[[[ 'P', 'R', 'F', 'I' followed by three axis lengths]]]]]]dnl
+[[[[[[ and three angles (in degrees);$2]]]]]]dnl
+[[[[[[---  semicolon: lines beginning with a semicolon are treated as comments$2]]]]]]dnl
+[[[[[[---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars,]]]]]]dnl
+[[[[[[ C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell),]]]]]]dnl
+[[[[[[ u for unsorted Dirichlet 7-cells.$2]]]]]]dnl
+[[[[[[---  END: ends the data input section$2]]]]]]dnl
+[[[[[[Examples of unit cell inputs$2]]]]]]dnl
+[[[[[[P 10 20 30 90 111 90$2]]]]]]dnl
+[[[[[[G 100 400 900 0 -215.02 0$2]]]]]]dnl
+[[[[[[S6 0 -107.51 0 7.51 -400 -792.49 $2]]]]]]dnl
+[[[[[[; this is a comment$2]]]]]]dnl
+[[[[[[end$3]]]]]]dnl
+dnl
+)dnl--------------------------------------------------
+dnl Command:  Dirichlet
+dnl -------------------
+define([[[LRLWEB_Dirichlet]]],[[[[[[$1]]]]]]dnl
+[[[[[[<strong>Command: ]]]]]]dnl
+[[[[[[Dirichlet</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> ]]]]]]dnl
+[[[[[[draw Dirichlet cells of listed cells$2]]]]]]dnl
+[[[[[[The Dirichlet cell (also known as Voronoi domain, Voronoi cell, ]]]]]]dnl
+[[[[[[Delaunay domain, or Wigner-Seitz cell) is the 3-D analog of ]]]]]]dnl
+[[[[[[Delaunay triangulation. It is the points nearest to a particular ]]]]]]dnl
+[[[[[[lattice point, usually the origin, rather than other lattice points.$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> images of Dirichlet cells in multiple orientations $2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> ]]]]]]dnl
+[[[[[[--blockorigin blkorig (0) and --blocksize blksz(10) $2]]]]]]dnl
+[[[[[[limit the portion of the listed cells drawn to prevent overload$2]]]]]]dnl
 [[[[[[<hr>]]]]]]dnl
 [[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl

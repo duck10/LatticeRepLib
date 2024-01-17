@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
-#include <map>
 #include <string>
 #include <utility>
 
@@ -297,48 +296,110 @@ int main(int argc, char* argv[])
 
    bool doProduceSellaGraphics = true;
 
-   if (argc > 1) {
-      selectBravaisCase = argv[1];
-      if (std::string(argv[1]) == "lca") 
-      {
-         selectBravaisCase.clear();
-         doProduceSellaGraphics = false;
-      }
-      if (argc > 2) {
+   std::vector<std::string> basicfileNameList;
+   std::vector<std::string> FileNameList;
+   std::vector<std::string> FullfileNameList;
+   std::string host=std::string("");
+   std::string rawprefix=std::string("");
+   std::string htmlprefix=std::string("");
+   bool usetimestamp=true;
+   bool usehttps=false;
+   bool usetarget=true;
+   size_t blockstart= 0;
+   size_t blocksize= 20;
+   int ii;
+
+   for(ii=1;ii<argc;ii++){
+       // std::cout << "argv[" << ii <<"] = "<< argv[ii] << std::endl;
+       if (std::string(argv[ii]).compare(std::string("--help"))==0) {
+           std::cout << "; CmdSella [--help ] [--host hostname] [--rawprefix prefix] [--htmlprefix htmlprefix]" << std::endl;
+       } else if (std::string(argv[ii]).compare(std::string("--host"))==0) {
+           host = std::string(argv[++ii]);
+           // std::cout << "; host: " << host;
+       } else if (std::string(argv[ii]).compare(std::string("--rawprefix"))==0) {
+           rawprefix = std::string(argv[++ii]);
+           // std::cout << "; rawprefix: " << rawprefix;
+       } else if (std::string(argv[ii]).compare(std::string("--htmlprefix"))==0) {
+           htmlprefix = std::string(argv[++ii]);
+           // std::cout << "; htmlprefix: " << htmlprefix;
+       } else if (std::string(argv[ii]).compare(std::string("--usetimestamp"))==0) {
+           usetimestamp =  (std::string(argv[++ii])).compare(std::string("true"))?true:false;
+           // std::cout << "; usetimestamp: " << usetimestamp;
+       } else if (std::string(argv[ii]).compare(std::string("--usehttps"))==0) {
+           usehttps =  (std::string(argv[++ii])).compare(std::string("true"))?true:false;
+           // std::cout << "; usehttps: " << usehttps;
+       } else if (std::string(argv[ii]).compare(std::string("--usetarget"))==0) {
+           usetarget =  (std::string(argv[++ii])).compare(std::string("true"))?true:false;
+           // std::cout << "; usetarget: " << usetarget;
+       } else if (std::string(argv[ii]).compare(std::string("--blockstart"))==0) {
+           blockstart = std::stoul(std::string(argv[++ii]));
+           // std::cout << "; blockstart: " << blockstart;
+       } else if (std::string(argv[ii]).compare(std::string("--blocksize"))==0) {
+           blocksize = std::stoul(std::string(argv[++ii]));
+           // std::cout << "; blocksize: " << blocksize;
+       } else if (ii==1 && std::string(argv[ii]).compare(std::string("lca"))==0) {
+           selectBravaisCase.clear();
+           doProduceSellaGraphics = false;
+       } else if (ii==1) {
+           selectBravaisCase = argv[1];
+           if (!(std::string(argv[1]).empty() && std::string(argv[1]) == "all")) {
+             doProduceSellaGraphics = false;
+           }
+       } else if (ii==2) {
          const double d = atof(argv[2]);
          if (d != 0.0) g_maxDeltaForMatch = atof(argv[2]);
-      }
-   }
-
-   if (argc > 1 && !(std::string(argv[1]).empty() && std::string(argv[1]) == "all")) {
-      doProduceSellaGraphics = false;
+       }
    }
 
    std::cout << "; SELLA method symmetry searching\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    /*
    p 10 20 30  90 90 90
-p 10 10 10  90 90 91
-end
-*/
+   p 10 10 10  90 90 91
+   end
+   */
 
-   const std::vector<std::string> filenames =
-      LRL_CreateFileName::CreateListOfFilenames(inputList.size(), "SEL", "svg");
-
-   for (size_t whichCell = 0; whichCell < inputList.size(); ++whichCell) {
-      std::cout << "; Send Sella Plot to graphics file " 
-         << filenames[whichCell]<< " for case " 
-         << whichCell+1 << std::endl;
+   if (blockstart + blocksize > inputList.size()) {
+       if (blockstart >= inputList.size()) {
+           blockstart = 0;
+           blocksize = 0;
+       } else {
+           blocksize = inputList.size() - blockstart;
+       }
    }
+
+   basicfileNameList
+       = LRL_CreateFileName::CreateListOfFilenames(inputList.size(), 
+       "SEL","svg",usetimestamp,blockstart,blocksize);
+   FileNameList 
+       = LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList,rawprefix); 
+   if(htmlprefix.compare(std::string(""))==0) {
+       FullfileNameList = std::vector<std::string>(FileNameList);
+   } else {
+       FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
+           basicfileNameList, host, htmlprefix, usehttps, usetarget);
+   }
+
+   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
+   {
+       std::cout << "; Sella graphics file " << FullfileNameList[i-blockstart] << std::endl;
+   }
+
+   std::cout << "; Sella cell block start " << blockstart << std::endl;
+   std::cout << "; Sella cell block size " << blocksize << std::endl;
 
    std::cout << std::endl;
 
-   for (size_t i = 0; i < inputList.size(); ++i)
+   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
    {
       std::cout << "----------------------------------------------------------" << std::endl;
-      std::cout << "; SELLA results for input case " << i + 1 << std::endl;
-      const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i], filenames[i]);
-      if (doProduceSellaGraphics) SendSellaToFile(svgOutput, filenames[i]);
+      std::cout << "; SELLA results for input case " << i  << std::endl;
+      const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i],
+        FileNameList[i-blockstart]);
+      if (doProduceSellaGraphics) {
+        SendSellaToFile(svgOutput, FileNameList[i-blockstart]);
+        std::cout << "; Send Sella Plot to graphics file " << FullfileNameList[i-blockstart] << std::endl; 
+      }
    }
 
 }
