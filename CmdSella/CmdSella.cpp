@@ -368,17 +368,17 @@ int main(int argc, char* argv[])
        }
    }
 
-   basicfileNameList
-       = LRL_CreateFileName::CreateListOfFilenames(inputList.size(), 
-       "SEL","svg",usetimestamp,blockstart,blocksize);
-   FileNameList 
-       = LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList,rawprefix); 
-   if(htmlprefix.compare(std::string(""))==0) {
-       FullfileNameList = std::vector<std::string>(FileNameList);
-   } else {
-       FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
-           basicfileNameList, host, htmlprefix, usehttps, usetarget);
-   }
+   //basicfileNameList
+   //    = LRL_CreateFileName::CreateListOfFilenames(inputList.size(), 
+   //    "SEL","svg",usetimestamp,blockstart,blocksize);
+   //FileNameList 
+   //    = LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList,rawprefix); 
+   //if(htmlprefix.compare(std::string(""))==0) {
+   //    FullfileNameList = std::vector<std::string>(FileNameList);
+   //} else {
+   //    FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
+   //        basicfileNameList, host, htmlprefix, usehttps, usetarget);
+   //}
 
    for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
    {

@@ -60,7 +60,7 @@ std::vector<MatS6> Filter(const std::vector<MatS6>& v) {
 
    //std::cout << v.size() << "    " << sm.size() << std::endl;
    
-   for (auto   i = sm.begin(); i != sm.end(); ++i)
+   for ( auto& i = sm.begin(); i != sm.end(); ++i)
    {
       out.push_back(*i);
    }
@@ -204,3 +204,13 @@ S6BoundaryMatricesThree::S6BoundaryMatricesThree(const size_t n1, const size_t n
    std::cout << "end of S6BoundaryMatricesThree" " m_mats.size " << m_mats.size() << std::endl;
 }
 
+std::vector<MatS6> S6BoundaryTransforms::GetBoundaries() const {
+   std::vector<MatS6> v;
+   S6BoundaryTransforms sbt;
+   for (size_t i = 0; i < sbt.size(); ++i) {
+      std::vector<MatS6>  xxx = sbt[i];
+      for (size_t i = 0; i < xxx.size(); ++i)
+         v.emplace_back(xxx[i]);
+   }
+   return v;
+}

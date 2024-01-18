@@ -21,7 +21,7 @@ public:
    {
       std::unordered_map<std::string, std::string> argMap;
 
-      for (auto arg: m_args) {
+      for (const auto& arg: m_args) {
          for (std::string keyword : keywordList) {
             if (arg.starts_with( keyword)) {
                argMap[keyword] = arg;

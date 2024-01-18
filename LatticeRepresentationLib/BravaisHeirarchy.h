@@ -147,7 +147,7 @@ public:
 
       // Get the upper bound on the allowed fit of the failing value.
    
-      auto xxx = S6BoundaryTransforms();
+      const auto xxx = S6BoundaryTransforms();
 
    }
 

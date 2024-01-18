@@ -185,7 +185,7 @@ std::vector<size_t> SellaBuild::DetermineToProcess(const std::set<size_t>& exclu
    std::vector<size_t> vZeros = FindS6Zeros(zeros);
    for (auto it = exclusions.begin(); it != exclusions.end(); ++it)
    {
-      auto zeroIT = std::find(vZeros.begin(), vZeros.end(), *it);
+      const auto zeroIT = std::find(vZeros.begin(), vZeros.end(), *it);
       if (zeroIT != vZeros.end()) vZeros.erase(zeroIT);
    }
    return vZeros;

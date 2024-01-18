@@ -19,8 +19,8 @@ bool LabeledDeloneTypeMatrices::AlreadyHasThisProjector( const MatS6& m, const L
 
 template<typename T>
 void PrintMap(const std::map<std::string, std::vector<T> >& t) {
-   for (auto it = t.begin(); it != t.end(); ++it) {
-      std::cout << (*it).first << "  " << (*it).second[0] << std::endl;
+   for (const auto& it : t) {
+      std::cout << it.first << "  " << it.second[0] << std::endl;
    }
 }
 

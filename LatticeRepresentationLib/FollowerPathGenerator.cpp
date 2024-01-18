@@ -135,7 +135,7 @@ std::string FollowerPathGenerator::GetName() const { return "FollowerPathGenerat
 
 void FollowerPathGenerator::OutputPath()const {
    std::cout << GetName() << " input size " << GetInput().size() << std::endl;
-   auto path = GetPath();
+   const auto path = GetPath();
    for (size_t i = 0; i < size(); ++i) {
       std::cout << path[i].first << "   " << path[i].second << std::endl;
    }
@@ -145,8 +145,8 @@ void FollowerPathGenerator::OutputPath()const {
 std::ostream& operator<< (std::ostream& o, const FollowerPathGenerator& dt) {
    o << dt.GetName() << " input size " << dt.GetInput().size() << std::endl;
    const std::vector<S6> inputList = dt.GetInput();
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      o << '\t' << inputList[i] << std::endl;
+   for (const auto& input : inputList) {
+      o << '\t' << input << std::endl;
    }
 
    o << "   Output" << std::endl;

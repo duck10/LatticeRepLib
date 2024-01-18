@@ -100,6 +100,9 @@ public:
    static std::vector<MatS6> GetReflections();
    static MatS6 GetReflection(const size_t n);
 
+   static std::vector<MatS6> GetBoundaries();
+   static MatS6 GetBoundaries(const size_t n);
+
    static std::string GetName() { return "MatS6"; }
 
 private:
