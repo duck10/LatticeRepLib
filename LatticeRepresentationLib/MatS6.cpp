@@ -11,6 +11,7 @@
 #include "MatG6.h"
 #include "MatMN.h"
 #include "MatN.h"
+#include "S6BoundaryTransforms.h"
 
 #include <string>
 #include <vector>
@@ -490,4 +491,17 @@ std::vector<MatS6> MatS6::GetReflections() {
       //   std::cout << C3(vS6_Refl[i] * v ) << std::endl;
    }
    return vS6_Refl;
+}
+
+std::vector<MatS6> MatS6::GetBoundaries() {
+   S6BoundaryTransforms sbt;
+   std::vector<MatS6> out;
+   for (size_t i = 0; i < sbt.size(); ++i) {
+     const auto xxx =  sbt[i];
+   }
+   return out;
+}
+
+MatS6 MatS6::GetBoundaries(const size_t n) {
+   return MatS6();
 }

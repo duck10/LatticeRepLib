@@ -9,6 +9,8 @@
 class S6BoundaryTransforms {
 public:
    S6BoundaryTransforms();
+   std::vector<MatS6> GetBoundaries() const;
+   std::vector<MatS6> GetBoundaries(const size_t n) const;
 
    std::vector<std::vector<MatS6> >  GetVector() const { return m_vvm; }
    
@@ -18,6 +20,7 @@ public:
    std::vector<MatS6> Prod(const size_t n, const std::vector<MatS6>& m) const;
    std::vector<MatS6> Prod(const size_t n1, const size_t n2, const std::vector<MatS6>& m) const;
    std::vector<MatS6> Prod(const size_t n1, const size_t n2, const size_t n3, const std::vector<MatS6>& m) const;
+   size_t size() const { return m_vvm.size(); }
 
 private:
    std::vector<std::vector<MatS6> > m_vvm;

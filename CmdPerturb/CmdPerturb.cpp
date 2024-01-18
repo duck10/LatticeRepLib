@@ -44,6 +44,9 @@ S6 MakeMorePerturbationAttempts(const double scale, const S6& s6, S6& out) {
       const S6 perturbation = delta * perturber;
       out = out + perturbation;
       cell = out;
+      const bool b = cell.IsValid();
+      const G6 g6(out);
+      const LRL_Cell cell2(out);
       out.SetValid(cell.IsValid());
    }
    if (count == maxCount) {
@@ -81,9 +84,13 @@ void OutputPerturbedCell(const std::string& lattice, const S6& perturbed,
    const std::string& label) {
    LRL_Cell_Degrees cell(perturbed);
 
-   if (!cell.IsValid()) {
-      std::cout << "; invalid perturbed cell " << std::endl;
-      //std::cout << "S6 " << perturbed << "  perturbed  " + label << std::endl;
+   const double alpha = cell[3];
+   const double beta = cell[4];
+   const double gamma = cell[5];
+   const bool b5 = (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) >= 0.0 - 0.00001;
+
+   if (!cell.IsValid() || !b5) {
+      std::cout << "; S6 " << perturbed << "  invalid perturbed cell  " + label << std::endl;
    }
    else if (latticeNames.find(lattice) == std::string::npos)
       std::cout << "S6 " << perturbed << "  perturbed  " + label << std::endl;

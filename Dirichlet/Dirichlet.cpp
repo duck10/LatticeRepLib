@@ -325,7 +325,7 @@ DirichletCell::DirichletCell(const std::string& strCellAndLattice)
 //typedef std::vector<ANGLELIST> ANGLESFORFACES;
 
 std::ostream& operator<< (std::ostream& o, const DirichletCell& dc) {
-   auto xxx = dc.GetAnglesForFaces();
+   const auto xxx = dc.GetAnglesForFaces();
    for (size_t i = 0; i < xxx.size(); ++i)
       for (size_t kkk = 0; kkk < xxx[i].size(); ++kkk)
       {

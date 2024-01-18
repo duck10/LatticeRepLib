@@ -165,10 +165,18 @@ static std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
 }
 
 static std::string AddTextAtBottom(const int x, const int y, const std::string& dataRange) {
-      const std::string s = "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y) + "\""
-         " font-size = \"20\" " +
+   std::string s = "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y) + "\""
+      " font-size = \"20\" " +
       " font-family = \"Arial, Helvetica, sans-serif \">" + LRL_DataToSVG(dataRange) + "</text>\n";
-         return s;
+   //
+   //
+   // the next line has a blank. It is a place to add a comment such as the command line to generate the plot
+   //
+   //
+   s += "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y+40) + "\""
+      " font-size = \"20\" " +
+      " font-family = \"Arial, Helvetica, sans-serif \">" + "" + "</text>\n";
+      return s;
 }
 
 std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int yint) {
