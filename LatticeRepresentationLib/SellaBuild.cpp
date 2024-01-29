@@ -389,14 +389,14 @@ bool SellaBuild::FindDuplicate(const std::vector<S6>& out, const S6& s6) {
    return fail;
 }
 
-std::vector<Transformations> ConvertS6ToTrans(const std::vector<S6>& v) {
+static std::vector<Transformations> ConvertS6ToTransformed(const std::vector<S6>& v) {
    std::vector<Transformations> out;
-   for (size_t i = 0; i < v.size(); ++i) out.push_back(Transformations(v[i]));
+   for (const auto& i:v) out.emplace_back(Transformations(i));
    return out;
 }
 
 template<typename T>
-void PrintMap(const std::map<std::string, std::vector<T> >& t) {
+static void PrintMap(const std::map<std::string, std::vector<T> >& t) {
    for (auto it = t.begin(); it != t.end(); ++it) {
       std::cout << (*it).first << "  " << (*it).second[0] << std::endl;
    }
@@ -413,7 +413,7 @@ void SellaBuild::ProcessItemStoreToVectorMap() {
          if (!fail) out.push_back(v[iv].second);
       }
       //themap.insert(std::make_pair(labels[i], out));
-      xfmap.insert(std::make_pair(labels[i], ConvertS6ToTrans(out)));
+      xfmap.insert(std::make_pair(labels[i], ConvertS6ToTransformed(out)));
    }
 }
 
@@ -433,19 +433,19 @@ void SellaBuild::ShowIndexResults() const {
    indexstore.ShowResults();
 }
 
-S6 ResetZeros(const S6& sin) {
+static S6 ResetZeros(const S6& sin) {
    S6 sout(sin);
    for (size_t i = 0; i < 6; ++i) if (abs(sin[i]) < 1.0E-3) sout[i] = 0.0;
    return sout;
 }
 
-S6 Rounder(const S6& s6) {
+static S6 Rounder(const S6& s6) {
    S6 out(s6);
    for (size_t i = 0; i < 6; ++i) out[i] = round(out[i]);
    return out;
 }
 
-std::set<S6> Rounder(const std::set<S6>& ss) {
+static std::set<S6> Rounder(const std::set<S6>& ss) {
    std::set<S6> out;
    for (auto it = ss.begin(); it != ss.end(); ++it) {
       out.insert(Rounder(*it));

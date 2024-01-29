@@ -12,6 +12,7 @@ class DeloneFitResults {
 public:
    friend std::ostream& operator<< (std::ostream&, const DeloneFitResults&);
 
+   DeloneFitResults() {}
    DeloneFitResults(const double fit, const S6& bestApprox, const S6& perpv, const MatS6& toCanon);
    void SetZscore(const double score) { m_zscore = score; }
    void SetLatticeType(const std::string& s) { m_latticeType = s; }

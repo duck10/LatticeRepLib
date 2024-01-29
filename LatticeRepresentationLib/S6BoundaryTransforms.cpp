@@ -1,10 +1,23 @@
+
+#include "Filter_Duplicates.h"
+#include "S6.h"
 #include "S6BoundaryTransforms.h"
 
-#include "S6.h"
 
 #include <set>
 
 static const std::vector<MatS6> vS6_Refl = MatS6::GetReflections();
+
+std::vector<MatS6> S6BoundaryTransforms::m_SixTransforms = std::vector<MatS6>
+{
+   MatS6("-1 0 0  0 0 0   1  1 0 0  0 0   1 0  0 0 1  0   -1 0 0  1 0 0   1  0 1 0  0 0   1 0  0 0 0  1"),  // g or p or s1
+   MatS6(" 1 1 0  0 0 0   0 -1 0 0  0 0   0 1  0 1 0  0    0 1 1  0 0 0   0 -1 0 0  1 0   0 1  0 0 0  1"),  // h or q or s2
+   MatS6(" 1 0 1  0 0 0   0  0 1 1  0 0   0 0 -1 0 0  0    0 1 1  0 0 0   0  0 1 0  1 0   0 0 -1 0 0  1"),  // k or r or s3
+   MatS6(" 1 0 0 -1 0 0   0  0 1 1  0 0   0 1  0 1 0  0    0 0 0 -1 0 0   0  0 0 1  1 0   0 0  0 1 0  1"),  // l or s or s4
+   MatS6(" 0 0 1  0 1 0   0  1 0 0 -1 0   1 0  0 0 1  0    0 0 0  1 1 0   0  0 0 0 -1 0   0 0  0 0 1  1"),  // mReduce or t or s5
+   MatS6(" 0 1 0  0 0 1   1  0 0 0  0 1   0 0  1 0 0 -1    0 0 0  1 0 1   0  0 0 0  1 1   0 0  0 0 0 -1")  // n or u or s6
+};
+
 
 size_t FindZero(const MatS6& m)
 {
@@ -20,51 +33,26 @@ size_t FindZero(const MatS6& m)
 
 S6BoundaryTransforms::S6BoundaryTransforms()
 {
-   MatS6 one( 0,0,0,0,0,0,   0,1,0,0,0,0,   0,0,0,0,1,0, 0,0,0,1,0,0,   0,0,1,0,0,0,   0,0,0,0,0,1);
-   std::vector<MatS6> v;
+   //std::vector<MatS6> v;
+   //m_vvm.resize(6);
 
-   for (size_t i = 0; i < vS6_Refl.size(); ++i)
-   {
-      const MatS6 s = vS6_Refl[i] * one;
-      v.push_back(s);
-   }
+   //for (size_t i = 0; i < v.size(); ++i)
+   //{
+   //   const size_t n = FindZero(v[i]);
+   //   m_vvm[n].push_back(v[i]);
+   //}
 
-   m_vvm.resize(6);
+   //if (m_vvm.size() != 6) throw("did not find all examples");
 
-   for (size_t i = 0; i < v.size(); ++i)
-   {
-      const size_t n = FindZero(v[i]);
-      m_vvm[n].push_back(v[i]);
-   }
-
-   if (m_vvm.size() != 6) throw("did not find all examples");
-
-   for (size_t i = 0; i < m_vvm.size(); ++i)
-   {
-      if (m_vvm[i].size() != 4) throw("all should = 4");
-   }
+   //for (size_t i = 0; i < m_vvm.size(); ++i)
+   //{
+   //   if (m_vvm[i].size() != 4) throw("all should = 4");
+   //}
 }
 
 S6BoundaryMatricesBase::S6BoundaryMatricesBase()
 {
    m_mats = vS6_Refl;
-}
-
-std::vector<MatS6> Filter(const std::vector<MatS6>& v) {
-   std::vector<MatS6> out;
-   std::set<MatS6> sm;
-   for (size_t i = 0; i < v.size(); ++i)  
-   {
-      sm.insert(v[i]);
-   }
-
-   //std::cout << v.size() << "    " << sm.size() << std::endl;
-   
-   for ( auto& i = sm.begin(); i != sm.end(); ++i)
-   {
-      out.push_back(*i);
-   }
-   return out;
 }
 
 std::vector<MatS6> S6BoundaryMatricesBase::GetVector() const
@@ -79,7 +67,7 @@ std::vector<MatS6> S6BoundaryMatricesBase::GetVector() const
          out.push_back(vS6_Refl[kk] * m_mats[i]);
       }
    }
-   return Filter(out);
+   return FilterRemoveDups(out);
 }
 
 S6BoundaryMatricesZero::S6BoundaryMatricesZero()
@@ -204,13 +192,22 @@ S6BoundaryMatricesThree::S6BoundaryMatricesThree(const size_t n1, const size_t n
    std::cout << "end of S6BoundaryMatricesThree" " m_mats.size " << m_mats.size() << std::endl;
 }
 
-std::vector<MatS6> S6BoundaryTransforms::GetBoundaries() const {
-   std::vector<MatS6> v;
-   S6BoundaryTransforms sbt;
-   for (size_t i = 0; i < sbt.size(); ++i) {
-      std::vector<MatS6>  xxx = sbt[i];
-      for (size_t i = 0; i < xxx.size(); ++i)
-         v.emplace_back(xxx[i]);
-   }
-   return v;
+std::vector<MatS6> S6BoundaryTransforms::GetSixBoundaries() const {
+   return {
+   MatS6("-1 0 0  0 0 0   1  1 0 0  0 0   1 0  0 0 1  0   -1 0 0  1 0 0   1  0 1 0  0 0   1 0  0 0 0  1"),  // g or p or s1
+   MatS6(" 1 1 0  0 0 0   0 -1 0 0  0 0   0 1  0 1 0  0    0 1 1  0 0 0   0 -1 0 0  1 0   0 1  0 0 0  1"),  // h or q or s2
+   MatS6(" 1 0 1  0 0 0   0  0 1 1  0 0   0 0 -1 0 0  0    0 1 1  0 0 0   0  0 1 0  1 0   0 0 -1 0 0  1"),  // k or r or s3
+   MatS6(" 1 0 0 -1 0 0   0  0 1 1  0 0   0 1  0 1 0  0    0 0 0 -1 0 0   0  0 0 1  1 0   0 0  0 1 0  1"),  // l or s or s4
+   MatS6(" 0 0 1  0 1 0   0  1 0 0 -1 0   1 0  0 0 1  0    0 0 0  1 1 0   0  0 0 0 -1 0   0 0  0 0 1  1"),  // mReduce or t or s5
+   MatS6(" 0 1 0  0 0 1   1  0 0 0  0 1   0 0  1 0 0 -1    0 0 0  1 0 1   0  0 0 0  1 1   0 0  0 0 0 -1")  // n or u or s6
+   };
+}
+
+std::vector<MatS6> S6BoundaryTransforms::GetBoundaries(const size_t n) const {
+   throw "do not use until all 24 transforms are implemented";
+   return m_vvm[n];
+}
+
+MatS6 S6BoundaryTransforms::GetOneTransform(const size_t whichBoundary) const {
+   return m_SixTransforms[whichBoundary];
 }

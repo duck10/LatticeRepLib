@@ -110,6 +110,7 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>..\LRL_Tools</AdditionalIncludeDirectories>
       <OpenMPSupport>false</OpenMPSupport>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,6 +150,7 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
       <AdditionalIncludeDirectories>..\LRL_Tools</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
