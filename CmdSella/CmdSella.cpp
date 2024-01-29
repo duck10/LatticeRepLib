@@ -233,7 +233,7 @@ static int ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDelon
 std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLatticeData& input,
    const std::string& filename) {
 
-   std::string out;
+   std::vector< BravaisChainFailures> outBCF;
    MatS6 oneReductionMatrix;
    const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
    const S6 oneErrors = 0.1 * input.GetCell();
@@ -241,8 +241,8 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
 
    std::vector<DeloneFitResults> vDeloneFitResultsForOneLattice = Sella().SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
 
-   out += BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
-   const auto result = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
+   const auto vBCF= BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
+   outBCF.insert(outBCF.end(), vBCF.begin(), vBCF.end());
 
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
    std::cout << "; Graphics output will go to file " << filename << std::endl;
@@ -258,6 +258,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
       std::cout << "; apparently the input is triclinic--no other Bravais types matched" << std::endl;;
    }
 
+   for (const auto& out: outBCF)
     std::cout << out << std::endl;
 
    return  BravaisHeirarchy::ProduceSVG(
@@ -368,17 +369,17 @@ int main(int argc, char* argv[])
        }
    }
 
-   //basicfileNameList
-   //    = LRL_CreateFileName::CreateListOfFilenames(inputList.size(), 
-   //    "SEL","svg",usetimestamp,blockstart,blocksize);
-   //FileNameList 
-   //    = LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList,rawprefix); 
-   //if(htmlprefix.compare(std::string(""))==0) {
-   //    FullfileNameList = std::vector<std::string>(FileNameList);
-   //} else {
-   //    FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
-   //        basicfileNameList, host, htmlprefix, usehttps, usetarget);
-   //}
+   basicfileNameList
+       = LRL_CreateFileName::CreateListOfFilenames(inputList.size(), 
+       "SEL","svg",usetimestamp,blockstart,blocksize);
+   FileNameList 
+       = LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList,rawprefix); 
+   if(htmlprefix.compare(std::string(""))==0) {
+       FullfileNameList = std::vector<std::string>(FileNameList);
+   } else {
+       FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
+           basicfileNameList, host, htmlprefix, usehttps, usetarget);
+   }
 
    for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
    {

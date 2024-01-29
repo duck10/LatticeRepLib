@@ -193,7 +193,7 @@ std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int y
       const std::string circle = "";
       const std::string x = LRL_ToString(xint + i * 15);
       const std::string y = LRL_ToString(yint);
-      const std::string s = std::string("<circle  r=\"10\" stroke = \"black\" stroke-width=\"0.5\""
+      const std::string s = std::string("<circle  r=\"12\" stroke = \"black\" stroke-width=\"0.5\""
          " fill= \"rgb(" + LRL_ToString(r) + ", " + LRL_ToString(g) + ", " + LRL_ToString(b) + ")\""
          " cx=\"" + x + "\""
          " cy=\"" + y + "\"/>\n");

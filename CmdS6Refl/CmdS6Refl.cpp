@@ -1,24 +1,8 @@
 
 #include <iostream>
 
+#include "Filter_Duplicates.h"
 #include "LRL_ReadLatticeData.h"
-
-std::vector<S6> EliminateDuplicates(const std::vector<S6>& vs) {
-   std::vector<S6> out(1, vs[0]);
-   for (size_t i = 1; i < vs.size(); ++i) {
-      std::vector<S6> toAdd(1, vs[i]);
-      for (size_t kkk = 0; kkk < out.size(); ++kkk)
-      {
-         const double d = (vs[i] - out[kkk]).norm();
-         if (d < 1.0E-6) {
-            toAdd.clear();
-            break;
-         }
-      }
-      out.insert(out.end(), toAdd.begin(), toAdd.end());
-   }
-   return out;
-}
 
 int main()
 {
@@ -34,7 +18,7 @@ int main()
       }
    }
 
-   const std::vector<S6> noDups = EliminateDuplicates(reflected);
+   const std::vector<S6> noDups = FilterRemoveDups<S6>(reflected);
 
    for ( size_t i=0; i<noDups.size(); ++i )
    {

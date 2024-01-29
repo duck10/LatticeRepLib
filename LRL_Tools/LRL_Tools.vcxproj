@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="ConstSingleton_T.h" />
     <ClInclude Include="FileOperations.h" />
+    <ClInclude Include="Filter_Duplicates.h" />
     <ClInclude Include="HSV.h" />
     <ClInclude Include="LinearAxis.h" />
     <ClInclude Include="LRL_CreateFileName.h" />

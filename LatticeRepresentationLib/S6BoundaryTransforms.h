@@ -9,22 +9,33 @@
 class S6BoundaryTransforms {
 public:
    S6BoundaryTransforms();
-   std::vector<MatS6> GetBoundaries() const;
+   std::vector<MatS6> GetSixBoundaries() const;
    std::vector<MatS6> GetBoundaries(const size_t n) const;
 
    std::vector<std::vector<MatS6> >  GetVector() const { return m_vvm; }
    
    std::vector<MatS6> GetVector(const size_t n) const { return m_vvm[n]; }
    std::vector<MatS6> operator[] (const size_t n) { return m_vvm[n]; }
-   std::vector<MatS6> Prod(const size_t n, const MatS6& m) const;
-   std::vector<MatS6> Prod(const size_t n, const std::vector<MatS6>& m) const;
-   std::vector<MatS6> Prod(const size_t n1, const size_t n2, const std::vector<MatS6>& m) const;
-   std::vector<MatS6> Prod(const size_t n1, const size_t n2, const size_t n3, const std::vector<MatS6>& m) const;
+
+   MatS6 GetOneTransform(const size_t n) const;
+
+   //std::vector<MatS6> Prod(const size_t n, const MatS6& m) const;
+   //std::vector<MatS6> Prod(const size_t n, const std::vector<MatS6>& m) const;
+   //std::vector<MatS6> Prod(const size_t n1, const size_t n2, const std::vector<MatS6>& m) const;
+   //std::vector<MatS6> Prod(const size_t n1, const size_t n2, const size_t n3, const std::vector<MatS6>& m) const;
+
+
+   std::vector<S6> operator*(const S6& s6);
+   friend std::vector<S6> operator*(const size_t n, const S6& s6);
+   S6 Transform(const size_t nBound, const size_t nInBound, const S6& s6);
+   std::vector<std::vector<S6> > TransformBounds(const S6& s6);
+
+
    size_t size() const { return m_vvm.size(); }
 
 private:
-   std::vector<std::vector<MatS6> > m_vvm;
-   
+   std::vector<std::vector<MatS6> > m_vvm;   
+   static std::vector<MatS6> m_SixTransforms;
 };
 
 class S6BoundaryMatricesBase {

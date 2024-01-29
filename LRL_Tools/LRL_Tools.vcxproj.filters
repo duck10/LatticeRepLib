@@ -90,6 +90,9 @@
     <ClInclude Include="RGB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Filter_Duplicates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LRL_inverse.cpp">
