@@ -173,9 +173,15 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
    // the next line has a blank. It is a place to add a comment such as the command line to generate the plot
    //
    //
-   s += "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y+40) + "\""
+   s += "<!--#######################################################-->\n"
+      "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y + 40) + "\""
       " font-size = \"20\" " +
-      " font-family = \"Arial, Helvetica, sans-serif \">" + "" + "</text>\n";
+      " font-family = \"Arial, Helvetica, sans-serif \">\n" +
+      ""  // INSERT TEXT HERE
+      + " \n</text>   "
+      "<!-- add a comment such as the command line-->\n"
+      "<!--#######################################################-->\n";
+
       return s;
 }
 
@@ -282,20 +288,26 @@ int main(int argc, char* argv[])
    svgOutput += legend;
 
    for (size_t whichPlot = 1; whichPlot < 4; ++whichPlot) {
+      const std::string line = c3plot.CreatePolylineFromPoints(whichPlot, ".5", v);
 
-      std::string line;
-      std::string cells;
+      if (whichPlot == 1)
+         svgOutput += PlotC3(whichPlot, 500, 500, line);
+      if (whichPlot == 2)
+         svgOutput  += PlotC3(whichPlot, 1100, 500, line );
+      if (whichPlot == 3)
+         svgOutput += PlotC3(whichPlot, 1700, 500, line );
+   }
 
-      line += c3plot.CreatePolylineFromPoints(whichPlot, ".5", v);
-      cells += c3plot.DrawCells(whichPlot, v);
+   for (size_t whichPlot = 1; whichPlot < 4; ++whichPlot) {
+      const std::string cells = c3plot.DrawCells(whichPlot, v);
 
       std::string plotc3;
       if (whichPlot == 1)
-         plotc3 = PlotC3(whichPlot, 500, 500, line + "  " + cells);
+         plotc3 = PlotC3(whichPlot, 500, 500, /*line +*/ "  " + cells);
       if (whichPlot == 2)
-         plotc3 = PlotC3(whichPlot, 1100, 500, line + "  " + cells);
+         plotc3 = PlotC3(whichPlot, 1100, 500, /*line +*/ "  " + cells);
       if (whichPlot == 3)
-         plotc3 = PlotC3(whichPlot, 1700, 500, line + "  " + cells);
+         plotc3 = PlotC3(whichPlot, 1700, 500, /*line +*/ "  " + cells);
 
       svgOutput += plotc3;
    }
