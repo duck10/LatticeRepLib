@@ -33,6 +33,7 @@
 #include "rhrand.h"
 #include "RI.h"
 #include "S6.h"
+#include "S6BoundaryTransforms.h"
 #include "S6Dist.h"
 #include "TNear.h"
 
@@ -41,6 +42,7 @@
 #include <complex>
 #include <cstdlib>
 #include <cstdio>
+#include <set>
 
 std::string Letters(void) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
@@ -1398,6 +1400,33 @@ static void TestCommandArgs(int argc, char* argv[]) {
 
    int main(int argc, char* argv[])
    {
+      static const std::vector<MatS6> vS6_Refl = MatS6::GetReflections();
+      S6BoundaryTransforms sbt;
+      const MatS6 matrix = sbt.GetOneTransform(0);
+      std::set<MatS6> matrices;
+      for (const auto& a : vS6_Refl) {
+         for (const auto& b : vS6_Refl) {
+            matrices.insert(a * matrix);
+         }
+      }
+      std::cout << " matrix count " << matrices.size() << std::endl;
+
+      for (const auto& a : vS6_Refl) {
+         for (const auto& b : vS6_Refl) {
+            matrices.insert(matrix * b);
+         }
+      }
+      std::cout << " matrix count " << matrices.size() << std::endl;
+
+      for (const auto& a : vS6_Refl) {
+         for (const auto& b : vS6_Refl) {
+            matrices.insert(a * matrix * b);
+         }
+      }
+      std::cout << " matrix count " << matrices.size() << std::endl;
+
+      exit(0);
+
       TestCommandArgs(argc, argv);
       TestRI();
       C3::Test_C3();
