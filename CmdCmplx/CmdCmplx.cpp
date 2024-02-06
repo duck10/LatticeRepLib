@@ -46,9 +46,21 @@ void ComplexCell(const S6& s)
    const std::complex<double> b = std::sqrt(std::complex<double>(bsq, 0.0));
    const std::complex<double> c = std::sqrt(std::complex<double>(csq, 0.0));
 
-   const std::complex<double> cosal = s[0] / (b * c);
-   const std::complex<double> cosbe = s[1] / (a * c);
-   const std::complex<double> cosga = s[2] / (a * b);
+   std::complex<double> cosal = s[0] / (b * c);
+   std::complex<double> cosbe = s[1] / (a * c);
+   std::complex<double> cosga = s[2] / (a * b);
+   if (a == 0.0) {
+      cosbe = 0.0;
+      cosga = 0.0;
+   }
+   if (b == 0.0) {
+      cosal = 0.0;
+      cosga = 0.0;
+   }
+   if (c == 0.0) {
+      cosal = 0.0;
+      cosbe = 0.0;
+   }
 
    const std::complex<double> ac1 = std::acos(cosal);
    const std::complex<double> ac2 = std::acos(cosbe);
@@ -118,6 +130,7 @@ int main()
    //   ComplexCell(test);
    //}
 
+   ComplexCell(S6(" 0.0001 0.0001 0 200  0 100"));
    ComplexCell(S6(" 0 0 0 200  0 100"));
    ComplexCell(S6(" 0 0 0 100 100 100"));
    ComplexCell(S6(" 0 0 0 0 100 100"));
