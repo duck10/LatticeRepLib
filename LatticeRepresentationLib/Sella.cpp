@@ -128,7 +128,6 @@ DeloneFitResults Sella::SellaFitXXXXXX(
 
    if (errors != 0) throw("prjs[i] count != perps[i] count");
 
-   S6 bestFitForType;
    for (size_t i = 0; i < perps.size(); ++i) {
       const S6 perpv = perps[i] * s6;
       const double testFit = perpv.norm();
@@ -136,10 +135,8 @@ DeloneFitResults Sella::SellaFitXXXXXX(
       if (bestFit > testFit && LRL_Cell_Degrees(prjs[i] * s6).IsValid()) {
          nBest = i;
          bestFit = testFit;
-         bestFitForType = prjs[i] * s6;
       }
    }
-   std::cout << "; best fit in SellaFitXXXXXX S6 " << bestFitForType << "   " << bestFit << " " << name << std::endl;
    if (bestFit < 1.0E-8) bestFit = 0.0;
    const S6 smallestPerp = perps[nBest] * s6;
    const S6 bestv = prjs[nBest] * s6;
@@ -166,7 +163,7 @@ std::vector<DeloneFitResults> Sella::SellaFit(
 
    for (size_t i = 0; i < sptypes.size(); ++i) {
          DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6);
-
+         std::cout << "; best fit in SellaFitXXXXXX S6 " << fit.GetBestFit() << "   " << fit.GetRawFit() << " " << sptypes[i]->GetName() << std::endl;
          const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
          fit.SetZscore(zscore);
          fit.SetLatticeType(sptypes[i]->GetBravaisType());
