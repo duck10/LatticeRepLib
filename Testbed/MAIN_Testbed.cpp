@@ -43,6 +43,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <set>
+#include <sstream>
 
 std::string Letters(void) {
    return "V,G,D,S,P,A,B,C,I,F,R,C3,G6,S6,B4,D7,H";
@@ -1398,8 +1399,58 @@ static void TestCommandArgs(int argc, char* argv[]) {
    exit(0);
 }
 
+class BasicDeloneRectangle {
+public:
+   int xcoord;
+   int ycoord;
+   std::string m_deloneName;
+   std::string m_bravaisType;
+   std::string m_generalType;
+   std::string m_character;
+
+   std::string DeloneOut() {
+      std::stringstream  o;
+      o << xcoord << "\n";
+      o << ycoord << "\n";
+      o << m_deloneName << "\n";
+      o << m_bravaisType << "\n";
+      o << m_generalType << "\n";
+      o << m_character << "\n";
+      return o.str();
+   }
+};
+
+class A1 : public BasicDeloneRectangle {
+public:
+   A1(const int x, const int y) {
+      xcoord = x;
+      ycoord = y;
+      m_deloneName = "A1";
+      m_bravaisType = "aP";
+      m_generalType = "aP";
+      m_character = "(rst uvw)";
+   }
+};
+
+class A2 : public BasicDeloneRectangle {
+public:
+   A2(const int x, const int y) {
+      xcoord = x;
+      ycoord = y;
+      m_deloneName = "A2";
+      m_bravaisType = "aP";
+      m_generalType = "aP";
+      m_character = "(rs0 tuv)";
+   }
+};
+
+
    int main(int argc, char* argv[])
    {
+      A1 a1(1, 2);
+      A2 a2(2, 4);
+      std::cout << a1.DeloneOut();
+      std::cout << a2.DeloneOut();
       static const std::vector<MatS6> vS6_Refl = MatS6::GetReflections();
       S6BoundaryTransforms sbt;
       const MatS6 matrix = sbt.GetOneTransform(0);

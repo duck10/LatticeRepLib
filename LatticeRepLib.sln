@@ -129,7 +129,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdInverse", "CmdInverse\Cm
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdScale", "CmdScale\CmdScale.vcxproj", "{74EDB67B-6EE4-4684-A02B-317DA7DA4E15}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdS6Boundries", "S6Boundries\S6Boundries.vcxproj", "{B6161287-214C-4869-8A1B-4AA0FE792480}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdS6Boundaries", "S6Boundries\S6Boundries.vcxproj", "{B6161287-214C-4869-8A1B-4AA0FE792480}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakeDeloneGrid", "MakeDeloneGrid\MakeDeloneGrid.vcxproj", "{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -563,6 +565,14 @@ Global
 		{B6161287-214C-4869-8A1B-4AA0FE792480}.Release|x64.Build.0 = Release|x64
 		{B6161287-214C-4869-8A1B-4AA0FE792480}.Release|x86.ActiveCfg = Release|Win32
 		{B6161287-214C-4869-8A1B-4AA0FE792480}.Release|x86.Build.0 = Release|Win32
+		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Debug|x64.ActiveCfg = Debug|x64
+		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Debug|x64.Build.0 = Debug|x64
+		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Debug|x86.ActiveCfg = Debug|Win32
+		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Debug|x86.Build.0 = Debug|Win32
+		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Release|x64.ActiveCfg = Release|x64
+		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Release|x64.Build.0 = Release|x64
+		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Release|x86.ActiveCfg = Release|Win32
+		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

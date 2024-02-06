@@ -75,21 +75,21 @@ int main()
    //std::cout << temp << std::endl;
 
 
-   std::cout << C6(S6(-100, -100, -100, 0, 0, 0)) << std::endl;
-   std::cout << C6(S6(100, 100, 100, 0, 0, 0)) << std::endl;
-   std::cout << std::endl;
-   std::cout << C6(S6(0, 0, 0, -100, -100, -100)) << std::endl;
-   std::cout << C6(S6(0, 0, 0, 100, 100, 100)) << std::endl;
-   std::cout << std::endl;
-   std::cout << C6(S6(0, 0, 0, -100, -200, -300)) << std::endl;
-   std::cout << C6(S6(0, 0, 0, 100, 200, 300)) << std::endl;;
-   std::cout << std::endl;
-   std::cout << C6(S6(-5, -10, -15, -100, -200, -300)) << std::endl;
-   std::cout << C6(S6(5, 10, 15, 100, 200, 300)) << std::endl;;
+   //std::cout << C6(S6(-100, -100, -100, 0, 0, 0)) << std::endl;
+   //std::cout << C6(S6(100, 100, 100, 0, 0, 0)) << std::endl;
+   //std::cout << std::endl;
+   //std::cout << C6(S6(0, 0, 0, -100, -100, -100)) << std::endl;
+   //std::cout << C6(S6(0, 0, 0, 100, 100, 100)) << std::endl;
+   //std::cout << std::endl;
+   //std::cout << C6(S6(0, 0, 0, -100, -200, -300)) << std::endl;
+   //std::cout << C6(S6(0, 0, 0, 100, 200, 300)) << std::endl;;
+   //std::cout << std::endl;
+   //std::cout << C6(S6(-5, -10, -15, -100, -200, -300)) << std::endl;
+   //std::cout << C6(S6(5, 10, 15, 100, 200, 300)) << std::endl;;
 
 
-   const int i19191 = 19191;
-   exit(0);
+   //const int i19191 = 19191;
+   //exit(0);
     //std::cout << "; To Complex" << std::endl;
     ////const std::vector<ReadComplexLatticeData> inputList = ReadComplexLatticeData().ReadLatticeData();
     //const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
