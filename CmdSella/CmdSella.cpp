@@ -188,7 +188,7 @@ std::vector<DeloneFitResults> FilterForBestExample(
    return out;
 }
 
-void NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
+std::string NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
    const S6 bestFit = deloneFitResults.GetBestFit();
    double deltaInputBest = DeltaInputBest(deloneFitResults);
    if (deltaInputBest < 1.0E-6) deltaInputBest = 0.0;
@@ -197,7 +197,8 @@ void NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
 
    const std::vector<std::shared_ptr<GenerateNiggliBase> >
       vglb = GenerateNiggliBase().Select(latticeGeneral);
-
+ 
+   std::string out;
    for (size_t i = 0; i < vglb.size(); ++i) {
       const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
       //if (pt->GetBravaisType()[0] == 'a') continue;
@@ -209,25 +210,34 @@ void NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
       if (d / probe.norm() > g_maxDeltaForMatch) continue;
       const G6 centered =  pt->GetToCenter() * probe;
 
-      std::cout << latticeType.substr(1,1)+" " << LRL_Cell_Degrees(centered)
+      std::cout << latticeType.substr(1, 1) + " " << LRL_Cell_Degrees(centered)
          << "  " << latticeType << "  " << deltaInputBest << "\n";
+      std::ostringstream os;
+      os << latticeType.substr(1, 1) + " " << LRL_Cell_Degrees(centered)
+         << "  " << latticeType << "  " << deltaInputBest << "\n";
+      out += os.str();
       break;
    }
+   return out;
 }
 
-static int ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
+static std::string  ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
    const S6& LatI) {
-   int toReturn = 0;
-   for (size_t kk = 0; kk < vFilteredDeloneFitResults.size(); ++kk) {
-      const DeloneFitResults& dfr = vFilteredDeloneFitResults[kk];
+   std::string out;
+   for (const auto& type: vFilteredDeloneFitResults) {
+      const DeloneFitResults& dfr =type;
       if (dfr.GetType()[0] == 'a') continue;
-      //const double d = vDeloneFitResults[kk].GetRawFit() / vLat[lat].norm();
-      if (vFilteredDeloneFitResults[kk].GetRawFit() / LatI.norm() < g_maxDeltaForMatch) {
-         NiggliMatchLatticeType(vFilteredDeloneFitResults[kk]);
-         toReturn = 1;
+      if (type.GetRawFit() / LatI.norm() < g_maxDeltaForMatch) {
+         std::ostringstream os;
+         os << "P " 
+            << type.GetBestFit() << " " 
+            << type.GetDeloneType() << " " 
+            << type.GetRawFit()
+            << std::endl;
+         out += os.str();
       }
    }
-   return toReturn;
+   return out;
 }
 
 std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLatticeData& input,
@@ -247,14 +257,14 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
    std::cout << "; Graphics output will go to file " << filename << std::endl;
 
-   std::cout << "; reported distances (in A^2)" << std::endl;
-   if (!vDeloneFitResultsForOneLattice.empty()) std::cout << "; projected best fits" << std::endl;
+   if (!vDeloneFitResultsForOneLattice.empty()) std::cout << "; projected best fits ( reported distances (in A^2))" << std::endl;
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneLattice);
-   sumBravaisTypesFound += ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
+   const std::string matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
+   std::cout << matches << "\n";
 
    const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResultsForOneLattice);
 
-   if (sumBravaisTypesFound == 0 && doProduceSellaGraphics) {
+   if (matches.empty() && doProduceSellaGraphics) {
       std::cout << "; apparently the input is triclinic--no other Bravais types matched" << std::endl;;
    }
 
@@ -354,11 +364,6 @@ int main(int argc, char* argv[])
 
    std::cout << "; SELLA method symmetry searching\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   /*
-   p 10 20 30  90 90 90
-   p 10 10 10  90 90 91
-   end
-   */
 
    if (blockstart + blocksize > inputList.size()) {
        if (blockstart >= inputList.size()) {
