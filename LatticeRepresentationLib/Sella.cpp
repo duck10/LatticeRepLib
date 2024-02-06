@@ -139,7 +139,7 @@ DeloneFitResults Sella::SellaFitXXXXXX(
          bestFitForType = prjs[i] * s6;
       }
    }
-   std::cout << "; best fit in SellaFitXXXXXX " << bestFitForType << std::endl;
+   std::cout << "; best fit in SellaFitXXXXXX S6 " << bestFitForType << "   " << bestFit << " " << name << std::endl;
    if (bestFit < 1.0E-8) bestFit = 0.0;
    const S6 smallestPerp = perps[nBest] * s6;
    const S6 bestv = prjs[nBest] * s6;
