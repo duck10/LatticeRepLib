@@ -318,11 +318,24 @@ BravaisChainFailures BravaisHeirarchy::CheckOneBravaisChain(
    return bcf;
 }
 
+std::vector<std::string> BravaisHeirarchy::FormatProjectedCells(const std::vector<std::string>& s) {
+   std::vector<std::string> strings{ s };
+
+   if ( ! s.empty())
+   {
+      for (const auto& si : s) {
+         std::cout << si << std::endl;
+      }
+   }
+
+   return strings;
+}
 
 std::string BravaisHeirarchy::ProduceSVG(
    const LRL_ReadLatticeData& input,
    const S6& reducedCell,
-   const std::vector<std::pair<std::string, double> >& scores) {
+   const std::vector<std::pair<std::string, double> >& scores,
+   const std::vector<std::string>& projectedCells) {
 
    const std::string inputText = "<text x=\"175\" y=\"175\" font-size=\"25\" >SELLA RESULTS  (Angstroms)"
       "</text>\n";
@@ -336,6 +349,10 @@ std::string BravaisHeirarchy::ProduceSVG(
       FormatCellData(input, reducedCell) +
       BravaisHeirarchy::ScoreLabels(scores) +
       BravaisHeirarchy::BoilerPlate_2();
+
+
+
+   std::vector<std::string> cells = FormatProjectedCells(projectedCells);
 
    return s;
 }

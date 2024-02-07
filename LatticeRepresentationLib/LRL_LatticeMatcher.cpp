@@ -46,7 +46,7 @@ std::vector<MatS6> LRL_LatticeMatcher::BuildMatrixBase() {
    // Expand the seed sequence 
    std::vector<MatS6> base;
    for (size_t i = 0; i < redc.size(); ++i) {
-      for ( auto& k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+      for ( auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
          base.push_back(redc[i].first * (*k));
       }
    }
@@ -60,7 +60,7 @@ std::vector<MatS6> LRL_LatticeMatcher::BuildMatrixBase() {
    for (size_t k = 0; k < m_matrixGenerationRecursionDepth; ++k) {
       for (size_t i = 0; i < base.size(); ++i) {
          const size_t msize = m_matrixTree.size();
-         for ( auto& m= m_matrixTree.begin(); m!= m_matrixTree.end(); ++m) {
+         for ( auto m= m_matrixTree.begin(); m!= m_matrixTree.end(); ++m) {
             const MatS6 temp = base[i] * (*m);
             const bool returnvalue = StoreMatS6IfUnique(temp);
          }
@@ -122,7 +122,7 @@ void LRL_LatticeMatcher::ExpandReflections(const MatS6& m) {
    StoreMatS6IfUnique(m);
    const size_t currentMatrixTreeSize = m_matrixTree.size();
    for (size_t i = 0; i < refl_one.size(); ++i) {
-      for ( auto& k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+      for ( auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
          const MatS6 mi = refl_one[i] * (*k);
          StoreMatS6IfUnique(mi);
       }
@@ -133,7 +133,7 @@ void LRL_LatticeMatcher::ExpandBoundaries(const MatS6& m) {
    StoreMatS6IfUnique(m);
    const size_t currentMatrixTreeSize = m_matrixTree.size();
    for (size_t i = 0; i < redc.size(); ++i) {
-      for ( auto& k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+      for ( auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
          const MatS6 mi = redc[i].first * (*k);
          StoreMatS6IfUnique(mi);
       }
@@ -220,7 +220,7 @@ void LRL_LatticeMatcher::SetReferenceLattice(const S6& newReference) {
 void LRL_LatticeMatcher::BuildReferenceTree(const S6& reference) {
    const double normReference = m_reducedReference.norm();
    const Scaler_MV scale(reference);
-   for ( auto& i = m_matrixTree.begin(); i != m_matrixTree.end(); ++i ) {
+   for ( auto i = m_matrixTree.begin(); i != m_matrixTree.end(); ++i ) {
       const S6 scaledMV = scale.Scale(*i * reference);
       StoreMV_IfUnique(scaledMV, MatS6::Inverse(*i));
    }
