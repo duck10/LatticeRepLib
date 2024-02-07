@@ -221,9 +221,9 @@ std::string NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
    return out;
 }
 
-static std::string  ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
+static std::vector<std::string>  ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
    const S6& LatI) {
-   std::string out;
+   std::vector<std::string> out;
    for (const auto& type: vFilteredDeloneFitResults) {
       const DeloneFitResults& dfr =type;
       if (dfr.GetType()[0] == 'a') continue;
@@ -234,7 +234,7 @@ static std::string  ListMatchingTypes(const std::vector<DeloneFitResults>& vFilt
             << type.GetDeloneType() << " " 
             << type.GetRawFit()
             << std::endl;
-         out += os.str();
+         out.emplace_back(os.str());
       }
    }
    return out;
@@ -259,8 +259,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
 
    if (!vDeloneFitResultsForOneLattice.empty()) std::cout << "; projected best fits ( reported distances (in A^2))" << std::endl;
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneLattice);
-   const std::string matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
-   std::cout << matches << "\n";
+   const std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
 
    const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResultsForOneLattice);
 
@@ -272,7 +271,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
     std::cout << out << std::endl;
 
    return  BravaisHeirarchy::ProduceSVG(
-      input, oneLattice, scores);
+      input, oneLattice, scores, matches);
 }
 
 std::string SendSellaToFile(const std::string& svg, const std::string& filename) {

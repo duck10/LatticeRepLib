@@ -294,11 +294,12 @@ public:
 
    static std::string ProduceSVG(
       const LRL_ReadLatticeData& input, const S6& reducedCell,
-      const std::vector<std::pair<std::string, double> >& scores);
+      const std::vector<std::pair<std::string, double> >& scores,
+      const std::vector<std::string>& projectedCells);
    static std::string BoilerPlate_1();
    static std::string BoilerPlate_2();
    static std::string ScoreLabels(const std::vector<std::pair<std::string, double> >& scores);
-
+   static std::vector<std::string> FormatProjectedCells(const std::vector<std::string>& s);
 };
 
 #endif // BRAVAISHEIRARCHY_H
