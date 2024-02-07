@@ -229,8 +229,8 @@ static std::vector<std::string>  ListMatchingTypes(const std::vector<DeloneFitRe
       if (dfr.GetType()[0] == 'a') continue;
       if (type.GetRawFit() / LatI.norm() < g_maxDeltaForMatch) {
          std::ostringstream os;
-         os << "P " 
-            << type.GetBestFit() << " " 
+         os << "P "
+            << LRL_Cell_Degrees(type.GetBestFit()) << " "
             << type.GetDeloneType() << " " 
             << type.GetRawFit();
          out.emplace_back(os.str());
@@ -254,11 +254,9 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    outBCF.insert(outBCF.end(), vBCF.begin(), vBCF.end());
 
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
-   std::cout << "; Graphics output will go to file " << filename << std::endl;
 
-   if (!vDeloneFitResultsForOneLattice.empty()) std::cout << "; projected best fits ( reported distances (in A^2))" << std::endl;
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneLattice);
-   const std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
+   std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
 
    const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResultsForOneLattice);
 
@@ -268,6 +266,22 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
 
    for (const auto& out: outBCF)
     std::cout << out << std::endl;
+
+   std::ostringstream os;
+   if (!matches.empty()) {
+      std::cout << "; projected best fits ( reported distances (in A^2))" << std::endl;
+      int y = 300;
+      const int x = 700;
+      os << "<text x = \"" << x-20 << "\" y = \"" << y << "\" font-size = \"15\" >" << "Projected best fits ( reported distances (in A^2))"  << " </text>\n";
+      for (const auto& cell : matches) {
+         std::cout << cell << std::endl;
+         y += 20;
+         os << "<text x = \"" << x << "\" y = \"" << y << "\" font-size = \"15\" >" << cell << " </text>\n";
+         //std::cout << os.str() << std::endl;
+      }
+   }
+   std::string temp = os.str();
+   matches.push_back(temp);
 
    return  BravaisHeirarchy::ProduceSVG(
       input, oneLattice, scores, matches);

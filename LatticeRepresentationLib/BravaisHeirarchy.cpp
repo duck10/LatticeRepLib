@@ -313,8 +313,8 @@ BravaisChainFailures BravaisHeirarchy::CheckOneBravaisChain(
       }
    }
    //DeloneFitResults(const double fit, const S6 & bestApprox, const S6 & perpv, const MatS6 & toCanon);
-   const DeloneFitResults dfr(bcf.Remediation());
-   if (!bcf.empty())  bcf.Remediation();
+   //const DeloneFitResults dfr(bcf.Remediation());
+   //if (!bcf.empty())  bcf.Remediation();
    return bcf;
 }
 
@@ -323,9 +323,7 @@ std::vector<std::string> BravaisHeirarchy::FormatProjectedCells(const std::vecto
 
    if ( ! s.empty())
    {
-      for (const auto& si : s) {
-         std::cout << si << std::endl;
-      }
+      std::cout << "; projected best fits ( reported distances (in A^2))" << std::endl;
    }
 
    return strings;
@@ -342,17 +340,22 @@ std::string BravaisHeirarchy::ProduceSVG(
    const std::string reduced = "<text x=\"175\" y=\"210\" font-size=\"25\" >      " +
       input.GetStrCell() + "</text>\n";
 
-   const std::string s =
+   std::string s =
       BravaisHeirarchy::BoilerPlate_1() +
       inputText +
       reduced +
       FormatCellData(input, reducedCell) +
-      BravaisHeirarchy::ScoreLabels(scores) +
-      BravaisHeirarchy::BoilerPlate_2();
+      BravaisHeirarchy::ScoreLabels(scores);
+      
 
+   if (!projectedCells.empty()) {
+      //s += "; projected best fits ( reported distances (in A^2))";
+      for (const auto& cell : projectedCells) {
+         s+=cell;
+      }
+   }
 
-
-   std::vector<std::string> cells = FormatProjectedCells(projectedCells);
+   s += BravaisHeirarchy::BoilerPlate_2();
 
    return s;
 }

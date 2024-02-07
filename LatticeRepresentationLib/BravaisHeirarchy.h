@@ -19,7 +19,7 @@
 class BravaisChainFail {
 public:
    friend std::ostream& operator<< (std::ostream& o, const BravaisChainFail& bcf) {
-      o << "; #### Bravais chain failure\n";
+      //o << "; #### Bravais chain failure A\n";
       o << ";  " << bcf.m_minus.first << " " << bcf.m_minus.second << "\n";
       o << ";  " << bcf.m_hit.first << " " << bcf.m_hit.second << "\n";
       o << ";  " << bcf.m_plus.first << " " << bcf.m_plus.second << "\n";
@@ -157,7 +157,7 @@ public:
 
 
       int zeroPosition = -1;
-      const double upper = 2.0 * getFailList()[0].GetPlus().second;
+      const double upper = std::min(0.1,2.0 * getFailList()[0].GetPlus().second);
 
       //std::cout << "; cell in BravaisChainFailures::Remediation \n" << GetS6() << std::endl;
       //std::cout << "; cell in BravaisChainFailures::Remediation \n" << LRL_Cell_Degrees(GetS6()) << std::endl;
@@ -173,7 +173,7 @@ public:
 
 
       if (ns6 > 3) {
-         std::cout << "iin  BravaisChainFailures::Remediation the case"
+         std::cout << "iin  BravaisChainFailures::Remediation the case "
             "of one C3 zero and other than 3 S6 zeroes is not implemented" << std::endl;
          return dfr;
       }
