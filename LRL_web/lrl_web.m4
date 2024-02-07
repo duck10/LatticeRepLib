@@ -1452,57 +1452,57 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"28\" onchange=\"changeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
       std::cout << "  <optgroup label=\"Information\">" << std::endl;
       selected=operation.compare("NoOp")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"NoOp\">Check Input</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"NoOp\"><b>Check Input</b></option>" << std::endl;
       selected=operation.compare("CmdDists")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdDists\">compute NCDist and CS6Dist distances</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdDists\"><b>Distances</b>: compute NCDist and CS6Dist distances</option>" << std::endl;
       selected=(operation.compare("CmdVolume")==0)?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdVolume\"> compute volumes of listed cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdVolume\"><b>Volume</b>:  compute volumes of listed cells</option>" << std::endl;
       selected=operation.compare("CmdSella")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdSella\"> apply Sella algorithm</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdSella\"><b>Sella</b>:  apply Sella algorithm</option>" << std::endl;
       selected=operation.compare("PlotC3")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"PlotC3\"> draw C3 plot of listed cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"PlotC3\"><b>PlotC3</b>:  draw C3 plot of listed cells</option>" << std::endl;
       selected=operation.compare("Dirichlet")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"Dirichlet\"> draw Dirichlet cells of listed cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"Dirichlet\"><b>Dirichlet</b>:  draw Dirichlet cells of listed cells</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Output Only\">"  << std::endl;
       selected=operation.compare("CmdGen")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdGen\">Generate cells of a particular type or types</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdGen\"><b>Generate cells</b>: Generate cells of a particular type or types</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Type Conversion\">" << std::endl;
       selected=operation.compare("CmdToB4")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToB4\"> compute Bravais tetrahedron (B4)</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToB4\"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>" << std::endl;
       selected=operation.compare("CmdToC3")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToC3\"> compute complex cell presentation (C3)</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToC3\"><b>To C3</b>: compute complex cell presentation (C3)</option>" << std::endl;
       selected=operation.compare("CmdToCell")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToCell\"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToCell\"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>" << std::endl;
       selected=operation.compare("CmdToG6")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToG6\"> compute G6 version of cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToG6\"><b>To G6</b>: compute G6 version of cells</option>" << std::endl;
       selected=operation.compare("CmdToS6")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToS6\"> compute S6 version of cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToS6\"><b>To S6</b>: compute S6 version of cells</option>" << std::endl;
       selected=operation.compare("CmdToS6L")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToS6L\"> compute linearized S6 or Root Invariant version of cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToS6L\"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>" << std::endl;
       selected=operation.compare("CmdToU")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToU\"> compute unsorted Dirichlet cells (dc7unsrt)</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToU\"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>" << std::endl;
       selected=operation.compare("CmdToV7")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdToV7\"> compute V7 version of cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdToV7\"><b>To V7</b>: compute V7 version of cells</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Reduction\">" << std::endl;
       selected=operation.compare("CmdDelone")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdDelone\">compute Selling-reduced primitive cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdDelone\"><b>Delone</b>:compute Selling-reduced primitive cells</option>" << std::endl;
       selected=operation.compare("CmdNiggli")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdNiggli\">compute Niggli-reduced primitive cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdNiggli\"><b>Niggli</b>:compute Niggli-reduced primitive cells</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Modify Input\">" << std::endl;
       selected=operation.compare("CmdLM")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdLM\">apply Lattice Matching algorithm to listed cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdLM\"><b>Matching</b>: apply Lattice Matching algorithm to listed cells</option>" << std::endl;
       selected=operation.compare("CmdPath")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdPath\">compute path between pairs of cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdPath\"><b>Path</b>: compute path between pairs of cells</option>" << std::endl;
       selected=operation.compare("CmdPerturb")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdPerturb\">compute perturbed versions of input cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdPerturb\"><b>Perturb</b>: compute perturbed versions of input cells</option>" << std::endl;
       selected=operation.compare("CmdS6Refl")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdS6Refl\">apply S6 reflections to input cells</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdS6Refl\"><b>S6Reflections</b>: apply S6 reflections to input cells</option>" << std::endl;
       selected=operation.compare("CmdScale")==0?"selected ":"";
-      std::cout << "  <option "+selected+"value=\"CmdScale\"> rescale cells to reference cell</option>" << std::endl;
+      std::cout << "  <option "+selected+"value=\"CmdScale\"><b>Scale</b>: rescale cells to reference cell</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  </select>" << std::endl;
       std::cout << "  </div>" << std::endl;
@@ -2892,36 +2892,36 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <label for="operation_01">Select an operation:</label><br />
   <select name="operation_01" id="operation_01" size="28" onchange="changeoperation('01')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -3012,36 +3012,36 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <label for="operation_02">Select an operation:</label><br />
   <select name="operation_02" id="operation_02" size="28" onchange="changeoperation('02')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -3132,36 +3132,36 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <label for="operation_03">Select an operation:</label><br />
   <select name="operation_03" id="operation_03" size="28" onchange="changeoperation('03')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -3252,36 +3252,36 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <label for="operation_04">Select an operation:</label><br />
   <select name="operation_04" id="operation_04" size="28" onchange="changeoperation('04')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -3372,36 +3372,36 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <label for="operation_05">Select an operation:</label><br />
   <select name="operation_05" id="operation_05" size="28" onchange="changeoperation('05')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -3492,36 +3492,36 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <label for="operation_06">Select an operation:</label><br />
   <select name="operation_06" id="operation_06" size="28" onchange="changeoperation('06')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -3612,36 +3612,36 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <label for="operation_07">Select an operation:</label><br />
   <select name="operation_07" id="operation_07" size="28" onchange="changeoperation('07')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -3742,38 +3742,37 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <div id="block_08a" style="display:none"> 
   <label for="operation_08">Select an operation:</label><br />
   <select name="operation_08" id="operation_08" size="28" onchange="changeoperation('08')">
-  <option selected value="NoOp">Check Input</option>
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
