@@ -232,8 +232,7 @@ static std::vector<std::string>  ListMatchingTypes(const std::vector<DeloneFitRe
          os << "P " 
             << type.GetBestFit() << " " 
             << type.GetDeloneType() << " " 
-            << type.GetRawFit()
-            << std::endl;
+            << type.GetRawFit();
          out.emplace_back(os.str());
       }
    }

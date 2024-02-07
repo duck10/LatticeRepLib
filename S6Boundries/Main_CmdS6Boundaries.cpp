@@ -29,8 +29,8 @@ int main()
    std::cout << "; S6 boundaries" << std::endl;
    if (inputList.empty()) exit(2);
 
-   S6BoundaryTransforms sbt;
-   const std::vector<MatS6> v = sbt.GetBoundaries();
+   //S6BoundaryTransforms sbt;
+   //const std::vector<MatS6> v = sbt.GetBoundaries();
 
    std::vector<S6> fromBound;
    for (auto& input : inputList) {
