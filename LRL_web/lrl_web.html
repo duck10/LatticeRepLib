@@ -232,7 +232,7 @@ function changeoperation(rownum) {
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdscale").style="display:inline";
     document.getElementById("block_"+tdrownum+"b_cmdtos6l").style="display:none";
-    document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1> <strong>Command: Scale unit cells data to single size</strong><br /><em><u>Purpose:</u></em><br /><em><u>Output Chosen vector type (one of S6, V7, DC7u, RI (root invariant)) <em><u>Parameters:</u></em> Vector type to scale and output(S6)<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
+    document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1> <strong>Command: Scale unit cells data to single size</strong><br /><em><u>Purpose:</u></em><br /><em><u>Output type:</u></em> Chosen vector type (one of S6, V7, DC7u, RI (root invariant))<br /> <em><u>Parameters:</u></em> Vector type to scale and output(S6)<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
  } else if (operation=="CmdSella") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML="<font size=-1> <strong>Command: apply Sella algorithm</strong><br /><em><u>Purpose:</u></em> Determine potentially higher symmetry for input cells<br /><em><u>Output type:</u></em> agreement factors for each of the Bravais lattice types<br />that fill well and reduced cell information for the input cells. Also the name<br />of the graphical output file.<br /><em><u>Graphical output:</u></em> the figure of the hierarchy of Bravais lattice types <br />with numerical agreement determined by Sella.<br /><p  style=margin-left:40px> Grimmer, H., &amp; Nespolo, M. (2006). <br />Geminography: the crystallography of twins. Zeitschrift<br />f&uuml;r Kristallographie-Crystalline Materials, 221(1), 28-50.)</p>  <em><u>Parameters:</u></em> choices if only some outputs are needed (all)<br /> <hr><strong>Command: Check Input</strong><br /><em><u>Purpose:</u></em> Verify input lattice types and parameters<br /><em><u>Output type:</u></em> Valid input is reported as unit cell a, b, c, &alpha;, &beta;, &gamma;.<br />Warnings are output for invalid inputs.<br /><em><u>Parameters:</u></em> NA<br /><hr />LRL_Web Data Inputs:  There are 5 types of input lines. Except for 'END', they can be combined in any order.<br /> All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.<br />---  RANDOM: Random (valid) unit cell;<br />---  Crystal lattice input: 'A', 'B', 'C', 'P', 'R', 'F', 'I' followed by three axis lengths and three angles (in degrees);<br />---  semicolon: lines beginning with a semicolon are treated as comments<br />---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars, C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell), u for unsorted Dirichlet 7-cells.<br />---  END: ends the data input section<br />Examples of unit cell inputs<br />P 10 20 30 90 111 90<br />G 100 400 900 0 -215.02 0<br />S6 0 -107.51 0 7.51 -400 -792.49 <br />; this is a comment<br />end<br /></font>";
  } else if (operation=="CmdToB4") {
@@ -440,36 +440,36 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <label for="operation_01">Select an operation:</label><br />
   <select name="operation_01" id="operation_01" size="28" onchange="changeoperation('01')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -566,36 +566,36 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <label for="operation_02">Select an operation:</label><br />
   <select name="operation_02" id="operation_02" size="28" onchange="changeoperation('02')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -692,36 +692,36 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <label for="operation_03">Select an operation:</label><br />
   <select name="operation_03" id="operation_03" size="28" onchange="changeoperation('03')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -818,36 +818,36 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <label for="operation_04">Select an operation:</label><br />
   <select name="operation_04" id="operation_04" size="28" onchange="changeoperation('04')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -944,36 +944,36 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <label for="operation_05">Select an operation:</label><br />
   <select name="operation_05" id="operation_05" size="28" onchange="changeoperation('05')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -1070,36 +1070,36 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <label for="operation_06">Select an operation:</label><br />
   <select name="operation_06" id="operation_06" size="28" onchange="changeoperation('06')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -1196,36 +1196,36 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <label for="operation_07">Select an operation:</label><br />
   <select name="operation_07" id="operation_07" size="28" onchange="changeoperation('07')">
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
@@ -1332,38 +1332,37 @@ Please read the <a href="#notice">NOTICE</a> below before use of this web page
   <div id="block_08a" style="display:none"> 
   <label for="operation_08">Select an operation:</label><br />
   <select name="operation_08" id="operation_08" size="28" onchange="changeoperation('08')">
-  <option selected value="NoOp">Check Input</option>
   <optgroup label="Information">
-  <option value="NoOp">Check Input</option>
-  <option value="CmdDists">compute NCDist and CS6Dist distances</option>
-  <option value="CmdVolume"> compute volumes of listed cells</option>
-  <option value="CmdSella"> apply Sella algorithm</option>
-  <option value="PlotC3"> draw C3 plot of listed cells</option>
-  <option value="Dirichlet"> draw Dirichlet cell of listed cells</option>
+  <option value="NoOp"><b>Check Input</b></option>
+  <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
+  <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
+  <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
+  <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
   </optgroup>
   <optgroup label="Output Only">
-  <option value="CmdGen">Generate cells of a particular type or types</option>
+  <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
   </optgroup>
   <optgroup label="Type Conversion">
-  <option value="CmdToB4"> compute Bravais tetrahedron (B4)</option>
-  <option value="CmdToC3"> compute complex cell presentation (C3)</option>
-  <option value="CmdToCell"> compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
-  <option value="CmdToG6"> compute G6 version of cells</option>
-  <option value="CmdToS6"> compute S6 version of cells</option>
-  <option value="CmdToS6L"> compute linearized S6 or Root Invariant version of cells</option>
-  <option value="CmdToU"> compute unsorted Dirichlet cells (dc7unsrt)</option>
-  <option value="CmdToV7"> compute V7 version of cells</option>
+  <option value="CmdToB4"><b>To B4</b>: compute Bravais tetrahedron (B4)</option>
+  <option value="CmdToC3"><b>To C3</b>: compute complex cell presentation (C3)</option>
+  <option value="CmdToCell"><b>To Cell</b>: compute side-angle cells (a, b, c, &alpha;, &beta;, &gamma;)</option>
+  <option value="CmdToG6"><b>To G6</b>: compute G6 version of cells</option>
+  <option value="CmdToS6"><b>To S6</b>: compute S6 version of cells</option>
+  <option value="CmdToS6L"><b>To S6L</b>: compute linearized S6 or Root Invariant version of cells</option>
+  <option value="CmdToU"><b>To Dirichlet (unsorted)</b>: compute unsorted Dirichlet cells (dc7unsrt)</option>
+  <option value="CmdToV7"><b>To V7</b>: compute V7 version of cells</option>
   </optgroup>
   <optgroup label="Reduction">
-  <option value="CmdDelone">compute Selling-reduced primitive cells</option>
-  <option selected value="CmdNiggli">compute Niggli-reduced primitive cells</option>
+  <option value="CmdDelone"><b>Delone</b>: compute Selling-reduced primitive cells</option>
+  <option selected value="CmdNiggli"><b>Niggli</b>: compute Niggli-reduced primitive cells</option>
   </optgroup>
   <optgroup label="Modify Input">
-  <option value="CmdLM">apply Lattice Matching algorithm to listed cells</option>
-  <option value="CmdPath">compute path between pairs of cells</option>
-  <option value="CmdPerturb">compute perturbed versions of input cells</option>
-  <option value="CmdS6Refl">apply S6 reflections to input cells</option>
-  <option value="CmdScale"> rescale cells to reference cell</option>
+  <option value="CmdLM"><b>Matching</b>:apply Lattice Matching algorithm to listed cells</option>
+  <option value="CmdPath"><b>Path</b>:compute path between pairs of cells</option>
+  <option value="CmdPerturb"><b>Perturb</b>:compute perturbed versions of input cells</option>
+  <option value="CmdS6Refl"><b>S6Reflections</b>:apply S6 reflections to input cells</option>
+  <option value="CmdScale"><b>Scale</b>: rescale cells to reference cell</option>
   </optgroup>
   </select>
   </div>
