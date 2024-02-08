@@ -3,6 +3,7 @@
 
 #include "C3Plot.h"
 #include "ColorTables.h"
+#include "GetDate.h"
 #include "LRL_ToString.h"
 #include "LRL_DataToSVG.h"
 #include "LRL_CreateFileName.h"
@@ -19,16 +20,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-std::string GetDate() {
-   auto t = std::time(nullptr);
-   std::tm tm;
-   localtime_s(&tm, &t);
-
-   std::ostringstream oss;
-   oss << std::put_time(&tm, "%Y-%m-%d");
-  return oss.str();
-}
 
 static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, const std::string& s) {
    const std::string sScaler = LRL_ToString(whichPlot);
