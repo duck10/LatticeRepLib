@@ -3,6 +3,7 @@
 
 #include <set>
 #include <vector>
+#include <cstddef>
 
 template<typename T>
 static std::vector<T> FilterRemoveDups(const std::vector<T>& vt) {
