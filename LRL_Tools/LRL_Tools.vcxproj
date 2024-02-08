@@ -151,6 +151,7 @@
     <ClInclude Include="ConstSingleton_T.h" />
     <ClInclude Include="FileOperations.h" />
     <ClInclude Include="Filter_Duplicates.h" />
+    <ClInclude Include="GetDate.h" />
     <ClInclude Include="HSV.h" />
     <ClInclude Include="LinearAxis.h" />
     <ClInclude Include="LRL_CreateFileName.h" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileOperations.cpp" />
+    <ClCompile Include="GetDate.cpp" />
     <ClCompile Include="HSV.cpp" />
     <ClCompile Include="LinearAxis.cpp" />
     <ClCompile Include="LRL_CreateFileName.cpp" />

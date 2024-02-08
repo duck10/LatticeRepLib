@@ -93,6 +93,9 @@
     <ClInclude Include="Filter_Duplicates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GetDate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LRL_inverse.cpp">
@@ -139,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="NumericTools.h">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GetDate.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
