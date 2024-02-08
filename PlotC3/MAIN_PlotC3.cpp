@@ -13,11 +13,22 @@
 
 #include <algorithm>
 #include <cmath>
+#include <ctime>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
+
+std::string GetDate() {
+   auto t = std::time(nullptr);
+   std::tm tm;
+   localtime_s(&tm, &t);
+
+   std::ostringstream oss;
+   oss << std::put_time(&tm, "%Y-%m-%d");
+  return oss.str();
+}
 
 static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, const std::string& s) {
    const std::string sScaler = LRL_ToString(whichPlot);
@@ -40,6 +51,15 @@ static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, c
       line2, "\n\n") + s;
 
    const std::string strScalar = LRL_DataToSVG(whichPlot);
+
+   auto t = std::time(nullptr);
+   std::tm tm;
+   localtime_s(&tm, &t);
+
+   std::ostringstream oss;
+   oss << std::put_time(&tm, "%d-%m-%Y");
+   const auto str = oss.str();
+
 
    plotc3 += "<!--plot labeling-->"
       "\n"
@@ -174,7 +194,7 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
    //
    //
    s += "<!--#######################################################-->\n"
-      "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y + 40) + "\""
+      "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y + 80) + "\""
       " font-size = \"20\" " +
       " font-family = \"Arial, Helvetica, sans-serif \">\n" +
       ""  // INSERT TEXT HERE
@@ -182,7 +202,16 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
       "<!-- add a comment such as the command line-->\n"
       "<!--#######################################################-->\n";
 
-      return s;
+   std::ostringstream os;
+   os << "<text x = \""
+      << x
+      << "\" y = \""
+      << y + 40
+      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  SELLA  "
+      << GetDate()
+      << " </text>\n";
+   s += os.str();;
+   return s;
 }
 
 std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int yint) {
