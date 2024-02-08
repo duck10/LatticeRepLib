@@ -198,7 +198,7 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
       << x
       << "\" y = \""
       << y + 40
-      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  SELLA  "
+      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  PlotC3   "
       << GetDate()
       << " </text>\n";
    s += os.str();;
