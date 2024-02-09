@@ -96,19 +96,19 @@ std::string ImageHeader(const std::string& imageWidth, const std::string& imageH
 std::vector<std::string> ImageFooter(const std::vector<std::string>& vs)
 {
    std::vector<std::string> vss;
-   vss.push_back( std::string("<!--\n") );
+   vss.emplace_back( "<!--\n" );
    vss.insert( vss.end(), vs.begin(), vs.end() );
-   vss.push_back( "-->" );
-   vss.push_back("<!-- Run Constants");
+   vss.emplace_back( "-->" );
+   vss.emplace_back("<!-- Run Constants");
    //vss.push_back(GLOBAL_Report::globalDataReport);
-   vss.push_back("-->");
-   vss.push_back( "</svg>" );
+   vss.emplace_back("-->");
+   vss.emplace_back( "</svg>" );
    return vss;
 }
 
 std::vector<std::string> ImageFooter(const std::string& s) {
    std::vector<std::string> sout;
-   sout.push_back(s);
+   sout.emplace_back(s);
    return ImageFooter(sout);
 }
 

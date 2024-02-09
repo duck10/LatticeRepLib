@@ -3,6 +3,7 @@
 #include "DirichletConstants.h"
 #include "D7.h"
 #include "DirichletCellFaces.h"
+#include "GetDate.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_inverse.h"
@@ -15,6 +16,7 @@
 
 #include <cmath>
 #include <iomanip>
+#include <sstream>
 
 DirichletSVG::DirichletSVG(const DirichletCell& dc)
    : m_dirCell(dc)
@@ -33,10 +35,25 @@ std::string DirichletSVG::OutputSVG(const std::vector<std::string>& stereoImages
    scell.insert(scell.end(), DirichletConstants::note.begin(), DirichletConstants::note.end());
 
    const std::string header = ImageHeader(DirichletConstants::canvas_x_size, DirichletConstants::canvas_y_size) + "\n";
-   std::vector<std::string> footer = ImageFooter(scell);
 
-   const std::string output = header +
-      LRL_StringTools::ConcatanateStrings(stereoImages) + LRL_StringTools::ConcatanateStrings(footer);
+   const int x = 100;
+   const int y = DirichletConstants::imageHeightPx + DirichletConstants::yposition + 40;
+
+   std::ostringstream os;
+   os << "<text x = \""
+      << x
+      << "\" y = \""
+      << y
+      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  DIRICHLET   "
+      << GetDate()
+      << " </text>\n";
+
+   std::vector<std::string> footer = ImageFooter(scell);
+   const std::string output = header + os.str()
+      + LRL_StringTools::ConcatanateStrings(stereoImages)
+      + os.str()
+      + LRL_StringTools::ConcatanateStrings(footer);
+
    return output;
 }
 
