@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DeloneGridClasses.cpp" />
     <ClCompile Include="MakeDeloneGrid.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +138,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DeloneGridClasses.h" />
     <ClInclude Include="MakeDeloneGrid.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
