@@ -740,6 +740,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<br />" << std::endl;
     std::cout << "Assorted tools to do various calculations for crystallographic lattices." << std::endl;
     std::cout << "<br />" << std::endl;
+    std::cout << "<a href=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/lrl_web/lrl_web_tutorial.html\" target=\"_blank\">Tutorial</a><br />" << std::endl;
     std::cout << "<STRONG>" << std::endl;
     std::cout << "Please read the <a href=\"#notice\">NOTICE</a> below before use of this web page" << std::endl;
     std::cout << "</STRONG>" << std::endl;
@@ -2840,6 +2841,7 @@ Sleeping Dragon line art image by Gordon Dylan Johnson,
 <br />
 Assorted tools to do various calculations for crystallographic lattices.
 <br />
+<a href="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/lrl_web/lrl_web_tutorial.html" target="_blank">Tutorial</a><br />
 <STRONG>
 Please read the <a href="#notice">NOTICE</a> below before use of this web page
 </STRONG>
