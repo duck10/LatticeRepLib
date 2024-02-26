@@ -163,7 +163,7 @@ std::vector<DeloneFitResults> Sella::SellaFit(
 
    for (size_t i = 0; i < sptypes.size(); ++i) {
          DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6);
-         std::cout << "; best fit in SellaFitXXXXXX S6 " << fit.GetBestFit() << "   " << fit.GetRawFit() << " " << sptypes[i]->GetName() << std::endl;
+         std::cout << "; best fit in SellaFit S6 " << fit.GetBestFit() << "   " << fit.GetRawFit() << " " << sptypes[i]->GetName() << std::endl;
          const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
          fit.SetZscore(zscore);
          fit.SetLatticeType(sptypes[i]->GetBravaisType());
