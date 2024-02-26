@@ -133,6 +133,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdS6Boundaries", "S6Boundr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakeDeloneGrid", "MakeDeloneGrid\MakeDeloneGrid.vcxproj", "{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakeNiggliGrid", "MakeNiggliGrid\MakeNiggliGrid.vcxproj", "{628B224A-38FE-4191-97B8-37E643E71BC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -573,6 +575,14 @@ Global
 		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Release|x64.Build.0 = Release|x64
 		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Release|x86.ActiveCfg = Release|Win32
 		{5E76E82B-8A61-45FE-BBE3-A9DA9E6645A9}.Release|x86.Build.0 = Release|Win32
+		{628B224A-38FE-4191-97B8-37E643E71BC8}.Debug|x64.ActiveCfg = Debug|x64
+		{628B224A-38FE-4191-97B8-37E643E71BC8}.Debug|x64.Build.0 = Debug|x64
+		{628B224A-38FE-4191-97B8-37E643E71BC8}.Debug|x86.ActiveCfg = Debug|Win32
+		{628B224A-38FE-4191-97B8-37E643E71BC8}.Debug|x86.Build.0 = Debug|Win32
+		{628B224A-38FE-4191-97B8-37E643E71BC8}.Release|x64.ActiveCfg = Release|x64
+		{628B224A-38FE-4191-97B8-37E643E71BC8}.Release|x64.Build.0 = Release|x64
+		{628B224A-38FE-4191-97B8-37E643E71BC8}.Release|x86.ActiveCfg = Release|Win32
+		{628B224A-38FE-4191-97B8-37E643E71BC8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

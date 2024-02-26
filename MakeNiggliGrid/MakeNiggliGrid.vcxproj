@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{5e76e82b-8a61-45fe-bbe3-a9da9e6645a9}</ProjectGuid>
-    <RootNamespace>MakeDeloneGrid</RootNamespace>
+    <ProjectGuid>{628b224a-38fe-4191-97b8-37e643e71bc8}</ProjectGuid>
+    <RootNamespace>MakeNiggliGrid</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -129,19 +129,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DeloneGridClasses.cpp" />
-    <ClCompile Include="MakeDeloneGrid.cpp" />
-    <ClCompile Include="MakeTriangles.cpp" />
+    <ClCompile Include="MakeNiggliGrid.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
+      <Project>{bf25d7aa-648c-48d2-b857-d383faf1e215}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
       <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DeloneGridClasses.h" />
-    <ClInclude Include="MakeDeloneGrid.h" />
-    <ClInclude Include="MakeTriangles.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,6 +5,17 @@
 #include <string>
 #include <vector>
 
+#include "LRL_Vector3.h"
+#include "MakeTriangles.h"
+
+
+class BravaisTriangle {
+public:
+   BravaisTriangle(const std::string& s);
+   int CountZeros(const std::string& s);
+   //std::vector<std::string> 
+};
+
 class BasicDeloneRectangle {
 public:
    std::string m_deloneName;
@@ -18,6 +29,65 @@ public:
    std::string MakeSVG();
    
    };
+
+class DeloneBackgroundWithTriangle : public BasicDeloneRectangle {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const DeloneBackgroundWithTriangle&);
+   DeloneBackgroundWithTriangle() {}
+
+   std::string WrapTriangleAndSlashesToTranslate(const std::string& s);
+
+   std::string MakeSVG();
+   std::string triangle;
+   std::string slashes;
+};  // end class DeloneBackgroundWithTriangle;
+
+class KeyFrame : public DeloneBackgroundWithTriangle
+{
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const KeyFrame&);
+   KeyFrame();
+
+   std::string MakeSVG();
+}; // end class KeyFrame
+
+class GrayRectangle : public BasicDeloneRectangle {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const GrayRectangle&);
+   GrayRectangle() {}
+   std::string MakeSVG();
+   std::string m_deloneName;
+   std::string m_bravaisType;
+   std::string m_generalType;
+   std::string m_character;
+   std::string m_textName;
+};  // end class GrayRectangle;
+
+class GrayRectangleWithTriangle : public GrayRectangle {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const GrayRectangleWithTriangle&);
+   GrayRectangleWithTriangle() {}
+   std::string MakeSVG();
+   std::string triangle;
+};  // end class DeloneBackgroundWithTriangle;
+
+class LightGrayRectangle : public BasicDeloneRectangle {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LightGrayRectangle&);
+   LightGrayRectangle() {}
+   std::string MakeSVG();
+};  // end class LightGrayRectangle;
+
+class BlankRectangle : public BasicDeloneRectangle {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const BlankRectangle&);
+   BlankRectangle() {
+      m_deloneName = "";
+      m_bravaisType = "";
+      m_generalType = "";
+      m_character = "";
+   }
+};  // end class BlankRectangle;
 
 class Digit_1 : public BasicDeloneRectangle {
 public:
@@ -91,25 +161,7 @@ public:
    Letter_H() { m_textName = "H"; }
 };
 
-class GrayRectangle : public BasicDeloneRectangle {
-public:
-   friend std::ostringstream& operator<< (std::ostringstream&, const GrayRectangle&);
-   GrayRectangle() {}
-   std::string MakeSVG();
-};  // end class GrayRectangle;
-
-class BlankRectangle : public BasicDeloneRectangle {
-public:
-   friend std::ostringstream& operator<< (std::ostringstream&, const BlankRectangle&);
-   BlankRectangle() {
-      m_deloneName  = "";
-      m_bravaisType = "";
-      m_generalType = "";
-      m_character   = "";
-   }
-};  // end class BlankRectangle;
-
-class C1 : public BlankRectangle {
+class C1 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const C1&);
    C1() {
@@ -117,10 +169,14 @@ public:
       m_bravaisType = "cI";
       m_generalType = "cI";
       m_character = "(rrr rrr)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class C1;
 
-class C3 : public BasicDeloneRectangle {
+class C3 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const C3&);
    C3()  {
@@ -128,10 +184,14 @@ public:
       m_bravaisType = "cF";
       m_generalType = "cF";
       m_character = "(rr0 rr0)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class C3;
 
-class C5 : public BasicDeloneRectangle {
+class C5 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const C5&);
    C5() {
@@ -139,10 +199,14 @@ public:
       m_bravaisType = "cP";
       m_generalType = "cP";
       m_character = "(000 rrr)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class C5;
 
-class T1 : public BasicDeloneRectangle {
+class T1 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const T1&);
    T1() {
@@ -150,10 +214,14 @@ public:
       m_bravaisType = "tI";
       m_generalType = "tI";
       m_character = "(rrs rrs)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class T1;
 
-class T2 : public BasicDeloneRectangle {
+class T2 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const T2&);
    T2() {
@@ -161,10 +229,14 @@ public:
       m_bravaisType = "tI";
       m_generalType = "tI";
       m_character = "(rr0 rrs)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class T2;
 
-class T5 : public BasicDeloneRectangle {
+class T5 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const T5&);
    T5() {
@@ -172,10 +244,14 @@ public:
       m_bravaisType = "tP";
       m_generalType = "tP";
       m_character = "(000 rrs)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class T5;
 
-class R1 : public BasicDeloneRectangle {
+class R1 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const R1&);
    R1() {
@@ -183,10 +259,14 @@ public:
       m_bravaisType = "hR";
       m_generalType = "hR";
       m_character = "(rrr sss)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class R1;
 
-class R3 : public BasicDeloneRectangle {
+class R3 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const R3&);
    R3() {
@@ -194,10 +274,14 @@ public:
       m_bravaisType = "hR";
       m_generalType = "hR";
       m_character = "(rr0 sr0) ";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class R3;
 
-class O1A : public BasicDeloneRectangle {
+class O1A : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const O1A&);
    O1A() {
@@ -205,10 +289,14 @@ public:
       m_bravaisType = "oF";
       m_generalType = "oF";
       m_character = "(rrs rrt)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class O1A;
 
-class O2 : public BasicDeloneRectangle {
+class O2 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const O2&);
    O2() {
@@ -216,10 +304,14 @@ public:
       m_bravaisType = "oI";
       m_generalType = "oI";
       m_character = "(rs0 srt)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class O2;
 
-class O3 : public GrayRectangle {
+class O3 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const O3&);
    O3() {
@@ -227,10 +319,15 @@ public:
       m_bravaisType = "oI";
       m_generalType = "oI";
       m_character = "(rs0 rs0)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
+   std::string slashes;
 };  // end class O3;
 
-class O4 : public BasicDeloneRectangle {
+class O4 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const O4&);
    O4() {
@@ -238,10 +335,14 @@ public:
       m_bravaisType = "oS";
       m_generalType = "oS";
       m_character = "(00r sst)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class O4;
 
-class O5 : public BasicDeloneRectangle {
+class O5 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const O5&);
    O5() {
@@ -249,10 +350,14 @@ public:
       m_bravaisType = "oP";
       m_generalType = "oP";
       m_character = "(000 rst)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class O5;
 
-class O1B : public BasicDeloneRectangle {
+class O1B : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const O1B&);
    O1B() {
@@ -260,10 +365,14 @@ public:
       m_bravaisType = "oI";
       m_generalType = "oI";
       m_character = "(rst rst)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class O1B;
 
-class M1A : public BasicDeloneRectangle {
+class M1A : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const M1A&);
    M1A() {
@@ -271,10 +380,14 @@ public:
       m_bravaisType = "mC";
       m_generalType = "mS";
       m_character = "(rrs ttu)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class M1A;
 
-class M2A : public BasicDeloneRectangle {
+class M2A : public DeloneBackgroundWithTriangle {
    public:
    friend std::ostringstream& operator<< (std::ostringstream&, const M2A&);
    M2A() {
@@ -282,10 +395,14 @@ class M2A : public BasicDeloneRectangle {
       m_bravaisType = "mC";
       m_generalType = "mS";
       m_character = "(rs0 stu)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class M2A;
 
-class M3 : public GrayRectangle {
+class M3 : public GrayRectangleWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const M3&);
    M3() {
@@ -293,10 +410,15 @@ public:
       m_bravaisType = "mC";
       m_generalType = "mS";
       m_character = "(rs0 ts0)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
+   std::string slashes;
 };  // end class M3;
 
-class M4 : public BasicDeloneRectangle {
+class M4 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const M4&);
    M4() {
@@ -304,10 +426,14 @@ public:
       m_bravaisType = "mP";
       m_generalType = "mP";
       m_character = "(00r stu)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class M4;
 
-class M1B : public BasicDeloneRectangle {
+class M1B : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const M1B&);
    M1B() {
@@ -315,10 +441,14 @@ public:
       m_bravaisType = "mC";
       m_generalType = "mS";
       m_character = "(rst rsu)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class M1B;
 
-class M2B : public GrayRectangle {
+class M2B : public GrayRectangleWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const M2B&);
    M2B() {
@@ -326,10 +456,15 @@ public:
       m_bravaisType = "mC";
       m_generalType = "mS";
       m_character = "(rs0 rst)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
+   std::string slashes;
 };  // end class M2B;
 
-class A1 : public BasicDeloneRectangle {
+class A1 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const A1&);
    A1() {
@@ -337,10 +472,12 @@ public:
       m_bravaisType = "aP";
       m_generalType = "aP";
       m_character = "(rst uvw)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
    }
 };  // end class A1;
 
-class A2 : public GrayRectangle {
+class A2 : public GrayRectangleWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const A2&);
    A2() {
@@ -348,10 +485,15 @@ public:
       m_bravaisType = "aP";
       m_generalType = "aP";
       m_character = "(rs0 tuv)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
+   std::string slashes;
 };  // end class A2;
 
-class A3 : public GrayRectangle {
+class A3 : public GrayRectangleWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const A3&);
    A3() {
@@ -359,10 +501,15 @@ public:
       m_bravaisType = "aP";
       m_generalType = "aP";
       m_character = "(rs0 tu0)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
+   std::string slashes;
 };  // end class A3;
 
-class H4 : public BasicDeloneRectangle {
+class H4 : public DeloneBackgroundWithTriangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const H4&);
    H4() {
@@ -370,6 +517,10 @@ public:
       m_bravaisType = "hP";
       m_generalType = "hP";
       m_character = "(00r rrs)";
+      DeloneBackgroundWithTriangle dbwt;
+      triangle = dbwt.MakeSVG();
+      Slashes sl;
+      slashes = sl.GetSlashes(m_character);
    }
 };  // end class H4;
 
@@ -584,7 +735,6 @@ public:
    }
    std::vector<BasicDeloneRows> m_row;
 };
-
 
 #endif  // DELONEGRIDCLASSES_H
 
