@@ -23,6 +23,8 @@ public:
    std::string m_generalType;
    std::string m_character;
    std::string m_textName;
+   std::string m_polyhedronName1;
+   std::string m_polyhedronName2;
 
 public:
    BasicDeloneRectangle();
@@ -92,31 +94,31 @@ public:
 class Digit_1 : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Digit_1&);
-   Digit_1() { m_textName = "1"; }
+   Digit_1();
 };
 
 class Digit_2 : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Digit_2&);
-   Digit_2() { m_textName = "2"; }
+   Digit_2();
 };
 
 class Digit_3 : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Digit_3&);
-   Digit_3() { m_textName = "3"; }
+   Digit_3();
 };
 
 class Digit_4 : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Digit_4&);
-   Digit_4() { m_textName = "4"; }
+   Digit_4();
 };
 
 class Digit_5 : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Digit_5&);
-   Digit_5() { m_textName = "5"; }
+   Digit_5();
 };
 
 class Letter_C : public BasicDeloneRectangle {
@@ -734,6 +736,42 @@ public:
       m_row.emplace_back(HRow());
    }
    std::vector<BasicDeloneRows> m_row;
+};
+
+class BasicLatticeType : public BasicDeloneRectangle {
+public:
+   std::string m_polyhedron;
+   std::string MakeSVG() const { return m_polyhedron; }
+};
+
+class LatticeType1 : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType1&);
+   LatticeType1();
+};
+
+class LatticeType2 : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType2&);
+   LatticeType2();
+};
+
+class LatticeType3 : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType3&);
+   LatticeType3();
+};
+
+class LatticeType4 : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType4&);
+   LatticeType4();
+};
+
+class LatticeType5 : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType5&);
+   LatticeType5();
 };
 
 #endif  // DELONEGRIDCLASSES_H

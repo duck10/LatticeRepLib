@@ -5,6 +5,8 @@
 
 #include <ctime>
 #include <cstdio>
+#include <iomanip>
+#include <thread>
 
 
 #pragma warning( disable: 4996 )
@@ -83,11 +85,17 @@
    const size_t block_size /*= 20*/)
 {
    std::vector<std::string> out;
+   const int pid = getpid();
 
    for (size_t i = block_start; (i < nFiles) && (i < block_start+block_size); ++i) {
+      std::ostringstream o;
+      o << std::hex << pid;
+      o << "_";
+      o <<i;
       const std::string filename = LRL_CreateFileName::Create
-      (prefix, LRL_DataToSVG(i), extension, includeTimestamp);
+      (prefix,o.str(), extension, includeTimestamp);
       out.emplace_back(filename);
+      std::cout << filename << std::endl;
    }
    return out;
 }

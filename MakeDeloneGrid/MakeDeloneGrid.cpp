@@ -17,6 +17,7 @@
 std::string WrapInSVGHeaderFooter(const int width, const int height, const std::string& s) {
    std::string out;
    out += ImageHeader(width, height);
+   out += +"\n<desc>Delone grid created for LRL_WEB, the site for Larry Andrews and Herbert J Bernstein</desc>\n";
    out += s;
    const std::vector<std::string> footer = ImageFooter("");
    for (const std::string& foot : footer) {
@@ -247,6 +248,7 @@ void MakeHorizontalGrid() {
    constexpr int delta = 100;
    int nx = 0;
    int ny = 0;
+   BasicDeloneRectangle bdr;
 
    num_row << Wrapper(delta * nx++, delta * ny, KeyFrame()).str();
    num_row << Wrapper(delta * nx++, delta * ny, Letter_C()).str();
@@ -258,6 +260,7 @@ void MakeHorizontalGrid() {
    num_row << Wrapper(delta * nx++, delta * ny, Letter_M()).str();
    num_row << Wrapper(delta * nx++, delta * ny, Letter_A()).str();
    num_row << Wrapper(delta * nx++, delta * ny, Letter_H()).str();
+   num_row << Wrapper(delta * nx++, delta * ny, bdr.MakeSVG()).str();
 
    nx = 0; ny++;
    one_row << Wrapper(delta * nx++, delta * ny, Digit_1()).str();
@@ -270,6 +273,7 @@ void MakeHorizontalGrid() {
    one_row << Wrapper(delta * nx++, delta * ny, M1B()).str();
    one_row << Wrapper(delta * nx++, delta * ny, A1()).str();
    one_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
+   one_row << Wrapper(delta * nx++, delta * ny, LatticeType1().MakeSVG()).str();
 
    ////std::cout << num_row.str() << std::endl;
    nx = 0; ny++;
@@ -283,6 +287,7 @@ void MakeHorizontalGrid() {
    two_row << Wrapper(delta * nx++, delta * ny, M2B()).str();
    two_row << Wrapper(delta * nx++, delta * ny, A2()).str();
    two_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
+   two_row << Wrapper(delta * nx++, delta * ny, LatticeType2().MakeSVG()).str();
 
    nx = 0; ny++;
    three_row << Wrapper(delta * nx++, delta * ny, Digit_3()).str();
@@ -295,6 +300,7 @@ void MakeHorizontalGrid() {
    three_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
    three_row << Wrapper(delta * nx++, delta * ny, A3()).str();
    three_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
+   three_row << Wrapper(delta * nx++, delta * ny, LatticeType3().MakeSVG()).str();
 
    nx = 0; ny++;
    four_row << Wrapper(delta * nx++, delta * ny, Digit_4()).str();
@@ -307,6 +313,7 @@ void MakeHorizontalGrid() {
    four_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
    four_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
    four_row << Wrapper(delta * nx++, delta * ny, H4()).str();
+   four_row << Wrapper(delta * nx++, delta * ny, LatticeType4().MakeSVG()).str();
 
    nx = 0; ny++;
    five_row << Wrapper(delta * nx++, delta * ny, Digit_5()).str();
@@ -319,6 +326,7 @@ void MakeHorizontalGrid() {
    five_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
    five_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
    five_row << Wrapper(delta * nx++, delta * ny, GrayRectangle()).str();
+   five_row << Wrapper(delta * nx++, delta * ny, LatticeType5().MakeSVG()).str();
 
    std::ostringstream bottomText;
 
@@ -331,7 +339,7 @@ void MakeHorizontalGrid() {
    total << num_row.str() << one_row.str() << two_row.str() << three_row.str() << four_row.str()
       << five_row.str()
       << newBottomText << std::endl;
-   std::cout << WrapInSVGHeaderFooter(1100, 750, total.str());
+   std::cout << WrapInSVGHeaderFooter(1400, 750, total.str());
 }
 
 int main()
