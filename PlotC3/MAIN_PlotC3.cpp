@@ -43,15 +43,6 @@ static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, c
 
    const std::string strScalar = LRL_DataToSVG(whichPlot);
 
-   auto t = std::time(nullptr);
-   std::tm tm;
-   localtime_s(&tm, &t);
-
-   std::ostringstream oss;
-   oss << std::put_time(&tm, "%d-%m-%Y");
-   const auto str = oss.str();
-
-
    plotc3 += "<!--plot labeling-->"
       "\n"
       "<g transform = \"translate(0,-265)\" >\n"
