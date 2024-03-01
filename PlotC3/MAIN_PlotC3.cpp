@@ -256,10 +256,8 @@ int main(int argc, char* argv[])
        } 
    }
 
-
-   auto xxxxx = LRL_CreateFileName::CreateListOfFilenames(1, "PLT", "svg", usetimestamp, 0, 20);
    const std::string filename =
-      LRL_CreateFileName::CreateListOfFilenames(1, "PLT", "svg", usetimestamp, 0, 0)[0];
+      LRL_CreateFileName::CreateListOfFilenames(1, "PLT", "svg", usetimestamp)[0];
 
    if(htmlprefix.compare(std::string(""))==0) {
      std::cout << std::string("; Graphical output SVG file = ")

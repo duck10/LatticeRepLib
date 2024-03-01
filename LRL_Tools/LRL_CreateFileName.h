@@ -14,12 +14,6 @@ public:
       const std::string& extension, const bool includeTimestamp = true);
 
    static std::vector<std::string> CreateListOfFilenames(
-      const size_t nFiles, 
-      const std::string& prefix,
-      const std::string& extension, 
-      const bool includeTimestamp = true);
-
-   static std::vector<std::string> CreateListOfFilenames(
       const size_t nFiles,
       const std::string& prefix,
       const std::string& extension, 

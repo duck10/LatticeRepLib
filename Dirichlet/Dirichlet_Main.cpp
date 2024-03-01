@@ -458,6 +458,12 @@ int main(int argc, char* argv[]) {
    std::cout << "; Dirichlet cell block start " << blockstart << std::endl;
    std::cout << "; Dirichlet cell block size " << blocksize << std::endl;
 
+
+   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart + blocksize); ++i)
+   {
+      std::cout << "; Dirichlet graphics file " << FullfileNameList[i - blockstart] << std::endl;
+   }
+
    for (size_t whichCell = blockstart; 
        whichCell < inputList.size() && whichCell < blockstart+blocksize; ++whichCell) {
        const DirichletCell dc = (inputList[whichCell]);
