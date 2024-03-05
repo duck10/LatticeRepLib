@@ -7,9 +7,13 @@
 #include <cstdio>
 #include <iomanip>
 #include <thread>
-
-
+ 
+#ifdef __unix__
+#include <unistd.h>
+#else
 #pragma warning( disable: 4996 )
+#endif
+
 ///////////////////////////////////////////////////////////////////////
 // Create a unique file name from the date and time
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
