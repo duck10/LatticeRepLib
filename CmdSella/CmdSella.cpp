@@ -110,7 +110,22 @@
 ;##  P  3.345  3.397  1.23  91.705  101.386  151.36
 ;  P  3.345  3.397  1.23  91.705  101.386  151.36  input  data
 */
-
+//S6 - 100.00000 - 100.00000 - 100.00000 - 100.00000 - 100.00000 - 100.00000  REFERENCE
+//S6 - 234.14273 - 1.88359 - 47.67826 - 0.30533 - 4.90138 - 53.63114  scaled
+//S6 - 10.41946 - 7.17661 - 95.06707 - 31.36144 - 190.57190 - 116.19378  scaled
+//S6 - 240.86238 - 24.92865 - 8.64775 - 7.17380 - 34.21200 - 8.19574  scaled
+//S6 - 230.17565 - 17.27155 - 54.34361 - 23.25853 - 11.49257 - 55.62911  scaled
+//S6 - 31.02879 - 10.96443 - 14.25264 - 38.96421 - 239.08206 - 5.95120  scaled
+//S6 - 13.78936 - 207.70159 - 82.97108 - 30.45375 - 12.34903 - 93.30473  scaled
+//S6 - 121.50546 - 10.74570 - 13.31738 - 80.60464 - 33.75129 - 193.15109  scaled
+//S6 - 7.70225 - 9.51802 - 105.79984 - 0.04535 - 211.62487 - 62.22050  scaled
+//S6 - 181.85349 - 23.36642 - 115.13135 - 18.98134 - 38.38171 - 106.27627  scaled
+//S6 - 2.78162 - 34.43272 - 237.34522 - 10.96929 - 43.32243 - 21.83436  scaled
+//S6 - 56.99568 - 27.30398 - 7.58384 - 107.64530 - 0.76797 - 210.61902  scaled
+//S6 - 1.76325 - 112.70665 - 24.56708 - 38.27043 - 84.68121 - 195.07698  scaled
+//S6 - 11.10601 - 81.30216 - 222.54748 - 5.31460 - 54.25901 - 27.69384  scaled
+//S6 - 9.12428 - 0.87504 - 63.50943 - 233.55358 - 4.41117 - 36.27397  scaled
+//S6 - 3.00480 - 19.63201 - 241.04017 - 9.76684 - 34.86767 - 13.93003  scaled
 static double g_maxDeltaForMatch = 0.02;
 std::string selectBravaisCase = "";
 
@@ -315,6 +330,26 @@ static std::vector<std::string> CreateAllFileNames(const size_t n) {
    return out;
 }
 
+void AnalyzeS6(const S6 s6) {
+
+   const double average = (abs(s6[0]) + abs(s6[1]) + abs(s6[2]) + abs(s6[3]) + abs(s6[4]) + abs(s6[5])) / s6.size();
+   std::vector<double> vec(s6.GetVector());
+   std::sort(vec.begin(), vec.end());
+
+   for (size_t i = 0; i < 6; ++i) {
+      vec[i] = abs(vec[i]);
+   }
+   int lowCount = 0;
+   for (size_t i = 0; i < 6; ++i) {
+      if (vec[i] < average) ++lowCount;
+   }
+   std::cout << "average " << average << std::endl;
+   std::cout << "s6 " << s6 << std::endl;
+   std::cout << "sorted and positive " <<  S6(vec) << std::endl;
+   std::cout << "lowCount " << lowCount << std::endl;
+}
+
+
 int main(int argc, char* argv[])
 {
 
@@ -361,9 +396,6 @@ int main(int argc, char* argv[])
        } else if (std::string(argv[ii]).compare(std::string("--blocksize"))==0) {
            blocksize = std::stoul(std::string(argv[++ii]));
            // std::cout << "; blocksize: " << blocksize;
-       } else if (ii==1 && std::string(argv[ii]).compare(std::string("lca"))==0) {
-           selectBravaisCase.clear();
-           doProduceSellaGraphics = false;
        } else if (ii==1) {
            selectBravaisCase = argv[1];
            if (!(std::string(argv[1]).empty() && std::string(argv[1]) == "all")) {
@@ -377,6 +409,12 @@ int main(int argc, char* argv[])
 
    std::cout << "; SELLA method symmetry searching\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+
+   //for (const auto& input : inputList) {
+   //   AnalyzeS6(input.GetCell());
+   //   std::cout << std::endl;
+   //}
+   //exit(0);
 
    if (blockstart + blocksize > inputList.size()) {
        if (blockstart >= inputList.size()) {
@@ -411,7 +449,7 @@ int main(int argc, char* argv[])
 
    for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
    {
-      std::cout << "----------------------------------------------------------" << std::endl;
+      std::cout << ";----------------------------------------------------------" << std::endl;
       std::cout << "; SELLA results for input case " << i  << std::endl;
       const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i],
         FileNameList[i-blockstart]);

@@ -23,6 +23,7 @@ public:
    std::string m_generalType;
    std::string m_character;
    std::string m_textName;
+   std::string m_description;
    std::string m_polyhedronName1;
    std::string m_polyhedronName2;
 
@@ -124,43 +125,58 @@ public:
 class Letter_C : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Letter_C&);
-   Letter_C() { m_textName = "C"; }
+   Letter_C() {
+      m_textName = "C";
+      m_description = "cubic";
+   }
 };
 
 class Letter_T : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Letter_T&);
-   Letter_T() { m_textName = "T"; }
+   Letter_T() { m_textName = "T";
+   m_description = "tetragonal";
+   }
 };
 
 class Letter_R : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Letter_R&);
-   Letter_R() { m_textName = "R"; }
+   Letter_R() { m_textName = "R";
+   m_description = "rhombohedral";
+   }
 };
 
 class Letter_O : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Letter_O&);
-   Letter_O() { m_textName = "O"; }
+   Letter_O() { m_textName = "O";
+   m_description = "orthorhombic";
+   }
 };
 
 class Letter_M : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Letter_M&);
-   Letter_M() { m_textName = "M"; }
+   Letter_M() { m_textName = "M";
+   m_description = "monoclinic";
+   }
 };
 
 class Letter_A : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Letter_A&);
-   Letter_A() { m_textName = "A"; }
+   Letter_A() { m_textName = "A";
+   m_description = "anorthic";
+   }
 };
 
 class Letter_H : public BasicDeloneRectangle {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const Letter_H&);
-   Letter_H() { m_textName = "H"; }
+   Letter_H() { m_textName = "H";
+   m_description = "hexagonal";
+   }
 };
 
 class C1 : public DeloneBackgroundWithTriangle {
@@ -772,6 +788,36 @@ class LatticeType5 : public BasicLatticeType {
 public:
    friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType5&);
    LatticeType5();
+};
+
+class LatticeType1a : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType1a&);
+   LatticeType1a();
+};
+
+class LatticeType2a : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType2a&);
+   LatticeType2a();
+};
+
+class LatticeType3a : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType3a&);
+   LatticeType3a();
+};
+
+class LatticeType4a : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType4a&);
+   LatticeType4a();
+};
+
+class LatticeType5a : public BasicLatticeType {
+public:
+   friend std::ostringstream& operator<< (std::ostringstream&, const LatticeType5a&);
+   LatticeType5a();
 };
 
 #endif  // DELONEGRIDCLASSES_H
