@@ -312,9 +312,9 @@ BravaisChainFailures BravaisHeirarchy::CheckOneBravaisChain(
          errorList.emplace_back(error);
       }
    }
-   //DeloneFitResults(const double fit, const S6 & bestApprox, const S6 & perpv, const MatS6 & toCanon);
-   //const DeloneFitResults dfr(bcf.Remediation());
-   //if (!bcf.empty())  bcf.Remediation();
+
+   const DeloneFitResults dfr(bcf.Remediation());
+   if (!bcf.empty())  bcf.Remediation();
    return bcf;
 }
 

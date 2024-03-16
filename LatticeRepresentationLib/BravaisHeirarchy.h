@@ -11,6 +11,7 @@
 #include "Sella.h"
 
 #include <algorithm>
+#include <cmath>
 #include <map>
 #include <string>
 #include <vector>
@@ -125,7 +126,7 @@ public:
    static int FindLoneS6Zero(const size_t n1, const size_t n2, const S6& s6, const double upper) {
       for (size_t i = 0; i < 6; ++i) {
          if (i == n1 || i == n2) continue;
-         if ( abs(s6[i]) < upper)  return i;
+         if ( abs(s6[i]) < upper)  return int(i);
       }
       return 19191;
    }
@@ -149,26 +150,51 @@ public:
       std::cout << std::endl;
    }
 
+   //void AnalyzeS6(const S6 s6) {
+
+   //   const double average = (abs(s6[0]) + abs(s6[1]) + abs(s6[2]) + abs(s6[3]) + abs(s6[4]) + abs(s6[5]))/s6.size();
+   //   std::vector<double> vec(s6.GetVector());
+   //   std::sort(vec.begin(), vec.end());
+
+   //   for (size_t i = 0; i < 6; ++i) {
+   //      vec[i] = abs(vec[i]);
+   //   }
+   //   int lowCount = 0;
+   //   for (size_t i = 0; i < 6; ++i) {
+   //      if (vec[i] < average) ++lowCount;
+   //   }
+   //   std::cout << "average " << average << std::endl;
+   //   std::cout << s6 << std::endl;
+   //   std::cout << S6(vec) << std::endl;
+   //   std::cout << "lowCount " << lowCount << std::endl;
+   //}
+
    DeloneFitResults Remediation()
    {
       DeloneFitResults dfr;
       if (m_failList.empty()) return dfr;
 
+      //AnalyzeS6(GetS6());
+
+      double lowestValue = DBL_MAX;
+      for (size_t i = 0; i < 6; ++i) lowestValue = std::min(lowestValue, abs(GetS6()[i]));
+      const double length = GetS6().norm();
 
 
       int zeroPosition = -1;
+      const auto xxxx = getFailList()[0].GetPlus().second;
       const double upper = std::min(0.1,2.0 * getFailList()[0].GetPlus().second);
 
-      //std::cout << "; cell in BravaisChainFailures::Remediation \n" << GetS6() << std::endl;
-      //std::cout << "; cell in BravaisChainFailures::Remediation \n" << LRL_Cell_Degrees(GetS6()) << std::endl;
-      //std::cout << "; cell in BravaisChainFailures::Remediation \n" << C3(GetS6()) << std::endl;
+      std::cout << "; cell in BravaisChainFailures::Remediation \n" << GetS6() << std::endl;
+      std::cout << "; cell in BravaisChainFailures::Remediation \n" << LRL_Cell_Degrees(GetS6()) << std::endl;
+      std::cout << "; cell in BravaisChainFailures::Remediation \n" << C3(GetS6()) << std::endl;
       const C3 c3v(GetS6());
       const int nc3 = countC3Zeros(c3v, upper);
       const int ns6 = CountS6Zeros(GetS6(), upper);
-      //std::cout << "Remdiation # C3 zeros " << nc3 << std::endl;
-      //std::cout << "Remediation # S6 zeros " << ns6 << std::endl;
+      std::cout << "Remdiation # C3 zeros " << nc3 << std::endl;
+      std::cout << "Remediation # S6 zeros " << ns6 << std::endl;
 
-      //std::cout << "C3 magnitudes " << abs(c3v[0]) << ", " << abs(c3v[1]) << ", " << abs(c3v[2]) << std::endl;
+      std::cout << "C3 magnitudes " << abs(c3v[0]) << ", " << abs(c3v[1]) << ", " << abs(c3v[2]) << std::endl;
 
 
 
