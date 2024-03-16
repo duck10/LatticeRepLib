@@ -352,74 +352,13 @@ int main(int argc, char* argv[])
       }
    }
 
+   if (names.empty()) {
+      names.emplace_back("ALL");
+   }
+
    for ( const std::string& namen: names)
    {
       CreateCells(argc, namen);
    }
-
-   //const int number = getNumber<int>(name);
-   //const bool isNumIn_1_44 = isNumber<int>(name) && number >= 1 && number <= 44;
-   //const bool badNumber = isNumber<int>(name) && (number < 1 || number > 44);
-
-   //bool doNiggli = false;
-   //bool doDelone = false;
-   //bool doGruber = false;
-
-
-   //if (LRL_StringTools::strToupper(name).find("ALL") != std::string::npos)
-   //{
-   //   name.clear();
-   //   doNiggli = doDelone = true;
-   //}
-
-
-   //if (argc == 1) doNiggli = doDelone = true;
-   //else if (argc > 1 && LRL_StringTools::strToupper(argv[1]) == "GRUBER") doGruber = true;
-   //else if (argc > 2 && LRL_StringTools::strToupper(argv[2]) == "GRUBER") doGruber = true;
-   //else if (argc <= 2) doNiggli = doDelone = true;
-   //else if (isNumIn_1_44) doNiggli = true;
-   //else if (LRL_StringTools::strToupper(name).find("NIGGLI") != std::string::npos) {
-   //   doNiggli = true;
-   //   doDelone = false;
-   //}
-   //else if (LRL_StringTools::strToupper(name).find("DELONE") != std::string::npos) {
-   //   doNiggli = false;
-   //   doDelone = true;
-   //}
-   //else if (isNumber<int>(name) && badNumber) doNiggli = doDelone = true;
-   //else if (isupper(name[0])) doDelone = true; // "A??" will incorrectly come here, but doNiggli already set
-   //else if (islower(name[0])) doNiggli = doDelone = true;
-   //else {
-   //   const int i19191 = 19191;
-   //}
-   //if (badNumber) name.clear();
-   //if (isupper(name[0]) && g_AllowedDelone.find(name[0]) == std::string::npos)
-   //{
-   //   doNiggli = doDelone = true;
-   //   name.clear();
-   //}
-
-
-   //if (doNiggli) {
-   //   const std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
-   //      GenerateNiggliBase().Select(name);
-   //   std::cout << "; Niggli lattice types requested " << std::endl;
-   //   ForNiggliInput(NiggiTypes);
-   //}
-
-   //if(doDelone) {
-   //   std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
-   //      GenerateDeloneBase().Select(name);
-   //   std::cout << "; Delone lattice type requested " << std::endl;
-   //   ForDeloneInput(DeloneTypes);
-   //}
-
-   //if (doGruber) {
-   //   std::cout << G6( std::vector<double>{ 4., 16., 16., 16., 3., 4.   } ) << std::endl;;// Niggli reduced
-   //   std::cout << G6( std::vector<double>{ 4., 16., 16., 16., 1., 4.   } ) << std::endl;;
-   //   std::cout << G6( std::vector<double>{ 4., 16., 16., -16., -1., -3.} ) << std::endl;;
-   //   std::cout << G6( std::vector<double>{ 4., 16., 16., -15., -1., -4.} ) << std::endl;;
-   //   std::cout << G6( std::vector<double>{ 4., 16., 16., -13., -3., -4.} ) << std::endl;;
-   //}
 
 }
