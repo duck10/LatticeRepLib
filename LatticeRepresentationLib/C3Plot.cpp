@@ -45,11 +45,14 @@ std::string C3Plot::CreatePolylineFromPoints(const size_t scalar, const std::str
 
    const std::string dashMode("");
    const std::string strokeWidth = "\" stroke-width=\"" + width + "\"";
-   std::string svg = transform + LRL_DataToSVG("   <polyline fill=\"none\" stroke=\"", "#A3A3A3", strokeWidth, "  points=\" ");
+   std::string svg = transform + LRL_DataToSVG("   <polyline fill=\"none\" stroke=\"", "#A3A3A3", strokeWidth, "  points=\" \n");
    for (size_t i = 0; i < v.size(); ++i) {
       const double& s1 = v[i][sp.index1];
       const double& s2 = v[i][sp.index2];
       svg += LRL_DataToSVG(s1 * cellScale) + " " + LRL_DataToSVG(s2 * cellScale) + ",  ";
+      if ((i + 1) % 100 == 0) svg += "\n";
+      if ((i + 1) % 10 == 0) svg += "\n";
+      if ((i + 1) % 5 == 0) svg += "\n";
    }
 
    svg += "\"/> \n\n";

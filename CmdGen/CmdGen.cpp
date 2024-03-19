@@ -321,11 +321,11 @@ void CreateCells(const int argc, const std::string& namen) {
    }
 
    if (doGruber) {
-      std::cout << G6(std::vector<double>{ 4., 16., 16., 16., 3., 4.   }) << std::endl;;// Niggli reduced
-      std::cout << G6(std::vector<double>{ 4., 16., 16., 16., 1., 4.   }) << std::endl;;
-      std::cout << G6(std::vector<double>{ 4., 16., 16., -16., -1., -3.}) << std::endl;;
-      std::cout << G6(std::vector<double>{ 4., 16., 16., -15., -1., -4.}) << std::endl;;
-      std::cout << G6(std::vector<double>{ 4., 16., 16., -13., -3., -4.}) << std::endl;;
+      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., 16., 3., 4.   }) << std::endl;;// Niggli reduced
+      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., 16., 1., 4.   }) << std::endl;;
+      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -16., -1., -3.}) << std::endl;;
+      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -15., -1., -4.}) << std::endl;;
+      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -13., -3., -4.}) << std::endl;;
    }
 }
 
