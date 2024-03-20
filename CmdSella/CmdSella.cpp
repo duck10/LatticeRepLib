@@ -297,6 +297,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
       }
    }
    std::string temp = os.str();
+   matches.clear();
    matches.push_back(temp);
 
    return  BravaisHeirarchy::ProduceSVG(

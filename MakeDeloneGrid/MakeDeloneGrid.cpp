@@ -244,6 +244,7 @@ static std::string FederovLabelCell() {
       "<text style = \"font-family:sans-serif; font-weight:bold; font-size:15px\" x = \"13\" y = \"30\" >also known as</text>n"
       "<text style = \"font-family:sans-serif; font-weight:bold; font-size:15px\" x = \"18\" y = \"45\" >Voronoi domains</text>n"
       "<text style = \"font-family:sans-serif; font-weight:bold; font-size:15px\" x = \"18\" y = \"60\" >Federov parallelohedra</text>n"
+      "<text style = \"font-family:sans-serif; font-weight:bold; font-size:15px\" x = \"18\" y = \"75\" >Wigner-Seitz cell</text>n"
       "</g>n";
 }
 
