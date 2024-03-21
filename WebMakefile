@@ -3,6 +3,7 @@ LRL_WEB_BINDEST ?= $(HOME)/public_html/cgi-bin/
 
 COMMANDS  =  \
 	CheckInput \
+	CmdCmplx \
 	CmdDelone \
 	CmdDists \
 	CmdGen \
@@ -24,10 +25,12 @@ COMMANDS  =  \
 	CmdToU \
 	CmdToV7 \
 	CmdVolume \
-	PlotC3
+	PlotC3 \
+	Dirichlet
 
 SOURCES  =  \
 	CheckInput/CheckInput.cpp \
+        CmdCmplx/CmdCmplx.cpp \
 	CmdDelone/CmdDelone.cpp \
 	CmdDists/CmdDists.cpp \
 	CmdGen/CmdGen.cpp \
@@ -50,10 +53,12 @@ SOURCES  =  \
 	CmdToU/CmdToU.cpp \
 	CmdToV7/CmdToV7.cpp \
 	CmdVolume/CmdVolume.cpp \
-	PlotC3/MAIN_PlotC3.cpp
+	PlotC3/MAIN_PlotC3.cpp \
+        Dirichlet/Dirichlet_Main.cpp
 
 BINS  =  \
 	CheckInput/CheckInput \
+        CmdCmplx/CmdCmplx.cpp \
 	CmdDelone/CmdDelone \
 	CmdDists/CmdDists \
 	CmdGen/CmdGen \
@@ -74,8 +79,9 @@ BINS  =  \
 	CmdToS6L/CmdToS6L \
 	CmdToU/CmdToU \
 	CmdToV7/CmdToV7 \
-	CmdVolume/CmdVolume\
-	PlotC3/PlotC3
+	CmdVolume/CmdVolume \
+	PlotC3/PlotC3 \
+	Dirichlet/Dirichlet
 
 BIN	= $(PWD)/bin
 
@@ -95,6 +101,9 @@ clean:
 
 CheckInput/CheckInput:  CheckInput/CheckInput.cpp $(BIN)
 	(cd CheckInput;  make all; cp CheckInput $(BIN))
+
+CmdCmplx/CmdCmplx:  CmdCmplx/CmdCmplx.cpp $(BIN)
+	(cd CmdCmplx;  make all; cp CmdCmplx $(BIN))
 
 CmdDelone/CmdDelone:  CmdDelone/CmdDelone.cpp $(BIN)
 	  (cd CmdDelone;  make all; cp CmdDelone $(BIN))
@@ -161,6 +170,9 @@ CmdVolume/CmdVolume:  CmdVolume/CmdVolume.cpp $(BIN)
 
 PlotC3/PlotC3:  PlotC3/MAIN_PlotC3.cpp $(BIN)
 	  (cd PlotC3; make all; cp PlotC3 $(BIN))
+
+Dirichlet/Dirichlet:  Dirichlet/Dirichlet_Main.cpp $(BIN)
+	  (cd Dirichlet; make all; cp Dirichlet $(BIN))
 
 $(LRL_WEB_BINDEST):
 	mkdir -p $(LRL_WEB_BINDEST)

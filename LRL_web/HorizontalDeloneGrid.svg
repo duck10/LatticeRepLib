@@ -969,6 +969,7 @@ version = "1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.or
 <text style = "font-family:sans-serif; font-weight:bold; font-size:15px" x = "13" y = "30" >also known as</text>
 <text style = "font-family:sans-serif; font-weight:bold; font-size:15px" x = "18" y = "45" >Voronoi domains</text>
 <text style = "font-family:sans-serif; font-weight:bold; font-size:15px" x = "18" y = "60" >Federov parallelohedra</text>
+<text style = "font-family:sans-serif; font-weight:bold; font-size:15px" x = "18" y = "75" >Wigner-Seitz cell</text>
 </g>
 
 
