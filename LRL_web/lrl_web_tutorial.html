@@ -3,7 +3,7 @@
 <title>LRL_WEB TUTORIAL</title>
 </head>
 <body>
-<font face="Arial,Helvtica,Times">
+<font face="Arial,Helvetica,Times">
 <pre>
 <strong>Lattice Representation Library for the Web</strong>
 
@@ -29,8 +29,8 @@ most common way for crystallographers to describe the box (i.e., unit cell)
 is by listing the lengths of three unique edges and the angles between them.
 
 But there are other ways to describe the box. In this web site, you can
-change the representation to other kinds. One list the three 3-D vectors that
-are the unique edges (call B4, on the website). Another useful (to crystallogaphers)
+change the representation to other kinds. One s to list the three 3-D vectors that
+are the unique edges (call B4, on the website). Another useful (to crystallographers)
 one is the three dot products between the edges and the additional three
 dot products of each edge with the negative of the vector sum of them.
 
@@ -52,7 +52,7 @@ of a single operation to perform; the operation will put its results into the
 &quot;Tool Output&quot; box immediately to the right.
 
 The intent is that operations specified for one input can be chained together
-to be used by the following one.
+to be used by the following operation.
 
 Immediately above the &quot;Tool Output&quot; box is a box labeled &quot;Input data&quot;; The Input data 
 box only is shown if the left-hand choice of &quot;use new input&quot; is selected. The choice of
@@ -65,7 +65,7 @@ In principle, you can use this web site without knowing any crystallography
 or even without doing any entries. Let's do a simple example.
 
 At the top for &quot;Number of operation windows&quot;, choose &quot;1&quot;.
-In the left-hand column, choose &quot;use new data.
+In the left-hand column, choose &quot;use new data&quot;.
 In the &quot;Select an operation&quot; box, choose &quot;Generate cells of a particular type or types&quot;.
 When you do that, two new boxes appear above &quot;Input data&quot;: &quot;Number of each type&quot; 
 and &quot;Lattice type&quot;. For Number of each type, input &quot;2&quot;; for Lattice type, change &quot;all&quot;
@@ -103,7 +103,7 @@ end</i>
 That's the operations guide for almost everything on the site. One important thing
 remains: how to input your own data. So let's do a simple example.
 
-In the &quot;number of operations&quot; box, select &quot;3&quot;.
+In the &quot;Number of operations&quot; box, select &quot;3&quot;.
 In the first &quot;Select an operation&quot; box, select &quot;Check input&quot;. 
 Enter two lines of data:
 P 10 10 10  90 90 90 (a simple cubic unit cell)
@@ -143,7 +143,7 @@ P     9.969     9.989     9.984    90.509    89.490    89.668   perturbed
 
 The thing to notice here is that the perturbed cells are all very
 similar to the original input cell. That's not surprising since we
-only requested 1% change.
+only requested a 1% change.
 
 Third output window:
 <i>; Volume
@@ -155,15 +155,15 @@ Third output window:
   P     9.969     9.989     9.984    90.509    89.490    89.668   Volume = 994.114
 end</i>
 
-Note that the volumes are near to the value of the unperturbed cell (1000). The
-1% change request is calculated in the S<sup>6</sup> space, so the volumes
+The third output window shows the volumes of perturbed unit cells.
+These volumes are close to the value of the unperturbed cell (1000).
+The 1% change request is calculated in the S<sup>6</sup> space, so the volumes
 and the cell parameters do not directly reflect that amount.
 ------------------------------------------------------------------------
 
-<strong>Let's do another example.</strong> We'll create a series of points from one
-lattice to another, change the presentation to a, b, c, &alpha;, &beta;, &gamma; 
-just so we can look at the cell parameters,
-and then calculate the distances between the points.
+<strong>Let's do another example.</strong> We'll create a series of points between one
+lattice and another, change the presentation to a, b, c, &alpha;, &beta;, &gamma;
+just so we can look at the cell parameters, and then calculate the distances between the points.
 
 To begin, set the number of operations to 3. The first one should be for
 new input, and the later 2 for using prior input.
@@ -259,7 +259,7 @@ The space of alternative unit cells for the second cell has been searched for
 the one most similar to the REFERENCE cells. The cell parameters look quite
 similar, and the angle between the reference vector and that of the search
 vector is quite small in S<sup>6</sup>. 
-
+These results can aid in the determination of the Niggli cell and Bravais lattice.
 
 -----------------------------------------------------------------------
 
@@ -316,11 +316,13 @@ Set the number of operations to 3.
 For the first operation, choose &quot;Generate cells&quot
 Set the first parameter to 1.
 Set the second parameter to &quot;44 C1 T2 C3 H4 C5&quot;
-(this is a list of one triclinic cells and one of each of the Delone lattice types, 1-5.)<br/>
-For the second operation, choose &quot;Path&quot;<br/>
+(this is a list of one triclinic cell and one of each of the Delone lattice types, 1-5.)
+
+For the second operation, choose &quot;Path&quot;
+
 For the third operation, choose &quot;PlotC3&quot;
 Click on &quot;Submit&quot; .
-<br/>
+
 In the Output Window for the first operation, we see:
 <i>; Generate cells
 ; Niggli lattice types requested
@@ -367,7 +369,7 @@ P 10.38 10.65 12.70 72.88 80.04 91.46
 
 ...
 
-P 8.65 8.65 8.65 90.00 90.00 90.00... and lots more ...<br/>
+P 8.65 8.65 8.65 90.00 90.00 90.00... and lots more ...
 
 Click on the graphics file name (<i>PLT_2024-03-17.14_32_14_35ddd8_0.svg</i> in this example), to display the C<sup>3</sup> plot.
 
@@ -393,9 +395,9 @@ Set operation 3 to Check Input
 Set operation 4 to Delone (reduction).
 Set operation 5 to PlotC3
 Click on &quot;Submit&quot; .
-<br/>
 
-In Output window 5, we see:<br/>
+In Output window 5, we see:
+
 PlotC3
 ; Graphical output SVG file = <i>PLT_2024-03-17.15_25_36_35de94_0.svg</i>
 The S6 data range is -148.28 to 0
@@ -431,13 +433,13 @@ line is long, then the points are relatively far apart (note that in the first p
 well-known, no unit cell reduction is perturbation-stable.
 
 
-
 <strong>Part 3</strong>
 Change the choice of Operation 3 to Perturb, with arguments 20 and 10 (20 perturbations
 and 1% changes)
 Click on &quot;Submit&quot; .
 <br/>
-In Output window 5, we see:<br/>
+In Output window 5, we see:
+
 ; PlotC3
 ; Graphical output SVG file = <i>PLT_2024-03-17.15_37_06_35df2a_0.svg</i>
 The S6 data range is -150.893 to 0
@@ -475,7 +477,7 @@ points that were close together, now are relatively far apart in this simple pro
 ------------------------------------------------------------------------
 <strong>3. Input types for LRL_WEB  </strong>
 
-here are 5 types of input lines.
+There are 5 types of input lines.
 Except for &quotEND&quot;, they can be combined in any order. All these are case-insensitive. 
 If a particular input lattice is invalid, it is rejected with a message.
 ---  RANDOM: Generate a random (valid) unit cell (a, b, c, &alpha;, &beta;, &gamma;);
@@ -499,6 +501,8 @@ information. Most write output that can be used as input to succeeding programs.
 Check Input: -- Read the input and rejects invalid unit cells
 Distances: -- compute NCDist and CS6Dist distances
 Volume: -- compute volumes of listed cells
+
+<strong>Graphical information</strong>
 Sella: -- apply Sella algorithm (graphics)
     Andrews, L. C., Bernstein, H. J., &amp; Sauter, N. K. (2023).
     SELLA--A Program for Determining Bravais Lattice Types.
@@ -533,7 +537,7 @@ S6Reflecions: -- apply S6 reflections to input cells
 Scale: rescale cells to reference cell
 </pre>
 <hr>
-Updated: 18 March 2024
+Updated: 21 March 2024
 </font>
 </body>
 </html>

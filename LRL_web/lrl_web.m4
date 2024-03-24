@@ -251,6 +251,7 @@ int main(int argc,
       std::cout << "    tdii = twodig(ii);" << std::endl;
       std::cout << "    // alert(\"enable block_\"+tdii);" << std::endl;
       std::cout << "    let mychain=document.getElementById(\"chain_\"+tdii).value;" << std::endl;
+      std::cout << "    setchaininput(ii);" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+tdii).style=\"display:inline\";" << std::endl;
       std::cout << "    document.getElementById(\"block_\"+tdii+\"a\").style=\"display:inline\";" << std::endl;
       std::cout << "    if (mychain!=\"chain_input\") {" << std::endl;
@@ -276,6 +277,7 @@ int main(int argc,
       std::cout << "      }" << std::endl;
       std::cout << "      document.getElementById(\"operation_\"+tdii).value=\"NoOp\";" << std::endl;
       std::cout << "      changeoperation(tdii);" << std::endl;
+      std::cout << "      document.getElementById(\"chain_\"+tdii).value=\"chain_input\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii).style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"a\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"b\").style=\"display:none\";" << std::endl;
@@ -738,11 +740,22 @@ std::string plaintext2html(std::string & dst, std::string src){
     xactstr+=std::string("/cgi-bin/"+LRL_WEB_CGI+"\" onsubmit=\"return running('00')\">");
     std::cout << xactstr  << std::endl;
     std::cout << "<br />" << std::endl;
-    std::cout << "Assorted tools to do various calculations for crystallographic lattices." << std::endl;
+    std::cout << "<font size=+2><b>Assorted tools to do various calculations for crystallographic lattices.</b></font>"<< std::endl;
     std::cout << "<br />" << std::endl;
-    std::cout << "<a href=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/lrl_web/lrl_web_tutorial.html\" target=\"_blank\">Tutorial</a><br />" << std::endl;
+    std::cout << "<table border=0>" << std::endl;
+    std::cout << "<tr>" << std::endl;
+    std::cout << "<td align=center width=300px><a href=\"http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/lrl_web/lrl_web_tutorial.html\" target=\"_blank\"><font size=+1><b>Tutorial</b></font></a></td>" << std::endl;
+    std::cout << "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>" << std::endl;
+    std::cout << "<td align=center width=300px><a href=#DeloneChars><font size=+1><b>Table of Delone Characters</b></font></a></td>" << std::endl;
+    std::cout << "</tr>" << std::endl;
+    std::cout << "<tr>" << std::endl;
+    std::cout << "<td align=center width=300px><a href=\"http://iterate.sf.net/bgaol\" target=\"_blank\"><font size=+1><b>G<sup>6</sup> Bravais General Analysis of Lattices (BGAOL)</b></font></a></td>" << std::endl;
+    std::cout << "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>" << std::endl;
+    std::cout << "<td align=center width=300px><a href=\"http://blondie.arcib.org:8084/sauc-1.1.1/\" target=\"_blank\"><font size=+1><b>G<sup>6</sup> Search for Alternative Unit Cells (SAUC)</b></font></a></td>" << std::endl;
+    std::cout << "</tr>" << std::endl;
+    std::cout << "</table>" << std::endl;
     std::cout << "<STRONG>" << std::endl;
-    std::cout << "Please read the <a href=\"#notice\">NOTICE</a> below before use of this web page" << std::endl;
+    std::cout << "<font size=+1><b>Please read the <a href=\"#notice\">NOTICE</a> below before use of this web page</b></font>" << std::endl;
     std::cout << "</STRONG>" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<a name=\"search\"></a>" << std::endl;
@@ -1458,6 +1471,8 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <option "+selected+"value=\"CmdDists\"><b>Distances</b>: compute NCDist and CS6Dist distances</option>" << std::endl;
       selected=(operation.compare("CmdVolume")==0)?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdVolume\"><b>Volume</b>:  compute volumes of listed cells</option>" << std::endl;
+      std::cout << "  </optgroup>" << std::endl;
+      std::cout << "  <optgroup label=\"Graphical Information\">"  << std::endl;
       selected=operation.compare("CmdSella")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdSella\"><b>Sella</b>:  apply Sella algorithm</option>" << std::endl;
       selected=operation.compare("PlotC3")==0?"selected ":"";
@@ -2352,6 +2367,11 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
     std::cout << "</center>" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "" << std::endl;
+    std::cout << "<a name=DeloneChars></a><h2>Table of Delone Characters</h2>" << std::endl;
+    std::cout << "<P>" << std::endl;
+    std::cout << "<center>" << std::endl;
+    std::cout << "<img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/lrl_web/HorizontalDeloneGrid.svg\" alt=\"Table of Delone Characters\" />" << std::endl;
+    std::cout << "</center>" << std::endl;
     std::cout << "<h2>References to Sources for Information about the Calculations</h2>" << std::endl;
     std::cout << "<ol>" << std::endl;
     std::cout << "<li>Check Input: simply check the input for errors</li>" << std::endl;
@@ -2362,7 +2382,7 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
     std::cout << "<li>Generate cells of a particular type or types</li>" << std::endl;
     std::cout << "<li>apply Lattice Matching algorithm to listed cells <a href=\"#Mighell2002\">[Mighell 2002]</a>" << std::endl;
     std::cout << "<a href=\"#Andrews2021\">[Andrews and Bernstein 2021]</a></li>" << std::endl;
-    std::cout << "<li>compute Niggli-reduced primitive cells <a href=\"#Niggli1928\">[Niggli 1928]</a></li>" << std::endl;
+    std::cout << "<li>compute Niggli-reduced primitive cells <a href=\"#Niggli1928\">[Niggli 1928]</a> <a href=\"#Roof1967\">[Roof 1967]</a></li>" << std::endl;
     std::cout << "<li>compute path between pairs of cells" << std::endl;
     std::cout << "<a href=\"#Andrews2023a\">[Andrews and Bernstein 2023a]</a></li>" << std::endl;
     std::cout << "<li>compute perturbed versions of input cells <a href=\"#Andrews2022\">[Andrews and Bernstein 2022]</a></li>" << std::endl;
@@ -2383,78 +2403,83 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
     std::cout << "<a name=\"references\"></a>" << std::endl;
     std::cout << "<h2>References</h2>" << std::endl;
     std::cout << "<p>" << std::endl;
+    std::cout << "<div style=\"margin-bottom:-0.1em;margin-top:-0.1em;\">" << std::endl;
     std::cout << "<a name=\"Andrews1988\">[Andrews and Bernstein 1988]</a> L. C. Andrews and H. J. Bernstein (1988) Lattices and reduced cells as points in " << std::endl;
-    std::cout << "6-space and selection of Bravais lattice type by projections. Acta Cryst., A44:6 1009 -- 1018.<br />" << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "6-space and selection of Bravais lattice type by projections. Acta Cryst., A44:6 1009 -- 1018." << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Andrews2014\">[Andrews and Bernstein 2014]</a> L. C. Andrews and H. J. Bernstein (2014). " << std::endl;
     std::cout << "The geometry of Niggli reduction: BGAOL–embedding Niggli reduction and analysis of boundaries." << std::endl;
     std::cout << "J. Appl. Cryst., 47(1), 346 -- 359." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Andrews2021\">[Andrews and Bernstein 2021]</a> L. C. Andrews and H. J. Bernstein (2021). " << std::endl;
     std::cout << "DC 7, a very efficient lattice comparison metric. Acta Cryst. A77(a2), C809." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Andrews2022\">[Andrews and Bernstein 2022]</a> L. C. Andrews and H. J. Bernstein (2022)." << std::endl;
     std::cout << "Generating random unit cells.  J. Appl. Cryst. 55(4) 782 -- 786." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Andrews2023a\">[Andrews and Bernstein 2023a]</a> L. C. Andrews and H. J. Bernstein (2023).  " << std::endl;
     std::cout << "The Follower algorithm and a program using it to explore spaces, Cambridge Open Engage preprint" << std::endl;
     std::cout << "<a href=" << std::endl;
     std::cout << "\"https://web.archive.org/web/20230308145808id_/https://www.cambridge.org/engage/api-gateway/coe/assets/orp/resource/item/63f41c579da0bc6b3344e7f3/original/the-follower-algorithm-and-a-program-using-it-to-explore-spaces.pdf\">" << std::endl;
     std::cout << "https://web.archive.org/web/20230308145808id_/https://www.cambridge.org/engage/api-gateway/coe/assets/orp/resource/item/63f41c579da0bc6b3344e7f3/original/the-follower-algorithm-and-a-program-using-it-to-explore-spaces.pdf</a>" << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Andrews2019a\">[Andrews <i>et al.</i> 2019a]</a> L. C. Andrews, H. J. Bernstein, H. J. and N. K. Sauter (2019)." << std::endl;
     std::cout << "Selling reduction versus Niggli reduction for crystallographic lattices. Acta Cryst.  A75, 115 -- 120." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Andrews2019b\">[Andrews <i>et al.</i> 2019b]</a> L. C. Andrews, H. J. Bernstein and N. K.Sauter (2019)." << std::endl;
     std::cout << "A space for lattice representation and clustering. Acta Cryst. A75(3), 593 -- 599. " << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Andrews2023b\">[Andrews <i>et al.</i> 2023b]</a> L. C. Andrews, H. J. Bernstein and N. K. Sauter (2023)." << std::endl;
     std::cout << "SELLA - A Program for Determining Bravais Lattice Types. arXiv preprint" << std::endl;
     std::cout << "<a href=\"https://arxiv.org/pdf/2303.03122.pdf\">" << std::endl;
     std::cout << "https://arxiv.org/pdf/2303.03122.pdf</a>." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Authier2013\">[Authier 2013]</a> A. Authier  (2013). Early days of X-ray crystallography. OUP Oxford." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Bernstein2023\">[Bernstein <i>et al.</i> 2023]</a> H. J. Bernstein, L. C. Andrews and M. Xerri (2023)." << std::endl;
     std::cout << "An invertible seven-dimensional Dirichlet cell characterization of lattices. Acta Cryst. A79(4), 369 -- 380." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Delaunay1933\">[Delaunay 1933]</a> B. N. Delaunay (1933)." << std::endl;
     std::cout << "Neue Darstellung der geometrischen Kristallographie: Erste Abhandlung." << std::endl;
     std::cout << " Z. Krist. 84, 109 -- 149." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Delone1975\">[Delone <i>et al.</i> 1975]</a> B. N. Delone, R. V. Galiulin and M. I. Shtogrin, (1975)." << std::endl;
     std::cout << "On the Bravais types of lattices." << std::endl;
     std::cout << " J. Sov. Math. 4(1), 79 -- 156." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Hauey1800\">[Ha&uuml;y 1800]</a>  R. J. Ha&uuml;y (1800). Addition au m&eacute;moire sur l’arragonite: " << std::endl;
     std::cout << "ins&eacute;r&eacute; dans le tome XI des annnales (p. 241 et suiv.)." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Kepler1611\">[Kepler 1611]</a> Kepler, J. (1611). Strena Seude Niue Sexangula. Godefridum Tampach." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Kepler1966\">[Kepler <i>et al.</i> 1966]</a> J. Kepler,C. G. Hardie, B. J. Mason and L. L. Whyte  (1966). " << std::endl;
     std::cout << "The Six-cornered Snowflake.[Edited and Translated by Colin Hardie. With Essays by L. L. Whyte and B. J. Mason. " << std::endl;
     std::cout << "With Illustrations.] Lat. & Eng. Clarendon Press." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Mighell2002\">[Mighell 2002]</a> A. D. Mighell (2002)." << std::endl;
     std::cout << "Lattice Matching (LM) -- Prevention of Inadvertent Duplicate Publications of Crystal Structures." << std::endl;
     std::cout << "J. Res. Natl. Inst. Stand. Technol. 107(5), 425 – 430." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Niggli1928\">[Niggli 1928]</a> P. Niggli (1928). Krystallographische und Strukturtheoretische Grundbegriffe, " << std::endl;
     std::cout << "Handbuch der Experimentalphysik, Vol. 7, part 1. Akademische Verlagsgesellschaft, Leipzig." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
+    std::cout << "<a name=\"Roof1967\">[Roof 1967]</a> R. B. Roof Jr, (1967). Theoretical Extension of the Reduced-Cell Concept in " << std::endl;
+    std::cout << "in Crystallography (No. LA-4038). Los Alamos National Lab.(LANL), Los Alamos, NM (United States). " << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Wikipedia2022\">[Wikipedia contributors 2022]</a> Wikipedia contributors, (2022). Theophrastus — Wikipedia, the " << std::endl;
     std::cout << "free encyclopedia. [Online; accessed 17-October-2022]. https://en.wikipedia.org/w/index.php?title=Theophrastus&oldid=1114534722" << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Wilkins2021\">[Wilkins <i>et al.</i> 2021]</a> J. Wilkins, B. J. Schoville, R. Pickering, L. Gliganic, B. Collins," << std::endl;
     std::cout << "K. S.  Brown, J. von der Meden, W. Khumalo, M. C. Meyer, S. Maape, and A. F. Blackwood (2021). Innovative " << std::endl;
     std::cout << "Homo sapiens behaviours 105,000 years ago in a wetter Kalahari. Nature, 592(7853), 248 -- 252." << std::endl;
-    std::cout << "<p>" << std::endl;
+    std::cout << "</p><p>" << std::endl;
     std::cout << "<a name=\"Zimmermann1985\">[Zimmermann and Burzlaff 1985]</a> H. Zimmermann and H. Burzlaff. DELOS A computer program for the " << std::endl;
     std::cout << "determination of a unique conventional cell. Zeitschrift f&uuml;r Kristallographie, 170:241 246, 1985." << std::endl;
     std::cout << "" << std::endl;
+    std::cout << "</div>" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 23 November 2023." << std::endl;
+    std::cout << "Updated 4 March 2024." << std::endl;
     std::cout << "</font>" << std::endl;
  }
 ]]]) dnl end of lrl_web.cpp
@@ -2564,6 +2589,7 @@ function changenumops(){
     tdii = twodig(ii);
     // alert("enable block_"+tdii);
     let mychain=document.getElementById("chain_"+tdii).value;
+    setchaininput(ii);
     document.getElementById("block_"+tdii).style="display:inline";
     document.getElementById("block_"+tdii+"a").style="display:inline";
     if (mychain!="chain_input") {
@@ -2589,6 +2615,7 @@ function changenumops(){
       }
       document.getElementById("operation_"+tdii).value="NoOp";
       changeoperation(tdii);
+      document.getElementById("chain_"+tdii).value="chain_input";
       document.getElementById("block_"+tdii).style="display:none";
       document.getElementById("block_"+tdii+"a").style="display:none";
       document.getElementById("block_"+tdii+"b").style="display:none";
@@ -2839,9 +2866,20 @@ Sleeping Dragon line art image by Gordon Dylan Johnson,
 </tr>
 <FORM method=POST ACTION="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/cgi-bin/]]]LRLWEBCGI[[[" onsubmit="return running('00')">
 <br />
-Assorted tools to do various calculations for crystallographic lattices.
+<font size=+1><b>Assorted tools to do various calculations for crystallographic lattices.</b></font>
 <br />
-<a href="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/lrl_web/lrl_web_tutorial.html" target="_blank">Tutorial</a><br />
+<table border=0>
+<tr>
+<td align=center width=300px><a href="http://]]]LRLWEBHOST[[[/~]]]LRLWEBUSER[[[/lrl_web/lrl_web_tutorial.html" target="_blank"><font size=+1><b>Tutorial</b></font></a></td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td align=center width=300px><a href=#DeloneChars><font size=+1><b>Table of Delone Characters</b></font></a></td>
+</tr>
+<tr>
+<td align=center width=300px><a href="http://iterate.sf.net/bgaol" target="_blank"><font size=+1><b>G<sup>6</sup> Bravais General Analysis of Lattices (BGAOL)</b></font></a></td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td align=center width=300px><a href="http://blondie.arcib.org:8084/sauc-1.1.1/" target="_blank"><font size=+1><b>G<sup>6</sup> Search for Alternative Unit Cells (SAUC)</b></font></a></td>
+</tr>
+</table>
 <STRONG>
 Please read the <a href="#notice">NOTICE</a> below before use of this web page
 </STRONG>
@@ -2897,6 +2935,8 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Graphical Information">
   <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
   <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
@@ -3017,6 +3057,8 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Graphical Information">
   <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
   <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
@@ -3137,6 +3179,8 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Graphical Information">
   <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
   <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
@@ -3257,6 +3301,8 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Graphical Information">
   <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
   <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
@@ -3377,6 +3423,8 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Graphical Information">
   <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
   <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
@@ -3497,6 +3545,8 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Graphical Information">
   <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
   <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
@@ -3617,6 +3667,8 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Graphical Information">
   <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
   <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
@@ -3748,6 +3800,8 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS6Dist distances</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
+  </optgroup>
+  <optgroup label="Graphical Information">
   <option value="CmdSella"><b>Sella</b>:  apply Sella algorithm</option>
   <option value="PlotC3"><b>PlotC3</b>: draw C3 plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
@@ -3987,6 +4041,12 @@ Fig. 1. Some key dates in the history of modern crystallography
 </center>
 <p>
 
+<a name=DeloneChars></a><h2>Table of Delone Characters</h2>
+<P>
+<center>
+<img src="/~]]]LRLWEBUSER[[[/lrl_web/HorizontalDeloneGrid.svg" alt="Table of Delone Characters" />
+</center>
+
 <h2>References to Sources for Information about the Calculations</h2>
 <ol>
 <li>Check Input: simply check the input for errors</li>
@@ -3997,7 +4057,7 @@ Fig. 1. Some key dates in the history of modern crystallography
 <li>Generate cells of a particular type or types</li>
 <li>apply Lattice Matching algorithm to listed cells <a href="#Mighell2002">[Mighell 2002]</a>
 <a href="#Andrews2021">[Andrews and Bernstein 2021]</a></li>
-<li>compute Niggli-reduced primitive cells <a href="#Niggli1928">[Niggli 1928]</a></li>
+<li>compute Niggli-reduced primitive cells <a href="#Niggli1928">[Niggli 1928] <a href="#Roof1967">[Roof 1967]</a></li>
 <li>compute path between pairs of cells
 <a href="#Andrews2023a">[Andrews and Bernstein 2023a]</a></li>
 <li>compute perturbed versions of input cells <a href="#Andrews2022">[Andrews and Bernstein 2022]</a></li>
@@ -4018,78 +4078,82 @@ Fig. 1. Some key dates in the history of modern crystallography
 <a name="references"></a>
 <h2>References</h2>
 <p>
+<div style="margin-bottom:-0.1em;margin-top:-0.1em;">
 <a name="Andrews1988">[Andrews and Bernstein 1988]</a> L. C. Andrews and H. J. Bernstein (1988) Lattices and reduced cells as points in 
 6-space and selection of Bravais lattice type by projections. Acta Cryst., A44:6 1009 -- 1018.<br />
-<p>
+</p><p>
 <a name="Andrews2014">[Andrews and Bernstein 2014]</a> L. C. Andrews and H. J. Bernstein (2014). 
 The geometry of Niggli reduction: BGAOL–embedding Niggli reduction and analysis of boundaries.
 J. Appl. Cryst., 47(1), 346 -- 359.
-<p>
+</p><p>
 <a name="Andrews2021">[Andrews and Bernstein 2021]</a> L. C. Andrews and H. J. Bernstein (2021). 
 DC 7, a very efficient lattice comparison metric. Acta Cryst. A77(a2), C809.
-<p>
+</p><p>
 <a name="Andrews2022">[Andrews and Bernstein 2022]</a> L. C. Andrews and H. J. Bernstein (2022).
 Generating random unit cells.  J. Appl. Cryst. 55(4) 782 -- 786.
-<p>
+</p><p>
 <a name="Andrews2023a">[Andrews and Bernstein 2023a]</a> L. C. Andrews and H. J. Bernstein (2023).  
 The Follower algorithm and a program using it to explore spaces, Cambridge Open Engage preprint
 <a href=
 "https://web.archive.org/web/20230308145808id_/https://www.cambridge.org/engage/api-gateway/coe/assets/orp/resource/item/63f41c579da0bc6b3344e7f3/original/the-follower-algorithm-and-a-program-using-it-to-explore-spaces.pdf">
 https://web.archive.org/web/20230308145808id_/https://www.cambridge.org/engage/api-gateway/coe/assets/orp/resource/item/63f41c579da0bc6b3344e7f3/original/the-follower-algorithm-and-a-program-using-it-to-explore-spaces.pdf</a>
-<p>
+</p><p>
 <a name="Andrews2019a">[Andrews <i>et al.</i> 2019a]</a> L. C. Andrews, H. J. Bernstein, H. J. and N. K. Sauter (2019).
 Selling reduction versus Niggli reduction for crystallographic lattices. Acta Cryst.  A75, 115 -- 120.
-<p>
+</p><p>
 <a name="Andrews2019b">[Andrews <i>et al.</i> 2019b]</a> L. C. Andrews, H. J. Bernstein and N. K.Sauter (2019).
 A space for lattice representation and clustering. Acta Cryst. A75(3), 593 -- 599. 
-<p>
+</p><p>
 <a name="Andrews2023b">[Andrews <i>et al.</i> 2023b]</a> L. C. Andrews, H. J. Bernstein and N. K. Sauter (2023).
 SELLA - A Program for Determining Bravais Lattice Types. arXiv preprint
 <a href="https://arxiv.org/pdf/2303.03122.pdf">
 https://arxiv.org/pdf/2303.03122.pdf</a>.
-<p>
+</p><p>
 <a name="Authier2013">[Authier 2013]</a> A. Authier  (2013). Early days of X-ray crystallography. OUP Oxford.
-<p>
+</p><p>
 <a name="Bernstein2023">[Bernstein <i>et al.</i> 2023]</a> H. J. Bernstein, L. C. Andrews and M. Xerri (2023).
 An invertible seven-dimensional Dirichlet cell characterization of lattices. Acta Cryst. A79(4), 369 -- 380.
-<p>
+</p><p>
 <a name="Delaunay1933">[Delaunay 1933]</a> B. N. Delaunay (1933).
 Neue Darstellung der geometrischen Kristallographie: Erste Abhandlung.
  Z. Krist. 84, 109 -- 149.
-<p>
+</p><p>
 <a name="Delone1975">[Delone <i>et al.</i> 1975]</a> B. N. Delone, R. V. Galiulin and M. I. Shtogrin, (1975).
 On the Bravais types of lattices.
  J. Sov. Math. 4(1), 79 -- 156.
-<p>
+</p><p>
 <a name="Hauey1800">[Ha&uuml;y 1800]</a>  R. J. Ha&uuml;y (1800). Addition au m&eacute;moire sur l’arragonite: 
 ins&eacute;r&eacute; dans le tome XI des annnales (p. 241 et suiv.).
-<p>
+</p><p>
 <a name="Kepler1611">[Kepler 1611]</a> Kepler, J. (1611). Strena Seude Niue Sexangula. Godefridum Tampach.
-<p>
+</p><p>
 <a name="Kepler1966">[Kepler <i>et al.</i> 1966]</a> J. Kepler,C. G. Hardie, B. J. Mason and L. L. Whyte  (1966). 
 The Six-cornered Snowflake.[Edited and Translated by Colin Hardie. With Essays by L. L. Whyte and B. J. Mason. 
 With Illustrations.] Lat. & Eng. Clarendon Press.
-<p>
+</p><p>
 <a name="Mighell2002">[Mighell 2002]</a> A. D. Mighell (2002).
 Lattice Matching (LM) -- Prevention of Inadvertent Duplicate Publications of Crystal Structures.
 J. Res. Natl. Inst. Stand. Technol. 107(5), 425 – 430.
-<p>
+</p><p>
 <a name="Niggli1928">[Niggli 1928]</a> P. Niggli (1928). Krystallographische und Strukturtheoretische Grundbegriffe, 
 Handbuch der Experimentalphysik, Vol. 7, part 1. Akademische Verlagsgesellschaft, Leipzig.
-<p>
+</p><p>
+<a name="Roof1967">[Roof 1967]</a> R. B. Roof Jr, (1967). Theoretical Extension of the Reduced-Cell Concept in 
+in Crystallography (No. LA-4038). Los Alamos National Lab.(LANL), Los Alamos, NM (United States). 
+</p><p>
 <a name="Wikipedia2022">[Wikipedia contributors 2022]</a> Wikipedia contributors, (2022). Theophrastus — Wikipedia, the 
 free encyclopedia. [Online; accessed 17-October-2022]. https://en.wikipedia.org/w/index.php?title=Theophrastus&oldid=1114534722
-<p>
+</p><p>
 <a name="Wilkins2021">[Wilkins <i>et al.</i> 2021]</a> J. Wilkins, B. J. Schoville, R. Pickering, L. Gliganic, B. Collins,
 K. S.  Brown, J. von der Meden, W. Khumalo, M. C. Meyer, S. Maape, and A. F. Blackwood (2021). Innovative 
 Homo sapiens behaviours 105,000 years ago in a wetter Kalahari. Nature, 592(7853), 248 -- 252.
-<p>
+</p><p>
 <a name="Zimmermann1985">[Zimmermann and Burzlaff 1985]</a> H. Zimmermann and H. Burzlaff. DELOS A computer program for the 
 determination of a unique conventional cell. Zeitschrift f&uuml;r Kristallographie, 170:241 246, 1985.
-
+</div>
 <p>
 <hr />
-Updated 23 November 2023.
+Updated 4 March 2024.
 </font>
 </body>
 </html>]]])
