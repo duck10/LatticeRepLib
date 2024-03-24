@@ -17,6 +17,7 @@
 #include <cmath>
 #include <iomanip>
 #include <sstream>
+#include <ctime>
 
 DirichletSVG::DirichletSVG(const DirichletCell& dc)
    : m_dirCell(dc)
