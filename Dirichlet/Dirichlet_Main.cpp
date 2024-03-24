@@ -417,13 +417,13 @@ int main(int argc, char* argv[]) {
            htmlprefix = std::string(argv[++ii]);
            // std::cout << "; htmlprefix: " << htmlprefix;
        } else if (std::string(argv[ii]).compare(std::string("--usetimestamp"))==0) {
-           usetimestamp =  (std::string(argv[++ii])).compare(std::string("true"))?true:false;
+           usetimestamp =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
            // std::cout << "; usetimestamp: " << usetimestamp;
        } else if (std::string(argv[ii]).compare(std::string("--usehttps"))==0) {
-           usehttps =  (std::string(argv[++ii])).compare(std::string("true"))?true:false;
+           usehttps =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
            // std::cout << "; usehttps: " << usehttps;
        } else if (std::string(argv[ii]).compare(std::string("--usetarget"))==0) {
-           usetarget =  (std::string(argv[++ii])).compare(std::string("true"))?true:false;
+           usetarget =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
            // std::cout << "; usetarget: " << usetarget;
        } else if (std::string(argv[ii]).compare(std::string("--blockstart"))==0) {
            blockstart = std::stoul(std::string(argv[++ii]));
