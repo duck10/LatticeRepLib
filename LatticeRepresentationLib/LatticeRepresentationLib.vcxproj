@@ -223,6 +223,7 @@
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="V7.cpp" />
     <ClCompile Include="VecN.cpp" />
+    <ClCompile Include="WebIO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -301,6 +302,7 @@
     <ClInclude Include="V7.h" />
     <ClInclude Include="V7Dist.h" />
     <ClInclude Include="VecN.h" />
+    <ClInclude Include="WebIO.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

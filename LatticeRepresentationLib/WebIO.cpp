@@ -1,0 +1,114 @@
+#include "WebIO.h"
+
+#include <iostream>
+#include <vector>
+
+static std::string  StringFinder(const std::string& toFind, const std::string& defaultvalue, const std::vector<std::string>& args) {
+   const auto f = std::find(args.begin(), args.end(), toFind);
+   if (f == args.end()) return defaultvalue;
+   return *(f + 1);
+}
+
+static bool BoolFinder(const std::string& toFind, const bool defaultvalue, const std::vector<std::string>& args) {
+   const auto f = std::find(args.begin(), args.end(), toFind);
+   if (f == args.end()) return defaultvalue;
+   return *(f + 1) == "true";
+}
+
+
+std::ostream& operator<< (std::ostream& o, const WebIO& w) {
+   //o << "; #### Bravais chain failure A\n";
+   o << "\n";
+   o << "; WebIO data content\n";
+   o << ";\thost \t\t" << w.m_host << "\n";
+   o << ";\trawprefix \t" << w.m_rawprefix << "\n";
+   o << ";\thtmlprefix \t" << w.m_htmlprefix << "\n";
+   o << ";\tusetimestamp \t" << w.m_usetimestamp << "\n";
+   o << ";\tusehttps \t" << w.m_usehttps << "\n";
+   o << ";\tusetarget \t" << w.m_usetarget << "\n";
+   o << ";\tfileNameCount \t" << w.m_fileNameCount << "\n";
+   o << ";\tblocksize \t" << w.m_blocksize << "\n";
+   o << ";\tblockstart \t" << w.m_blockstart << "\n";
+
+   std::cout << std::endl;
+   return o;
+}
+
+
+bool containsSubstring(const std::string& str, const std::string& substring) {
+   // Use string::find to check if substring exists within str
+   return str.find(substring) != std::string::npos;
+}
+
+WebIO::WebIO(int argc, char* argv[], const std::string& progName, const size_t fileCount)
+   : m_fileNameCount(fileCount)
+{
+   std::vector<std::string> args;
+   for (size_t i = 0; i < argc; ++i) {
+      args.emplace_back(argv[i]);
+   }
+
+   const std::string searchString("--");
+   // Use std::find_if to search for element containing the "--"
+   auto it = find_if(args.begin(), args.end(),
+      [&searchString](const std::string& element) {
+         return containsSubstring(element, searchString); });
+
+   m_hasWebInstructions = it != args.end();
+
+   m_host = StringFinder("--host", m_host, args);
+   m_rawprefix = StringFinder("--rawprefix", m_rawprefix, args);
+   m_htmlprefix = StringFinder("--htmlprefix", m_htmlprefix, args);
+
+   m_usetimestamp = BoolFinder("--usetimestamp", m_usetimestamp, args);
+   m_usehttps = BoolFinder("--usehttps", m_usehttps, args);
+   m_usetarget = BoolFinder("--usetimestamp", m_usetarget, args);
+
+}
+
+void WebIO::GetWebBlockSize(int argc, char* argv[]) {
+
+   std::vector<std::string> args;
+   for (size_t i = 0; i < argc; ++i) {
+      args.emplace_back(argv[i]);
+   }
+
+   m_blockstart = std::stoul(StringFinder("--blockstart", std::to_string(m_blockstart), args));
+   m_blocksize = std::stoul(StringFinder("--blocksize", std::to_string(m_blocksize), args));
+
+   if (m_blockstart >= m_fileNameCount) {
+      // nothing to do
+      m_blockstart = 0;
+      m_blocksize = 0;
+   }
+   else if (m_blockstart + m_blocksize > m_fileNameCount) {
+      m_blocksize = m_fileNameCount - m_blockstart;
+   }
+   else {
+      // accept the vaules of blockstart and blocksize
+      const int i19191 = 19191;
+   }
+}
+
+void WebIO::CompareHtmlFromWebIO(
+   const std::string host,
+   const std::string rawprefix,
+   const std::string htmlprefix,
+   const bool usetimestamp,
+   const bool usehttps,
+   const bool usetarget,
+   const WebIO& webio) {
+   if (host != webio.m_host) {
+      std::cout << " host disagree" << std::endl;
+      std::cout << host << "   " << webio.m_host << std::endl;
+   }
+   if (rawprefix != webio.m_rawprefix) std::cout << " rawprefix disagree" << std::endl;
+   if (htmlprefix != webio.m_htmlprefix) std::cout << " htmlprefix disagree" << std::endl;
+   if (usetimestamp != webio.m_usetimestamp) std::cout << " usetimestamp disagree" << std::endl;
+   if (usehttps != webio.m_usehttps) std::cout << " usehttps disagree" << std::endl;
+   if (usetarget != webio.m_usetarget)
+   {
+      std::cout << " usetarget disagree" << std::endl;
+      std::cout << usetarget << "   " << webio.m_usetarget << std::endl;
+   }
+}
