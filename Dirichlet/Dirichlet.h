@@ -19,9 +19,9 @@ typedef std::vector<ANGLELIST> ANGLESFORFACES;
 class DirichletCell {
 public:
    friend std::ostream& operator<< (std::ostream&, const DirichletCell&);
-   DirichletCell() {}
-   DirichletCell(const std::string& strCellAndLattice);
-   DirichletCell(const LRL_ReadLatticeData& inputList);
+   DirichletCell() = default;
+   explicit DirichletCell(const std::string& strCellAndLattice);
+   explicit DirichletCell(const LRL_ReadLatticeData& inputList);
    void ProcessInputCell(const std::string& lattice, const LRL_Cell& cell);
 
    std::string GetStrCell() const { return m_strCell; }
@@ -65,6 +65,38 @@ public:
       const Cell_Faces& faceRecords, const std::string& extra) const;
 private:
    const DirichletCell m_dirCell;
+};
+
+class Dirichlet {
+public:
+   static ANGLELIST RotateOneFace(const Matrix_3x3& m, const ANGLELIST& input);
+   static ANGLESFORFACES RotateAllFaces(const Matrix_3x3& m, const ANGLESFORFACES& input);
+   static ANGLESFORFACES RotateObject(const Matrix_3x3& m, const ANGLESFORFACES& ring);
+   static ANGLESFORFACES Z_SortAllFaces(const ANGLESFORFACES& newRinged);
+   static double CleanNearZero(const double d);
+   static Vector_3 CleanNearZero(const Vector_3& v);
+   static std::string CreateStereoSVGText(const DirichletCell& dc);
+   static std::string DrawOneDirichletRing(const double scale, const ANGLELIST& ring, const size_t nColor);
+   static std::string EdgeLengths(const ANGLELIST& list);
+   static std::string FaceRecords(const ANGLESFORFACES& rings, const std::vector<Vector_3>& indices);
+   static std::string HandleOneCell(const DirichletCell& dc);
+   static std::string OneFaceRecord(const ANGLELIST& face, const Vector_3& index);
+   static std::string OutputOneFace(const size_t index, const size_t vertices, const std::string& faceRecord);
+   static std::vector<ANGLESFORFACES> CreateSeriesOfImages(const ANGLESFORFACES& inputRingsOfFace,
+      const size_t nImages, const Matrix_3x3& initialRotation, const Matrix_3x3& rotationBetween);
+   static std::vector<double> Z_Angles(const std::vector<Vector_3>& vcm);
+   static std::vector<std::string> DrawDirichletRings(const ANGLESFORFACES& newRinged);
+   static std::vector<std::string> DrawSeriesOfObjects(const std::vector<ANGLESFORFACES>& series);
+   std::vector<std::string> GetUpwardSymmetry(const std::string& s) const;
+   static std::vector<std::string> MadeStereo(const std::vector<std::string>& vsin);
+   std::vector<std::string> RetrieveCellsAsStringsFromDirichletConstants() const;
+   static std::vector<Vector_3> CentersOfMassForAllFaces(const ANGLESFORFACES& list);
+   static std::vector<Vector_3> GetVerticesFromFaces(const ANGLESFORFACES& faces);
+   static Vector_3 round(const Vector_3& vin);
+   static void ListVertices(const DirichletCell& dc);
+   static void PrintOneFaceRecord(const ANGLELIST& face, const Vector_3& index);
+
+private:
 };
 
 #endif  // DIRICHLET

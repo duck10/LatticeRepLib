@@ -135,6 +135,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakeDeloneGrid", "MakeDelon
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MakeNiggliGrid", "MakeNiggliGrid\MakeNiggliGrid.vcxproj", "{628B224A-38FE-4191-97B8-37E643E71BC8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdParams", "CmdParams\CmdParams.vcxproj", "{0617768A-5F25-4767-B0A4-1BD57F6F99EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -583,6 +585,14 @@ Global
 		{628B224A-38FE-4191-97B8-37E643E71BC8}.Release|x64.Build.0 = Release|x64
 		{628B224A-38FE-4191-97B8-37E643E71BC8}.Release|x86.ActiveCfg = Release|Win32
 		{628B224A-38FE-4191-97B8-37E643E71BC8}.Release|x86.Build.0 = Release|Win32
+		{0617768A-5F25-4767-B0A4-1BD57F6F99EF}.Debug|x64.ActiveCfg = Debug|x64
+		{0617768A-5F25-4767-B0A4-1BD57F6F99EF}.Debug|x64.Build.0 = Debug|x64
+		{0617768A-5F25-4767-B0A4-1BD57F6F99EF}.Debug|x86.ActiveCfg = Debug|Win32
+		{0617768A-5F25-4767-B0A4-1BD57F6F99EF}.Debug|x86.Build.0 = Debug|Win32
+		{0617768A-5F25-4767-B0A4-1BD57F6F99EF}.Release|x64.ActiveCfg = Release|x64
+		{0617768A-5F25-4767-B0A4-1BD57F6F99EF}.Release|x64.Build.0 = Release|x64
+		{0617768A-5F25-4767-B0A4-1BD57F6F99EF}.Release|x86.ActiveCfg = Release|Win32
+		{0617768A-5F25-4767-B0A4-1BD57F6F99EF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

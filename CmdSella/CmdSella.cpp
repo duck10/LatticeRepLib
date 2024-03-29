@@ -21,6 +21,7 @@
 #include "Sella.h"
 #include "Selling.h"
 #include "StoreResults.h"
+#include "WebIO.h"
 
 
 // 2023/12/23
@@ -356,57 +357,57 @@ int main(int argc, char* argv[])
 
    bool doProduceSellaGraphics = true;
 
-   std::vector<std::string> basicfileNameList;
-   std::vector<std::string> FileNameList;
-   std::vector<std::string> FullfileNameList;
-   std::string host=std::string("");
-   std::string rawprefix=std::string("");
-   std::string htmlprefix=std::string("");
-   bool usetimestamp=true;
-   bool usehttps=false;
-   bool usetarget=true;
-   size_t blockstart= 0;
-   size_t blocksize= 20;
-   int ii;
+   //std::vector<std::string> basicfileNameList;
+   //std::vector<std::string> FileNameList;
+   //std::vector<std::string> FullfileNameList;
+   //std::string host=std::string("");
+   //std::string rawprefix=std::string("");
+   //std::string htmlprefix=std::string("");
+   //bool usetimestamp=true;
+   //bool usehttps=false;
+   //bool usetarget=true;
+   //size_t blockstart= 0;
+   //size_t blocksize= 20;
+   //int ii;
 
-   for(ii=1;ii<argc;ii++){
-       // std::cout << "argv[" << ii <<"] = "<< argv[ii] << std::endl;
-       if (std::string(argv[ii]).compare(std::string("--help"))==0) {
-           std::cout << "; CmdSella [--help ] [--host hostname] [--rawprefix prefix] [--htmlprefix htmlprefix]" << std::endl;
-       } else if (std::string(argv[ii]).compare(std::string("--host"))==0) {
-           host = std::string(argv[++ii]);
-           // std::cout << "; host: " << host;
-       } else if (std::string(argv[ii]).compare(std::string("--rawprefix"))==0) {
-           rawprefix = std::string(argv[++ii]);
-           // std::cout << "; rawprefix: " << rawprefix;
-       } else if (std::string(argv[ii]).compare(std::string("--htmlprefix"))==0) {
-           htmlprefix = std::string(argv[++ii]);
-           // std::cout << "; htmlprefix: " << htmlprefix;
-       } else if (std::string(argv[ii]).compare(std::string("--usetimestamp"))==0) {
-           usetimestamp =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
-           // std::cout << "; usetimestamp: " << usetimestamp;
-       } else if (std::string(argv[ii]).compare(std::string("--usehttps"))==0) {
-           usehttps =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
-           // std::cout << "; usehttps: " << usehttps;
-       } else if (std::string(argv[ii]).compare(std::string("--usetarget"))==0) {
-           usetarget =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
-           // std::cout << "; usetarget: " << usetarget;
-       } else if (std::string(argv[ii]).compare(std::string("--blockstart"))==0) {
-           blockstart = std::stoul(std::string(argv[++ii]));
-           // std::cout << "; blockstart: " << blockstart;
-       } else if (std::string(argv[ii]).compare(std::string("--blocksize"))==0) {
-           blocksize = std::stoul(std::string(argv[++ii]));
-           // std::cout << "; blocksize: " << blocksize;
-       } else if (ii==1) {
-           selectBravaisCase = argv[1];
-           if (!(std::string(argv[1]).empty() && std::string(argv[1]) == "all")) {
-             doProduceSellaGraphics = false;
-           }
-       } else if (ii==2) {
-         const double d = atof(argv[2]);
-         if (d != 0.0) g_maxDeltaForMatch = atof(argv[2]);
-       }
-   }
+   //for(ii=1;ii<argc;ii++){
+   //    // std::cout << "argv[" << ii <<"] = "<< argv[ii] << std::endl;
+   //    if (std::string(argv[ii]).compare(std::string("--help"))==0) {
+   //        std::cout << "; CmdSella [--help ] [--host hostname] [--rawprefix prefix] [--htmlprefix htmlprefix]" << std::endl;
+   //    } else if (std::string(argv[ii]).compare(std::string("--host"))==0) {
+   //        host = std::string(argv[++ii]);
+   //        // std::cout << "; host: " << host;
+   //    } else if (std::string(argv[ii]).compare(std::string("--rawprefix"))==0) {
+   //        rawprefix = std::string(argv[++ii]);
+   //        // std::cout << "; rawprefix: " << rawprefix;
+   //    } else if (std::string(argv[ii]).compare(std::string("--htmlprefix"))==0) {
+   //        htmlprefix = std::string(argv[++ii]);
+   //        // std::cout << "; htmlprefix: " << htmlprefix;
+   //    } else if (std::string(argv[ii]).compare(std::string("--usetimestamp"))==0) {
+   //        usetimestamp =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
+   //        // std::cout << "; usetimestamp: " << usetimestamp;
+   //    } else if (std::string(argv[ii]).compare(std::string("--usehttps"))==0) {
+   //        usehttps =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
+   //        // std::cout << "; usehttps: " << usehttps;
+   //    } else if (std::string(argv[ii]).compare(std::string("--usetarget"))==0) {
+   //        usetarget =  (std::string(argv[++ii])).compare(std::string("true"))==0?true:false;
+   //        // std::cout << "; usetarget: " << usetarget;
+   //    } else if (std::string(argv[ii]).compare(std::string("--blockstart"))==0) {
+   //        blockstart = std::stoul(std::string(argv[++ii]));
+   //        // std::cout << "; blockstart: " << blockstart;
+   //    } else if (std::string(argv[ii]).compare(std::string("--blocksize"))==0) {
+   //        blocksize = std::stoul(std::string(argv[++ii]));
+   //        // std::cout << "; blocksize: " << blocksize;
+   //    } else if (ii==1) {
+   //        selectBravaisCase = argv[1];
+   //        if (!(std::string(argv[1]).empty() && std::string(argv[1]) == "all")) {
+   //          doProduceSellaGraphics = false;
+   //        }
+   //    } else if (ii==2) {
+   //      const double d = atof(argv[2]);
+   //      if (d != 0.0) g_maxDeltaForMatch = atof(argv[2]);
+   //    }
+   //}
 
    std::cout << "; SELLA method symmetry searching\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
@@ -417,36 +418,46 @@ int main(int argc, char* argv[])
    //}
    //exit(0);
 
-   if (blockstart + blocksize > inputList.size()) {
-       if (blockstart >= inputList.size()) {
-           blockstart = 0;
-           blocksize = 0;
-       } else {
-           blocksize = inputList.size() - blockstart;
-       }
-   }
+   WebIO webio(argc, argv, "CmdSella", inputList.size());
+   webio.GetWebBlockSize(argc, argv);
 
-   basicfileNameList
-       = LRL_CreateFileName::CreateListOfFilenames(inputList.size(), 
-       "SEL","svg",usetimestamp,blockstart,blocksize);
-   FileNameList 
-       = LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList,rawprefix); 
-   if(htmlprefix.compare(std::string(""))==0) {
-       FullfileNameList = std::vector<std::string>(FileNameList);
-   } else {
-       FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
-           basicfileNameList, host, htmlprefix, usehttps, usetarget);
-   }
+   const std::string& host=webio.m_host;
+   const std::string& rawprefix = webio.m_rawprefix;
+   const std::string& htmlprefix = webio.m_htmlprefix;
+   const bool& usetimestamp = webio.m_usetimestamp;
+   const bool& usehttps = webio.m_usehttps;
+   const bool& usetarget = webio.m_usetarget;
+   const size_t& blockstart = webio.m_blockstart;
+   const size_t& blocksize = webio.m_blocksize;
 
-   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
-   {
-       std::cout << "; Sella graphics file " << FullfileNameList[i-blockstart] << std::endl;
+   //webio.CompareHtmlFromWebIO(host, rawprefix, htmlprefix, usetimestamp, usehttps, usetarget, webio);
+   //std::cout << webio << std::endl;
+
+   const std::vector<std::string> basicfileNameList(
+      LRL_CreateFileName::CreateListOfFilenames(inputList.size(),
+         "SEL", "svg", usetimestamp, blockstart, blocksize));
+   const std::vector<std::string> 
+      FileNameList( LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList, rawprefix));
+
+   std::vector<std::string> FullfileNameList;
+   if (webio.m_hasWebInstructions) {
+      FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
+         basicfileNameList, host, htmlprefix, usehttps, usetarget);
+   }
+   else {
+      FullfileNameList = FileNameList;
    }
 
    std::cout << "; Sella cell block start " << blockstart << std::endl;
    std::cout << "; Sella cell block size " << blocksize << std::endl;
-
    std::cout << std::endl;
+
+   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
+   {
+      std::cout << "; Sella graphics file " <<
+         i + 1 << "  " << FullfileNameList[i - blockstart] << std::endl;
+   }
+
 
    for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
    {

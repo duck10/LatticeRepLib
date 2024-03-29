@@ -64,6 +64,7 @@
     <ClCompile Include="PrintTable.cpp" />
     <ClCompile Include="RI.cpp" />
     <ClCompile Include="S6L.cpp" />
+    <ClCompile Include="WebIO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -142,6 +143,7 @@
     <ClInclude Include="RI.h" />
     <ClInclude Include="S6L.h" />
     <ClInclude Include="LRL_GetCommandArgs.h" />
+    <ClInclude Include="WebIO.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
