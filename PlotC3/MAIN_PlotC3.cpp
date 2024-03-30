@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
 
    WebIO webio(argc, argv, "PlotC3", 1);
    webio.GetWebBlockSize(argc, argv);
-   std::cout << webio << std::endl;
+   webio.CreateFilenamesAndLinks(1, "PLT");
 
    const std::string& host = webio.m_host;
    const std::string& rawprefix = webio.m_rawprefix;
@@ -239,21 +239,16 @@ int main(int argc, char* argv[])
 
    //CompareHtmlFromWebIO(host, rawprefix, htmlprefix, usetimestamp, usehttps, usetarget, webio);
 
-   LRL_ReadLatticeData reader;
-   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
+   const std::vector<std::string> basicfileNameList = webio.m_basicfileNameList;
+   const std::vector<std::string> FileNameList = webio.m_FileNameList;
+   const std::vector<std::string> FullfileNameList = webio.m_FullfileNameList;
+   const std::string filename = basicfileNameList[0];
 
-   const std::vector<std::string> basicfileNameList(
-      LRL_CreateFileName::CreateListOfFilenames(inputList.size(),
-         "DC", "svg", usetimestamp, blockstart, blocksize));
-   const std::vector<std::string>
-      FileNameList(LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList, rawprefix));
-   const std::string& filename = FileNameList[0];
-
-   if(htmlprefix.compare(std::string(""))==0) {
+   if(!webio.m_hasWebInstructions) {
      std::cout << std::string("; Graphical output SVG file = ")
        + rawprefix+filename << std::endl;
    } else {
-     if(host.compare(std::string(""))==0) {
+     if(webio.m_host.empty()) {
        std::cout << std::string("; Graphical output SVG file = <a href=\"")
          +  htmlprefix+filename+std::string("\" target=\"_blank\">")+filename+std::string("</a>") << std::endl;
      } else {
@@ -270,13 +265,16 @@ int main(int argc, char* argv[])
          +filename+std::string("</a>") << std::endl;
      }
    }
+   std::cout << webio << std::endl;
+
+   LRL_ReadLatticeData reader;
+   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
   
    C3Plot c3plot(filename, 1050, 380, 500, 500);
 
    std::string svgOutput;
    const std::string intro = c3plot.GetIntro(filename);
    svgOutput += intro;
-
 
    const std::vector<S6> v = ConvertInputToS6(inputList);
    std::pair<double, double> minmax = GetMinMaxS6(v);

@@ -1,3 +1,4 @@
+#include "LRL_CreateFileName.h"
 #include "WebIO.h"
 
 #include <iostream>
@@ -15,7 +16,6 @@ static bool BoolFinder(const std::string& toFind, const bool defaultvalue, const
    return *(f + 1) == "true";
 }
 
-
 std::ostream& operator<< (std::ostream& o, const WebIO& w) {
    //o << "; #### Bravais chain failure A\n";
    o << "\n";
@@ -29,6 +29,18 @@ std::ostream& operator<< (std::ostream& o, const WebIO& w) {
    o << ";\tfileNameCount \t" << w.m_fileNameCount << "\n";
    o << ";\tblocksize \t" << w.m_blocksize << "\n";
    o << ";\tblockstart \t" << w.m_blockstart << "\n";
+   o << "\n";
+
+   for (const auto& name : w.m_FullfileNameList)
+      o << ";\tm_FullfileNameList   \t" << name << "\n";
+   o << "\n";
+
+   for (const auto& name : w.m_basicfileNameList)
+      o << ";\tm_basicfileNameList   \t" << name << "\n";
+   o << "\n";
+
+   for (const auto& name : w.m_FileNameList)
+      o << ";\tm_FileNameList   \t" << name << "\n";
 
    std::cout << std::endl;
    return o;
@@ -86,7 +98,21 @@ void WebIO::GetWebBlockSize(int argc, char* argv[]) {
    }
    else {
       // accept the vaules of blockstart and blocksize
-      const int i19191 = 19191;
+   }
+}
+
+void WebIO::CreateFilenamesAndLinks(const size_t n, const std::string& programName)
+{
+   m_basicfileNameList = LRL_CreateFileName::CreateListOfFilenames(n,
+      programName, "svg", m_usetimestamp, m_blockstart, m_blocksize);
+   m_FileNameList = LRL_CreateFileName::CreateRawListOfFilenames(m_basicfileNameList, m_rawprefix);
+
+   if (m_hasWebInstructions) {
+      m_FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
+         m_basicfileNameList, m_host, m_htmlprefix, m_usehttps, m_usetarget);
+   }
+   else {
+      m_FullfileNameList = m_FileNameList;
    }
 }
 
