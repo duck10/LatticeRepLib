@@ -358,6 +358,7 @@ int main(int argc, char* argv[])
 
    std::cout << "; SELLA method symmetry searching\n";
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   std::cout << "; count of input cells " << inputList.size() << std::endl;
 
    //for (const auto& input : inputList) {
    //   AnalyzeS6(input.GetCell());

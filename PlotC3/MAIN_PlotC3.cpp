@@ -4,11 +4,11 @@
 #include "C3Plot.h"
 #include "ColorTables.h"
 #include "GetDate.h"
-#include "LRL_ToString.h"
 #include "LRL_DataToSVG.h"
 #include "LRL_CreateFileName.h"
 #include "LRL_MinMaxTools.h"
 #include "LRL_ReadLatticeData.h"
+#include "LRL_ToString.h"
 #include "S6.h"
 #include "LRL_Vector3.h"
 #include "WebIO.h"
@@ -23,8 +23,8 @@
 #include <vector>
 
 static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, const std::string& s) {
-   const std::string sScaler = LRL_ToString(whichPlot);
-   const std::string sScalerP3 = LRL_ToString(whichPlot+3);
+   const std::string sScaler = std::to_string(whichPlot);
+   const std::string sScalerP3 = std::to_string(whichPlot+3);
    //<g transform = "translate(150,975) scale(1 -1)">
    const std::string x1 = LRL_DataToSVG_ToQuotedString(-0);
    const std::string y1 = LRL_DataToSVG_ToQuotedString(0);
@@ -119,7 +119,7 @@ static std::string PrepareLegend(const double x, const double y, const std::vect
    //out += commandLine;
    std::string out;
 
-   const std::string count =  "; Number of points: " + LRL_ToString(v.size()) + "\n\n";
+   const std::string count =  "; Number of points: " + std::to_string(v.size()) + "\n\n";
 
    out += count;
 
@@ -149,8 +149,8 @@ static std::string PrepareLegend(const double x, const double y, const std::vect
       out += dots;
       out += cellText2;
    }
-   const std::string ypos = LRL_ToString(y + 3400);
-   const std::string commandLine = LRL_ToString("\n edit SVG file to insert command line text\n");
+   const std::string ypos = std::to_string(y + 3400);
+   const std::string commandLine = "\n edit SVG file to insert command line text\n";
 
    return out;
 }
@@ -209,10 +209,10 @@ std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int y
       const double frac = double(i) / double(nguides-1);
       c3plot.GetColorRange().GetRGBFromRangeFraction(frac, r, g, b);
       const std::string circle = "";
-      const std::string x = LRL_ToString(xint + i * 15);
-      const std::string y = LRL_ToString(yint);
+      const std::string x = std::to_string(xint + i * 15);
+      const std::string y = std::to_string(yint);
       const std::string s = std::string("<circle  r=\"12\" stroke = \"black\" stroke-width=\"0.5\""
-         " fill= \"rgb(" + LRL_ToString(r) + ", " + LRL_ToString(g) + ", " + LRL_ToString(b) + ")\""
+         " fill= \"rgb(" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ")\""
          " cx=\"" + x + "\""
          " cy=\"" + y + "\"/>\n");
       out += s;
