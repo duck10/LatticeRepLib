@@ -23,6 +23,7 @@ public:
       const WebIO& webio);
 
 public:
+   std::string m_programName;
    bool m_hasWebInstructions;
    std::string m_host = "";
    std::string m_rawprefix = "";

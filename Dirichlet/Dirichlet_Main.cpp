@@ -7,27 +7,13 @@
 #include <utility>
 #include <vector>
 
-#include "D7.h"
 #include "Dirichlet.h"
 #include "DirichletConstants.h"
 #include "DirichletCellFaces.h"
 #include "FileOperations.h"
-#include "G6.h"
-#include "LatticeConverter.h"
-#include "LRL_CreateFileName.h"
-#include "LRL_DataStreamToString.h"
-#include "LRL_DataToSVG.h"
 #include "LRL_ReadLatticeData.h"
-#include "LRL_StringTools.h"
-#include "LRL_ToString.h"
-#include "LRL_Vector3.h"
 #include "ReadDirichletGlobalData.h"
-#include "SVG_Tools.h"
-#include "TNear.h"
-#include "TriangleAreaFromSides.h"
-#include "LRL_Vector3.h"
 #include "WebIO.h"
-
 
 int main(int argc, char* argv[]) {
    LRL_ReadLatticeData reader;
@@ -36,40 +22,21 @@ int main(int argc, char* argv[]) {
 
    WebIO webio(argc, argv, "Dirichlet", inputList.size());
    webio.GetWebBlockSize(argc, argv);
+   webio.CreateFilenamesAndLinks(inputList.size(), "DC");
 
-   //webio.CompareHtmlFromWebIO(host, rawprefix, htmlprefix, usetimestamp, usehttps, usetarget, webio);
-   //std::cout << webio << std::endl;
-
-   const std::string& host=webio.m_host;
-   const std::string& rawprefix=webio.m_rawprefix;
-   const std::string& htmlprefix=webio.m_htmlprefix;
-   const bool& usetimestamp=webio.m_usetimestamp;
-   const bool& usehttps=webio.m_usehttps;
-   const bool& usetarget=webio.m_usetarget;
    const size_t& blockstart= webio.m_blockstart;
    const size_t& blocksize= webio.m_blocksize;
 
-   const std::vector<std::string> basicfileNameList(
-      LRL_CreateFileName::CreateListOfFilenames(inputList.size(),
-         "DC", "svg", usetimestamp, blockstart, blocksize));
-   const std::vector<std::string> 
-      FileNameList( LRL_CreateFileName::CreateRawListOfFilenames(basicfileNameList, rawprefix));
-
-   std::vector<std::string> FullfileNameList;
-   if (webio.m_hasWebInstructions) {
-      FullfileNameList = LRL_CreateFileName::CreateHTMLListOfFilenames(
-         basicfileNameList, host, htmlprefix, usehttps, usetarget);
-   }
-   else {
-      FullfileNameList = FileNameList;
-   }
+   const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
+   const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
+   const std::vector<std::string>& FullfileNameList = webio.m_FullfileNameList;
 
    std::cout << "; Dirichlet cell block start " << blockstart << std::endl;
    std::cout << "; Dirichlet cell block size " << blocksize << std::endl;
 
    for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart + blocksize); ++i)
    {
-      std::cout << "; Dirichlet graphics file " <<
+      std::cout << "; Dirichlet graphics file(s) " <<
          i+1 << "  " << FullfileNameList[i - blockstart] << std::endl;
    }
 
@@ -79,7 +46,7 @@ int main(int argc, char* argv[]) {
        std::cout << inputList[whichCell].GetStrCell() << std::endl;
        Dirichlet::ListVertices(dc);
        const std::string svg = Dirichlet::HandleOneCell(dc);
-       const std::string fileName = FileNameList[whichCell-blockstart];
+       const std::string fileName = RawFileNameList[whichCell-blockstart];
        const std::string fullfileName = FullfileNameList[whichCell-blockstart];
        if (!svg.empty())
        {

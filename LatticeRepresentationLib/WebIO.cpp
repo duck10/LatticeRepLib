@@ -53,7 +53,8 @@ bool containsSubstring(const std::string& str, const std::string& substring) {
 }
 
 WebIO::WebIO(int argc, char* argv[], const std::string& progName, const size_t fileCount)
-   : m_fileNameCount(fileCount)
+   : m_programName(progName)
+   , m_fileNameCount(fileCount)
 {
    std::vector<std::string> args;
    for (size_t i = 0; i < argc; ++i) {
@@ -138,3 +139,9 @@ void WebIO::CompareHtmlFromWebIO(
       std::cout << usetarget << "   " << webio.m_usetarget << std::endl;
    }
 }
+//  Graphical output SVG file = <a href="http://blondie.arcib.org:8083/~yaya/tmp/lrl_web_2948/PLT_2024-03-30.17_48_19_36e8e1_0.svg" target="_blank" >PLT_2024-03-30.17_48_19_36e8e1_0.svg</a><br />
+// --usehttps false
+// --host blondie.arcib.org:8083/~yaya/tmp/lrl_web_2948/
+// --usetarget "_blank"
+
+// --usetarget "_blank"// --usehttps false --host blondie.arcib.org:8083/~yaya/tmp/lrl_web_2948/ --usetarget "_blank"

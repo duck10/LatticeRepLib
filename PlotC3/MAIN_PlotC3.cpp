@@ -228,44 +228,23 @@ int main(int argc, char* argv[])
    webio.GetWebBlockSize(argc, argv);
    webio.CreateFilenamesAndLinks(1, "PLT");
 
-   const std::string& host = webio.m_host;
-   const std::string& rawprefix = webio.m_rawprefix;
-   const std::string& htmlprefix = webio.m_htmlprefix;
-   const bool& usetimestamp = webio.m_usetimestamp;
-   const bool& usehttps = webio.m_usehttps;
-   const bool& usetarget = webio.m_usetarget;
    const size_t& blockstart = webio.m_blockstart;
    const size_t& blocksize = webio.m_blocksize;
 
-   //CompareHtmlFromWebIO(host, rawprefix, htmlprefix, usetimestamp, usehttps, usetarget, webio);
+   const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
+   const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
+   const std::vector<std::string>& FullfileNameList = webio.m_FullfileNameList;
+   const std::string& filename = basicfileNameList[0];
+   const std::string& graphicsFileName = RawFileNameList[0];
 
-   const std::vector<std::string> basicfileNameList = webio.m_basicfileNameList;
-   const std::vector<std::string> FileNameList = webio.m_FileNameList;
-   const std::vector<std::string> FullfileNameList = webio.m_FullfileNameList;
-   const std::string filename = basicfileNameList[0];
+   //std::cout << "; PlotC3 cell block start " << blockstart << std::endl;
+   //std::cout << "; PlotC3 cell block size " << blocksize << std::endl;
 
-   if(!webio.m_hasWebInstructions) {
-     std::cout << std::string("; Graphical output SVG file = ")
-       + rawprefix+filename << std::endl;
-   } else {
-     if(webio.m_host.empty()) {
-       std::cout << std::string("; Graphical output SVG file = <a href=\"")
-         +  htmlprefix+filename+std::string("\" target=\"_blank\">")+filename+std::string("</a>") << std::endl;
-     } else {
-       std::string host_string;
-       if (usehttps) {
-          host_string=std::string("<a href=\"https://")+host+std::string("/");
-       } else {
-          host_string=std::string("<a href=\"http://")+host+std::string("/");
-       }
-       std::cout << std::string("; Graphical output SVG file = ")
-         +  host_string+htmlprefix+filename
-         + (usetarget?std::string("\" target=\"_blank\" >"):
-                  std::string(" >"))
-         +filename+std::string("</a>") << std::endl;
-     }
+   for (size_t i = blockstart; (i < blockstart + blocksize); ++i)
+   {
+      std::cout << "; PlotC3 graphics file(s) " <<
+         i+1 << "  " << FullfileNameList[i - blockstart] << std::endl;
    }
-   std::cout << webio << std::endl;
 
    LRL_ReadLatticeData reader;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
@@ -285,33 +264,19 @@ int main(int argc, char* argv[])
 
    svgOutput += legend;
 
-   for (size_t whichPlot = 1; whichPlot < 4; ++whichPlot) {
-      //const std::string line = c3plot.CreatePolylineFromPoints(whichPlot, ".5", v);
-      const std::string line;
-      if (whichPlot == 1)
-         svgOutput += PlotC3(whichPlot, 500, 500, line);
-      if (whichPlot == 2)
-         svgOutput  += PlotC3(whichPlot, 1100, 500, line );
-      if (whichPlot == 3)
-         svgOutput += PlotC3(whichPlot, 1700, 500, line );
+   if (bool drawConnectingLines = false)
+   {
+      svgOutput += PlotC3(1, 500, 500, c3plot.CreatePolylineFromPoints(1, ".5", v));
+      svgOutput += PlotC3(2, 1100, 500, c3plot.CreatePolylineFromPoints(2, ".5", v));
+      svgOutput += PlotC3(3, 1700, 500, c3plot.CreatePolylineFromPoints(3, ".5", v));
    }
 
-   for (size_t whichPlot = 1; whichPlot < 4; ++whichPlot) {
-      const std::string cells = c3plot.DrawCells(whichPlot, v);
-
-      std::string plotc3;
-      if (whichPlot == 1)
-         plotc3 = PlotC3(whichPlot, 500, 500, /*line +*/ "  " + cells);
-      if (whichPlot == 2)
-         plotc3 = PlotC3(whichPlot, 1100, 500, /*line +*/ "  " + cells);
-      if (whichPlot == 3)
-         plotc3 = PlotC3(whichPlot, 1700, 500, /*line +*/ "  " + cells);
-
-      svgOutput += plotc3;
-   }
+   svgOutput += PlotC3(1, 500, 500, "  " + c3plot.DrawCells(1, v));
+   svgOutput += PlotC3(2, 1100, 500, "  " + c3plot.DrawCells(2, v));
+   svgOutput += PlotC3(3, 1700, 500, "  " + c3plot.DrawCells(3, v));
 
    std::cout << dataRange << std::endl << std::endl;
    ListInput(inputList);
-   c3plot.SendFrameToFile(rawprefix+filename, svgOutput + c3plot.GetFoot());
+   c3plot.SendFrameToFile(graphicsFileName, svgOutput + c3plot.GetFoot());
    std::cout << PrepareLegend(600, 600, v);
 }
