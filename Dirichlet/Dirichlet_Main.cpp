@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
    LRL_ReadLatticeData reader;
    std::cout << "; Dirichlet (Voronoi) cells" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
+   std::cout << "; count of input cells " << inputList.size() << std::endl;
 
    WebIO webio(argc, argv, "Dirichlet", inputList.size());
    webio.GetWebBlockSize(argc, argv);
