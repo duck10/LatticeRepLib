@@ -40,7 +40,7 @@ std::string DirichletSVG::OutputSVG(const std::vector<std::string>& stereoImages
    const std::string header = ImageHeader(DirichletConstants::canvas_x_size, DirichletConstants::canvas_y_size) + "\n";
 
    const int x = 100;
-   const int y = DirichletConstants::imageHeightPx + DirichletConstants::yposition + 40;
+   const int y = DirichletConstants::imageHeightPx + DirichletConstants::yposition + 60;
 
    std::ostringstream os;
    os << "<text x = \""
