@@ -258,7 +258,7 @@ int main(int argc, char* argv[])
    const std::vector<S6> v = ConvertInputToS6(inputList);
    std::pair<double, double> minmax = GetMinMaxS6(v);
    if (abs(minmax.second) < 1.0E-5) minmax.second = 0.0;
-   const std::string dataRange = LRL_ToString(" The S6 data range is ", minmax.first, " to ", minmax.second);
+   const std::string dataRange = LRL_ToString("; The S6 data range is ", minmax.first, " to ", minmax.second);
    const std::string legend = AddTextAtBottom(350, 550, dataRange) +
       PrepareColorGuide(c3plot, 850, 550);
 
