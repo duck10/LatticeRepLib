@@ -1353,12 +1353,12 @@ std::string plaintext2html(std::string & dst, std::string src){
       lrl_web_data_cmdpath_npath=std::string("20");
       lrl_web_data_cmdscale_type=std::string("S6");
       lrl_web_data_cmdsella_rawprefix=tmp_lrl_web+std::string("/");
-      lrl_web_data_cmdsella_htmlprefix=html_tmp_lrl_web+std::string("/");;
+      lrl_web_data_cmdsella_htmlprefix=html_tmp_lrl_web+std::string("/");
       lrl_web_data_cmdtos6l_type=std::string("S6L");
       lrl_web_data_dirichlet_rawprefix=tmp_lrl_web+std::string("/");
-      lrl_web_data_dirichlet_htmlprefix=html_tmp_lrl_web+std::string("/");;
+      lrl_web_data_dirichlet_htmlprefix=html_tmp_lrl_web+std::string("/");
       lrl_web_data_plotc3_rawprefix=tmp_lrl_web+std::string("/");
-      lrl_web_data_plotc3_htmlprefix=html_tmp_lrl_web+std::string("/");;
+      lrl_web_data_plotc3_htmlprefix=html_tmp_lrl_web+std::string("/");
       if (operation=="CmdGen") {
         lrl_web_data_cmdgen_ngen_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdgen_ngen");
         lrl_web_data_cmdgen_ltype_iter=formData.getElement("lrl_web_data_"+twodig_array[numop]+"_cmdgen_ltype");
