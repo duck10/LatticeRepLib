@@ -1215,11 +1215,17 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<td align=center width=300px><a href=#DeloneChars><font size=+1><b>Table of Delone Characters</b></font></a></td>" << std::endl;
     std::cout << "</tr>" << std::endl;
     std::cout << "<tr>" << std::endl;
+    std::cout << "<td></td>" << std::endl;
+    std::cout << "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>" << std::endl;
+    std::cout << "<td align=center width=300px><a href=#NiggliFams><font size=+1><b>Table of Niggli Lattice Families</b></font></a></td>" << std::endl;
+    std::cout << "</tr>" << std::endl;
+    std::cout << "<tr>" << std::endl;
     std::cout << "<td align=center width=300px><a href=\"http://iterate.sf.net/bgaol\" target=\"_blank\"><font size=+1><b>G<sup>6</sup> Bravais General Analysis of Lattices (BGAOL)</b></font></a></td>" << std::endl;
     std::cout << "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>" << std::endl;
     std::cout << "<td align=center width=300px><a href=\"http://blondie.arcib.org:8084/sauc-1.1.1/\" target=\"_blank\"><font size=+1><b>G<sup>6</sup> Search for Alternative Unit Cells (SAUC)</b></font></a></td>" << std::endl;
     std::cout << "</tr>" << std::endl;
     std::cout << "</table>" << std::endl;
+
     std::cout << "<STRONG>" << std::endl;
     std::cout << "<font size=+1><b>Please read the <a href=\"#notice\">NOTICE</a> below before use of this web page</b></font>" << std::endl;
     std::cout << "</STRONG>" << std::endl;
@@ -1895,8 +1901,8 @@ std::string plaintext2html(std::string & dst, std::string src){
       // std::cout << "<tr><td colspan=\"3\">" << outlen << "</td></tr>" << std::endl;
       selected = "";
       if (numop > 1) {
-        std::cout << "    <tr><td colspan=3><div name=\"hrule_"+twodig_array[numop]+"\" id=\"hrule_"+twodig_array[numop]+"\" style="+active+">" << std::endl;
-        std::cout << "    <hr />" << std::endl;
+        std::cout << "    <tr><td colspan=3 align=center><div name=\"hrule_"+twodig_array[numop]+"\" id=\"hrule_"+twodig_array[numop]+"\" style="+active+">" << std::endl;
+        std::cout << "    <img src=http://blondie.arcib.org:8083/~yaya/lrl_web/sep5.svg>" << std::endl;
         std::cout << "    </div></td></tr>" << std::endl;
       }
       std::cout << "  <tr>" << std::endl;
@@ -2812,7 +2818,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<a name=\"source\"></a>" << std::endl;
     std::cout << "<H2>Access to the source of LRL_WEB</H2>" << std::endl;
     std::cout << "" << std::endl;
-    std::cout << "This open sorce software is maintained on github:" << std::endl;
+    std::cout << "This open source software is maintained on github:" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<center>" << std::endl;
     std::cout << "<a href=\"http://github.com/duck10/LatticeRepLib\">http://github.com/duck10/LatticeRepLib</a>" << std::endl;
@@ -2843,6 +2849,13 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<P>" << std::endl;
     std::cout << "<center>" << std::endl;
     std::cout << "<img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/lrl_web/HorizontalDeloneGrid.svg\" alt=\"Table of Delone Characters\" />" << std::endl;
+    std::cout << "</center>" << std::endl;
+    std::cout << "<p>" << std::endl;
+    std::cout << "" << std::endl;
+    std::cout << "<a name=NiggliFams></a><h2>Table of Niggli Lattice Families</h2>" << std::endl;
+    std::cout << "<P>" << std::endl;
+    std::cout << "<center>" << std::endl;
+    std::cout << "<img src=\"http://"+LRL_WEB_HOST+"/~"+LRL_WEB_USER+"/lrl_web/NiggliGrid-2.svg\" alt=\"Niggli Lattice Families\" />" << std::endl;
     std::cout << "</center>" << std::endl;
     std::cout << "<h2>References to Sources for Information about the Calculations</h2>" << std::endl;
     std::cout << "<ol>" << std::endl;
@@ -2951,7 +2964,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "</div>" << std::endl;
     std::cout << "<p>" << std::endl;
     std::cout << "<hr />" << std::endl;
-    std::cout << "Updated 4 March 2024." << std::endl;
+    std::cout << "Updated 17 April 2024." << std::endl;
     std::cout << "</font>" << std::endl;
  }
  

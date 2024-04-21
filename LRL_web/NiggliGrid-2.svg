@@ -1,0 +1,122 @@
+<?xml version="1.0" standalone="no"?>
+<svg width="1000" height ="480" viewBox = "0 0 1000 480"
+version = "1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+
+
+<text x="40" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">Lattice Families / numbering from International Tables</text>
+
+
+<g transform="translate(40,40)">
+
+<g transform="translate(0,0)">
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">C</text>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace"  font-size="12px" xml:space="preserve"> 1 44C cF [r, r, r, r, r, r]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace"  font-size="12px" xml:space="preserve"> 5 44B cI [3r, 3r, 3r, -2r, -2r, -2r]</text>
+<text x="0" y="80" font-family="Arial, Helvetica, sans-serif, monospace"  font-size="12px" xml:space="preserve"> 3 44A cP [r, r, r, 0, 0, 0]</text>
+<line x1="0" y1="90" x2="150" y2 = "90" stroke-width="2" stroke="black"/>
+</g>
+
+<g transform="translate(200,0)">
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">T</text>
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace"  font-size="12px" xml:space="preserve"> 6  45D tI [r, r, r, -r+s, -r+s, -2s]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace"  font-size="12px" xml:space="preserve"> 7  45D tI [r, r, r, 2s, -r -s, -r -s]</text>
+<text x="0" y="80" font-family="Arial, Helvetica, sans-serif, monospace"  font-size="12px">15 45C tI [r, r, s, -r, -r, 0]</text>
+<text x="0" y="100" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">18 45E tI [2r, s, s, r, 2r, 2r]</text>
+<text x="0" y="120" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">11 45A tP [r, r, s, 0,0,0]</text>
+<text x="0" y="140" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">21 45B tP [r, s, s, 0, 0, 0]</text>
+<line x1="0" y1="150" x2="150" y2 = "150" stroke-width="2" stroke="black"/>
+</g>
+
+<g transform="translate(400,0)">
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">R</text>
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px" xml:space="preserve"> 2  49C hR [r, r, r, s, s, s]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px" xml:space="preserve"> 4  49D hR [r, r, r, -s, -s, -s]</text>
+<text x="0" y="80" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px" xml:space="preserve"> 9  49B hR [r, r, s, r, r, r]</text>
+<text x="0" y="100" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">24 49E hR [3r, s, s, -s, -s+r, -2r, -2r]</text>
+<line x1="0" y1="110" x2="150" y2 = "110" stroke-width="2" stroke="black"/>
+</g>
+
+<g transform="translate(600,0)">
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">H</text>
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">12 48A hP [r, r, s, 0, 0, -r]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">22 48B hP [r, s, s, -s, 0, 0]</text>
+<line x1="0" y1="70" x2="150" y2 = "70" stroke-width="2" stroke="black"/>
+</g>
+<g transform="translate(0,160)">
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">O</text>
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">13 50D oC [r, r, s, 0, 0, -t]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">23 50E oC [r, s, s, -t, 0, 0]</text>
+<text x="0" y="80" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">36 50A oC [r, s, t, 0, -r, 0]</text>
+<text x="0" y="100" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">38 50B oC [r, s, t, 0, 0, -r]</text>
+<text x="0" y="120" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">40 50F oC [r, s, t, -s, 0, 0]</text>
+<text x="0" y="140" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">16 51A oF [r, r, s, -t, -t, -2r -2t]</text>
+<text x="0" y="160" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">26 51B oF [2r, s, t, r, 2r, 2r]</text>
+<text x="0" y="180" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">8 52A oI [r, r, r, -s, -t, -2r+s+t]</text>
+<text x="0" y="200" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">19 52B oI [r, s, s, t, r, r]</text>
+<text x="0" y="220" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">42 52C oI [r, s, t, -s, -r, 0]</text>
+<text x="0" y="240" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">32 50C oP [r, s, t, 0, 0, 0]</text>
+<line x1="0" y1="250" x2="150" y2 = "250" stroke-width="2" stroke="black"/>
+</g>
+
+<g transform="translate(200,160)">
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">M</text>
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">10 55A mC [r, r, s, t, t, u]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">14 55A mC [r, r, s, t, t, u]</text>
+<text x="0" y="80" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">17 57B mC [r, r, s, -2t, -2u, -2r -t -u]</text>
+<text x="0" y="100" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">20 55B mC [r, s, s, t, u, u]</text>
+<text x="0" y="120" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">25 55B mC [r, s, s, -t, -u, -u]</text>
+<text x="0" y="140" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">27 57C mC [r, s, t, u, r, r]</text>
+<text x="0" y="160" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">28 56A mC [r, s, t, u, r, 2u]</text>
+<text x="0" y="180" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">29 56C mC [r, s, t, u, 2u, r]</text>
+<line x1="0" y1="190" x2="150" y2 = "190" stroke-width="2" stroke="black"/>
+</g>
+
+<g transform="translate(400,160)">
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">M</text>
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">30 56B mC [r, s, t, s, u, 2u]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">37 54C mC [r, s, t, u, -r, 0]</text>
+<text x="0" y="80" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">39 54A mC [r, s, t, u, 0, -r]</text>
+<text x="0" y="100" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">41 54B mC [r, s, t, -s, u, 0]</text>
+<text x="0" y="120" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">43 57A mI [r, s, t, -s -u, -r -u, 2u]</text>
+<text x="0" y="140" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">33 53A mP [r, s, t, 0, u, 0]</text>
+<text x="0" y="160" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">34 53B mP [r, s, t, -u, 0, 0]</text>
+<text x="0" y="180" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">35 53C mP [r, s, t, 0, 0, -u]</text>
+<line x1="0" y1="190" x2="150" y2 = "190" stroke-width="2" stroke="black"/>
+</g>
+
+<g transform="translate(600,160)">
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">A</text>
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">31 58B aP [r, s, t, u, v, w]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">44 58B aP [r, s, t, -u, -v, -w]</text>
+<line x1="0" y1="70" x2="150" y2 = "70" stroke-width="2" stroke="black"/>
+</g>
+
+<g transform="translate(600,160)">
+<text x="50" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-weight="bold" font-size="25px">A</text>
+<line x1="0" y1="25" x2="150" y2 = "25" stroke-width="2" stroke="black"/>
+<text x="0" y="40" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">31 58B aP [r, s, t, u, v, w]</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">44 58B aP [r, s, t, -u, -v, -w]</text>
+<line x1="0" y1="70" x2="150" y2 = "70" stroke-width="2" stroke="black"/>
+</g>
+
+<g transform="translate(600,240)">
+<rect  x="-10" y="0" width="200" height="160"  stroke-width="2" stroke="black" fill="none" />
+<text x="0" y="20" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">initial number from International</text>
+<text x="10" y="35" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">Tables</text>
+<text x="0" y="60" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">2nd is numbers of Niggli(1932) and</text>
+<text x="10" y="75" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">Roof(1968)</text>
+<text x="0" y="100" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">character is the pattern of G6</text>
+<text x="10" y="115" font-family="Arial, Helvetica, sans-serif, monospace" font-size="12px">scalars</text>
+</g>
+</g>
+</svg>
+
