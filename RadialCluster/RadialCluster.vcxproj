@@ -132,7 +132,6 @@
     <ClCompile Include="..\LatticeRepresentationLib\dbscan.cpp" />
     <ClCompile Include="Lloyd.cpp" />
     <ClCompile Include="MainRadialCluster.cpp" />
-    <ClCompile Include="Radial.cpp" />
     <ClCompile Include="SampleMain.cpp" />
     <ClCompile Include="Vector_2.cpp" />
   </ItemGroup>
@@ -147,7 +146,6 @@
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\dbscan.h" />
     <ClInclude Include="LLoyd.h" />
-    <ClInclude Include="Radial.h" />
     <ClInclude Include="Vector_2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

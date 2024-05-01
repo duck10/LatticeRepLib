@@ -48,6 +48,11 @@ public:
    LRL_Cell(const B4& ds); // specialized for Delone tetrahedron
    ~LRL_Cell(void);
 
+   bool CheckValid();
+   static bool CheckValid(const LRL_Cell& cell);
+   static bool CheckValid(const double a, const double b, const double c, 
+      const double alpha, const double beta, const double gamma);
+
    double Volume(void) const;
 
    LRL_Cell& operator= (const std::string& s);

@@ -201,7 +201,9 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    const bool b4 = (alpha + beta + gamma) < 360.0;
    const bool b5 = (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) >= 0.0 - 0.00001;
    m_valid = m_valid && b1 && b2 && b3 && b4 && b5;
-   if (!b5) std::cout << "; angles do not satisfy the triangle inequality\n";
+   if (!b5) {
+      std::cout << "; angles do not satisfy the triangle inequality\n";
+   }
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -596,3 +598,34 @@ G6 LRL_Cell::GetPrimitiveV6Vector(const std::string& latsym, const LRL_Cell& c) 
    return m66 * G6(c);
 }
 
+bool LRL_Cell::CheckValid() {
+   return CheckValid(*this);
+}
+
+bool LRL_Cell::CheckValid(const LRL_Cell& cell) {
+   return CheckValid(cell[0], cell[1], cell[2], cell[3], cell[4], cell[5]);
+}
+
+bool LRL_Cell::CheckValid(const double a, const double b, const double c,
+   const double alpha, const double beta, const double gamma) {
+   static const double pi = 4.0 * atan(1.0);
+   static const double twopi = 2.0 * pi;
+   static const double rad = 180.0 / pi;
+
+   const bool radianInput = alpha < pi && beta < pi && gamma < pi;
+
+   const double lowerlimit = 0.001;
+   const bool b1 = a > lowerlimit && b > lowerlimit && c > lowerlimit;
+   const bool b2 = alpha > lowerlimit && beta > lowerlimit && gamma > lowerlimit;
+   const bool b3 = alpha < 179.99 && beta < 179.99 && gamma < 179.99;
+
+   const double anglesum = alpha + beta + gamma;
+   const bool b4 = (radianInput) ? (anglesum < twopi) : (anglesum < 360.0);
+
+   // b5 checks the triangle inequality for the angles
+   const bool b5 = (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) >= 0.0 - 0.00001;
+
+   //std::cout << "in CheckValid " << ((b1 && b2 && b3 && b4 && b5) ? "true" : "false") << std::endl;
+
+   return b1 && b2 && b3 && b4 && b5;
+}

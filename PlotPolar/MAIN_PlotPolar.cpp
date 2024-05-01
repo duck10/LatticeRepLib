@@ -1,7 +1,4 @@
-// PlotC3.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
-#include "C3Plot.h"
 #include "ColorTables.h"
 #include "GetDate.h"
 #include "LRL_DataToSVG.h"
@@ -9,32 +6,36 @@
 #include "LRL_MinMaxTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
-#include "LRL_Vector3.h"
+#include "PlotPolar.h"
+#include "Polar.h"
 #include "S6.h"
+#include "LRL_Vector3.h"
 #include "Vector_2.h"
 #include "WebIO.h"
+
 
 #include <algorithm>
 #include <cmath>
 #include <ctime>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
 
-static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, const std::string& s) {
+static std::string MakePlotPolar(const size_t whichPlot, const int wx, const int wy, const std::string& s) {
    const std::string sScaler = std::to_string(whichPlot);
-   const std::string sScalerP3 = std::to_string(whichPlot+3);
+   const std::string sScalerP3 = std::to_string(whichPlot + 3);
    //<g transform = "translate(150,975) scale(1 -1)">
-   const std::string x1 = LRL_DataToSVG_ToQuotedString(-0);
+   const std::string x1 = LRL_DataToSVG_ToQuotedString(std::min(wx, wy));
    const std::string y1 = LRL_DataToSVG_ToQuotedString(0);
    const std::string x2 = LRL_DataToSVG_ToQuotedString(0);
    const std::string y2 = LRL_DataToSVG_ToQuotedString(-std::min(wx, wy));
-   const std::string x3 = LRL_DataToSVG_ToQuotedString(-std::min(wx,wy));
+   const std::string x3 = LRL_DataToSVG_ToQuotedString(-std::min(wx, wy));
    const std::string y3 = LRL_DataToSVG_ToQuotedString(0);
 
-   const std::string line1 = "\n<line x1=" + x1 + " y1 = " + y1 + " x2 =" + x2
+   const std::string line1 = "\n<line x1=" + y1 + " y1 = " + y1 + " x2 =" + x2
       + " y2 = " + y2 + " stroke-width = \"2\" stroke=\"black\" > </line>";
    const std::string line2 = "\n<line x1=" + x1 + " y1 = " + y1 + " x2 =" + x3
       + " y2 = " + y3 + " stroke-width = \"2\" stroke=\"black\" > </line>";
@@ -48,7 +49,7 @@ static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, c
    plotc3 += "<!--plot labeling-->"
       "\n"
       "<g transform = \"translate(0,-265)\" >\n"
-      "<text x = \"-350\" y = \"-200\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" >Coordinate c</text>\n"
+      "<text x = \"-350\" y = \"-200\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" >Coordinate p</text>\n"
       "<g transform = \"translate(205,10)\">\n"
       "<text x = \"-325\" y = \"-200\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >" + strScalar + " </text >\n"
       "</g>\n"
@@ -56,19 +57,25 @@ static std::string PlotC3( const size_t whichPlot, const int wx, const int wy, c
 
 
       "<g transform = \"translate(0,0)\" >\n"
-      "<text   x = \"-480\" y = \"-20\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -s </text>\n"
+      "<text   x = \"-480\" y = \"-20\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -x </text>\n"
       "<g transform = \"translate(30,10)\">\n"
-      "<text  x = \"-480\" y = \"-20\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >"+sScaler+"</text >\n"
+      "<text  x = \"-480\" y = \"-20\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >" + sScaler + "</text >\n"
       "</g>\n"
       "</g>\n"
 
       "<g transform = \"translate(0,0)\" >\n"
-      "<text  x = \"-60\" y = \"-450\" font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -s </text>\n"
+      "<text  x = \"-60\" y = \"-450\" font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > y </text>\n"
       "<g transform = \"translate(30,10)\">\n"
-      "<text x = \"-60\" y = \"-450\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >"+sScalerP3+"</text >\n"
+      "<text x = \"-60\" y = \"-450\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >" + sScaler + "</text >\n"
       "</g>\n"
       "</g>\n"
-   "</g>\n";
+      "</g>\n"
+   "<g transform = \"translate(0,0)\" >\n"
+      "<text   x = \"360\" y = \"-20\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > x </text>\n"
+      "<g transform = \"translate(30,10)\">\n"
+      "<text  x = \"360\" y = \"-20\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >" + sScaler + "</text >\n"
+      "</g>\n"
+      "</g>\n";
 
    return plotc3;;
 }
@@ -95,12 +102,20 @@ static void ListInput(const std::vector<LRL_ReadLatticeData>& inputList) {
 
    }
 }
-
 static std::vector<S6> ConvertInputToS6(const std::vector<LRL_ReadLatticeData>& inputList) {
    std::vector<S6> v;
 
    for (size_t i = 0; i < inputList.size(); ++i) {
       v.push_back(S6(inputList[i].GetCell()));
+   }
+   return v;
+}
+
+const std::vector<Polar> ConvertInputToPolar(const std::vector<LRL_ReadLatticeData>& inputList) {
+   std::vector<Polar> v;
+
+   for (size_t i = 0; i < inputList.size(); ++i) {
+      v.push_back(Polar(inputList[i].GetCell()));
    }
    return v;
 }
@@ -114,56 +129,29 @@ static std::string CellPrecision2(const S6& s) {
    }
    return os.str();
 }
-
-static std::string PrepareLegend(const double x, const double y, const std::vector<S6>& v) {
+static std::string PrepareLegend(const double x, const double y, const std::vector<Polar>& v) {
 
    //out += commandLine;
    std::string out;
 
-   const std::string count =  "; Number of points: " + std::to_string(v.size()) + "\n\n";
+   const std::string count = "; Number of points: " + std::to_string(v.size()) + "\n\n";
 
    out += count;
 
    if (v.empty()) {
-      std::cout << "; PlotC3 requires at least one lattice" << std::endl;
+      std::cout << "; PlotPolar requires at least one lattice" << std::endl;
    }
-   else if (v.size() < 5) {
-      // just list them all
-      for (size_t i = 0; i < v.size(); ++i) {
-         const std::string cellText =  "P " + CellPrecision2(v[i]) + "\n";
-         out += cellText;
-      }
-   }
-   else {
-      // just list the first 3 and the last one
-      for (size_t i = 0; i < 3; ++i) {
-         const std::string cellText1 = "P " + CellPrecision2(v[i]);
-
-            out += cellText1 + "\n";
-      }
-      std::stringstream os;
-      os << CellPrecision2(v[v.size() - 1]);
-
-      const std::string dots = "\n ...\n\n";
-
-      const std::string cellText2 = "  P " + os.str() + "\n";
-      out += dots;
-      out += cellText2;
-   }
-   const std::string ypos = std::to_string(y + 3400);
-   const std::string commandLine = "\n edit SVG file to insert command line text\n";
 
    return out;
 }
 
-static std::pair<double, double> GetMinMaxS6(const std::vector<S6>& v) {
+static std::pair<double, double> GetMinMaxPolar(const std::vector<Polar>& v) {
    double mins6 = DBL_MAX;
    double maxs6 = -DBL_MAX;
 
-   for (size_t i = 0; i < v.size(); ++i) {
-      const S6& vv = v[i];
-      mins6 = minNC(mins6, vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]);
-      maxs6 = maxNC(maxs6, vv[0], vv[1], vv[2], vv[3], vv[4], vv[5]);
+   for (const auto& vv : v) {
+      mins6 = minNC(mins6, vv[0][0], vv[0][1]);
+      maxs6 = maxNC(maxs6, vv[0][0], vv[0][1]);
    }
    return { mins6,maxs6 };
 }
@@ -191,23 +179,23 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
       << x
       << "\" y = \""
       << y + 40
-      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  PlotC3   "
+      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  PlotPolar   "
       << GetDate()
       << " </text>\n";
    s += os.str();;
    return s;
 }
 
-std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int yint) {
+std::string  PrepareColorGuide(const PlotPolar& c3plot, const int xint, const int yint) {
    unsigned long r;
    unsigned long g;
    unsigned long b;
    const size_t nguides = 9;
    std::string out;
 
-   for ( size_t i=0; i<=nguides; ++i ) 
+   for (size_t i = 0; i <= nguides; ++i)
    {
-      const double frac = double(i) / double(nguides-1);
+      const double frac = double(i) / double(nguides - 1);
       c3plot.GetColorRange().GetRGBFromRangeFraction(frac, r, g, b);
       const std::string circle = "";
       const std::string x = std::to_string(xint + i * 15);
@@ -223,12 +211,12 @@ std::string  PrepareColorGuide(const C3Plot& c3plot, const int xint, const int y
 
 int main(int argc, char* argv[])
 {
-   std::cout << "; PlotC3" << std::endl;
+   std::cout << "; PlotPolar" << std::endl;
 
-   WebIO webio(argc, argv, "PlotC3", 1);
+   WebIO webio(argc, argv, "PlotPolar", 1);
    webio.GetWebBlockSize(argc, argv);
-   webio.CreateFilenamesAndLinks(1, "PLT");
-
+   webio.CreateFilenamesAndLinks(1, "PPL");
+   
    const size_t& blockstart = webio.m_blockstart;
    const size_t& blocksize = webio.m_blocksize;
 
@@ -238,46 +226,38 @@ int main(int argc, char* argv[])
    const std::string& filename = basicfileNameList[0];
    const std::string& graphicsFileName = RawFileNameList[0];
 
-   //std::cout << "; PlotC3 cell block start " << blockstart << std::endl;
-   //std::cout << "; PlotC3 cell block size " << blocksize << std::endl;
+   //std::cout << "; PlotPolar cell block start " << blockstart << std::endl;
+   //std::cout << "; PlotPolar cell block size " << blocksize << std::endl;
 
    for (size_t i = blockstart; (i < blockstart + blocksize); ++i)
    {
-      std::cout << "; PlotC3 graphics file(s) " <<
-         i+1 << "  " << FullfileNameList[i - blockstart] << std::endl;
+      std::cout << "; PlotPolar graphics file(s) " <<
+         i + 1 << "  " << FullfileNameList[i - blockstart] << std::endl;
    }
 
    LRL_ReadLatticeData reader;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
-  
-   C3Plot c3plot(filename, 1050, 380, 500, 500);
+
+   PlotPolar plplot(filename, 1250, 750, 500, 500);
 
    std::string svgOutput;
-   const std::string intro = c3plot.GetIntro(filename);
+   const std::string intro = plplot.GetIntro(filename);
    svgOutput += intro;
 
-   const std::vector<S6> vS6 = ConvertInputToS6(inputList);
-   std::pair<double, double> minmax = GetMinMaxS6(vS6);
-   if (abs(minmax.second) < 1.0E-5) minmax.second = 0.0;
-   const std::string dataRange = LRL_ToString("; The S6 data range is ", minmax.first, " to ", minmax.second);
-   const std::string legend = AddTextAtBottom(350, 550, dataRange) +
-      PrepareColorGuide(c3plot, 850, 550);
+   const std::vector<Polar> vPolar = ConvertInputToPolar(inputList);
+   std::pair<double, double> minmaxPolar = GetMinMaxPolar(vPolar);
+   if (abs(minmaxPolar.second) < 1.0E-5) minmaxPolar.second = 0.0;
+   const std::string dataRange = LRL_ToString("; The Polar data value range is ", minmaxPolar.first, " to ", minmaxPolar.second);
+   const std::string legend = AddTextAtBottom(1150, 800, dataRange) +
+      PrepareColorGuide(plplot, 1150, 750);
 
    svgOutput += legend;
-
-   if (bool drawConnectingLines = false)
-   {
-      svgOutput += PlotC3(1, 500, 500, c3plot.CreatePolylineFromPoints(1, ".5", vS6));
-      svgOutput += PlotC3(2, 1100, 500, c3plot.CreatePolylineFromPoints(2, ".5", vS6));
-      svgOutput += PlotC3(3, 1700, 500, c3plot.CreatePolylineFromPoints(3, ".5", vS6));
-   }
-
-   svgOutput += PlotC3(1, 500, 500, "  " + c3plot.DrawCells(1, vS6));
-   svgOutput += PlotC3(2, 1100, 500, "  " + c3plot.DrawCells(2, vS6));
-   svgOutput += PlotC3(3, 1700, 500, "  " + c3plot.DrawCells(3, vS6));
+   svgOutput += MakePlotPolar(1, 500, 500, "  " + plplot.DrawCells(1, vPolar));
+   svgOutput += MakePlotPolar(2, 1550, 500, "  " + plplot.DrawCells(2, vPolar));
+   svgOutput += MakePlotPolar(3, 500, 1100, "  " + plplot.DrawCells(3, vPolar));
 
    std::cout << dataRange << std::endl << std::endl;
    ListInput(inputList);
-   c3plot.SendFrameToFile(graphicsFileName, svgOutput + c3plot.GetFoot());
-   std::cout << PrepareLegend(600, 600, vS6);
+   plplot.SendFrameToFile(graphicsFileName, svgOutput + plplot.GetFoot());
+   std::cout << PrepareLegend(600, 600, vPolar);
 }

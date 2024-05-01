@@ -35,7 +35,7 @@
     <ClInclude Include="LRL_ToString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LRL_Vector3.h">
+    <ClInclude Include="Mat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PairReporter.h">
