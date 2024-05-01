@@ -131,7 +131,6 @@
   <ItemGroup>
     <ClCompile Include="main_Radial.cpp" />
     <ClCompile Include="Radial.cpp" />
-    <ClCompile Include="Vector_2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
@@ -144,7 +143,6 @@
   <ItemGroup>
     <ClInclude Include="main_Radial.h" />
     <ClInclude Include="Radial.h" />
-    <ClInclude Include="Vector_2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

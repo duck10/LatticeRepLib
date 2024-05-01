@@ -30,9 +30,6 @@
     <ClCompile Include="SampleMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Radial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LLoyd.h">
@@ -42,9 +39,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\LatticeRepresentationLib\dbscan.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Radial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

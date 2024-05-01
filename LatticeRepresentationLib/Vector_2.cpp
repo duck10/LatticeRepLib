@@ -107,7 +107,7 @@ double& Vector_2::operator[](const size_t n)
 
 std::ostream& operator<<(std::ostream& o, const Vector_2& v)
 {
-   o << v[0] << " " << v[1];
+   o << v[0] << ", " << v[1];
    return o;
 }
 
@@ -185,7 +185,6 @@ Centroid Centroid::operator-(const Centroid& v) const
 
 Centroid Centroid::operator/(const double d)
 {
-   const Vector_2& cent = m_centroid * d;
    m_centroid /= d;
    return *this;
 }
@@ -239,32 +238,6 @@ Vector_2 Vector_2::CenterOfMass(const std::vector<Vector_2>& vv)
    }
    return cm / double(vv.size());
 }
-
-const std::vector<Vector_2> Vector_2::ConvertCellsToXYAndRemoveReferenceCell(
-   const Radial& radial, const std::vector<LRL_ReadLatticeData>& inputList) {
-
-   Radial radialX(radial);
-   const LRL_Cell baseCell = inputList[0].GetCell();
-   const std::string baseLattice = inputList[0].GetLattice();
-   const double basex = radialX.XAxisDist(baseLattice, baseCell);
-   const double basey = radialX.YAxisDist(baseLattice, baseCell);
-
-   radialX.SetBaseCell(inputList[0].GetLattice(), inputList[0].GetCell());
-   std::vector<Vector_2> out;
-   for (size_t i = 1; i < inputList.size(); ++i) {
-
-      const std::string latticeb = inputList[i].GetLattice();
-      const LRL_Cell b = inputList[i].GetCell();
-      const double dx = radialX.XAxisDist(latticeb, b) - basex;
-      const double dy = radialX.YAxisDist(latticeb, b) - basey;
-      out.emplace_back(dx, dy);
-      std::cout << "; xy in ConvertCellsToXYAndRemoveReferenceCell " << dx <<
-         " " << dy << std::endl;
-   }
-
-   return out;
-}
-
 
 std::ostream& operator<<(std::ostream& o, const Centroid& v)
 {
@@ -447,5 +420,24 @@ Matrix_2 Matrix_2::InertiaTensor(const std::vector<Vector_2>& vv) {
 std::ostream& operator<<(std::ostream& o, const Matrix_2& v)
 {
    o << v[0] << " " << v[1] << "    " << v[2] << " " << v[3];
+   return o;
+}
+
+
+// Const version of operator[]
+double Polar_2::operator[] (const size_t n) const {
+   return (n == 0) ? m_mag : m_radians;
+}
+// Non-const version of operator[]
+double& Polar_2::operator[] (const size_t n) {
+   if (n == 0)
+      return m_mag;
+   else
+      return m_radians;
+}
+
+std::ostream& operator<< (std::ostream& o, const Polar_2& v) {
+   o << "magnitude " << v.m_mag << std::endl;
+   o << "radians " << v.m_radians << std::endl;
    return o;
 }

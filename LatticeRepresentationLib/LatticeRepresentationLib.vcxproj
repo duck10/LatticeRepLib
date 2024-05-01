@@ -192,7 +192,9 @@
     <ClCompile Include="MatDC7u.cpp" />
     <ClCompile Include="MatricesForOneDeloneType.cpp" />
     <ClCompile Include="Niggli_Types.cpp" />
+    <ClCompile Include="Polar.cpp" />
     <ClCompile Include="PrintTable.cpp" />
+    <ClCompile Include="Radial.cpp" />
     <ClCompile Include="ReadTypedData.cpp" />
     <ClCompile Include="RI.cpp" />
     <ClCompile Include="S6.cpp" />
@@ -223,6 +225,7 @@
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="V7.cpp" />
     <ClCompile Include="VecN.cpp" />
+    <ClCompile Include="Vector_2.cpp" />
     <ClCompile Include="WebIO.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -266,7 +269,9 @@
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="ParseData.h" />
+    <ClInclude Include="Polar.h" />
     <ClInclude Include="PrintTable.h" />
+    <ClInclude Include="Radial.h" />
     <ClInclude Include="ReadTypedData.h" />
     <ClInclude Include="RI.h" />
     <ClInclude Include="S6.h" />
@@ -302,6 +307,7 @@
     <ClInclude Include="V7.h" />
     <ClInclude Include="V7Dist.h" />
     <ClInclude Include="VecN.h" />
+    <ClInclude Include="Vector_2.h" />
     <ClInclude Include="WebIO.h" />
   </ItemGroup>
   <ItemGroup>
