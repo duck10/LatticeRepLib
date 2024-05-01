@@ -8,7 +8,6 @@
 #include "LRL_ToString.h"
 #include "PlotPolar.h"
 #include "Polar.h"
-#include "S6.h"
 #include "LRL_Vector3.h"
 #include "Vector_2.h"
 #include "WebIO.h"
@@ -102,20 +101,12 @@ static void ListInput(const std::vector<LRL_ReadLatticeData>& inputList) {
 
    }
 }
-static std::vector<S6> ConvertInputToS6(const std::vector<LRL_ReadLatticeData>& inputList) {
-   std::vector<S6> v;
 
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      v.push_back(S6(inputList[i].GetCell()));
-   }
-   return v;
-}
-
-const std::vector<Polar> ConvertInputToPolar(const std::vector<LRL_ReadLatticeData>& inputList) {
+std::vector<Polar> ConvertInputToPolar(const std::vector<LRL_ReadLatticeData>& inputList) {
    std::vector<Polar> v;
 
    for (size_t i = 0; i < inputList.size(); ++i) {
-      v.push_back(Polar(inputList[i].GetCell()));
+      v.emplace_back(Polar(inputList[i].GetCell()));
    }
    return v;
 }
@@ -244,7 +235,7 @@ int main(int argc, char* argv[])
    const std::string intro = plplot.GetIntro(filename);
    svgOutput += intro;
 
-   const std::vector<Polar> vPolar = ConvertInputToPolar(inputList);
+   std::vector<Polar> vPolar = ConvertInputToPolar(inputList);
    std::pair<double, double> minmaxPolar = GetMinMaxPolar(vPolar);
    if (abs(minmaxPolar.second) < 1.0E-5) minmaxPolar.second = 0.0;
    const std::string dataRange = LRL_ToString("; The Polar data value range is ", minmaxPolar.first, " to ", minmaxPolar.second);
