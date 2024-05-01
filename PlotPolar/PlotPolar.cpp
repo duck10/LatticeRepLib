@@ -95,12 +95,11 @@ std::string PlotPolar::BuildIntro(const std::string& filename) const {
       "\n <g transform=\"scale(0.6)\">\n";
 }
 
-
 std::vector<S6> PlotPolar::PrepareCells() const {
    std::vector<S6> v;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
    for (size_t i = 0; i < inputList.size(); ++i) {
-      v.emplace_back(S6(inputList[i].GetCell()));
+      v.emplace_back(inputList[i].GetCell());
    }
    return v;
 }

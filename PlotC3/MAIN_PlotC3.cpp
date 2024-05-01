@@ -257,6 +257,7 @@ int main(int argc, char* argv[])
    svgOutput += intro;
 
    const std::vector<S6> vS6 = ConvertInputToS6(inputList);
+   const std::vector<S6> vPolar = ConvertInputToPolar(inputList);
    std::pair<double, double> minmax = GetMinMaxS6(vS6);
    if (abs(minmax.second) < 1.0E-5) minmax.second = 0.0;
    const std::string dataRange = LRL_ToString("; The S6 data range is ", minmax.first, " to ", minmax.second);

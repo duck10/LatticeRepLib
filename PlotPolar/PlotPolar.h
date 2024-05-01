@@ -41,7 +41,6 @@ private:
    ColorRange m_colRange;
 
    std::string BuildIntro(const std::string& filename) const;
-
 };
 
 class ScalarProperties {
@@ -75,6 +74,4 @@ public:
 
 };
 
-
 #endif  // PlotPolar_H
-
