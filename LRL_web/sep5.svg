@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1245" height="30">
+<defs>
+<path id="seg" d="m 0,0 140,0" stroke-width="5"/>
+<path id="trPlus" fill="none" stroke-width="5" d="m 0,0 4,0 Q 16,0 20,5 24,10 36,10 L 40,10"/>
+<path id="trZero" fill="none" stroke-width="5" d="m 0,0 40,0"/>
+<path id="trMinus" fill="none" stroke-width="5" d="m 0,0 4,0 Q 16,0 20,-5 24,-10 36,-10 L 40,-10"/>
+</defs>
+<!-- RED -->
+<use href="#seg" x="0" y="05" stroke="red"/>
+<use href="#seg" x="180" y="15" stroke="red"/>
+<use href="#trPlus" x="320" y="15" stroke="red"/>
+<use href="#seg" x="360" y="25" stroke="red"/>
+<use href="#trZero" x="500" y="25" stroke="red"/>
+<use href="#seg" x="540" y="25" stroke="red"/>
+<use href="#trMinus" x="680" y="25" stroke="red"/>
+<use href="#seg" x="720" y="15" stroke="red"/>
+<use href="#seg" x="900" y="05" stroke="red"/>
+<use href="#trZero" x="1040" y="05" stroke="red"/>
+<use href="#seg" x="1080" y="05" stroke="red"/>
+<use href="#trZero" x="1200" y="05" stroke="red"/>
+<!-- BLUE -->
+<use href="#seg" x="0" y="15" stroke="blue"/>
+<use href="#trMinus" x="140" y="15" stroke="blue"/>
+<use href="#trPlus" x="140" y="05" stroke="red"/>
+<use href="#seg" x="180" y="05" stroke="blue"/>
+<use href="#trZero" x="320" y="05" stroke="blue"/>
+<use href="#seg" x="360" y="05" stroke="blue"/>
+<use href="#trPlus" x="500" y="05" stroke="blue"/>
+<use href="#seg" x="540" y="15" stroke="blue"/>
+<use href="#trPlus" x="680" y="15" stroke="blue"/>
+<use href="#seg" x="720" y="25" stroke="blue"/>
+<use href="#trZero" x="860" y="25" stroke="blue"/>
+<use href="#seg" x="900" y="25" stroke="blue"/>
+<use href="#seg" x="1080" y="15" stroke="blue"/>
+<use href="#trZero" x="1200" y="15" stroke="blue"/>
+<!-- Orange -->
+<use href="#seg" x="0" y="25" stroke="orange"/>
+<use href="#trZero" x="140" y="25" stroke="orange"/>
+<use href="#seg" x="180" y="25" stroke="orange"/>
+<use href="#trMinus" x="320" y="25" stroke="orange"/>
+<use href="#seg" x="360" y="15" stroke="orange"/>
+<use href="#trMinus" x="500" y="15" stroke="orange"/>
+<use href="#seg" x="540" y="05" stroke="orange"/>
+<use href="#trZero" x="680" y="05" stroke="orange"/>
+<use href="#seg" x="720" y="05" stroke="orange"/>
+<use href="#trPlus" x="860" y="05" stroke="orange"/>
+<use href="#trMinus" x="860" y="15" stroke="red"/>
+<use href="#seg" x="900" y="15" stroke="orange"/>
+<use href="#trPlus" x="1040" y="15" stroke="orange"/>
+<use href="#trMinus" x="1040" y="25" stroke="blue"/>
+<use href="#seg" x="1080" y="25" stroke="orange"/>
+<use href="#trZero" x="1200" y="25" stroke="orange"/>
+</svg>
