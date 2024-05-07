@@ -240,6 +240,28 @@ Vector_2 Vector_2::CenterOfMass(const std::vector<Vector_2>& vv)
    return cm / double(vv.size());
 }
 
+const std::vector<Vector_2> Vector_2::ConvertCellsToXYAndRemoveReferenceCell(const Radial& radial, 
+   const std::vector<LRL_ReadLatticeData>& inputList)
+{
+
+   /*
+   LCA 2024-05-07
+   This is totally broken. The Code for this function was central to the Radial plots,
+   and it got deleted sometime. I have not been able to find it. This is basically a
+   placeholder for when it can be reconstructed.
+   */
+   std::vector<Vector_2> out;
+   if ( !inputList.empty())
+   {
+      for (size_t i = 1; i < inputList.size(); ++i) {
+         const LRL_Cell cell = inputList[i].GetCell();
+         const Radial rad;
+         //out.emplace_back();
+      }
+   }
+   return out;
+}
+
 std::ostream& operator<<(std::ostream& o, const Centroid& v)
 {
    o << v[0] << " " << v[1] << std::endl;

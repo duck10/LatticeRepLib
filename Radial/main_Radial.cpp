@@ -156,8 +156,8 @@ int main(int argc, char* argv[])
 
    std::cout << "; first input cell  " << LRL_Cell_Degrees(radial.GetBaseCell()) << std::endl;
 
-   const std::vector<Vector_2> vxy = Vector_2::ConvertCellsToXYAndRemoveReferenceCell(radial, inputList);
-   TEST(vxy);
+   //const std::vector<Vector_2> vxy = Vector_2::ConvertCellsToXYAndRemoveReferenceCell(radial, inputList);
+   //TEST(vxy);
 
 
    //RotateRecenterAndRescale(inputList);
