@@ -16,7 +16,7 @@ public:
    std::string GetFoot() const { return m_svgFoot; }
    double CellScale(const std::vector<S6>& v);
    double CellScaleFactor() const;
-   std::string DrawCells(const size_t scalar, const std::vector<S6>& v);
+   std::string DrawCells(const size_t scalar, const std::vector<S6>& v, const ColorRange& colRange);
    double GetWx() const { return m_wx; }
    double GetWy() const { return m_wy; }
    double GetGx() const { return m_gx; }
@@ -31,9 +31,8 @@ public:
    std::vector<S6> PrepareCells() const;
    std::string CreatePolylineFromPoints(const size_t scalarr, const std::string& width, const std::vector<S6>& v);
    void SendFrameToFile(const std::string& sFileName, const std::string& data) const;
-   ColorRange GetColorRange() const { return m_colRange; }
 
-protected:
+private:
    const int m_wx;
    const int m_wy;
    const int m_gx;
@@ -45,20 +44,20 @@ protected:
    std::string m_svgIntro;
    std::string m_svgFoot;
 
-private:
-   std::string BuildIntro(const std::string& filename) const;
    double m_maxScalar;
-   ColorRange m_colRange;
 
+   std::string BuildIntro(const std::string& filename) const;
 };
 
 class ScalarProperties {
 
 public:
-   size_t index1, index2;
-   int moveX, moveY;
+   size_t index1;
+   size_t index2;
+   int moveX;
+   int moveY;
 
-   ScalarProperties(const size_t scalar) {
+   explicit ScalarProperties(const size_t scalar) {
       if (scalar == 1) {
          index1 = 0;
          index2 = 3;

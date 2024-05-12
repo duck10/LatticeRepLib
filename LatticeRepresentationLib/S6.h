@@ -33,6 +33,7 @@ public:
    S6(const std::vector<double>& v);
    S6(const double d1, const double d2, const double d3, const double d4, const double d5, const double d6);
    ~S6(void) {}
+   static size_t size() { return 6; }
 
 
    S6& operator= (const S6& v);
@@ -59,7 +60,6 @@ public:
    double& operator[](const size_t n) { return m_vec[n]; }
    double DistanceBetween( const S6& v1, const S6& v2 );
    static double AngleBetween( const S6& v1, const S6& v2 );
-   size_t size(void) const { return 6; }
    double norm() const { return m_vec.norm(); }
    double norm(const S6& s6) const { return norm(s6); }
    double Norm() const { return m_vec.norm(); }

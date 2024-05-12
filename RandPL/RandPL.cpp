@@ -11,8 +11,16 @@
 
 int main(int argc, char* argv[])
 {
+   int ngen;
+   int testarg = 50;
+   if (argc > 1) {
+      testarg = atoi(argv[1]);
+      if (testarg != 0) ngen = testarg;
+   }
+
+
    Polar test;
-   for (size_t i = 0; i < 50; ++i) {
+   for (size_t i = 0; i < ngen; ++i) {
       test = test.rand();
       const Polar_2 v1 = Polar::ConvertUnitSphereProjectionToLengthAndAngle(test[0]);
       const Polar_2 v2 = Polar::ConvertUnitSphereProjectionToLengthAndAngle(test[1]);

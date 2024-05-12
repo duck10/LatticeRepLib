@@ -11,6 +11,7 @@ public:
 
    Polar();
    Polar(const Vector_2& v1, const Vector_2& v2, const Vector_2& v3);
+   static size_t size() { return 3; }
 
    bool CheckValid();
    //bool CheckValid(const Polar& p);
@@ -38,6 +39,7 @@ public:
    Vector_2 operator[] (const size_t n) const {
       return m_vec[n];
    }
+   Vector_2& operator[](const size_t n) { return m_vec[n]; }
 
    operator LRL_Cell() const;
 

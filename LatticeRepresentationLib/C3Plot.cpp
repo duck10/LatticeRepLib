@@ -60,7 +60,7 @@ std::string C3Plot::CreatePolylineFromPoints(const size_t scalar, const std::str
    return svg;
 }
 
-std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
+std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v, const ColorRange& colRange) {
    CellScale(v);
    const double cellScale = CellScaleFactor();
    const ScalarProperties sp(scalar);
@@ -99,7 +99,7 @@ std::string C3Plot::DrawCells(const size_t scalar, const std::vector<S6>& v) {
       unsigned long g;
       unsigned long b;
       const double frac = double(i) / double(v.size()-1);
-      m_colRange.GetRGBFromRangeFraction(frac, r, g, b);
+      colRange.GetRGBFromRangeFraction(frac, r, g, b);
 
       //// fill="rgb(255, 0, 0)"
       //const std::string hexColor = NumberToHexString(color);
@@ -140,7 +140,6 @@ C3Plot::C3Plot(const std::string& filename, const int wx, const int wy, const in
    , m_gy(gy)
    , m_svgIntro(BuildIntro(filename))
    , m_svgFoot("\n</g> <!--end of scale=0.6-->\n</svg>")
-   , m_colRange(0xFFFF00, 0x1589FF) // should be yellow to Neon Blue
 {
 }
 
