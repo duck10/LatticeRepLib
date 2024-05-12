@@ -1,4 +1,5 @@
 
+#include "PlotPolar.h"
 #include "ColorTables.h"
 #include "GetDate.h"
 #include "LRL_DataToSVG.h"
@@ -6,9 +7,9 @@
 #include "LRL_MinMaxTools.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
-#include "PlotPolar.h"
-#include "Polar.h"
 #include "LRL_Vector3.h"
+#include "Plots.h"
+#include "Polar.h"
 #include "Vector_2.h"
 #include "WebIO.h"
 
@@ -23,7 +24,7 @@
 #include <utility>
 #include <vector>
 
-static std::string MakePlotPolar(const size_t whichPlot, const int wx, const int wy, const std::string& s) {
+static std::string MakeThePlot(const size_t whichPlot, const int wx, const int wy, const std::string& s) {
    const std::string sScaler = std::to_string(whichPlot);
    const std::string sScalerP3 = std::to_string(whichPlot + 3);
    //<g transform = "translate(150,975) scale(1 -1)">
@@ -102,15 +103,6 @@ static void ListInput(const std::vector<LRL_ReadLatticeData>& inputList) {
    }
 }
 
-std::vector<Polar> ConvertInputToPolar(const std::vector<LRL_ReadLatticeData>& inputList) {
-   std::vector<Polar> v;
-
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      v.emplace_back(Polar(inputList[i].GetCell()));
-   }
-   return v;
-}
-
 static std::string CellPrecision2(const S6& s) {
    std::stringstream os;
    const LRL_Cell_Degrees cell(s);
@@ -120,34 +112,25 @@ static std::string CellPrecision2(const S6& s) {
    }
    return os.str();
 }
-static std::string PrepareLegend(const double x, const double y, const std::vector<Polar>& v) {
+static std::string PrepareLegend(const double x, const double y, const size_t nData,
+   const std::string& programName) {
 
    //out += commandLine;
    std::string out;
 
-   const std::string count = "; Number of points: " + std::to_string(v.size()) + "\n\n";
+   const std::string count = "; Number of points: " + std::to_string(nData) + "\n\n";
 
    out += count;
 
-   if (v.empty()) {
-      std::cout << "; PlotPolar requires at least one lattice" << std::endl;
+   if (nData==0) {
+      std::cout << "; "+programName+" requires at least one lattice" << std::endl;
    }
 
    return out;
 }
 
-static std::pair<double, double> GetMinMaxPolar(const std::vector<Polar>& v) {
-   double mins6 = DBL_MAX;
-   double maxs6 = -DBL_MAX;
-
-   for (const auto& vv : v) {
-      mins6 = minNC(mins6, vv[0][0], vv[0][1]);
-      maxs6 = maxNC(maxs6, vv[0][0], vv[0][1]);
-   }
-   return { mins6,maxs6 };
-}
-
-static std::string AddTextAtBottom(const int x, const int y, const std::string& dataRange) {
+static std::string AddTextAtBottom(const int x, const int y, const std::string& dataRange,
+   const std::string& programName) {
    std::string s = "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y) + "\""
       " font-size = \"20\" " +
       " font-family = \"Arial, Helvetica, sans-serif \">" + LRL_DataToSVG(dataRange) + "</text>\n";
@@ -163,21 +146,22 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
       ""  // INSERT TEXT HERE
       + " \n</text>   "
       "<!-- add a comment such as the command line-->\n"
-      "<!--#######################################################-->\n";
+      "<!--#######################################################-->\n"
+      "<!--<text x=\"1150\" y=\"920\" font-size = \"20\"  font-family = \"Arial, Helvetica, sans - serif \"> REPLACEABLE</text>-->\n";
 
    std::ostringstream os;
    os << "<text x = \""
       << x
       << "\" y = \""
       << y + 40
-      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  PlotPolar   "
+      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  "+ programName+"   "
       << GetDate()
       << " </text>\n";
    s += os.str();;
    return s;
 }
 
-std::string  PrepareColorGuide(const PlotPolar& c3plot, const int xint, const int yint) {
+std::string  PrepareColorGuide(const ColorRange& colorRange, const int xint, const int yint) {
    unsigned long r;
    unsigned long g;
    unsigned long b;
@@ -187,7 +171,7 @@ std::string  PrepareColorGuide(const PlotPolar& c3plot, const int xint, const in
    for (size_t i = 0; i <= nguides; ++i)
    {
       const double frac = double(i) / double(nguides - 1);
-      c3plot.GetColorRange().GetRGBFromRangeFraction(frac, r, g, b);
+      colorRange.GetRGBFromRangeFraction(frac, r, g, b);
       const std::string circle = "";
       const std::string x = std::to_string(xint + i * 15);
       const std::string y = std::to_string(yint);
@@ -202,11 +186,15 @@ std::string  PrepareColorGuide(const PlotPolar& c3plot, const int xint, const in
 
 int main(int argc, char* argv[])
 {
-   std::cout << "; PlotPolar" << std::endl;
+   const std::string programName("PlotPolar");
+   const std::string dataName("Polar");
+   const std::string prefixName("PPL");
+   const ColorRange colorRange(0xFFFF00, 0x1589FF);
+   std::cout << "; "+programName << std::endl;
 
-   WebIO webio(argc, argv, "PlotPolar", 1);
+   WebIO webio(argc, argv, programName, 1);
    webio.GetWebBlockSize(argc, argv);
-   webio.CreateFilenamesAndLinks(1, "PPL");
+   webio.CreateFilenamesAndLinks(1, prefixName);
    
    const size_t& blockstart = webio.m_blockstart;
    const size_t& blocksize = webio.m_blocksize;
@@ -222,33 +210,35 @@ int main(int argc, char* argv[])
 
    for (size_t i = blockstart; (i < blockstart + blocksize); ++i)
    {
-      std::cout << "; PlotPolar graphics file(s) " <<
+      std::cout << "; "+programName+" graphics file(s) " <<
          i + 1 << "  " << FullfileNameList[i - blockstart] << std::endl;
    }
 
    LRL_ReadLatticeData reader;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
 
-   PlotPolar plplot(filename, 1250, 750, 500, 500);
+   PlotPolar thePlot(filename, 1250, 750, 500, 500);
 
    std::string svgOutput;
-   const std::string intro = plplot.GetIntro(filename);
+   const std::string intro = thePlot.GetIntro(filename);
    svgOutput += intro;
 
-   std::vector<Polar> vPolar = ConvertInputToPolar(inputList);
-   std::pair<double, double> minmaxPolar = GetMinMaxPolar(vPolar);
-   if (abs(minmaxPolar.second) < 1.0E-5) minmaxPolar.second = 0.0;
-   const std::string dataRange = LRL_ToString("; The Polar data value range is ", minmaxPolar.first, " to ", minmaxPolar.second);
-   const std::string legend = AddTextAtBottom(1150, 800, dataRange) +
-      PrepareColorGuide(plplot, 1150, 750);
+   const std::vector<Polar> vData = ConvertInput<Polar>(inputList);
+   std::pair<double, double> minmax = GetMinMaxPlot(vData);
+   if (abs(minmax.second) < 1.0E-5) minmax.second = 0.0;
+   const std::string dataRange = 
+      LRL_ToString("; The "+dataName+" data value range is ", minmax.first, " to ", minmax.second);
+   const std::string legend = AddTextAtBottom(1150, 800, dataRange, programName) +
+      PrepareColorGuide(colorRange, 1150, 750);
 
    svgOutput += legend;
-   svgOutput += MakePlotPolar(1, 500, 500, "  " + plplot.DrawCells(1, vPolar));
-   svgOutput += MakePlotPolar(2, 1550, 500, "  " + plplot.DrawCells(2, vPolar));
-   svgOutput += MakePlotPolar(3, 500, 1100, "  " + plplot.DrawCells(3, vPolar));
+   ColorRange colRange(0xFFFF00, 0x1589FF); // nice yellow to blue
+   svgOutput += MakeThePlot(1, 500, 500,  "  " + thePlot.DrawCells(1, vData, colRange));
+   svgOutput += MakeThePlot(2, 1550, 500, "  " + thePlot.DrawCells(2, vData, colRange));
+   svgOutput += MakeThePlot(3, 500, 1100, "  " + thePlot.DrawCells(3, vData, colRange));
 
    std::cout << dataRange << std::endl << std::endl;
    ListInput(inputList);
-   plplot.SendFrameToFile(graphicsFileName, svgOutput + plplot.GetFoot());
-   std::cout << PrepareLegend(600, 600, vPolar);
+   thePlot.SendFrameToFile(graphicsFileName, svgOutput + thePlot.GetFoot());
+   std::cout << PrepareLegend(600, 600, vData.size(), programName);
 }

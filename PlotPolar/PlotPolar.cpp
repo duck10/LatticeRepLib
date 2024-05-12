@@ -35,7 +35,7 @@ double PlotPolar::CellScaleFactor() const {
    return 0.9 * m_gx / m_maxScalar;
 }
 
-std::string PlotPolar::DrawCells(const size_t scalar, const std::vector<Polar>& vPolar) {
+std::string PlotPolar::DrawCells(const size_t scalar, const std::vector<Polar>& vPolar, const ColorRange& colRange) {
    CellScale(vPolar);
    const double cellScale = CellScaleFactor();
    const ScalarProperties sp(scalar);
@@ -57,7 +57,7 @@ std::string PlotPolar::DrawCells(const size_t scalar, const std::vector<Polar>& 
       unsigned long g;
       unsigned long b;
       const double frac = (vPolar.size()==1) ? 1.0 : double(i) / double(vPolar.size() - 1);
-      m_colRange.GetRGBFromRangeFraction(frac, r, g, b);
+      colRange.GetRGBFromRangeFraction(frac, r, g, b);
 
       const std::string s = std::string("<circle  r=\"10\" stroke = \"black\" stroke-width=\"0.5\""
          " fill= \"rgb(" + LRL_ToString(r) + ", " + LRL_ToString(g) + ", " + LRL_ToString(b) + ")\""
@@ -79,7 +79,6 @@ PlotPolar::PlotPolar(const std::string& filename, const int wx, const int wy, co
    , m_gy(gy)
    , m_svgIntro(BuildIntro(filename))
    , m_svgFoot("\n</g> <!--end of scale=0.6-->\n</svg>")
-   , m_colRange(0xFFFF00, 0x1589FF) // should be yellow to Neon Blue
 {
 }
 

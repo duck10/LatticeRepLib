@@ -68,6 +68,7 @@
     <ClCompile Include="Radial.cpp" />
     <ClCompile Include="Vector_2.cpp" />
     <ClCompile Include="Polar.cpp" />
+    <ClCompile Include="Plots.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="Radial.h" />
     <ClInclude Include="Vector_2.h" />
     <ClInclude Include="Polar.h" />
+    <ClInclude Include="Plots.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

@@ -11,6 +11,7 @@ public:
    Vector_2();
    Vector_2(const double d1, const double d2);
    Vector_2(const Vector_2& v);
+   friend std::ostream& operator<< (std::ostream& o, const Vector_2& v);
    Vector_2 AveragePosition(const std::vector<Vector_2>& vv) const;
 
    Vector_2& operator = (const Vector_2& v);
@@ -26,7 +27,6 @@ public:
    Vector_2 operator/= (const double d);
    double operator[] (const size_t n) const;
    double& operator[] (const size_t n);
-   friend std::ostream& operator<< (std::ostream& o, const Vector_2& v);
 
    double dot(const Vector_2& v2) const;
    double angle(const Vector_2& v2) const;

@@ -7,6 +7,7 @@
 #include "Niggli.h"
 #include "NumericTools.h"
 #include "GenerateLatticeTypeExamples.h"
+#include "Polar.h"
 #include "S6BoundaryTransforms.h"
 #include "LRL_StringTools.h"
 /* 
@@ -193,74 +194,6 @@ void ForDeloneInput(
 
 }
 
-//void DoOneTypeSpecifier(const std::string& s, const int argc) {
-//   std::string name(s);
-//   const int number = getNumber<int>(name);
-//   const bool isNumIn_1_44 = isNumber<int>(name) && number >= 1 && number <= 44;
-//   const bool badNumber = isNumber<int>(name) && (number < 1 || number > 44);
-//
-//   bool doNiggli = false;
-//   bool doDelone = false;
-//   bool doGruber = false;
-//
-//
-//   if (LRL_StringTools::strToupper(name).find("ALL") != std::string::npos)
-//   {
-//      name.clear();
-//      doNiggli = doDelone = true;
-//   }
-//
-//
-//   if (argc == 1) doNiggli = doDelone = true;
-//   else if (argc > 1 && LRL_StringTools::strToupper(argv[1]) == "GRUBER") doGruber = true;
-//   else if (argc > 2 && LRL_StringTools::strToupper(argv[2]) == "GRUBER") doGruber = true;
-//   else if (argc <= 2) doNiggli = doDelone = true;
-//   else if (isNumIn_1_44) doNiggli = true;
-//   else if (LRL_StringTools::strToupper(name).find("NIGGLI") != std::string::npos) {
-//      doNiggli = true;
-//      doDelone = false;
-//   }
-//   else if (LRL_StringTools::strToupper(name).find("DELONE") != std::string::npos) {
-//      doNiggli = false;
-//      doDelone = true;
-//   }
-//   else if (isNumber<int>(name) && badNumber) doNiggli = doDelone = true;
-//   else if (isupper(name[0])) doDelone = true; // "A??" will incorrectly come here, but doNiggli already set
-//   else if (islower(name[0])) doNiggli = doDelone = true;
-//   else {
-//      const int i19191 = 19191;
-//   }
-//   if (badNumber) name.clear();
-//   if (isupper(name[0]) && g_AllowedDelone.find(name[0]) == std::string::npos)
-//   {
-//      doNiggli = doDelone = true;
-//      name.clear();
-//   }
-//
-//
-//   if (doNiggli) {
-//      const std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
-//         GenerateNiggliBase().Select(name);
-//      std::cout << "; Niggli lattice types requested " << std::endl;
-//      ForNiggliInput(NiggiTypes);
-//   }
-//
-//   if (doDelone) {
-//      std::vector<std::shared_ptr<GenerateDeloneBase> > DeloneTypes =
-//         GenerateDeloneBase().Select(name);
-//      std::cout << "; Delone lattice type requested " << std::endl;
-//      ForDeloneInput(DeloneTypes);
-//   }
-//
-//   if (doGruber) {
-//      std::cout << G6(std::vector<double>{ 4., 16., 16., 16., 3., 4.   }) << std::endl;;// Niggli reduced
-//      std::cout << G6(std::vector<double>{ 4., 16., 16., 16., 1., 4.   }) << std::endl;;
-//      std::cout << G6(std::vector<double>{ 4., 16., 16., -16., -1., -3.}) << std::endl;;
-//      std::cout << G6(std::vector<double>{ 4., 16., 16., -15., -1., -4.}) << std::endl;;
-//      std::cout << G6(std::vector<double>{ 4., 16., 16., -13., -3., -4.}) << std::endl;;
-//   }
-//}
-
 void CreateCells(const int argc, const std::string& namen) {
    std::string name(namen);
    const int number = getNumber<int>(name);
@@ -270,6 +203,7 @@ void CreateCells(const int argc, const std::string& namen) {
    bool doNiggli = false;
    bool doDelone = false;
    bool doGruber = false;
+   bool doPolar = false;
 
 
    if (LRL_StringTools::strToupper(name).find("ALL") != std::string::npos)
@@ -287,10 +221,17 @@ void CreateCells(const int argc, const std::string& namen) {
    else if (LRL_StringTools::strToupper(name).find("NIGGLI") != std::string::npos) {
       doNiggli = true;
       doDelone = false;
+      doPolar = false;
    }
    else if (LRL_StringTools::strToupper(name).find("DELONE") != std::string::npos) {
       doNiggli = false;
       doDelone = true;
+      doPolar = false;
+   }
+   else if (LRL_StringTools::strToupper(name).find("RANDOM") != std::string::npos) {
+      doNiggli = false;
+      doDelone = false;
+      doPolar = true;
    }
    else if (isNumber<int>(name) && badNumber) doNiggli = doDelone = true;
    else if (isupper(name[0])) doDelone = true; // "A??" will incorrectly come here, but doNiggli already set
@@ -321,19 +262,28 @@ void CreateCells(const int argc, const std::string& namen) {
    }
 
    if (doGruber) {
-      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., 16., 3., 4.   }) << std::endl;;// Niggli reduced
-      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., 16., 1., 4.   }) << std::endl;;
-      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -16., -1., -3.}) << std::endl;;
-      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -15., -1., -4.}) << std::endl;;
-      std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -13., -3., -4.}) << std::endl;;
+      for (size_t i = 0; i < ngen; ++i)
+      {
+         std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., 16., 3., 4.   }) << std::endl;// Niggli reduced
+         std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., 16., 1., 4.   }) << std::endl;
+         std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -16., -1., -3.}) << std::endl;
+         std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -15., -1., -4.}) << std::endl;
+         std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., -13., -3., -4.}) << std::endl;
+      }
+   }
+
+   if (doPolar) {
+      Polar p;
+      for (size_t i = 0; i < ngen; ++i)
+      {
+         std::cout << "P " << LRL_Cell_Degrees(p.rand()) << std::endl;
+      }
    }
 }
 
 int main(int argc, char* argv[])
 {
    static std::string name = ""; // blank or unrecognized gives all types
-
-   std::cout << "; Generate cells" << std::endl;
 
    int test = 0;
    if (argc > 1) {
@@ -344,6 +294,8 @@ int main(int argc, char* argv[])
          name = strtest;
       }
    }
+
+   std::cout << "; Generate cells, ngen= " << ngen << std::endl;
 
    std::vector<std::string> names;
    if (argc > 2) {

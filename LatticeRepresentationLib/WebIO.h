@@ -12,7 +12,8 @@ public:
    WebIO(int argc, char* argv[], const std::string& progName, const size_t fileCount);
    std::string RecreateFileNames(const std::string& name);
    void GetWebBlockSize(int argc, char* argv[]);
-   void CreateFilenamesAndLinks(const size_t n, const std::string& programName);
+   void CreateFilenamesAndLinks(const size_t n, const std::string& programName,
+      const std::string& extension = "svg");
    void CompareHtmlFromWebIO(
       const std::string host,
       const std::string rawprefix,

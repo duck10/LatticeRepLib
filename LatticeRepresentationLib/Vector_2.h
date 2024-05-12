@@ -12,6 +12,7 @@ public:
    Vector_2(const Vector_2& v);
    friend std::ostream& operator<< (std::ostream& o, const Vector_2& v);
    Vector_2 AveragePosition(const std::vector<Vector_2>& vv) const;
+   static size_t size() { return 2; }
 
    Vector_2& operator = (const Vector_2& v);
    Vector_2 operator+ (const Vector_2& v) const;

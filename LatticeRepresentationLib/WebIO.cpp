@@ -102,10 +102,11 @@ void WebIO::GetWebBlockSize(int argc, char* argv[]) {
    }
 }
 
-void WebIO::CreateFilenamesAndLinks(const size_t n, const std::string& programName)
+void WebIO::CreateFilenamesAndLinks(const size_t n,
+   const std::string& programName, const std::string& extension)
 {
    m_basicfileNameList = LRL_CreateFileName::CreateListOfFilenames(n,
-      programName, "svg", m_usetimestamp, m_blockstart, m_blocksize);
+      programName, extension, m_usetimestamp, m_blockstart, m_blocksize);
    m_FileNameList = LRL_CreateFileName::CreateRawListOfFilenames(m_basicfileNameList, m_rawprefix);
 
    if (m_hasWebInstructions) {
