@@ -16,20 +16,16 @@ int main()
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
    LRL_WriteLatticeData reader;
+   reader.SetPrecision(7);
 
    std::vector<LRL_Cell> inverses;
    for (const auto& data : inputList)
    {
-      const LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(data.GetLattice(), data.GetCell());
-      inverses.emplace_back(pCell.Inverse());
+      //const LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(data.GetLattice(), data.GetCell());
+      inverses.emplace_back(data.GetCell().Inverse());
    }
 
    for (const auto& inv : inverses) {
-      std::cout << reader.Write(G6(LRL_Cell()), inv);
+      std::cout << reader.Write(LRL_Cell(), inv);
    }
 }
-/*
-QUESTIONS
-how to choose output data type?
-should output type for each input match that item's type?
-*/
