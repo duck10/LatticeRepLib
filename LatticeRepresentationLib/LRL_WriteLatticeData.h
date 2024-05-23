@@ -13,6 +13,9 @@
 class LRL_WriteLatticeData {
 public:
 
+   LRL_WriteLatticeData()
+      : m_precision(3) {}
+
    void SetPrecision(const int n) { m_precision = n; }
    int GetPrecision() const { return m_precision; }
 
@@ -35,11 +38,11 @@ private:
    template<typename OUTPUTTYPE>
    std::string Formatter(const OUTPUTTYPE& type, const LRL_Cell& cell) const {
       std::stringstream out;
-      std::streamsize oldPrecision = std::cout.precision();
+      const std::streamsize oldPrecision = std::cout.precision();
       out << std::setprecision(m_precision);
       out << "P ";
       for (size_t i = 0; i < cell.size(); ++i) {
-         out << std::to_string(cell[i]) << " ";
+         out << std::setprecision(m_precision) <<cell[i] << " ";
       }
 
       out << "\n";
@@ -50,11 +53,11 @@ private:
 
    std::string Formatter(const LRL_Cell& cell) const {
       std::stringstream out;
-      std::streamsize oldPrecision = std::cout.precision();
-      out << std::setprecision(m_precision);
+      const std::streamsize oldPrecision = std::cout.precision();
+      out << std::fixed << std::showpoint << std::setprecision(m_precision);
       out << "P ";
       for (size_t i = 0; i < cell.size(); ++i) {
-         out << std::to_string(cell[i]) << " ";
+         out << std::setprecision(m_precision) << cell[i] << " ";
       }
 
       out << "\n";
@@ -64,7 +67,7 @@ private:
    }
 
 private:
-   int m_precision = 3;
+   int m_precision;
 
 };
 
