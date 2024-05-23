@@ -188,6 +188,7 @@
     <ClCompile Include="LRL_Cell_Degrees.cpp" />
     <ClCompile Include="LRL_CoordinateConversionMatrices.cpp" />
     <ClCompile Include="LRL_LatticeMatcher.cpp" />
+    <ClCompile Include="LRL_WriteLatticeData.cpp" />
     <ClCompile Include="MatD13.cpp" />
     <ClCompile Include="MatDC7u.cpp" />
     <ClCompile Include="MatricesForOneDeloneType.cpp" />
@@ -263,6 +264,7 @@
     <ClInclude Include="LRL_GetCommandArgs.h" />
     <ClInclude Include="LRL_indices.h" />
     <ClInclude Include="LRL_LatticeMatcher.h" />
+    <ClInclude Include="LRL_WriteLatticeData.h" />
     <ClInclude Include="MatD13.h" />
     <ClInclude Include="MatDC7u.h" />
     <ClInclude Include="MatricesForOneDeloneType.h" />

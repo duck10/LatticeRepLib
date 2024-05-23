@@ -69,6 +69,7 @@
     <ClCompile Include="Vector_2.cpp" />
     <ClCompile Include="Polar.cpp" />
     <ClCompile Include="Plots.cpp" />
+    <ClCompile Include="LRL_WriteLatticeData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -152,6 +153,7 @@
     <ClInclude Include="Vector_2.h" />
     <ClInclude Include="Polar.h" />
     <ClInclude Include="Plots.h" />
+    <ClInclude Include="LRL_WriteLatticeData.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
