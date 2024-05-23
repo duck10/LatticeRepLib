@@ -42,6 +42,26 @@ public:
 
 };
 
+class BaseFaceCentered {
+public:
+
+};
+
+class BaseFaceCentered {
+public:
+
+};
+
+class BaseFaceCentered {
+public:
+
+};
+
+class BaseFaceCentered {
+public:
+
+};
+
 class BaseCell {
 public:
    friend std::ostream& operator<< (std::ostream&, const BaseCell&);
