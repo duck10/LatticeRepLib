@@ -386,7 +386,7 @@ G6 G6::operator- (const G6& v) const {
 
 G6 G6::InverseG6Vector(void) const {
    G6 v(*this);
-
+   throw "this code is broken LCA 2024-05-26 -- the angle components are wrong";
    double a = sqrt(v[G6_AA_idx]);
    double b = sqrt(v[G6_BB_idx]);
    double c = sqrt(v[G6_CC_idx]);
