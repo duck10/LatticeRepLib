@@ -3,7 +3,6 @@
 
 #include <cmath>
 #include <iomanip>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -13,63 +12,39 @@
 class LRL_WriteLatticeData {
 public:
 
-   LRL_WriteLatticeData()
-      : m_precision(3) {}
+   explicit(false) LRL_WriteLatticeData(const int precision = 3)
+      : m_precision(precision) {}
 
    void SetPrecision(const int n) { m_precision = n; }
    int GetPrecision() const { return m_precision; }
 
    template<typename OUTPUTTYPE>
-   std::string Write(const OUTPUTTYPE& type,
-      const LRL_Cell& cell) const {
-      std::string out;
-      out += Formatter(type, cell);
-      return out;
+   std::string Write(const OUTPUTTYPE& type, const LRL_Cell& cell) const {
+      return Formatter(type, cell);
    }
 
-   std::string Write(const LRL_Cell& type,
-      const LRL_Cell& cell) const {
-      std::string out;
-      out += Formatter(cell);
-      return out;
-   }
+   std::string WriteLatticeAndCell(const std::string& lattice, const LRL_Cell& cell) const;
 
 private:
    template<typename OUTPUTTYPE>
    std::string Formatter(const OUTPUTTYPE& type, const LRL_Cell& cell) const {
       std::stringstream out;
-      const std::streamsize oldPrecision = std::cout.precision();
-      out << std::setprecision(m_precision);
-      out << "P ";
-      for (size_t i = 0; i < cell.size(); ++i) {
-         out << std::setprecision(m_precision) <<cell[i] << " ";
-      }
-
-      out << "\n";
-      out << std::setprecision(oldPrecision);
-      out.unsetf(std::ios::floatfield);
-      return out.str();
-   }
-
-   std::string Formatter(const LRL_Cell& cell) const {
-      std::stringstream out;
-      const std::streamsize oldPrecision = std::cout.precision();
       out << std::fixed << std::showpoint << std::setprecision(m_precision);
-      out << "P ";
+      out << type.GetName() + " ";
+
+      const OUTPUTTYPE data(cell);
       for (size_t i = 0; i < cell.size(); ++i) {
-         out << std::setprecision(m_precision) << cell[i] << " ";
+         out << data[i] << " ";
       }
 
-      out << "\n";
-      out << std::setprecision(oldPrecision);
-      out.unsetf(std::ios::floatfield);
-      return out.str();
+      return out.str() + "\n";
    }
+
+   std::string Formatter(const LRL_Cell& , const LRL_Cell& cell) const;
+   std::string Formatter(const std::string& lattice, const LRL_Cell& cell)const ;
 
 private:
    int m_precision;
-
 };
-
 
 #endif // LRL_WRITElATTICEDATA

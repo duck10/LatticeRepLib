@@ -1,17 +1,20 @@
 #include "LRL_WriteLatticeData.h"
 
+std::string LRL_WriteLatticeData::Formatter(const LRL_Cell&, const LRL_Cell& cell) const {
+   return Formatter(std::string("P"), cell);
+}
 
-LRL_WriteLatticeData data;
+std::string LRL_WriteLatticeData::WriteLatticeAndCell(const std::string& lattice, const LRL_Cell& cell) const {
+   return Formatter(lattice, LRL_Cell_Degrees(cell));
+}
 
-/*
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      const LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(inputList[i].GetLattice(), inputList[i].GetCell());
-      //std::cout << pCell << std::endl;
-      G6 g;
-      const bool b = Niggli::Reduce(G6(pCell), g);
-      //std::cout << "cycles " << Niggli::GetCycles() << std::endl;
-      std::cout << "G6 " << g << std::endl;
+std::string LRL_WriteLatticeData::Formatter(const std::string& lattice, const LRL_Cell& cell) const {
+   std::stringstream out;
+   out << std::fixed << std::showpoint << std::setprecision(m_precision);
+   out << lattice + " ";
+   for (size_t i = 0; i < cell.size(); ++i) {
+      out << cell[i] << " ";
    }
 
-   */
+   return out.str() + "\n";
+}
