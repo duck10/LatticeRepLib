@@ -18,13 +18,17 @@ int main()
    std::cout << "; ToInverse (to reciprocal cell)" << std::endl;
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
-   LRL_WriteLatticeData writer;
-   writer.SetPrecision(7);
+   LRL_WriteLatticeData writercout;
+   writercout.SetPrecision(7);
+
+   LRL_WriteLatticeData writercerr;
+   writercerr.SetPrecision(12);
 
    for (const auto& data : inputList)
    {
       const std::string lattice(UpdateInverseLatticeType(data.GetLattice()));
       const LRL_Cell inverse(data.GetCell().Inverse());
-      std::cout << writer.WriteLatticeAndCell(lattice, inverse);
+      std::cout << writercout.WriteLatticeAndCell(lattice, inverse);
+      std::cout << writercerr.WriteLatticeAndCell(lattice, inverse);
    }
 }

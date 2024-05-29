@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
    LRL_ReadLatticeData reader;
    const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
   
-   C3Plot thePlot(filename, 1050, 380, 500, 500);
+   C3Plot thePlot(filename, 1200, 500, 500, 500);
 
    std::string svgOutput;
    const std::string intro = thePlot.GetIntro(filename);

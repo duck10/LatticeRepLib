@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\LatticeRepresentationLib\BravaisHeirarchy.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
     <ClCompile Include="CmdSella.cpp" />
   </ItemGroup>
@@ -155,6 +156,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\LatticeRepresentationLib\BravaisHeirarchy.h" />
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
