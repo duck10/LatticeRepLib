@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "LRL_Cell_Degrees.h"
-#include "LRL_ReadLatticeData.h"
 
 class LRL_WriteLatticeData {
 public:
