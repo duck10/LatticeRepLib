@@ -42,22 +42,17 @@ public:
 
 };
 
-class BaseFaceCentered {
+class FrontBackCentered {
 public:
 
 };
 
-class BaseFaceCentered {
+class RightLeftCentered {
 public:
 
 };
 
-class BaseFaceCentered {
-public:
-
-};
-
-class BaseFaceCentered {
+class TopBottomCentered {
 public:
 
 };

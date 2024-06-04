@@ -173,6 +173,7 @@ public:
    {
       DeloneFitResults dfr;
       if (m_failList.empty()) return dfr;
+      dfr.SetRawFit(DBL_MAX);
 
       //AnalyzeS6(GetS6());
 
@@ -182,8 +183,10 @@ public:
 
 
       int zeroPosition = -1;
+      const auto failList = getFailList();
       const auto xxxx = getFailList()[0].GetPlus().second;
-      const double upper = std::min(0.1,2.0 * getFailList()[0].GetPlus().second);
+      const auto thePlus = getFailList()[0].GetPlus();
+      const double upper = 2.0 * getFailList()[0].GetPlus().second;
 
       std::cout << "; cell in BravaisChainFailures::Remediation \n" << GetS6() << std::endl;
       std::cout << "; cell in BravaisChainFailures::Remediation \n" << LRL_Cell_Degrees(GetS6()) << std::endl;
@@ -191,22 +194,23 @@ public:
       const C3 c3v(GetS6());
       const int nc3 = countC3Zeros(c3v, upper);
       const int ns6 = CountS6Zeros(GetS6(), upper);
-      std::cout << "Remdiation # C3 zeros " << nc3 << std::endl;
-      std::cout << "Remediation # S6 zeros " << ns6 << std::endl;
+      std::cout << ";Remdiation # C3 zeros " << nc3 << std::endl;
+      std::cout << ";Remediation # S6 zeros " << ns6 << std::endl;
 
-      std::cout << "C3 magnitudes " << abs(c3v[0]) << ", " << abs(c3v[1]) << ", " << abs(c3v[2]) << std::endl;
+      std::cout << ";C3 magnitudes " << abs(c3v[0]) << ", " << abs(c3v[1]) << ", " << abs(c3v[2]) << std::endl;
 
 
 
       if (ns6 > 3) {
-         std::cout << "iin  BravaisChainFailures::Remediation the case "
+         std::cout << ";in  BravaisChainFailures::Remediation the case "
             "of one C3 zero and other than 3 S6 zeroes is not implemented" << std::endl;
          return dfr;
       }
       else if (nc3 == 0) {
          std::cout << "; in  BravaisChainFailures::Remediation, "
             "no C3 zeros, case is not implemented" << std::endl;
-         return dfr;
+             std::cout << c3v << std::endl;
+        return dfr;
       }
       else if (nc3 > 1) {
          std::cout << "; in  BravaisChainFailures::Remediation, "
@@ -224,7 +228,7 @@ public:
             zeroPosition = FindLoneS6Zero(2, 5, GetS6(), upper);
          }
          else {
-            std::cout << "this is NOT supposed to be possible in in  BravaisChainFailures::Remediation" << std::endl;
+            std::cout << ";this is NOT supposed to be possible in in  BravaisChainFailures::Remediation" << std::endl;
             zeroPosition = 19191;
          }
       }
@@ -235,7 +239,7 @@ public:
       for ( size_t i=0;i<6;++i)
       {
          const MatS6 matrix = sbt.GetOneTransform((zeroPosition + i)%6);
-         std::cout << " in Remediation, i = " << i << std::endl;
+         std::cout << "; in Remediation, i = " << i << std::endl;
 
       //std::cout << " all 6 of the reduction matrices " << std::endl;
       //for (size_t i = 0; i < 6; ++i) {
@@ -264,11 +268,15 @@ public:
       std::pair<std::string, double> minus = getFailList()[0].GetMinus();
       plus.first += " ";
       std::cout << "plus " << PairReporter(plus) << " " << std::endl;
-      std::cout << "hit " << PairReporter(hit) << " " << std::endl;
+      std::cout << "hit " << hit.first << "  " << hit.second << std::endl;
       std::cout << "minus " << PairReporter(minus) << " " << std::endl;
       static const std::vector<std::shared_ptr<GenerateDeloneBase> > sptypes =
          GenerateDeloneBase().Select(hit.first);
-      dfr = Sella::SellaFitXXXXXX(sptypes[0], matrix * GetS6());
+
+      const auto dfrTemp = Sella::SellaFitXXXXXX(sptypes[0], matrix * GetS6());
+      if (dfrTemp.GetRawFit() < dfr.GetRawFit()) {
+         dfr = dfrTemp;
+      }
 
 
       std::cout << dfr.GetGeneralType() << " " << dfr.GetRawFit() << std::endl;

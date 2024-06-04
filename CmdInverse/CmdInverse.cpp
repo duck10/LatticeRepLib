@@ -21,14 +21,14 @@ int main()
    LRL_WriteLatticeData writercout;
    writercout.SetPrecision(7);
 
-   LRL_WriteLatticeData writercerr;
-   writercerr.SetPrecision(12);
+   //LRL_WriteLatticeData writercerr;
+   //writercerr.SetPrecision(12);
 
    for (const auto& data : inputList)
    {
       const std::string lattice(UpdateInverseLatticeType(data.GetLattice()));
       const LRL_Cell inverse(data.GetCell().Inverse());
       std::cout << writercout.WriteLatticeAndCell(lattice, inverse);
-      std::cout << writercerr.WriteLatticeAndCell(lattice, inverse);
+      //std::cout << writercerr.WriteLatticeAndCell(lattice, inverse);
    }
 }
