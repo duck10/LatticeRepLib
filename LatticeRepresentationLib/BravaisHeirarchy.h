@@ -25,7 +25,7 @@ public:
       o << ";  " << bcf.m_hit.first << " " << bcf.m_hit.second << "\n";
       o << ";  " << bcf.m_plus.first << " " << bcf.m_plus.second << "\n";
 
-      std::cout << std::endl;
+      o << std::endl;
       return o;
    }
 
@@ -57,12 +57,12 @@ private:
 class BravaisChainFailures {
 public:
    friend std::ostream& operator<< (std::ostream& o, const BravaisChainFailures& bcf) {
-      o << "; #### Bravais chain failure\n";
-      for (size_t i = 0; i < bcf.m_failList.size(); ++i)
-      {
-         o << ";  " << bcf.m_failList[i] << "\n";
-      }
-      o << std::endl;
+      //o << "; #### Bravais chain failure\n";
+      //for (size_t i = 0; i < bcf.m_failList.size(); ++i)
+      //{
+      //   o << ";  " << bcf.m_failList[i] << "\n";
+      //}
+      //o << std::endl;
    return o;
    }
 
@@ -81,74 +81,19 @@ public:
       m_failList.emplace_back(bf);
    }
 
-   static int countC3Zeros(const C3& c) {
-      int count = 0;
-      const double c3norm = c.norm();
-      const double c1 = abs(c[0]);
-      const double c2 = abs(c[1]);
-      const double c3 = abs(c[2]);
-      if (c1 / c3norm < 1.0e-3) ++count;
-      if (c2 / c3norm < 1.0e-3) ++count;
-      if (c3 / c3norm < 1.0e-3) ++count;
-      return count;
-   }
+   static int countC3Zeros(const C3& c);
 
-   static int countC3Zeros(const C3& c, const double upperLimit) {
-      int count = 0;
-      const double c3norm = c.norm();
-      const double c1 = abs(c[0]);
-      const double c2 = abs(c[1]);
-      const double c3 = abs(c[2]);
-      if (c1 < 1.01*upperLimit) ++count;
-      if (c2 < 1.01*upperLimit) ++count;
-      if (c3 < 1.01*upperLimit) ++count;
-      return count;
-   }
+   static int countC3Zeros(const C3& c, const double upperLimit);
 
-   static int CountS6Zeros(const S6& s6 ) {
-      int count = 0;
-      const double s6norm = s6.norm();
-      for (size_t i = 0; i < 6; ++i) {
-         if (abs(s6[i]) <= 0.0) ++count;
-      }
-      return count;
-   }
+   static int CountS6Zeros(const S6& s6 );
 
-   static int CountS6Zeros(const S6& s6, const double upperLimit) {
-      int count = 0;
-      const double s6norm = s6.norm();
-      for (size_t i = 0; i < 6; ++i) {
-         if (abs(s6[i]) <= 1.01 * upperLimit) ++count;
-      }
-      return count;
-   }
+   static int CountS6Zeros(const S6& s6, const double upperLimit);
 
-   static int FindLoneS6Zero(const size_t n1, const size_t n2, const S6& s6, const double upper) {
-      for (size_t i = 0; i < 6; ++i) {
-         if (i == n1 || i == n2) continue;
-         if ( abs(s6[i]) < upper)  return int(i);
-      }
-      return 19191;
-   }
+   static int FindLoneS6Zero(const size_t n1, const size_t n2, const S6& s6, const double upper);
 
-   static void PrintWork(const std::vector<MatS6>& vm, const S6& s6) {
-      for (const auto& m : vm) {
-         std::cout << m << std::endl << std::endl;
-      }
-      for (const auto& m : vm) {
-         std::cout << m * s6 << std::endl;
-      }
-      for (const auto& m : vm) {
-         std::cout << C3(m * s6) << std::endl;
-      }
-      std::cout << std::endl;
-   }
+   static void PrintWork(const std::vector<MatS6>& vm, const S6& s6);
 
-   static void PrintWork(const MatS6& vm, const S6& s6) {
-      std::cout << vm * s6 << std::endl << std::endl;
-      std::cout << C3(vm * s6) << std::endl << std::endl;
-      std::cout << std::endl;
-   }
+   static void PrintWork(const MatS6& vm, const S6& s6);
 
    //void AnalyzeS6(const S6 s6) {
 
@@ -169,144 +114,23 @@ public:
    //   std::cout << "lowCount " << lowCount << std::endl;
    //}
 
-   DeloneFitResults Remediation()
-   {
-      DeloneFitResults dfr;
-      if (m_failList.empty()) return dfr;
-      dfr.SetRawFit(DBL_MAX);
+   DeloneFitResults Remediation();
 
-      //AnalyzeS6(GetS6());
-
-      double lowestValue = DBL_MAX;
-      for (size_t i = 0; i < 6; ++i) lowestValue = std::min(lowestValue, abs(GetS6()[i]));
-      const double length = GetS6().norm();
-
-
-      int zeroPosition = -1;
-      const auto failList = getFailList();
-      const auto xxxx = getFailList()[0].GetPlus().second;
-      const auto thePlus = getFailList()[0].GetPlus();
-      const double upper = 2.0 * getFailList()[0].GetPlus().second;
-
-      std::cout << "; cell in BravaisChainFailures::Remediation \n" << GetS6() << std::endl;
-      std::cout << "; cell in BravaisChainFailures::Remediation \n" << LRL_Cell_Degrees(GetS6()) << std::endl;
-      std::cout << "; cell in BravaisChainFailures::Remediation \n" << C3(GetS6()) << std::endl;
-      const C3 c3v(GetS6());
-      const int nc3 = countC3Zeros(c3v, upper);
-      const int ns6 = CountS6Zeros(GetS6(), upper);
-      std::cout << ";Remdiation # C3 zeros " << nc3 << std::endl;
-      std::cout << ";Remediation # S6 zeros " << ns6 << std::endl;
-
-      std::cout << ";C3 magnitudes " << abs(c3v[0]) << ", " << abs(c3v[1]) << ", " << abs(c3v[2]) << std::endl;
-
-
-
-      if (ns6 > 3) {
-         std::cout << ";in  BravaisChainFailures::Remediation the case "
-            "of one C3 zero and other than 3 S6 zeroes is not implemented" << std::endl;
-         return dfr;
-      }
-      else if (nc3 == 0) {
-         std::cout << "; in  BravaisChainFailures::Remediation, "
-            "no C3 zeros, case is not implemented" << std::endl;
-             std::cout << c3v << std::endl;
-        return dfr;
-      }
-      else if (nc3 > 1) {
-         std::cout << "; in  BravaisChainFailures::Remediation, "
-            "C3 zeros count >1 is not implemented" << std::endl;
-         return dfr;
-      }
-      else {
-         if (abs(c3v[0]) < upper) {
-            zeroPosition = FindLoneS6Zero(0, 3, GetS6(), upper);
-         }
-         else if (abs(c3v[1]) < upper) {
-            zeroPosition = FindLoneS6Zero(1, 4, GetS6(), upper);
-         }
-         else if (abs(c3v[2]) < upper) {
-            zeroPosition = FindLoneS6Zero(2, 5, GetS6(), upper);
-         }
-         else {
-            std::cout << ";this is NOT supposed to be possible in in  BravaisChainFailures::Remediation" << std::endl;
-            zeroPosition = 19191;
-         }
-      }
-
-      //std::cout << " upper " << upper << "  lone zero position " << zeroPosition << std::endl;
-
-      S6BoundaryTransforms sbt;
-      for ( size_t i=0;i<6;++i)
-      {
-         const MatS6 matrix = sbt.GetOneTransform((zeroPosition + i)%6);
-         std::cout << "; in Remediation, i = " << i << std::endl;
-
-      //std::cout << " all 6 of the reduction matrices " << std::endl;
-      //for (size_t i = 0; i < 6; ++i) {
-      //   std::cout << "matrix " << i << std::endl;
-      //   std::cout << sbt.GetOneTransform(i) << std::endl;
-      //}
-
-      ////debugging lc
-      //const S6 v{ 0,1,2,3,4,5 };
-      //std::cout << " test vector " << v << std::endl;
-      //for (const auto& x : xxx) {
-      //   const MatS6 xi{ x.Inverse(x) };
-      //   std::cout << std::endl;
-      //   std::cout << x << std::endl;
-      //   std::cout << std::endl;
-      //   std::cout << x * v << std::endl;
-      //}
-
-      //std::cout << std::endl;
-      //std::cout << matrix << std::endl << std::endl;
-
-      PrintWork(matrix, S6(c3v));
-
-      std::pair<std::string, double> plus = getFailList()[0].GetPlus();
-      std::pair<std::string, double> hit = getFailList()[0].GetHit();
-      std::pair<std::string, double> minus = getFailList()[0].GetMinus();
-      plus.first += " ";
-      std::cout << "plus " << PairReporter(plus) << " " << std::endl;
-      std::cout << "hit " << hit.first << "  " << hit.second << std::endl;
-      std::cout << "minus " << PairReporter(minus) << " " << std::endl;
-      static const std::vector<std::shared_ptr<GenerateDeloneBase> > sptypes =
-         GenerateDeloneBase().Select(hit.first);
-
-      const auto dfrTemp = Sella::SellaFitXXXXXX(sptypes[0], matrix * GetS6());
-      if (dfrTemp.GetRawFit() < dfr.GetRawFit()) {
-         dfr = dfrTemp;
-      }
-
-
-      std::cout << dfr.GetGeneralType() << " " << dfr.GetRawFit() << std::endl;
-
-      //const S6 modifidedS6A = xxx[zeroPosition][0] * GetS6();
-      //const S6 modifidedS6B = xxx[zeroPosition][1] * GetS6();
-      //const S6 modifidedS6C = xxx[zeroPosition][2] * GetS6();
-      //std::cout << modifidedS6A << std::endl;
-      //std::cout << modifidedS6B << std::endl;
-      //std::cout << modifidedS6C << std::endl;
-      //std::cout << C3(modifidedS6A) << std::endl;
-      //std::cout << C3(modifidedS6B) << std::endl;
-      //std::cout << C3(modifidedS6C) << std::endl;
-      const int i19191 = 19191;
-      }
-      return dfr;
-   }
-
-   std::vector< BravaisChainFail> getFailList() const { return m_failList; }
+   std::vector< BravaisChainFail> getFailList() const;
 
    size_t size() const { return m_failList.size(); }
    bool empty() const { return m_failList.empty(); }
    void SetS6(const S6& s6) { m_s6 = s6; }
    S6 GetS6() const { return m_s6; }
+   DeloneFitResults GetRemediationResult() const { return m_remediationResult; }
+   void SetRemediationResult( const DeloneFitResults& result) { m_remediationResult = result; }
    //void SetStrCell(const std::string& s) { m_strCell = s; }
    //std::string GetStrCell() const { return m_strCell; }
 
 private:
    std::vector<BravaisChainFail> m_failList;
    S6 m_s6;
+   DeloneFitResults m_remediationResult;
    //std::string m_strCell;
 };
 
