@@ -142,7 +142,13 @@ DeloneFitResults Sella::SellaFitXXXXXX(
    const S6 bestv = prjs[nBest] * s6;
    const MatS6 toCanonicalDeloneType/* = sptypes[nBest]->GetToCanon(nBest)*/;
 
-   return DeloneFitResults(bestFit, bestv, smallestPerp, MatS6().unit());
+   DeloneFitResults temp(bestFit, bestv, smallestPerp, MatS6().unit());
+   temp.SetLatticeType(sptype->GetBravaisType());
+   temp.SetDeloneType(sptype->GetBravaisLatticeGeneral());
+   temp.SetGeneralType(sptype->GetBravaisType());
+   temp.SetBavaisType(sptype->GetBravaisType());
+
+   return temp;
 }
 
 double Sella::Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix)
@@ -163,13 +169,13 @@ std::vector<DeloneFitResults> Sella::SellaFit(
 
    for (size_t i = 0; i < sptypes.size(); ++i) {
          DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6);
-         std::cout << "; best fit in SellaFit S6 " << fit.GetBestFit() << "   " << fit.GetRawFit() << " " << sptypes[i]->GetName() << std::endl;
+         //std::cout << "; best fit in SellaFit S6 " << fit.GetBestFit() << "   " << fit.GetRawFit() << " " << sptypes[i]->GetName() << std::endl;
          const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
          fit.SetZscore(zscore);
          fit.SetLatticeType(sptypes[i]->GetBravaisType());
          fit.SetDeloneType(sptypes[i]->GetBravaisType());
          fit.SetReductionMatrix(reductionMatrix);
-         fit.SetType(sptypes[i]->GetBravaisType());
+         fit.SetBavaisType(sptypes[i]->GetBravaisType());
          fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());
 
          fit.SetDifference(s6 - fit.GetBestFit());

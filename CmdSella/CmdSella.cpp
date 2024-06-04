@@ -134,21 +134,21 @@ S6 GetInputSellingReducedVectors(const LRL_ReadLatticeData& input, MatS6& mat) {
    return s6;
 }
 
-std::vector<std::pair<std::string, double> > DeloneFitToScores(std::vector< DeloneFitResults>& fits) {
+std::vector<std::pair<std::string, double> > DeloneFitToScores(const std::vector< DeloneFitResults>& fits) {
 
    std::map<std::string, std::pair<std::string, double> > best;
 
    for (size_t i = 0; i < fits.size(); ++i) {
-      auto test = best.find(fits[i].GetType());
+      auto test = best.find(fits[i].GetBravaisType());
       if (test == best.end()) {
          fits[i].GetZscore();
-         best.insert(std::make_pair(fits[i].GetType(), std::make_pair(fits[i].GetType(), fits[i].GetRawFit())));
+         best.insert(std::make_pair(fits[i].GetBravaisType(), std::make_pair(fits[i].GetBravaisType(), fits[i].GetRawFit())));
       }
       else
       {
          const double previous = (*test).second.second;
          if (fits[i].GetRawFit() < previous) {
-            best[fits[i].GetType()] = std::make_pair(fits[i].GetType(), fits[i].GetRawFit());
+            best[fits[i].GetBravaisType()] = std::make_pair(fits[i].GetBravaisType(), fits[i].GetRawFit());
          }
       }
    }
@@ -208,7 +208,7 @@ std::string NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
    const S6 bestFit = deloneFitResults.GetBestFit();
    double deltaInputBest = DeltaInputBest(deloneFitResults);
    if (deltaInputBest < 1.0E-6) deltaInputBest = 0.0;
-   const std::string latticeType = deloneFitResults.GetType();
+   const std::string latticeType = deloneFitResults.GetBravaisType();
    const std::string latticeGeneral = deloneFitResults.GetGeneralType();
 
    const std::vector<std::shared_ptr<GenerateNiggliBase> >
@@ -242,7 +242,7 @@ static std::vector<std::string>  ListMatchingTypes(const std::vector<DeloneFitRe
    std::vector<std::string> out;
    for (const auto& type: vFilteredDeloneFitResults) {
       const DeloneFitResults& dfr =type;
-      if (dfr.GetType()[0] == 'a') continue;
+      if (dfr.GetBravaisType()[0] == 'a') continue;
       if (type.GetRawFit() / LatI.norm() < g_maxDeltaForMatch) {
          std::ostringstream os;
          os << "P "
@@ -268,14 +268,17 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
 
    const auto vBCF= BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
    outBCF.insert(outBCF.end(), vBCF.begin(), vBCF.end());
-   outBCF = vBCF;
-
+   outBCF = vBCF; 
+   //vDeloneFitResultsForOneLattice.insert(vDeloneFitResultsForOneLattice.end(), vBCF.begin(), vBCF.end());
+   if (!vBCF.empty()) {
+      vDeloneFitResultsForOneLattice.emplace_back(vBCF[0].GetRemediationResult());
+   }
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
 
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneLattice);
    std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
 
-   const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vDeloneFitResultsForOneLattice);
+   const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vFilteredDeloneFitResults);
 
    if (matches.empty() && doProduceSellaGraphics) {
       std::cout << "; apparently the input is triclinic--no other Bravais types matched" << std::endl;;

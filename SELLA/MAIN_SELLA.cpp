@@ -44,16 +44,16 @@ std::vector<std::pair<std::string, double> > DeloneFitToScores(std::vector< Delo
    std::map<std::string, std::pair<std::string, double> > best;
 
    for (size_t i = 0; i < fits.size(); ++i) {
-      auto test = best.find(fits[i].GetType());
+      auto test = best.find(fits[i].GetBravaisType());
       if (test == best.end()) {
          fits[i].GetZscore();
-         best.insert(std::make_pair(fits[i].GetType(), std::make_pair(fits[i].GetType(), fits[i].GetRawFit())));
+         best.insert(std::make_pair(fits[i].GetBravaisType(), std::make_pair(fits[i].GetBravaisType(), fits[i].GetRawFit())));
       }
       else
       {
          const double previous = (*test).second.second;
          if (fits[i].GetRawFit() < previous) {
-            best[fits[i].GetType()] = std::make_pair(fits[i].GetType(), fits[i].GetRawFit());
+            best[fits[i].GetBravaisType()] = std::make_pair(fits[i].GetBravaisType(), fits[i].GetRawFit());
          }
       }
    }
@@ -124,7 +124,7 @@ void NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
    const S6 bestFit = deloneFitResults.GetBestFit();
    double deltaInputBest = DeltaInputBest(deloneFitResults);
    if (deltaInputBest < 1.0E-6) deltaInputBest = 0.0;
-   const std::string latticeType = deloneFitResults.GetType();
+   const std::string latticeType = deloneFitResults.GetBravaisType();
    const std::string latticeGeneral = deloneFitResults.GetGeneralType();
 
    const std::vector<std::shared_ptr<GenerateNiggliBase> >
