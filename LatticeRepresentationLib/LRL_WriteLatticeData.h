@@ -11,7 +11,7 @@
 class LRL_WriteLatticeData {
 public:
 
-   explicit(false) LRL_WriteLatticeData(const int precision = 3)
+   LRL_WriteLatticeData(const int precision = 3)
       : m_precision(precision) {}
 
    void SetPrecision(const int n) { m_precision = n; }

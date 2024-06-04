@@ -268,6 +268,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
 
    const auto vBCF= BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
    outBCF.insert(outBCF.end(), vBCF.begin(), vBCF.end());
+   outBCF = vBCF;
 
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
 

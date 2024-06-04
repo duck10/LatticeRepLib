@@ -18,6 +18,7 @@ public:
    void SetLatticeType(const std::string& s) { m_latticeType = s; }
    void SetDeloneType(const std::string& s) { m_DeloneType = s; }
    double GetRawFit(void) const { return m_rawFit; }
+   void SetRawFit(const double fit) { m_rawFit = fit; }
    double GetZscore(void) const { return m_zscore; }
    S6 GetBestFit(void) const { return m_bestFit; }
    S6 GetDifference(void) const { return m_difference; }

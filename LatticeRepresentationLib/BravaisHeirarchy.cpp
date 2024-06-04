@@ -313,8 +313,13 @@ BravaisChainFailures BravaisHeirarchy::CheckOneBravaisChain(
       }
    }
 
+   const auto remediation = bcf.Remediation();
    const DeloneFitResults dfr(bcf.Remediation());
-   if (!bcf.empty())  bcf.Remediation();
+   if (!bcf.empty())
+   {
+      const DeloneFitResults bffResult = bcf.Remediation();
+      const int i19191 = 19191;
+   }
    return bcf;
 }
 
