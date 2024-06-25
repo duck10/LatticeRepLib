@@ -34,7 +34,8 @@ protected:
    bool SetG6Data( const std::vector<double>& fields );
    bool SetD7Data( const std::vector<double>& fields );
    bool SetS6Data(  const std::vector<double>& fields );
-   bool SetC3Data( const std::vector<double>& fields);
+   bool SetC3Data(const std::vector<double>& fields);
+   bool SetP3Data(const std::vector<double>& fields);
    bool SetB4Data( const std::vector<double>& fields);
    bool SetV7Data(const std::vector<double>& fields);
    bool SetUData(const std::vector<double>& fields);

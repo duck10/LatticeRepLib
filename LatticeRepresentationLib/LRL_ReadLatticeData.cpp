@@ -47,6 +47,9 @@ const std::vector<std::string> vS6_names(S6_names, S6_names + sizeof(S6_names) /
 const std::string C3_names[] = { "C3 " };
 const std::vector<std::string> vC3_names(C3_names, C3_names + sizeof(C3_names) / sizeof(C3_names[0]));
 
+const std::string P3_names[] = { "P3 " };
+const std::vector<std::string> vP3_names(P3_names, P3_names + sizeof(P3_names) / sizeof(P3_names[0]));
+
 const std::string B4_names[] = { "B ", "B4 " };
 const std::vector<std::string> vB4_names(B4_names, B4_names + sizeof(B4_names) / sizeof(B4_names[0]));
 
@@ -63,9 +66,10 @@ static const std::string symbols7(" V V7  ");
 static const std::string symbols13(" /*DC13*/ ");
 static const std::string symbolsSL(" RI SL ");
 static const std::string symbolsC3(" C3 ");
+static const std::string symbolsP3(" P3 ");
 static const std::string symbolsDU(" U DU DC7U ");
 static const std::string allowedLatticeSymbols = symbols6 + symbols7 + symbols13 + symbolsSL + symbolsC3 +
-symbolsDU;
+   symbolsP3 + symbolsDU;
 
 
 size_t SizeForLatticeType(const std::string& lattice) {
@@ -74,6 +78,7 @@ size_t SizeForLatticeType(const std::string& lattice) {
    if (symbols13.find(" " + lattice + " ") != std::string::npos) return 13;
    if (symbolsSL.find(" " + lattice + " ") != std::string::npos) return 6;
    if (symbolsC3.find(" " + lattice + " ") != std::string::npos) return 6;
+   if (symbolsP3.find(" " + lattice + " ") != std::string::npos) return 6;
    if (symbolsDU.find(" " + lattice + " ") != std::string::npos) return 7;
    throw " in SizeForLatticeType, got unrecognized lattice " + lattice;
 }
@@ -164,6 +169,27 @@ bool LRL_ReadLatticeData::SetC3Data(const std::vector<double>& fields) {
    if (test) {
       m_cell = LRL_Cell(C3(fields));
       m_lattice = "P";
+   }
+   return test;
+}
+
+bool LRL_ReadLatticeData::SetP3Data(const std::vector<double>& fields) {
+   const bool test = IsLatticeName(m_inputDataType, vP3_names);
+   if (test) {
+      const double a = sqrt(fields[0] * fields[0] + fields[1] * fields[1]);
+      const double b = sqrt(fields[2] * fields[2] + fields[3] * fields[3]);
+      const double c = sqrt(fields[4] * fields[4] + fields[5] * fields[5]);
+      const double alpha = asin(fields[1] / a);
+      const double beta  = asin(fields[3] / b);
+      const double gamma = asin(fields[5] / c);
+      m_cell[0] = a;
+      m_cell[1] = b;
+      m_cell[2] = c;
+      m_cell[3] = alpha;
+      m_cell[4] = beta;
+      m_cell[5] = gamma;
+      m_cell.SetValid(LRL_Cell::CheckValid(m_cell));
+      const int i19191 = 19191;
    }
    return test;
 }
@@ -294,6 +320,7 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
       //SetD7Data(fields) ||
       SetS6Data(fields) ||
       SetC3Data(fields) ||
+      SetP3Data(fields) ||
       SetB4Data(fields) ||
       SetUData(fields) ||
       SetSLData(fields) ||

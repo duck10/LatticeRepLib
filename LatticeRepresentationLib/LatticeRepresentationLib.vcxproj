@@ -193,6 +193,7 @@
     <ClCompile Include="MatDC7u.cpp" />
     <ClCompile Include="MatricesForOneDeloneType.cpp" />
     <ClCompile Include="Niggli_Types.cpp" />
+    <ClCompile Include="P3.cpp" />
     <ClCompile Include="Plots.cpp" />
     <ClCompile Include="Polar.cpp" />
     <ClCompile Include="PrintTable.cpp" />
@@ -271,6 +272,7 @@
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
+    <ClInclude Include="P3.h" />
     <ClInclude Include="ParseData.h" />
     <ClInclude Include="Plots.h" />
     <ClInclude Include="Polar.h" />
