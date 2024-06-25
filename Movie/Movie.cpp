@@ -13,7 +13,7 @@
 #include "Selling.h"
 #include "WebIO.h"
 
-enum eReductionType { Delone, Niggli };
+enum eReductionType { Delone, Niggli, NONE };
 eReductionType reductionType(Delone);
 enum eProgressType { circular,linear};
 const eProgressType progressType(circular);
@@ -108,6 +108,13 @@ int main(int argc, char* argv[])
       }
    }
    else if (reductionType == Niggli) {
+      for (size_t i = 0; i < fullRangeSteps; ++i) {
+         const double frac = double(i) / double(fullRangeSteps - 1);
+         const std::vector<G6> g6Frames = DoOneFrame(frac, inputG6, reducedG6Input);
+         frames.emplace_back(ConvertVectorOfLatticesToCellDegrees(g6Frames));
+      }
+   }
+   else if (reductionType == NONE) {
       for (size_t i = 0; i < fullRangeSteps; ++i) {
          const double frac = double(i) / double(fullRangeSteps - 1);
          const std::vector<G6> g6Frames = DoOneFrame(frac, inputG6, reducedG6Input);
