@@ -7,6 +7,8 @@ COMMANDS  =  \
 	CmdDelone \
 	CmdDists \
 	CmdGen \
+	CmdInverse \
+	CmdPrim \
 	CmdLM \
 	CmdNiggli \
 	CmdPath \
@@ -20,20 +22,24 @@ COMMANDS  =  \
 	CmdToD13 \
 	CmdToDC \
 	CmdToG6 \
+	CmdToP3 \
 	CmdToS6 \
 	CmdToS6L \
 	CmdToU \
 	CmdToV7 \
 	CmdVolume \
 	PlotC3 \
+	PlotPolar \
 	Dirichlet
 
 SOURCES  =  \
 	CheckInput/CheckInput.cpp \
-        CmdCmplx/CmdCmplx.cpp \
+	CmdCmplx/CmdCmplx.cpp \
 	CmdDelone/CmdDelone.cpp \
 	CmdDists/CmdDists.cpp \
 	CmdGen/CmdGen.cpp \
+	CmdInverse/CmdInverse.cpp \
+	CmdPrim/CmdPrim.cpp \
 	CmdLM/CmdLM.cpp \
 	CmdNiggli/CmdNiggli.cpp \
 	CmdPath/CmdPath.cpp \
@@ -47,6 +53,7 @@ SOURCES  =  \
 	CmdToD13/CmdToD13.cpp \
 	CmdToDC/CmdToDC.cpp \
 	CmdToG6/CmdToG6.cpp \
+	CmdToP3/CmdToP3.cpp \
 	CmdToV7/CmdToV7.cpp \
 	CmdToS6/CmdToS6.cpp \
 	CmdToS6L/CmdToS6L.cpp \
@@ -54,18 +61,21 @@ SOURCES  =  \
 	CmdToV7/CmdToV7.cpp \
 	CmdVolume/CmdVolume.cpp \
 	PlotC3/MAIN_PlotC3.cpp \
-        Dirichlet/Dirichlet_Main.cpp
+	PlotPolar/MAIN_PlotPolar \
+	Dirichlet/Dirichlet_Main.cpp
 
 BINS  =  \
 	CheckInput/CheckInput \
-        CmdCmplx/CmdCmplx.cpp \
+	CmdCmplx/CmdCmplx.cpp \
 	CmdDelone/CmdDelone \
 	CmdDists/CmdDists \
 	CmdGen/CmdGen \
+	CmdInverse/CmdInverse \
 	CmdLM/CmdLM \
 	CmdNiggli/CmdNiggli \
 	CmdPath/CmdPath \
 	CmdPerturb/CmdPerturb \
+	CmdPrim/CmdPrim \
 	CmdS6Refl/CmdS6Refl \
 	CmdScale/CmdScale \
 	CmdSella/CmdSella  \
@@ -75,12 +85,14 @@ BINS  =  \
 	CmdToD13/CmdToD13 \
 	CmdToDC/CmdToDC \
 	CmdToG6/CmdToG6 \
+	CmdToP3/CmdToP3 \
 	CmdToS6/CmdToS6 \
 	CmdToS6L/CmdToS6L \
 	CmdToU/CmdToU \
 	CmdToV7/CmdToV7 \
 	CmdVolume/CmdVolume \
 	PlotC3/PlotC3 \
+	PlotPolar/PlotPolar \
 	Dirichlet/Dirichlet
 
 BIN	= $(PWD)/bin
@@ -114,6 +126,9 @@ CmdDists/CmdDists:  CmdDists/CmdDists.cpp $(BIN)
 CmdGen/CmdGen:  CmdGen/CmdGen.cpp $(BIN)
 	  (cd CmdGen;  make all; cp CmdGen $(BIN))
 
+CmdInverse/CmdInverse:  CmdInverse/CmdInverse.cpp $(BIN)
+	  (cd CmdInverse;  make all; cp CmdInverse $(BIN))
+
 CmdLM/CmdLM:  CmdLM/CmdLM.cpp $(BIN)
 	  (cd CmdLM;  make all; cp CmdLM $(BIN))
 
@@ -125,6 +140,9 @@ CmdPath/CmdPath:  CmdPath/CmdPath.cpp $(BIN)
 
 CmdPerturb/CmdPerturb:  CmdPerturb/CmdPerturb.cpp $(BIN)
 	  (cd CmdPerturb;  make all; cp CmdPerturb $(BIN))
+
+CmdPrim/CmdPrim:  CmdPrim/CmdPrim.cpp $(BIN)
+	  (cd CmdPrim;  make all; cp CmdPrim $(BIN))
 
 CmdS6Refl/CmdS6Refl:  CmdS6Refl/CmdS6Refl.cpp $(BIN)
 	  (cd CmdS6Refl;  make all; cp CmdS6Refl $(BIN))
@@ -153,6 +171,9 @@ CmdToDC/CmdToDC:  CmdToDC/CmdToDC.cpp $(BIN)
 CmdToG6/CmdToG6:  CmdToG6/CmdToG6.cpp $(BIN)
 	  (cd CmdToG6;  make all; cp CmdToG6 $(BIN))
 
+CmdToP3/CmdToP3:  CmdToP3/CmdToP3.cpp $(BIN)
+	  (cd CmdToP3;  make all; cp CmdToP3 $(BIN))
+
 CmdToS6/CmdToS6:  CmdToS6/CmdToS6.cpp $(BIN)
 	  (cd CmdToS6;  make all; cp CmdToS6 $(BIN))
 
@@ -170,6 +191,9 @@ CmdVolume/CmdVolume:  CmdVolume/CmdVolume.cpp $(BIN)
 
 PlotC3/PlotC3:  PlotC3/MAIN_PlotC3.cpp $(BIN)
 	  (cd PlotC3; make all; cp PlotC3 $(BIN))
+
+PlotPolar/PlotPolar:  PlotPolar/MAIN_PlotPolar.cpp $(BIN)
+	  (cd PlotPolar; make all; cp PlotPolar $(BIN))
 
 Dirichlet/Dirichlet:  Dirichlet/Dirichlet_Main.cpp $(BIN)
 	  (cd Dirichlet; make all; cp Dirichlet $(BIN))
