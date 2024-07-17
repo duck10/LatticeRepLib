@@ -1,12 +1,14 @@
 #include "BravaisHeirarchy.h"
 #include "DeloneFitResults.h"
 #include "GenerateLatticeTypeExamples.h"
+#include "GrimmerTree.h"
 #include "LRL_ToString.h"
 #include "S6.h"
 #include "Sella.h"
 
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <sstream>
 
 std::string BravaisHeirarchy::BoilerPlate_2() {
@@ -34,11 +36,11 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
    for (size_t i = 0; i < scores.size(); ++i) {
       const std::pair<std::string, double>& scr = scores[i];
       const std::string strAngstroms = SetWP(sqrt(scr.second));
-      if (scr.first == "cP") 
+      if (scr.first == "cP")
          out +=
          "   <rect id=\"cP\" x=\"215\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"cP\" x=\"220\" y=\"250\" font-size=\"18\">"+
-         strAngstroms+
+         "   <text id=\"cP\" x=\"220\" y=\"250\" font-size=\"18\">" +
+         strAngstroms +
          "</text>\n"
          "\n";
 
@@ -98,8 +100,8 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          "</g>\n";
 
       if (scores[i].first == "oC" || scores[i].first == "os") out +=
-          "   <rect id=\"oS\" x=\"285\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-        "   <text id=\"oS\" x=\"300\" y=\"550\" font-size=\"18\">" +
+         "   <rect id=\"oS\" x=\"285\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
+         "   <text id=\"oS\" x=\"300\" y=\"550\" font-size=\"18\">" +
          strAngstroms +
          " </text>\n"
          "\n";
@@ -129,7 +131,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
          " </text>\n"
          "</g>\n";
 
-      if (scores[i].first == "mC" ||scores[i].first == "mS") out +=
+      if (scores[i].first == "mC" || scores[i].first == "mS") out +=
          "   <g transform=\" translate(90 20)  \"> "
          "   <rect id=\"mS\" x=\"435\" y=\"650\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
          "   <text id=\"mS\" x=\"450\" y=\"670\" font-size=\"18\">" +
@@ -303,7 +305,7 @@ BravaisChainFailures BravaisHeirarchy::CheckOneBravaisChain(
          sst << std::endl << ";################ Bravais chain failure  "
             << name0 << " " << value0 << " "
             << name1 << " " << value1 << " "
-            << name2 << " " << value2 
+            << name2 << " " << value2
             << "\n;##  \ts6 " << vDeloneFitResultsForOneLattice[i].GetOriginalInput()
             << "\n;##\tP " << LRL_Cell_Degrees(vDeloneFitResultsForOneLattice[i].GetOriginalInput()) << std::endl;
          bf.SetDescription(sst.str());
@@ -326,7 +328,7 @@ BravaisChainFailures BravaisHeirarchy::CheckOneBravaisChain(
 std::vector<std::string> BravaisHeirarchy::FormatProjectedCells(const std::vector<std::string>& s) {
    std::vector<std::string> strings{ s };
 
-   if ( ! s.empty())
+   if (!s.empty())
    {
       std::cout << "; projected best fits ( reported distances (in A^2))" << std::endl;
    }
@@ -351,12 +353,12 @@ std::string BravaisHeirarchy::ProduceSVG(
       reduced +
       //FormatCellData(input, reducedCell) +
       BravaisHeirarchy::ScoreLabels(scores);
-      
+
 
    if (!projectedCells.empty()) {
       //s += "; projected best fits ( reported distances (in A^2))";
       for (const auto& cell : projectedCells) {
-         s+=cell;
+         s += cell;
       }
    }
 
@@ -386,6 +388,7 @@ std::vector<std::vector<std::string> > BravaisHeirarchy::CreateBravaisChains()
    return v;
 }
 
+
 std::map<std::string, double> BravaisHeirarchy::GetBestOfEachBravaisType(
    const std::vector<DeloneFitResults>& vDeloneFitResults)
 {
@@ -408,7 +411,7 @@ std::vector<BravaisChainFailures> BravaisHeirarchy::CheckBravaisChains(const std
    static const std::vector<std::vector<std::string> > bravaisChains = CreateBravaisChains();
    for (size_t i = 0; i < bravaisChains.size() - 1; ++i)
    {
-      const auto result =   BravaisHeirarchy::CheckOneBravaisChain(bravaisChains[i], vDeloneFitResultsForOneLattice, valueMap, errorList);
+      const auto result = BravaisHeirarchy::CheckOneBravaisChain(bravaisChains[i], vDeloneFitResultsForOneLattice, valueMap, errorList);
       if (!result.empty()) {
          fitResults.emplace_back(result.GetRemediationResult());
          outBCF.emplace_back(result);
@@ -438,7 +441,7 @@ std::map<std::string, DeloneFitResults>  BravaisHeirarchy::CreateMapForBestExamp
          bravaisMap.insert(std::make_pair(name, result));
       else
          if (delta < (*mapElement).second.GetDifference().norm())
-            (*mapElement).second =result;
+            (*mapElement).second = result;
    }
    return bravaisMap;
 }
@@ -517,8 +520,8 @@ inline DeloneFitResults BravaisChainFailures::Remediation()
 
    //AnalyzeS6(GetS6());
 
-   double lowestValue = DBL_MAX;
-   for (size_t i = 0; i < 6; ++i) lowestValue = std::min(lowestValue, abs(GetS6()[i]));
+   double lowestScalar = DBL_MAX;
+   for (size_t i = 0; i < 6; ++i) lowestScalar = std::min(lowestScalar, abs(GetS6()[i]));
 
    int zeroPosition = -1;
    const auto failList = getFailList();
@@ -573,7 +576,7 @@ inline DeloneFitResults BravaisChainFailures::Remediation()
    //std::cout << " upper " << upper << "  lone zero position " << zeroPosition << std::endl;
 
    S6BoundaryTransforms sbt;
-   for (size_t i = 0; i<6; ++i)
+   for (size_t i = 0; i < 6; ++i)
    {
       const MatS6 matrix = sbt.GetOneTransform((zeroPosition + i) % 6);
       //std::cout << "; in Remediation, i = " << i << std::endl;

@@ -179,9 +179,9 @@ bool LRL_ReadLatticeData::SetP3Data(const std::vector<double>& fields) {
       const double a = sqrt(fields[0] * fields[0] + fields[1] * fields[1]);
       const double b = sqrt(fields[2] * fields[2] + fields[3] * fields[3]);
       const double c = sqrt(fields[4] * fields[4] + fields[5] * fields[5]);
-      const double alpha = asin(fields[1] / a);
-      const double beta  = asin(fields[3] / b);
-      const double gamma = asin(fields[5] / c);
+      const double alpha = atan2(fields[1], fields[0]);
+      const double beta = atan2(fields[3], fields[2]);
+      const double gamma = atan2(fields[5], fields[4]);
       m_cell[0] = a;
       m_cell[1] = b;
       m_cell[2] = c;
@@ -189,7 +189,6 @@ bool LRL_ReadLatticeData::SetP3Data(const std::vector<double>& fields) {
       m_cell[4] = beta;
       m_cell[5] = gamma;
       m_cell.SetValid(LRL_Cell::CheckValid(m_cell));
-      const int i19191 = 19191;
    }
    return test;
 }

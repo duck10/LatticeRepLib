@@ -177,6 +177,7 @@ std::vector<DeloneFitResults> Sella::SellaFit(
          fit.SetReductionMatrix(reductionMatrix);
          fit.SetBavaisType(sptypes[i]->GetBravaisType());
          fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());
+         fit.SetGeneralType(sptypes[i]->GetName());
 
          fit.SetDifference(s6 - fit.GetBestFit());
          fit.SetOriginalInput(s6);

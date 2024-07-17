@@ -8,6 +8,7 @@
 #include "FileOperations.h"
 #include "DeloneFitResults.h"
 #include "GetDate.h"
+#include "GrimmerTree.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LRL_CreateFileName.h"
@@ -264,18 +265,34 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    const S6 oneErrors = 0.1 * input.GetCell();
    int sumBravaisTypesFound = 0;
 
-   std::vector<DeloneFitResults> vDeloneFitResultsForOneLattice = Sella().SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
+   std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice = Sella().SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
+   MapOFDeloneFits theDelonefits;
+   theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
+   MapOfBravaisFits theBravaisfits;
+   theBravaisfits.CreateMapOFBravaisFits(vDeloneFitResultsForOneInputLattice);
 
-   const auto vBCF= BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneLattice);
-   outBCF.insert(outBCF.end(), vBCF.begin(), vBCF.end());
+   //std::cout << theDelonefits << std::endl;
+   //std::cout << theBravaisfits << std::endl;
+
+
+   GrimmerChains gcs(S6(input.GetCell()));
+   gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
+   std::cout << gcs << std::endl;
+   gcs.CheckAllGrimmerChains();
+   
+
+
+
+   const auto vBCF = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneInputLattice);
    outBCF = vBCF; 
-   //vDeloneFitResultsForOneLattice.insert(vDeloneFitResultsForOneLattice.end(), vBCF.begin(), vBCF.end());
    if (!vBCF.empty()) {
-      vDeloneFitResultsForOneLattice.emplace_back(vBCF[0].GetRemediationResult());
+      // this is safe because it will simply be a duplicate lattice type,
+      // and the filtering below will take the best value
+      vDeloneFitResultsForOneInputLattice.emplace_back(vBCF[0].GetRemediationResult());
    }
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
 
-   const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneLattice);
+   const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneInputLattice);
    std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
 
    const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vFilteredDeloneFitResults);
@@ -284,6 +301,9 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
       std::cout << "; apparently the input is triclinic--no other Bravais types matched" << std::endl;;
    }
 
+   // the next loop might be not the best. If there was a 2nd copy of a lattice added
+   // above, then both might be listed here. Probably there should be a filter so
+   // only one for each type gets output.
    for (const auto& out: outBCF)
     std::cout << out << std::endl;
 
@@ -354,10 +374,8 @@ void AnalyzeS6(const S6 s6) {
    std::cout << "lowCount " << lowCount << std::endl;
 }
 
-
 int main(int argc, char* argv[])
 {
-
    bool doProduceSellaGraphics = true;
 
    std::cout << "; SELLA method symmetry searching\n";
