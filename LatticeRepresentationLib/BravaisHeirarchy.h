@@ -145,6 +145,7 @@ public:
 
    static std::vector< BravaisChainFailures> CheckBravaisChains(const std::vector<DeloneFitResults>& v);
    static std::vector<std::vector<std::string> > CreateBravaisChains();
+   std::vector<std::vector<std::string>> CreateBravaisTrees();
    static std::map<std::string, double> GetBestOfEachBravaisType(
       const std::vector<DeloneFitResults>& vDeloneFitResults);
    static std::map<std::string, DeloneFitResults>  CreateMapForBestExamples(

@@ -177,6 +177,7 @@
     <ClCompile Include="FollowerConstants.cpp" />
     <ClCompile Include="FollowerPathGenerator.cpp" />
     <ClCompile Include="GenerateLatticeTypeExamples.cpp" />
+    <ClCompile Include="GrimmerTree.cpp" />
     <ClCompile Include="IT_TypeList.cpp" />
     <ClCompile Include="LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="LabeledSellaMatrices.cpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="FollowerPathGenerator.h" />
     <ClInclude Include="GenerateLatticeTypeExamples.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
+    <ClInclude Include="GrimmerTree.h" />
     <ClInclude Include="IT_TypeList.h" />
     <ClInclude Include="LabeledDeloneTypeMatrices.h" />
     <ClInclude Include="LabeledSellaMatrices.h" />

@@ -71,6 +71,7 @@
     <ClCompile Include="Plots.cpp" />
     <ClCompile Include="LRL_WriteLatticeData.cpp" />
     <ClCompile Include="P3.cpp" />
+    <ClCompile Include="GrimmerTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Plots.h" />
     <ClInclude Include="LRL_WriteLatticeData.h" />
     <ClInclude Include="P3.h" />
+    <ClInclude Include="GrimmerTree.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
