@@ -279,8 +279,6 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
    std::cout << gcs << std::endl;
    gcs.CheckAllGrimmerChains();
-   
-
 
 
    const auto vBCF = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneInputLattice);
