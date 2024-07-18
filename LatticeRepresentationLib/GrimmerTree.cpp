@@ -208,22 +208,22 @@ std::map<std::string, double> MapOFDeloneFits::CreateMapOFDeloneFits(std::vector
 GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain()
 {
    m_fail = false;
-   //double prevFit = m_chain[0].GetFit();
+   double prevFit = m_chain[0].GetFit();
    GrimmerChainFailure fails;
-   //for (size_t i = 0; i < m_chain.size(); ++i) {
-   //   const double fit = m_chain[i].GetFit();
-   //   if (fit < (1.0+1.0E-10)*prevFit) {
-   //      m_fail = true;
-   //      fails.AddBravaistypeAndFit(m_chain[i - 2].GetBravaisType(), m_chain[i - 2].GetFit());
-   //      fails.AddBravaistypeAndFit(m_chain[i-1].GetBravaisType(), m_chain[i-1].GetFit());
-   //      fails.AddBravaistypeAndFit(m_chain[i].GetBravaisType(), m_chain[i].GetFit());
-   //      std::cout << fails << std::endl;
-   //      m_chain.emplace_back(fails[0]);
-   //      m_chain.emplace_back(fails[1]);
-   //      m_chain.emplace_back(fails[2]);
-   //   }
-   //   prevFit = fit;
-   //}
+   for (size_t i = 0; i < m_chain.size(); ++i) {
+      const double fit = m_chain[i].GetFit();
+      if (fit < (1.0+1.0E-10)*prevFit) {
+         m_fail = true;
+         fails.AddBravaistypeAndFit(m_chain[i - 2].GetBravaisType(), m_chain[i - 2].GetFit());
+         fails.AddBravaistypeAndFit(m_chain[i-1].GetBravaisType(), m_chain[i-1].GetFit());
+         fails.AddBravaistypeAndFit(m_chain[i].GetBravaisType(), m_chain[i].GetFit());
+         std::cout << fails << std::endl;
+         m_chain.emplace_back(fails[0]);
+         m_chain.emplace_back(fails[1]);
+         m_chain.emplace_back(fails[2]);
+      }
+      prevFit = fit;
+   }
    return fails;
 }
 
@@ -357,8 +357,8 @@ DeloneFitResults GrimmerChains::Remediation(const DeloneTypeForGrimmer& type, co
    }
    return dfr;
 }
-//
-//GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain() const
-//{
-//   return GrimmerChainFailure();
-//}
+////
+////GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain() const
+////{
+////   return GrimmerChainFailure();
+////}
