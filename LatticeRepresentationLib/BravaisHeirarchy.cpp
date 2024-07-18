@@ -600,7 +600,7 @@ inline DeloneFitResults BravaisChainFailures::Remediation()
 
       //std::cout << std::endl;
       //std::cout << matrix << std::endl << std::endl;
-
+       
       //PrintWork(matrix, S6(c3v));
 
       std::pair<std::string, double> plus = getFailList()[0].GetPlus();

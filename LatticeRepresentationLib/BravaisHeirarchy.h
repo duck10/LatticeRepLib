@@ -102,7 +102,7 @@ public:
    //   std::sort(vec.begin(), vec.end());
 
    //   for (size_t i = 0; i < 6; ++i) {
-   //      vec[i] = abs(vec[i]);
+   //      vec[i] = abs(vec[i]); 
    //   }
    //   int lowCount = 0;
    //   for (size_t i = 0; i < 6; ++i) {

@@ -23,7 +23,7 @@ double Sella::TestOneType(const std::string& label, const S6 &s6, const std::vec
    double best = DBL_MAX;
    size_t bestIndex;
    S6 bestS6;
-   const double s6norm = s6.norm();
+   const double s6norm = s6.norm(); 
    for (size_t i = 0; i < vm.size(); ++i) {
       S6 prp = vm[i] * s6;
       if (best > prp.norm()) {

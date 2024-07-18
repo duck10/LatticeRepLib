@@ -245,9 +245,9 @@ LRL_Cell::LRL_Cell(const G6& g6)
       const double singamma(sqrt(1.0 - cosgamma * cosgamma));
 
       // compute the v angles in radians
-      m_cell[3] = atan2(sinalpha, cosalpha);
-      m_cell[4] = atan2(sinbeta, cosbeta);
-      m_cell[5] = atan2(singamma, cosgamma);
+      m_cell[3] = atan2(cosalpha, sinalpha);
+      m_cell[4] = atan2(cosbeta, sinbeta);
+      m_cell[5] = atan2(cosgamma, singamma);
       m_valid = m_valid && m_cell[0] > lowerlimit && m_cell[1] > lowerlimit && m_cell[2] > lowerlimit &&
          m_cell[3] > lowerlimit && m_cell[4] > lowerlimit && m_cell[5] > lowerlimit &&
          m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
