@@ -148,7 +148,7 @@ void  GrimmerChains::CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBra
    m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_hR, btype_cP });
 
    m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_hR, btype_cI });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_hR, btype_cF });
+   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_hR, btype_cF }); 
 }
 
 

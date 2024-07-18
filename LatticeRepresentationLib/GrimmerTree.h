@@ -127,7 +127,7 @@ public:
    OneGrimmerChain() = default;
    OneGrimmerChain(const std::vector<BravaisTypeForGrimmer>& chain) { m_chain = chain; }
    void PopulateOneBChainWithFitValues(std::map<std::string, double>& themap);
-   std::vector<BravaisTypeForGrimmer> GetChain() const { return m_chain; }
+   std::vector<BravaisTypeForGrimmer> GetChain() const { return m_chain; } 
 private:
    std::vector<BravaisTypeForGrimmer> m_chain;
    bool m_fail;

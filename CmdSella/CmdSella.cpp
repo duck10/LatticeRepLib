@@ -374,7 +374,7 @@ void AnalyzeS6(const S6 s6) {
    std::cout << "lowCount " << lowCount << std::endl;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char* argv[]) 
 {
    bool doProduceSellaGraphics = true;
 

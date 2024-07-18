@@ -10,7 +10,7 @@ template<typename T>
 static std::vector<T> FilterRemoveDups(const std::vector<T>& vt) {
    std::set<T> st;
    std::vector<T> out;
-   st.insert(vt.begin(), vt.end());
+   st.insert(vt.begin(), vt.end()); 
    out.insert(out.end(), st.begin(), st.end());
    return out;
 }

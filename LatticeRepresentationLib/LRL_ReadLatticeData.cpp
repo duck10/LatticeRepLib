@@ -592,7 +592,7 @@ std::vector<LRL_ReadLatticeData> LRL_ReadLatticeData::ReadLatticeData() {
       if (input.IsValid()) {
          input.SetOrdinal(ordinal);
          inputList.push_back(input);
-         ++ordinal;
+         ++ordinal; 
       }
 
    }
