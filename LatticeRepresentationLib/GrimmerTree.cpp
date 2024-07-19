@@ -212,15 +212,14 @@ GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain()
    GrimmerChainFailure fails;
    for (size_t i = 0; i < m_chain.size(); ++i) {
       const double fit = m_chain[i].GetFit();
-      if (fit < (1.0+1.0E-10)*prevFit) {
+      if (fit < (1.0-1.0E-8)*prevFit) {
+         const double test = fit - prevFit;
          m_fail = true;
          fails.AddBravaistypeAndFit(m_chain[i - 2].GetBravaisType(), m_chain[i - 2].GetFit());
          fails.AddBravaistypeAndFit(m_chain[i-1].GetBravaisType(), m_chain[i-1].GetFit());
          fails.AddBravaistypeAndFit(m_chain[i].GetBravaisType(), m_chain[i].GetFit());
          std::cout << fails << std::endl;
-         m_chain.emplace_back(fails[0]);
-         m_chain.emplace_back(fails[1]);
-         m_chain.emplace_back(fails[2]);
+         m_failures = fails;
       }
       prevFit = fit;
    }
@@ -229,11 +228,16 @@ GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain()
 
 void GrimmerChains::CheckAllGrimmerChains()
 {
+   m_hasChainFailure = false;
    for (auto& chain : m_GrimmerChains) {
-     const GrimmerChainFailure fail = chain.CheckOneGrimmerChain();
+      const GrimmerChainFailure fail = chain.CheckOneGrimmerChain();
+      if (!fail.empty()) {
+         m_GrimmerFailures.emplace_back(fail);
+         m_hasChainFailure = true;
+         std::cout << fail << std::endl;
+      }
    }
 }
-
 
 static inline int countC3Zeros(const C3& c) {
    int count = 0;
@@ -289,7 +293,7 @@ GrimmerChainFailure::GrimmerChainFailure(const std::string& bravaisName, const d
 }
 
 
-DeloneFitResults GrimmerChains::Remediation(const DeloneTypeForGrimmer& type, const double deltaFromZeroAllowed) {
+DeloneFitResults GrimmerChains::Remediation(const std::string& bravaisName, const double deltaFromZeroAllowed) {
    DeloneFitResults dfr;
    double lowestScalar = DBL_MAX;
    for (size_t i = 0; i < 6; ++i) lowestScalar = std::min(lowestScalar, abs(m_s6[i]));
@@ -298,8 +302,8 @@ DeloneFitResults GrimmerChains::Remediation(const DeloneTypeForGrimmer& type, co
 
    int zeroPosition = -1;
    const C3 c3v(m_s6);
-   const int nc3 = countC3Zeros(c3v, upperScalar);
-   const int ns6 = CountS6Zeros(m_s6, upperScalar);
+   const int nc3 = countC3Zeros(c3v, 5.0*deltaFromZeroAllowed);
+   const int ns6 = CountS6Zeros(m_s6,5.0*deltaFromZeroAllowed);
 
    if (ns6 > 3) {
       std::cout << ";in  BravaisChainFailures::Remediation the case "
@@ -333,13 +337,24 @@ DeloneFitResults GrimmerChains::Remediation(const DeloneTypeForGrimmer& type, co
       }
    }
 
+
    //std::cout << " upper " << upper << "  lone zero position " << zeroPosition << std::endl;
+   static const std::vector<std::shared_ptr<GenerateDeloneBase> > sptypes =
+      GenerateDeloneBase().Select(bravaisName);
+
 
    S6BoundaryTransforms sbt;
    for (size_t i = 0; i < 6; ++i)
    {
       // apply a boundary transform
       const MatS6 matrix = sbt.GetOneTransform((zeroPosition + i) % 6);
+      const S6 mod = matrix * m_s6;
+      const auto dfrTemp = Sella::SellaFitXXXXXX(sptypes[0], matrix * m_s6);
+      if (dfrTemp.GetRawFit() < dfr.GetRawFit()) {
+         dfr = dfrTemp;
+      }
+
+
       //std::pair<std::string, double> plus = getFailList()[0].GetPlus();
       //std::pair<std::string, double> hit = getFailList()[0].GetHit();
       //std::pair<std::string, double> minus = getFailList()[0].GetMinus();

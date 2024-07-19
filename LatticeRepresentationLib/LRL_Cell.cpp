@@ -200,6 +200,8 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
    const bool b3 = alpha < 179.99 && beta < 179.99 && gamma < 179.99;
    const bool b4 = (alpha + beta + gamma) < 360.0;
    const bool b5 = (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) >= 0.0 - 0.00001;
+   const double xxxx = (alpha + beta + gamma);
+   const double xxxxx = 2.0 * maxNC(alpha, beta, gamma);
    m_valid = m_valid && b1 && b2 && b3 && b4 && b5;
    if (!b5) {
       std::cout << "; angles do not satisfy the triangle inequality\n";
@@ -245,9 +247,9 @@ LRL_Cell::LRL_Cell(const G6& g6)
       const double singamma(sqrt(1.0 - cosgamma * cosgamma));
 
       // compute the v angles in radians
-      m_cell[3] = atan2(cosalpha, sinalpha);
-      m_cell[4] = atan2(cosbeta, sinbeta);
-      m_cell[5] = atan2(cosgamma, singamma);
+      m_cell[3] = atan2(sinalpha, cosalpha);
+      m_cell[4] = atan2(sinbeta, cosbeta);
+      m_cell[5] = atan2(singamma, cosgamma);
       m_valid = m_valid && m_cell[0] > lowerlimit && m_cell[1] > lowerlimit && m_cell[2] > lowerlimit &&
          m_cell[3] > lowerlimit && m_cell[4] > lowerlimit && m_cell[5] > lowerlimit &&
          m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi

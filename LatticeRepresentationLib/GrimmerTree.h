@@ -94,7 +94,7 @@ public:
       }
       else
       {
-         o << "; Grimmer Chain failures\n";
+         o << "; Grimmer Chain failure\n";
          o << obc.m_failGroup[0].first << " " << obc.m_failGroup[0].second << std::endl;
          o << obc.m_failGroup[1].first << " " << obc.m_failGroup[1].second << "  ****" << std::endl;
          o << obc.m_failGroup[2].first << " " << obc.m_failGroup[2].second << std::endl;
@@ -110,6 +110,7 @@ public:
    }
    std::pair<std::string, double> operator[](const std::size_t n) { return m_failGroup[n]; }
    bool empty() const { return m_failGroup.empty(); }
+   std::vector<std::pair<std::string, double>> GetFailures() const { return m_failGroup; }
 private:
    std::vector<std::pair<std::string, double>> m_failGroup;;
 };
@@ -130,6 +131,7 @@ public:
    std::vector<BravaisTypeForGrimmer> GetChain() const { return m_chain; } 
 private:
    std::vector<BravaisTypeForGrimmer> m_chain;
+   GrimmerChainFailure m_failures;
    bool m_fail;
 };
 
@@ -145,12 +147,17 @@ public:
          for (const auto& btypeChain : obc.m_GrimmerChains) {
             o << btypeChain << std::endl;
          }
+         for (size_t i = 0; i < obc.m_GrimmerFailures.size(); ++i) {
+            std::cout << i << " " << obc.m_GrimmerFailures[i] << std::endl;
+
+         }
       }
       return o;
    }
 
    GrimmerChains(const S6& s6)
       : m_s6(s6)
+      , m_hasChainFailure(false)
    {}
 
    std::map<std::string, double> CreateMapOfDeloneFitValues(const std::vector<DeloneFitResults>& fits);
@@ -160,11 +167,15 @@ public:
    std::vector<OneGrimmerChain> GetChains() const { return m_GrimmerChains; }
    void BestInBravaisType(const DeloneTypeForGrimmer& type) const;
    void CheckAllGrimmerChains();
+   bool HasFailure() const { return m_hasChainFailure; }
+   GrimmerChainFailure GetFirstFailure() const { return m_GrimmerFailures[0]; }
+   DeloneFitResults Remediation(const std::string& bravaisName, const double deltaFromZeroAllowed);
 
 private:
    void PopulateChainsWithFitValues(std::map<std::string, double>& themap);
-   DeloneFitResults Remediation(const DeloneTypeForGrimmer& type, const double deltaFromZeroAllowed);
    std::vector<OneGrimmerChain> m_GrimmerChains;
+   std::vector<GrimmerChainFailure> m_GrimmerFailures;
+   bool m_hasChainFailure;
    double m_fit;
    S6 m_s6;
 
