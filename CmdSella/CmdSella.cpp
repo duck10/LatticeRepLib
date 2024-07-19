@@ -279,7 +279,14 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
    std::cout << gcs << std::endl;
    gcs.CheckAllGrimmerChains();
+   std::cout << gcs << std::endl;
 
+   if (gcs.HasFailure()) {
+      GrimmerChainFailure gcf = gcs.GetFirstFailure();
+      const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
+
+      gcs.Remediation(firstFail[1].first, firstFail[0].second);
+   }
 
    const auto vBCF = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneInputLattice);
    outBCF = vBCF; 
