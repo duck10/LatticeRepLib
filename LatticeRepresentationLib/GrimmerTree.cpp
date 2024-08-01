@@ -293,87 +293,42 @@ GrimmerChainFailure::GrimmerChainFailure(const std::string& bravaisName, const d
 }
 
 
-DeloneFitResults GrimmerChains::Remediation(const std::string& bravaisName, const double deltaFromZeroAllowed) {
-   DeloneFitResults dfr;
-   double lowestScalar = DBL_MAX;
-   for (size_t i = 0; i < 6; ++i) lowestScalar = std::min(lowestScalar, abs(m_s6[i]));
-   double upperScalar = -DBL_MAX;
-   for (size_t i = 0; i < 6; ++i) upperScalar = std::min(upperScalar, abs(m_s6[i]));
+DeloneFitResults GrimmerChains::Remediation(const std::string& bravaisName, const double initialFit) {
 
-   int zeroPosition = -1;
-   const C3 c3v(m_s6);
-   const int nc3 = countC3Zeros(c3v, 5.0*deltaFromZeroAllowed);
-   const int ns6 = CountS6Zeros(m_s6,5.0*deltaFromZeroAllowed);
-
-   if (ns6 > 3) {
-      std::cout << ";in  BravaisChainFailures::Remediation the case "
-         "of one C3 zero and other than 3 S6 zeroes is not implemented" << std::endl;
-      return dfr;
-   }
-   else if (nc3 == 0) {
-      std::cout << "; in  BravaisChainzures::Remediation, "
-         "no C3 zeros, case is not implemented" << std::endl;
-      std::cout << c3v << std::endl;
-      return dfr;
-   }
-   else if (nc3 > 1) {
-      std::cout << "; in  BravaisChainFailures::Remediation, "
-         "C3 zeros count >1 is not implemented" << std::endl;
-      return dfr;
-   }
-   else {
-      if (abs(c3v[0]) < deltaFromZeroAllowed) {
-         zeroPosition = FindLoneS6Zero(0, 3, m_s6, deltaFromZeroAllowed);
-      }
-      else if (abs(c3v[1]) < deltaFromZeroAllowed) {
-         zeroPosition = FindLoneS6Zero(1, 4, m_s6, deltaFromZeroAllowed);
-      }
-      else if (abs(c3v[2]) < deltaFromZeroAllowed) {
-         zeroPosition = FindLoneS6Zero(2, 5, m_s6, deltaFromZeroAllowed);
-      }
-      else {
-         std::cout << ";this is NOT supposed to be possible in in  BravaisChainFailures::Remediation" << std::endl;
-         zeroPosition = 19191;
-      }
-   }
-
-
-   //std::cout << " upper " << upper << "  lone zero position " << zeroPosition << std::endl;
    static const std::vector<std::shared_ptr<GenerateDeloneBase> > sptypes =
       GenerateDeloneBase().Select(bravaisName);
 
+   const DeloneFitResults dfrInit = Sella::SellaFitXXXXXX(sptypes[0], m_s6);
+   auto dfr = dfrInit;
 
    S6BoundaryTransforms sbt;
    for (size_t i = 0; i < 6; ++i)
    {
       // apply a boundary transform
-      const MatS6 matrix = sbt.GetOneTransform((zeroPosition + i) % 6);
+      const MatS6 matrix = sbt.GetOneTransform(i);
       const S6 mod = matrix * m_s6;
       const auto dfrTemp = Sella::SellaFitXXXXXX(sptypes[0], matrix * m_s6);
       if (dfrTemp.GetRawFit() < dfr.GetRawFit()) {
          dfr = dfrTemp;
       }
-
-
-      //std::pair<std::string, double> plus = getFailList()[0].GetPlus();
-      //std::pair<std::string, double> hit = getFailList()[0].GetHit();
-      //std::pair<std::string, double> minus = getFailList()[0].GetMinus();
-      //plus.first += " ";
-      //std::cout << "plus " << PairReporter(plus) << " " << std::endl;
-      //std::cout << "hit " << hit.first << "  " << hit.second << std::endl;
-      //std::cout << "minus " << PairReporter(minus) << " " << std::endl;
-      //static const std::vector<std::shared_ptr<GenerateDeloneBase> > sptypes =
-      //   GenerateDeloneBase().Select(hit.first);
-
-      //const auto dfrTemp = Sella::SellaFitXXXXXX(sptypes[0], matrix*m_s6);
-      //if (dfrTemp.GetRawFit() < dfr.GetRawFit()) {
-      //   dfr = dfrTemp;
-      //}
    }
    return dfr;
 }
-////
-////GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain() const
-////{
-////   return GrimmerChainFailure();
-////}
+
+GrimmerChains GrimmerChains::ReplaceRemediation(const DeloneFitResults& newFit) const {
+   std::vector<OneGrimmerChain> chain;
+   GrimmerChains out(*this);
+   const std::string name = newFit.GetDeloneType();
+
+   for (auto& oneChain : m_GrimmerChains) {
+      //chain.emplace_back(oneChain);
+      for (auto& b : oneChain.GetChain()) {
+         if (b.GetBravaisType() == name) {
+            const int i19191 = 19191;
+            b.SetFit(newFit.GetRawFit());
+         }
+      }
+   }
+   return out;
+}
+

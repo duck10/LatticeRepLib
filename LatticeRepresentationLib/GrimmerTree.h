@@ -67,7 +67,7 @@ public:
       o << "; Bravais name " << bt.m_name << std::endl;
       o << "  fit  " << bt.m_fit << "\n";
       for (const auto& type : bt.m_vtypes) {
-         std::cout << "\t\t " << type;
+         o << "\t\t " << type;
       }
       return o;
    }
@@ -148,7 +148,7 @@ public:
             o << btypeChain << std::endl;
          }
          for (size_t i = 0; i < obc.m_GrimmerFailures.size(); ++i) {
-            std::cout << i << " " << obc.m_GrimmerFailures[i] << std::endl;
+            o << i << " " << obc.m_GrimmerFailures[i] << std::endl;
 
          }
       }
@@ -159,6 +159,8 @@ public:
       : m_s6(s6)
       , m_hasChainFailure(false)
    {}
+
+   GrimmerChains ReplaceRemediation(const DeloneFitResults& newFit) const;
 
    std::map<std::string, double> CreateMapOfDeloneFitValues(const std::vector<DeloneFitResults>& fits);
    std::map<std::string, double> CreateMapOfBravaisFitValues(const std::vector<DeloneFitResults>& fits);

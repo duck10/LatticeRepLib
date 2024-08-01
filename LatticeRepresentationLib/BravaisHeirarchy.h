@@ -95,27 +95,6 @@ public:
 
    static void PrintWork(const MatS6& vm, const S6& s6);
 
-   //void AnalyzeS6(const S6 s6) {
-
-   //   const double average = (abs(s6[0]) + abs(s6[1]) + abs(s6[2]) + abs(s6[3]) + abs(s6[4]) + abs(s6[5]))/s6.size();
-   //   std::vector<double> vec(s6.GetVector());
-   //   std::sort(vec.begin(), vec.end());
-
-   //   for (size_t i = 0; i < 6; ++i) {
-   //      vec[i] = abs(vec[i]); 
-   //   }
-   //   int lowCount = 0;
-   //   for (size_t i = 0; i < 6; ++i) {
-   //      if (vec[i] < average) ++lowCount;
-   //   }
-   //   std::cout << "average " << average << std::endl;
-   //   std::cout << s6 << std::endl;
-   //   std::cout << S6(vec) << std::endl;
-   //   std::cout << "lowCount " << lowCount << std::endl;
-   //}
-
-   DeloneFitResults Remediation();
-
    std::vector< BravaisChainFail> getFailList() const;
 
    size_t size() const { return m_failList.size(); }
