@@ -32,7 +32,6 @@ double Sella::TestOneType(const std::string& label, const S6 &s6, const std::vec
          bestS6 = vm[i] * s6;
       }
    }
-
    return best;
 }
 
@@ -49,12 +48,11 @@ std::vector<std::pair<std::string, double> > Sella::GetVectorOfFits(const S6& s6
       for (size_t i = 0; i < LabeledSellaMatrices::perps.size(); ++i) {
          const std::string label = LabeledSellaMatrices::perps[i].GetLabel();
          const double best = TestOneType(label, out, LabeledSellaMatrices::perps[i].GetMatrices());
-         v.push_back(std::make_pair(label, best));
+         v.emplace_back(std::make_pair(label, best));
       }
    }
    return v;
 }
-
 
 std::pair<std::string, double>  Sella::GetBestFitForCrystalSystem(const std::string& type, const S6& s6) {
    std::string bestLabel;

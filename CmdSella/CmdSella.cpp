@@ -277,24 +277,20 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
 
    GrimmerChains gcs(S6(input.GetCell()));
    gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
-   std::cout << gcs << std::endl;
+   //std::cout << gcs << std::endl;
    gcs.CheckAllGrimmerChains();
-   std::cout << gcs << std::endl;
+   //std::cout << gcs << std::endl;
 
    if (gcs.HasFailure()) {
       GrimmerChainFailure gcf = gcs.GetFirstFailure();
       const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
 
-      gcs.Remediation(firstFail[1].first, firstFail[0].second);
+      const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
+      GrimmerChains gcsRevision = gcs.ReplaceRemediation(revisedFit);
+      gcs = gcsRevision;
+      vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
    }
 
-   const auto vBCF = BravaisHeirarchy::CheckBravaisChains(vDeloneFitResultsForOneInputLattice);
-   outBCF = vBCF; 
-   if (!vBCF.empty()) {
-      // this is safe because it will simply be a duplicate lattice type,
-      // and the filtering below will take the best value
-      vDeloneFitResultsForOneInputLattice.emplace_back(vBCF[0].GetRemediationResult());
-   }
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
 
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneInputLattice);
