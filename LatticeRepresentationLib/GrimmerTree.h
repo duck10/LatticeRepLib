@@ -2,6 +2,7 @@
 #define  GRIMMERTREE_H
 
 #include <cmath>
+#include <cfloat>
 #include <string>
 #include <map>
 #include <vector>
