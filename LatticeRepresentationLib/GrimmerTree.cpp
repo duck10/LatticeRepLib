@@ -7,6 +7,7 @@
 #include "Sella.h"
 
 #include <algorithm>
+#include <set>
 #include <utility>
 #include <cmath>
 
@@ -179,7 +180,7 @@ std::map<std::string, double> MapOfBravaisFits::CreateMapOFBravaisFits(std::vect
    std::map<std::string, double> valuemap;
    for (const auto& fit : fits) {
       const double fitvalue = fit.GetRawFit();
-      const std::string bravaisName = fit.GetBravaisType();
+      const std::string bravaisName = fit.GetDeloneType();
       if (valuemap.find(bravaisName) == valuemap.end()) {
          valuemap[bravaisName] = fitvalue;
       }
@@ -229,9 +230,13 @@ GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain()
 void GrimmerChains::CheckAllGrimmerChains()
 {
    m_hasChainFailure = false;
+   std::set<std::string> uniqueFailures; //lca save these up!!!!!!!!!!!!!!
    for (auto& chain : m_GrimmerChains) {
       const GrimmerChainFailure fail = chain.CheckOneGrimmerChain();
       if (!fail.empty()) {
+         std::stringstream ss;
+         ss << fail << std::endl;
+         uniqueFailures.insert(ss.str());
          m_GrimmerFailures.emplace_back(fail);
          m_hasChainFailure = true;
          std::cout << fail << std::endl;

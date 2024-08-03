@@ -141,9 +141,9 @@ DeloneFitResults Sella::SellaFitXXXXXX(
    const MatS6 toCanonicalDeloneType/* = sptypes[nBest]->GetToCanon(nBest)*/;
 
    DeloneFitResults temp(bestFit, bestv, smallestPerp, MatS6().unit());
-   temp.SetLatticeType(sptype->GetBravaisType());
-   temp.SetDeloneType(sptype->GetBravaisLatticeGeneral());
-   temp.SetGeneralType(sptype->GetBravaisType());
+   temp.SetLatticeType(sptype->GetBravaisLatticeGeneral());
+   temp.SetDeloneType(sptype->GetBravaisType());
+   temp.SetGeneralType(name);
    temp.SetBavaisType(sptype->GetBravaisType());
 
    return temp;

@@ -64,7 +64,7 @@ public:
 class BravaisTypeForGrimmer {
 public:
    friend std::ostream& operator<< (std::ostream& o, const BravaisTypeForGrimmer& bt) {
-      o << "; Bravais name " << bt.m_name << std::endl;
+      o << "; Bravais Fit Map " << bt.m_name << std::endl;
       o << "  fit  " << bt.m_fit << "\n";
       for (const auto& type : bt.m_vtypes) {
          o << "\t\t " << type;

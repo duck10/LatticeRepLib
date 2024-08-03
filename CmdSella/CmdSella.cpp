@@ -168,12 +168,6 @@ std::vector<S6> CreateS6Errors(const std::vector< S6>& vs) {
    return out;
 }
 
-double DeltaInputBest(const DeloneFitResults& vDeloneFitResults) {
-   const S6 input = vDeloneFitResults.GetOriginalInput();
-   const S6 bestFit = vDeloneFitResults.GetBestFit();
-   return (input - bestFit).norm();
-}
-
 std::map<std::string, DeloneFitResults>  CreateMapForBestExamples(
    const std::vector<DeloneFitResults>& vDeloneFitResults)
 {
@@ -205,39 +199,6 @@ std::vector<DeloneFitResults> FilterForBestExample(
    return out;
 }
 
-std::string NiggliMatchLatticeType(const DeloneFitResults& deloneFitResults) {
-   const S6 bestFit = deloneFitResults.GetBestFit();
-   double deltaInputBest = DeltaInputBest(deloneFitResults);
-   if (deltaInputBest < 1.0E-6) deltaInputBest = 0.0;
-   const std::string latticeType = deloneFitResults.GetBravaisType();
-   const std::string latticeGeneral = deloneFitResults.GetGeneralType();
-
-   const std::vector<std::shared_ptr<GenerateNiggliBase> >
-      vglb = GenerateNiggliBase().Select(latticeGeneral);
- 
-   std::string out;
-   for (size_t i = 0; i < vglb.size(); ++i) {
-      const std::shared_ptr<GenerateNiggliBase> pt = vglb[i];
-      //if (pt->GetBravaisType()[0] == 'a') continue;
-      G6 probe;
-      Niggli::Reduce(G6(bestFit), probe);
-      const G6 perpV = pt->GetPerp() * probe;
-      double d = perpV.norm();
-      if (d < 1.0E-8) d = 0.0;
-      if (d / probe.norm() > g_maxDeltaForMatch) continue;
-      const G6 centered =  pt->GetToCenter() * probe;
-
-      std::cout << latticeType.substr(1, 1) + " " << LRL_Cell_Degrees(centered)
-         << "  " << latticeType << "  " << deltaInputBest << "\n";
-      std::ostringstream os;
-      os << latticeType.substr(1, 1) + " " << LRL_Cell_Degrees(centered)
-         << "  " << latticeType << "  " << deltaInputBest << "\n";
-      out += os.str();
-      break;
-   }
-   return out;
-}
-
 static std::vector<std::string>  ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
    const S6& LatI) {
    std::vector<std::string> out;
@@ -265,7 +226,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    const S6 oneErrors = 0.1 * input.GetCell();
    int sumBravaisTypesFound = 0;
 
-   std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice = Sella().SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
+   std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice = Sella::SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
    MapOFDeloneFits theDelonefits;
    theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
    MapOfBravaisFits theBravaisfits;
@@ -274,22 +235,23 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    //std::cout << theDelonefits << std::endl;
    //std::cout << theBravaisfits << std::endl;
 
-
    GrimmerChains gcs(S6(input.GetCell()));
    gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
-   //std::cout << gcs << std::endl;
    gcs.CheckAllGrimmerChains();
+   //std::cout << gcs << std::endl;
    //std::cout << gcs << std::endl;
 
    if (gcs.HasFailure()) {
       GrimmerChainFailure gcf = gcs.GetFirstFailure();
       const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
-
       const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
-      GrimmerChains gcsRevision = gcs.ReplaceRemediation(revisedFit);
-      gcs = gcsRevision;
       vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
+      gcs = gcs.ReplaceRemediation(revisedFit);
    }
+   //theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
+   //std::cout << theDelonefits << std::endl;
+   //theBravaisfits.CreateMapOFBravaisFits(vDeloneFitResultsForOneInputLattice);
+   //std::cout << theBravaisfits << std::endl;
 
    std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
 
