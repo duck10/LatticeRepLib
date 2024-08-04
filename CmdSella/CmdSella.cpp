@@ -202,19 +202,60 @@ std::vector<DeloneFitResults> FilterForBestExample(
 static std::vector<std::string>  ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
    const S6& LatI) {
    std::vector<std::string> out;
-   for (const auto& type: vFilteredDeloneFitResults) {
-      const DeloneFitResults& dfr =type;
+   for (const auto& type : vFilteredDeloneFitResults) {
+      const DeloneFitResults& dfr = type;
       if (dfr.GetBravaisType()[0] == 'a') continue;
       if (type.GetRawFit() / LatI.norm() < g_maxDeltaForMatch) {
          std::ostringstream os;
          os << "P "
             << LRL_Cell_Degrees(type.GetBestFit()) << " "
-            << type.GetDeloneType() << " " 
+            << type.GetDeloneType() << " "
             << type.GetRawFit();
          out.emplace_back(os.str());
       }
    }
    return out;
+}
+
+void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
+   std::vector< LabeledSellaMatrices> matrices = LabeledSellaMatrices().GetPrjs();
+   static const std::vector<MatS6> refl_one = MatS6::GetReflections();
+   std::vector<MatS6> prjs;
+            bool matchprj = false;
+   for (const auto& f : vfit) {
+      const S6 bestfit = f.GetBestFit();
+      const S6 inputVector = f.GetOriginalInput();
+      bool match = false;
+      matchprj = false;
+      const auto name = f.GetGeneralType();
+      for (const LabeledSellaMatrices& m : matrices) {
+         if (name == m.GetLabel()) {
+            match = true;
+            matchprj = true;
+            prjs = m.GetMatrices();
+            for (const auto& prj : refl_one) {
+               const S6 projected =prj * inputVector ;
+               const double test = (bestfit - projected).norm();
+               if (test < 1.0E-8) {
+                  matchprj = true;
+               }
+            }
+            const int i19191 = 19191;
+         }
+      }
+      if (!matchprj) {
+         // did not find the name
+         throw("did not find the name");
+      }
+
+
+
+
+
+
+
+      const int i19191 = 19191;
+   }
 }
 
 std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLatticeData& input,
@@ -231,6 +272,8 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
    MapOfBravaisFits theBravaisfits;
    theBravaisfits.CreateMapOFBravaisFits(vDeloneFitResultsForOneInputLattice);
+
+   SearchForToCanon(vDeloneFitResultsForOneInputLattice);
 
    //std::cout << theDelonefits << std::endl;
    //std::cout << theBravaisfits << std::endl;
