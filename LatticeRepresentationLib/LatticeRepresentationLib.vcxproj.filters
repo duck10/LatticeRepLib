@@ -158,6 +158,8 @@
     <ClInclude Include="LRL_WriteLatticeData.h" />
     <ClInclude Include="P3.h" />
     <ClInclude Include="GrimmerTree.h" />
+    <ClInclude Include="R9.h" />
+    <ClInclude Include="R9Dist.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

@@ -279,6 +279,8 @@
     <ClInclude Include="Plots.h" />
     <ClInclude Include="Polar.h" />
     <ClInclude Include="PrintTable.h" />
+    <ClInclude Include="R9.h" />
+    <ClInclude Include="R9Dist.h" />
     <ClInclude Include="Radial.h" />
     <ClInclude Include="ReadTypedData.h" />
     <ClInclude Include="RI.h" />
