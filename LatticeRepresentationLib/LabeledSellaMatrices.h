@@ -23,6 +23,7 @@ public:
    std::vector<MatS6>  GetMatrices() const { return m_vector; }
 
    size_t size() const { return m_vector.size(); }
+   MatS6 operator[](const size_t n) const { return m_vector[n]; }
 
    static const std::vector<LabeledSellaMatrices> projectors;
    static const std::vector<LabeledSellaMatrices> perps;

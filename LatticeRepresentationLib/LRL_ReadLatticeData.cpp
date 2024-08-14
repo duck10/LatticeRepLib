@@ -584,14 +584,13 @@ LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
 
 std::vector<LRL_ReadLatticeData> LRL_ReadLatticeData::ReadLatticeData() {
    std::vector<LRL_ReadLatticeData> inputList;
-   LRL_ReadLatticeData readData;
    LRL_ReadLatticeData  input;
    size_t ordinal = 1;
    while (input.GetLattice() != "EOF") {
       input = read();
       if (input.IsValid()) {
          input.SetOrdinal(ordinal);
-         inputList.push_back(input);
+         inputList.emplace_back(input);
          ++ordinal; 
       }
 
