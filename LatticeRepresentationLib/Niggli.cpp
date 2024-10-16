@@ -1,3 +1,4 @@
+#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
 
 
 #include "D7.h"

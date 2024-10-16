@@ -21,7 +21,7 @@ std::pair<S6, S6> GeneratePairsOfTestData::ScalePairToSpecifedSeparation(const S
 }
 
 S6 GeneratePairsOfTestData::DoReflection(const S6& s, const size_t n) {
-   static const std::vector< S6(*)(const S6&)> refl = S6::SetRelectionFunctions();
+   static const std::vector< S6(*)(const S6&)> refl = S6::SetReflectionFunctions();
    return refl[n](s);
 }
 

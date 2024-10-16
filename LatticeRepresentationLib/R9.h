@@ -209,7 +209,7 @@
 typedef std::array<int, 81> Matrix9x9;
 
 
-std::vector<Matrix9x9> create_r9_permutation_matrices() {
+static std::vector<Matrix9x9> create_r9_permutation_matrices() {
    return {
       // 1. Identity
       {1,0,0,0,0,0,0,0,0, 0,1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,0,0, 0,0,0,1,0,0,0,0,0, 0,0,0,0,1,0,0,0,0, 0,0,0,0,0,1,0,0,0, 0,0,0,0,0,0,1,0,0, 0,0,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0,1},
@@ -321,11 +321,11 @@ public:
    template<typename T>
    R9(const T& t) {
       const S6 s(t);
-      std::cout << "S6 input: ";
-      for (int i = 0; i < 6; ++i) {
-         std::cout << s[i] << " ";
-      }
-      std::cout << std::endl;
+      //std::cout << "S6 input: ";
+      //for (int i = 0; i < 6; ++i) {
+      //   std::cout << s[i] << " ";
+      //}
+      //std::cout << std::endl;
 
       m_data = {
           s[0] + s[1] + s[2],
@@ -339,11 +339,11 @@ public:
           s[2] - s[5]
       };
 
-      std::cout << "Calculated R9: ";
-      for (int i = 0; i < 9; ++i) {
-         std::cout << m_data[i] << " ";
-      }
-      std::cout << std::endl;
+      //std::cout << "Calculated R9: ";
+      //for (int i = 0; i < 9; ++i) {
+      //   std::cout << m_data[i] << " ";
+      //}
+      //std::cout << std::endl;
    }
    double& operator[](size_t index) {
       return m_data[index];
@@ -424,7 +424,7 @@ public:
       return out;
    }
 
-   std::string GetName() const { return "R9"; }
+   static std::string GetName() { return "R9"; }
    double* data() { return m_data.data(); }
 
 private:
@@ -446,16 +446,16 @@ static R9 MV(const Matrix9x9& m, const R9& v)
    return out;
 }
 
-double r9_lattice_distance(const R9& r9_1, const R9& r9_2, const std::vector<Matrix9x9>& r9_permutations) {
-   double min_distance = std::numeric_limits<double>::max();
-
-   for (const auto& Q : r9_permutations) {
-      R9 permuted_r9_1 = MV(Q, r9_1);
-      double distance = (permuted_r9_1 - r9_2).norm();
-      min_distance = std::min(min_distance, distance);
-   }
-
-   return min_distance;
-}
+//double r9_lattice_distance(const R9& r9_1, const R9& r9_2, const std::vector<Matrix9x9>& r9_permutations) {
+//   double min_distance = std::numeric_limits<double>::max();
+//
+//   for (const auto& Q : r9_permutations) {
+//      R9 permuted_r9_1 = MV(Q, r9_1);
+//      double distance = (permuted_r9_1 - r9_2).norm();
+//      min_distance = std::min(min_distance, distance);
+//   }
+//
+//   return min_distance;
+//}
 
 #endif // R9_H

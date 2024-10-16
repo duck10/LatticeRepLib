@@ -13,6 +13,7 @@
 #include "MatN.h"
 #include "S6BoundaryTransforms.h"
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -424,7 +425,6 @@ void MatS6::transpose(void) {
    }
 }
 
-
 double MatS6::at(const size_t n) const {
    return m_mat[n];
 }
@@ -452,45 +452,74 @@ MatS6 MatS6::GetReflection(const size_t n) {
    return vS6_Refl[n];
 }
 
+bool componentsMatch(const std::pair<int, int>& a, const std::pair<int, int>& b) {
+   return (a == b) || (a.first == b.second && a.second == b.first);
+}
+
+std::pair<int, int> permute(const std::vector<int>& indices, const std::pair<int, int>& component) {
+   return { indices[component.first], indices[component.second] };
+}
+
 std::vector<MatS6> MatS6::GetReflections() {
-   if (vS6_Refl.empty()) {
-      vS6_Refl.resize(24);
-      size_t i = 0;
-      vS6_Refl[i++] = MatS6("1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1");
-      vS6_Refl[i++] = MatS6("1 0 0 0 0 0  0 0 1 0 0 0  0 1 0 0 0 0  0 0 0 1 0 0  0 0 0 0 0 1  0 0 0 0 1 0");
-      vS6_Refl[i++] = MatS6("1 0 0 0 0 0  0 0 0 0 0 1  0 0 0 0 1 0  0 0 0 1 0 0  0 0 1 0 0 0  0 1 0 0 0 0");
-      vS6_Refl[i++] = MatS6("1 0 0 0 0 0  0 0 0 0 1 0  0 0 0 0 0 1  0 0 0 1 0 0  0 1 0 0 0 0  0 0 1 0 0 0");
 
-      vS6_Refl[i++] = MatS6("0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1");
-      vS6_Refl[i++] = MatS6("0 0 0 0 0 1  1 0 0 0 0 0  0 0 0 0 1 0  0 0 1 0 0 0  0 0 0 1 0 0  0 1 0 0 0 0");
-      vS6_Refl[i++] = MatS6("0 0 1 0 0 0  1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 1  0 0 0 1 0 0  0 0 0 0 1 0");
-      vS6_Refl[i++] = MatS6("0 0 0 0 1 0  1 0 0 0 0 0  0 0 0 0 0 1  0 1 0 0 0 0  0 0 0 1 0 0  0 0 1 0 0 0");
+      std::vector<MatS6> matrices;
+      std::vector<int> indices = { 0, 1, 2, 3 };  // Representing a, b, c, d
 
-      vS6_Refl[i++] = MatS6("0 1 0 0 0 0  0 0 1 0 0 0  1 0 0 0 0 0  0 0 0 0 1 0  0 0 0 0 0 1  0 0 0 1 0 0");
-      vS6_Refl[i++] = MatS6("0 0 0 0 0 1  0 0 0 0 1 0  1 0 0 0 0 0  0 0 1 0 0 0  0 1 0 0 0 0  0 0 0 1 0 0");
-      vS6_Refl[i++] = MatS6("0 0 1 0 0 0  0 1 0 0 0 0  1 0 0 0 0 0  0 0 0 0 0 1  0 0 0 0 1 0  0 0 0 1 0 0");
-      vS6_Refl[i++] = MatS6("0 0 0 0 1 0  0 0 0 0 0 1  1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0");
+      const std::vector<std::pair<int, int>> s6_components = {
+          {1,2}, {0,2}, {0,1}, {0,3}, {1,3}, {2,3} }; // the indices of the 6 dot products of a,b,c,d
 
-      vS6_Refl[i++] = MatS6("0 0 0 1 0 0  0 0 0 0 1 0  0 0 1 0 0 0  1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 1");
-      vS6_Refl[i++] = MatS6("0 0 0 1 0 0  0 0 1 0 0 0  0 0 0 0 1 0  1 0 0 0 0 0  0 0 0 0 0 1  0 1 0 0 0 0");
-      vS6_Refl[i++] = MatS6("0 0 0 1 0 0  0 0 0 0 0 1  0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0");
-      vS6_Refl[i++] = MatS6("0 0 0 1 0 0  0 1 0 0 0 0  0 0 0 0 0 1  1 0 0 0 0 0  0 0 0 0 1 0  0 0 1 0 0 0");
+      do { // loop over all permutations of a,b,c,d, represented by variable "indices"
+         MatS6 mat = MatS6::Zero();
+         for (int i = 0; i < 6; ++i) { // loop over original indices positions
+            for (int j = 0; j < 6; ++j) {  // loop over posiion of reflected index positions
+               if (componentsMatch(s6_components[i], permute(indices, s6_components[j]))) {
+                  mat[j * 6 + i] = 1.0;
+                  break;
+               }
+            }
+         }
+         matrices.push_back(mat);
+      } while (std::next_permutation(indices.begin(), indices.end()));
 
-      vS6_Refl[i++] = MatS6("0 0 0 0 1 0  0 0 0 1 0 0  0 0 1 0 0 0  0 1 0 0 0 0  1 0 0 0 0 0  0 0 0 0 0 1");
-      vS6_Refl[i++] = MatS6("0 0 0 0 0 1  0 0 0 1 0 0  0 1 0 0 0 0  0 0 1 0 0 0  1 0 0 0 0 0  0 0 0 0 1 0");
-      vS6_Refl[i++] = MatS6("0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1  1 0 0 0 0 0  0 1 0 0 0 0");
-      vS6_Refl[i++] = MatS6("0 1 0 0 0 0  0 0 0 1 0 0  0 0 0 0 0 1  0 0 0 0 1 0  1 0 0 0 0 0  0 0 1 0 0 0");
+      return matrices;
 
-      vS6_Refl[i++] = MatS6("0 0 0 0 1 0  0 0 1 0 0 0  0 0 0 1 0 0  0 1 0 0 0 0  0 0 0 0 0 1  1 0 0 0 0 0");
-      vS6_Refl[i++] = MatS6("0 0 0 0 0 1  0 1 0 0 0 0  0 0 0 1 0 0  0 0 1 0 0 0  0 0 0 0 1 0  1 0 0 0 0 0");
-      vS6_Refl[i++] = MatS6("0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1  0 1 0 0 0 0  1 0 0 0 0 0");
-      vS6_Refl[i++] = MatS6("0 1 0 0 0 0  0 0 0 0 0 1  0 0 0 1 0 0  0 0 0 0 1 0  0 0 1 0 0 0  1 0 0 0 0 0");
+   //if (vS6_Refl.empty()) {
+   //   vS6_Refl.resize(24);
+   //   size_t i = 0;
+   //   vS6_Refl[i++] = MatS6("1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1");
+   //   vS6_Refl[i++] = MatS6("1 0 0 0 0 0  0 0 1 0 0 0  0 1 0 0 0 0  0 0 0 1 0 0  0 0 0 0 0 1  0 0 0 0 1 0");
+   //   vS6_Refl[i++] = MatS6("1 0 0 0 0 0  0 0 0 0 0 1  0 0 0 0 1 0  0 0 0 1 0 0  0 0 1 0 0 0  0 1 0 0 0 0");
+   //   vS6_Refl[i++] = MatS6("1 0 0 0 0 0  0 0 0 0 1 0  0 0 0 0 0 1  0 0 0 1 0 0  0 1 0 0 0 0  0 0 1 0 0 0");
+
+   //   vS6_Refl[i++] = MatS6("0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1");
+   //   vS6_Refl[i++] = MatS6("0 0 0 0 0 1  1 0 0 0 0 0  0 0 0 0 1 0  0 0 1 0 0 0  0 0 0 1 0 0  0 1 0 0 0 0");
+   //   vS6_Refl[i++] = MatS6("0 0 1 0 0 0  1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 1  0 0 0 1 0 0  0 0 0 0 1 0");
+   //   vS6_Refl[i++] = MatS6("0 0 0 0 1 0  1 0 0 0 0 0  0 0 0 0 0 1  0 1 0 0 0 0  0 0 0 1 0 0  0 0 1 0 0 0");
+
+   //   vS6_Refl[i++] = MatS6("0 1 0 0 0 0  0 0 1 0 0 0  1 0 0 0 0 0  0 0 0 0 1 0  0 0 0 0 0 1  0 0 0 1 0 0");
+   //   vS6_Refl[i++] = MatS6("0 0 0 0 0 1  0 0 0 0 1 0  1 0 0 0 0 0  0 0 1 0 0 0  0 1 0 0 0 0  0 0 0 1 0 0");
+   //   vS6_Refl[i++] = MatS6("0 0 1 0 0 0  0 1 0 0 0 0  1 0 0 0 0 0  0 0 0 0 0 1  0 0 0 0 1 0  0 0 0 1 0 0");
+   //   vS6_Refl[i++] = MatS6("0 0 0 0 1 0  0 0 0 0 0 1  1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0");
+
+   //   vS6_Refl[i++] = MatS6("0 0 0 1 0 0  0 0 0 0 1 0  0 0 1 0 0 0  1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 1");
+   //   vS6_Refl[i++] = MatS6("0 0 0 1 0 0  0 0 1 0 0 0  0 0 0 0 1 0  1 0 0 0 0 0  0 0 0 0 0 1  0 1 0 0 0 0");
+   //   vS6_Refl[i++] = MatS6("0 0 0 1 0 0  0 0 0 0 0 1  0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0");
+   //   vS6_Refl[i++] = MatS6("0 0 0 1 0 0  0 1 0 0 0 0  0 0 0 0 0 1  1 0 0 0 0 0  0 0 0 0 1 0  0 0 1 0 0 0");
+
+   //   vS6_Refl[i++] = MatS6("0 0 0 0 1 0  0 0 0 1 0 0  0 0 1 0 0 0  0 1 0 0 0 0  1 0 0 0 0 0  0 0 0 0 0 1");
+   //   vS6_Refl[i++] = MatS6("0 0 0 0 0 1  0 0 0 1 0 0  0 1 0 0 0 0  0 0 1 0 0 0  1 0 0 0 0 0  0 0 0 0 1 0");
+   //   vS6_Refl[i++] = MatS6("0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1  1 0 0 0 0 0  0 1 0 0 0 0");
+   //   vS6_Refl[i++] = MatS6("0 1 0 0 0 0  0 0 0 1 0 0  0 0 0 0 0 1  0 0 0 0 1 0  1 0 0 0 0 0  0 0 1 0 0 0");
+
+   //   vS6_Refl[i++] = MatS6("0 0 0 0 1 0  0 0 1 0 0 0  0 0 0 1 0 0  0 1 0 0 0 0  0 0 0 0 0 1  1 0 0 0 0 0");
+   //   vS6_Refl[i++] = MatS6("0 0 0 0 0 1  0 1 0 0 0 0  0 0 0 1 0 0  0 0 1 0 0 0  0 0 0 0 1 0  1 0 0 0 0 0");
+   //   vS6_Refl[i++] = MatS6("0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1  0 1 0 0 0 0  1 0 0 0 0 0");
+   //   vS6_Refl[i++] = MatS6("0 1 0 0 0 0  0 0 0 0 0 1  0 0 0 1 0 0  0 0 0 0 1 0  0 0 1 0 0 0  1 0 0 0 0 0");
 
       //const S6 v( "1 2 3 4 5 6" );
       //for (size_t i = 0; i < vS6_Refl.size( ); ++i)
       //   std::cout << C3(vS6_Refl[i] * v ) << std::endl;
-   }
-   return vS6_Refl;
+   //return vS6_Refl;
 }
 
 std::vector<MatS6> MatS6::GetBoundaries() {
@@ -504,4 +533,22 @@ std::vector<MatS6> MatS6::GetBoundaries() {
 
 MatS6 MatS6::GetBoundaries(const size_t n) {
    return MatS6();
+}
+
+std::set<MatS6> MatS6::Generate24S6Reflections() {
+   const MatS6 m1(0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0);
+   const MatS6 m2(0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+
+   std::set<MatS6> sm;
+   sm.insert(m1);
+   sm.insert(m2);
+
+   for (size_t i = 0; i < 3; ++i)
+   {
+      for (const auto& s : sm) {
+         sm.insert(s * m1);
+         sm.insert(s * m2);
+      }
+   }
+   return sm;
 }

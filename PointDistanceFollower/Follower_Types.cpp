@@ -1,24 +1,25 @@
 #include "Follower_Types.h"
 #include "G6.h"
 #include "NCDist.h"
+#include "R9.h"
 #include "S6.h"
 
-Follower_Type::Follower_Type (const Follower_Type_D13)
-   : m_name("D13")
+Follower_Type::Follower_Type (const Follower_Type_R9)
+   : m_name("R9")
 {
    m_SellingPath.clear();
    m_NiggliPath.clear();
-   m_D13Path.clear();
+   m_R9Path.clear();
 }
 
-//Follower_Type_D13::Follower_Type_D13()
-//   : Follower_Type_Base<D13>()
+//Follower_Type_R9::Follower_Type_R9()
+//   : Follower_Type_Base<R9>()
 //{
-//   m_name =D13::GetName();
+//   m_name = R9::GetName();
 //}
 
-MultiFollower Follower_Type_D13::CalculateDistances(const MultiFollower& mf) const {
-
+MultiFollower Follower_Type_R9::CalculateDistances(const MultiFollower& mf) const {
+   throw;
    //std::vector<double> vdist;
    //const std::vector<std::pair<G6, G6> >& m_Path(Follower_Type_Base<G6> m_NiggiReducedPath);
    ////const std::vector<std::pair<G6, G6> > secondPath(mf.GetSG6().GetSecondPath());
@@ -37,7 +38,7 @@ MultiFollower Follower_Type_D13::CalculateDistances(const MultiFollower& mf) con
    return m;
 }
 
-void Follower_Type_D13::SetLatticePointChoiceForDistanceCalculation() {
+void Follower_Type_R9::SetLatticePointChoiceForDistanceCalculation() {
    m_latticePointChoiceForDistanceCalculation = (
       FollowerConstants::globalFollowerMode == FollowerConstants::globalChord ||
       FollowerConstants::globalFollowerMode == FollowerConstants::globalSinglePoint) ?

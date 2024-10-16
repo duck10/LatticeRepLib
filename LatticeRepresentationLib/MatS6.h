@@ -1,6 +1,7 @@
 #ifndef MATS6_H
 #define MATS6_H
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -104,6 +105,7 @@ public:
    static MatS6 GetBoundaries(const size_t n);
 
    static std::string GetName() { return "MatS6"; }
+   std::set<MatS6> Generate24S6Reflections();
 
 private:
    MatN m_mat;

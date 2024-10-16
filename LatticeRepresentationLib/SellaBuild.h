@@ -9,12 +9,11 @@
 #include <string>
 #include <vector>
 
+#include "EnhancedS6.h"
 #include "LabeledDeloneTypeMatrices.h"
 #include "LabeledSellaMatrices.h"
 #include "MatS6.h"
 #include "S6.h"
-#include "S6_Ordinals.h"
-#include "StoreResults.h"
 #include "Transformations.h"
 
 class SellaBuild {
@@ -28,8 +27,8 @@ public:
    void ShowIndexResults() const;
 
 private:
-   std::map<std::string, std::vector<S6> > themap;  // no longer used
-   std::map<std::string, std::vector<Transformations> > xfmap;
+   //std::map<std::string, std::vector<S6> > themap;  // no longer used
+   std::map<std::string, std::vector<EnhancedS6> > xfmap;
    std::vector<LabeledSellaMatrices> projectors;
    std::vector<LabeledSellaMatrices> perps;
    StoreResults<std::string, S6> store;
@@ -44,11 +43,7 @@ public:
       const std::set<size_t>& exclusions) {
       return DetermineToProcess(exclusions, zeros); }
    void ProcessItemStoreToVectorMap();
-   void Store(const std::string& label, const S6_Ordinals& s);
-   void Store(const std::string& label, const std::set<S6_Ordinals>& s);
-   void StoreAllReflections(const std::string& label, const S6_Ordinals& s);
    void StoreAllReflections(const std::string& label, const S6& s);
-   void StoreAllReflections(const std::string& label, const std::set<S6_Ordinals>& s);
    void StoreAllReflections(const std::string& label, const std::set<S6>& s);
    static std::set<S6> GenerateAllReflections(const S6& s);
    static std::set<S6> GenerateAllReflections(const std::set<S6_Ordinals>& s);

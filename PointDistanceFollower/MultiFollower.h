@@ -18,6 +18,7 @@
 #include "MultiFollower.h"
 #include "S6.h"
 #include "D7.h"
+#include "R9.h"
 #include "OutlierFinder.h"
 
 enum m_enumLatticePointChoiceForDistanceCalculation { versusFirstPoint, versusCorrespondingPoint };
@@ -36,7 +37,7 @@ public:
    LRL_Path<G6> GetV7( void ) const;
    LRL_Path<S6> GetLM(void) const;
    LRL_Path<DC> GetDC(void) const;
-   LRL_Path<D13> GetD13(void) const;
+   LRL_Path<R9> GetR9(void) const;
 
    MultiFollower CalculateDistancesS6( const MultiFollower& mf ) const;
    MultiFollower CalculateDistancesG6( const MultiFollower& mf ) const;
@@ -45,7 +46,7 @@ public:
    MultiFollower CalculateDistancesV7( const MultiFollower& mf ) const;
    MultiFollower CalculateDistancesLM(const MultiFollower& mf) const;
    MultiFollower CalculateDistancesDC(const MultiFollower& mf) const;
-   MultiFollower CalculateDistancesD13(const MultiFollower& mf) const;
+   MultiFollower CalculateDistancesR9(const MultiFollower& mf) const;
    MultiFollower GenerateAllDistances(void);
    void SetLatticePointChoiceForDistanceCalculation();
 
@@ -56,7 +57,7 @@ public:
    void SetDistancesV7( const std::vector<double>& v ) { m_v7path.SetDistances( v ); }
    void SetDistancesLM(const std::vector<double>& v) { m_lmpath.SetDistances(v); }
    void SetDistancesDC(const std::vector<double>& v) { m_dcpath.SetDistances(v); }
-   //void SetDistancesD13(const std::vector<double>& v) { m_d13path.SetDistances(v); }
+   void SetDistancesR9(const std::vector<double>& v) { m_r9path.SetDistances(v); }
 
    LRL_Path<S6>& GetPathS6( void ) { return m_s6path; }
    LRL_Path<G6>& GetPathG6( void ) { return m_g6path; }
@@ -65,7 +66,7 @@ public:
    LRL_Path<G6>& GetPathV7( void ) { return m_v7path; }
    LRL_Path<S6>& GetPathLM(void) { return m_lmpath; }
    LRL_Path<DC>& GetPathDC(void) { return m_dcpath; }
-   //LRL_Path<D13>& GetPathD13(void) { return m_d13path; }
+   LRL_Path<R9>& GetPathR9(void) { return m_r9path; }
 
    std::pair<double, double> GetMinMax(void) const;
    size_t size(void)const { return maxNC(m_s6path.size(), m_g6path.size(), m_d7path.size(), m_cspath.size()); }
@@ -99,11 +100,11 @@ private:
    LRL_Path<G6> m_v7path;
    LRL_Path<S6> m_lmpath;
    LRL_Path<DC> m_dcpath;
-   // LRL_Path<D13> m_d13path;
+   LRL_Path<R9> m_r9path;
 
    std::vector<std::pair<S6, S6> > m_SellingReducedPath;
-   std::vector<std::pair<G6, G6> >m_NiggiReducedPath;
-   std::vector<std::pair<DC, DC> >m_DCPath;
+   std::vector<std::pair<G6, G6> > m_NiggiReducedPath;
+   std::vector<std::pair<DC, DC> > m_DCPath;
    std::string m_inputVectors;
 
    enum m_enumLatticePointChoiceForDistanceCalculation {versusFirstPoint, versusCorrespondingPoint};
@@ -119,7 +120,6 @@ private:
       for (size_t i = 0; i < s6path.size(); ++i) {
          const std::pair<S6, S6> p(s6path[i]);
          G6 reduced;
-         const bool b = TREDUCE::Reduce(G6(p.second), reduced);
          const T_OUTPUT out(reduced);
          result.push_back(std::make_pair(T_OUTPUT(s6path[i].first), out));
       }

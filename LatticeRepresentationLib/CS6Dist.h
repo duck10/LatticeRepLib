@@ -6,6 +6,11 @@
 //
 //
 
+#pragma warning(disable:4100)  // Visual Studio -- unreferenced formal parameter
+#pragma warning(disable:4101)  // Visual Studio -- unreferenced local variable
+#pragma warning(disable:4505)  // Visual Studio -- unreferenced function with internal linkage has been removed
+#pragma warning(disable:4701)  // Visual Studio -- potentially uninitialized local variable
+#pragma warning(disable:4702)  // Visual Studio -- unreachable code.
 
 #ifndef CS6DIST_H
 #define CS6DIST_H

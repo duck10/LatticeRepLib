@@ -1,18 +1,19 @@
+#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
+
 #include "SellaBuild.h"
 
 #include "Delone.h"
 #include "GenerateRandomLattice.h"
 #include "LRL_ToString.h"
-#include "LRL_MaximaTools.h"
-#include "S6BoundaryTransforms.h"
 #include "S6_Ordinals.h"
 #include "S6Dist.h"
 #include "Selling.h"
+#include "StoreResults.h"
 
 std::vector< std::pair<std::string, MatS6> > SellaBuild::vDeloneTypes = Delone::LoadLabeledLatticeTypeProjectors();
 static const std::vector<MatS6> g_refls = MatS6::GetReflections();
 static const std::vector< S6(*)(const S6&)> fnMakeVirtualCartPoint = S6Dist::SetVCPFunctions();
-static const std::vector<S6(*)(const S6&)> fnRefl = S6::SetRelectionFunctions();
+static const std::vector<S6(*)(const S6&)> fnRefl = S6::SetReflectionFunctions();
 
 std::set<S6> BoundaryAndAllReflections(const size_t n, const S6& s) {
       const std::set<S6> bAndR = SellaBuild::GenerateAllReflections(fnMakeVirtualCartPoint[n](s));
@@ -48,7 +49,7 @@ std::vector<LabeledDeloneTypeMatrices>  SellaBuild::Build() {
    std::cout << std::endl << std::endl << "after ProcessItemStoreToVectorMap, the map " << xfmap.size() << std::endl;
    for (auto ita = xfmap.begin(); ita != xfmap.end(); ++ita) std::cout << (*ita).first << "  " << (*ita).second.size() << std::endl;
    LabeledDeloneTypeMatrices lsm2;
-   const std::vector<LabeledDeloneTypeMatrices> vtypes = lsm2.ProcessVectorMapToPerpsAndProjectors(themap, xfmap);
+   const std::vector<LabeledDeloneTypeMatrices> vtypes = lsm2.ProcessVectorMapToPerpsAndProjectors(/*themap, */xfmap);
 
    lsm2.WriteSellaMatrices(vtypes);
    return vtypes;
@@ -117,29 +118,6 @@ std::vector<MatS6> RemoveForDuplicates(const std::vector<MatS6>& m) {
    return v;
 }
 
-void SellaBuild::Store(const std::string& label, const S6_Ordinals& s) {
-   store.Store(label, s);
-}
-
-void SellaBuild::Store(const std::string& label, const std::set<S6_Ordinals>& s) {
-   for (auto i = s.begin(); i != s.end(); ++i) {
-      Store(label, *i);
-   }
-}
-
-void SellaBuild::StoreAllReflections(const std::string& label, const S6_Ordinals& s1in) {
-   S6_Ordinals s1(s1in);
-
-   for (size_t i = 0; i < fnRefl.size(); ++i) {
-      store.Store(label, fnRefl[i](s1));
-   }
-}
-
-void SellaBuild::StoreAllReflections(const std::string& label, const std::set<S6_Ordinals>& s) {
-   for (std::set<S6_Ordinals>::const_iterator it = s.begin(); it != s.end(); ++it) {
-      StoreAllReflections(label, *it);
-   }
-}
 
 void SellaBuild::StoreAllReflections(const std::string& label, const S6& s) {
    S6_Ordinals s1(s);
@@ -251,13 +229,13 @@ void SellaBuild::Expand(const std::string& label, const MatS6& fromCanon/*, MatS
    //store.ShowResults();
 }
 
-void SellaBuild:: Expand2(const std::string& label, const MatS6& fromCanon) {
-   const S6_Ordinals s6 = MakeSampleType(fromCanon);
-   MatN mn(36);
-   mn.SetVector(fromCanon.GetVector());
-   //const MatS6 toCanon = mn.inverse();
-   const std::set<S6> out =Xpand3(label, s6, fromCanon);
-   StoreAllReflections(label, out);
+void SellaBuild:: Expand2(const std::string& deloneType, const MatS6& projectorForCanonDeloneType) {
+   const S6_Ordinals s6 = MakeSampleType(projectorForCanonDeloneType);
+   MatN projector(36);
+   projector.SetVector(projectorForCanonDeloneType.GetVector());
+   //const MatS6 toCanon = projector.inverse();
+   const std::set<S6> out =Xpand3(deloneType, s6, projectorForCanonDeloneType);
+   StoreAllReflections(deloneType, out);
 }
 
 void SellaBuild::OneBound(const std::string& label, const S6_Ordinals& s1,
@@ -389,9 +367,9 @@ bool SellaBuild::FindDuplicate(const std::vector<S6>& out, const S6& s6) {
    return fail;
 }
 
-static std::vector<Transformations> ConvertS6ToTransformed(const std::vector<S6>& v) {
-   std::vector<Transformations> out;
-   for (const auto& i:v) out.emplace_back(Transformations(i));
+static std::vector<EnhancedS6> ConvertS6ToTransformed(const std::vector<S6>& v) {
+   std::vector<EnhancedS6> out;
+   for (const auto& i:v) out.emplace_back(EnhancedS6(i));
    return out;
 }
 
@@ -515,20 +493,20 @@ std::set<S6> SellaBuild::Xpand2(const std::string& label, const std::set<S6>& vs
    return vs;
 }
 
-std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s, const MatS6& toCanon) {
+std::set<S6> SellaBuild::Xpand3(const std::string& label, const S6& s, const MatS6& projectorForCanonDeloneType) {
    std::set<S6> out;
    const std::vector<size_t> vZeros = FindS6Zeros(s);
    if (vZeros.size() < 3) {
-      return Xpand2(label, s, toCanon);
+      return Xpand2(label, s, projectorForCanonDeloneType);
    }
 
    const S6 s6temp0 = Rounder(fnMakeVirtualCartPoint[vZeros[0]](s));
    const S6 s6temp1 = Rounder(fnMakeVirtualCartPoint[vZeros[1]](s));
    const S6 s6temp2 = Rounder(fnMakeVirtualCartPoint[vZeros[2]](s));
 
-   const std::set<S6>  pluss6temp0 = Rounder(Xpand2(label, SetPos(0, s6temp0), toCanon));
-   const std::set<S6>  pluss6temp1 = Rounder(Xpand2(label, SetPos(1, s6temp1), toCanon));
-   const std::set<S6>  pluss6temp2 = Rounder(Xpand2(label, SetPos(2, s6temp2), toCanon));
+   const std::set<S6>  pluss6temp0 = Rounder(Xpand2(label, SetPos(0, s6temp0), projectorForCanonDeloneType));
+   const std::set<S6>  pluss6temp1 = Rounder(Xpand2(label, SetPos(1, s6temp1), projectorForCanonDeloneType));
+   const std::set<S6>  pluss6temp2 = Rounder(Xpand2(label, SetPos(2, s6temp2), projectorForCanonDeloneType));
 
    const std::set<S6> setRefl1 =Rounder(GenerateAllReflections(SetPos(0, s6temp0)));
    const std::set<S6> setRefl2 =Rounder(GenerateAllReflections(SetPos(1, s6temp1)));

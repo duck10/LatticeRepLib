@@ -1,3 +1,5 @@
+#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
+
 #include "C3.h"
 #include "DeloneFitResults.h"
 #include "DeloneTypeList.h"

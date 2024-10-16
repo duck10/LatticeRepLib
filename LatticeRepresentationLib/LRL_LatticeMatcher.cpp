@@ -1,3 +1,6 @@
+#pragma warning (disable: 4702) // Visual Studio --  unreachable code
+#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
+
 #include "LRL_LatticeMatcher.h"
 
 #include <cfloat>

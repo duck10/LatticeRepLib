@@ -174,6 +174,7 @@
     <ClCompile Include="DC7uBoundaryMatrices.cpp" />
     <ClCompile Include="DeloneFitResults.cpp" />
     <ClCompile Include="Delone_Types.cpp" />
+    <ClCompile Include="EnhancedS6.cpp" />
     <ClCompile Include="FollowerConstants.cpp" />
     <ClCompile Include="FollowerPathGenerator.cpp" />
     <ClCompile Include="GenerateLatticeTypeExamples.cpp" />
@@ -227,6 +228,7 @@
     <ClCompile Include="SellaBuild.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Transformations.cpp" />
     <ClCompile Include="V7.cpp" />
     <ClCompile Include="VecN.cpp" />
     <ClCompile Include="Vector_2.cpp" />
@@ -248,6 +250,7 @@
     <ClInclude Include="DeloneFitResults.h" />
     <ClInclude Include="DeloneTypeVarietyList.h" />
     <ClInclude Include="Delone_Types.h" />
+    <ClInclude Include="EnhancedS6.h" />
     <ClInclude Include="FollowerConstants.h" />
     <ClInclude Include="FollowerPathGenerator.h" />
     <ClInclude Include="GenerateLatticeTypeExamples.h" />

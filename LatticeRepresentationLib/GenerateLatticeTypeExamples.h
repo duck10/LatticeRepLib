@@ -1,3 +1,6 @@
+#pragma warning (disable: 4100) // Visual Studio --  unreferenced formal parameter
+#pragma warning(disable:4101)  // Visual Studio -- unreferenced local variable
+
 #ifndef GENERATELATTICETYPEEXAMPLES_H
 #define GENERATELATTICETYPEEXAMPLES_H
 

@@ -16,7 +16,7 @@
 #include "LabeledSellaMatrices.h"
 #include "MatS6.h"
 #include "S6.h"
-#include "StoreResults.h"
+//#include "StoreResults.h"
 
 class SellaResult {
 public:

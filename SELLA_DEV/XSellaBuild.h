@@ -23,8 +23,8 @@ public:
    double TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm);
    void TestAllTypes(const S6& s6);
    void TestPerps();
-   std::vector<std::pair<std::string, double> > GetVectorOfFits(const S6& s6);
-   void ShowIndexResults() const;
+   //std::vector<std::pair<std::string, double> > GetVectorOfFits(const S6& s6);
+   //void ShowIndexResults() const;
    size_t size(void) const { return themap.size(); }
 
 private:

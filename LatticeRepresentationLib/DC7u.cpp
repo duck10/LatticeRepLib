@@ -1,3 +1,5 @@
+#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
+
 #include "DC7u.h"
 #include "Niggli.h"
 #include "S6.h"

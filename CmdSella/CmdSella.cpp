@@ -17,7 +17,7 @@
 #include "LRL_ReadLatticeData.h"
 #include "LatticeConverter.h"
 #include "MatS6.h"
-#include "Niggli.h"
+////#include "Niggli.h"
 #include "S6.h"
 #include "Sella.h"
 #include "Selling.h"

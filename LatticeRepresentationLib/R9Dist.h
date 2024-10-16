@@ -36,7 +36,7 @@
 
 #define NREFL 24
 
-static int RS[NREFL][81] = {
+static int RS_R9[NREFL][81] = {
    // 1. Identity
    {1,0,0,0,0,0,0,0,0, 0,1,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,0,0, 0,0,0,1,0,0,0,0,0, 0,0,0,0,1,0,0,0,0, 0,0,0,0,0,1,0,0,0, 0,0,0,0,0,0,1,0,0, 0,0,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0,1},
 
@@ -193,34 +193,34 @@ static double norm(double* r) {
 double r9_lattice_distance(double r9_1[9], double r9_2[9]) {
    double min_distance = DBL_MAX;
    std::cout << std::setprecision(6) << std::fixed;
-   std::cout << "r9_1: ";
-   for (size_t i = 0; i < 9; ++i) {
-      std::cout << r9_1[i] << " ";
-   }
-   std::cout << std::endl;
-   std::cout << "r9_2: ";
-   for (size_t i = 0; i < 9; ++i) {
-      std::cout << r9_2[i] << " ";
-   }
-   std::cout << std::endl;
+   //std::cout << "r9_1: ";
+   //for (size_t i = 0; i < 9; ++i) {
+   //   std::cout << r9_1[i] << " ";
+   //}
+   //std::cout << std::endl;
+   //std::cout << "r9_2: ";
+   //for (size_t i = 0; i < 9; ++i) {
+   //   std::cout << r9_2[i] << " ";
+   //}
+   //std::cout << std::endl;
 
    double permuted[9];
    for (size_t i = 0; i < 24; ++i) {
-      imv9(r9_1, RS[i], permuted);
-      std::cout << "Permutation " << i << ": ";
-      for (size_t j = 0; j < 9; ++j) {
-         std::cout << permuted[j] << " ";
-      }
-      std::cout << std::endl;
+      imv9(r9_1, RS_R9[i], permuted);
+      //std::cout << "Permutation " << i << ": ";
+      //for (size_t j = 0; j < 9; ++j) {
+      //   std::cout << permuted[j] << " ";
+      //}
+      //std::cout << std::endl;
 
       double diff[9];
       r9_diff(permuted, r9_2, diff);
       double distance = norm(diff);
-      std::cout << "Distance: " << distance << std::endl;
+      //std::cout << "Distance: " << distance << std::endl;
 
       if (distance < min_distance) {
          min_distance = distance;
-         std::cout << "New minimum distance: " << min_distance << std::endl;
+         //std::cout << "New minimum distance: " << min_distance << std::endl;
       }
    }
    return min_distance;

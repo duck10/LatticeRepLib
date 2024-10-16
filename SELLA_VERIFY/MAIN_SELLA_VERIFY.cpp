@@ -9,6 +9,7 @@
 #include "Nullspace.h"
 #include "rhrand.h"
 #include "Sella.h"
+#include "StoreResults.h"
 
 #include <algorithm>
 #include <iostream>

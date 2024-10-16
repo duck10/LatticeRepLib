@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "EnhancedS6.h"
 #include "S6.h"
 #include "LabeledSellaMatrices.h"
 #include "MatS6.h"
@@ -13,11 +14,13 @@
 
 class LabeledDeloneTypeMatrices {
 public:
-   LabeledDeloneTypeMatrices(){}
+   LabeledDeloneTypeMatrices() {}
+   std::vector<LabeledDeloneTypeMatrices>
+   ProcessVectorMapToPerpsAndProjectors
+   ( const std::map<std::string, std::vector<S6> >& themap);
    std::vector<LabeledDeloneTypeMatrices>
       ProcessVectorMapToPerpsAndProjectors
-      (const std::map<std::string, std::vector<S6> >& themap,
-         const std::map<std::string, std::vector<Transformations> >& xfmap);
+   ( const std::map<std::string, std::vector<EnhancedS6> >& xfmap);
 
    size_t size() const { return m_perps.size(); }
 
@@ -44,6 +47,7 @@ private:
       //const Transformations& xf);
    static MatS6 ToCanon(const S6& s);
    static MatS6 ToCanon(const S6_Ordinals& s);
+   static MatS6 ToCanon(const EnhancedS6& s);
    bool AlreadyHasThisProjector(const MatS6& m, const LabeledDeloneTypeMatrices& lsm) const;
 
    std::string m_label;
@@ -51,6 +55,7 @@ private:
    std::vector<MatS6> m_prjs;
    std::vector<MatS6> m_toCanons;
 
+   std::vector<LabeledDeloneTypeMatrices> MapToMatrices(const std::map<std::string, std::vector<EnhancedS6>>& t) const;
 
 
    template <typename T>
@@ -61,14 +66,20 @@ private:
          const auto& p = *it;
          LabeledDeloneTypeMatrices lsm;
          const std::string& label = p.first;
+         const auto& type = p.second;
+         const auto& typepart = type[0];
+         //const auto& mat = typepart.GetTransformMatrix();
          lsm.m_label = label;
          for (size_t i = 0; i < p.second.size(); ++i) {
-            const S6 s6 = p.second[i].GetVector();
+            const auto s6 = p.second[i].GetVector();
             const MatS6 prj = ProjectorFromVector(label,s6);
             if (!AlreadyHasThisProjector(prj, lsm)) {
                lsm.m_prjs.push_back(ProjectorFromVector(label, p.second[i]));
                lsm.m_perps.push_back(unitM - ProjectorFromVector(label, p.second[i]));
-               //lsm.m_toCanons.push_back(ToCanon(p.second[i]));
+               //MatS6 fromCanon = p.second[i].getTransformMatrix();
+               //const int i19191 = 19191;
+               //lsm.m_toCanons.push_back(MatS6::Inverse(fromCanon));
+               //lsm.m_toCanons.push_back(MatS6::Inverse(p.second[i].getTransformMatrix()));
                // LCA -- NEED TO MAKE ToCanon work for Transformations !!!!!!!!!!!!!!!!!!
             }
          }
