@@ -1,9 +1,11 @@
+#pragma warning (disable: 4100) // Visual Studio --  unreferenced formal parameter
+
 #ifndef BRAVAISHEIRARCHY_H
 #define BRAVAISHEIRARCHY_H
 
 #include "C3.h"
 #include "DeloneFitResults.h"
-#include "GenerateLatticeTypeExamples.h"
+//#include "GenerateLatticeTypeExamples.h"
 #include "LRL_ReadLatticeData.h"
 #include "PairReporter.h"
 #include "S6.h"

@@ -1,4 +1,4 @@
-
+#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
 
 
 #include <algorithm>
@@ -55,7 +55,7 @@ S6Dist::S6Dist(const double dnearzero/* = 1.0*/)
 {
    SetReduceFunctions();
    SetUnreduceFunctions();
-   m_reflectionFunctions = S6::SetRelectionFunctions();
+   m_reflectionFunctions = S6::SetReflectionFunctions();
 }
 
 S6 S6Dist::ApplyReductionFunction(const size_t n, const S6& d) const {

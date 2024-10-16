@@ -1,3 +1,5 @@
+#pragma warning (disable: 4100) // Visual Studio --  unreferenced formal parameter
+
 #ifndef C3_H
 #define C3_H
 
@@ -188,7 +190,6 @@ public:
    template<typename T>
    static C3 ReduceToFundamentalUnit(const T& tin) {
       S6 vout;
-      const bool b = Selling::Reduce(S6(tin), vout);
       return ConvertToFundamentalUnit(C3(vout));
    }
 

@@ -52,7 +52,7 @@ public:
    static LabeledSellaMatrices CreatePrjs_O3();
    static LabeledSellaMatrices CreatePrjs_O4();
    static LabeledSellaMatrices CreatePrjs_O4B();
-   static LabeledSellaMatrices CreatePrjs_O4C();
+   //static LabeledSellaMatrices CreatePrjs_O4C();
    static LabeledSellaMatrices CreatePrjs_O5();
    static LabeledSellaMatrices CreatePrjs_T1();
    static LabeledSellaMatrices CreatePrjs_T2();
@@ -79,7 +79,7 @@ public:
    static LabeledSellaMatrices CreatePerps_O3();
    static LabeledSellaMatrices CreatePerps_O4();
    static LabeledSellaMatrices CreatePerps_O4B();
-   static LabeledSellaMatrices CreatePerps_O4C();
+   //static LabeledSellaMatrices CreatePerps_O4C();
    static LabeledSellaMatrices CreatePerps_O5();
    static LabeledSellaMatrices CreatePerps_T1();
    static LabeledSellaMatrices CreatePerps_T2();
@@ -106,7 +106,7 @@ public:
    static LabeledSellaMatrices CreateToCanon_O3( );
    static LabeledSellaMatrices CreateToCanon_O4();
    static LabeledSellaMatrices CreateToCanon_O4B();
-   static LabeledSellaMatrices CreateToCanon_O4C();
+   //static LabeledSellaMatrices CreateToCanon_O4C();
    static LabeledSellaMatrices CreateToCanon_O5( );
    static LabeledSellaMatrices CreateToCanon_R1( );
    static LabeledSellaMatrices CreateToCanon_R3( );

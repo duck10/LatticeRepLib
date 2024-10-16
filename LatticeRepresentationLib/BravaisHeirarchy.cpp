@@ -1,6 +1,8 @@
+#pragma warning (disable: 4100) // Visual Studio --  unreferenced formal parameter
+
 #include "BravaisHeirarchy.h"
 #include "DeloneFitResults.h"
-#include "GenerateLatticeTypeExamples.h"
+//#include "GenerateLatticeTypeExamples.h"
 #include "GrimmerTree.h"
 #include "LRL_ToString.h"
 #include "S6.h"

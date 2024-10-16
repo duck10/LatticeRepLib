@@ -1,3 +1,5 @@
+#pragma warning (disable: 4100) // Visual Studio --  unreferenced formal parameter
+
 // From paciorek and bonin, 1992");
 #ifndef GENERATED_IT_TYPES_H
 #define GENERATED_IT_TYPES_H

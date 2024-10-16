@@ -6,6 +6,7 @@
 #include "Selling.h"
 
 #include <algorithm>
+#include <array>
 #include <utility>
 
 #include "C3.h"
@@ -125,4 +126,51 @@ bool Selling::Reduce(const S6& in, S6& out) {
 
    bool Selling::IsReduced(const S6& s6, const double delta) {
       return (MaxScalar(s6) <= delta);
+   }
+
+   bool Selling::Reduce(const EnhancedS6& in, EnhancedS6& out) {
+      out = in;
+      MatS6 cumulativeTransform = MatS6::Eye();  // Start with identity matrix
+
+      const int limitReductionCycles = 10000;
+      int cycleCount = 0;
+
+      // Define the reduction matrices
+      static const std::array<MatS6, 6> reductionMatrices = { {
+          MatS6("-1 0 0 0 0 0   1 1 0 0 0 0   1 0 0 0 1 0   -1 0 0 1 0 0   1 0 1 0 0 0   1 0 0 0 0 1"),
+          MatS6("1 1 0 0 0 0   0 -1 0 0 0 0   0 1 0 1 0 0   0 1 1 0 0 0   0 -1 0 0 1 0   0 1 0 0 0 1"),
+          MatS6("1 0 1 0 0 0   0 0 1 1 0 0   0 0 -1 0 0 0   0 1 1 0 0 0   0 0 1 0 1 0   0 0 -1 0 0 1"),
+          MatS6("1 0 0 -1 0 0   0 0 1 1 0 0   0 1 0 1 0 0   0 0 0 -1 0 0   0 0 0 1 1 0   0 0 0 1 0 1"),
+          MatS6("0 0 1 0 1 0   0 1 0 0 -1 0   1 0 0 0 1 0   0 0 0 1 1 0   0 0 0 0 -1 0   0 0 0 0 1 1"),
+          MatS6("0 1 0 0 0 1   1 0 0 0 0 1   0 0 1 0 0 -1   0 0 0 1 0 1   0 0 0 0 1 1   0 0 0 0 0 -1")
+      } };
+
+      while (true) {
+         // Find the maximum positive scalar
+         double maxScalar = out[0];
+         size_t maxIndex = 0;
+         for (size_t i = 1; i < 6; ++i) {
+            if (out[i] > maxScalar) {
+               maxScalar = out[i];
+               maxIndex = i;
+            }
+         }
+
+         if (maxScalar <= 0) break;  // All scalars are non-positive, reduction complete
+
+         // Apply reduction step
+         const MatS6& reductionMatrix = reductionMatrices[maxIndex];
+         out = reductionMatrix * out;
+         cumulativeTransform = reductionMatrix * cumulativeTransform;
+
+         ++cycleCount;
+         if (cycleCount > limitReductionCycles || S6::NegativeSumOfScalars(out) < 0.0) {
+            return false;  // Reduction failed
+         }
+      }
+
+      // Update the final transformation matrix
+      out.setTransformMatrix(cumulativeTransform * in.getTransformMatrix());
+
+      return true;
    }

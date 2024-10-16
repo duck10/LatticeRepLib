@@ -43,7 +43,7 @@ public:
       m_lineColorMap.insert( std::make_pair( "V7", Line( "V7", "orange", 3, -1.0, "" ) ) );
       m_lineColorMap.insert(std::make_pair("LM", Line("LM", "black", 3, -1.0, "")));
       m_lineColorMap.insert(std::make_pair("DC", Line("DC", "darkgray", 3, -1.0, "20,5")));
-      m_lineColorMap.insert(std::make_pair("D13", Line("D13", "darkblue", 3, -1.0, "")));
+      m_lineColorMap.insert(std::make_pair("R9", Line("R9", "darkblue", 3, -1.0, "")));
       m_lineColorMap.insert( std::make_pair( "INVALID", Line( "INVALID", "orange", 3, -1.0, "10,10" ) ) );
 
 

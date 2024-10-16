@@ -2,14 +2,14 @@
 #define FOLLOWER_TYPES
 
 #include <ctime>
-#include "D13.h"
+#include "R9.h"
 #include "MultiFollower.h"
 
 
 
-class Follower_Type_D13 {
+class Follower_Type_R9 {
 public:
-   Follower_Type_D13();
+   Follower_Type_R9();
 
    MultiFollower CalculateDistances(const MultiFollower& mf) const;
    void SetLatticePointChoiceForDistanceCalculation();
@@ -18,7 +18,7 @@ protected:
 
 class Follower_Type {
 public:
-   Follower_Type(const Follower_Type_D13);
+   Follower_Type(const Follower_Type_R9);
   //virtual  std::vector<std::pair<T, T> > GetPath(void) { return m_Path; }
   MultiFollower CalculateDistances(const MultiFollower& mf) const;
   //virtual void SetLatticePointChoiceForDistanceCalculation() = 0;
@@ -28,7 +28,7 @@ protected:
    // data
    std::vector<std::pair<S6, S6> >m_SellingPath;
    std::vector<std::pair<G6, G6> >m_NiggliPath;
-   std::vector<std::pair<D13, D13> >m_D13Path;
+   std::vector<std::pair<R9, R9> >m_R9Path;
    std::string m_name;
    std::clock_t m_ComputeStartTime;
    double m_seconds2ComputerFrame;

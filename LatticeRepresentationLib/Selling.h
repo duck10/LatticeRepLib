@@ -1,6 +1,8 @@
 #ifndef SELLING_H
 #define SELLING_H
 
+#include "EnhancedS6.h"
+
 class MatS6;
 #include "S6.h"
 
@@ -42,6 +44,9 @@ public:
    static void SetListSteps(const bool b) { listSteps = b; }
 
    static std::string GetName() { return "Selling"; }
+
+   bool Reduce(const EnhancedS6& in, EnhancedS6& out);
+
 
 private:
    static void ListSteps(const S6& s6);

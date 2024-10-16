@@ -1,15 +1,19 @@
 #ifndef TRANSFORMATIONS_H
 #define TRANSFORMATIONS_H
 
+#include "S6.h"
+#include "EnhancedS6.h"
 
 class Transformations : public S6 {
 public:
-   Transformations(const S6& s) : S6(s) {}
-   void SetToCanon(const MatS6& m) { m_toCanon = m; }
-   MatS6 GetToCanon(void) const { return m_toCanon; }
+   Transformations();
+   explicit Transformations(const EnhancedS6& s);
 
-protected:
-   MatS6 m_toCanon;
+   const EnhancedS6& getEnhancedS6() const { return m_s; }
+   EnhancedS6 operator()(const EnhancedS6& v) const;
+
+private:
+   EnhancedS6 m_s;
 };
 
 

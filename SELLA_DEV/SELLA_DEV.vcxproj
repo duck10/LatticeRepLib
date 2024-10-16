@@ -19,11 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\LatticeRepresentationLib\S6_Ordinals.cpp" />
     <ClCompile Include="MAIN_SELLA_DEV.cpp" />
+    <ClCompile Include="S6_Ordinals.cpp" />
+    <ClCompile Include="SellaBuild.cpp" />
+    <ClCompile Include="VCPVector..cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\LatticeRepresentationLib\S6_Ordinals.h" />
+    <ClInclude Include="S6_Ordinals.h" />
+    <ClInclude Include="SellaBuild.h" />
+    <ClInclude Include="VCPVector.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">

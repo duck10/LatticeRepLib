@@ -1,3 +1,5 @@
+#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
+
 #include "GenerateRandomLattice.h"
 #include "LabeledSellaMatrices.h"
 #include "LabeledDeloneTypeMatrices.h"
@@ -5,14 +7,22 @@
 #include "DeloneTypeList.h"
 #include "Sella.h"
 
+#include <cmath>
 #include <string>
 #include <sstream>
 
+double MaxDelta(const MatS6& m1, const MatS6& m2) {
+   double out = 0.0;
+   for (size_t i = 0; i <m1.size(); ++i) {
+      out =std::max(out, abs(m1[i] - m2[i]));
+   }
+   return out;
+}
 
 bool LabeledDeloneTypeMatrices::AlreadyHasThisProjector( const MatS6& m, const LabeledDeloneTypeMatrices& lsm) const{
    for (size_t i=0; i<lsm.m_prjs.size(); ++i ) {
-      const double d = (m - lsm.m_prjs[i]).norm();
-      if ((m - lsm.m_prjs[i]).norm() < 1.0E-4) return true;
+      const double maxDelta = MaxDelta(m, lsm.m_prjs[i]);
+      if (maxDelta < 1.0E-8) return true;
    }
    return false;
 }
@@ -24,55 +34,53 @@ void PrintMap(const std::map<std::string, std::vector<T> >& t) {
    }
 }
 
-std::vector<LabeledDeloneTypeMatrices> 
-   LabeledDeloneTypeMatrices::ProcessVectorMapToPerpsAndProjectors
-   (const std::map<std::string, std::vector<S6> >& themap,
-      const std::map<std::string, std::vector<Transformations> >& xfmap)
+std::vector<LabeledDeloneTypeMatrices>
+LabeledDeloneTypeMatrices::ProcessVectorMapToPerpsAndProjectors
+(const std::map<std::string, std::vector<S6> >& themap)
 {
    static const MatS6 unit = MatS6().unit();
    std::vector<LabeledDeloneTypeMatrices> vlsm;
    std::vector<LabeledDeloneTypeMatrices> xfvlsm;
+   const auto xxxxfmap = MapToMatrices(themap);
+   //const auto xxxthemap = MapToMatrices(themap);
+   //PrintMap(themap);
+   //PrintMap(themap);
+
+   return xxxxfmap;
+}
+
+std::vector<LabeledDeloneTypeMatrices>
+LabeledDeloneTypeMatrices::ProcessVectorMapToPerpsAndProjectors
+(/*const std::map<std::string, std::vector<S6> >& themap,*/
+   const std::map<std::string, std::vector<EnhancedS6> >& xfmap)
+{
+   //static const MatS6 unit = MatS6().unit();
+   //std::vector<LabeledDeloneTypeMatrices> vlsm;
+   //std::vector<LabeledDeloneTypeMatrices> xfvlsm;
    const auto xxxxfmap = MapToMatrices(xfmap);
    //const auto xxxthemap = MapToMatrices(themap);
    //PrintMap(xfmap);
    //PrintMap(themap);
-   return xxxxfmap;
-   //for (std::map<std::string, std::vector<S6> >::const_iterator it = themap.begin(); it != themap.end(); ++it) {
-   //   const std::pair<std::string, std::vector<S6> > p = *it;
-   //   LabeledDeloneTypeMatrices lsm;
-   //   std::vector<MatS6> vmprj;
-   //   std::vector<MatS6> vmprp;
-   //   std::vector<MatS6> vmcan;
-   //   const std::string label = p.first;
-   //   lsm.m_label = label;
-   //   for (size_t i = 0; i < p.second.size(); ++i) {
-   //      const MatS6 prj = ProjectorFromVector(label, p.second[i]);
-   //      if (!AlreadyHasThisProjector(prj, lsm)) {
-   //         lsm.m_prjs.push_back(ProjectorFromVector(label, p.second[i]));
-   //         lsm.m_perps.push_back(unit - ProjectorFromVector(label, p.second[i]));
-   //         lsm.m_toCanons.push_back(ToCanon(p.second[i]));
-   //      }
-   //   }
 
-   //   vlsm.push_back(lsm);
-   //}
-   return vlsm;
+   return xxxxfmap;
 }
 
 MatS6 LabeledDeloneTypeMatrices::ToCanon(const S6_Ordinals& s) {
    MatS6 fromCanon = ToCanon(s.m_ordinals);
    for (size_t i = 0; i < 36; ++i) if (fromCanon[i] == 0.0) fromCanon[i] = 0.0;
    return fromCanon;
-
-   //const MatS6 fromCanon = ToCanon(s.m_ordinals);
-   //MatN mn(36);
-   //mn.SetVector(fromCanon.GetVector());
-   //MatS6 ms6I = mn.inverse();
-   //for (size_t i = 0; i < 36; ++i) if(ms6I[i] == 0.0) ms6I[i] = 0.0;
-   //return ms6I;
 }
 
 MatS6 LabeledDeloneTypeMatrices::ToCanon(const S6& s) {
+   MatS6 m(MatS6().Zero());
+   for (size_t i = 0; i < 6; ++i) {
+      const size_t index = 6 * i + int(s[i]);
+      m[index] = 1.0;
+   }
+   return m;
+}
+
+MatS6 LabeledDeloneTypeMatrices::ToCanon(const EnhancedS6& s) {
    MatS6 m(MatS6().Zero());
    for (size_t i = 0; i < 6; ++i) {
       const size_t index = 6 * i + int(s[i]);
@@ -218,8 +226,8 @@ void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::vector<LabeledDelo
       const std::string s = WriteMatrixTypes(
          matsForAllDeloneTypes[i].GetLabel(),
          "",
-         "Prjs",
-         matsForAllDeloneTypes[i].m_prjs);
+         "Perps",
+         matsForAllDeloneTypes[i].m_perps);
       std::cout << s << std::endl;
    }
 
@@ -227,8 +235,8 @@ void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::vector<LabeledDelo
       const std::string s = WriteMatrixTypes(
          matsForAllDeloneTypes[i].GetLabel(),
          "",
-         "Perps",
-         matsForAllDeloneTypes[i].m_perps);
+         "Prjs",
+         matsForAllDeloneTypes[i].m_prjs);
       std::cout << s << std::endl;
    }
 
@@ -240,4 +248,30 @@ void LabeledDeloneTypeMatrices::WriteSellaMatrices(const std::vector<LabeledDelo
          matsForAllDeloneTypes[i].m_toCanons);
       std::cout << s << std::endl;
    }
+}
+
+std::vector<LabeledDeloneTypeMatrices> LabeledDeloneTypeMatrices::MapToMatrices(const std::map<std::string, std::vector<EnhancedS6>>& t) const {
+   std::vector<LabeledDeloneTypeMatrices> vlsm;
+   static const MatS6 unitM = MatS6().unit();
+   for (auto it = t.begin(); it != t.end(); ++it) {
+      const auto& p = *it;
+      LabeledDeloneTypeMatrices lsm;
+      const std::string& label = p.first;
+      lsm.m_label = label;
+      for (size_t i = 0; i < p.second.size(); ++i) {
+         const auto s6 = p.second[i].GetVector();
+         const MatS6 prj = ProjectorFromVector(label, s6);
+         if (!AlreadyHasThisProjector(prj, lsm)) {
+            lsm.m_prjs.push_back(ProjectorFromVector(label, p.second[i]));
+            lsm.m_perps.push_back(unitM - ProjectorFromVector(label, p.second[i]));
+            //std::cout << p.second[i] << std::endl;
+            const MatS6 fromCanon = p.second[i].getTransformMatrix();
+            //lsm.m_toCanons.push_back(MatS6::Inverse(fromCanon));
+            lsm.m_toCanons.push_back(MatS6::Inverse(fromCanon));
+         }
+      }
+
+      vlsm.push_back(lsm);
+   }
+   return vlsm;
 }

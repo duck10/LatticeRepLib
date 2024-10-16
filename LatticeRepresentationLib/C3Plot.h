@@ -1,3 +1,5 @@
+#pragma warning (disable: 4100) // Visual Studio --  unreferenced formal parameter
+
 #ifndef C3PLOT_H
 #define C3PLOT_H
 

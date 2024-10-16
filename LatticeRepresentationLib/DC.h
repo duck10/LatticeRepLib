@@ -1,3 +1,5 @@
+#pragma warning (disable: 4100) // Visual Studio --  unreferenced formal parameter
+#pragma warning (disable: 4702) // Visual Studio --  unreachable code
 #ifndef DC_H
 #define DC_H
 
