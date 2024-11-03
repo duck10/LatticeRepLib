@@ -381,6 +381,10 @@ bool MatS6::IsUnit() const {
    return true;
 }
 
+MatS6 MatS6::Identity() {
+   return Eye();
+}
+
 MatS6 MatS6::Eye(void) {
    MatS6 m;
    for (size_t i = 0; i < 36; ++i)
@@ -523,10 +527,9 @@ std::vector<MatS6> MatS6::GetReflections() {
 }
 
 std::vector<MatS6> MatS6::GetBoundaries() {
-   S6BoundaryTransforms sbt;
    std::vector<MatS6> out;
-   for (size_t i = 0; i < sbt.size(); ++i) {
-     const auto xxx =  sbt[i];
+   for (size_t i = 0; i < 6; ++i) {
+     const auto xxx = S6BoundaryTransforms::generateOneBoundaryTransform(i);
    }
    return out;
 }

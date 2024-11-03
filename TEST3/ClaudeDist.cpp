@@ -395,12 +395,6 @@ double latticeDistance(const S6C& a, const S6C& b) {
    //std::cout << "in latticeDistance, input = " << a << "\n " << b << std::endl;
    const S6C reducedA = sellingReduce(a);
    const S6C reducedB = sellingReduce(b);
-   //std::cout << "in latticeDistance, Claude reduced input = \n" << reducedA << " " << reducedB << std::endl;
-
-   const S6C aSelling(sellingReduce(S6C(a)));
-   const S6C bSelling(sellingReduce(S6C(b)));
-   //std::cout << "in latticeDistance, Selling reduced input = \n" << aSelling << "\n " << bSelling << std::endl;
-
 
    int maxShells = estimateRequiredShells(reducedB, reducedA);
    maxShells = std::min(maxShells, maximumNumberOfShellsToAllow);
