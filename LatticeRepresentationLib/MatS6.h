@@ -81,6 +81,7 @@ public:
    size_t GetRowDim(void) const { return 6; }
    virtual bool IsUnit() const;
    static MatS6 Eye(void);
+   static MatS6 Identity(void);
    static MatS6 Zero(void);
    std::vector<double> GetVector(void) const { return m_mat.GetVector(); }
    void SetVector(const std::vector<double>& v) { m_mat.SetVector(v); }
@@ -105,7 +106,7 @@ public:
    static MatS6 GetBoundaries(const size_t n);
 
    static std::string GetName() { return "MatS6"; }
-   std::set<MatS6> Generate24S6Reflections();
+   static std::set<MatS6> Generate24S6Reflections();
 
 private:
    MatN m_mat;

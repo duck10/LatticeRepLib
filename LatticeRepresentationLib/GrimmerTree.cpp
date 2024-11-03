@@ -308,11 +308,10 @@ DeloneFitResults GrimmerChains::Remediation(const std::string& bravaisName, cons
    const DeloneFitResults dfrInit = Sella::SellaFitXXXXXX(sptypes[0], m_s6);
    auto dfr = dfrInit;
 
-   S6BoundaryTransforms sbt;
    for (size_t i = 0; i < 6; ++i)
    {
       // apply a boundary transform
-      const MatS6 matrix = sbt.GetOneTransform(i);
+      const MatS6 matrix = S6BoundaryTransforms::generateOneBoundaryTransform(i);
       const S6 mod = matrix * m_s6;
       const auto dfrTemp = Sella::SellaFitXXXXXX(sptypes[0], matrix * m_s6);
       if (dfrTemp.GetRawFit() < dfr.GetRawFit()) {

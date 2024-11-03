@@ -169,6 +169,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Claude2", "Claude2\Claude2.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdBounds", "CmdBounds\CmdBounds.vcxproj", "{11575CBF-ECF7-4B4E-AED1-14B2F7CF51D8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Claude3", "Claude3\Claude3.vcxproj", "{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -753,6 +755,14 @@ Global
 		{11575CBF-ECF7-4B4E-AED1-14B2F7CF51D8}.Release|x64.Build.0 = Release|x64
 		{11575CBF-ECF7-4B4E-AED1-14B2F7CF51D8}.Release|x86.ActiveCfg = Release|Win32
 		{11575CBF-ECF7-4B4E-AED1-14B2F7CF51D8}.Release|x86.Build.0 = Release|Win32
+		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Debug|x64.ActiveCfg = Debug|x64
+		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Debug|x64.Build.0 = Debug|x64
+		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Debug|x86.ActiveCfg = Debug|Win32
+		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Debug|x86.Build.0 = Debug|Win32
+		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Release|x64.ActiveCfg = Release|x64
+		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Release|x64.Build.0 = Release|x64
+		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Release|x86.ActiveCfg = Release|Win32
+		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -21,6 +21,9 @@
     <ClCompile Include="Investigate_S6_Boundaries.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="S6BoundaryTransforms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LRL_Tools\TNear.h">
@@ -30,6 +33,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Investigate_S6_Boundaries.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="S6BoundaryTransforms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
