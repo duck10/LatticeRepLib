@@ -34,6 +34,20 @@ public:
       double normRatio;
    };
 
+   double calculateBoundaryDistance(const double distPrev, const MatS6& m, const S6& vec) const {
+      double dist(distPrev);
+      const S6 trans1 = m * vec;
+      const double dist1 = calculateReflectionDistance(trans1, vec);
+      if (dist1 < dist) {
+         dist = dist1;
+         if (m_debugOutput) {
+            std::cout << "Better distance after transform vec: " << dist << std::endl;
+            printDiagnostics(trans1, vec);
+         }
+      }
+      return dist;
+   }
+
    double DistanceBetween(const S6& s6vec1, const S6& s6vec2) const {
       if (m_debugOutput) {
          printDiagnostics(s6vec1, s6vec2);
@@ -47,45 +61,18 @@ public:
       }
 
       // Try each transformation on each vector
+
       for (const auto& transform : m_boundaryTransforms) {
-         // Transform first vector
-         const S6 trans1 = transform * s6vec1;
-         const double dist1 = calculateReflectionDistance(trans1, s6vec2);
-         if (dist1 < dist) {
-            dist = dist1;
-            if (m_debugOutput) {
-               std::cout << "Better distance after transform v1: " << dist << std::endl;
-               printDiagnostics(trans1, s6vec2);
-            }
-         }
-
-         // Transform second vector
-         const S6 trans2 = transform * s6vec2;
-         const double dist2 = calculateReflectionDistance(s6vec1, trans2);
-         if (dist2 < dist) {
-            dist = dist2;
-            if (m_debugOutput) {
-               std::cout << "Better distance after transform v2: " << dist << std::endl;
-               printDiagnostics(s6vec1, trans2);
-            }
-         }
-
-         // Try transforming both vectors
-         const double dist3 = calculateReflectionDistance(trans1, trans2);
-         if (dist3 < dist) {
-            dist = dist3;
-            if (m_debugOutput) {
-               std::cout << "Better distance after transform both: " << dist << std::endl;
-               printDiagnostics(trans1, trans2);
-            }
-         }
+         dist = calculateBoundaryDistance(dist, transform, s6vec1);
+         dist = calculateBoundaryDistance(dist, transform, s6vec2);
       }
 
       return dist;
    }
 
 private:
-   const std::vector<MatS6> m_boundaryTransforms;
+   const std::vector<MatS6> m_boundaryTransforms = S6BoundaryTransforms::generateFlat24BoundaryTransforms();
+   const std::vector<MatS6> m_reflections = MatS6::GetReflections();
    bool m_debugOutput;
 
    DiagnosticInfo calculateDiagnostics(const S6& v1, const S6& v2) const {
@@ -155,9 +142,7 @@ private:
 
    double calculateReflectionDistance(const S6& v1, const S6& v2) const {
       double minDist = (v1 - v2).Norm();
-
-      static const auto& reflections = MatS6::GetReflections();
-      for (const auto& refl : reflections) {
+      for (const auto& refl : m_reflections) {
          const S6 transformed = refl * v2;
          const double dist = (v1 - transformed).Norm();
          minDist = std::min(minDist, dist);
@@ -172,73 +157,8 @@ public:
 };
 
 
-
-
-int main() {
-
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-
-   //const int ntest = 20;
-   const int ntest = inputList.size()-1;
-   std::vector<std::string> line(3);
-   std::vector < std::vector<std::string>> arr;
-   for (size_t i = 0; i < ntest; ++i) {
-      arr.emplace_back(line);
-   }
-
-   std::vector<std::pair<S6, S6>> tests;
-
-   CS6Dist_C cs6d; 
-   cs6d.enableDebugOutput(false);
-   for ( size_t i=0; i<ntest; ++i )
-   {
-      cs6d.enableDebugOutput(false);
-
-      //S6 r1 = S6::rand();
-      //S6 r2 = S6::rand();
-      const S6 r1 = inputList[i].GetCell();
-      const S6 r2 = inputList[i+1].GetCell();
-      tests.emplace_back(std::make_pair(r1,r2));
-      const double dddd = CS6Dist(r1.data(), r2.data());
-       
-      std::string blanks;
-      if ((abs(dddd - 233.076) < .01 || (abs(dddd - 242.339) < .01)))
-      {
-         cs6d.enableDebugOutput(false);
-
-         std::cout << "S6 " << tests[i].first << std::endl;
-         std::cout << "S6 " << tests[i].second << std::endl;
-         std::cout << " CS6Dist = " << dddd << std::endl;
-      }
-      const double d = cs6d.DistanceBetween(r1, r2);
-      const double diff = (d - dddd) / d;
-
-      std::ostringstream os;
-      os <</* blanks << */"  CS6Dist_C " << d << "  CS6Dist " << dddd;
-      //if ((abs(dddd - 38.9353) < .001 || (abs(dddd - 57.7191) < .001)))
-         //{
-      //   std::cout <</* blanks << */"  CS6Dist_C " << d << "  CS6Dist " << dddd;
-      //}
-      const std::string o = os.str();
-      std::cout << "S6 " << tests[i].first << std::endl;
-      std::cout << "S6 " << tests[i].second << std::endl;
-      std::cout << o << std::endl;
-
-      int pos = 0;
-      if ((std::abs(diff) < 1.0E-2) || abs(d+dddd) < 1.0e-4) pos = 1;
-      else if (diff < 0)  pos = 2;
-
-      // look for a blank space in arr
-      for (size_t i = 0; i < ntest; ++i) {
-         if (arr[i][pos].empty()) {
-            arr[i][pos] = o;
-            arr[i][pos].resize(36, ' ');
-            break;
-         }
-      }
-   }
-
-   std::cout << "output arr" << std::endl;
+static void PrintArrayOfResults(const std::vector<std::vector<std::string>>& arr) {
+   std::cout << std::endl << "output arr" << std::endl;
 
    for (const auto& oa : arr) {
       std::string oa1 = oa[0].c_str();
@@ -257,4 +177,64 @@ int main() {
       std::cout << "  " << oa3;
       std::cout << std::endl;
    }
+}
+
+static void FillPrintArray(std::vector<std::vector<std::string>>& arr, const double d_C, const double dCS6Dist,
+   const std::pair<S6, S6>& tests) {
+      std::ostringstream os;
+   os <</* blanks << */"  CS6Dist_C " << d_C << "  CS6Dist " << dCS6Dist;
+   //if ((abs(dddd - 38.9353) < .001 || (abs(dddd - 57.7191) < .001)))
+      //{
+   //   std::cout <</* blanks << */"  CS6Dist_C " << d << "  CS6Dist " << dddd;
+   //}
+   std::string o = os.str();
+   std::cout << "S6 " << tests.first << std::endl;
+   std::cout << "S6 " << tests.second << std::endl;
+   std::cout << o << std::endl;
+   o.resize(36, ' ');
+
+   int pos = 0;
+   const double diff = (d_C - dCS6Dist) / d_C;
+   if ((std::abs(diff) < 1.0E-2) || abs(d_C + dCS6Dist) < 1.0e-4) pos = 1;
+   else if (diff < 0)  pos = 2;
+
+   // look for a blank space in arr
+   for (size_t i = 0; i < arr.size(); ++i) {
+      if (arr[i][pos].empty()) 
+      {
+         arr[i][pos] = o;
+         break;
+      }
+   }
+}
+
+int main() {
+
+   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+
+   //const int ntest = 20;
+
+   const size_t ntest = inputList.size() - 1;
+   std::vector<std::vector<std::string>> arr(ntest, std::vector<std::string>(3));
+
+   std::vector<std::pair<S6, S6>> tests;
+
+   CS6Dist_C cs6d; 
+   cs6d.enableDebugOutput(false);
+   for ( size_t i=0; i<ntest; ++i )
+   {
+      cs6d.enableDebugOutput(false);
+
+      //S6 r1 = S6::rand();
+      //S6 r2 = S6::rand();
+      const S6 r1 = inputList[i].GetCell();
+      const S6 r2 = inputList[i+1].GetCell();
+      tests.emplace_back(r1,r2);
+      const double d_CS6Dist = CS6Dist(r1.data(), r2.data());
+      const double d_Claude = cs6d.DistanceBetween(r1, r2);
+
+      FillPrintArray( arr, d_Claude, d_CS6Dist, tests[i]);
+   }
+
+   PrintArrayOfResults(arr);
 }
