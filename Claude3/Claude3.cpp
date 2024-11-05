@@ -61,7 +61,6 @@ public:
       }
 
       // Try each transformation on each vector
-
       for (const auto& transform : m_boundaryTransforms) {
          dist = calculateBoundaryDistance(dist, transform, s6vec1);
          dist = calculateBoundaryDistance(dist, transform, s6vec2);
@@ -179,14 +178,10 @@ static void PrintArrayOfResults(const std::vector<std::vector<std::string>>& arr
    }
 }
 
-static void FillPrintArray(std::vector<std::vector<std::string>>& arr, const double d_C, const double dCS6Dist,
+static void FillPrintArray(std::vector<std::vector<std::string>>& arr, const double d_Claude, const double d_CS6Dist,
    const std::pair<S6, S6>& tests) {
       std::ostringstream os;
-   os <</* blanks << */"  CS6Dist_C " << d_C << "  CS6Dist " << dCS6Dist;
-   //if ((abs(dddd - 38.9353) < .001 || (abs(dddd - 57.7191) < .001)))
-      //{
-   //   std::cout <</* blanks << */"  CS6Dist_C " << d << "  CS6Dist " << dddd;
-   //}
+   os << "  CS6Dist_C " << d_Claude << "  CS6Dist " << d_CS6Dist;
    std::string o = os.str();
    std::cout << "S6 " << tests.first << std::endl;
    std::cout << "S6 " << tests.second << std::endl;
@@ -194,15 +189,15 @@ static void FillPrintArray(std::vector<std::vector<std::string>>& arr, const dou
    o.resize(36, ' ');
 
    int pos = 0;
-   const double diff = (d_C - dCS6Dist) / d_C;
-   if ((std::abs(diff) < 1.0E-2) || abs(d_C + dCS6Dist) < 1.0e-4) pos = 1;
+   const double diff = (d_Claude - d_CS6Dist) / d_Claude;
+   if ((std::abs(diff) < 1.0E-2) || abs(d_Claude + d_CS6Dist) < 1.0e-4) pos = 1;
    else if (diff < 0)  pos = 2;
 
    // look for a blank space in arr
-   for (size_t i = 0; i < arr.size(); ++i) {
-      if (arr[i][pos].empty()) 
+   for (auto& ar : arr) {
+      if (ar[pos].empty()) 
       {
-         arr[i][pos] = o;
+         ar[pos] = o;
          break;
       }
    }
@@ -229,11 +224,10 @@ int main() {
       //S6 r2 = S6::rand();
       const S6 r1 = inputList[i].GetCell();
       const S6 r2 = inputList[i+1].GetCell();
-      tests.emplace_back(r1,r2);
       const double d_CS6Dist = CS6Dist(r1.data(), r2.data());
       const double d_Claude = cs6d.DistanceBetween(r1, r2);
 
-      FillPrintArray( arr, d_Claude, d_CS6Dist, tests[i]);
+      FillPrintArray( arr, d_Claude, d_CS6Dist, {r1,r2});
    }
 
    PrintArrayOfResults(arr);
