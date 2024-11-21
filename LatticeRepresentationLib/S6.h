@@ -64,6 +64,7 @@ public:
    double norm(const S6& s6) const { return norm(s6); }
    double Norm() const { return m_vec.norm(); }
    double Norm(const S6& s6) const { return norm(s6); }
+   double Dot(const S6& s6) const;
 
    std::vector<double> GetVector(void) const { return m_vec.GetVector(); }
    double* data() const { return const_cast<double*>(m_vec.data()); }

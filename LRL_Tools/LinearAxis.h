@@ -35,6 +35,9 @@ public:
 	const double m_upperLimit;
 	const size_t m_numSteps;
 	const size_t m_objectScaleFactor;
+   double GetMin() const { return m_lowerLimit; }
+   double GetMax() const { return m_upperLimit; }
+   double GetStepSize() const { return (m_upperLimit - m_lowerLimit) / m_numSteps;  }
 
 };
 

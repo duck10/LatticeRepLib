@@ -14,146 +14,145 @@
 class CS6Dist_C {
 public:
    CS6Dist_C()
-      : m_boundaryTransforms(S6BoundaryTransforms::generateFlat24BoundaryTransforms()),
-      m_debugOutput(false)
+      : m_debugOutput(false)
    {}
 
-   struct DiagnosticInfo {
-      double norm1;
-      double norm2;
-      double maxComp1;
-      double minComp1;
-      double maxComp2;
-      double minComp2;
-      double sumAbs1;
-      double sumAbs2;
-      int numNearZero1;
-      int numNearZero2;
-      double maxRatio;  // ratio of corresponding components
-      double minRatio;
-      double normRatio;
-   };
-
-   double calculateBoundaryDistance(const double distPrev, const MatS6& m, const S6& vec) const {
-      double dist(distPrev);
-      const S6 trans1 = m * vec;
-      const double dist1 = calculateReflectionDistance(trans1, vec);
-      if (dist1 < dist) {
-         dist = dist1;
-         if (m_debugOutput) {
-            std::cout << "Better distance after transform vec: " << dist << std::endl;
-            printDiagnostics(trans1, vec);
-         }
-      }
-      return dist;
-   }
-
    double DistanceBetween(const S6& s6vec1, const S6& s6vec2) const {
-      if (m_debugOutput) {
-         printDiagnostics(s6vec1, s6vec2);
-      }
-
-      // Initial distance considering reflections
       double dist = calculateReflectionDistance(s6vec1, s6vec2);
 
       if (m_debugOutput) {
-         std::cout << "\nStarting distance: " << dist << std::endl;
+         std::cout << "\nStarting vectors:" << std::endl;
+         std::cout << "v1: " << s6vec1 << std::endl;
+         std::cout << "v2: " << s6vec2 << std::endl;
+         std::cout << "Initial distance: " << dist << std::endl;
       }
 
-      // Try each transformation on each vector
-      for (const auto& transform : m_boundaryTransforms) {
-         dist = calculateBoundaryDistance(dist, transform, s6vec1);
-         dist = calculateBoundaryDistance(dist, transform, s6vec2);
+      // Try single boundary paths
+      for (size_t boundary = 0; boundary < 6; ++boundary) {
+         const double newDist = processTMB(s6vec1, s6vec2, boundary, dist, true);
+         if (newDist < dist) {
+            dist = newDist;
+         }
+      }
+
+      // Try double boundary paths
+      for (size_t firstBoundary = 0; firstBoundary < 6; ++firstBoundary) {
+         const double newDist = processTMB(s6vec1, s6vec2, firstBoundary, dist, false);
+         if (newDist < dist) {
+            dist = newDist;
+         }
       }
 
       return dist;
    }
 
+   double DistanceInG6(const G6& g6vec1, const G6& g6vec2) const {
+      return DistanceBetween(S6(g6vec1), S6(g6vec2));
+   }
+
+   void enableDebugOutput(bool enable) noexcept { m_debugOutput = enable; }
+   [[nodiscard]] bool isDebugEnabled() const noexcept { return m_debugOutput; }
+
 private:
-   const std::vector<MatS6> m_boundaryTransforms = S6BoundaryTransforms::generateFlat24BoundaryTransforms();
    const std::vector<MatS6> m_reflections = MatS6::GetReflections();
    bool m_debugOutput;
 
-   DiagnosticInfo calculateDiagnostics(const S6& v1, const S6& v2) const {
-      DiagnosticInfo info;
-      constexpr double nearZeroThreshold = 1.0E-10;
-
-      // Calculate norms and related values
-      info.norm1 = v1.Norm();
-      info.norm2 = v2.Norm();
-      info.normRatio = info.norm1 / info.norm2;
-
-      // Initialize component stats
-      info.maxComp1 = std::numeric_limits<double>::lowest();
-      info.minComp1 = std::numeric_limits<double>::max();
-      info.maxComp2 = std::numeric_limits<double>::lowest();
-      info.minComp2 = std::numeric_limits<double>::max();
-      info.sumAbs1 = 0.0;
-      info.sumAbs2 = 0.0;
-      info.numNearZero1 = 0;
-      info.numNearZero2 = 0;
-      info.maxRatio = -std::numeric_limits<double>::max();
-      info.minRatio = std::numeric_limits<double>::max();
-
-      // Calculate component-wise statistics
-      for (size_t i = 0; i < 6; ++i) {
-         const double abs1 = std::abs(v1[i]);
-         const double abs2 = std::abs(v2[i]);
-
-         info.sumAbs1 += abs1;
-         info.sumAbs2 += abs2;
-
-         info.maxComp1 = std::max(info.maxComp1, abs1);
-         info.minComp1 = std::min(info.minComp1, abs1);
-         info.maxComp2 = std::max(info.maxComp2, abs2);
-         info.minComp2 = std::min(info.minComp2, abs2);
-
-         if (abs1 < nearZeroThreshold) ++info.numNearZero1;
-         if (abs2 < nearZeroThreshold) ++info.numNearZero2;
-
-         if (abs2 > nearZeroThreshold) {
-            const double ratio = abs1 / abs2;
-            info.maxRatio = std::max(info.maxRatio, ratio);
-            info.minRatio = std::min(info.minRatio, ratio);
-         }
-      }
-
-      return info;
-   }
-
-   void printDiagnostics(const S6& v1, const S6& v2) const {
-      auto info = calculateDiagnostics(v1, v2);
-
-      std::cout << "\nDiagnostic Information:" << std::endl;
-      std::cout << "Vector 1: " << v1 << std::endl;
-      std::cout << "Vector 2: " << v2 << std::endl;
-      std::cout << "Norms: " << info.norm1 << ", " << info.norm2
-         << " (ratio: " << info.normRatio << ")" << std::endl;
-      std::cout << "Max components: " << info.maxComp1 << ", " << info.maxComp2 << std::endl;
-      std::cout << "Min components: " << info.minComp1 << ", " << info.minComp2 << std::endl;
-      std::cout << "Sum of absolutes: " << info.sumAbs1 << ", " << info.sumAbs2 << std::endl;
-      std::cout << "Near-zero components: " << info.numNearZero1
-         << ", " << info.numNearZero2 << std::endl;
-      std::cout << "Component ratios: " << info.minRatio
-         << " to " << info.maxRatio << std::endl;
-      std::cout << std::endl;
-   }
-
    double calculateReflectionDistance(const S6& v1, const S6& v2) const {
       double minDist = (v1 - v2).Norm();
+
       for (const auto& refl : m_reflections) {
-         const S6 transformed = refl * v2;
-         const double dist = (v1 - transformed).Norm();
+         const S6 reflected = refl * v2;
+         const double dist = (v1 - reflected).Norm();
          minDist = std::min(minDist, dist);
       }
 
       return minDist;
    }
 
-public:
-   void enableDebugOutput(bool enable) noexcept { m_debugOutput = enable; }
-   [[nodiscard]] bool isDebugEnabled() const noexcept { return m_debugOutput; }
-};
+   static S6 createMirrorPoint(const S6& v1, const S6& v2, size_t boundary) {
+      const double alpha = calculateAlpha(v1[boundary], v2[boundary]);
+      S6 mirror = v1 + alpha * (v2 - v1);
+      mirror[boundary] = 0.0;
+      return mirror;
+   }
+
+   static double calculateAlpha(double comp1, double comp2) {
+      const double dist1 = std::abs(comp1);
+      const double dist2 = std::abs(comp2);
+
+      if (dist1 + dist2 > dist1 * 1.0E-10) {
+         const double alpha = dist1 / (dist1 + dist2);
+         return std::min(std::max(alpha, 0.0), 1.0);
+      }
+      return 0.0;
+   }
+
+   double processPathThroughMirrorPoints(const S6& s1, const S6& s2,
+      const S6& firstMirror, const S6& secondMirror,
+      bool isSingleBoundary) const {
+      double bestPath = std::numeric_limits<double>::max();
+
+      for (const auto& refl : m_reflections) {
+         const S6 reflectedMirror = refl * (isSingleBoundary ? firstMirror : secondMirror);
+         const double pathDist = isSingleBoundary ?
+            (s1 - reflectedMirror).Norm() + (reflectedMirror - s2).Norm() :
+            (s1 - firstMirror).Norm() + (firstMirror - reflectedMirror).Norm() +
+            (reflectedMirror - s2).Norm();
+
+         bestPath = std::min(bestPath, pathDist);
+      }
+      return bestPath;
+   }
+
+   double processTMB(const S6& s1, const S6& s2,
+      size_t firstBoundary,
+      double currentDist,
+      bool singleBoundaryOnly) const {
+      const S6 firstMirror = createMirrorPoint(s1, s2, firstBoundary);
+      double minDist = currentDist;
+      if (singleBoundaryOnly)
+      {
+         minDist = tryPathWithMirrors(s1, s2, firstMirror, firstMirror,
+            firstBoundary, firstBoundary, minDist);
+      }
+      else
+      {
+         for (size_t secondBoundary = 0; secondBoundary < 6; ++secondBoundary) {
+            if ( secondBoundary != firstBoundary ) {
+               const S6 secondMirror = createMirrorPoint(firstMirror, s2, secondBoundary);
+               minDist = tryPathWithMirrors(s1, s2, firstMirror, secondMirror,
+                  firstBoundary, secondBoundary, minDist);
+            }
+         }
+      }
+
+      return minDist;
+   }
+
+
+   double tryPathWithMirrors(const S6& s1, const S6& s2,
+      const S6& mirror1, const S6& mirror2,
+      size_t boundary1, size_t boundary2,
+      double currentDist) const {
+      const double pathDist = processPathThroughMirrorPoints(s1, s2, mirror1,
+         mirror2,
+         boundary1 == boundary2);
+      if (pathDist < currentDist && m_debugOutput) {
+         if (boundary1 == boundary2) {
+            std::cout << "Better single boundary path at " << boundary1
+               << ": " << pathDist << std::endl;
+         }
+         else {
+            std::cout << "Better two-boundary path through " << boundary1
+               << " and " << boundary2 << ": " << pathDist << std::endl;
+         }
+      }
+      return std::min(currentDist, pathDist);
+   }
+
+
+}; // end of CS6Dist_C
+
 
 
 static void PrintArrayOfResults(const std::vector<std::vector<std::string>>& arr) {
@@ -181,7 +180,7 @@ static void PrintArrayOfResults(const std::vector<std::vector<std::string>>& arr
 static void FillPrintArray(std::vector<std::vector<std::string>>& arr, const double d_Claude, const double d_CS6Dist,
    const std::pair<S6, S6>& tests) {
       std::ostringstream os;
-   os << "  CS6Dist_C " << d_Claude << "  CS6Dist " << d_CS6Dist;
+   os << "\t CS6Dist_C " << d_Claude << "  CS6Dist " << d_CS6Dist;
    std::string o = os.str();
    std::cout << "S6 " << tests.first << std::endl;
    std::cout << "S6 " << tests.second << std::endl;
@@ -206,6 +205,8 @@ static void FillPrintArray(std::vector<std::vector<std::string>>& arr, const dou
 int main() {
 
    const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+   S6 origin;
+   Selling::Reduce(inputList[0].GetCell(), origin);
 
    //const int ntest = 20;
 
@@ -222,12 +223,16 @@ int main() {
 
       //S6 r1 = S6::rand();
       //S6 r2 = S6::rand();
-      const S6 r1 = inputList[i].GetCell();
-      const S6 r2 = inputList[i+1].GetCell();
-      const double d_CS6Dist = CS6Dist(r1.data(), r2.data());
-      const double d_Claude = cs6d.DistanceBetween(r1, r2);
+      S6 r1 = inputList[i].GetCell();
+      S6 r2 = inputList[i+1].GetCell();
+      Selling::Reduce(r1,r1);
+      Selling::Reduce(r2,r2);
+      const double d_CS6DistA = CS6Dist(r1.data(), r2.data());
+      const double d_ClaudeA = cs6d.DistanceBetween(r1, r2);
+      const double d_CS6DistB = CS6Dist(origin.data(), r2.data());
+      const double d_ClaudeB = cs6d.DistanceBetween(origin, r2);
 
-      FillPrintArray( arr, d_Claude, d_CS6Dist, {r1,r2});
+      FillPrintArray( arr, d_ClaudeB, d_CS6DistB, {r1,r2});
    }
 
    PrintArrayOfResults(arr);

@@ -190,7 +190,7 @@ static double norm(double* r) {
 //   }
 //   return min_distance;
 //}
-double r9_lattice_distance(double r9_1[9], double r9_2[9]) {
+static double r9_lattice_distance(double r9_1[9], double r9_2[9]) {
    double min_distance = DBL_MAX;
    std::cout << std::setprecision(6) << std::fixed;
    //std::cout << "r9_1: ";
@@ -226,7 +226,7 @@ double r9_lattice_distance(double r9_1[9], double r9_2[9]) {
    return min_distance;
 }
 
-double R9Dist(double* r1, double* r2) {
+static double R9Dist(double* r1, double* r2) {
    return r9_lattice_distance(r1, r2);
 }
 

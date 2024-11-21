@@ -40,9 +40,12 @@ public:
    static std::string NumberToHexString(const int n);
    static void ConvertHexColorToRGB(const unsigned long n, 
       unsigned long& red, unsigned long& green, unsigned long& blue);
-
+   static std::string interpolateColor(size_t index, size_t total);
+   static const unsigned long START_COLOR = 0x0077BB;  // Blue
+   static const unsigned long END_COLOR = 0xEE7733;    // Orange
 
 private:
+   static std::string makeHexColor(unsigned long r, unsigned long g, unsigned long b);
 
 
 };

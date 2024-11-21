@@ -16,7 +16,7 @@ std::string ColorTables::NumberToHexString(const int n) {
    return ostr.str();
 }
 
-void ColorTables::ConvertHexColorToRGB(const unsigned long color, 
+void ColorTables::ConvertHexColorToRGB(const unsigned long color,
    unsigned long& red, unsigned long& green, unsigned long& blue) {
    const std::string hexColor = NumberToHexString(color);
 
@@ -35,13 +35,43 @@ void ColorTables::ConvertHexColorToRGB(const unsigned long color,
    }
 }
 
+std::string ColorTables::interpolateColor(size_t index, size_t total) {
+   // Start color (blue): 0x0077BB
+   unsigned long rStart = 0x00;
+   unsigned long gStart = 0x77;
+   unsigned long bStart = 0xBB;
+
+   // End color (orange): 0xEE7733
+   unsigned long rEnd = 0xEE;
+   unsigned long gEnd = 0x77;
+   unsigned long bEnd = 0x33;
+
+   double fraction = (total <= 1) ? 0.0 : static_cast<double>(index) / (total - 1);
+
+   unsigned long r = static_cast<unsigned long>(rStart + fraction * (rEnd - rStart));
+   unsigned long g = static_cast<unsigned long>(gStart + fraction * (gEnd - gStart));
+   unsigned long b = static_cast<unsigned long>(bStart + fraction * (bEnd - bStart));
+
+   return makeHexColor(r, g, b);
+}
+
+
 const std::string ColorTables::BASIC_COLORS[] = { "red", "lightblue", "turquoise", "slategrey",
                   "orange", "blueviolet", "coral", "saddlebrown", "blue", "pink", "violet",
                   "deeppink", "mediumvioletred", "tomato", "greenyellow", "olive" };
 
+std::string ColorTables::makeHexColor(unsigned long r, unsigned long g, unsigned long b) {
+   std::stringstream ss;
+   ss << "#"
+      << std::hex << std::setfill('0') << std::setw(2) << (r & 0xFF)
+      << std::hex << std::setfill('0') << std::setw(2) << (g & 0xFF)
+      << std::hex << std::setfill('0') << std::setw(2) << (b & 0xFF);
+   return ss.str();
+}
+
 ColorRange::ColorRange(const unsigned long mincol, const unsigned long maxcol)
-   : m_minhex(std::min(mincol, maxcol)), 
-   m_maxhex(std::max(mincol, maxcol)) 
+   : m_minhex(std::min(mincol, maxcol)),
+   m_maxhex(std::max(mincol, maxcol))
 {
    //std::cout << std::hex << std::setfill('0') << std::setw(6) << mincol << std::endl;;
    //std::cout << std::hex << std::setfill('0') << std::setw(6) << maxcol << std::endl;;
@@ -67,17 +97,18 @@ ColorRange::ColorRange(const unsigned long mincol, const unsigned long maxcol)
    const int i19191 = 19191;
 }
 
-double ColorRange::ColorFraction(const double color){
+double ColorRange::ColorFraction(const double color) {
    const double index = (color - m_minhex) / (m_maxhex - m_minhex);
    return index;
 }
 
 int ColorRange::GetColorFromRangeFraction(const double frac) const {
-   return m_minhex + fmod(frac, 1.0) * (m_maxhex - m_minhex);
+   int interp = m_minhex + fmod(frac, 1.0000000001) * (m_maxhex - m_minhex);
+   return m_minhex + fmod(frac, 1.0000000001) * (m_maxhex - m_minhex);
 }
 
 void ColorRange::GetHSVFromRangeFraction(const double frac, unsigned long& h,
-    unsigned long& s,  unsigned long& v) const
+   unsigned long& s, unsigned long& v) const
 {
    h = m_minh + fmod(frac, 1.0) * (m_maxh - m_minh);
    s = m_mins + fmod(frac, 1.0) * (m_maxs - m_mins);
@@ -103,7 +134,7 @@ void ColorRange::GetRGBFromRangeFraction(const double frac, unsigned long& r,
    b = newFrac * (rgbmax.m_nBlue - rgbmin.m_nBlue) + rgbmin.m_nBlue;
 }
 
-int ColorRange::ColorIndex( const double color ) {
+int ColorRange::ColorIndex(const double color) {
    return int(255 * ColorFraction(color) + 0.499999);
 }
 

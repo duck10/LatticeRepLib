@@ -171,6 +171,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdBounds", "CmdBounds\CmdB
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Claude3", "Claude3\Claude3.vcxproj", "{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Follow", "Follow\Follow.vcxproj", "{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -763,6 +765,14 @@ Global
 		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Release|x64.Build.0 = Release|x64
 		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Release|x86.ActiveCfg = Release|Win32
 		{519AB562-6F5C-4097-AF05-9BE2DFB10D7F}.Release|x86.Build.0 = Release|Win32
+		{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}.Debug|x64.ActiveCfg = Debug|x64
+		{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}.Debug|x64.Build.0 = Debug|x64
+		{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}.Debug|x86.ActiveCfg = Debug|Win32
+		{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}.Debug|x86.Build.0 = Debug|Win32
+		{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}.Release|x64.ActiveCfg = Release|x64
+		{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}.Release|x64.Build.0 = Release|x64
+		{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}.Release|x86.ActiveCfg = Release|Win32
+		{F6FF9AD2-F100-4255-9B2D-1F677F0D8639}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
