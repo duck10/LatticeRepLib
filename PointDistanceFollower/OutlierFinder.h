@@ -2,7 +2,6 @@
 #define OUTLIERFINDER_H
 
 #include <cmath>
-#include <list>
 #include <vector>
 
 #include "spline_under_tension.hpp"

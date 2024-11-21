@@ -36,6 +36,8 @@ public:
       return m_p3[n];
    }
 
+   static P3 rand();
+   static P3 RandWork();
    double norm() const;
    double Norm() const { return norm(); }
    static double norm(const P3& p3) { return p3.norm(); }

@@ -243,6 +243,11 @@ double S6::AngleBetween( const S6& v1, const S6& v2 ) {
    return returnvalue;
 }
 
+double S6::Dot(const S6& s6) const {
+   return VecN((*this).GetVector()).dot(VecN(s6.GetVector()));
+}
+
+
 S6& S6::operator= ( const S6& v ) {
    m_vec = v.m_vec;
    m_dim = v.m_dim;
