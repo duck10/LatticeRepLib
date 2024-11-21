@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 
       webio.CreateFilenamesAndLinks(ntotal, "FOL");
 
-      controlVars.updateFilenames(webio.m_FullfileNameList);
+      controlVars.updateFilenames(webio.m_basicfileNameList);
 
       Follow follow(controlVars);
       follow.run(controlVars.filenames, inputVectors);
