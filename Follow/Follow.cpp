@@ -78,6 +78,9 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const std::v
       SvgPlotWriter writer(svg, controlVars, glitchDetector);
       writer.writePlot(allDistances, distances, trialNum, perturbationNum);
    }
+   else {
+      std::cout << "unable to open output file" << std::endl;
+   }
 }
 
 
