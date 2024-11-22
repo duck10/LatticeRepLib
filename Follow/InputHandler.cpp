@@ -69,7 +69,7 @@ void InputHandler::handleControlVariable(ControlVariables& cv, const std::string
    }
    else if (key == "PERTURBATIONS") cv.perturbations = std::stoi(value);
    else if (key == "PERTURBBY") cv.perturbBy = std::stod(value);
-   else if (key == "GLITCHLEVEL") cv.glitchLevel = std::stod(value);
+   else if (key == "GLITCHTHRESHOLD") cv.glitchThresholdPercent = std::stod(value);
    else if (key == "NUMFOLLOWERPOINTS") cv.numFollowerPoints = std::stoi(value);
    else if (key == "PRINTDISTANCEDATA") cv.printDistanceData = (toUpper(value) == "TRUE" || value == "1");
    else if (key == "GLITCHESONLY") cv.glitchesOnly = (toUpper(value) == "TRUE" || value == "1");
@@ -77,10 +77,11 @@ void InputHandler::handleControlVariable(ControlVariables& cv, const std::string
    else if (key == "RANDOMSEED") cv.randomSeed = std::stoi(value);
    else if (key == "TIMESTAMP") cv.timestamp = (toUpper(value) == "TRUE" || value == "1");
    else if (key == "FILEPREFIX") cv.filePrefix = value;
-   else if (key == "SHOWDATAPOINTS") cv.showDataPoints = (toUpper(value) == "TRUE" || value == "1");
+   else if (key == "SHOWDATAMARKERS") cv.showDataMarkers = (toUpper(value) == "TRUE" || value == "1");
    else if (key == "ENABLE") cv.setDistanceTypes(value, false);  // Add this line
    else std::cerr << "Warning: Unknown control variable '" << key << "'" << std::endl;
 }
+
 std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
    std::vector<std::string> tokens;
    std::istringstream iss(line);

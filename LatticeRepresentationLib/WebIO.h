@@ -22,6 +22,7 @@ public:
       const bool usehttps,
       const bool usetarget,
       const WebIO& webio);
+   void SetTimeStamp(const bool set) { m_usetimestamp = set; }
 
 public:
    std::string m_programName;

@@ -21,8 +21,8 @@ public:
       }
    }
 
-   std::vector<std::pair<double, double>> FindDiscontinuities(const double cutoff) {
-      const std::vector<std::pair<double, double>> candidates = SelectCandidateTransitionPoints(cutoff);
+   std::vector<std::pair<double, double>> FindDiscontinuities(const double cutoffPercent) {
+      const std::vector<std::pair<double, double>> candidates = SelectCandidateTransitionPoints(cutoffPercent);
       const std::vector<std::pair<double, double>> separated = InsertSeparatorsBetweenRuns(candidates);
       return FilterForPeakOfRun(separated);
    }
@@ -34,7 +34,7 @@ public:
    ~OutlierFinder() = default;
 
 private:
-   std::vector<std::pair<double, double>> SelectCandidateTransitionPoints(const double cutoff) {
+   std::vector<std::pair<double, double>> SelectCandidateTransitionPoints(const double cutoffPercent) {
       std::vector<std::pair<double, double>> candidates;
       double prevDataDiff = 0.0;
 
@@ -51,14 +51,14 @@ private:
          // Calculate percentage difference between adjacent points
          const double absDataDiff = 100.0 * std::abs(current - next) / std::max(current, next);
 
-         if (absDataDiff > cutoff) {
+         if (absDataDiff > cutoffPercent) {
             const double avg = (current + next) / 2.0;
             const double interpValue = std::abs(GetValue(static_cast<double>(i) + 0.5));
             const double diffFromInterp = std::abs(avg - interpValue);
             const double normalizedPercent = 100.0 * diffFromInterp / interpValue;
 
             // Check if the difference is significant and larger than the previous difference
-            if (normalizedPercent > cutoff && absDataDiff > 1.1 * prevDataDiff) {
+            if (normalizedPercent > cutoffPercent && absDataDiff > 1.1 * prevDataDiff) {
                candidates.emplace_back(static_cast<double>(i), normalizedPercent);
             }
          }

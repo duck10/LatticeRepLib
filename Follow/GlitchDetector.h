@@ -26,8 +26,7 @@ public:
       OutlierFinder of(data);
 
       const double minPercentDiff = 1.0;
-      ControlVariables ctrl;
-      const std::vector<std::pair<double,double>> shifts = of.FindDiscontinuities(ctrl.glitchLevel);
+      const std::vector<std::pair<double,double>> shifts = of.FindDiscontinuities(thresholdPercent);
       for (const auto& sh : shifts)
       {
          const Glitch glitch(int(sh.first), 0.0, sh.second);

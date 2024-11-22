@@ -196,8 +196,12 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
       const auto& distanceValues = allDistances[i];
       if (distanceValues.empty()) continue;
 
-      std::vector<GlitchDetector::Glitch> glitches =
-         glitchDetector.detectGlitches(distanceValues, 10.0, 5);
+      std::vector<GlitchDetector::Glitch> glitches;
+      if (controlVars.shouldDetectGlitches)
+      {
+         glitches =
+            glitchDetector.detectGlitches(distanceValues, controlVars.glitchThresholdPercent, 5);
+      }
 
       // Use interpolated color
       std::string color = ColorTables::interpolateColor(i, allDistances.size());
@@ -212,7 +216,7 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
       }
       svg << "\" stroke=\"" << color << "\" fill=\"none\" stroke-width=\"2\"/>\n";
 
-      if (controlVars.showDataPoints) {
+      if (controlVars.showDataMarkers) {
          for (size_t j = 0; j < distanceValues.size(); ++j) {
             double x = margin + (j - xMin) * xScale;
             double y = height - margin - (distanceValues[j] - yMin) * yScale;
@@ -321,7 +325,7 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
    svg << "</followerMode>\n"
       << "    <perturbations>" << controlVars.perturbations << "</perturbations>\n"
       << "    <perturbBy>" << controlVars.perturbBy << "</perturbBy>\n"
-      << "    <glitchLevel>" << controlVars.glitchLevel << "</glitchLevel>\n"
+      << "    <glitchThresholdPercent>" << controlVars.glitchThresholdPercent << "</glitchThresholdPercent>\n"
       << "    <numFollowerPoints>" << controlVars.numFollowerPoints << "</numFollowerPoints>\n"
       << "    <printDistanceData>" << (controlVars.printDistanceData ? "true" : "false")
       << "</printDistanceData>\n"

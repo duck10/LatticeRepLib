@@ -42,17 +42,15 @@ public:
    // Static variables (set at startup)
    int perturbations;  // Renamed from trials
    double perturbBy;
-   double glitchLevel;
    int numFollowerPoints;
    bool printDistanceData;
    bool glitchesOnly;
-   bool niggliSellingFirst;
    bool fixRandomSeed;
    bool timestamp;
    int randomSeed;
    bool shouldDetectGlitches;
-   double glitchThreshold;
-   bool showDataPoints;
+   double glitchThresholdPercent;
+   bool showDataMarkers;
    std::string filePrefix;
    std::set<std::string> enabledDistances;
 

@@ -15,17 +15,15 @@ ControlVariables::ControlVariables()
    : followerMode(FollowerMode::POINT),
    perturbations(1),
    perturbBy(0.1),
-   glitchLevel(2.0),
    numFollowerPoints(100),
    printDistanceData(false),
    glitchesOnly(false),
-   niggliSellingFirst(false),
    fixRandomSeed(false),
    timestamp(false),
    randomSeed(42),
    shouldDetectGlitches(true),
-   glitchThreshold(0.4),
-   showDataPoints(true),
+   glitchThresholdPercent(4.0),
+   showDataMarkers(true),
    filePrefix("follow_output")
 {
    ensureDefaultTypesEnabled();
@@ -34,19 +32,17 @@ ControlVariables::ControlVariables()
 std::string ControlVariables::getControlVariablesAsString() const {
    std::ostringstream oss;
 
-   oss << "Trials: " << perturbations << "\n"
+   oss << "Perturbations: " << perturbations << "\n"
       << "Perturb By: " << perturbBy << "\n"
-      << "Glitch Level: " << glitchLevel << "\n"
       << "Follower Points: " << numFollowerPoints << "\n"
       << "Print Distance Data: " << (printDistanceData ? "Yes" : "No") << "\n"
       << "Glitches Only: " << (glitchesOnly ? "Yes" : "No") << "\n"
-      << "Niggli Selling First: " << (niggliSellingFirst ? "Yes" : "No") << "\n"
       << "Fix Random Seed: " << (fixRandomSeed ? "Yes" : "No") << "\n"
       << "Timestamp: " << (timestamp ? "Yes" : "No") << "\n"
       << "Random Seed: " << randomSeed << "\n"
       << "Detect Glitches: " << (shouldDetectGlitches ? "Yes" : "No") << "\n"
-      << "Glitch Threshold: " << glitchThreshold << "\n"
-      << "Show Data Points: " << (showDataPoints ? "Yes" : "No") << "\n"
+      << "Glitch Threshold Percent: " << glitchThresholdPercent << "\n"
+      << "Show Data Points: " << (showDataMarkers ? "Yes" : "No") << "\n"
       << "File Prefix: " << filePrefix << "\n"
       << "Follower Mode: ";
 
@@ -88,7 +84,6 @@ std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
    os << "\n";
    os << "Perturbations: " << cv.perturbations << "\n";
    os << "Perturb By: " << cv.perturbBy << "\n";
-   os << "Glitch Level: " << cv.glitchLevel << "\n";
    os << "Number of Follower Points: " << cv.numFollowerPoints << "\n";
    os << "Print Distance Data: " << (cv.printDistanceData ? "Yes" : "No") << "\n";
    os << "Glitches Only: " << (cv.glitchesOnly ? "Yes" : "No") << "\n";
@@ -96,8 +91,8 @@ std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
    os << "Timestamp: " << (cv.timestamp ? "Yes" : "No") << "\n";
    os << "Random Seed: " << cv.randomSeed << "\n";
    os << "Should Detect Glitches: " << (cv.shouldDetectGlitches ? "Yes" : "No") << "\n";
-   os << "Glitch Threshold: " << cv.glitchThreshold << "\n";
-   os << "Show Data Points: " << (cv.showDataPoints ? "Yes" : "No") << "\n";
+   os << "Glitch Threshold Percent: " << cv.glitchThresholdPercent << "\n";
+   os << "Show Data Markers: " << (cv.showDataMarkers ? "Yes" : "No") << "\n";
    os << "File Prefix: " << cv.filePrefix << "\n";
    os << "Enabled Distances: ";
    for (const auto& dist : cv.enabledDistances) {

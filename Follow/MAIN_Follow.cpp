@@ -72,6 +72,9 @@ int main(int argc, char* argv[]) {
          std::cout << "No input vectors provided. Exiting." << std::endl;
          return 0;
       }
+      if (!webio.m_hasWebInstructions) {
+         webio.SetTimeStamp(controlVars.timestamp);
+      }
 
       if (!validateFollowerMode(controlVars.followerMode, inputVectors.size())) {
          throw std::runtime_error("Not enough input vectors for the selected follower mode");
