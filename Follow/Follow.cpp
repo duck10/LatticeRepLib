@@ -6,12 +6,12 @@
 #include "Niggli.h"
 #include "SvgPlotWriter.h"
 
-#include <fstream>
-#include <iomanip>
 #include <algorithm>
 #include <cmath>
 #include <chrono>
 #include <ctime>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <random>
 
@@ -57,9 +57,34 @@ void Follow::processTrial(int trialNum) {
    }
 }
 
+void Follow::PrintDistanceData(const Path& path) {
+   //switch (controlVars.followerMode) {
+   //case FollowerMode::POINT:
+   //case FollowerMode::LINE:
+   //case FollowerMode::CHORD:
+   //case FollowerMode::CHORD3:
+   //case FollowerMode::TRIANGLE:
+   //default:
+   //}
+
+   if (controlVars.printDistanceData)
+   {
+      std::cout << "; the path" << std::endl;
+      for (const auto& point : path) {
+         std::cout << "; S6 " << point.first << "\n; S6 "
+            << point.second << std::endl << std::endl;
+      }
+   }
+
+}
+
 void Follow::processPerturbation(int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints) {
    Path path = generatePath(trialNum, perturbationNum, perturbedPoints);
    if (path.empty()) return;
+
+   if (controlVars.printDistanceData) {
+      PrintDistanceData(path);
+   }
 
    std::vector<std::vector<double>> allDistances;
 

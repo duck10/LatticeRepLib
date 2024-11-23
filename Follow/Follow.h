@@ -32,6 +32,7 @@ private:
    void processAllTrials();
    void processTrial(int trialNum);
    void processPerturbation(int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints);
+   void PrintDistanceData(const Path& path);
    S6 perturbVector(const S6& inputVector, int perturbationIndex);
 
    Path generatePath(const int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints);
