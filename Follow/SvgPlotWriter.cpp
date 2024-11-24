@@ -27,8 +27,15 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
 
    auto now = std::chrono::system_clock::now();
    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
-   std::string datetime = std::ctime(&now_time);
-   datetime.pop_back();  // Remove newline
+   struct tm* timeinfo = localtime(&now_time);
+   std::ostringstream datetime;
+   datetime << (timeinfo->tm_year + 1900) << "/"  // Year
+      << std::setfill('0') << std::setw(2) << (timeinfo->tm_mon + 1) << "/"  // Month
+      << std::setfill('0') << std::setw(2) << timeinfo->tm_mday << " "  // Day
+      << std::setfill('0') << std::setw(2) << timeinfo->tm_hour << ":"  // Hour
+      << std::setfill('0') << std::setw(2) << timeinfo->tm_min << ":"  // Minute
+      << std::setfill('0') << std::setw(2) << timeinfo->tm_sec;  // Second
+   std::string datetime_str = datetime.str();
 
    double maxDist = 0.0;
    for (const auto& distances : allDistances) {
@@ -41,11 +48,11 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    const int margin = 50;
 
    writeHeader(width, height);
-   writeTitle(width, datetime, trial, perturbation);
+   writeTitle(width, datetime.str(), trial, perturbation);
    writeGridAndAxes(width, height, margin, maxDist, allDistances);
    writePlotData(width, height, margin, maxDist, allDistances);
    writeLegend(width, margin, allDistances, distances);
-   writeMetadata(trial, perturbation, datetime);
+   writeMetadata(trial, perturbation, datetime.str());
 
    svg << "</svg>\n";
 }
