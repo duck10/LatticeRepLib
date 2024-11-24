@@ -19,6 +19,7 @@ bool isEndOfInput(const std::string& line) {
 void InputHandler::readMixedInput(ControlVariables& cv, std::vector<G6>& inputVectors, std::istream& input) {
    std::string line;
    while (std::getline(input, line)) {
+      if (!line.empty() && line[0] == ';') continue;
       // Trim leading and trailing whitespace
       line.erase(0, line.find_first_not_of(" \t\n\r\f\v"));
       line.erase(line.find_last_not_of(" \t\n\r\f\v") + 1);
@@ -78,7 +79,8 @@ void InputHandler::handleControlVariable(ControlVariables& cv, const std::string
    else if (key == "TIMESTAMP") cv.timestamp = (toUpper(value) == "TRUE" || value == "1");
    else if (key == "FILEPREFIX") cv.filePrefix = value;
    else if (key == "SHOWDATAMARKERS") cv.showDataMarkers = (toUpper(value) == "TRUE" || value == "1");
-   else if (key == "ENABLE") cv.setDistanceTypes(value, false);  // Add this line
+   else if (key == "ENABLE") cv.setDistanceTypes(value, false);
+   else if (key[0] == ';');  // reject lines starting with semicolon
    else std::cerr << "Warning: Unknown control variable '" << key << "'" << std::endl;
 }
 
