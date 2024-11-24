@@ -6,6 +6,7 @@
 #include "DistanceFactory.h"
 #include "GlitchDetector.h"
 #include "LinearAxis.h"
+#include "PathPoint.h"
 #include "S6.h"
 #include "G6.h"
 #include "Polar.h"
@@ -13,9 +14,6 @@
 #include <vector>
 #include <memory>
 #include <string>
-
-using PathPoint = std::pair<S6, S6>;
-using Path = std::vector<PathPoint>;
 
 class Follow {
 public:

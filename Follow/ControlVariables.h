@@ -7,7 +7,10 @@
 #include <atomic>
 #include <iostream>
 #include <sstream>
+
 #include "G6.h"  // For inputPoints type
+#include "S6.h"
+#include "PathPoint.h"
 
 enum class FollowerMode {
    POINT,
@@ -34,6 +37,14 @@ public:
       filenames = names;
    }
 
+   void updatePathStart(const std::vector<S6>& start) {
+      pathStart = start;
+   }
+
+   void updatePath(const Path& pathIn) {
+      path = pathIn;
+   }
+
 
    // Static control flags
    static std::atomic<bool> g_running;
@@ -58,6 +69,8 @@ public:
    FollowerMode followerMode;
    std::vector<std::string> filenames;
    std::string currentFilename;
+   std::vector<S6> pathStart;
+   Path path;
 
    // Member functions
    void setFollowerMode(FollowerMode mode);

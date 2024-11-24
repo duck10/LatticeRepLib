@@ -95,10 +95,17 @@ std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
    os << "Show Data Markers: " << (cv.showDataMarkers ? "Yes" : "No") << "\n";
    os << "File Prefix: " << cv.filePrefix << "\n";
    os << "Enabled Distances: ";
+
    for (const auto& dist : cv.enabledDistances) {
       os << dist << " ";
    }
    os << "\n";
+
+   os << "Starting Point of Path: ";
+   for (const auto& point : cv.pathStart) {
+      os << "S6 " << S6(point) << "\n";
+   }
+
    return os;
 }
 

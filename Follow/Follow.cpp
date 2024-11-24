@@ -15,6 +15,8 @@
 #include <iostream>
 #include <random>
 
+#include "PathPoint.h"
+
 Follow::Follow(ControlVariables& cv) : controlVars(cv), glitchDetector() {
    distances = DistanceFactory::createEnabledDistances(controlVars);
 }
@@ -80,6 +82,8 @@ void Follow::PrintDistanceData(const Path& path) {
 
 void Follow::processPerturbation(int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints) {
    Path path = generatePath(trialNum, perturbationNum, perturbedPoints);
+   controlVars.updatePathStart( perturbedPoints);
+   controlVars.updatePath(path);
    if (path.empty()) return;
 
    if (controlVars.printDistanceData) {

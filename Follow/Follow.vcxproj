@@ -157,6 +157,7 @@
     <ClInclude Include="GlitchDetector.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="OutlierFinder.h" />
+    <ClInclude Include="PathPoint.h" />
     <ClInclude Include="SvgPlotWriter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
