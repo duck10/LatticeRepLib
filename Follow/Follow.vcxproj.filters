@@ -68,5 +68,8 @@
     <ClInclude Include="SvgPlotWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PathPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

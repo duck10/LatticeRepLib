@@ -3,6 +3,7 @@
 
 #include "SvgPlotWriter.h"
 #include "LinearAxis.h"
+#include "PathPoint.h"
 
 #include <iomanip>
 #include <chrono>
@@ -359,6 +360,31 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
    case FollowerMode::CHORD3: svg << "CHORD3"; break;
    case FollowerMode::TRIANGLE: svg << "TRIANGLE"; break;
    }
+   svg << "\n";
+
+   svg << "<pathStart>\n";
+   for (const auto& point : controlVars.pathStart) {
+      svg << "S6 " << S6(point) << "\n";
+   }
+   svg << "</pathStart>\n";
+
+
+   svg << "<path>\n";
+   const Path& path = controlVars.path;
+   for (size_t i = 0; i < path.size(); ++i ) {
+      if ( i < 4 || i > path.size()-5)
+      {
+         svg << "S6 " << S6(path[i].first) << "  -------- - \n";
+         svg << "S6 " << S6(path[i].second) << "\n";
+      }
+      else
+      {
+         svg << " ... ... ... ... \n";
+         i = path.size() - 5;
+      }
+   }
+   svg << "</path>\n";
+
 
    svg << "</followerMode>\n"
       << "    <perturbations>" << controlVars.perturbations << "</perturbations>\n"
