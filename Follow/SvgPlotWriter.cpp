@@ -14,7 +14,7 @@
 #include <sstream>
 
 SvgPlotWriter::SvgPlotWriter(std::ofstream& outSvg, const ControlVariables& cv,
-    GlitchDetector& detector)
+   GlitchDetector& detector)
    : svg(outSvg), controlVars(cv), glitchDetector(detector) {}
 
 
@@ -22,7 +22,7 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    const std::vector<std::unique_ptr<Distance>>& distances,
    int trial, int perturbation,
    int width, int height)
- {
+{
    if (!svg.is_open()) return;
 
    auto now = std::chrono::system_clock::now();
@@ -71,8 +71,9 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin,
    double maxDist, const std::vector<std::vector<double>>& allDistances) {
 
    bool useScientific = maxDist >= 1000;
-   int leftMargin = margin + (useScientific ? 30 : 0);
+   int leftMargin = margin;  // No extra margin needed since we don't use scientific notation for numbers
 
+   // Define clip path
    svg << "<defs>\n"
       << "  <clipPath id=\"plot-area\">\n"
       << "    <rect x=\"" << leftMargin << "\" y=\"" << margin
@@ -97,14 +98,15 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin,
    const double xScale = plotWidth / (xMax - xMin);
    const double yScale = plotHeight / (yMax - yMin);
 
+   // Draw grid lines with clipping
    svg << "<g clip-path=\"url(#plot-area)\" stroke=\"#e0e0e0\" stroke-width=\"1\">\n";
-
+   // Draw vertical grid lines
    for (double x = xMin; x <= xMax; x += xStepSize) {
       double xPos = leftMargin + (x - xMin) * xScale;
       svg << "  <line x1=\"" << xPos << "\" y1=\"" << margin << "\" "
          << "x2=\"" << xPos << "\" y2=\"" << (height - margin) << "\"/>\n";
    }
-
+   // Draw horizontal grid lines
    for (double y = yMin; y <= yMax; y += yStepSize) {
       double yPos = height - margin - (y - yMin) * yScale;
       if (yPos >= margin && yPos <= height - margin) {
@@ -114,6 +116,7 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin,
    }
    svg << "</g>\n";
 
+   // Draw y-axis label with scale indicator and exponent
    writeAxisLabels(leftMargin, width, height, margin, xMin, xMax, xStepSize,
       yMin, yMax, yStepSize, xScale, yScale, useScientific);
 }
@@ -122,34 +125,45 @@ void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int m
    double xMin, double xMax, double xStepSize, double yMin, double yMax, double yStepSize,
    double xScale, double yScale, bool useScientific) {
 
+   // Calculate the exponent for the axis label if values are large
+   int exponent = 0;
+   if (yMax >= 1000) {
+      exponent = static_cast<int>(std::floor(std::log10(yMax)));
+   }
+
+   // First clear the area where the x-axis will be drawn
+   svg << "<rect x=\"" << leftMargin << "\" y=\"" << (height - margin)
+      << "\" width=\"" << (width - leftMargin - margin) << "\" height=\"" << margin
+      << "\" fill=\"white\"/>\n";
+
+   // Draw x-axis line - shifted to be just below the plotted area
    svg << "<line x1=\"" << leftMargin << "\" y1=\"" << (height - margin)
       << "\" x2=\"" << (width - margin) << "\" y2=\"" << (height - margin)
       << "\" stroke=\"black\"/>\n";
 
+   // Draw x-axis tick marks and labels using same coordinate transform as grid
    for (double x = xMin; x <= xMax; x += xStepSize) {
       double xPos = leftMargin + (x - xMin) * xScale;
-
+      // Draw tick mark
       svg << "<line x1=\"" << xPos << "\" y1=\"" << (height - margin)
          << "\" x2=\"" << xPos << "\" y2=\"" << (height - margin + 5)
          << "\" stroke=\"black\"/>\n";
-
-      int labelValue = static_cast<int>(std::round(x));
-      int labelWidth = (labelValue == 0) ? 1 :
-         static_cast<int>(std::log10(std::abs(labelValue))) + 1;
-      int yOffset = 20 + (labelWidth > 2 ? (labelWidth - 2) * 5 : 0);
-
-      svg << "<text x=\"" << xPos << "\" y=\"" << (height - margin + yOffset)
+      // Draw label
+      svg << "<text x=\"" << xPos << "\" y=\"" << (height - margin + 20)
          << "\" text-anchor=\"middle\" font-size=\"12\">"
-         << labelValue << "</text>\n";
+         << static_cast<int>(std::round(x)) << "</text>\n";
    }
 
+   // Draw x-axis label
    svg << "<text x=\"" << (width / 2) << "\" y=\"" << (height - 10)
       << "\" text-anchor=\"middle\" font-size=\"14\">Point Index</text>\n";
 
+   // Draw y-axis line
    svg << "<line x1=\"" << leftMargin << "\" y1=\"" << margin
       << "\" x2=\"" << leftMargin << "\" y2=\"" << (height - margin)
       << "\" stroke=\"black\"/>\n";
 
+   // Draw y-axis tick marks and labels
    for (double y = yMin; y <= yMax; y += yStepSize) {
       double yPos = height - margin - (y - yMin) * yScale;
       if (yPos >= margin && yPos <= height - margin) {
@@ -158,11 +172,17 @@ void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int m
             << "\" stroke=\"black\"/>\n";
 
          std::ostringstream labelStream;
-         if (useScientific) {
-            labelStream << std::scientific << std::setprecision(1) << y;
+         labelStream << std::fixed << std::setprecision(1);
+         if (exponent > 0) {
+            double scaledValue = y / std::pow(10.0, exponent);
+            labelStream << std::fixed << std::setprecision(1);
+            if (scaledValue < 10) {
+               labelStream << std::setprecision(2);  // More precision for small numbers
+            }
+            labelStream << scaledValue;
          }
          else {
-            labelStream << std::fixed << std::setprecision(1) << y;
+            labelStream << y;
          }
 
          svg << "<text x=\"" << (leftMargin - 10) << "\" y=\"" << (yPos + 5)
@@ -171,14 +191,25 @@ void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int m
       }
    }
 
-   svg << "<text x=\"" << (leftMargin - 40) << "\" y=\"" << (height / 2)
+   // Draw y-axis label with scale indicator and exponent
+   int yAxisLabelOffset = 40;
+   svg << "<text x=\"" << (leftMargin - yAxisLabelOffset) << "\" y=\"" << (height / 2)
       << "\" text-anchor=\"middle\" font-size=\"14\" transform=\"rotate(-90 "
-      << (leftMargin - 40) << " " << (height / 2) << ")\">"
-      << "Distance" << (useScientific ? " (x10ⁿ)" : "") << "</text>\n";
-}
+      << (leftMargin - yAxisLabelOffset) << " " << (height / 2) << ")\">"
+      << "Distance";
 
+   if (exponent > 0) {
+      svg << " (x10^" << exponent;  // Changed to include the exponent directly
+      svg << ")</text>\n";
+   }
+   else {
+      svg << "</text>\n";  // Just close the label if no exponent
+   }
+}
 void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxDist,
    const std::vector<std::vector<double>>& allDistances) {
+
+   int leftMargin = margin;
 
    LinearAxis xAxis, yAxis;
    AxisLimits xLimits = xAxis.LinearAxisLimits(0, allDistances[0].size() - 1);
@@ -187,7 +218,7 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
    double xMin = xLimits.GetMin();
    double yMin = yLimits.GetMin();
 
-   const double plotWidth = width - 2 * margin;
+   const double plotWidth = width - leftMargin - margin;
    const double plotHeight = height - 2 * margin;
    const double xScale = plotWidth / (xLimits.GetMax() - xMin);
    const double yScale = plotHeight / (yLimits.GetMax() - yMin);
@@ -209,7 +240,7 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
 
       svg << "<path id=\"" << pathId << "\" d=\"M";
       for (size_t j = 0; j < distanceValues.size(); ++j) {
-         double x = margin + (j - xMin) * xScale;
+         double x = leftMargin + (j - xMin) * xScale;  // Modified this line
          double y = height - margin - (distanceValues[j] - yMin) * yScale;
          if (j > 0) svg << " L";
          svg << x << "," << y;
@@ -218,7 +249,7 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
 
       if (controlVars.showDataMarkers) {
          for (size_t j = 0; j < distanceValues.size(); ++j) {
-            double x = margin + (j - xMin) * xScale;
+            double x = leftMargin + (j - xMin) * xScale;  // Modified this line
             double y = height - margin - (distanceValues[j] - yMin) * yScale;
             svg << "<circle cx=\"" << x << "\" cy=\"" << y
                << "\" r=\"3\" fill=\"" << color << "\"/>\n";
@@ -227,7 +258,7 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
 
       for (const auto& glitch : glitches) {
          size_t j = glitch.index;
-         double x = margin + (j - xMin) * xScale;
+         double x = leftMargin + (j - xMin) * xScale;  // Modified this line
          double y = height - margin - (distanceValues[j] - yMin) * yScale;
 
          svg << "<line x1=\"" << x << "\" y1=\"" << (height - margin)
