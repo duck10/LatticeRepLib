@@ -30,14 +30,14 @@ void InputHandler::readMixedInput(ControlVariables& cv, std::vector<G6>& inputVe
       if (tokens.empty()) continue;
 
       std::string key = toUpper(tokens[0]);
-      if (key == "G6" || key == "S6" || key == "V7" ||
+      if (key == "G6" || key == "S6" ||/* key == "V7" disabled ||*/
          key == "A" || key == "B" || key == "C" || key == "I" ||
          key == "R" || key == "P" || key == "F" || key == "H" ||
          key == "RANDOM") {
          try {
             if (key == "G6") inputVectors.push_back(parseG6(tokens));
             else if (key == "S6") inputVectors.push_back(G6(parseS6(tokens)));
-            else if (key == "V7") inputVectors.push_back(parseV7(tokens));
+            //else if (key == "V7") inputVectors.push_back(parseV7(tokens));
             else if (key == "RANDOM") inputVectors.push_back(parseRandom(tokens));
             else inputVectors.push_back(parseLattice(tokens));
          }
@@ -93,7 +93,7 @@ std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
 }
 
 G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
-   if (tokens.size() != 7) {
+   if (tokens.size() < 7) {
       throw std::runtime_error("Invalid G6 input: expected 7 tokens, got " + std::to_string(tokens.size()));
    }
    G6 result;
@@ -109,7 +109,7 @@ G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
 }
 
 S6 InputHandler::parseS6(const std::vector<std::string>& tokens) {
-   if (tokens.size() != 7) {
+   if (tokens.size() < 7) {
       throw std::runtime_error("Invalid S6 input: expected 7 tokens, got " + std::to_string(tokens.size()));
    }
    S6 result;
@@ -125,7 +125,7 @@ S6 InputHandler::parseS6(const std::vector<std::string>& tokens) {
 }
 
 G6 InputHandler::parseV7(const std::vector<std::string>& tokens) {
-   if (tokens.size() != 8) {
+   if (tokens.size() < 8) {
       throw std::runtime_error("Invalid V7 input: expected 8 tokens, got " + std::to_string(tokens.size()));
    }
    // Implement V7 to G6 conversion here
@@ -147,7 +147,7 @@ G6 InputHandler::parseRandom(const std::vector<std::string>& tokens) {
 }
 
 G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
-   if (tokens.size() != 7) {
+   if (tokens.size() < 7) {
       throw std::runtime_error("Invalid lattice input: expected 7 tokens, got " + std::to_string(tokens.size()));
    }
    // Implement lattice to G6 conversion here

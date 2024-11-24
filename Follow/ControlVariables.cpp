@@ -19,7 +19,7 @@ ControlVariables::ControlVariables()
    printDistanceData(false),
    glitchesOnly(false),
    fixRandomSeed(false),
-   timestamp(false),
+   timestamp(true),
    randomSeed(42),
    shouldDetectGlitches(true),
    glitchThresholdPercent(4.0),
