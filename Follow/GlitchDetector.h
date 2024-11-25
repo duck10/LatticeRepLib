@@ -33,28 +33,8 @@ public:
          glitches.emplace_back(glitch);
       }
 
-      //for (size_t i = 1; i < data.size(); ++i) {
-      //   double prevValue = data[i - 1];
-      //   double currValue = data[i];
-
-      //   if (std::abs(prevValue) < 1e-6 && std::abs(currValue) < 1e-6) continue;
-
-      //   double changePercent = (currValue - prevValue) / std::max(std::abs(prevValue), 1e-6) * 100.0;
-
-      //   if (std::abs(changePercent) > thresholdPercent) {
-      //      // Check if this glitch is far enough from the previous one
-      //      if (glitches.empty() || (i - glitches.back().index) >= minSeparation) {
-      //         glitches.emplace_back(i, currValue, changePercent);
-      //      }
-      //   }
-      //}
-
       return glitches;
    }
 };
-
-
-
-
 
 #endif // GLITCHDETECTOR_H

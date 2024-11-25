@@ -54,19 +54,6 @@ Polar::operator LRL_Cell() const
 }
 
 
-
-/*
-   Vector_2 out(19191, 19191);
-   double sum = 19191.0;
-   while (sum > 0.99) {
-      const double r1 = ran.urand();
-      const double r2 = ran.urand();
-      out[0] = v[0] * r1;
-      out[1] = v[1] * r2 * onehundredseventyDegrees + fiveDegrees;
-   }
-   return out;
-*/
-
 Polar_2 Polar::ConvertUnitSphereProjectionToLengthAndAngle(const Vector_2& v) {
    return Polar_2 ( v.norm() * axialLength, atan2(v[1], v[0])); // radians
 }
@@ -131,50 +118,6 @@ Polar Polar::rand() {
    } while (!out.CheckValid());
 
    return out;
-
-   //double sum(19191.0);
-   //Vector_2 prj1;
-   //Vector_2 prj2;
-   //Vector_2 prj3;
-
-   //bool validCell = false;
-   //int count = 0;
-   //while (!validCell && count < 100)
-   //{
-   //   ++count;
-   //   validCell = true;
-   //   while (sum > 0.99)
-   //   {
-   //      sum = 0.0;
-   //      prj1 = GeneratePolarProjection();
-   //      prj2 = GeneratePolarProjection();
-   //      sum = prj1[0] * prj1[0] + prj1[1] * prj1[1] + prj2[0] * prj2[0] + prj2[1] * prj2[1];
-   //      if (sum > 0.99) continue;
-   //      prj3 = GeneratePolarProjection();
-
-   //      //std::cout << "in Polar::rand() \n";
-   //      //std::cout << "prj1 " << prj1 << std::endl;
-   //      //std::cout << "prj2 " << prj2 << std::endl;
-   //      //std::cout << "prj3 " << prj3 << std::endl;
-   //      sum += prj3[0] * prj3[0] + prj3[1] * prj3[1];
-   //   }
-
-   //   const Polar_2 p2_1 = ConvertUnitSphereProjectionToLengthAndAngle(prj1);
-   //   const Polar_2 p2_2 = ConvertUnitSphereProjectionToLengthAndAngle(prj2);
-   //   const Polar_2 p2_3 = ConvertUnitSphereProjectionToLengthAndAngle(prj3);
-   //   //LRL_Cell cell(p2_1[0], p2_2[0], p2_3[0], p2_1[1], p2_2[1], p2_3[1]);
-   //   validCell = LRL_Cell::CheckValid(p2_1[0], p2_2[0], p2_3[0], p2_1[1], p2_2[1], p2_3[1]);
-   //   //LRL_Cell cell(p2_1[0], p2_2[0], p2_3[0], p2_1[1], p2_2[1], p2_3[1]);
-
-   //   //std::cout << " in Polar::rand() " << validCell << std::endl;
-
-   //   const int i19191 = 19191;
-   //}
-   //std::cout << count << std::endl;
-   //return Polar(
-   //   ConvertUnitSphereProjectionToLengthAndAngle(prj1), 
-   //   ConvertUnitSphereProjectionToLengthAndAngle(prj2), 
-   //   ConvertUnitSphereProjectionToLengthAndAngle(prj3));
 }
 
 LRL_Cell_Degrees Polar::ConvertPolarToCell(const Polar& p) {
@@ -193,10 +136,6 @@ LRL_Cell_Degrees Polar::ConvertPolarToCell(const Polar& p) {
 bool Polar::CheckValid() {
    return CheckValid(*this);
 }
-
-//bool Polar::CheckValid(const Polar& p) {
-//   return CheckValid(*this);
-//}
 
 bool Polar::CheckValid(const LRL_Cell& cell) {
    return CheckValid(cell[0], cell[1], cell[2], cell[3], cell[4], cell[5]);
