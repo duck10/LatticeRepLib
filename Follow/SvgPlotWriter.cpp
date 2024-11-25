@@ -79,7 +79,7 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin,
    double maxDist, const std::vector<std::vector<double>>& allDistances) {
 
    bool useScientific = maxDist >= 1000;
-   int leftMargin = margin;  // No extra margin needed since we don't use scientific notation for numbers
+   const int leftMargin = margin;  // No extra margin needed since we don't use scientific notation for numbers
 
    // Define clip path
    svg << "<defs>\n"
@@ -91,15 +91,15 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin,
       << "</defs>\n";
 
    LinearAxis xAxis, yAxis;
-   AxisLimits xLimits = xAxis.LinearAxisLimits(0, allDistances[0].size() - 1);
-   AxisLimits yLimits = yAxis.LinearAxisLimits(0, maxDist);
+   const AxisLimits xLimits = xAxis.LinearAxisLimits(0, allDistances[0].size() - 1);
+   const AxisLimits yLimits = yAxis.LinearAxisLimits(0, maxDist);
 
-   double xMin = xLimits.GetMin();
-   double xMax = xLimits.GetMax();
-   double xStepSize = xLimits.GetStepSize();
-   double yMin = yLimits.GetMin();
-   double yMax = yLimits.GetMax();
-   double yStepSize = yLimits.GetStepSize();
+   const double xMin = xLimits.GetMin();
+   const double xMax = xLimits.GetMax();
+   const double xStepSize = xLimits.GetStepSize();
+   const double yMin = yLimits.GetMin();
+   const double yMax = yLimits.GetMax();
+   const double yStepSize = yLimits.GetStepSize();
 
    const double plotWidth = width - leftMargin - margin;
    const double plotHeight = height - 2 * margin;
@@ -110,13 +110,13 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin,
    svg << "<g clip-path=\"url(#plot-area)\" stroke=\"#e0e0e0\" stroke-width=\"1\">\n";
    // Draw vertical grid lines
    for (double x = xMin; x <= xMax; x += xStepSize) {
-      double xPos = leftMargin + (x - xMin) * xScale;
+      const double xPos = leftMargin + (x - xMin) * xScale;
       svg << "  <line x1=\"" << xPos << "\" y1=\"" << margin << "\" "
          << "x2=\"" << xPos << "\" y2=\"" << (height - margin) << "\"/>\n";
    }
    // Draw horizontal grid lines
    for (double y = yMin; y <= yMax; y += yStepSize) {
-      double yPos = height - margin - (y - yMin) * yScale;
+      const double yPos = height - margin - (y - yMin) * yScale;
       if (yPos >= margin && yPos <= height - margin) {
          svg << "  <line x1=\"" << leftMargin << "\" y1=\"" << yPos << "\" "
             << "x2=\"" << (width - margin) << "\" y2=\"" << yPos << "\"/>\n";
@@ -130,8 +130,8 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin,
 }
 
 void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int margin,
-   double xMin, double xMax, double xStepSize, double yMin, double yMax, double yStepSize,
-   double xScale, double yScale, bool useScientific) {
+   const double xMin, double xMax, double xStepSize, double yMin, double yMax, double yStepSize,
+   const double xScale, double yScale, bool useScientific) {
 
    // Calculate the exponent for the axis label if values are large
    int exponent = 0;
@@ -173,7 +173,7 @@ void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int m
 
    // Draw y-axis tick marks and labels
    for (double y = yMin; y <= yMax; y += yStepSize) {
-      double yPos = height - margin - (y - yMin) * yScale;
+      const double yPos = height - margin - (y - yMin) * yScale;
       if (yPos >= margin && yPos <= height - margin) {
          svg << "<line x1=\"" << (leftMargin - 5) << "\" y1=\"" << yPos
             << "\" x2=\"" << leftMargin << "\" y2=\"" << yPos
@@ -200,7 +200,7 @@ void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int m
    }
 
    // Draw y-axis label with scale indicator and exponent
-   int yAxisLabelOffset = 40;
+   const int yAxisLabelOffset = 40;
    svg << "<text x=\"" << (leftMargin - yAxisLabelOffset) << "\" y=\"" << (height / 2)
       << "\" text-anchor=\"middle\" font-size=\"14\" transform=\"rotate(-90 "
       << (leftMargin - yAxisLabelOffset) << " " << (height / 2) << ")\">"
@@ -220,11 +220,11 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
    int leftMargin = margin;
 
    LinearAxis xAxis, yAxis;
-   AxisLimits xLimits = xAxis.LinearAxisLimits(0, allDistances[0].size() - 1);
-   AxisLimits yLimits = yAxis.LinearAxisLimits(0, maxDist);
+   const AxisLimits xLimits = xAxis.LinearAxisLimits(0, allDistances[0].size() - 1);
+   const AxisLimits yLimits = yAxis.LinearAxisLimits(0, maxDist);
 
-   double xMin = xLimits.GetMin();
-   double yMin = yLimits.GetMin();
+   const double xMin = xLimits.GetMin();
+   const double yMin = yLimits.GetMin();
 
    const double plotWidth = width - leftMargin - margin;
    const double plotHeight = height - 2 * margin;
@@ -248,8 +248,8 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
 
       svg << "<path id=\"" << pathId << "\" d=\"M";
       for (size_t j = 0; j < distanceValues.size(); ++j) {
-         double x = leftMargin + (j - xMin) * xScale;  // Modified this line
-         double y = height - margin - (distanceValues[j] - yMin) * yScale;
+         const double x = leftMargin + (j - xMin) * xScale;  // Modified this line
+         const double y = height - margin - (distanceValues[j] - yMin) * yScale;
          if (j > 0) svg << " L";
          svg << x << "," << y;
       }
@@ -257,8 +257,8 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
 
       if (controlVars.showDataMarkers) {
          for (size_t j = 0; j < distanceValues.size(); ++j) {
-            double x = leftMargin + (j - xMin) * xScale;  // Modified this line
-            double y = height - margin - (distanceValues[j] - yMin) * yScale;
+            const double x = leftMargin + (j - xMin) * xScale;  // Modified this line
+            const double y = height - margin - (distanceValues[j] - yMin) * yScale;
             svg << "<circle cx=\"" << x << "\" cy=\"" << y
                << "\" r=\"3\" fill=\"" << color << "\"/>\n";
          }
@@ -266,8 +266,8 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
 
       for (const auto& glitch : glitches) {
          size_t j = glitch.index;
-         double x = leftMargin + (j - xMin) * xScale;  // Modified this line
-         double y = height - margin - (distanceValues[j] - yMin) * yScale;
+         const double x = leftMargin + (j - xMin) * xScale;  // Modified this line
+         const double y = height - margin - (distanceValues[j] - yMin) * yScale;
 
          svg << "<line x1=\"" << x << "\" y1=\"" << (height - margin)
             << "\" x2=\"" << x << "\" y2=\"" << margin
@@ -317,7 +317,7 @@ void SvgPlotWriter::writeLegend(int width, int margin,
       }
    }
 
-   int xOffset = (bestX < 0.3) ? margin + 20 :
+   const int xOffset = (bestX < 0.3) ? margin + 20 :
       (bestX > 0.7) ? width - margin - 100 :
       (width / 2) - 50;
 
@@ -325,8 +325,8 @@ void SvgPlotWriter::writeLegend(int width, int margin,
       << "<rect x=\"-5\" y=\"-15\" width=\"90\" height=\""
       << (distances.size() * 20 + 10) << "\" fill=\"white\" stroke=\"black\"/>\n";
 
-   auto xxxx1 = colorRange.GetColorFromRangeFraction(0);
-   auto xxxx2 = colorRange.GetColorFromRangeFraction(.99999);
+   const auto xxxx1 = colorRange.GetColorFromRangeFraction(0);
+   const auto xxxx2 = colorRange.GetColorFromRangeFraction(.99999);
 
 
    for (size_t i = 0; i < distances.size(); ++i) {

@@ -135,7 +135,6 @@
     <ClCompile Include="DistanceFactory.cpp" />
     <ClCompile Include="Follow.cpp" />
     <ClCompile Include="FollowUtils.h.cpp" />
-    <ClCompile Include="GlitchDetector.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="MAIN_Follow.cpp" />
     <ClCompile Include="SvgPlotWriter.cpp" />

@@ -33,8 +33,8 @@ void Follow::run(const std::vector<std::string>& filenames, const std::vector<G6
 }
 
 void Follow::processAllTrials() {
-   int vectorsPerTrial = controlVars.getVectorsPerTrial();
-   int numTrials = inputVectors.size() / vectorsPerTrial;
+   const int vectorsPerTrial = controlVars.getVectorsPerTrial();
+   const int numTrials = inputVectors.size() / vectorsPerTrial;
 
    for (int trial = 0; trial < numTrials; ++trial) {
       processTrial(trial);
@@ -43,7 +43,7 @@ void Follow::processAllTrials() {
 
 void Follow::processTrial(int trialNum) {
    std::vector<S6> startingPoints;
-   int vectorsPerTrial = controlVars.getVectorsPerTrial();
+   const int vectorsPerTrial = controlVars.getVectorsPerTrial();
 
    // Get the starting points for this trial
    for (int i = 0; i < vectorsPerTrial; ++i) {
@@ -60,15 +60,6 @@ void Follow::processTrial(int trialNum) {
 }
 
 void Follow::PrintDistanceData(const Path& path) {
-   //switch (controlVars.followerMode) {
-   //case FollowerMode::POINT:
-   //case FollowerMode::LINE:
-   //case FollowerMode::CHORD:
-   //case FollowerMode::CHORD3:
-   //case FollowerMode::TRIANGLE:
-   //default:
-   //}
-
    if (controlVars.printDistanceData)
    {
       std::cout << "; the path" << std::endl;
@@ -81,7 +72,7 @@ void Follow::PrintDistanceData(const Path& path) {
 }
 
 void Follow::processPerturbation(int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints) {
-   Path path = generatePath(trialNum, perturbationNum, perturbedPoints);
+   const Path path = generatePath(trialNum, perturbationNum, perturbedPoints);
    controlVars.updatePathStart( perturbedPoints);
    controlVars.updatePath(path);
    if (path.empty()) return;
@@ -140,7 +131,7 @@ Path Follow::generatePointPath(const S6& startPoint) {
 
    // Go from startPoint to niggliReduced and back
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
+      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
       const S6 currentPoint = startPoint * (1.0 - t) + endPoint * t;
          path.emplace_back(currentPoint, endPoint);
    }
@@ -153,7 +144,7 @@ Path Follow::generateLinePath(const S6& startPoint, const S6& endPoint) {
    path.reserve(controlVars.numFollowerPoints);
 
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
+      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
       const S6 currentPoint = startPoint * (1.0 - t) + endPoint * t;
       path.emplace_back(currentPoint, endPoint);
    }
@@ -173,7 +164,7 @@ Path Follow::generateChordPath(const S6& point1, const S6& point2) {
    path.reserve(controlVars.numFollowerPoints);
 
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
+      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
       const S6 mobile1 = point1 * (1.0 - t) + reduced1 * t;
       const S6 mobile2 = point2 * (1.0 - t) + reduced2 * t;
       path.emplace_back(mobile1, mobile2);
@@ -193,7 +184,7 @@ Path Follow::generateChord3Path(const S6& mobile1, const S6& mobile2, const S6& 
    path.reserve(controlVars.numFollowerPoints);
 
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
+      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
       S6 currentMidpoint = initialMidpoint * (1.0 - t) + target * t;
       S6 point1 = currentMidpoint - initialDirection * (separation * 0.5);
       S6 point2 = currentMidpoint + initialDirection * (separation * 0.5);
@@ -208,7 +199,7 @@ Path Follow::generateTrianglePath(const S6& point1, const S6& point2, const S6& 
    path.reserve(controlVars.numFollowerPoints);
 
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
+      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
       const S6 mobile1 = point1 * (1.0 - t) + point3 * t;
       const S6 mobile2 = point2 * (1.0 - t) + point3 * t;
       path.emplace_back(mobile1, mobile2);
@@ -217,28 +208,26 @@ Path Follow::generateTrianglePath(const S6& point1, const S6& point2, const S6& 
    return path;
 }
 
-
-
-S6 Follow::perturbVector(const S6& inputVector, int perturbationIndex) {
+S6 Follow::perturbVector(const S6& inputVector, const int perturbationIndex) {
    if (perturbationIndex == 0) {
       return inputVector;  // No perturbation for the first case
    }
 
    // Generate a random vector
-   S6 randomVector = S6(Polar::rand());
+   const S6 randomVector = S6(Polar::rand());
 
    // Compute the component of randomVector orthogonal to inputVector
-   double dotProduct = inputVector.Dot(randomVector);
-   double inputNormSquared = inputVector.Dot(inputVector);
-   S6 orthogonalVector = randomVector - (dotProduct / inputNormSquared) * inputVector;
+   const double dotProduct = inputVector.Dot(randomVector);
+   const double inputNormSquared = inputVector.Dot(inputVector);
+   const S6 orthogonalVector = randomVector - (dotProduct / inputNormSquared) * inputVector;
 
    // Compute norms
-   double inputNorm = std::sqrt(inputNormSquared);
-   double orthogonalNorm = std::sqrt(orthogonalVector.Dot(orthogonalVector));
+   const double inputNorm = std::sqrt(inputNormSquared);
+   const double orthogonalNorm = std::sqrt(orthogonalVector.Dot(orthogonalVector));
 
    // Scale the orthogonal vector
-   double scaleFactor = inputNorm * controlVars.perturbBy / orthogonalNorm;
-   S6 scaledOrthogonalVector = scaleFactor * orthogonalVector;
+   const double scaleFactor = inputNorm * controlVars.perturbBy / orthogonalNorm;
+   const S6 scaledOrthogonalVector = scaleFactor * orthogonalVector;
 
    // Return the perturbed vector
    return inputVector + scaledOrthogonalVector;

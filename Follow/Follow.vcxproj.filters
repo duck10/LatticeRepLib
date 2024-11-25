@@ -27,9 +27,6 @@
     <ClCompile Include="ControlVariables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GlitchDetector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FollowUtils.h.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
