@@ -136,6 +136,11 @@ const std::vector<std::string> ControlVariables::VALID_DISTANCE_TYPES = {
     "CS", "NC", "V7", "R9"
 };
 
+void ControlVariables::disableDistanceType(const std::string& type) {
+   enabledDistances.erase(type);
+}
+
+
 void ControlVariables::setDistanceTypes(const std::string& types, bool clearExisting ) {
    if (clearExisting) {
       enabledDistances.clear();

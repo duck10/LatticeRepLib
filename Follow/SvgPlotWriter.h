@@ -38,9 +38,12 @@ private:
 
    void writeMetadata(int trial, int perturbation, const std::string& datetime);
 
+   std::string reportGlitches(const int n=2);
+
    std::ofstream& svg;
    const ControlVariables& controlVars;
    GlitchDetector& glitchDetector;
+   std::vector<GlitchDetector::Glitch> glitches;
    //const int minColor = 0xFFFF00;  // yellow
    //const int maxColor = 0x1589FF; // nice blue
    ColorRange colorRange = { 0xFFFF00, 0x1589FF };

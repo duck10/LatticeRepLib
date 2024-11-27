@@ -25,7 +25,7 @@ void Follow::run(const std::vector<std::string>& filenames, const std::vector<G6
    this->inputVectors = inputVectors;
 
    int vectorsPerTrial = controlVars.getVectorsPerTrial();
-   int numTrials = inputVectors.size() / vectorsPerTrial;
+   int numTrials = int(inputVectors.size()) / vectorsPerTrial;
 
    for (int trial = 0; trial < numTrials; ++trial) {
       processTrial(trial);
@@ -34,7 +34,7 @@ void Follow::run(const std::vector<std::string>& filenames, const std::vector<G6
 
 void Follow::processAllTrials() {
    const int vectorsPerTrial = controlVars.getVectorsPerTrial();
-   const int numTrials = inputVectors.size() / vectorsPerTrial;
+   const int numTrials = int(inputVectors.size()) / vectorsPerTrial;
 
    for (int trial = 0; trial < numTrials; ++trial) {
       processTrial(trial);
@@ -47,7 +47,7 @@ void Follow::processTrial(int trialNum) {
 
    // Get the starting points for this trial
    for (int i = 0; i < vectorsPerTrial; ++i) {
-      startingPoints.push_back(S6(inputVectors[trialNum * vectorsPerTrial + i]));
+      startingPoints.emplace_back(S6(inputVectors[trialNum * vectorsPerTrial + i]));
    }
 
    for (int perturbation = 0; perturbation < controlVars.perturbations; ++perturbation) {
@@ -68,7 +68,12 @@ void Follow::PrintDistanceData(const Path& path) {
             << point.second << std::endl << std::endl;
       }
    }
+   std::cout << ";--------  end of path ----------------- \n";
 
+}
+
+bool PathPointIsValid(const S6& p) {
+   return(LRL_Cell(p).IsValid());
 }
 
 void Follow::processPerturbation(int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints) {
@@ -88,7 +93,12 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const std::v
       std::vector<double> pathDists;
       pathDists.reserve(path.size());
       for (const auto& [point1, point2] : path) {
-         pathDists.push_back(dist->dist(G6(point1), G6(point2)));
+         if (PathPointIsValid(point1) && PathPointIsValid(point2)) {
+            pathDists.emplace_back(dist->dist(G6(point1), G6(point2)));
+         }
+         else {
+            pathDists.emplace_back(-19191.0);
+         }
       }
       allDistances.push_back(pathDists);
    }
@@ -102,7 +112,6 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const std::v
       std::cout << "unable to open output file" << std::endl;
    }
 }
-
 
 Path Follow::generatePath(const int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints) {
    switch (controlVars.followerMode) {
@@ -121,7 +130,11 @@ Path Follow::generatePath(const int trialNum, int perturbationNum, const std::ve
    }
 }
 
-Path Follow::generatePointPath(const S6& startPoint) {
+static S6 MakeInvalidS6() {
+   return { 19191.111111111111, 0, 0, 0, 0, 0 };
+}
+
+Path Follow::generatePointPath(const S6& startPoint) const {
    G6 niggliReduced;
    Niggli::Reduce(G6(startPoint), niggliReduced);
    const S6 endPoint(niggliReduced);
@@ -132,20 +145,21 @@ Path Follow::generatePointPath(const S6& startPoint) {
    // Go from startPoint to niggliReduced and back
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
       const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      const S6 currentPoint = startPoint * (1.0 - t) + endPoint * t;
-         path.emplace_back(currentPoint, endPoint);
+      S6 currentPoint = startPoint * (1.0 - t) + endPoint * t;
+      if (!PathPointIsValid(currentPoint)) currentPoint = MakeInvalidS6();
+      path.emplace_back(currentPoint, endPoint);
    }
    return path;
 }
 
-
-Path Follow::generateLinePath(const S6& startPoint, const S6& endPoint) {
+Path Follow::generateLinePath(const S6& startPoint, const S6& endPoint) const {
    Path path;
    path.reserve(controlVars.numFollowerPoints);
 
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
       const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      const S6 currentPoint = startPoint * (1.0 - t) + endPoint * t;
+      S6 currentPoint = startPoint * (1.0 - t) + endPoint * t;
+      if (!PathPointIsValid(currentPoint)) currentPoint = MakeInvalidS6();
       path.emplace_back(currentPoint, endPoint);
    }
 
@@ -153,7 +167,7 @@ Path Follow::generateLinePath(const S6& startPoint, const S6& endPoint) {
 }
 
 
-Path Follow::generateChordPath(const S6& point1, const S6& point2) {
+Path Follow::generateChordPath(const S6& point1, const S6& point2) const {
    G6 reduced1G6, reduced2G6;
    Niggli::Reduce(G6(point1), reduced1G6);
    Niggli::Reduce(G6(point2), reduced2G6);
@@ -165,16 +179,17 @@ Path Follow::generateChordPath(const S6& point1, const S6& point2) {
 
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
       const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      const S6 mobile1 = point1 * (1.0 - t) + reduced1 * t;
-      const S6 mobile2 = point2 * (1.0 - t) + reduced2 * t;
+      S6 mobile1 = point1 * (1.0 - t) + reduced1 * t;
+      S6 mobile2 = point2 * (1.0 - t) + reduced2 * t;
+      if (!PathPointIsValid(mobile1)) mobile1 = MakeInvalidS6();
+      if (!PathPointIsValid(mobile2)) mobile2 = MakeInvalidS6();
       path.emplace_back(mobile1, mobile2);
    }
 
    return path;
 }
 
-
-Path Follow::generateChord3Path(const S6& mobile1, const S6& mobile2, const S6& target) {
+Path Follow::generateChord3Path(const S6& mobile1, const S6& mobile2, const S6& target) const {
    S6 initialDirection = mobile2 - mobile1;
    const double separation = initialDirection.Norm();
    initialDirection = initialDirection * (1.0 / separation);
@@ -188,27 +203,31 @@ Path Follow::generateChord3Path(const S6& mobile1, const S6& mobile2, const S6& 
       S6 currentMidpoint = initialMidpoint * (1.0 - t) + target * t;
       S6 point1 = currentMidpoint - initialDirection * (separation * 0.5);
       S6 point2 = currentMidpoint + initialDirection * (separation * 0.5);
+      if (!PathPointIsValid(point1)) point1 = MakeInvalidS6();
+      if (!PathPointIsValid(point2)) point2 = MakeInvalidS6();
       path.emplace_back(point1, point2);
    }
 
    return path;
 }
 
-Path Follow::generateTrianglePath(const S6& point1, const S6& point2, const S6& point3) {
+Path Follow::generateTrianglePath(const S6& point1, const S6& point2, const S6& point3) const {
    Path path;
    path.reserve(controlVars.numFollowerPoints);
 
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
       const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      const S6 mobile1 = point1 * (1.0 - t) + point3 * t;
-      const S6 mobile2 = point2 * (1.0 - t) + point3 * t;
+      S6 mobile1 = point1 * (1.0 - t) + point3 * t;
+      S6 mobile2 = point2 * (1.0 - t) + point3 * t;
+      if (!PathPointIsValid(mobile1)) mobile1 = MakeInvalidS6();
+      if (!PathPointIsValid(mobile2)) mobile2 = MakeInvalidS6();
       path.emplace_back(mobile1, mobile2);
    }
 
    return path;
 }
 
-S6 Follow::perturbVector(const S6& inputVector, const int perturbationIndex) {
+S6 Follow::perturbVector(const S6& inputVector, const int perturbationIndex) const {
    if (perturbationIndex == 0) {
       return inputVector;  // No perturbation for the first case
    }
