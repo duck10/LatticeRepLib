@@ -31,14 +31,14 @@ private:
    void processTrial(int trialNum);
    void processPerturbation(int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints);
    void PrintDistanceData(const Path& path);
-   S6 perturbVector(const S6& inputVector, int perturbationIndex);
+   S6 perturbVector(const S6& inputVector, int perturbationIndex) const;
 
    Path generatePath(const int trialNum, int perturbationNum, const std::vector<S6>& perturbedPoints);
-   Path generatePointPath(const S6& startPoint);
-   Path generateLinePath(const S6& startPoint, const S6& endPoint);
-   Path generateChordPath(const S6& startPoint, const S6& endPoint);
-   Path generateChord3Path(const S6& mobile1, const S6& mobile2, const S6& target);
-   Path generateTrianglePath(const S6& point1, const S6& point2, const S6& point3);
+   Path generatePointPath(const S6& startPoint) const;
+   Path generateLinePath(const S6& startPoint, const S6& endPoint) const;
+   Path generateChordPath(const S6& startPoint, const S6& endPoint) const;
+   Path generateChord3Path(const S6& mobile1, const S6& mobile2, const S6& target) const;
+   Path generateTrianglePath(const S6& point1, const S6& point2, const S6& point3) const;
 
    };
 

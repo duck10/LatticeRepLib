@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
          throw std::runtime_error("Not enough input vectors for the selected follower mode");
       }
 
-      const int ntotal = ComputeTotalNumberOfRuns(controlVars, inputVectors.size());
+      const int ntotal = ComputeTotalNumberOfRuns(controlVars, int(inputVectors.size()));
 
       CheckWebFileLimits(ntotal, webio.m_hasWebInstructions);
 

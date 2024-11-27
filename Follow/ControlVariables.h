@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include "G6.h"  // For inputPoints type
+#include "GlitchDetector.h"
 #include "S6.h"
 #include "PathPoint.h"
 
@@ -45,6 +46,9 @@ public:
       path = pathIn;
    }
 
+   void updateGlitches(const std::vector<GlitchDetector::Glitch>& glitchesIn) {
+      glitches = glitchesIn;
+   }
 
    // Static control flags
    static std::atomic<bool> g_running;
@@ -71,6 +75,7 @@ public:
    std::string currentFilename;
    std::vector<S6> pathStart;
    Path path;
+   std::vector<GlitchDetector::Glitch> glitches;
 
    // Member functions
    void setFollowerMode(FollowerMode mode);
@@ -80,6 +85,7 @@ public:
    void setCurrentFilename(size_t index);
    std::string getControlVariablesAsString() const;
    void setDistanceTypes(const std::string& types, bool clearExisting = false);
+   void disableDistanceType(const std::string& type);
    std::string getDistanceTypes() const;
    void toggleDistanceType(const std::string& type, bool enable);
    static const std::vector<std::string> VALID_DISTANCE_TYPES;

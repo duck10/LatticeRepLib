@@ -44,7 +44,7 @@ private:
             prevDataDiff = 0.0;
             continue;
          }
-
+         //if (m_data[i + 1] < 0.0 || m_data[i] < 0.0) continue;
          const double& current = m_data[i];
          const double& next = m_data[i + 1];
 

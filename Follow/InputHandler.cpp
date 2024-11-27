@@ -35,12 +35,20 @@ void InputHandler::readMixedInput(ControlVariables& cv, std::vector<G6>& inputVe
          key == "A" || key == "B" || key == "C" || key == "I" ||
          key == "R" || key == "P" || key == "F" || key == "H" ||
          key == "RANDOM") {
+         G6 result;
          try {
-            if (key == "G6") inputVectors.push_back(parseG6(tokens));
-            else if (key == "S6") inputVectors.push_back(G6(parseS6(tokens)));
+            if (key == "G6") result = parseG6(tokens);
+            else if (key == "S6") result = parseS6(tokens);
             //else if (key == "V7") inputVectors.push_back(parseV7(tokens));
-            else if (key == "RANDOM") inputVectors.push_back(parseRandom(tokens));
-            else inputVectors.push_back(parseLattice(tokens));
+            else if (key == "RANDOM") result = parseRandom(tokens);
+            else result = parseLattice(tokens);
+            const LRL_Cell cell = result;
+            if (cell.IsValid()) {
+               inputVectors.emplace_back(result);
+            }
+            else {
+               const int i19191 = 19191; // invalid input cells
+            }
          }
          catch (const std::exception& e) {
             std::cerr << "Warning: Invalid input vector ignored - " << e.what() << std::endl;
@@ -80,6 +88,7 @@ void InputHandler::handleControlVariable(ControlVariables& cv, const std::string
    else if (key == "FILEPREFIX") cv.filePrefix = value;
    else if (key == "SHOWDATAMARKERS") cv.showDataMarkers = (toUpper(value) == "TRUE" || value == "1");
    else if (key == "ENABLE") cv.setDistanceTypes(value, false);
+   else if (key == "DISABLE") cv.disableDistance(value);
    else if (key[0] == ';');  // reject lines starting with semicolon
    else std::cerr << "Warning: Unknown control variable '" << key << "'" << std::endl;
 }
