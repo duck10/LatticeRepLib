@@ -48,51 +48,73 @@ void InputHandler::readMixedInput(ControlVariables& cv, std::vector<G6>& inputVe
             }
             else {
                const int i19191 = 19191; // invalid input cells
+               std::cerr << ";Warning: Invalid input vector ignored - " << std::endl;
             }
          }
          catch (const std::exception& e) {
-            std::cerr << "Warning: Invalid input vector ignored - " << e.what() << std::endl;
+            std::cerr << ";Warning: Invalid input vector ignored - " << e.what() << std::endl;
          }
       }
       else {
          // Assume it's a control variable
          if (tokens.size() >= 2) {
-            handleControlVariable(cv, key, tokens[1]);
+            handleControlVariable(cv, key, tokens[1]);  // Now we can call it directly
          }
          else {
-            std::cerr << "Warning: Invalid control variable format: " << line << std::endl;
+            std::cerr << ";Warning: Invalid control variable format: " << line << std::endl;
          }
       }
    }
 }
 
 void InputHandler::handleControlVariable(ControlVariables& cv, const std::string& key, const std::string& value) {
-   if (key == "FOLLOWERMODE") {
-      std::string modeStr = toUpper(value);
-      if (modeStr == "POINT") cv.followerMode = FollowerMode::POINT;
-      else if (modeStr == "LINE") cv.followerMode = FollowerMode::LINE;
-      else if (modeStr == "CHORD") cv.followerMode = FollowerMode::CHORD;
-      else if (modeStr == "CHORD3") cv.followerMode = FollowerMode::CHORD3;
-      else if (modeStr == "TRIANGLE") cv.followerMode = FollowerMode::TRIANGLE;
-      else std::cerr << "Warning: Unknown follower mode '" << value << "'" << std::endl;
-   }
-   else if (key == "PERTURBATIONS") cv.perturbations = std::stoi(value);
-   else if (key == "PERTURBBY") cv.perturbBy = std::stod(value);
-   else if (key == "GLITCHTHRESHOLD") cv.glitchThresholdPercent = std::stod(value);
-   else if (key == "NUMFOLLOWERPOINTS") cv.numFollowerPoints = std::stoi(value);
-   else if (key == "PRINTDISTANCEDATA") cv.printDistanceData = (toUpper(value) == "TRUE" || value == "1");
-   else if (key == "GLITCHESONLY") cv.glitchesOnly = (toUpper(value) == "TRUE" || value == "1");
-   else if (key == "FIXRANDOMSEED") cv.fixRandomSeed = (toUpper(value) == "TRUE" || value == "1");
-   else if (key == "RANDOMSEED") cv.randomSeed = std::stoi(value);
-   else if (key == "TIMESTAMP") cv.timestamp = (toUpper(value) == "TRUE" || value == "1");
-   else if (key == "FILEPREFIX") cv.filePrefix = value;
-   else if (key == "SHOWDATAMARKERS") cv.showDataMarkers = (toUpper(value) == "TRUE" || value == "1");
-   else if (key == "ENABLE") cv.setDistanceTypes(value, false);
-   else if (key == "DISABLE") cv.disableDistance(value);
-   else if (key[0] == ';');  // reject lines starting with semicolon
-   else std::cerr << "Warning: Unknown control variable '" << key << "'" << std::endl;
-}
+   // Each section handles its own StringMatcher instance for its specific command
+   static const StringMatcher followerModeMatcher(0.2);
+   static const StringMatcher modeMatcher(0.15);  // for FOLLOWERMODE values
+   static const StringMatcher perturbationsMatcher(0.2);
+   static const StringMatcher perturbByMatcher(0.2);
+   static const StringMatcher glitchThresholdMatcher(0.2);
+   static const StringMatcher numFollowerPointsMatcher(0.2);
+   static const StringMatcher printDistanceDataMatcher(0.2);
+   static const StringMatcher glitchesOnlyMatcher(0.2);
+   static const StringMatcher fixRandomSeedMatcher(0.2);
+   static const StringMatcher randomSeedMatcher(0.2);
+   static const StringMatcher timestampMatcher(0.2);
+   static const StringMatcher filePrefixMatcher(0.2);
+   static const StringMatcher showDataMarkersMatcher(0.2);
+   static const StringMatcher enableMatcher(0.2);
+   static const StringMatcher disableMatcher(0.2);
 
+   if (followerModeMatcher.matches(key, "FOLLOWERMODE")) {
+      std::string modeStr = toUpper(value);
+      if (modeMatcher.matches(modeStr, "POINT")) cv.followerMode = FollowerMode::POINT;
+      else if (modeMatcher.matches(modeStr, "LINE")) cv.followerMode = FollowerMode::LINE;
+      else if (modeMatcher.matches(modeStr, "CHORD")) {
+         // Special handling for CHORD vs CHORD3
+         if (modeMatcher.matches(modeStr, "CHORD3"))
+            cv.followerMode = FollowerMode::CHORD3;
+         else
+            cv.followerMode = FollowerMode::CHORD;
+      }
+      else if (modeMatcher.matches(modeStr, "TRIANGLE")) cv.followerMode = FollowerMode::TRIANGLE;
+      else std::cerr << ";Warning: Unknown follower mode '" << value << "'" << std::endl;
+   }
+   else if (perturbationsMatcher.matches(key, "PERTURBATIONS")) cv.perturbations = std::stoi(value);
+   else if (perturbByMatcher.matches(key, "PERTURBBY")) cv.perturbBy = std::stod(value);
+   else if (glitchThresholdMatcher.matches(key, "GLITCHTHRESHOLD")) cv.glitchThresholdPercent = std::stod(value);
+   else if (numFollowerPointsMatcher.matches(key, "NUMFOLLOWERPOINTS")) cv.numFollowerPoints = std::stoi(value);
+   else if (printDistanceDataMatcher.matches(key, "PRINTDISTANCEDATA")) cv.printDistanceData = (toUpper(value) == "TRUE" || value == "1");
+   else if (glitchesOnlyMatcher.matches(key, "GLITCHESONLY")) cv.glitchesOnly = (toUpper(value) == "TRUE" || value == "1");
+   else if (fixRandomSeedMatcher.matches(key, "FIXRANDOMSEED")) cv.fixRandomSeed = (toUpper(value) == "TRUE" || value == "1");
+   else if (randomSeedMatcher.matches(key, "RANDOMSEED")) cv.randomSeed = std::stoi(value);
+   else if (timestampMatcher.matches(key, "TIMESTAMP")) cv.timestamp = (toUpper(value) == "TRUE" || value == "1");
+   else if (filePrefixMatcher.matches(key, "FILEPREFIX")) cv.filePrefix = value;
+   else if (showDataMarkersMatcher.matches(key, "SHOWDATAMARKERS")) cv.showDataMarkers = (toUpper(value) == "TRUE" || value == "1");
+   else if (enableMatcher.matches(key, "ENABLE")) cv.setDistanceTypes(value, false);
+   else if (disableMatcher.matches(key, "DISABLE")) cv.disableDistance(value);
+   else if (key[0] == ';');  // reject lines starting with semicolon
+   else std::cerr << ";Warning: Unknown control variable '" << key << "'" << std::endl;
+}
 std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
    std::vector<std::string> tokens;
    std::istringstream iss(line);
@@ -121,7 +143,7 @@ G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
 
 S6 InputHandler::parseS6(const std::vector<std::string>& tokens) {
    if (tokens.size() < 7) {
-      throw std::runtime_error("Invalid S6 input: expected 7 tokens, got " + std::to_string(tokens.size()));
+      throw std::runtime_error(";Invalid S6 input: expected 7 tokens, got " + std::to_string(tokens.size()));
    }
    S6 result;
    for (int i = 0; i < 6; ++i) {
@@ -129,7 +151,7 @@ S6 InputHandler::parseS6(const std::vector<std::string>& tokens) {
          result[i] = std::stod(tokens[i + 1]);
       }
       catch (const std::exception& e) {
-         throw std::runtime_error("Invalid S6 input: failed to parse " + tokens[i + 1] + " as double");
+         throw std::runtime_error(";Invalid S6 input: failed to parse " + tokens[i + 1] + " as double");
       }
    }
    return result;

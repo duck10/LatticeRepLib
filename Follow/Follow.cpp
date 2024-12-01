@@ -64,8 +64,12 @@ void Follow::PrintDistanceData(const Path& path) {
    {
       std::cout << "; the path" << std::endl;
       for (const auto& point : path) {
-         std::cout << "; S6 " << point.first << "\n; S6 "
-            << point.second << std::endl << std::endl;
+         const S6& pnt1(point.first);
+         const S6& pnt2(point.second);
+         const std::string invalid1 = (pnt1.IsValid()) ? "" : " invalid";
+         const std::string invalid2 = (pnt2.IsValid()) ? "" : " invalid";
+         std::cout << "; S6 " << pnt1 << invalid1 << "\n; S6 "
+            << pnt2 << invalid2 << std::endl << std::endl;
       }
    }
    std::cout << ";--------  end of path ----------------- \n";

@@ -528,7 +528,7 @@ std::vector<MatS6> MatS6::GetReflections() {
 
 std::vector<MatS6> MatS6::GetBoundaries() {
    std::vector<MatS6> out;
-   for (size_t i = 0; i < 6; ++i) {
+   for (size_t i = 1; i <= 6; ++i) {
      const auto xxx = S6BoundaryTransforms::generateOneBoundaryTransform(i);
    }
    return out;
