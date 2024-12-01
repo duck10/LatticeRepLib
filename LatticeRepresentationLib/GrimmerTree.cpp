@@ -221,7 +221,10 @@ GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain()
          fails.AddBravaistypeAndFit(m_chain[i - 2].GetBravaisType(), m_chain[i - 2].GetFit());
          fails.AddBravaistypeAndFit(m_chain[i-1].GetBravaisType(), m_chain[i-1].GetFit());
          fails.AddBravaistypeAndFit(m_chain[i].GetBravaisType(), m_chain[i].GetFit());
-         std::cout << fails << std::endl;
+         if (const bool debug = false == true)
+         {
+            std::cout << fails << std::endl;
+         }
          m_failures = fails;
       }
       prevFit = fit;
@@ -241,7 +244,10 @@ void GrimmerChains::CheckAllGrimmerChains()
          uniqueFailures.insert(ss.str());
          m_GrimmerFailures.emplace_back(fail);
          m_hasChainFailure = true;
-         std::cout << fail << std::endl;
+         if ( const bool debug = false ==true)
+         {
+            std::cout << fail << std::endl;
+         }
       }
    }
 }
@@ -308,7 +314,7 @@ DeloneFitResults GrimmerChains::Remediation(const std::string& bravaisName, cons
    const DeloneFitResults dfrInit = Sella::SellaFitXXXXXX(sptypes[0], m_s6);
    auto dfr = dfrInit;
 
-   for (size_t i = 0; i < 6; ++i)
+   for (size_t i = 1; i <= 6; ++i)
    {
       // apply a boundary transform
       const MatS6 matrix = S6BoundaryTransforms::generateOneBoundaryTransform(i);

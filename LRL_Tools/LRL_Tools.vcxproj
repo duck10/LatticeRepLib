@@ -169,6 +169,7 @@
     <ClInclude Include="rhrand.h" />
     <ClInclude Include="spline_under_tension.hpp" />
     <ClInclude Include="StoreResults.h" />
+    <ClInclude Include="StringMatcher.h" />
     <ClInclude Include="SuperFastHash.h" />
     <ClInclude Include="SVG_Tools.h" />
     <ClInclude Include="Theta.h" />
