@@ -22,7 +22,7 @@ public:
 
 private:
    ControlVariables& controlVars;
-   std::vector<std::unique_ptr<Distance>> distances;
+   std::vector<std::unique_ptr<Distance>> distfuncs;
    GlitchDetector glitchDetector;
    std::vector<G6> inputVectors;
    std::vector<std::string> filenames;  // Add this line if it's not already there

@@ -84,6 +84,7 @@ void InputHandler::handleControlVariable(ControlVariables& cv, const std::string
    static const StringMatcher showDataMarkersMatcher(0.2);
    static const StringMatcher enableMatcher(0.2);
    static const StringMatcher disableMatcher(0.2);
+   static const StringMatcher blockstartMatcher(0.2);
 
    if (followerModeMatcher.matches(key, "FOLLOWERMODE")) {
       std::string modeStr = toUpper(value);
@@ -112,9 +113,11 @@ void InputHandler::handleControlVariable(ControlVariables& cv, const std::string
    else if (showDataMarkersMatcher.matches(key, "SHOWDATAMARKERS")) cv.showDataMarkers = (toUpper(value) == "TRUE" || value == "1");
    else if (enableMatcher.matches(key, "ENABLE")) cv.setDistanceTypes(value, false);
    else if (disableMatcher.matches(key, "DISABLE")) cv.disableDistance(value);
+   else if (blockstartMatcher.matches(key, "BLOCKSTART")) cv.updateBlock((size_t)std::stol(value),BLOCKSIZE_LIMIT);
    else if (key[0] == ';');  // reject lines starting with semicolon
    else std::cerr << ";Warning: Unknown control variable '" << key << "'" << std::endl;
 }
+
 std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
    std::vector<std::string> tokens;
    std::istringstream iss(line);
@@ -127,7 +130,7 @@ std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
 
 G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
    if (tokens.size() < 7) {
-      throw std::runtime_error("Invalid G6 input: expected 7 tokens, got " + std::to_string(tokens.size()));
+      throw std::runtime_error(";Invalid G6 input: expected 7 tokens, got " + std::to_string(tokens.size()));
    }
    G6 result;
    for (int i = 0; i < 6; ++i) {
@@ -135,7 +138,7 @@ G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
          result[i] = std::stod(tokens[i + 1]);
       }
       catch (const std::exception& e) {
-         throw std::runtime_error("Invalid G6 input: failed to parse " + tokens[i + 1] + " as double");
+         throw std::runtime_error(";Invalid G6 input: failed to parse " + tokens[i + 1] + " as double");
       }
    }
    return result;
@@ -159,7 +162,7 @@ S6 InputHandler::parseS6(const std::vector<std::string>& tokens) {
 
 G6 InputHandler::parseV7(const std::vector<std::string>& tokens) {
    if (tokens.size() < 8) {
-      throw std::runtime_error("Invalid V7 input: expected 8 tokens, got " + std::to_string(tokens.size()));
+      throw std::runtime_error(";Invalid V7 input: expected 8 tokens, got " + std::to_string(tokens.size()));
    }
    // Implement V7 to G6 conversion here
    // This is a placeholder implementation
@@ -169,7 +172,7 @@ G6 InputHandler::parseV7(const std::vector<std::string>& tokens) {
          result[i] = std::stod(tokens[i + 1]);
       }
       catch (const std::exception& e) {
-         throw std::runtime_error("Invalid V7 input: failed to parse " + tokens[i + 1] + " as double");
+         throw std::runtime_error(";Invalid V7 input: failed to parse " + tokens[i + 1] + " as double");
       }
    }
    return result;
@@ -181,7 +184,7 @@ G6 InputHandler::parseRandom(const std::vector<std::string>& tokens) {
 
 G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
    if (tokens.size() < 7) {
-      throw std::runtime_error("Invalid lattice input: expected 7 tokens, got " + std::to_string(tokens.size()));
+      throw std::runtime_error(";Invalid lattice input: expected 7 tokens, got " + std::to_string(tokens.size()));
    }
    // Implement lattice to G6 conversion here
    // This is a placeholder implementation
@@ -191,7 +194,7 @@ G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
          result[i] = std::stod(tokens[i + 1]);
       }
       catch (const std::exception& e) {
-         throw std::runtime_error("Invalid lattice input: failed to parse " + tokens[i + 1] + " as double");
+         throw std::runtime_error(";Invalid lattice input: failed to parse " + tokens[i + 1] + " as double");
       }
    }
    return result;

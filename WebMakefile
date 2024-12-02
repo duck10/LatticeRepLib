@@ -28,6 +28,7 @@ COMMANDS  =  \
 	CmdToU \
 	CmdToV7 \
 	CmdVolume \
+	Follow \
 	PlotC3 \
 	PlotPolar \
 	Dirichlet
@@ -60,6 +61,7 @@ SOURCES  =  \
 	CmdToU/CmdToU.cpp \
 	CmdToV7/CmdToV7.cpp \
 	CmdVolume/CmdVolume.cpp \
+	Follow/MAIN_Follow.cpp \
 	PlotC3/MAIN_PlotC3.cpp \
 	PlotPolar/MAIN_PlotPolar \
 	Dirichlet/Dirichlet_Main.cpp
@@ -91,6 +93,7 @@ BINS  =  \
 	CmdToU/CmdToU \
 	CmdToV7/CmdToV7 \
 	CmdVolume/CmdVolume \
+	Follow/Follow \
 	PlotC3/PlotC3 \
 	PlotPolar/PlotPolar \
 	Dirichlet/Dirichlet
@@ -188,6 +191,9 @@ CmdToV7/CmdToV7:  CmdToV7/CmdToV7.cpp $(BIN)
 
 CmdVolume/CmdVolume:  CmdVolume/CmdVolume.cpp $(BIN)
 	  (cd CmdVolume;  make all; cp CmdVolume $(BIN))
+
+Follow/Follow:  Follow/MAIN_Follow.cpp $(BIN)
+	  (cd Follow; make all; cp Follow $(BIN))
 
 PlotC3/PlotC3:  PlotC3/MAIN_PlotC3.cpp $(BIN)
 	  (cd PlotC3; make all; cp PlotC3 $(BIN))

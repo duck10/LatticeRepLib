@@ -10,9 +10,6 @@
 #include <string>
 #include <istream>
 
-
-
-
 class InputHandler {
 private:
    StringMatcher commandMatcher;

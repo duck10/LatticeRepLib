@@ -27,6 +27,9 @@ public:
 
    ControlVariables();
 
+   // block size limit to control load SET CAREFULLY
+   #define  BLOCKSIZE_LIMIT 20L
+
    void updateFilenames(int totalRuns) {
       filenames.clear();
       for (int i = 0; i < totalRuns; ++i) {
@@ -36,6 +39,13 @@ public:
 
    void updateFilenames(const std::vector<std::string>& names) {
       filenames = names;
+   }
+
+   void updateBlock( const size_t & blockstartIn, const size_t blocksizeIn ) {
+      blockstart = blockstartIn;
+      blocksize = BLOCKSIZE_LIMIT;
+      if (blockstart >  filenames.size()-1) blockstart = filenames.size()-1;
+      if (blocksize + blockstart > filenames.size()) blocksize = filenames.size()-1-blockstart;
    }
 
    void updatePathStart(const std::vector<S6>& start) {
@@ -55,6 +65,8 @@ public:
    static std::atomic<bool> g_in_input;
 
    // Static variables (set at startup)
+   size_t blockstart; // held between 0  and totalRuns-1
+   size_t blocksize; // held between 1 and min(BLOCKSIZE_LIMIT, totalRuns-blockstart))
    int perturbations;  // Renamed from trials
    double perturbBy;
    int numFollowerPoints;

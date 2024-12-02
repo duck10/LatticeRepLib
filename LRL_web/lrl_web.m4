@@ -1,7 +1,7 @@
 dnl # lrl_web.m4 m4 source code of LRL_WEB cgi-bin script and web page
-dnl #    (C) Copyright  2023 Herbert J. Bernstein
-dnl #    YOU MAY REDISTRIBUTE THE CBFLIB PACKAGE UNDER THE TERMS OF THE GPL.
-dnl #    ALTERNATIVELY YOU MAY REDISTRIBUTE THE CBFLIB API UNDER THE TERMS OF THE LGPL.
+dnl #    (C) Copyright  2024 Herbert J. Bernstein
+dnl #    YOU MAY REDISTRIBUTE THE LRL_WEB PACKAGE UNDER THE TERMS OF THE GPL.
+dnl #    ALTERNATIVELY YOU MAY REDISTRIBUTE THE LRL_WEB API UNDER THE TERMS OF THE LGPL.
 dnl #
 dnl # m4 macro expansion is controlled by defining the following m4 macros
 dnl #    lrl_web_host -- the web host name (without http: prefix)
@@ -285,6 +285,7 @@ int main(int argc,
       std::cout << "      document.getElementById(\"block_\"+tdii+\"c\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"d\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"_running\").style=\"display:none\";" << std::endl;
+      std::cout << "      document.getElementById(\"block_\"+tdii+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -329,6 +330,9 @@ int main(int argc,
       std::cout << std::string("   outdivid.scrollTop = \"0\";") << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).scrollTop=\"0\";")<< std::endl;
       std::cout << " let operation=document.getElementById(\"operation_\"+tdrownum).value;" << std::endl;
+      std::cout << " if (operation!=\"Follow\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
+      std::cout << " }" << std::endl;
       std::cout << " if (operation!=\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << " }" << std::endl;
@@ -347,6 +351,9 @@ int main(int argc,
       std::cout << " if (operation==\"Dirichlet\") {" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_Dirichlet([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
+      std::cout << " } else if (operation==\"Follow\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_Follow([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdDelone\") {" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdDelone([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
@@ -354,6 +361,7 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdDists([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdGen\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -368,6 +376,7 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdNiggli([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdPath\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -376,6 +385,7 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdPath([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
@@ -387,6 +397,7 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdS6Refl([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdScale\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -422,6 +433,7 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdToS6([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToS6L\") {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -445,6 +457,7 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_PlotPolar([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else {" << std::endl;
+      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -1332,6 +1345,8 @@ std::string plaintext2html(std::string & dst, std::string src){
       std::string lrl_web_data_cmdtos6l_type;
       std::string lrl_web_data_dirichlet_rawprefix;
       std::string lrl_web_data_dirichlet_htmlprefix;
+      std::string lrl_web_data_follow_rawprefix;
+      std::string lrl_web_data_follow_htmlprefix;
       std::string lrl_web_data_plotc3_rawprefix;
       std::string lrl_web_data_plotc3_htmlprefix;
       std::string lrl_web_data_plotpolar_rawprefix;
@@ -1378,6 +1393,8 @@ std::string plaintext2html(std::string & dst, std::string src){
       lrl_web_data_cmdtos6l_type=std::string("S6L");
       lrl_web_data_dirichlet_rawprefix=tmp_lrl_web+std::string("/");
       lrl_web_data_dirichlet_htmlprefix=html_tmp_lrl_web+std::string("/");
+      lrl_web_data_follow_rawprefix=tmp_lrl_web+std::string("/");
+      lrl_web_data_follow_htmlprefix=html_tmp_lrl_web+std::string("/");
       lrl_web_data_plotc3_rawprefix=tmp_lrl_web+std::string("/");
       lrl_web_data_plotc3_htmlprefix=html_tmp_lrl_web+std::string("/");
       lrl_web_data_plotpolar_rawprefix=tmp_lrl_web+std::string("/");
@@ -1439,6 +1456,13 @@ std::string plaintext2html(std::string & dst, std::string src){
           +std::string(" --rawprefix ")+std::string(lrl_web_data_dirichlet_rawprefix)
           +std::string(" --htmlprefix ")+std::string(lrl_web_data_dirichlet_htmlprefix));
         // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_dirichlet_prefixes" << (opmod).c_str() <<"</td></tr>" << std::endl;
+      } else if (operation=="Follow") {
+        lrl_web_data_follow_rawprefix = tmp_lrl_web+std::string("/");
+        lrl_web_data_follow_htmlprefix = html_tmp_lrl_web+std::string("/");
+        opmod=(std::string(" --host ]]]LRLWEBHOST[[[ ")
+          +std::string(" --rawprefix ")+std::string(lrl_web_data_follow_rawprefix)
+          +std::string(" --htmlprefix ")+std::string(lrl_web_data_follow_htmlprefix));
+        // std::cout << "<tr><td colspan=\"3\">" << "lrl_web_data_"+twodig_array[numop]+"_follow_prefixes" << (opmod).c_str() <<"</td></tr>" << std::endl;
       }
       std::string oppath=std::string(tmp_lrl_web+"/operation_"+twodig_array[numop]);
       if(string_to_file(at.c_str(), oppath.c_str(), (operation+opmod).c_str())) {
@@ -1493,7 +1517,7 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <td align=left>" << std::endl;
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"a\" style="+active+">" << std::endl; 
       std::cout << "  <label for=\"operation_"+twodig_array[numop]+"\">Select an operation:</label><br />" << std::endl;
-      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"32\" onchange=\"changeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
+      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"33\" onchange=\"wchangeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
       std::cout << "  <optgroup label=\"Information\">" << std::endl;
       selected=operation.compare("NoOp")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"NoOp\"><b>Check Input</b></option>" << std::endl;
@@ -1511,6 +1535,8 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <option "+selected+"value=\"PlotPolar\"><b>PlotPolar</b>:  draw polar plot of listed cells</option>" << std::endl;
       selected=operation.compare("Dirichlet")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"Dirichlet\"><b>Dirichlet</b>:  draw Dirichlet cells of listed cells</option>" << std::endl;
+      selected=operation.compare("Follow")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"Follow\"><b>Follow</b>:  draw results of following various small transitions</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
       std::cout << "  <optgroup label=\"Output Only\">"  << std::endl;
       selected=operation.compare("CmdGen")==0?"selected ":"";
@@ -2678,6 +2704,7 @@ function changenumops(){
       document.getElementById("block_"+tdii+"c").style="display:none";
       document.getElementById("block_"+tdii+"d").style="display:none";
       document.getElementById("block_"+tdii+"_running").style="display:none";
+      document.getElementById("block_"+tdii+"b_follow").style="display:none";
       document.getElementById("block_"+tdii+"b_cmdgen").style="display:none";
       document.getElementById("block_"+tdii+"b_cmdpath").style="display:none";
       document.getElementById("block_"+tdii+"b_cmdperturb").style="display:none";
@@ -2720,6 +2747,9 @@ function changeoperation(rownum) {
   document.getElementById("lrl_web_help_"+tdrownum).scrollTop="0";
   outdivid.scrollTop = "0";
   let operation=document.getElementById("operation_"+tdrownum).value;
+  if (operation!="Follow") {
+    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
+  }
   if (operation!="CmdGen") {
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
   }
@@ -2735,13 +2765,16 @@ function changeoperation(rownum) {
   if (operation!="CmdToS6L") {
     document.getElementById("block_"+tdrownum+"b_cmdtos6l").style="display:none";
   }
-  if (operation=="Dirichlet") {
+  if (operation=="Follow") {
+    document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_Follow([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
+  } else if (operation=="Dirichlet") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_Dirichlet([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
- } else if (operation=="CmdDelone") {
+  } else if (operation=="CmdDelone") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdDelone([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
- } else if (operation=="CmdDists") {
+  } else if (operation=="CmdDists") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdDists([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
- } else  if (operation=="CmdGen") {
+  } else  if (operation=="CmdGen") {
+    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:inline";
     document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
@@ -2753,6 +2786,7 @@ function changeoperation(rownum) {
  } else if (operation=="CmdNiggli") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdNiggli([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdPath") {
+    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:inline";
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
@@ -2760,6 +2794,7 @@ function changeoperation(rownum) {
     document.getElementById("block_"+tdrownum+"b_cmdtos6l").style="display:none";
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdPath([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
   } else if (operation=="CmdPerturb") {
+    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:inline";
@@ -2769,6 +2804,7 @@ function changeoperation(rownum) {
  } else if (operation=="CmdS6Refl") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdS6Refl([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdScale") {
+    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
@@ -2999,7 +3035,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_01a" style="display:inline"> 
   <label for="operation_01">Select an operation:</label><br />
-  <select name="operation_01" id="operation_01" size="32" onchange="changeoperation('01')">
+  <select name="operation_01" id="operation_01" size="33" onchange="changeoperation('01')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
@@ -3010,6 +3046,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="PlotC3"><b>PlotC3</b>: draw C<sup>3</sup> plot of listed cells</option>
   <option value="PlotPolar"><b>PlotPolar</b>: draw polar plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
+  <option value="Follow"><b>Follow</b>: draw results of following various small transitions</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
@@ -3042,6 +3079,13 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
+  <div id="block_01b_follow" style="display:none">
+  <label for="lrl_web_data_01_follow_blockstart">Blockstart:</label>&nbsp;
+  <input id="lrl_web_data_01_follow_blockstart" name="lrl_web_data_01_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
+  <label for="lrl_web_data_01_follow_blocksize">Blocksize:</label>&nbsp;
+  <input id="lrl_web_data_01_follow_blocksize" name="lrl_web_data_01_follow_blocksize" type="number" value="20" />
+  <br />
+  </div>
   <div id="block_01b_cmdgen" style="display:none">
   <label for="lrl_web_data_01_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_01_cmdgen_ngen" name="lrl_web_data_01_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3125,7 +3169,7 @@ LRLWEBRUNNING([[[ ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_02a" style="display:none">
   <label for="operation_02">Select an operation:</label><br />
-  <select name="operation_02" id="operation_02" size="32" onchange="changeoperation('02')">
+  <select name="operation_02" id="operation_02" size="33" onchange="changeoperation('02')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
@@ -3136,6 +3180,7 @@ LRLWEBRUNNING([[[ ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="PlotC3"><b>PlotC3</b>: draw C<sup>3</sup> plot of listed cells</option>
   <option value="PlotPolar"><b>PlotPolar</b>: draw polar plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
+  <option value="Follow"><b>Follow</b>: draw results of following various small transitions</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
@@ -3168,6 +3213,13 @@ LRLWEBRUNNING([[[ ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
+  <div id="block_02b_follow" style="display:none">
+  <label for="lrl_web_data_02_follow_blockstart">Blockstart:</label>&nbsp;
+  <input id="lrl_web_data_02_follow_blockstart" name="lrl_web_data_02_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
+  <label for="lrl_web_data_02_follow_blocksize">Blocksize:</label>&nbsp;
+  <input id="lrl_web_data_02_follow_blocksize" name="lrl_web_data_02_follow_blocksize" type="number" value="20" />
+  <br />
+  </div>
   <div id="block_02b_cmdgen" style="display:none">
   <label for="lrl_web_data_02_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_02_cmdgen_ngen" name="lrl_web_data_02_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp; 
@@ -3253,7 +3305,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_03a" style="display:none"> 
   <label for="operation_03">Select an operation:</label><br />
-  <select name="operation_03" id="operation_03" size="32" onchange="changeoperation('03')">
+  <select name="operation_03" id="operation_03" size="33" onchange="changeoperation('03')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
@@ -3264,6 +3316,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="PlotC3"><b>PlotC3</b>: draw C<sup>3</sup> plot of listed cells</option>
   <option value="PlotPolar"><b>PlotPolar</b>: draw polar plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
+  <option value="Follow"><b>Follow</b>: draw results of following various small transitions</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
@@ -3296,6 +3349,13 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
+  <div id="block_03b_follow" style="display:none">
+  <label for="lrl_web_data_03_follow_blockstart">Blockstart:</label>&nbsp;
+  <input id="lrl_web_data_03_follow_blockstart" name="lrl_web_data_03_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
+  <label for="lrl_web_data_03_follow_blocksize">Blocksize:</label>&nbsp;
+  <input id="lrl_web_data_03_follow_blocksize" name="lrl_web_data_03_follow_blocksize" type="number" value="20" />
+  <br />
+  </div>
   <div id="block_03b_cmdgen" style="display:none">
   <label for="lrl_web_data_03_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_03_cmdgen_ngen" name="lrl_web_data_03_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3379,7 +3439,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_04a" style="display:none"> 
   <label for="operation_04">Select an operation:</label><br />
-  <select name="operation_04" id="operation_04" size="32" onchange="changeoperation('04')">
+  <select name="operation_04" id="operation_04" size="33" onchange="changeoperation('04')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
@@ -3390,6 +3450,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="PlotC3"><b>PlotC3</b>: draw C<sup>3</sup> plot of listed cells</option>
   <option value="PlotPolar"><b>PlotPolar</b>: draw polar plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
+  <option value="Follow"><b>Follow</b>: draw results of following various small transitions</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
@@ -3422,6 +3483,13 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
+  <div id="block_04b_follow" style="display:none">
+  <label for="lrl_web_data_04_follow_blockstart">Blockstart:</label>&nbsp;
+  <input id="lrl_web_data_04_follow_blockstart" name="lrl_web_data_04_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
+  <label for="lrl_web_data_04_follow_blocksize">Blocksize:</label>&nbsp;
+  <input id="lrl_web_data_04_follow_blocksize" name="lrl_web_data_04_follow_blocksize" type="number" value="20" />
+  <br />
+  </div>
   <div id="block_04b_cmdgen" style="display:none">
   <label for="lrl_web_data_04_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_04_cmdgen_ngen" name="lrl_web_data_04_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3505,7 +3573,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_05a" style="display:none"> 
   <label for="operation_05">Select an operation:</label><br />
-  <select name="operation_05" id="operation_05" size="32" onchange="changeoperation('05')">
+  <select name="operation_05" id="operation_05" size="33" onchange="changeoperation('05')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
@@ -3516,6 +3584,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="PlotC3"><b>PlotC3</b>: draw C<sup>3</sup> plot of listed cells</option>
   <option value="PlotPolar"><b>PlotPolar</b>: draw polar plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
+  <option value="Follow"><b>Follow</b>: draw results of following various small transitions</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
@@ -3548,6 +3617,13 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
+  <div id="block_05b_follow" style="display:none">
+  <label for="lrl_web_data_05_follow_blockstart">Blockstart:</label>&nbsp;
+  <input id="lrl_web_data_05_follow_blockstart" name="lrl_web_data_05_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
+  <label for="lrl_web_data_05_follow_blocksize">Blocksize:</label>&nbsp;
+  <input id="lrl_web_data_05_follow_blocksize" name="lrl_web_data_05_follow_blocksize" type="number" value="20" />
+  <br />
+  </div>
   <div id="block_05b_cmdgen" style="display:none">
   <label for="lrl_web_data_05_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_05_cmdgen_ngen" name="lrl_web_data_05_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3631,7 +3707,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_06a" style="display:none"> 
   <label for="operation_06">Select an operation:</label><br />
-  <select name="operation_06" id="operation_06" size="32" onchange="changeoperation('06')">
+  <select name="operation_06" id="operation_06" size="33" onchange="changeoperation('06')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
@@ -3642,6 +3718,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="PlotC3"><b>PlotC3</b>: draw C<sup>3</sup> plot of listed cells</option>
   <option value="PlotPolar"><b>PlotPolar</b>: draw polar plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
+  <option value="Follow"><b>Follow</b>: draw results of following various small transitions</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
@@ -3674,6 +3751,13 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
+  <div id="block_06b_follow" style="display:none">
+  <label for="lrl_web_data_06_follow_blockstart">Blockstart:</label>&nbsp;
+  <input id="lrl_web_data_06_follow_blockstart" name="lrl_web_data_06_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
+  <label for="lrl_web_data_06_follow_blocksize">Blocksize:</label>&nbsp;
+  <input id="lrl_web_data_06_follow_blocksize" name="lrl_web_data_06_follow_blocksize" type="number" value="20" />
+  <br />
+  </div>
   <div id="block_06b_cmdgen" style="display:none">
   <label for="lrl_web_data_06_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_06_cmdgen_ngen" name="lrl_web_data_06_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3757,7 +3841,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_07a" style="display:none"> 
   <label for="operation_07">Select an operation:</label><br />
-  <select name="operation_07" id="operation_07" size="32" onchange="changeoperation('07')">
+  <select name="operation_07" id="operation_07" size="33" onchange="changeoperation('07')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
@@ -3768,6 +3852,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="PlotC3"><b>PlotC3</b>: draw C<sup>3</sup> plot of listed cells</option>
   <option value="PlotPolar"><b>PlotPolar</b>: draw polar plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
+  <option value="Follow"><b>Follow</b>: draw results of following various small transitions</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
@@ -3800,6 +3885,13 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
+  <div id="block_07b_follow" style="display:none">
+  <label for="lrl_web_data_07_follow_blockstart">Blockstart:</label>&nbsp;
+  <input id="lrl_web_data_07_follow_blockstart" name="lrl_web_data_07_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
+  <label for="lrl_web_data_07_follow_blocksize">Blocksize:</label>&nbsp;
+  <input id="lrl_web_data_07_follow_blocksize" name="lrl_web_data_07_follow_blocksize" type="number" value="20" />
+  <br />
+  </div>
   <div id="block_07b_cmdgen" style="display:none">
   <label for="lrl_web_data_07_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_07_cmdgen_ngen" name="lrl_web_data_07_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3893,7 +3985,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_08a" style="display:none"> 
   <label for="operation_08">Select an operation:</label><br />
-  <select name="operation_08" id="operation_08" size="32" onchange="changeoperation('08')">
+  <select name="operation_08" id="operation_08" size="33" onchange="changeoperation('08')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
@@ -3904,6 +3996,7 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <option value="PlotC3"><b>PlotC3</b>: draw C<sup>3</sup> plot of listed cells</option>
   <option value="PlotPolar"><b>PlotPolar</b>: draw polar plot of listed cells</option>
   <option value="Dirichlet"><b>Dirichlet</b>: draw Dirichlet cell of listed cells</option>
+  <option value="Follow"><b>Follow</b>: draw results of following various small transitions</option>
   </optgroup>
   <optgroup label="Output Only">
   <option value="CmdGen"><b>Generate cells</b>: Generate cells of a particular type or types</option>
@@ -3936,6 +4029,13 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
+  <div id="block_08b_follow" style="display:none">
+  <label for="lrl_web_data_08_follow_blockstart">Blockstart:</label>&nbsp;
+  <input id="lrl_web_data_08_follow_blockstart" name="lrl_web_data_08_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
+  <label for="lrl_web_data_08_follow_blocksize">Blocksize:</label>&nbsp;
+  <input id="lrl_web_data_08_follow_blocksize" name="lrl_web_data_08_follow_blocksize" type="number" value="20" />
+  <br />
+  </div>
   <div id="block_08b_cmdgen" style="display:none">
   <label for="lrl_web_data_08_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_08_cmdgen_ngen" name="lrl_web_data_08_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -4280,7 +4380,7 @@ determination of a unique conventional cell. Zeitschrift f&uuml;r Kristallograph
 
 <p>
 <hr />
-Updated 17 July 2024.
+Updated 27 November 2024.
 </font>
 </body>
 </html>]]])
