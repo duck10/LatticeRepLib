@@ -1,3 +1,6 @@
+#pragma warning(disable: 4996)
+
+
 #include "LRL_CreateFileName.h"
 #include "WebIO.h"
 
