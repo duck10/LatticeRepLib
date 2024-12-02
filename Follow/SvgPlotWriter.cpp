@@ -20,7 +20,7 @@ SvgPlotWriter::SvgPlotWriter(std::ofstream& outSvg, const ControlVariables& cv,
 
 
 void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistances,
-   const std::vector<std::unique_ptr<Distance>>& distances,
+   const std::vector<std::unique_ptr<Distance>>& distfuncs,
    int trial, int perturbation,
    int width, int height)
 {
@@ -39,9 +39,9 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    std::string datetime_str = datetime.str();
 
    double maxDist = 0.0;
-   for (const auto& distances : allDistances) {
-      if (!distances.empty()) {
-         maxDist = std::max(maxDist, *std::max_element(distances.begin(), distances.end()));
+   for (const auto& distfuncs : allDistances) {
+      if (!distfuncs.empty()) {
+         maxDist = std::max(maxDist, *std::max_element(distfuncs.begin(), distfuncs.end()));
       }
    }
    maxDist = std::ceil(maxDist * 1.1);
@@ -52,7 +52,7 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    writeTitle(width, datetime.str(), trial, perturbation);
    writeGridAndAxes(width, height, margin, maxDist, allDistances);
    writePlotData(width, height, margin, maxDist, allDistances);
-   writeLegend(width, margin, allDistances, distances);
+   writeLegend(width, margin, allDistances, distfuncs);
    writeMetadata(trial, perturbation, datetime.str());
 
    svg << "</svg>\n";
@@ -168,7 +168,7 @@ void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int m
    svg << "<text x=\"" << (width / 2) << "\" y=\"" << (height - 10)
       << "\" text-anchor=\"middle\" font-size=\"14\">Point Index</text>\n";
    svg << "</g>\n\n";
-
+ 
    svg << "<g id=\"Y-AXIS\">\n";
    // Draw y-axis line
    svg << "<line x1=\"" << leftMargin << "\" y1=\"" << margin
@@ -231,8 +231,8 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
 
    // Find actual maximum y value first
    double actualMaxDist = 0.0;
-   for (const auto& distances : allDistances) {
-      for (double d : distances) {
+   for (const auto& distfuncs : allDistances) {
+      for (double d : distfuncs) {
          if (d > 0 && !std::isnan(d) && d != MakeInvalidS6()[0]) {
             actualMaxDist = std::max(actualMaxDist, d);
          }
@@ -344,15 +344,15 @@ int CalculateXOffset(double bestX, int width, int margin) {
 
 void SvgPlotWriter::writeLegend(int width, int margin,
    const std::vector<std::vector<double>>& allDistances,
-   const std::vector<std::unique_ptr<Distance>>& distances) {
+   const std::vector<std::unique_ptr<Distance>>& distfuncs) {
 
    std::vector<DataPoint> sampledPoints;
-   for (const auto& distances : allDistances) {
-      if (!distances.empty()) {
-         size_t len = distances.size();
-         sampledPoints.push_back({ 0.0, distances[0], 0 });
-         sampledPoints.push_back({ 0.5, distances[len / 2], len / 2 });
-         sampledPoints.push_back({ 1.0, distances[len - 1], len - 1 });
+   for (const auto& distfuncs : allDistances) {
+      if (!distfuncs.empty()) {
+         size_t len = distfuncs.size();
+         sampledPoints.push_back({ 0.0, distfuncs[0], 0 });
+         sampledPoints.push_back({ 0.5, distfuncs[len / 2], len / 2 });
+         sampledPoints.push_back({ 1.0, distfuncs[len - 1], len - 1 });
       }
    }
 
@@ -370,17 +370,17 @@ void SvgPlotWriter::writeLegend(int width, int margin,
 
    svg << "\n" << R"(<g id="LEGEND" transform="translate()" << xOffset << "," << margin + 20 << ")\">\n"
       << "<rect x=\"-5\" y=\"-15\" width=\"90\" height=\""
-      << (distances.size() * 20 + 10) << R"(" fill="white" stroke="black"/>)" << "\n";
+      << (distfuncs.size() * 20 + 10) << R"(" fill="white" stroke="black"/>)" << "\n";
 
-   for (size_t i = 0; i < distances.size(); ++i) {
+   for (size_t i = 0; i < distfuncs.size(); ++i) {
       // Get interpolated color instead of using CS6_COLOR or NC_COLOR
-      std::string color = ColorTables::interpolateColor(i, distances.size());
+      std::string color = ColorTables::interpolateColor(i, distfuncs.size());
 
       svg << R"(<line x1="0" y1=")" << (i * 20) << R"(" x2="20" y2=")" << (i * 20)
          << R"(" stroke=")" << color << R"(" stroke-width="10"/>)" << "\n"
          << R"(<text x="25" y=")" << (i * 20 + 5)
          << R"(" font-family="Arial" font-size="12">)"
-         << distances[i]->getName() << R"(</text>)" << "\n";
+         << distfuncs[i]->getName() << R"(</text>)" << "\n";
    }
    svg << "</g>\n\n";
 }
@@ -393,7 +393,7 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
       << "  <perturbation>" << perturbation + 1 << "</perturbation>\n"
       << "  <datetime>" << datetime << "</datetime>\n"
       << "  <controlVariables>\n\n"
-      << "  <followerMode>";
+      << "    <followerMode>";
 
    switch (controlVars.followerMode) {
    case FollowerMode::POINT: svg << "POINT"; break;
@@ -412,7 +412,6 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
 
    svg << "  <path>\n";
    const Path& path = controlVars.path;
-
    for (size_t i = 0; i < path.size(); ++i ) {
       if ( i < 4 || i > path.size()-5)
       {
@@ -429,7 +428,7 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
          i = path.size() - 5;
       }
    }
-   svg << "  </path>\n";
+   svg << "</path>\n";
 
    svg << "</followerMode>\n"
       << "    <perturbations>" << controlVars.perturbations << "</perturbations>\n"
@@ -451,7 +450,7 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
    }
    svg << "    </enabledDistances>\n";
 
-   svg << "  <glitches>\n" << reportGlitches() << "  </glitches>\n";
+   svg << "<glitches>\n" << reportGlitches(100) << "</glitches>\n";
 
     svg  << "  </controlVariables>\n"
       << "</metadata>\n";
@@ -472,7 +471,7 @@ std::string  SvgPlotWriter::reportGlitches(const int n) {
 
    std::stringstream os;
    for (size_t i = 0; i < std::min(size_t(n), sorted.size()); ++i) {
-      os << "   S6 " 
+      os << " S6 " 
          << controlVars.path[glitches[i].index].first 
          << " percent change " << glitches[i].changePercent << "\n S6 "
          << controlVars.path[glitches[i].index].second << std::endl;

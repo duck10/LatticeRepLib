@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 
 static std::string  StringFinder(const std::string& toFind, const std::string& defaultvalue, const std::vector<std::string>& args) {
    const auto f = std::find(args.begin(), args.end(), toFind);
@@ -81,6 +82,9 @@ WebIO::WebIO(int argc, char* argv[], const std::string& progName, const size_t f
 
 void WebIO::GetWebBlockSize(int argc, char* argv[]) {
 
+   char * blocksizelimit;
+   long lblocksizelimit;
+
    std::vector<std::string> args;
    for (size_t i = 0; i < argc; ++i) {
       args.emplace_back(argv[i]);
@@ -88,6 +92,12 @@ void WebIO::GetWebBlockSize(int argc, char* argv[]) {
 
    m_blockstart = std::stoul(StringFinder("--blockstart", std::to_string(m_blockstart), args));
    m_blocksize = std::stoul(StringFinder("--blocksize", std::to_string(m_blocksize), args));
+   blocksizelimit = getenv(std::string("WEBIO_BLOCKSIZELIMIT").c_str());
+   if (blocksizelimit != NULL) {
+      lblocksizelimit=atol(blocksizelimit);
+      if (lblocksizelimit < 0 ) lblocksizelimit = 0;
+      if (m_blocksize > lblocksizelimit) m_blocksize = lblocksizelimit;
+   }
 
    if (m_blockstart >= m_fileNameCount) {
       // nothing to do

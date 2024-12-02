@@ -1020,6 +1020,54 @@ define([[[LRLWEB_Dirichlet]]],[[[[[[$1]]]]]]dnl
 [[[[[[end$3]]]]]]dnl
 dnl
 )dnl--------------------------------------------------
+dnl Command:  Follow
+dnl -------------------
+define([[[LRLWEB_Follow]]],[[[[[[$1]]]]]]dnl
+[[[[[[<strong>Command: ]]]]]]dnl
+[[[[[[Follow</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> ]]]]]]dnl
+[[[[[[In the default mode (POINT), a single cell is read, and its Niggli-reduced cell is calculated.$2]]]]]]dnl
+[[[[[[Multiple cells can be read, and a graphical output is computed for each input cell.$2]]]]]]dnl
+[[[[[[In space S<sup>6</sup>, a straight line is computed between those points. Then the distances$2]]]]]]dnl
+[[[[[[from points (default: 100 points&ensp; along that line are calculated to the end point (Niggli-reduced cell,$2]]]]]]dnl
+[[[[[[in the POINT case). The graphical output shows those distances for each chosen $2]]]]]]dnl
+[[[[[[distance measure (default: NCDist in G<sup>6</sup> and CS6Dist in S<sup>6</sup>).$2]]]]]]dnl
+[[[[[[$2]]]]]]dnl
+[[[[[[For more details on the Follower method, see Andrews and Bernstein:$2]]]]]]dnl
+[[[[[[<a href=https://www.cambridge.org/engage/api-gateway/coe/assets/orp/resource/item/63f418f01d2d184063d630a3/original/the-follower-algorithm-and-a-program-using-it-to-explore-spaces.pdf target=_blank>$2]]]]]]dnl
+[[[[[[&quot;The Follower algorithm and a program using it to explore spaces&quot;</a>$2]]]]]]dnl 
+[[[[[[<em><u>Output type:</u></em>$2]]]]]]dnl
+[[[[[[graphical file names and various text$2]]]]]]dnl
+[[[[[[<em><u>Graphical output:</u></em>Follow consumes unit cells descriptions.$2]]]]]]dnl
+[[[[[[$2]]]]]]dnl
+[[[[[[$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em>$2]]]]]]dnl
+[[[[[[NA<br>$2]]]]]]dnl
+[[[[[[<br>$2]]]]]]dnl
+[[[[[[$2]]]]]]dnl
+[[[[[[<em><u>Control Parameters</u></em><br>$2]]]]]]dnl
+[[[[[[Control information is NOT case sensitive.<br>$2]]]]]]dnl
+[[[[[[^$2]]]]]]dnl
+[[[[[[<em>FOLLOWERMODE</em> One of:$2]]]]]]dnl
+[[[[[[&emsp;POINT (default)$2]]]]]]dnl
+[[[[[[&emsp;LINE$2]]]]]]dnl
+[[[[[[&emsp;CHORD$2]]]]]]dnl
+[[[[[[&emsp;CHORD3$2]]]]]]dnl
+[[[[[[&emsp;TRIANGLE$2]]]]]]dnl
+[[[[[[<em>PERTURBATIONS:</em> how many graphs of slightly different starting point to produce (default: 0)$2]]]]]]dnl
+[[[[[[<em>PERTURBBY:</em> how much to perturb input cells (default: 0.10)$2]]]]]]dnl
+[[[[[[<em>GLITCHTHRESHOLD:</em> how large a change in distance between points to consider are problem (default: 4%)$2]]]]]]dnl
+[[[[[[<em>NUMFOLLOWERPOINTS:</em> the number of distance points to plot (default: 100)$2]]]]]]dnl
+[[[[[[<em>PRINTDISTANCEDATA:</em> whether to send the input points along the S<sup>6</sup> line to output (default: false)$2]]]]]]dnl
+[[[[[[$2]]]]]]dnl
+[[[[[[Sample control input:$2]]]]]]dnl
+[[[[[[&emsp;numFollowerPoints 77$2]]]]]]dnl
+[[[[[[&emsp;FollowerMode Line$2]]]]]]dnl
+[[[[[[$2]]]]]]dnl
+[[[[[[$3]]]]]]dnl
+
+dnl
+)dnl--------------------------------------------------
 dnl Command:  PlotC3
 dnl -------------------
 define([[[LRLWEB_PlotC3]]],[[[[[[$1 ]]]]]]dnl

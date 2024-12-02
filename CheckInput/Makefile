@@ -13,6 +13,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
+	../LatticeRepresentationLib/EnhancedS6.cpp ../LatticeRepresentationLib/EnhancedS6.h \
 	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
 	../LatticeRepresentationLib/LabeledSellaMatrices.cpp \
@@ -39,6 +40,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
+	../LatticeRepresentationLib/EnhancedS6.cpp \
 	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
 	../LRL_Tools/HSV.cpp ../LRL_Tools/RGB.cpp  \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \

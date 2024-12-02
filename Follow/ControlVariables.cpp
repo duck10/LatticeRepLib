@@ -24,6 +24,8 @@ ControlVariables::ControlVariables()
    shouldDetectGlitches(true),
    glitchThresholdPercent(4.0),
    showDataMarkers(true),
+   blockstart(0),
+   blocksize(BLOCKSIZE_LIMIT),
    filePrefix("follow_output")
 {
    ensureDefaultTypesEnabled();
@@ -43,6 +45,7 @@ std::string ControlVariables::getControlVariablesAsString() const {
       << "Detect Glitches: " << (shouldDetectGlitches ? "Yes" : "No") << "\n"
       << "Glitch Threshold Percent: " << glitchThresholdPercent << "\n"
       << "Show Data Points: " << (showDataMarkers ? "Yes" : "No") << "\n"
+      << "Blockstart, Blocksize:  " << "("<<blockstart << ", " << blocksize<<")" << "\n"
       << "File Prefix: " << filePrefix << "\n"
       << "Follower Mode: ";
 

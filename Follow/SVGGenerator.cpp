@@ -61,13 +61,13 @@ std::string SVGGenerator::generateSVG(const std::map<std::string, std::pair<std:
    // Plot data
    colorIndex = 0;
    for (const auto& [distType, data] : results) {
-      const auto& distances = data.second;
+      const auto& distfuncs = data.second;
       svg << "   <polyline fill=\"none\" stroke=\"" << colors[colorIndex % colors.size()]
          << "\" stroke-width=\"" << (colorIndex == 0 ? 12 : 3) << "\" stroke-dasharray=\"" << (colorIndex == 0 ? "10,5" : "5,10")
          << "\" points=\"";
-      for (size_t i = 0; i < distances.size(); ++i) {
+      for (size_t i = 0; i < distfuncs.size(); ++i) {
          double x = static_cast<double>(i) * plotWidth / (static_cast<double>(maxSteps) - 1.0);
-         double y = plotHeight * (distances[i] - minY) / (maxY - minY);
+         double y = plotHeight * (distfuncs[i] - minY) / (maxY - minY);
          if (!std::isnan(y)) {
             svg << x << "," << y << " ";
          }
@@ -121,8 +121,8 @@ std::pair<double, double> SVGGenerator::findMinMax(const std::map<std::string, s
    double maxY = std::numeric_limits<double>::lowest();
 
    for (const auto& [distType, data] : results) {
-      const auto& distances = data.second;
-      for (const auto& dist : distances) {
+      const auto& distfuncs = data.second;
+      for (const auto& dist : distfuncs) {
          if (!std::isnan(dist)) {
             minY = std::min(minY, dist);
             maxY = std::max(maxY, dist);

@@ -20,6 +20,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
 	../LatticeRepresentationLib/LRL_Cell_Degrees.cpp ../LatticeRepresentationLib/LRL_CoordinateConversionMatrices.cpp \
 	../LatticeRepresentationLib/LRL_LatticeMatcher.cpp \
+	../LatticeRepresentationLib/EnhancedS6.cpp ../LatticeRepresentationLib/EnhancedS6.h \
 	../LRL_Tools/LRL_inverse.cpp ../LRL_Tools/LRL_MaximaTools.cpp \
 	../LatticeRepresentationLib/LRL_ReadLatticeData.cpp ../LRL_Tools/LRL_StringTools.cpp \
 	../LatticeRepresentationLib/MatD13.cpp \
@@ -40,6 +41,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
+	../LatticeRepresentationLib/EnhancedS6.cpp \
 	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
 	../LRL_Tools/HSV.cpp ../LRL_Tools/RGB.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \

@@ -18,7 +18,7 @@
 #include "PathPoint.h"
 
 Follow::Follow(ControlVariables& cv) : controlVars(cv), glitchDetector() {
-   distances = DistanceFactory::createEnabledDistances(controlVars);
+   distfuncs = DistanceFactory::createEnabledDistances(controlVars);
 }
 void Follow::run(const std::vector<std::string>& filenames, const std::vector<G6>& inputVectors) {
    this->filenames = filenames;
@@ -92,8 +92,8 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const std::v
 
    std::vector<std::vector<double>> allDistances;
 
-   // Just calculate the distances without trying to copy the Distance objects
-   for (const auto& dist : distances) {
+   // Just calculate the distfuncs without trying to copy the Distance objects
+   for (const auto& dist : distfuncs) {
       std::vector<double> pathDists;
       pathDists.reserve(path.size());
       for (const auto& [point1, point2] : path) {
@@ -110,7 +110,7 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const std::v
    std::ofstream svg(controlVars.filenames[trialNum * controlVars.perturbations + perturbationNum]);
    if (svg.is_open()) {
       SvgPlotWriter writer(svg, controlVars, glitchDetector);
-      writer.writePlot(allDistances, distances, trialNum, perturbationNum);
+      writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);
    }
    else {
       std::cout << "unable to open output file" << std::endl;

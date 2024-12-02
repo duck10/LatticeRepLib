@@ -16,7 +16,7 @@ public:
        GlitchDetector& detector);
 
    void writePlot(const std::vector<std::vector<double>>& allDistances,
-      const std::vector<std::unique_ptr<Distance>>& distances,
+      const std::vector<std::unique_ptr<Distance>>& distfuncs,
       int trial, int perturbation,
       int width = 800, int height = 400);
 
@@ -34,7 +34,7 @@ private:
       const std::vector<std::vector<double>>& allDistances);
    void writeLegend(int width, int margin,
       const std::vector<std::vector<double>>& allDistances,
-      const std::vector<std::unique_ptr<Distance>>& distances);
+      const std::vector<std::unique_ptr<Distance>>& distfuncs);
 
    void writeMetadata(int trial, int perturbation, const std::string& datetime);
 
