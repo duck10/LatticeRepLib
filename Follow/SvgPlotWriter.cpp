@@ -395,13 +395,7 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
       << "  <controlVariables>\n\n"
       << "    <followerMode>";
 
-   switch (controlVars.followerMode) {
-   case FollowerMode::POINT: svg << "POINT"; break;
-   case FollowerMode::LINE: svg << "LINE"; break;
-   case FollowerMode::CHORD: svg << "CHORD"; break;
-   case FollowerMode::CHORD3: svg << "CHORD3"; break;
-   case FollowerMode::TRIANGLE: svg << "TRIANGLE"; break;
-   }
+   svg << controlVars.getFollowerMode();
    svg << "\n";
 
    svg << "  <pathStart>\n";

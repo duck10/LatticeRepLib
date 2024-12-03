@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
       const size_t& blocksize = webio.m_blocksize;
 
 
-      std::cout << "\nControl Variables set:\n" << controlVars << std::endl;
+      std::cout << controlVars << std::endl;
       std::cout << "Number of input vectors read: " << inputVectors.size() << std::endl;
 
       if (inputVectors.empty()) {
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
 
       CheckWebFileLimits(ntotal, webio.m_hasWebInstructions, blocksize);
 
-      webio.CreateFilenamesAndLinks(ntotal, "FOL");
+      webio.CreateFilenamesAndLinks(ntotal, controlVars.filePrefix);
 
       const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
       const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
