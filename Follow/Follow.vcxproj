@@ -155,6 +155,7 @@
     <ClInclude Include="FollowUtils.h" />
     <ClInclude Include="GlitchDetector.h" />
     <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="LatticeCell.h" />
     <ClInclude Include="OutlierFinder.h" />
     <ClInclude Include="PathPoint.h" />
     <ClInclude Include="SvgPlotWriter.h" />

@@ -1,11 +1,14 @@
 #ifndef INPUT_HANDLER_H
 #define INPUT_HANDLER_H
 
-#include "StringMatcher.h"
 #include "ControlVariables.h"
 #include "G6.h"
 #include "S6.h"
+#include "LatticeCell.h"
 #include "LRL_Cell.h"
+#include "StringMatcher.h"
+
+
 #include <string>
 #include <vector>
 #include <functional>
@@ -47,7 +50,7 @@ private:
    static G6 parseLattice(const std::vector<std::string>& tokens);
 
 public:
-   static void readMixedInput(ControlVariables& cv, std::vector<G6>& inputVectors, std::istream& input);
+   static void readMixedInput(ControlVariables& cv, std::vector<LatticeCell>& inputVectors, std::istream& input);
    static void handleControlVariable(ControlVariables& cv, const std::string& key, const std::string& value);
 };
 

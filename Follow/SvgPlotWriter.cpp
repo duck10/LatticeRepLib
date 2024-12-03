@@ -471,10 +471,11 @@ std::string  SvgPlotWriter::reportGlitches(const int n) {
 
    std::stringstream os;
    for (size_t i = 0; i < std::min(size_t(n), sorted.size()); ++i) {
-      os << " S6 " 
-         << controlVars.path[glitches[i].index].first 
-         << " percent change " << glitches[i].changePercent << "\n S6 "
-         << controlVars.path[glitches[i].index].second << std::endl;
+      os << " " << controlVars.path[glitches[i].index].first.getLatticeType() << " S6 "
+         << S6(controlVars.path[glitches[i].index].first.getCell())
+         << " percent change " << glitches[i].changePercent << "\n "
+         << controlVars.path[glitches[i].index].second.getLatticeType() << " S6 "
+         << S6(controlVars.path[glitches[i].index].second.getCell()) << std::endl;
    }
 
    return os.str();
