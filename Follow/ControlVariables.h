@@ -106,7 +106,7 @@ public:
    void printControlVariables(std::ostream& out = std::cout) const;
    size_t getCurrentFilenameIndex() const;
    int getVectorsPerTrial() const;
-   std::string getFollowerMode();
+   std::string getFollowerMode() const;
 
    // Color constants for SVG plots
    static const std::string CS6_COLOR;
