@@ -106,9 +106,8 @@ std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
 
    os << "Starting Point of Path: ";
    for (const auto& point : cv.pathStart) {
-      os << "S6 " << S6(point) << "\n";
+      os << point.getLatticeType() << " " << S6(point.getCell()) << "\n";
    }
-
    return os;
 }
 

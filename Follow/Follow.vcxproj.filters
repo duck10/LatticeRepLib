@@ -68,5 +68,8 @@
     <ClInclude Include="PathPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LatticeCell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

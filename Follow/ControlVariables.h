@@ -48,7 +48,7 @@ public:
       if (blocksize + blockstart > filenames.size()) blocksize = filenames.size()-1-blockstart;
    }
 
-   void updatePathStart(const std::vector<S6>& start) {
+   void updatePathStart(const std::vector<LatticeCell>& start) {
       pathStart = start;
    }
 
@@ -85,7 +85,7 @@ public:
    FollowerMode followerMode;
    std::vector<std::string> filenames;
    std::string currentFilename;
-   std::vector<S6> pathStart;
+   std::vector<LatticeCell> pathStart;
    Path path;
    std::vector<GlitchDetector::Glitch> glitches;
 

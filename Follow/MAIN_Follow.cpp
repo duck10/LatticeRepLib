@@ -14,6 +14,7 @@
 #include "FollowUtils.h"
 #include "G6.h"
 #include "InputHandler.h"
+#include "LatticeCell.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
@@ -64,7 +65,7 @@ int main(int argc, char* argv[]) {
 
    try {
       ControlVariables controlVars;
-      std::vector<G6> inputVectors;
+      std::vector<LatticeCell> inputVectors;
 
       std::cout << "Enter control variables and input vectors (type 'end' to finish):\n";
       InputHandler::readMixedInput(controlVars, inputVectors, std::cin);

@@ -141,13 +141,13 @@ std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
    return tokens;
 }
 
-void InputHandler::readMixedInput(ControlVariables& cv, std::vector<G6>& inputVectors, std::istream& input) {
+void InputHandler::readMixedInput(ControlVariables& cv, std::vector<LatticeCell>& inputVectors, std::istream& input) {
    std::string line;
    while (std::getline(input, line)) {
       if (!line.empty() && line[0] == ';') continue;
       // Trim leading and trailing whitespace
-      line.erase(0, line.find_first_not_of(" \t\n\r\f\v"));
-      line.erase(line.find_last_not_of(" \t\n\r\f\v") + 1);
+      line.erase(0, line.find_first_not_of(" \t\n\r\f\v,"));
+      line.erase(line.find_last_not_of(" \t\n\r\f\v,") + 1);
 
       if (line.empty()) continue;  // Skip empty lines
       if (isEndOfInput(line)) break;  // Stop processing on end markers
@@ -160,19 +160,26 @@ void InputHandler::readMixedInput(ControlVariables& cv, std::vector<G6>& inputVe
          key == "A" || key == "B" || key == "C" || key == "I" ||
          key == "R" || key == "P" || key == "F" || key == "H" ||
          key == "RANDOM") {
-         G6 result;
          try {
+            G6 result;
+            std::string latticeType = "P";  // Default to primitive
+
             if (key == "G6") result = parseG6(tokens);
             else if (key == "S6") result = parseS6(tokens);
             //else if (key == "V7") inputVectors.push_back(parseV7(tokens));
             else if (key == "RANDOM") result = parseRandom(tokens);
-            else result = parseLattice(tokens);
+            else {
+               result = parseLattice(tokens);
+               latticeType = key;  // Use the key as lattice type for A,B,C,F,I,H
+            }
+
             const LRL_Cell cell = result;
             if (cell.IsValid()) {
-               inputVectors.emplace_back(result);
+               inputVectors.emplace_back(result, latticeType);
             }
             else {
-               const int i19191 = 19191; // invalid input cells
+               const int i19191 = 19191;
+               std::cerr << ";Warning: Invalid input vector ignored - " << std::endl;
             }
          }
          catch (const std::exception& e) {
@@ -250,16 +257,12 @@ G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
    if (tokens.size() < 7) {
       throw std::runtime_error("Invalid lattice input: expected 7 tokens, got " + std::to_string(tokens.size()));
    }
-   // Implement lattice to G6 conversion here
-   // This is a placeholder implementation
-   G6 result;
-   for (int i = 0; i < 6; ++i) {
-      try {
-         result[i] = std::stod(tokens[i + 1]);
-      }
-      catch (const std::exception& e) {
-         throw std::runtime_error("Invalid lattice input: failed to parse " + tokens[i + 1] + " as double");
-      }
-   }
-   return result;
+   LRL_Cell cell(
+      tokens[1] + " " + 
+      tokens[2] + " " + 
+      tokens[3] + " " + 
+      tokens[4] + " " + 
+      tokens[5] + " " +
+      tokens[6]);
+   return cell;
 }
