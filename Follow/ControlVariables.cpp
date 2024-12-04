@@ -38,37 +38,37 @@ std::string ControlVariables::getControlVariablesAsString() const {
 }
 
 void ControlVariables::printControlVariables(std::ostream& out) const {
-   out << "Control Variables:\n" << getControlVariablesAsString();
+   out << ";Control Variables:\n" << getControlVariablesAsString();
 }
 
 std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
-   os << "Control Variables:\n";
-   os << "Follower Mode: ";
+   os << ";Control Variables:\n";
+   os << ";Follower Mode: ";
    os << cv.getFollowerMode();
    os << "\n";
-   os << "Perturbations: " << cv.perturbations << "\n";
-   os << "Perturb By: " << cv.perturbBy << "\n";
-   os << "Number of Follower Points: " << cv.numFollowerPoints << "\n";
-   os << "Print Distance Data: " << (cv.printDistanceData ? "Yes" : "No") << "\n";
-   os << "Glitches Only: " << (cv.glitchesOnly ? "Yes" : "No") << "\n";
-   os << "Should Detect Glitches: " << (cv.shouldDetectGlitches ? "Yes" : "No") << "\n";
-   os << "Glitch Threshold Percent: " << cv.glitchThresholdPercent << "\n";
-   os << "Show Data Markers: " << (cv.showDataMarkers ? "Yes" : "No") << "\n";
-   os << "File Prefix: " << cv.filePrefix << "\n";
-   os << "Enabled Distances: ";
+   os << ";Perturbations: " << cv.perturbations << "\n";
+   os << ";Perturb By: " << cv.perturbBy << "\n";
+   os << ";Number of Follower Points: " << cv.numFollowerPoints << "\n";
+   os << ";Print Distance Data: " << (cv.printDistanceData ? "Yes" : "No") << "\n";
+   os << ";Glitches Only: " << (cv.glitchesOnly ? "Yes" : "No") << "\n";
+   os << ";Should Detect Glitches: " << (cv.shouldDetectGlitches ? "Yes" : "No") << "\n";
+   os << ";Glitch Threshold Percent: " << cv.glitchThresholdPercent << "\n";
+   os << ";Show Data Markers: " << (cv.showDataMarkers ? "Yes" : "No") << "\n";
+   os << ";File Prefix: " << cv.filePrefix << "\n";
+   os << ";Enabled Distances: ";
 
    for (const auto& dist : cv.enabledDistances) {
       os << dist << " ";
    }
    os << "\n";
 
-   if (!cv.pathStart.empty()) os << "Starting Point of Path: ";
+   if (!cv.pathStart.empty()) os << ";Starting Point of Path: ";
    for (const auto& point : cv.pathStart) {
       os << point.getLatticeType() << " " << S6(point.getCell()) << "\n";
    }
    os << "\n";
 
-   os << "Current Filename: " << cv.currentFilename << "\n";
+   if (!cv.currentFilename.empty()) os << ";Current Filename: " << cv.currentFilename << "\n";
    return os;
 }
 
@@ -102,7 +102,6 @@ const std::vector<std::string> ControlVariables::VALID_DISTANCE_TYPES = {
 void ControlVariables::disableDistanceType(const std::string& type) {
    enabledDistances.erase(type);
 }
-
 
 void ControlVariables::setDistanceTypes(const std::string& types, bool clearExisting ) {
    if (clearExisting) {
