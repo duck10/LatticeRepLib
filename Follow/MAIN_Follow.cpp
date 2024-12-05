@@ -60,6 +60,7 @@ void  CheckWebFileLimits(const int ntotalFiles, const bool hasWebInstructions, c
 
 int main(int argc, char* argv[]) {
    const std::string programName("Follow");
+   std::cout << "; Follow \n";
 
    WebIO webio(argc, argv, programName, 0);
 
@@ -67,18 +68,18 @@ int main(int argc, char* argv[]) {
       ControlVariables controlVars;
       std::vector<LatticeCell> inputVectors;
 
-      std::cout << "Enter control variables and input vectors (type 'end' to finish):\n";
+      //std::cout << "Enter control variables and input vectors (type 'end' to finish):\n";
       InputHandler::readMixedInput(controlVars, inputVectors, std::cin);
 
       const size_t& blockstart = webio.m_blockstart;
       const size_t& blocksize = webio.m_blocksize;
 
 
-      std::cout << controlVars << std::endl;
-      std::cout << "Number of input vectors read: " << inputVectors.size() << std::endl;
+      //std::cout << controlVars << std::endl;
+      std::cout << ";Number of input vectors read: " << inputVectors.size() << std::endl;
 
       if (inputVectors.empty()) {
-         std::cout << "No input vectors provided. Exiting." << std::endl;
+         std::cout << ";No input vectors provided. Exiting." << std::endl;
          return 0;
       }
       if (!webio.m_hasWebInstructions) {
@@ -86,7 +87,7 @@ int main(int argc, char* argv[]) {
       }
 
       if (!validateFollowerMode(controlVars.followerMode, inputVectors.size())) {
-         throw std::runtime_error("Not enough input vectors for the selected follower mode");
+         throw std::runtime_error(";Not enough input vectors for the selected follower mode");
       }
 
       const int ntotal = ComputeTotalNumberOfRuns(controlVars, int(inputVectors.size()));
@@ -116,7 +117,7 @@ int main(int argc, char* argv[]) {
 
    }
    catch (const std::exception& e) {
-      std::cerr << "An error occurred: " << e.what() << std::endl;
+      std::cerr << ";An error occurred: " << e.what() << std::endl;
       return 1;
    }
 

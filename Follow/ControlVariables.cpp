@@ -46,8 +46,13 @@ std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
    os << ";Follower Mode: ";
    os << cv.getFollowerMode();
    os << "\n";
-   os << ";Perturbations: " << cv.perturbations << "\n";
-   os << ";Perturb By: " << cv.perturbBy << "\n";
+   if (cv.perturbations == 1) {
+      os << ";Perturbations: no perturbations\n";
+   }
+   else{
+      os << ";Perturbations: " << cv.perturbations << "\n";
+      os << ";Perturb By: " << cv.perturbBy << "\n";
+   }
    os << ";Number of Follower Points: " << cv.numFollowerPoints << "\n";
    os << ";Print Distance Data: " << (cv.printDistanceData ? "Yes" : "No") << "\n";
    os << ";Glitches Only: " << (cv.glitchesOnly ? "Yes" : "No") << "\n";
