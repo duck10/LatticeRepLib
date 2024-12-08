@@ -25,7 +25,7 @@
 
 
 // 2023/12/23
-// bad case: P 21.775 21.785 27.232 90.028 89.974 90.023
+// bad case: P 21.775 21.785 27.232 90.028 89.974 90.023 still bad after remediation
 //;################ Bravais chain failure  mP 0.206 oS 188.739 tP 0.371973         s6  -0.09949 -473.88154  -0.19042  -0.07866 -474.29631 -741.21325       P    21.775    21.785    34.860    90.008   128.630    90.023
 // ; P 21.775      21.785  27.232  90.028  89.974  90.023   input data
 // on the Grimmer plot:
@@ -35,7 +35,7 @@
 // tP .61
 //
 
-/*   2023-12-24
+/*   2023-12-24F
 ;################  Bravais  chain  failure  mP  0.0653663  oS  1.12195  tP  0.230772
 ;##  s6  -8.02079  -0.06452  -1.63327  -0.01046  -0.1679  -1.83719
 ;##  P  1.307  3.134  3.15  144.338  90.898  113.499
@@ -114,24 +114,24 @@
 //S6 - 100.00000 - 100.00000 - 100.00000 - 100.00000 - 100.00000 - 100.00000  REFERENCE
 //S6 - 234.14273 - 1.88359 - 47.67826 - 0.30533 - 4.90138 - 53.63114  scaled
 //S6 - 10.41946 - 7.17661 - 95.06707 - 31.36144 - 190.57190 - 116.19378  scaled
-//S6 - 240.86238 - 24.92865 - 8.64775 - 7.17380 - 34.21200 - 8.19574  scaled
-//S6 - 230.17565 - 17.27155 - 54.34361 - 23.25853 - 11.49257 - 55.62911  scaled
+//S6 - 240.86238 - 24.92865 - 8.64775 - 7.17380 - 34.21200 - 8.19574  scaled still bad after remediation
+//S6 - 230.17565 - 17.27155 - 54.34361 - 23.25853 - 11.49257 - 55.62911  scaled still bad after remediation
 //S6 - 31.02879 - 10.96443 - 14.25264 - 38.96421 - 239.08206 - 5.95120  scaled
 //S6 - 13.78936 - 207.70159 - 82.97108 - 30.45375 - 12.34903 - 93.30473  scaled
 //S6 - 121.50546 - 10.74570 - 13.31738 - 80.60464 - 33.75129 - 193.15109  scaled
 //S6 - 7.70225 - 9.51802 - 105.79984 - 0.04535 - 211.62487 - 62.22050  scaled
 //S6 - 181.85349 - 23.36642 - 115.13135 - 18.98134 - 38.38171 - 106.27627  scaled
-//S6 - 2.78162 - 34.43272 - 237.34522 - 10.96929 - 43.32243 - 21.83436  scaled
+//S6 - 2.78162 - 34.43272 - 237.34522 - 10.96929 - 43.32243 - 21.83436  scaled still bad after remediation
 //S6 - 56.99568 - 27.30398 - 7.58384 - 107.64530 - 0.76797 - 210.61902  scaled
 //S6 - 1.76325 - 112.70665 - 24.56708 - 38.27043 - 84.68121 - 195.07698  scaled
-//S6 - 11.10601 - 81.30216 - 222.54748 - 5.31460 - 54.25901 - 27.69384  scaled
-//S6 - 9.12428 - 0.87504 - 63.50943 - 233.55358 - 4.41117 - 36.27397  scaled
-//S6 - 3.00480 - 19.63201 - 241.04017 - 9.76684 - 34.86767 - 13.93003  scaled
+//S6 - 11.10601 - 81.30216 - 222.54748 - 5.31460 - 54.25901 - 27.69384  scaled still bad after remediation
+//S6 - 9.12428 - 0.87504 - 63.50943 - 233.55358 - 4.41117 - 36.27397  scaled still bad after remediation
+//S6 - 3.00480 - 19.63201 - 241.04017 - 9.76684 - 34.86767 - 13.93003  scaled still bad after remediation
 static double g_maxDeltaForMatch = 0.02;
 std::string selectBravaisCase = "";
 
 S6 GetInputSellingReducedVectors(const LRL_ReadLatticeData& input, MatS6& mat) {
-      const S6 s6 = LatticeConverter::SellingReduceCell(input.GetLattice(), input.GetCell(), mat);
+   const S6 s6 = LatticeConverter::SellingReduceCell(input.GetLattice(), input.GetCell(), mat);
    return s6;
 }
 
@@ -221,7 +221,7 @@ void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
    std::vector< LabeledSellaMatrices> matrices = LabeledSellaMatrices().GetPrjs();
    static const std::vector<MatS6> refl_one = MatS6::GetReflections();
    std::vector<MatS6> prjs;
-            bool matchprj = false;
+   bool matchprj = false;
    for (const auto& f : vfit) {
       const S6 bestfit = f.GetBestFit();
       const S6 inputVector = f.GetOriginalInput();
@@ -234,7 +234,7 @@ void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
             matchprj = true;
             prjs = m.GetMatrices();
             for (const auto& prj : refl_one) {
-               const S6 projected =prj * inputVector ;
+               const S6 projected = prj * inputVector;
                const double test = (bestfit - projected).norm();
                if (test < 1.0E-8) {
                   matchprj = true;
@@ -280,16 +280,19 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
 
    GrimmerChains gcs(S6(input.GetCell()));
    gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
+   gcs.updateChains(theDelonefits, theBravaisfits);  // Instead of CreateGrimmerChains
    gcs.CheckAllGrimmerChains();
    //std::cout << gcs << std::endl;
    //std::cout << gcs << std::endl;
 
-   if (gcs.HasFailure()) {
-      GrimmerChainFailure gcf = gcs.GetFirstFailure();
-      const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
-      const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
-      vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
-      gcs = gcs.ReplaceRemediation(revisedFit);
+   {
+      if (gcs.HasFailure()) {
+         GrimmerChainFailure gcf = gcs.GetFirstFailure();
+         const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
+         const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
+         vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
+         gcs = gcs.ReplaceRemediation(revisedFit);
+      }
    }
    //theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
    //std::cout << theDelonefits << std::endl;
@@ -310,15 +313,15 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    // the next loop might be not the best. If there was a 2nd copy of a lattice added
    // above, then both might be listed here. Probably there should be a filter so
    // only one for each type gets output.
-   for (const auto& out: outBCF)
-    std::cout << out << std::endl;
+   for (const auto& out : outBCF)
+      std::cout << out << std::endl;
 
    std::ostringstream os;
    if (!matches.empty()) {
       std::cout << "; projected best fits ( reported distances (in A^2))" << std::endl;
       int y = 300;
       const int x = 700;
-      os << "<text x = \"" << x-20 << "\" y = \"" << y << "\" font-size = \"15\" >" << "Projected best fits ( reported distances (in A^2))"  << " </text>\n";
+      os << "<text x = \"" << x - 20 << "\" y = \"" << y << "\" font-size = \"15\" >" << "Projected best fits ( reported distances (in A^2))" << " </text>\n";
       for (const auto& cell : matches) {
          std::cout << cell << std::endl;
          y += 20;
@@ -355,8 +358,8 @@ static std::vector<std::string> CreateAllFileNames(const size_t n) {
    std::vector<std::string> out;
 
    for (size_t i = 0; i < n; ++i) {
-   const std::string filename = LRL_CreateFileName::Create("SEL", LRL_DataToSVG(i+1), "svg", true);
-   out.emplace_back(filename);
+      const std::string filename = LRL_CreateFileName::Create("SEL", LRL_DataToSVG(i + 1), "svg", true);
+      out.emplace_back(filename);
    }
    return out;
 }
@@ -376,11 +379,11 @@ void AnalyzeS6(const S6 s6) {
    }
    std::cout << "average " << average << std::endl;
    std::cout << "s6 " << s6 << std::endl;
-   std::cout << "sorted and positive " <<  S6(vec) << std::endl;
+   std::cout << "sorted and positive " << S6(vec) << std::endl;
    std::cout << "lowCount " << lowCount << std::endl;
 }
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
    bool doProduceSellaGraphics = true;
 
@@ -409,21 +412,24 @@ int main(int argc, char* argv[])
    std::cout << "; Sella cell block size " << blocksize << std::endl;
    std::cout << std::endl;
 
-   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
+   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart + blocksize); ++i)
    {
       std::cout << "; Sella graphics file(s) " <<
          i + 1 << "  " << FullfileNameList[i - blockstart] << std::endl;
    }
 
-   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart+blocksize); ++i)
+   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart + blocksize); ++i)
    {
       std::cout << ";----------------------------------------------------------" << std::endl;
-      std::cout << "; SELLA results for input case " << i  << std::endl;
+      std::cout << "; SELLA results for input case " << i << std::endl;
+
+
+
       const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i],
-        RawFileNameList[i-blockstart]);
+         RawFileNameList[i - blockstart]);
       if (doProduceSellaGraphics) {
-        SendSellaToFile(svgOutput, RawFileNameList[i-blockstart]);
-        std::cout << "; Send Sella Plot to graphics file " << FullfileNameList[i-blockstart] << std::endl; 
+         SendSellaToFile(svgOutput, RawFileNameList[i - blockstart]);
+         std::cout << "; Send Sella Plot to graphics file " << FullfileNameList[i - blockstart] << std::endl;
       }
    }
 

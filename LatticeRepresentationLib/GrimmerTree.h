@@ -26,7 +26,7 @@ private:
    double m_fit;
 };
 
-class MapOfBravaisFits{
+class MapOfBravaisFits {
 public:
    friend std::ostream& operator<< (std::ostream& o, MapOfBravaisFits& mbf) {
       o << "; Bravais Fit Map\n";
@@ -40,7 +40,7 @@ public:
    auto operator[] (const std::string& s) { return m_valuemap[s]; }
    MapOfBravaisFits() = default;
    std::map<std::string, double> CreateMapOFBravaisFits(std::vector<DeloneFitResults>& fits);
-   std::map<std::string, double> GetMap() const { return m_valuemap; }private:
+std::map<std::string, double> GetMap() const { return m_valuemap; }private:
    std::map<std::string, double> m_valuemap;
 };
 
@@ -58,7 +58,7 @@ public:
    auto operator[] (const std::string& s) { return m_valuemap[s]; }
    MapOFDeloneFits() = default;
    std::map<std::string, double> CreateMapOFDeloneFits(std::vector<DeloneFitResults>& fits);
-   std::map<std::string, double> GetMap() const { return m_valuemap; }private:
+std::map<std::string, double> GetMap() const { return m_valuemap; }private:
    std::map<std::string, double> m_valuemap;
 };
 
@@ -73,7 +73,7 @@ public:
       return o;
    }
    BravaisTypeForGrimmer() = default;
-   BravaisTypeForGrimmer(const std::string& name, 
+   BravaisTypeForGrimmer(const std::string& name,
       const std::vector<DeloneTypeForGrimmer>& vdeloneTypes,
       const double fit = DBL_MAX);
    void SetFit(const double d) { m_fit = d; }
@@ -118,7 +118,7 @@ private:
 
 class OneGrimmerChain {
 public:
-   GrimmerChainFailure CheckOneGrimmerChain() ;
+   GrimmerChainFailure CheckOneGrimmerChain();
    friend std::ostream& operator<< (std::ostream& o, const OneGrimmerChain& obc) {
       o << ";--------- One Grimmer Chain -------------------------------------\n";
       for (const auto& btype : obc.m_chain) {
@@ -129,7 +129,7 @@ public:
    OneGrimmerChain() = default;
    OneGrimmerChain(const std::vector<BravaisTypeForGrimmer>& chain) { m_chain = chain; }
    void PopulateOneBChainWithFitValues(std::map<std::string, double>& themap);
-   std::vector<BravaisTypeForGrimmer> GetChain() const { return m_chain; } 
+   std::vector<BravaisTypeForGrimmer> GetChain() const { return m_chain; }
 private:
    std::vector<BravaisTypeForGrimmer> m_chain;
    GrimmerChainFailure m_failures;
@@ -137,6 +137,56 @@ private:
 };
 
 class GrimmerChains {
+private:
+   // Static constant data
+   static const std::map<std::string, double> baseDeloneMap;
+   static const std::map<std::string, double> baseBravaisMap;
+
+   static const DeloneTypeForGrimmer m_dtype_a1;
+   static const DeloneTypeForGrimmer m_dtype_m1a;
+   static const DeloneTypeForGrimmer m_dtype_m1b;
+   static const DeloneTypeForGrimmer m_dtype_m2a;
+   static const DeloneTypeForGrimmer m_dtype_m4;
+   static const DeloneTypeForGrimmer m_dtype_o1a;
+   static const DeloneTypeForGrimmer m_dtype_o1b;
+   static const DeloneTypeForGrimmer m_dtype_o2;
+   static const DeloneTypeForGrimmer m_dtype_o4;
+   static const DeloneTypeForGrimmer m_dtype_o5;
+   static const DeloneTypeForGrimmer m_dtype_r1;
+   static const DeloneTypeForGrimmer m_dtype_r3;
+   static const DeloneTypeForGrimmer m_dtype_t1;
+   static const DeloneTypeForGrimmer m_dtype_t2;
+   static const DeloneTypeForGrimmer m_dtype_t5;
+   static const DeloneTypeForGrimmer m_dtype_c1;
+   static const DeloneTypeForGrimmer m_dtype_c3;
+   static const DeloneTypeForGrimmer m_dtype_c5;
+   static const DeloneTypeForGrimmer m_dtype_h4;
+
+   static const BravaisTypeForGrimmer m_btype_aP;
+   static const BravaisTypeForGrimmer m_btype_mP;
+   static const BravaisTypeForGrimmer m_btype_mC;
+   static const BravaisTypeForGrimmer m_btype_oF;
+   static const BravaisTypeForGrimmer m_btype_oI;
+   static const BravaisTypeForGrimmer m_btype_oC;
+   static const BravaisTypeForGrimmer m_btype_oP;
+   static const BravaisTypeForGrimmer m_btype_hR;
+   static const BravaisTypeForGrimmer m_btype_tI;
+   static const BravaisTypeForGrimmer m_btype_tP;
+   static const BravaisTypeForGrimmer m_btype_cI;
+   static const BravaisTypeForGrimmer m_btype_cF;
+   static const BravaisTypeForGrimmer m_btype_cP;
+   static const BravaisTypeForGrimmer m_btype_hP;
+
+   static const std::vector<std::vector<const BravaisTypeForGrimmer*>> chainTemplates;
+
+   // Instance data
+   std::vector<OneGrimmerChain> m_GrimmerChains;
+   std::vector<GrimmerChainFailure> m_GrimmerFailures;
+   bool m_hasChainFailure;
+   S6 m_s6;
+   MapOFDeloneFits m_deloneFits;
+   MapOfBravaisFits m_bravaisFits;
+
 public:
    friend std::ostream& operator<< (std::ostream& o, const GrimmerChains& obc) {
       if (obc.m_GrimmerChains.empty()) {
@@ -156,48 +206,30 @@ public:
       return o;
    }
 
-   GrimmerChains(const S6& s6)
-      : m_s6(s6)
-      , m_hasChainFailure(false)
-   {}
+   GrimmerChains(const S6& s6) : m_s6(s6), m_hasChainFailure(false) {}
 
-   GrimmerChains ReplaceRemediation(const DeloneFitResults& newFit) const;
+   void updateChains(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits) {
+      m_deloneFits = deloneFits;
+      m_bravaisFits = bravaisFits;
+      initializeChains();
+   }
 
-   std::map<std::string, double> CreateMapOfDeloneFitValues(const std::vector<DeloneFitResults>& fits);
-   std::map<std::string, double> CreateMapOfBravaisFitValues(const std::vector<DeloneFitResults>& fits);
-
-   void  CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBravaisFits& theBravaisMap);
-   std::vector<OneGrimmerChain> GetChains() const { return m_GrimmerChains; }
-   void BestInBravaisType(const DeloneTypeForGrimmer& type) const;
+   void updateFits(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits);
+   void CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBravaisFits& theBravaisMap);
    void CheckAllGrimmerChains();
    bool HasFailure() const { return m_hasChainFailure; }
    GrimmerChainFailure GetFirstFailure() const { return m_GrimmerFailures[0]; }
    DeloneFitResults Remediation(const std::string& bravaisName, const double deltaFromZeroAllowed);
+   std::vector<OneGrimmerChain> GetChains() const { return m_GrimmerChains; }
+   GrimmerChains ReplaceRemediation(const DeloneFitResults& newFit) const;
+
+   friend std::ostream& operator<< (std::ostream& o, const GrimmerChains& obc);
 
 private:
-   void PopulateChainsWithFitValues(std::map<std::string, double>& themap);
-   std::vector<OneGrimmerChain> m_GrimmerChains;
-   std::vector<GrimmerChainFailure> m_GrimmerFailures;
-   bool m_hasChainFailure;
-   double m_fit;
-   S6 m_s6;
-
-   BravaisTypeForGrimmer m_btype_aP;
-   BravaisTypeForGrimmer m_btype_mP;
-   BravaisTypeForGrimmer m_btype_mC;
-   BravaisTypeForGrimmer m_btype_oF;
-   BravaisTypeForGrimmer m_btype_oI;
-
-   BravaisTypeForGrimmer m_btype_oS;
-   BravaisTypeForGrimmer m_btype_oP;
-   BravaisTypeForGrimmer m_btype_hR;
-   BravaisTypeForGrimmer m_btype_tI;
-   BravaisTypeForGrimmer m_btype_tP;
-
-   BravaisTypeForGrimmer m_btype_cI;
-   BravaisTypeForGrimmer m_btype_cF;
-   BravaisTypeForGrimmer m_btype_cP;
-   BravaisTypeForGrimmer m_btype_hP;
+   void initializeChains();
+   void PopulateChainsWithFitValues();
+   void BestInBravaisType(const DeloneTypeForGrimmer& type) const;
 };
 
 #endif // GRIMMERTREE_H
+

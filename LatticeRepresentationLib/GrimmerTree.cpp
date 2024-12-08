@@ -13,13 +13,110 @@
 #include <utility>
 #include <cmath>
 
+const std::map<std::string, double> GrimmerChains::baseDeloneMap = {
+   {"A1", 0.0}, {"M1A", 0.0}, {"M1B", 0.0}, {"M2A", 0.0}, {"M4", 0.0},
+   {"O1A", 0.0}, {"O1B", 0.0}, {"O2", 0.0}, {"O4", 0.0}, {"O5", 0.0},
+   {"R1", 0.0}, {"R3", 0.0}, {"T1", 0.0}, {"T2", 0.0}, {"T5", 0.0},
+   {"C1", 0.0}, {"C3", 0.0}, {"C5", 0.0}, {"H4", 0.0}
+};
+
+const std::map<std::string, double> GrimmerChains::baseBravaisMap = {
+   {"aP", 0.0}, {"mP", 0.0}, {"mC", 0.0}, {"oF", 0.0}, {"oI", 0.0},
+   {"oC", 0.0}, {"oP", 0.0}, {"hR", 0.0}, {"tI", 0.0}, {"tP", 0.0},
+   {"cI", 0.0}, {"cF", 0.0}, {"cP", 0.0}, {"hP", 0.0}
+};
+
+// Delone types
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_a1("A1", "aP", baseDeloneMap.at("A1"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_m1a("M1A", "mC", baseDeloneMap.at("M1A"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_m1b("M1B", "mC", baseDeloneMap.at("M1B"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_m2a("M2A", "mC", baseDeloneMap.at("M2A"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_m4("M4", "mP", baseDeloneMap.at("M4"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_o1a("O1A", "oF", baseDeloneMap.at("O1A"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_o1b("O1B", "oI", baseDeloneMap.at("O1B"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_o2("O2", "oI", baseDeloneMap.at("O2"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_o4("O4", "oS", baseDeloneMap.at("O4"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_o5("O5", "oP", baseDeloneMap.at("O5"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_r1("R1", "hR", baseDeloneMap.at("R1"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_r3("R3", "hR", baseDeloneMap.at("R3"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_t1("T1", "tI", baseDeloneMap.at("T1"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_t2("T2", "tI", baseDeloneMap.at("T2"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_t5("T5", "tP", baseDeloneMap.at("T5"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_c1("C1", "cI", baseDeloneMap.at("C1"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_c3("C3", "cF", baseDeloneMap.at("C3"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_c5("C5", "cP", baseDeloneMap.at("C5"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_h4("H4", "hP", baseDeloneMap.at("H4"));
+
+// Bravais types
+const BravaisTypeForGrimmer GrimmerChains::m_btype_aP("aP", { m_dtype_a1 }, baseBravaisMap.at("aP"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_mP("mP", { m_dtype_m4 }, baseBravaisMap.at("mP"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_mC("mC", { m_dtype_m1a, m_dtype_m1b, m_dtype_m2a }, baseBravaisMap.at("mC"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_oF("oF", { m_dtype_o1a }, baseBravaisMap.at("oF"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_oI("oI", { m_dtype_o1b, m_dtype_o2 }, baseBravaisMap.at("oI"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_oC("oC", { m_dtype_o4 }, baseBravaisMap.at("oC"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_oP("oP", { m_dtype_o5 }, baseBravaisMap.at("oP"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_hR("hR", { m_dtype_r1, m_dtype_r3 }, baseBravaisMap.at("hR"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_tI("tI", { m_dtype_t1, m_dtype_t2 }, baseBravaisMap.at("tI"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_tP("tP", { m_dtype_t5 }, baseBravaisMap.at("tP"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_cI("cI", { m_dtype_c1 }, baseBravaisMap.at("cI"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_cF("cF", { m_dtype_c3 }, baseBravaisMap.at("cF"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_cP("cP", { m_dtype_c5 }, baseBravaisMap.at("cP"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_hP("hP", { m_dtype_h4 }, baseBravaisMap.at("hP"));
+const std::vector<std::vector<const BravaisTypeForGrimmer*>> GrimmerChains::chainTemplates = {
+   {&m_btype_aP, &m_btype_mP, &m_btype_oP, &m_btype_tP, &m_btype_cP},
+   {&m_btype_aP, &m_btype_mP, &m_btype_oC, &m_btype_tP, &m_btype_cP},
+   {&m_btype_aP, &m_btype_mP, &m_btype_oC, &m_btype_hP},
+   {&m_btype_aP, &m_btype_mC, &m_btype_oC, &m_btype_tP, &m_btype_cP},
+   {&m_btype_aP, &m_btype_mC, &m_btype_oC, &m_btype_hP},
+
+   {&m_btype_aP, &m_btype_mC, &m_btype_oI, &m_btype_tI, &m_btype_cI},
+   {&m_btype_aP, &m_btype_mC, &m_btype_oI, &m_btype_tI, &m_btype_cF},
+   {&m_btype_aP, &m_btype_mC, &m_btype_oF, &m_btype_tI, &m_btype_cI},
+   {&m_btype_aP, &m_btype_mC, &m_btype_oF, &m_btype_tI, &m_btype_cF},
+   {&m_btype_aP, &m_btype_mC, &m_btype_hR, &m_btype_cP},
+
+   {&m_btype_aP, &m_btype_mC, &m_btype_hR, &m_btype_cI},
+   {&m_btype_aP, &m_btype_mC, &m_btype_hR, &m_btype_cF}
+};
+
+
+void GrimmerChains::updateFits(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits) {
+   m_deloneFits = deloneFits;
+   m_bravaisFits = bravaisFits;
+   initializeChains();
+}
+
+void GrimmerChains::initializeChains() {
+   m_GrimmerChains.clear();
+   for (const auto& chainTemplate : chainTemplates) {
+      std::vector<BravaisTypeForGrimmer> chain;
+      for (const auto* btype : chainTemplate) {
+
+
+         auto x1 = btype->GetBravaisType();
+         auto x2 = btype->GetDeloneTypes();
+         auto x3 = btype->GetBravaisType();
+         auto x4 = m_bravaisFits[x3];
+
+
+
+
+         chain.push_back(BravaisTypeForGrimmer(
+            btype->GetBravaisType(),
+            btype->GetDeloneTypes(),
+            m_bravaisFits[btype->GetBravaisType()]));
+      }
+      m_GrimmerChains.emplace_back(chain);
+   }
+}
+
 DeloneTypeForGrimmer::DeloneTypeForGrimmer(const std::string& deloneName, const std::string bravaisType, const double fit/*=DBL_MAX*/)
    :m_DeloneName(deloneName)
    , m_BravaisType(bravaisType)
    , m_fit(fit)
 {      }
 
-BravaisTypeForGrimmer::BravaisTypeForGrimmer(const std::string& name, 
+BravaisTypeForGrimmer::BravaisTypeForGrimmer(const std::string& name,
    const std::vector<DeloneTypeForGrimmer>& vdeloneTypes,
    const double fit)
    : m_name(name)
@@ -46,21 +143,6 @@ void BravaisTypeForGrimmer::PopulateBravaisTypeWithFitValues(std::map<std::strin
 //   throw; //LCA  TBD
 //}
 
-std::map<std::string, double> GrimmerChains::CreateMapOfDeloneFitValues(const std::vector<DeloneFitResults>& fits) {
-   std::map<std::string, double> fitmap;
-   for (const auto& fit : fits) {
-      fitmap[fit.GetLatticeType()] = fit.GetRawFit();
-   }
-   return fitmap;
-}
-
-std::map<std::string, double> GrimmerChains::CreateMapOfBravaisFitValues(const std::vector<DeloneFitResults>& fits) {
-   std::map<std::string, double> fitmap;
-   for (const auto& fit : fits) {
-      fitmap[fit.GetDeloneType()] = fit.GetRawFit();
-   }
-   return fitmap;
-}
 
 void GrimmerChains::BestInBravaisType(const DeloneTypeForGrimmer& type) const { // member of GrimmerChains
    GrimmerChains gcs = (*this);
@@ -75,84 +157,6 @@ void GrimmerChains::BestInBravaisType(const DeloneTypeForGrimmer& type) const { 
    }
 }
 
-void  GrimmerChains::CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBravaisFits& theBravaisMap)
-{
-   // there are 19 non-degenerate Delone types
-   const DeloneTypeForGrimmer dtype_a1("A1", "aP", theDeloneMap["A1"]);
-   const DeloneTypeForGrimmer dtype_m1a("M1A", "mC", theDeloneMap["M1A"]);
-   const DeloneTypeForGrimmer dtype_m1b("M1B", "mC", theDeloneMap["M1B"]);
-   const DeloneTypeForGrimmer dtype_m2a("M2A", "mC", theDeloneMap["M2A"]);
-   const DeloneTypeForGrimmer dtype_m4("M4", "mP", theDeloneMap["M4"]);
-
-   const DeloneTypeForGrimmer dtype_o1a("O1A", "oF", theDeloneMap["O1A"]);
-   const DeloneTypeForGrimmer dtype_o1b("O1B", "oI", theDeloneMap["O1B"]);
-   const DeloneTypeForGrimmer dtype_o2("O2", "oI", theDeloneMap["O2"]);
-   const DeloneTypeForGrimmer dtype_o4("O4", "oS", theDeloneMap["O4"]);
-   const DeloneTypeForGrimmer dtype_o5("O5", "oP", theDeloneMap["O5"]);
-
-   const DeloneTypeForGrimmer dtype_r1("R1", "hR", theDeloneMap["R1"]);
-   const DeloneTypeForGrimmer dtype_r3("R3", "hR", theDeloneMap["R3"]);
-   const DeloneTypeForGrimmer dtype_t1("T1", "tI", theDeloneMap["T1"]);
-   const DeloneTypeForGrimmer dtype_t2("T2", "tI", theDeloneMap["T2"]);
-   const DeloneTypeForGrimmer dtype_t5("T5", "tP", theDeloneMap["T5"]);
-
-   const DeloneTypeForGrimmer dtype_c1("C1", "cI", theDeloneMap["C1"]);
-   const DeloneTypeForGrimmer dtype_c3("C3", "cf", theDeloneMap["C3"]);
-   const DeloneTypeForGrimmer dtype_c5("C5", "cP", theDeloneMap["C5"]);
-   const DeloneTypeForGrimmer dtype_h4("H4", "hP", theDeloneMap["H4"]);
-
-   //// there are 14 Bravais typs with Delone synonyms
-   const BravaisTypeForGrimmer btype_aP("aP", std::vector<DeloneTypeForGrimmer>{ dtype_a1 }, theBravaisMap["aP"]);
-   const BravaisTypeForGrimmer btype_mP("mP", { dtype_m4 }, theBravaisMap["mP"]);
-   const BravaisTypeForGrimmer btype_mC("mS", { dtype_m1a, dtype_m1b, dtype_m2a }, theBravaisMap["mC"]);
-   const BravaisTypeForGrimmer btype_oF("oF", { dtype_o1a }, theBravaisMap["oF"]);
-   const BravaisTypeForGrimmer btype_oI("oI", { dtype_o1b, dtype_o2 }, theBravaisMap["oI"]);
-
-   const BravaisTypeForGrimmer btype_oS("oS", { dtype_o4 }, theBravaisMap["oC"]);
-   const BravaisTypeForGrimmer btype_oP("oP", { dtype_o5 }, theBravaisMap["oP"]);
-   const BravaisTypeForGrimmer btype_hR("hR", { dtype_r1, dtype_r3 }, theBravaisMap["hR"]);
-   const BravaisTypeForGrimmer btype_tI("tI", { dtype_t1, dtype_t2 }, theBravaisMap["tI"]);
-   const BravaisTypeForGrimmer btype_tP("tP", { dtype_t5 }, theBravaisMap["tP"]);
-
-   const BravaisTypeForGrimmer btype_cI("cI", { dtype_c1 }, theBravaisMap["cI"]);
-   const BravaisTypeForGrimmer btype_cF("cF", { dtype_c3 }, theBravaisMap["cF"]);
-   const BravaisTypeForGrimmer btype_cP("cP", { dtype_c5 }, theBravaisMap["cP"]);
-   const BravaisTypeForGrimmer btype_hP("hP", { dtype_h4 }, theBravaisMap["hP"]);
-   m_btype_aP = btype_aP;
-   m_btype_mP = btype_mP;
-   m_btype_mC = btype_mC;
-   m_btype_oF = btype_oF;
-   m_btype_oI = btype_oI;
-
-   m_btype_oS = btype_oS;
-   m_btype_oP = btype_oP;
-   m_btype_hR = btype_hR;
-   m_btype_tI = btype_tI;
-   m_btype_tP = btype_tP;
-
-   m_btype_cI = btype_cI;
-   m_btype_cF = btype_cF;
-   m_btype_cP = btype_cP;
-   m_btype_hP = btype_hP;
-
-   //// now make the Grimmer chains
-   //// there are only 12 Grimmer chains
-   typedef std::vector<BravaisTypeForGrimmer> Q;
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mP, btype_oP, btype_tP, btype_cP });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mP, btype_oS, btype_tP, btype_cP });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mP, btype_oS, btype_hP });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_oS, btype_tP, btype_cP });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_oS, btype_hP });
-
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_oI, btype_tI, btype_cI });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_oI, btype_tI, btype_cF });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_oF, btype_tI, btype_cI });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_oF, btype_tI, btype_cF });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_hR, btype_cP });
-
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_hR, btype_cI });
-   m_GrimmerChains.emplace_back(Q{ btype_aP, btype_mC, btype_hR, btype_cF }); 
-}
 
 
 std::vector<std::vector<std::string> > CreateBravaisChains()
@@ -215,11 +219,11 @@ GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain()
    GrimmerChainFailure fails;
    for (size_t i = 0; i < m_chain.size(); ++i) {
       const double fit = m_chain[i].GetFit();
-      if (fit < (1.0-1.0E-8)*prevFit) {
+      if (fit < (1.0 - 1.0E-8) * prevFit) {
          const double test = fit - prevFit;
          m_fail = true;
          fails.AddBravaistypeAndFit(m_chain[i - 2].GetBravaisType(), m_chain[i - 2].GetFit());
-         fails.AddBravaistypeAndFit(m_chain[i-1].GetBravaisType(), m_chain[i-1].GetFit());
+         fails.AddBravaistypeAndFit(m_chain[i - 1].GetBravaisType(), m_chain[i - 1].GetFit());
          fails.AddBravaistypeAndFit(m_chain[i].GetBravaisType(), m_chain[i].GetFit());
          if (const bool debug = false == true)
          {
@@ -230,6 +234,13 @@ GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain()
       prevFit = fit;
    }
    return fails;
+}
+
+
+void GrimmerChains::CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBravaisFits& theBravaisMap) {
+   m_deloneFits = theDeloneMap;
+   m_bravaisFits = theBravaisMap;
+   initializeChains();
 }
 
 void GrimmerChains::CheckAllGrimmerChains()
@@ -244,7 +255,7 @@ void GrimmerChains::CheckAllGrimmerChains()
          uniqueFailures.insert(ss.str());
          m_GrimmerFailures.emplace_back(fail);
          m_hasChainFailure = true;
-         if ( const bool debug = false ==true)
+         if (const bool debug = false == true)
          {
             std::cout << fail << std::endl;
          }
@@ -301,7 +312,7 @@ static inline int FindLoneS6Zero(const size_t n1, const size_t n2, const S6& s6,
 }
 
 GrimmerChainFailure::GrimmerChainFailure(const std::string& bravaisName, const double fit) {
-//    std::vector<std::pair<std::string, double>> m_failGroup;
+   //    std::vector<std::pair<std::string, double>> m_failGroup;
    m_failGroup.emplace_back(bravaisName, fit);
 }
 
