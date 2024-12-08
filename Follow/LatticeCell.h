@@ -46,6 +46,7 @@ public:
 
 
    operator S6() {
+      return (this->getCell());
 
    }
 

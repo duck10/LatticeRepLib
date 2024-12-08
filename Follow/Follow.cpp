@@ -33,6 +33,18 @@ void Follow::run(const std::vector<std::string>& filenames, const std::vector<La
    }
 }
 
+void Follow::run(const std::vector<std::string>& filenames, const std::vector<LatticeCell>& inputVectors, const size_t blockstart, const size_t blocksize) {
+   this->filenames = filenames;
+   this->inputVectors = inputVectors;
+
+   int vectorsPerTrial = controlVars.getVectorsPerTrial();
+   int numTrials = int(inputVectors.size()) / vectorsPerTrial;
+
+   for (int trial = blockstart; trial < numTrials && trial-blockstart < blocksize; ++trial) {
+      processTrial(trial);
+   }
+}
+
 void Follow::processAllTrials() {
    const int vectorsPerTrial = controlVars.getVectorsPerTrial();
    const int numTrials = int(inputVectors.size()) / vectorsPerTrial;
@@ -70,7 +82,7 @@ void Follow::PrintDistanceData(const Path& path) {
          const std::string invalid2 = (p2.IsValid()) ? "" : " invalid";
          std::cout << "; " << point1.getLatticeType() << " " << p1 << invalid1
             << "\n; " << point2.getLatticeType() << " " << p2 << invalid2 << std::endl << std::endl;
-      }
+     }
    }
    std::cout << ";--------  end of path ----------------- \n";
 }
@@ -80,10 +92,14 @@ bool PathPointIsValid(const S6& p) {
 }
 
 void Follow::processPerturbation(int trialNum, int perturbationNum, const std::vector<LatticeCell>& perturbedPoints) {
+   std::string curfilename(controlVars.filenames[trialNum * controlVars.perturbations + perturbationNum]);
    const Path path = generatePath(trialNum, perturbationNum, perturbedPoints);
    controlVars.updatePathStart(perturbedPoints);
    controlVars.updatePath(path);
    if (path.empty()) return;
+
+   if (curfilename.compare(std::string(""))==0) return;
+
 
    if (controlVars.printDistanceData) {
       PrintDistanceData(path);
@@ -104,7 +120,7 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const std::v
       allDistances.push_back(pathDists);
    }
 
-   std::ofstream svg(controlVars.filenames[trialNum * controlVars.perturbations + perturbationNum]);
+   std::ofstream svg(curfilename);
    if (svg.is_open()) {
       SvgPlotWriter writer(svg, controlVars, glitchDetector);
       writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);
@@ -163,7 +179,7 @@ Path Follow::generateLinePath(const LatticeCell& startPoint, const LatticeCell& 
    const S6 endS6(endPoint.getCell());
    const std::string startType = startPoint.getLatticeType();
    const std::string endType = endPoint.getLatticeType();
-
+   
    Path path;
    path.reserve(controlVars.numFollowerPoints);
 
@@ -215,10 +231,10 @@ Path Follow::generateChord3Path(const LatticeCell& mobile1, const LatticeCell& m
    const S6 targetS6(target.getCell());
    const std::string type1 = mobile1.getLatticeType();
    const std::string type2 = mobile2.getLatticeType();
-
+ 
    Path path;
    path.reserve(controlVars.numFollowerPoints);
-
+ 
    for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
       const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
       S6 currentMidpoint = initialMidpoint * (1.0 - t) + targetS6 * t;
@@ -227,8 +243,8 @@ Path Follow::generateChord3Path(const LatticeCell& mobile1, const LatticeCell& m
       if (!PathPointIsValid(point1)) point1 = MakeInvalidS6();
       if (!PathPointIsValid(point2)) point2 = MakeInvalidS6();
       path.emplace_back(LatticeCell(G6(point1), type1), LatticeCell(G6(point2), type2));
-   }
-   return path;
+    }
+    return path;
 }
 
 Path Follow::generateTrianglePath(const LatticeCell& point1, const LatticeCell& point2, const LatticeCell& point3) const {
@@ -274,4 +290,3 @@ LatticeCell Follow::perturbVector(const LatticeCell& inputVector, const int pert
    // Return perturbed vector with same lattice type
    return LatticeCell(G6(inputS6 + scaledOrthogonalVector), inputVector.getLatticeType());
 }
-
