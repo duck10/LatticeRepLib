@@ -1,6 +1,14 @@
 #ifndef FOLLOW_H
 #define FOLLOW_H
 
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <limits>
+#include <random>
+#include <string>
+#include <vector>
+
 #include "ControlVariables.h"
 #include "DistanceFactory.h"
 #include "GlitchDetector.h"
@@ -29,6 +37,8 @@ private:
 public:
    Follow(ControlVariables& cv);
    void run(const std::vector<std::string>& filenames, const std::vector<LatticeCell>& inputVectors);
+   void run(const std::vector<std::string>& filenames, const std::vector<LatticeCell>& inputVectors, 
+        size_t blockstart, size_t blocksize);
    void processAllTrials();
 };
 

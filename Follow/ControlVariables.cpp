@@ -50,8 +50,8 @@ std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
       os << ";Perturbations: no perturbations\n";
    }
    else{
-      os << ";Perturbations: " << cv.perturbations << "\n";
-      os << ";Perturb By: " << cv.perturbBy << "\n";
+   os << ";Perturbations: " << cv.perturbations << "\n";
+   os << ";Perturb By: " << cv.perturbBy << "\n";
    }
    os << ";Number of Follower Points: " << cv.numFollowerPoints << "\n";
    os << ";Print Distance Data: " << (cv.printDistanceData ? "Yes" : "No") << "\n";
@@ -60,6 +60,8 @@ std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
    os << ";Glitch Threshold Percent: " << cv.glitchThresholdPercent << "\n";
    os << ";Show Data Markers: " << (cv.showDataMarkers ? "Yes" : "No") << "\n";
    os << ";File Prefix: " << cv.filePrefix << "\n";
+   os << ";Blockstart: " << cv.blockstart << "\n";
+   os << ";Blocksize: " << BLOCKSIZE_LIMIT << "\n";
    os << ";Enabled Distances: ";
 
    for (const auto& dist : cv.enabledDistances) {

@@ -62,6 +62,12 @@ const std::vector<InputHandler::CommandHandler> InputHandler::COMMAND_HANDLERS =
 {"RANDOMSEED", 0.35, [](ControlVariables& cv, const std::string& value) {
     cv.randomSeed = std::stoi(value);
 }},
+{"BLOCKSIZE", 0.35, [](ControlVariables& cv, const std::string& value) {
+    cv.blocksize = (size_t)std::stoi(value);
+}},
+{"BLOCKSTART", 0.35, [](ControlVariables& cv, const std::string& value) {
+    cv.blockstart = (size_t)std::stol(value);
+}},
 {"TIMESTAMP", 0.35, [](ControlVariables& cv, const std::string& value) {
     cv.timestamp = toBool(value);
 }},
