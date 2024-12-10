@@ -114,8 +114,8 @@ static size_t CountEqualButNonZero(const double d, const S6& s) {
 }
 
  double LabeledDeloneTypeMatrices::Fraction(const double d, const S6& s) {
-   const double count = CountEqualButNonZero(d, s);
-   return (count == 0.0) ? 0.0 : 1.0 / (double)(count);
+    const double count = static_cast<double>(CountEqualButNonZero(d, s));
+   return (count == 0.0) ? 0.0 : 1.0 / count;
 }
 
 static S6 ReZeroScalars(const S6& s) {
