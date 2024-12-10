@@ -67,11 +67,11 @@ std::ostream& operator<< ( std::ostream& o, const DeloneFitResults& dfr) {
    o << "\tm_rawFit                " << dfr.m_rawFit << std::endl;
    o << "\tm_DeloneType            " << dfr.m_DeloneType << std::endl;
    o << "\tm_zscore                " << dfr.m_zscore << std::endl;
-   o << "\tm_bestFit               " << dfr.m_bestFit << std::endl;
-   o << "\tm_difference            " << dfr.m_difference << std::endl;
+   o << "\tm_bestFit               " << dfr.m_bestS6Fit << std::endl;
+   o << "\tm_difference            " << dfr.m_S6Difference << std::endl;
 
    o << "\tBest Cell in original centering\n";
-   o << "\t" << LRL_Cell_Degrees(MatS6::Inverse(dfr.m_reductionMatrix) * dfr.GetToCanon() * dfr.m_bestFit) << std::endl;
+   o << "\t" << LRL_Cell_Degrees(MatS6::Inverse(dfr.m_reductionMatrix) * dfr.GetToCanon() * dfr.m_bestS6Fit) << std::endl;
 
    //const MatS6 makePrim = LRL_Cell::G6MakePrimitiveMatrix(dfr.m_latticeType);
    //const MatS6 prim2Center( LRL_Cell::G6MakePrimitiveMatrix(dfr.m_latticeType));
