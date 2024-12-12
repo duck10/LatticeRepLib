@@ -61,7 +61,7 @@ std::ostream& operator<<(std::ostream& os, const ControlVariables& cv) {
    os << ";Show Data Markers: " << (cv.showDataMarkers ? "Yes" : "No") << "\n";
    os << ";File Prefix: " << cv.filePrefix << "\n";
    os << ";Blockstart: " << cv.blockstart << "\n";
-   os << ";Blocksize: " << BLOCKSIZE_LIMIT << "\n";
+   os << ";Blocksize: " << cv.blocksize << "\n";
    os << ";Enabled Distances: ";
 
    for (const auto& dist : cv.enabledDistances) {
@@ -152,4 +152,48 @@ bool ControlVariables::isValidDistanceType(const std::string& type) const {
    return std::find(VALID_DISTANCE_TYPES.begin(),
       VALID_DISTANCE_TYPES.end(),
       type) != VALID_DISTANCE_TYPES.end();
+}
+
+void ControlVariables::updateBlock(const size_t numFiles, const bool isWebMode) {
+   // Convert any negative values to 0 for safety
+   blockstart = std::max(size_t(0), blockstart);
+
+   if (isWebMode) {
+      // Web mode: enforce maximum blocksize of 20
+      const size_t MAX_WEB_BLOCKSIZE = 20;
+
+      // If user hasn't set blocksize, use default
+      if (blocksize == 0) {
+         blocksize = std::min(MAX_WEB_BLOCKSIZE, numFiles);
+      }
+      else {
+         blocksize = std::min(blocksize, MAX_WEB_BLOCKSIZE);
+      }
+
+      // If user hasn't set blockstart, start from beginning
+      if (blockstart == 0) {
+         blockstart = 0;
+      }
+
+   }
+   else {
+      // Non-web mode: use full file list unless user specified otherwise
+      if (blocksize == 0) {
+         blocksize = numFiles;
+      }
+      if (blockstart == 0) {
+         blockstart = 0;
+      }
+   }
+
+   // Final bounds checking to prevent indexing beyond array
+   if (blockstart >= numFiles) {
+      blockstart = numFiles > 0 ? numFiles - 1 : 0;
+   }
+
+   // Adjust blocksize if it would go past end of array
+   const size_t remainingFiles = numFiles - blockstart;
+   if (blocksize > remainingFiles) {
+      blocksize = remainingFiles;
+   }
 }

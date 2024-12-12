@@ -387,7 +387,7 @@ void SvgPlotWriter::writeLegend(int width, int margin,
 
 void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string& datetime) {
    svg << "<metadata>\n"
-      << "  <filename>" << controlVars.filenames[trial * controlVars.perturbations + perturbation]
+      << "  <filename>" << controlVars.currentFilename << "\n"
       << "</filename>\n"
       << "  <trial>" << trial + 1 << "</trial>\n"
       << "  <perturbation>" << perturbation + 1 << "</perturbation>\n"

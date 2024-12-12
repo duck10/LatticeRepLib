@@ -71,5 +71,8 @@
     <ClInclude Include="LatticeCell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FollowInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
