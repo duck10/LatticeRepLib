@@ -103,6 +103,7 @@ public:
    static const std::vector<std::string> VALID_DISTANCE_TYPES;
 
    bool isValidDistanceType(const std::string& type) const;
+   void updateBlock(const size_t numFiles, const bool isWebMode);
    void printControlVariables(std::ostream& out = std::cout) const;
    size_t getCurrentFilenameIndex() const;
    int getVectorsPerTrial() const;

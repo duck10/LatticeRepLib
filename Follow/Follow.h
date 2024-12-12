@@ -12,6 +12,7 @@
 #include "ControlVariables.h"
 #include "DistanceFactory.h"
 #include "GlitchDetector.h"
+#include "FollowInstance.h"
 #include "LatticeCell.h"
 #include "PathPoint.h"
 
@@ -23,8 +24,6 @@ private:
    std::vector<std::string> filenames;
    std::vector<LatticeCell> inputVectors;
 
-   void processTrial(int trialNum);
-   void processPerturbation(int trialNum, int perturbationNum, const std::vector<LatticeCell>& perturbedPoints);
    LatticeCell perturbVector(const LatticeCell& inputVector, const int perturbationIndex) const;
    void PrintDistanceData(const Path& path);
    Path generatePath(const int trialNum, int perturbationNum, const std::vector<LatticeCell>& perturbedPoints);
@@ -35,11 +34,8 @@ private:
    Path generateTrianglePath(const LatticeCell& point1, const LatticeCell& point2, const LatticeCell& point3) const;
 
 public:
-   Follow(ControlVariables& cv);
-   void run(const std::vector<std::string>& filenames, const std::vector<LatticeCell>& inputVectors);
-   void run(const std::vector<std::string>& filenames, const std::vector<LatticeCell>& inputVectors, 
-        size_t blockstart, size_t blocksize);
-   void processAllTrials();
+   explicit Follow(ControlVariables& cv);
+   void processPerturbation(int trialNum, int perturbationNum, const FollowInstance& followStart);
 };
 
 #endif // FOLLOW_H

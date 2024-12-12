@@ -21,56 +21,6 @@
 Follow::Follow(ControlVariables& cv) : controlVars(cv), glitchDetector() {
    distfuncs = DistanceFactory::createEnabledDistances(controlVars);
 }
-void Follow::run(const std::vector<std::string>& filenames, const std::vector<LatticeCell>& inputVectors) {
-   this->filenames = filenames;
-   this->inputVectors = inputVectors;
-
-   int vectorsPerTrial = controlVars.getVectorsPerTrial();
-   int numTrials = int(inputVectors.size()) / vectorsPerTrial;
-
-   for (int trial = 0; trial < numTrials; ++trial) {
-      processTrial(trial);
-   }
-}
-
-void Follow::run(const std::vector<std::string>& filenames, const std::vector<LatticeCell>& inputVectors, const size_t blockstart, const size_t blocksize) {
-   this->filenames = filenames;
-   this->inputVectors = inputVectors;
-
-   int vectorsPerTrial = controlVars.getVectorsPerTrial();
-   int numTrials = int(inputVectors.size()) / vectorsPerTrial;
-
-   for (int trial = blockstart; trial < numTrials && trial-blockstart < blocksize; ++trial) {
-      processTrial(trial);
-   }
-}
-
-void Follow::processAllTrials() {
-   const int vectorsPerTrial = controlVars.getVectorsPerTrial();
-   const int numTrials = int(inputVectors.size()) / vectorsPerTrial;
-
-   for (int trial = 0; trial < numTrials; ++trial) {
-      processTrial(trial);
-   }
-}
-
-void Follow::processTrial(int trialNum) {
-   std::vector<LatticeCell> startingPoints;
-   const int vectorsPerTrial = controlVars.getVectorsPerTrial();
-
-   // Get the starting points for this trial
-   for (int i = 0; i < vectorsPerTrial; ++i) {
-      startingPoints.emplace_back(inputVectors[trialNum * vectorsPerTrial + i]);
-   }
-
-   for (int perturbation = 0; perturbation < controlVars.perturbations; ++perturbation) {
-      std::vector<LatticeCell> perturbedPoints;
-      for (const auto& point : startingPoints) {
-         perturbedPoints.push_back(perturbVector(point, perturbation));
-      }
-      processPerturbation(trialNum, perturbation, perturbedPoints);
-   }
-}
 
 void Follow::PrintDistanceData(const Path& path) {
    if (controlVars.printDistanceData) {
@@ -91,14 +41,14 @@ bool PathPointIsValid(const S6& p) {
    return(LRL_Cell(p).IsValid());
 }
 
-void Follow::processPerturbation(int trialNum, int perturbationNum, const std::vector<LatticeCell>& perturbedPoints) {
-   std::string curfilename(controlVars.filenames[trialNum * controlVars.perturbations + perturbationNum]);
-   const Path path = generatePath(trialNum, perturbationNum, perturbedPoints);
-   controlVars.updatePathStart(perturbedPoints);
+void Follow::processPerturbation(int trialNum, int perturbationNum, const FollowInstance& instance) {
+   std::string curfilename = instance.GetRawFileName();
+   const Path path = generatePath(trialNum, perturbationNum, instance.GetFollowSeed());
+   controlVars.updatePathStart(instance.GetFollowSeed());
    controlVars.updatePath(path);
    if (path.empty()) return;
 
-   if (curfilename.compare(std::string(""))==0) return;
+   if (curfilename.compare(std::string("")) == 0) return;
 
 
    if (controlVars.printDistanceData) {
@@ -121,6 +71,7 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const std::v
    }
 
    std::ofstream svg(curfilename);
+   controlVars.currentFilename = instance.GetRawFileName();
    if (svg.is_open()) {
       SvgPlotWriter writer(svg, controlVars, glitchDetector);
       writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);

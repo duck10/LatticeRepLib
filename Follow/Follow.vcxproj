@@ -152,6 +152,7 @@
     <ClInclude Include="Distance.h" />
     <ClInclude Include="DistanceFactory.h" />
     <ClInclude Include="Follow.h" />
+    <ClInclude Include="FollowInstance.h" />
     <ClInclude Include="FollowUtils.h" />
     <ClInclude Include="GlitchDetector.h" />
     <ClInclude Include="InputHandler.h" />
