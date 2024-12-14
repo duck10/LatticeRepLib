@@ -123,7 +123,7 @@ void InputHandler::handleControlVariable(ControlVariables& cv, const std::string
    auto [matched, handler] = matchControlCommand(key);
    if (!matched) {
       if (key[0] != ';') {  // ignore comment lines
-         std::cerr << ";Warning: Unknown control variable '" << key << "'" << std::endl;
+         std::cerr << ";Warning: Unknown control or lattice variable '" << key << "'" << std::endl;
       }
       return;
    }
@@ -136,7 +136,6 @@ void InputHandler::handleControlVariable(ControlVariables& cv, const std::string
    }
 }
 
-// Existing parsing functions remain the same
 std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
    std::vector<std::string> tokens;
    std::istringstream iss(line);
@@ -163,6 +162,7 @@ void InputHandler::readMixedInput(ControlVariables& cv, std::vector<LatticeCell>
 
       std::string key = toUpper(tokens[0]);
       if (key == "G6" || key == "S6" ||/* key == "V7" disabled ||*/
+         key == "G" || key =="S" ||
          key == "A" || key == "B" || key == "C" || key == "I" ||
          key == "R" || key == "P" || key == "F" || key == "H" ||
          key == "RANDOM") {
@@ -170,8 +170,8 @@ void InputHandler::readMixedInput(ControlVariables& cv, std::vector<LatticeCell>
             G6 result;
             std::string latticeType = "P";  // Default to primitive
 
-            if (key == "G6") result = parseG6(tokens);
-            else if (key == "S6") result = parseS6(tokens);
+            if (key == "G6" || key == "G") result = parseG6(tokens);
+            else if (key == "S6" || key == "S") result = parseS6(tokens);
             //else if (key == "V7") inputVectors.push_back(parseV7(tokens));
             else if (key == "RANDOM") result = parseRandom(tokens);
             else {
@@ -181,7 +181,7 @@ void InputHandler::readMixedInput(ControlVariables& cv, std::vector<LatticeCell>
 
             const LRL_Cell cell = result;
             if (cell.IsValid()) {
-               inputVectors.emplace_back(result, latticeType);
+               inputVectors.emplace_back(result, latticeType, line);
             }
             else {
                const int i19191 = 19191;

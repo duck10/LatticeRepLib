@@ -25,15 +25,22 @@ T CreateTotallyRandomUnitOrthogonalComponent(const T& t) {
 class FollowInstance {
 public:
    friend std::ostream& operator<<(std::ostream& os, const FollowInstance& fi) {
-      os << "file name " << fi.m_RawFileName << std::endl;
-      os << "file name " << fi.m_basicFileName << std::endl;
-      os << "file name " << fi.m_FullFileName << std::endl;
-      for (size_t rrr = 0; rrr < fi.m_followSeed.size(); ++rrr)
-      {
-         os << "seed " << rrr << "  " << S6(fi.m_followSeed[rrr].getCell()) << std::endl;
-      }
       os << "trial # " << fi.m_trial << std::endl;
       os << "perturbation # " << fi.m_perturbation << std::endl;
+      os << ";raw file name   " << fi.m_RawFileName << std::endl;
+      os << ";basic file name " << fi.m_basicFileName << std::endl;
+      os << ";full file name  " << fi.m_FullFileName << std::endl;
+      for (size_t rrr = 0; rrr < fi.m_followSeed.size(); ++rrr)
+      {
+         os << "seed " << rrr << "; S6  " << S6(fi.m_followSeed[rrr].getCell()) << std::endl;
+      }
+      return os;
+   }
+
+   friend std::ostream& operator<<(std::ostream& os, const std::vector<FollowInstance>& v) {
+      for (const auto& iv : v) {
+         os << iv << "\n";
+      }
       return os;
    }
 
