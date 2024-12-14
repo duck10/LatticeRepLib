@@ -373,7 +373,6 @@ void SvgPlotWriter::writeLegend(int width, int margin,
       << (distfuncs.size() * 20 + 10) << R"(" fill="white" stroke="black"/>)" << "\n";
 
    for (size_t i = 0; i < distfuncs.size(); ++i) {
-      // Get interpolated color instead of using CS6_COLOR or NC_COLOR
       std::string color = ColorTables::interpolateColor(i, distfuncs.size());
 
       svg << R"(<line x1="0" y1=")" << (i * 20) << R"(" x2="20" y2=")" << (i * 20)
