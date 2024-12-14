@@ -12,10 +12,14 @@ class LatticeCell {
 private:
    G6 cell;
    std::string latticeType;  // "P", "A", "B", "C", "F", "I", "H"
+   std::string inputtext;
 
 public:
-   LatticeCell(const G6& c, const std::string& type = "P")
-      : cell(c), latticeType(type) {}
+   LatticeCell(const G6& c, const std::string& type = "P", const std::string& inputReadIn = "")
+      : cell(c)
+      , latticeType(type)
+   , inputtext(inputReadIn)
+   {}
 
    G6 getNiggliReducedCell() const {
       G6 primitive = toPrimitive();
