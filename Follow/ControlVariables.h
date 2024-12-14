@@ -108,10 +108,6 @@ public:
    size_t getCurrentFilenameIndex() const;
    int getVectorsPerTrial() const;
    std::string getFollowerMode() const;
-
-   // Color constants for SVG plots
-   static const std::string CS6_COLOR;
-   static const std::string NC_COLOR;
 };
 
 // Implementation of member functions

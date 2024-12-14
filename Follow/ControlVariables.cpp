@@ -7,10 +7,6 @@
 std::atomic<bool> ControlVariables::g_running(true);
 std::atomic<bool> ControlVariables::g_in_input(false);
 
-// In ControlVariables.cpp, define:
-const std::string ControlVariables::CS6_COLOR = "#0077BB";  // Blue
-const std::string ControlVariables::NC_COLOR = "#EE7733";   // Orange
-
 ControlVariables::ControlVariables()
    : followerMode(FollowerMode::POINT),
    perturbations(1),
