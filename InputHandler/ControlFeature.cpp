@@ -4,13 +4,16 @@
 #include <string>
 #include <ostream>
 
-// In ControlFeature.h
 class ControlFeature {
 public:
    virtual ~ControlFeature() = default;
-   virtual std::string getFeatureState() const = 0;
-   virtual void writeToStream(std::ostream& os) const = 0;
    virtual bool handleInput(const std::string& command, const std::string& value) = 0;
+   virtual std::string getFeatureState() const = 0;
+
+   // Change to inline implementation
+   virtual void writeToStream(std::ostream& os) const {
+      os << getFeatureState();
+   }
 };
 
 #endif // INPUTHANDLER_CONTROL_FEATURE_H

@@ -78,6 +78,8 @@ WebIO::WebIO(int argc, char* argv[], const std::string& progName, const size_t f
    m_htmlprefix = StringFinder("--htmlprefix", m_htmlprefix, args);
 
    m_usetimestamp = BoolFinder("--usetimestamp", m_usetimestamp, args);
+   if (m_hasWebInstructions) m_usetimestamp = true;
+
    m_usehttps = BoolFinder("--usehttps", m_usehttps, args);
    m_usetarget = BoolFinder("--usetimestamp", m_usetarget, args);
 

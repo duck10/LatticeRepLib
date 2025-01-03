@@ -20,12 +20,18 @@
     <ClCompile Include="..\LatticeRepresentationLib\BravaisHeirarchy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CmdSellaFeatures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\LatticeRepresentationLib\BravaisHeirarchy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CmdSellaFeatures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

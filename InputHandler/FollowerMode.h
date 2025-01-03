@@ -13,7 +13,7 @@ enum class FollowerMode {
    TRIANGLE
 };
 
-std::string toString(FollowerMode mode);
+static std::string toString(FollowerMode mode);
 FollowerMode toFollowerMode(const std::string& s);
 std::ostream& operator<<(std::ostream& os, const FollowerMode& mode);
 

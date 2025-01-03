@@ -1,5 +1,6 @@
 ﻿#pragma warning (disable: 4996)
 
+#include "DistanceFactory.h"
 #include "Follow.h"
 #include "GlitchDetector.h"
 #include "LinearAxis.h"
@@ -15,44 +16,45 @@
 #include <iomanip>
 #include <iostream>
 #include <random>
+#include <vector>
 
 #include "PathPoint.h"
 
-Follow::Follow(ControlVariables& cv) : controlVars(cv), glitchDetector() {
-   distfuncs = DistanceFactory::createEnabledDistances(controlVars);
+Follow::Follow(FollowControls& followControls)
+   : controls(followControls)
+   , glitchDetector()
+{
+   distfuncs = DistanceFactory::createEnabledDistances(*controls.getDistanceTypes());
 }
 
-void Follow::PrintDistanceData(const Path& path) {
-   if (controlVars.printDistanceData) {
-      std::cout << "; the path" << std::endl;
-      for (const auto& [point1, point2] : path) {
-         const S6 p1(point1.getCell());
-         const S6 p2(point2.getCell());
-         const std::string invalid1 = (p1.IsValid()) ? "" : " invalid";
-         const std::string invalid2 = (p2.IsValid()) ? "" : " invalid";
-         std::cout << "; " << point1.getLatticeType() << " " << p1 << invalid1
-            << "\n; " << point2.getLatticeType() << " " << p2 << invalid2 << std::endl << std::endl;
-     }
+void Follow::PrintPathData(const Path& path) const {
+   if (controls.shouldPrintDistanceData()) {
+      std::cout << path << std::endl;
    }
-   std::cout << ";--------  end of path ----------------- \n";
 }
 
-bool PathPointIsValid(const S6& p) {
-   return(LRL_Cell(p).IsValid());
-}
+bool Follow::processPerturbation(int trialNum, int perturbationNum, const FollowInstance& instance) {
+   distfuncs = DistanceFactory::createEnabledDistances(*controls.getDistanceTypes());
+   if (distfuncs.empty()) {
+      std::cerr << "; No distance types enabled - please enable at least one type" << std::endl;
+      return false;  // Exit before creating file
+   }
 
-void Follow::processPerturbation(int trialNum, int perturbationNum, const FollowInstance& instance) {
    std::string curfilename = instance.GetRawFileName();
    const Path path = generatePath(trialNum, perturbationNum, instance.GetFollowSeed());
-   controlVars.updatePathStart(instance.GetFollowSeed());
-   controlVars.updatePath(path);
-   if (path.empty()) return;
+   if (path.empty()) {
+      std::cerr << "; Failed to generate valid path" << std::endl;
+      return false;
+   }
+   if (curfilename.empty()) {
+      std::cerr << "; Empty output filename" << std::endl;
+      return false;
+   }
+   if (path.empty()) return false;
+   if (curfilename.empty()) return false;
 
-   if (curfilename.compare(std::string("")) == 0) return;
-
-
-   if (controlVars.printDistanceData) {
-      PrintDistanceData(path);
+   if (controls.shouldPrintDistanceData()) {
+      PrintPathData(path);
    }
 
    std::vector<std::vector<double>> allDistances;
@@ -60,8 +62,9 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const Follow
       std::vector<double> pathDists;
       pathDists.reserve(path.size());
       for (const auto& [point1, point2] : path) {
-         if (PathPointIsValid(S6(point1.getCell())) && PathPointIsValid(S6(point2.getCell()))) {
-            pathDists.emplace_back(dist->dist(point1.getCell(), point2.getCell()));
+         if (Path::PathPointIsValid(S6(point1.getCell())) && Path::PathPointIsValid(S6(point2.getCell()))) {
+            pathDists.emplace_back(dist->dist(static_cast<S6>(point1.getCell()),
+               static_cast<S6>(point2.getCell())));
          }
          else {
             pathDists.emplace_back(-19191.0);
@@ -70,153 +73,40 @@ void Follow::processPerturbation(int trialNum, int perturbationNum, const Follow
       allDistances.push_back(pathDists);
    }
 
-   std::ofstream svg(curfilename);
-   controlVars.currentFilename = instance.GetRawFileName();
-   if (svg.is_open()) {
-      SvgPlotWriter writer(svg, controlVars, glitchDetector);
+   if (allDistances.empty()) {
+      std::cerr << "; Error, no paths created\n";
+      return false;
+   }
+
+   std::ofstream svgfile(curfilename);
+   if (svgfile.is_open()) {
+      SvgPlotWriter writer(svgfile, controls, glitchDetector);
       writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);
    }
    else {
-      std::cout << "unable to open output file" << std::endl;
+      std::cerr << ";Warning: Unable to open output file" << std::endl;
+      return false;
    }
+   return true;
 }
 
 Path Follow::generatePath(const int trialNum, int perturbationNum, const std::vector<LatticeCell>& perturbedPoints) {
-   switch (controlVars.followerMode) {
+
+   const int numPoints = controls.getNumPoints();
+   switch (controls.getMode()) {
    case FollowerMode::POINT:
-      return generatePointPath(perturbedPoints[0]);
+      return Path::generatePointPath(perturbedPoints[0], numPoints);
    case FollowerMode::LINE:
-      return generateLinePath(perturbedPoints[0], perturbedPoints[1]);
+      return Path::generateLinePath(perturbedPoints[0], perturbedPoints[1], numPoints);
    case FollowerMode::CHORD:
-      return generateChordPath(perturbedPoints[0], perturbedPoints[1]);
+      return Path::generateChordPath(perturbedPoints[0], perturbedPoints[1], numPoints);
    case FollowerMode::CHORD3:
-      return generateChord3Path(perturbedPoints[0], perturbedPoints[1], perturbedPoints[2]);
+      return Path::generateChord3Path(perturbedPoints[0], perturbedPoints[1], perturbedPoints[2], numPoints);
    case FollowerMode::TRIANGLE:
-      return generateTrianglePath(perturbedPoints[0], perturbedPoints[1], perturbedPoints[2]);
+      return Path::generateTrianglePath(perturbedPoints[0], perturbedPoints[1], perturbedPoints[2], numPoints);
    default:
       return Path();
    }
-}
-
-static S6 MakeInvalidS6() {
-   return { 19191.111111111111, 0, 0, 0, 0, 0 };
-}
-
-Path Follow::generatePointPath(const LatticeCell& startPoint) const {
-   // Convert to primitive before Niggli reduction
-   G6 primitive = startPoint.toPrimitive();
-   G6 niggliReduced;
-   Niggli::Reduce(primitive, niggliReduced);
-   const S6 startS6(startPoint.getCell());
-   const S6 endS6(niggliReduced);
-   const std::string latticeType = startPoint.getLatticeType();
-
-   Path path;
-   path.reserve(controlVars.numFollowerPoints);
-
-   for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      S6 currentS6 = startS6 * (1.0 - t) + endS6 * t;
-      if (!PathPointIsValid(currentS6)) currentS6 = MakeInvalidS6();
-
-      path.emplace_back(LatticeCell(G6(currentS6), latticeType),
-         LatticeCell(G6(endS6), latticeType));
-   }
-   return path;
-}
-
-Path Follow::generateLinePath(const LatticeCell& startPoint, const LatticeCell& endPoint) const {
-   const S6 startS6(startPoint.getCell());
-   const S6 endS6(endPoint.getCell());
-   const std::string startType = startPoint.getLatticeType();
-   const std::string endType = endPoint.getLatticeType();
-   
-   Path path;
-   path.reserve(controlVars.numFollowerPoints);
-
-   for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      S6 currentS6 = startS6 * (1.0 - t) + endS6 * t;
-      if (!PathPointIsValid(currentS6)) currentS6 = MakeInvalidS6();
-      path.emplace_back(LatticeCell(G6(currentS6), startType), LatticeCell(G6(endS6), endType));
-   }
-   return path;
-}
-
-
-Path Follow::generateChordPath(const LatticeCell& point1, const LatticeCell& point2) const {
-   G6 primitive1 = point1.toPrimitive();
-   G6 primitive2 = point2.toPrimitive();
-   G6 reduced1G6, reduced2G6;
-   Niggli::Reduce(primitive1, reduced1G6);
-   Niggli::Reduce(primitive2, reduced2G6);
-
-   const S6 p1S6(point1.getCell());
-   const S6 p2S6(point2.getCell());
-   const S6 reduced1(reduced1G6);
-   const S6 reduced2(reduced2G6);
-   const std::string type1 = point1.getLatticeType();
-   const std::string type2 = point2.getLatticeType();
-
-   Path path;
-   path.reserve(controlVars.numFollowerPoints);
-
-   for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      S6 mobile1 = p1S6 * (1.0 - t) + reduced1 * t;
-      S6 mobile2 = p2S6 * (1.0 - t) + reduced2 * t;
-      if (!PathPointIsValid(mobile1)) mobile1 = MakeInvalidS6();
-      if (!PathPointIsValid(mobile2)) mobile2 = MakeInvalidS6();
-      path.emplace_back(LatticeCell(G6(mobile1), type1), LatticeCell(G6(mobile2), type2));
-   }
-   return path;
-}
-
-Path Follow::generateChord3Path(const LatticeCell& mobile1, const LatticeCell& mobile2, const LatticeCell& target) const {
-   const S6 m1S6(mobile1.getCell());
-   const S6 m2S6(mobile2.getCell());
-   S6 initialDirection = m2S6 - m1S6;
-   const double separation = initialDirection.Norm();
-   initialDirection = initialDirection * (1.0 / separation);
-   const S6 initialMidpoint = (m1S6 + m2S6) * 0.5;
-   const S6 targetS6(target.getCell());
-   const std::string type1 = mobile1.getLatticeType();
-   const std::string type2 = mobile2.getLatticeType();
- 
-   Path path;
-   path.reserve(controlVars.numFollowerPoints);
- 
-   for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      S6 currentMidpoint = initialMidpoint * (1.0 - t) + targetS6 * t;
-      S6 point1 = currentMidpoint - initialDirection * (separation * 0.5);
-      S6 point2 = currentMidpoint + initialDirection * (separation * 0.5);
-      if (!PathPointIsValid(point1)) point1 = MakeInvalidS6();
-      if (!PathPointIsValid(point2)) point2 = MakeInvalidS6();
-      path.emplace_back(LatticeCell(G6(point1), type1), LatticeCell(G6(point2), type2));
-    }
-    return path;
-}
-
-Path Follow::generateTrianglePath(const LatticeCell& point1, const LatticeCell& point2, const LatticeCell& point3) const {
-   const S6 p1S6(point1.getCell());
-   const S6 p2S6(point2.getCell());
-   const S6 p3S6(point3.getCell());
-   const std::string type1 = point1.getLatticeType();
-   const std::string type2 = point2.getLatticeType();
-
-   Path path;
-   path.reserve(controlVars.numFollowerPoints);
-
-   for (int i = 0; i < controlVars.numFollowerPoints; ++i) {
-      const double t = i / static_cast<double>(controlVars.numFollowerPoints - 1);
-      S6 mobile1 = p1S6 * (1.0 - t) + p3S6 * t;
-      S6 mobile2 = p2S6 * (1.0 - t) + p3S6 * t;
-      if (!PathPointIsValid(mobile1)) mobile1 = MakeInvalidS6();
-      if (!PathPointIsValid(mobile2)) mobile2 = MakeInvalidS6();
-      path.emplace_back(LatticeCell(G6(mobile1), type1), LatticeCell(G6(mobile2), type2));
-   }
-   return path;
 }
 
 LatticeCell Follow::perturbVector(const LatticeCell& inputVector, const int perturbationIndex) const {
@@ -235,7 +125,7 @@ LatticeCell Follow::perturbVector(const LatticeCell& inputVector, const int pert
    // Scale the orthogonal vector
    const double inputNorm = std::sqrt(inputNormSquared);
    const double orthogonalNorm = std::sqrt(orthogonalVector.Dot(orthogonalVector));
-   const double scaleFactor = inputNorm * controlVars.perturbBy / orthogonalNorm;
+   const double scaleFactor = inputNorm * controls.getPerturbBy() / orthogonalNorm;
    const S6 scaledOrthogonalVector = scaleFactor * orthogonalVector;
 
    // Return perturbed vector with same lattice type

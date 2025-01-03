@@ -45,11 +45,11 @@ public:
 class WebLimits {
 public:
 
-   static friend std::ostream& operator<<(std::ostream& os, const WebLimits& wl) {
-      os << "WebLimits\n";
-      os << "   block size " << wl.blocksize << std::endl;
-      os << "   block start " << wl.blockstart << std::endl;
-      os << "   block size max " << wl.blocksizemax << std::endl;
+   friend std::ostream& operator<<(std::ostream& os, const WebLimits& wl) {
+      os << ";WebLimits\n";
+      os << ";   block size " << wl.blocksize << std::endl;
+      os << ";   block start " << wl.blockstart << std::endl;
+      os << ";   block size max " << wl.blocksizemax << std::endl;
       return os;
    }
 
@@ -87,25 +87,30 @@ public:
       const int blockstart,
       const int blocksize,
       const int numFiles,
-      const bool isWeb)
-   {
-      int newBlockSize(std::max(1, blocksize));
-      newBlockSize = std::min(newBlockSize, numFiles);
-      const int newBlockStart(std::max(0, blockstart));
+      const int perturbations,
+      const bool isWeb) {
+
+      const int totalFiles = numFiles * perturbations;
+      if (blockstart >= totalFiles) {
+         throw std::runtime_error("; start point " + std::to_string(blockstart) +
+            " is already past the end point " + std::to_string(totalFiles));
+      }
+
+      int newBlockSize = std::max(1, blocksize);
+      newBlockSize = std::min(newBlockSize, totalFiles);
+      const int newBlockStart = std::max(0, blockstart);
       int runEnd;
 
       if (isWeb) {
          newBlockSize = std::min(newBlockSize, 20);
-         runEnd = std::min(numFiles, newBlockStart + newBlockSize);
+         runEnd = std::min(totalFiles, newBlockStart + newBlockSize);
       }
-      else
-      {
-         runEnd = numFiles;
+      else {
+         runEnd = totalFiles;
       }
 
-      return { newBlockStart, runEnd };  // does not account for start off  the end 
+      return { newBlockStart, runEnd };
    }
-
 
    int GetBlockSize() const { return blocksize; }
    int GetBlockStart() const { return blockstart; }

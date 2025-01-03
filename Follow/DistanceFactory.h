@@ -1,28 +1,14 @@
-#ifndef DISTANCEFACTORY_H
-#define DISTANCEFACTORY_H
+#ifndef DISTANCE_FACTORY_H
+#define DISTANCE_FACTORY_H
 
-#include <vector>
-#include <memory>
-#include <string>
-#include "ControlVariables.h"
 #include "Distance.h"
+#include "DistanceTypes.h"
 
-class DistanceFactory {
-public:
-   static std::vector<std::unique_ptr<Distance>> createEnabledDistances(const ControlVariables& controlVars);
+#include <memory>
+#include <vector>
 
-   // Helper method to get all available distance types
-   static std::vector<std::string> getAvailableDistanceTypes() {
-      return { "CS", "NC", "V7", "R9" };
-   }
+namespace DistanceFactory {
+   std::vector<std::unique_ptr<Distance>> createEnabledDistances(const DistanceTypes& types);
+}
 
-   // Helper method to check if a distance type is valid
-   static bool isValidDistanceType(const std::string& distName) {
-      for (const auto& type : getAvailableDistanceTypes()) {
-         if (type == distName) return true;
-      }
-      return false;
-   }
-};
-
-#endif // DISTANCEFACTORY_H
+#endif // DISTANCE_FACTORY_H

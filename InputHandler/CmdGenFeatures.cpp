@@ -1,20 +1,36 @@
 // CmdGenFeatures.cpp
 #include "CmdGenFeatures.h"
 #include "InputHandler.h"
+#include <sstream>
+
+// GenCountControl implementations
+GenCountControl::GenCountControl() : count(0) {
+   InputHandler::registerHandler("COUNT", 0.35,
+      [this](BaseControlVariables&, const std::string& value) {
+         setCount(std::stoul(value));
+      });
+}
+
+bool GenCountControl::handleInput(const std::string& command, const std::string& value) {
+   return false;  // Now handled via InputHandler
+}
+
+std::string GenCountControl::getFeatureState() const {
+   std::ostringstream oss;
+   oss << ";Generate Count: " << count << "\n";
+   return oss.str();
+}
 
 void GenCountControl::writeToStream(std::ostream& os) const {
-   os << ";Generate Count: " << count << "\n";
+   os << getFeatureState();
 }
 
-void GenCountControl::setCount(size_t n) { count = n; }
-size_t GenCountControl::getCount() const { return count; }
-
-void GenTypeListControl::writeToStream(std::ostream& os) const {
-   os << ";Generate Types: " << typeList << "\n";
+void GenCountControl::setCount(size_t n) {
+   count = n;
 }
 
-void GenTypeListControl::setTypeList(const std::string& types) {
-   typeList += " " + types;
+size_t GenCountControl::getCount() const {
+   return count;
 }
 
 void GenTypeListControl::addType(const std::string& type) {

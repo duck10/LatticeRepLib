@@ -6,6 +6,5 @@
 #include "LatticeCell.h"
 
 using PathPoint = std::pair<LatticeCell, LatticeCell>;
-using Path = std::vector<PathPoint>;
 
 #endif  // PATHPOINT

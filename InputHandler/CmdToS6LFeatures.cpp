@@ -1,13 +1,31 @@
 // CmdToS6LFeatures.cpp
 #include "CmdToS6LFeatures.h"
 #include "InputHandler.h"
+#include <sstream>
 
-void CmdToS6LFormatControl::writeToStream(std::ostream& os) const {
-   os << ";Output Format: " << format << "\n";
+CmdToS6LFormatControl::CmdToS6LFormatControl() {
+   InputHandler::registerHandler("FORMAT", 0.35,
+      [this](BaseControlVariables&, const std::string& value) {
+         setFormat(value);
+      });
 }
 
-void CmdToS6LFormatControl::setFormat(const std::string& fmt) {
-   format = fmt;
+bool CmdToS6LFormatControl::handleInput(const std::string& command, const std::string& value) {
+   return false;  // Handled via InputHandler
+}
+
+std::string CmdToS6LFormatControl::getFeatureState() const {
+   std::ostringstream oss;
+   oss << ";Format: " << format << "\n";
+   return oss.str();
+}
+
+void CmdToS6LFormatControl::writeToStream(std::ostream& os) const {
+   os << getFeatureState();
+}
+
+void CmdToS6LFormatControl::setFormat(const std::string& newFormat) {
+   format = newFormat;
 }
 
 std::string CmdToS6LFormatControl::getFormat() const {
@@ -20,11 +38,5 @@ CmdToS6LControlVariables::CmdToS6LControlVariables() {
 
 void CmdToS6LControlVariables::setupHandlers() {
    InputHandler::clearHandlers();
-
-   InputHandler::registerHandler("FORMAT", 0.35,
-      [](BaseControlVariables& cv, const std::string& value) {
-         if (auto* formatCtrl = cv.getFeature<CmdToS6LFormatControl>()) {
-            formatCtrl->setFormat(value);
-         }
-      });
+   // Any additional handler setup if needed
 }

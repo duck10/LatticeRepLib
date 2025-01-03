@@ -1,66 +1,30 @@
-// ControlFeatures.h
-#ifndef CONTROL_FEATURES_H
-#define CONTROL_FEATURES_H
+#ifndef INPUTHANDLER_CONTROL_FEATURES_H
+#define INPUTHANDLER_CONTROL_FEATURES_H
 
-#include "ControlFeature.h"
 #include <string>
-#include <set>
 #include <vector>
+#include <algorithm>
 
-// Feature for block processing
-class BlockControl : public ControlFeature {
+class LatticeTypesControl {
 private:
-   size_t blockstart{ 0 };
-   size_t blocksize{ 20 };
+   static const std::vector<std::string> LATTICE_TYPE_LIST;
 
-public:
-   void writeToStream(std::ostream& os) const override;
-   void setBlockStart(size_t start);
-   void setBlockSize(size_t size);
-   size_t getBlockStart() const;
-   size_t getBlockSize() const;
+   static bool isValidType(const std::string& type) {
+      return std::find(LATTICE_TYPE_LIST.begin(),
+         LATTICE_TYPE_LIST.end(),
+         type) != LATTICE_TYPE_LIST.end();
+   }
 };
 
-// Feature for multiple lattice type selection
-class LatticeTypesControl : public ControlFeature {
+class SingleLatticeTypeControl {
 private:
-   std::set<std::string> enabledTypes;
-   static const std::vector<std::string> VALID_TYPES;
+   static const std::vector<std::string> SINGLE_LATTICE_TYPES;
 
-public:
-   LatticeTypesControl();
-   void writeToStream(std::ostream& os) const override;
-   void enableType(const std::string& type);
-   void disableType(const std::string& type);
-
-private:
-   bool isValidType(const std::string& type) const;
+   static bool isValidType(const std::string& type) {
+      return std::find(SINGLE_LATTICE_TYPES.begin(),
+         SINGLE_LATTICE_TYPES.end(),
+         type) != SINGLE_LATTICE_TYPES.end();
+   }
 };
 
-// Feature for single lattice type selection
-class SingleLatticeTypeControl : public ControlFeature {
-private:
-   std::string selectedType{ "P" };
-   static const std::vector<std::string> VALID_TYPES;
-
-public:
-   void writeToStream(std::ostream& os) const override;
-   void setType(const std::string& type);
-   std::string getType() const;
-
-private:
-   bool isValidType(const std::string& type) const;
-};
-
-// Feature for output size control
-class OutputSizeControl : public ControlFeature {
-private:
-   size_t outputElements{ 100 };  // Default to 100 elements
-
-public:
-   void writeToStream(std::ostream& os) const override;
-   void setOutputElements(size_t count);
-   size_t getOutputElements() const;
-};
-
-#endif // CONTROL_FEATURES_H
+#endif

@@ -1,15 +1,17 @@
 // DirichletFeatures.h
-#ifndef DIRICHLET_FEATURES_H
-#define DIRICHLET_FEATURES_H
+#ifndef INPUTHANDLER_DIRICHLET_FEATURES_H
+#define INPUTHANDLER_DIRICHLET_FEATURES_H
 
-#include "ControlFeature.h"
 #include "BaseControlVariables.h"
-#include "ControlFeatures.h"  // For BlockControl
+#include "BlockProcessing.h"
 
 class DirichletControlVariables : public BaseControlVariables {
 public:
-   DirichletControlVariables();
-   static void setupHandlers();
+   DirichletControlVariables() {
+      features.push_back(std::make_unique<BlockProcessing>());
+   }
+
+   void setupHandlers();
 };
 
-#endif // DIRICHLET_FEATURES_H
+#endif  // INPUTHANDLER_DIRICHLET_FEATURES_H
