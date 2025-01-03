@@ -1,26 +1,29 @@
 // CmdToS6LFeatures.h
-#ifndef CMDTOS6L_FEATURES_H
-#define CMDTOS6L_FEATURES_H
+#ifndef INPUTHANDLER_CMD_TO_S6L_FEATURES_H
+#define INPUTHANDLER_CMD_TO_S6L_FEATURES_H
 
-#include "ControlFeature.h"
 #include "BaseControlVariables.h"
+#include "ControlFeature.h"
 #include <string>
 
-// Control for output format
 class CmdToS6LFormatControl : public ControlFeature {
-private:
-   std::string format{ "S6" };  // Default to S6
-
 public:
+   CmdToS6LFormatControl();
+   bool handleInput(const std::string& command, const std::string& value) override;
+   std::string getFeatureState() const override;
    void writeToStream(std::ostream& os) const override;
-   void setFormat(const std::string& fmt);
+
+   void setFormat(const std::string& newFormat);
    std::string getFormat() const;
+
+private:
+   std::string format;
 };
 
 class CmdToS6LControlVariables : public BaseControlVariables {
 public:
    CmdToS6LControlVariables();
-   static void setupHandlers();
+   void setupHandlers();
 };
 
-#endif // CMDTOS6L_FEATURES_H
+#endif

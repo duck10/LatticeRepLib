@@ -1,21 +1,24 @@
-// DistanceFactory.cpp
 #include "DistanceFactory.h"
+#include "Distance.h"
+#include <memory>
 
-std::vector<std::unique_ptr<Distance>> DistanceFactory::createEnabledDistances(const ControlVariables& controlVars) {
-   std::vector<std::unique_ptr<Distance>> distfuncs;
-   for (const auto& distName : controlVars.enabledDistances) {
-      if (distName == "CS") {
-         distfuncs.push_back(std::make_unique<CS6Distance>());
+namespace DistanceFactory {
+   std::vector<std::unique_ptr<Distance>> createEnabledDistances(const DistanceTypes& types) {
+      std::vector<std::unique_ptr<Distance>> distances;
+
+      if (types.isTypeEnabled("CS")) {
+         distances.push_back(std::make_unique<CS6Distance>());
       }
-      else if (distName == "NC") {
-         distfuncs.push_back(std::make_unique<NCDistance>());
+      if (types.isTypeEnabled("NC")) {
+         distances.push_back(std::make_unique<NCDistance>());
       }
-      else if (distName == "V7") {
-         distfuncs.push_back(std::make_unique<V7Distance>());
+      if (types.isTypeEnabled("V7")) {
+         distances.push_back(std::make_unique<V7Distance>());
       }
-      else if (distName == "R9") {
-         distfuncs.push_back(std::make_unique<R9Distance>());
+      if (types.isTypeEnabled("R9")) {
+         distances.push_back(std::make_unique<R9Distance>());
       }
+
+      return distances;
    }
-   return distfuncs;
 }

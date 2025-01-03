@@ -2,29 +2,14 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <limits>
-#include <ostream>
-#include <random>
 #include <string>
 #include <vector>
 
-#include "ControlVariables.h"
-#include "CS6Dist.h"
-#include "CS6Dist.cpp"
+#include "FollowControls.h"
 #include "Follow.h"
-#include "FollowUtils.h"
-#include "G6.h"
 #include "FollowInstance.h"
 #include "InputHandler.h"
 #include "LatticeCell.h"
-#include "LRL_Cell.h"
-#include "LRL_Cell_Degrees.h"
-#include "LRL_ReadLatticeData.h"
-#include "Niggli.h"
-#include "Polar.h"
-#include "rhrand.h"
-#include "S6.h"
-#include "Selling.h"
 #include "WebIO.h"
 
 static void setupWebIO(WebIO& webio, const std::string filePrefix,
@@ -45,32 +30,14 @@ static void setupWebIO(WebIO& webio, const std::string filePrefix,
    webio.CreateFilenamesAndLinks(ntotal, filePrefix);
 }
 
-std::vector<LatticeCell> handleInput(ControlVariables& controlVars, WebIO& webio) {
-   std::vector<LatticeCell> inputVectors;
-
-   std::cout << "; Enter control variables and input vectors (type 'end' to finish):\n";
-   InputHandler::readMixedInput(controlVars, inputVectors, std::cin);
-
-   if (controlVars.getVectorsPerTrial() > inputVectors.size()) {
-      throw std::runtime_error("; Not enough input vectors for the selected follower mode");
-   }
-
-   std::cout << "; Number of input vectors read: " << inputVectors.size() << std::endl;
-   if (webio.m_hasWebInstructions) {
-      webio.SetTimeStamp(true);
-   }
-
-   return inputVectors;
-}
-
 static std::vector<FollowInstance> CreateFollowInstanceList(
-   const ControlVariables& cv,
+   const FollowControls& controls,
    const std::vector<LatticeCell>& cells)
 {
    std::vector<FollowInstance> instances;
-   const size_t vectorsNeeded = cv.getVectorsPerTrial();
+   const size_t vectorsNeeded = controls.getVectorsPerTrial();
    const size_t numCompleteSets = cells.size() / vectorsNeeded;
-   instances.reserve(numCompleteSets * cv.perturbations);  // Pre-allocate space
+   instances.reserve(numCompleteSets * controls.getPerturbations());  // Pre-allocate space
 
    for (size_t i = 0; i < numCompleteSets; ++i) {
       std::vector<LatticeCell> starter;
@@ -85,8 +52,8 @@ static std::vector<FollowInstance> CreateFollowInstanceList(
       instances.emplace_back(starter, static_cast<int>(i), 0);
 
       // Handle perturbations
-      for (size_t kk = 1; kk < cv.perturbations; ++kk) {
-         auto perturbedCells = FollowInstance::Perturb(starter, cv.perturbBy);
+      for (size_t kk = 1; kk < controls.getPerturbations(); ++kk) {
+         auto perturbedCells = FollowInstance::Perturb(starter, controls.getPerturbBy());
          instances.emplace_back(std::move(perturbedCells),
             static_cast<int>(i),
             static_cast<int>(kk));
@@ -96,16 +63,29 @@ static std::vector<FollowInstance> CreateFollowInstanceList(
 }
 
 static void processInstances(const std::vector<FollowInstance>& instances,
-   const std::pair<int, int>& limits,
-   ControlVariables& controlVars) {
-   Follow follow(controlVars);
-   for (size_t i = limits.first; i < limits.second; ++i) {
-      std::cout << "; Follow graphics file(s) "
-         << i << "  " << instances[i].GetFullFileName() << std::endl;
+   std::pair<int, int>& limits,
+   FollowControls& controls) {
 
-      follow.processPerturbation(instances[i].GetTrial(),
+   limits.second = std::min(limits.second, static_cast<int>(instances.size()));
+
+   Follow follow(controls);
+   for (size_t i = limits.first; i < limits.second; ++i) {
+      if (follow.processPerturbation(instances[i].GetTrial(),
          instances[i].GetPerturbation(),
-         instances[i]);
+         instances[i])) {
+         // Only output filename if file was successfully written
+         std::cout << "; Follow graphics file(s) "
+            << i << "  " << instances[i].GetFullFileName() << std::endl;
+      }
+   }
+}
+
+static void assignFilenamesToInstances(const WebIO& webio, std::vector<FollowInstance>& instances) {
+   for (size_t i = 0; i < webio.m_basicfileNameList.size(); ++i) {
+      instances[i].AddFileNames(
+         webio.m_FileNameList[i],
+         webio.m_basicfileNameList[i],
+         webio.m_FullfileNameList[i]);
    }
 }
 
@@ -115,44 +95,56 @@ int main(int argc, char* argv[]) {
       std::cout << "; Follow\n";
 
       WebIO webio(argc, argv, programName, 0);
-      ControlVariables controlVars;
+      FollowControls controls;
 
-      const auto inputVectors = handleInput(controlVars, webio);
+      std::vector<LatticeCell> inputVectors;
+      std::cout << "; Enter control variables and input vectors (type 'end' to finish):\n";
+      InputHandler::readMixedInput(controls, inputVectors, std::cin);
 
       if (inputVectors.empty()) {
          throw std::runtime_error("; No input vectors provided");
       }
+      std::cout << "; Number of input vectors read: " << inputVectors.size() << std::endl;
+
+      // Add vector count validation here
+      std::string errorMsg;
+      if (!FollowerModeUtils::validateVectorCount(controls.getMode(), inputVectors.size(), errorMsg)) {
+         throw std::runtime_error(errorMsg);
+      }
 
       WebLimits wl;
-      wl.Update(webio); // update using webio FIRST
-      wl.Update(int(controlVars.blocksize), int(controlVars.blockstart));
+      wl.Update(webio);
 
-      auto instances = CreateFollowInstanceList(controlVars, inputVectors);
+      auto* blockProcessing = controls.getBlockProcessing();
+
+      blockProcessing->updateLimits(inputVectors.size(), webio.m_hasWebInstructions,
+         [&controls](size_t inputs) {
+            return (inputs / controls.getVectorsPerTrial()) * controls.getPerturbations();
+         });
+      wl.Update(static_cast<int>(blockProcessing->getBlockSize()), static_cast<int>(blockProcessing->getBlockStart()));
+
+      //std::cout << controls.getState() << "\n";
+
+      auto instances = CreateFollowInstanceList(controls, inputVectors);
       const int ntotal = static_cast<int>(instances.size());
 
-      const auto limits = WebLimits::GetProcessingLimits(
+      setupWebIO(webio, controls.getFilePrefix()->getPrefix(), instances, ntotal);
+      assignFilenamesToInstances(webio, instances);
+      controls.updateFilenames(webio.m_FileNameList);
+
+      auto limits = WebLimits::GetProcessingLimits(
          wl.GetBlockStart(),
          wl.GetBlockSize(),
          ntotal,
+         controls.getPerturbations(),
          webio.m_hasWebInstructions);
 
-      if (limits.first > ntotal) {
-         throw std::runtime_error("; start point is already past the end point");
+      if ( controls.shouldShowControls())
+      {
+         std::cout << controls.getState() << "\n";
       }
 
-      setupWebIO(webio, controlVars.filePrefix, instances, ntotal);
-      // Update control variables with file names
-      controlVars.updateFilenames(webio.m_FileNameList);
-      // Add filenames to instances
-      for (size_t i = 0; i < webio.m_basicfileNameList.size(); ++i) {
-         instances[i].AddFileNames(
-            webio.m_FileNameList[i],
-            webio.m_basicfileNameList[i],
-            webio.m_FullfileNameList[i]);
-      }
-
-
-      processInstances(instances, limits, controlVars);
+      processInstances(instances, limits, controls);
 
       return 0;
    }
@@ -161,3 +153,4 @@ int main(int argc, char* argv[]) {
       return 1;
    }
 }
+

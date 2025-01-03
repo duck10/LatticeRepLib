@@ -4,11 +4,14 @@
 #include <string>
 #include <utility>
 
+#include "BlockProcessing.h"
 #include "BravaisHeirarchy.h"
+#include "CmdSellaFeatures.h"
 #include "FileOperations.h"
 #include "DeloneFitResults.h"
 #include "GetDate.h"
 #include "GrimmerTree.h"
+#include "InputHandler.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_CoordinateConversionMatrices.h"
 #include "LRL_CreateFileName.h"
@@ -385,6 +388,7 @@ void AnalyzeS6(const S6 s6) {
 
 int main(int argc, char* argv[])
 {
+
    bool doProduceSellaGraphics = true;
 
    std::cout << "; SELLA method symmetry searching\n";
@@ -400,6 +404,11 @@ int main(int argc, char* argv[])
    WebIO webio(argc, argv, "CmdSella", inputList.size());
    webio.GetWebBlockSize(argc, argv);
    webio.CreateFilenamesAndLinks(inputList.size(), "SEL");
+
+   CmdSellaControlVariables controls;
+   std::vector<LatticeCell> InputList = InputHandler::handleInput(controls, webio);
+
+
 
    const size_t& blockstart = webio.m_blockstart;
    const size_t& blocksize = webio.m_blocksize;
@@ -432,5 +441,8 @@ int main(int argc, char* argv[])
          std::cout << "; Send Sella Plot to graphics file " << FullfileNameList[i - blockstart] << std::endl;
       }
    }
+
+
+
 
 }

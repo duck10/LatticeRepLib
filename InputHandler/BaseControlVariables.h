@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <ostream>
+#include <sstream>
 
 class BaseControlVariables {
 protected:
@@ -22,6 +23,23 @@ public:
          }
       }
       return nullptr;
+   }
+
+   virtual bool handleInput(const std::string& command, const std::string& value) {
+      for (auto& feature : features) {
+         if (feature->handleInput(command, value)) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   virtual std::string getState() const {
+      std::ostringstream oss;
+      for (const auto& feature : features) {
+         oss << feature->getFeatureState();
+      }
+      return oss.str();
    }
 
    friend std::ostream& operator<<(std::ostream& os, const BaseControlVariables& cv);

@@ -9,6 +9,8 @@
 #include "S6.h"
 #include "V7Dist.h"
 #include "Selling.h"
+
+#include <memory>
 #include <string>
 
 class Distance {

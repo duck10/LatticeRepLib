@@ -1,14 +1,51 @@
 // ProgramControls.cpp
 #include "ProgramControls.h"
-#include "ControlFeatures.h"
+#include "InputHandler.h"
+#include <sstream>
 
-// Initialize Program1Controls with BlockControl and OutputSizeControl
+OutputSizeControl::OutputSizeControl() {
+   InputHandler::registerHandler("SIZE", 0.35,
+      [this](BaseControlVariables&, const std::string& value) {
+         setSize(std::stoul(value));
+      });
+}
+
+bool OutputSizeControl::handleInput(const std::string& command, const std::string& value) {
+   return false;  // Now handled via InputHandler
+}
+
+std::string OutputSizeControl::getFeatureState() const {
+   std::ostringstream oss;
+   oss << ";Output Size: " << size << "\n";
+   return oss.str();
+}
+
+void OutputSizeControl::writeToStream(std::ostream& os) const {
+   os << getFeatureState();
+}
+
+void OutputSizeControl::setSize(size_t newSize) {
+   size = newSize;
+}
+
+size_t OutputSizeControl::getSize() const {
+   return size;
+}
+
 Program1Controls::Program1Controls() {
-   features.push_back(std::make_unique<BlockControl>());
+   // Now using features from BaseControlVariables
+   features.push_back(std::make_unique<BlockProcessing>());
    features.push_back(std::make_unique<OutputSizeControl>());
 }
 
-// Initialize Program2Controls with SingleLatticeTypeControl
+void Program1Controls::setupHandlers() {
+   InputHandler::clearHandlers();
+}
+
 Program2Controls::Program2Controls() {
-   features.push_back(std::make_unique<SingleLatticeTypeControl>());
+   features.push_back(std::make_unique<BlockProcessing>());
+}
+
+void Program2Controls::setupHandlers() {
+   InputHandler::clearHandlers();
 }
