@@ -156,8 +156,6 @@
     <ClInclude Include="DistanceTypesUtils.h" />
     <ClInclude Include="FilePrefix.h" />
     <ClInclude Include="FilePrefixFeatures.h" />
-    <ClInclude Include="FollowerMode.h" />
-    <ClInclude Include="FollowerPointUtils.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="ControlFeature.h" />
@@ -177,7 +175,6 @@
     <ClCompile Include="DirichletFeatures.cpp" />
     <ClCompile Include="DistanceTypes.cpp" />
     <ClCompile Include="FilePrefixFeatures.cpp" />
-    <ClCompile Include="FollowerMode.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="PathControlFeatures.cpp" />
     <ClCompile Include="pch.cpp">
