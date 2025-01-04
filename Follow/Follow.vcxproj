@@ -134,6 +134,7 @@
     <ClCompile Include="DistanceFactory.cpp" />
     <ClCompile Include="Follow.cpp" />
     <ClCompile Include="FollowControls.cpp" />
+    <ClCompile Include="FollowerMode.cpp" />
     <ClCompile Include="FollowUtils.h.cpp" />
     <ClCompile Include="MAIN_Follow.cpp" />
     <ClCompile Include="Path.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="FollowControls.h" />
     <ClInclude Include="FollowerMode.h" />
     <ClInclude Include="FollowerPointsUtils.h" />
+    <ClInclude Include="FollowerPointUtils.h" />
     <ClInclude Include="FollowInstance.h" />
     <ClInclude Include="FollowUtils.h" />
     <ClInclude Include="GlitchDetector.h" />

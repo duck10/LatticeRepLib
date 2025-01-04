@@ -39,9 +39,6 @@
     <ClInclude Include="InputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FollowerMode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DirichletFeatures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,9 +78,6 @@
     <ClInclude Include="DistanceTypesUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FollowerPointUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FilePrefixFeatures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -102,9 +96,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PathControlFeatures.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FollowerMode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DirichletFeatures.cpp">
