@@ -13,7 +13,7 @@ public:
 
       InputHandler::registerHandler("PREFIX", 0.35,
          [this](BaseControlVariables&, const std::string_view& value) {
-            prefix = value;
+            if (!value.empty()) prefix = value;
          });
    }
 

@@ -102,6 +102,10 @@ public:
       os << getFeatureState();
    }
 
+   void setEnabledTypes(const std::set<std::string>& in) {
+      enabledTypes = in;
+   }
+
 private:
    std::set<std::string> enabledTypes;
 };

@@ -22,7 +22,7 @@ public:
       const std::vector<std::pair<double, double>> shifts = of.FindDiscontinuities(thresholdPercent);
       for (const auto& sh : shifts)
       {
-         const Glitch glitch(int(sh.first), 0.0, sh.second);
+         const Glitch glitch(int(sh.first), data[static_cast<size_t>(sh.first)], sh.second);
          glitches.emplace_back(glitch);
       }
 
