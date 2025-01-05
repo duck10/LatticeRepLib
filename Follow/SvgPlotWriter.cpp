@@ -42,12 +42,11 @@ std::string SvgPlotWriter::reportGlitches(const int n) {
 
    std::stringstream os;
    for (size_t i = 0; i < std::min(size_t(n), sorted.size()); ++i) {
-      os << " point index: " << sorted[i].second
+      os << "      point index: " << sorted[i].second
          << " value: " << sorted[i].first << "\n";
    }
    return os.str();
 }
-
 
 void SvgPlotWriter::writeHeader(int width, int height) {
    svg << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
@@ -241,6 +240,7 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    writePlotData(width, height, margin, maxDist, allDistances);
    writeLegend(width, margin, allDistances, distfuncs);
    writeMetadata(trial, perturbation, datetime.str());
+   WriteDistanceSummary(allDistances);
 
    svg << "</svg>\n";
 }
@@ -281,7 +281,8 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
       std::string color = ColorTables::interpolateColor(i, allDistances.size());
       std::string pathId = "Path" + std::to_string(i);
 
-      svg << "\n<path id=\"" << pathId << "\" d=\"";
+      controls;
+      svg << "\n\n<path id=\"" << pathId << "\" d=\"";
       bool inLine = false;
 
       for (size_t j = 0; j < distanceValues.size(); ++j) {
@@ -316,6 +317,7 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
                }
             }
          }
+         svg << "\n";
       }
 
       for (const auto& glitch : glitches) {
@@ -325,13 +327,13 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
             const double x = leftMargin + (j - xMin) * xScale;
             const double y = height - margin - (currentValue - yMin) * yScale;
             if (!std::isnan(y)) {
-               svg << R"(<line x1=")" << x << R"(" y1=")" << (height - margin)
+               svg << "\n" << R"(<line id="GlitchLine" x1=")" << x << R"(" y1=")" << (height - margin)
                   << R"(" x2=")" << x << R"(" y2=")" << margin
                   << R"(" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="5,5"/>)";
-               svg << R"(<path d="M)" << (x - 5) << " " << y << " L" << x << " "
+               svg << "\n" << R"(<path id="GlitchMarker" d="M)" << (x - 5) << " " << y << " L" << x << " "
                   << (y - 5) << " L" << (x + 5) << " " << y << " L" << x
                   << " " << (y + 5) << R"( Z" fill="#0000FF" stroke="black" stroke-width="1"/>)";
-               svg << R"(<text x=")" << x << R"(" y=")" << (margin - 5)
+               svg << "\n" << R"(<text id="GlitchIndex" x=")" << x << R"(" y=")" << (margin - 5)
                   << R"(" text-anchor="middle" font-size="12" fill="#0000FF">)" << j << R"(</text>)";
             }
          }
@@ -391,16 +393,46 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
       << "    <perturbations>" << controls.getPerturbations() << "</perturbations>\n"
       << "    <perturbBy>" << controls.getPerturbBy() << "</perturbBy>\n"
       << "    <glitchThresholdPercent>" << controls.getGlitchThreshold() << "</glitchThresholdPercent>\n"
+      << "    <glitchesOnly>" << (controls.shouldShowOnlyGlitches() ? "true" : "false") << "</glitchesOnly>\n"
       << "    <numFollowerPoints>" << controls.getNumPoints() << "</numFollowerPoints>\n"
       << "    <printDistanceData>" << (controls.shouldPrintDistanceData() ? "true" : "false") << "</printDistanceData>\n"
-      << "    <glitchesOnly>" << (controls.shouldShowOnlyGlitches() ? "true" : "false") << "</glitchesOnly>\n"
       << "    <enabledDistances>\n";
 
-   for (const auto& dist : controls.getDistanceTypes()->getEnabledTypes()) {
-      svg << "      <distance>" << dist << "</distance>\n";
+   const auto xxxx = controls.getDistanceTypes().getEnabledTypes();
+
+   for (const auto& distType : xxxx) {
+      svg << "      <distance>" << distType << "</distance>\n";
    }
+
    svg << "    </enabledDistances>\n"
-      << "    <glitches>\n" << reportGlitches(100) << "</glitches>\n"
+      << "    <glitches>\n" << reportGlitches(100) << "    </glitches>\n"
       << "  </controlVariables>\n"
       << "</metadata>\n";
 }
+
+std::string SvgPlotWriter::WriteDistanceSummary(const std::vector<std::vector<double>>& alldistances) const {
+
+   std::stringstream os;
+   for (const auto& onePath : alldistances) {
+      os << "<pathsummary>\n";
+      for (size_t i = 0; i < onePath.size(); ++i) {
+         if (i < 5 || i > onePath.size() - 6) {
+            if ( onePath[i] != -19191) 
+            {
+               os << i << "  " << onePath[i] << std::endl;
+            }
+            else {
+               os << i << "  " << onePath[i] << "  invalid cell\n";
+            }
+         }
+         if (i == 5)
+         {
+            os << " ... ..." << std::endl;;
+         }
+      }
+      os << "</pathsummary>\n";
+   }
+   svg << os.str();
+   return os.str();
+}
+

@@ -68,16 +68,18 @@ public:
    static std::string  CheckWebFileLimits(const int ntotalFiles, const bool hasWebInstructions,
       const int blocksize, const int blockstart) {
       std::stringstream ss;
-      if (hasWebInstructions && ntotalFiles > blocksize && blockstart == 0) {
-         // limits load to blocksize svg files
-         ss
-            << ";the total number files generated in a single web\n"
-            << ";run is limited to blocksize (" << blocksize
-            << ";). If you need more, consider\n"
-            << ";running directly on a computer from a command interface.\n"
-            << ";On the web the blocksize limit is usually 20.\n"
-            << ";Try with a smaller number of files and/or perturbations\n"
-            << ";or do multiple runs using control variable blockstart\n\n";
+      if (hasWebInstructions) {
+         if ((ntotalFiles > blocksize) && (ntotalFiles - blockstart) > blocksize) {
+            // limits load to blocksize svg files
+            ss
+               << ";the total number files generated in a single web\n"
+               << ";run is limited to blocksize (" << blocksize
+               << "). If you need more, consider\n"
+               << ";running directly on a computer from a command interface.\n"
+               << ";On the web the blocksize limit is usually 20.\n"
+               << ";Try with a smaller number of files and/or perturbations\n"
+               << ";or do multiple runs using control variable blockstart\n\n";
+         }
          // exit(-1);
       }
       return ss.str();

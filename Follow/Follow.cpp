@@ -24,7 +24,7 @@ Follow::Follow(FollowControls& followControls)
    : controls(followControls)
    , glitchDetector()
 {
-   distfuncs = DistanceFactory::createEnabledDistances(*controls.getDistanceTypes());
+   distfuncs = DistanceFactory::createEnabledDistances(controls.getDistanceTypes());
 }
 
 void Follow::PrintPathData(const Path& path) const {
@@ -34,7 +34,7 @@ void Follow::PrintPathData(const Path& path) const {
 }
 
 bool Follow::processPerturbation(int trialNum, int perturbationNum, const FollowInstance& instance) {
-   distfuncs = DistanceFactory::createEnabledDistances(*controls.getDistanceTypes());
+   distfuncs = DistanceFactory::createEnabledDistances(controls.getDistanceTypes());
    if (distfuncs.empty()) {
       std::cerr << "; No distance types enabled - please enable at least one type" << std::endl;
       return false;  // Exit before creating file

@@ -4,27 +4,62 @@
 #include "BaseControlVariables.h"
 #include "BlockProcessing.h"
 #include "DistanceTypes.h"
+#include "DistanceTypesUtils.h"
 #include "FilePrefix.h"
 #include "FollowerMode.h" 
 #include "FollowerPointsUtils.h"
 #include "GlitchUtils.h"
+#include "InputHandler.h"
 #include "PerturbationUtils.h"
+#include "LRL_StringTools.h"
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <atomic>
+#include <set>
+#include <sstream>
 
 class FollowControls : public BaseControlVariables {
 public:
    static std::atomic<bool> g_running;
    static std::atomic<bool> g_in_input;
 
-   FollowControls()
-   {
-      features.push_back(std::make_unique<FilePrefix>("FOL"));
-      features.push_back(std::make_unique<BlockProcessing>());
-      features.push_back(std::make_unique<DistanceTypes>());
+   FollowControls() {
+      InputHandler::registerHandler("BLOCKSIZE", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            setBlockSize(std::stoul(value));
+         });
+
+      InputHandler::registerHandler("BLOCKSTART", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            setBlockStart(std::stoul(value));
+         });
+
+      InputHandler::registerHandler("FILEPREFIX", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            setPrefix(value);
+         });
+
+      InputHandler::registerHandler("PREFIX", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            setPrefix(value);
+         });
+
+      InputHandler::registerHandler("TYPE", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            handleDistanceType(value);
+         });
+
+      InputHandler::registerHandler("ENABLE", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            handleEnableDistance(value);
+         });
+
+      InputHandler::registerHandler("DISABLE", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            handleDisableDistance(value);
+         });
 
       InputHandler::registerHandler("MODE", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
@@ -58,45 +93,136 @@ public:
 
       InputHandler::registerHandler("PRINTDATA", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
-            printDistanceData = (value == "1" || value == "true" || value == "TRUE" || value.empty());
+            printDistanceData = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
 
       InputHandler::registerHandler("PRINTDISTANCEDATA", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
-            printDistanceData = (value == "1" || value == "true" || value == "TRUE" || value.empty());
+            printDistanceData = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
 
-      // GLITCHTHRESHOLD needs to come before GLITCHESONLY
       InputHandler::registerHandler("GLITCHTHRESHOLD", 0.2,
          [this](BaseControlVariables&, const std::string& value) {
-            //std::cerr << ";Debug: GLITCHTHRESHOLD handler called with value: " << value << std::endl;
             glitchThresholdPercent = GlitchUtils::validateGlitchThresholdPercent(value);
          });
-
       InputHandler::registerHandler("GLITCHESONLY", .2,
          [this](BaseControlVariables&, const std::string& value) {
-            glitchesOnly = (value == "1" || value == "true" || value == "TRUE" || value.empty());
+            glitchesOnly = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
 
       InputHandler::registerHandler("DETECTGLITCHES", .2,
          [this](BaseControlVariables&, const std::string& value) {
-            shouldDetectGlitches = (value == "1" || value == "true" || value == "TRUE" || value.empty());
+            shouldDetectGlitches = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
 
       InputHandler::registerHandler("SHOW", .5,
          [this](BaseControlVariables&, const std::string& value) {
-            showControls = (value == "1" || value == "true" || value == "TRUE" || value.empty());
+            showControls = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
+
+      InputHandler::registerHandler("SHOWMARKERS", .2,
+         [this](BaseControlVariables&, const std::string& value) {
+            showDataMarkers = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
+      InputHandler::registerHandler("SHOWDATAMARKERS", .2,
+         [this](BaseControlVariables&, const std::string& value) {
+            showDataMarkers = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
    }
 
-   // Feature accessors
-   FilePrefix* getFilePrefix() { return static_cast<FilePrefix*>(features[0].get()); }
-   BlockProcessing* getBlockProcessing() { return static_cast<BlockProcessing*>(features[1].get()); }
-   DistanceTypes* getDistanceTypes() const { return static_cast<DistanceTypes*>(features[2].get()); }
+   // Block processing methods
+   std::string  getFilePrefix() const {return prefix;}
+   BlockProcessing getBlockProcessing() const {
+      BlockProcessing bp;
+      bp.setBlockSize(blocksize);
+      bp.setBlockStart(blockstart);
+      bp.setWebRun(webRun);      
+      return bp;}
+   DistanceTypes getDistanceTypes() const { 
+      DistanceTypes dt;
+      dt.setEnabledTypes(getEnabledTypes());
+      return dt;
+      }
 
+
+   void setBlockSize(int size) {
+      long long val = static_cast<long long>(size);
+      if (val <= 0) {
+         std::cerr << ";Warning: Blocksize must be positive, using "
+            << DEFAULT_BLOCKSIZE << std::endl;
+         blocksize = DEFAULT_BLOCKSIZE;
+      }
+      else if (webRun && val > MAX_BLOCKSIZE) {
+         std::cerr << ";Warning: Blocksize exceeds web limit, using "
+            << MAX_BLOCKSIZE << std::endl;
+         blocksize = MAX_BLOCKSIZE;
+      }
+      else {
+         blocksize = static_cast<size_t>(val);
+      }
+   }
+
+   void setBlockStart(int start) {
+      long long val = static_cast<long long>(start);
+      if (val < 0) {
+         std::cerr << ";Warning: Blockstart cannot be negative, using 0" << std::endl;
+         blockstart = 0;
+      }
+      else {
+         blockstart = start;
+      }
+   }
+
+   // File prefix methods
+   void setPrefix(const std::string& newPrefix) {
+      prefix = newPrefix;
+   }
+
+   // Distance type methods
+   void handleDistanceType(const std::string& value) {
+      std::istringstream iss(value);
+      std::string type;
+      while (iss >> type) {
+         if (isValidDistanceType(type)) {
+            enabledTypes.insert(type);
+         }
+         else {
+            std::cerr << ";Warning: Invalid distance type: " << type << std::endl;
+         }
+      }
+   }
+
+   void handleEnableDistance(const std::string& value) {
+      handleDistanceType(value);  // Same logic as TYPE
+   }
+
+   void handleDisableDistance(const std::string& value) {
+      std::istringstream iss(value);
+      std::string type;
+      while (iss >> type) {
+         if (isValidDistanceType(type)) {
+            enabledTypes.erase(type);
+         }
+         else {
+            std::cerr << ";Warning: Invalid distance type: " << type << std::endl;
+         }
+      }
+   }
+
+   bool isValidDistanceType(const std::string& type) const {
+      return std::find(DistanceTypesUtils::VALID_TYPES.begin(),
+         DistanceTypesUtils::VALID_TYPES.end(),
+         type) != DistanceTypesUtils::VALID_TYPES.end();
+   }
+
+   // Public accessors
    int getVectorsPerTrial() const { return FollowerModeUtils::getVectorsNeeded(followerMode); }
    int getPerturbations() const { return perturbations; }
    double getPerturbBy() const { return perturbBy; }
@@ -110,10 +236,16 @@ public:
    bool shouldShowMarkers() const { return showDataMarkers; }
    int getNumPoints() const { return numFollowerPoints; }
 
+   size_t getBlockStart() const { return blockstart; }
+   size_t getBlockSize() const { return blocksize; }
+   void setWebRun(bool web) { webRun = web; }
+   std::string getPrefix() const { return prefix; }
+   const std::set<std::string>& getEnabledTypes() const { return enabledTypes; }
+
    void updateFilenames(const std::vector<std::string>& names) { filenames = names; }
    const std::vector<std::string>& getFilenames() const { return filenames; }
 
-   std::string getState() const override {
+   std::string getState() const {
       std::ostringstream oss;
       oss << ";Follower Mode: " << FollowerModeUtils::toString(followerMode) << "\n";
       if (perturbations == 1) {
@@ -128,15 +260,34 @@ public:
          << ";Glitches Only: " << (glitchesOnly ? "Yes" : "No") << "\n"
          << ";Should Detect Glitches: " << (shouldDetectGlitches ? "Yes" : "No") << "\n"
          << ";Glitch Threshold Percent: " << glitchThresholdPercent << "\n"
-         << ";Show Data Markers: " << (showDataMarkers ? "Yes" : "No") << "\n";
-
-      for (const auto& f : features) {
-         oss << f->getFeatureState() << "\n";
+         << ";Show Data Markers: " << (showDataMarkers ? "Yes" : "No") << "\n"
+         << ";File Prefix: " << prefix << "\n\n"
+         << ";Blockstart: " << blockstart << "\n"
+         << ";Blocksize: " << blocksize << "\n\n"
+         << ";Enabled Distances: ";
+      for (const auto& type : enabledTypes) {
+         oss << type << " ";
       }
+      oss << "\n\n";
       return oss.str();
    }
 
 private:
+   // Block processing members
+   static constexpr size_t MIN_BLOCKSIZE = 1;
+   static constexpr size_t MAX_BLOCKSIZE = 20;
+   static constexpr size_t DEFAULT_BLOCKSIZE = MAX_BLOCKSIZE;
+   size_t blockstart = 0;
+   size_t blocksize = DEFAULT_BLOCKSIZE;
+   bool webRun = false;
+
+   // File prefix member
+   std::string prefix = "FOL";
+
+   // Distance types member
+   std::set<std::string> enabledTypes{ "CS", "NC" };
+
+   // Existing members
    FollowerMode followerMode;
    int perturbations = 1;
    double perturbBy = 0.1;
@@ -149,5 +300,7 @@ private:
    bool showDataMarkers = true;
    std::vector<std::string> filenames;
 };
+
+
 #endif // FOLLOW_CONTROLS_H
 

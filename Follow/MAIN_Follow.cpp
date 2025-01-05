@@ -90,18 +90,23 @@ static void assignFilenamesToInstances(const WebIO& webio, std::vector<FollowIns
 }
 
 int main(int argc, char* argv[]) {
-   try {
-      const std::string programName("Follow");
-      std::cout << "; Follow\n";
+   const std::string programName("Follow");
+   std::cout << "; Follow\n";
 
-      WebIO webio(argc, argv, programName, 0);
-      FollowControls controls;
+   WebIO webio(argc, argv, programName, 0);
+   FollowControls controls;
+
+   try {
 
       std::vector<LatticeCell> inputVectors;
       std::cout << "; Enter control variables and input vectors (type 'end' to finish):\n";
       InputHandler::readMixedInput(controls, inputVectors, std::cin);
 
       if (inputVectors.empty()) {
+         if (controls.shouldShowControls())
+         {
+            std::cout << controls.getState() << "\n";
+         }
          throw std::runtime_error("; No input vectors provided");
       }
       std::cout << "; Number of input vectors read: " << inputVectors.size() << std::endl;
@@ -115,20 +120,18 @@ int main(int argc, char* argv[]) {
       WebLimits wl;
       wl.Update(webio);
 
-      auto* blockProcessing = controls.getBlockProcessing();
+      auto blockProcessing = controls.getBlockProcessing();
 
-      blockProcessing->updateLimits(inputVectors.size(), webio.m_hasWebInstructions,
+      blockProcessing.updateLimits(inputVectors.size(), webio.m_hasWebInstructions,
          [&controls](size_t inputs) {
             return (inputs / controls.getVectorsPerTrial()) * controls.getPerturbations();
          });
-      wl.Update(static_cast<int>(blockProcessing->getBlockSize()), static_cast<int>(blockProcessing->getBlockStart()));
-
-      //std::cout << controls.getState() << "\n";
+      wl.Update(static_cast<int>(blockProcessing.getBlockSize()), static_cast<int>(blockProcessing.getBlockStart()));
 
       auto instances = CreateFollowInstanceList(controls, inputVectors);
       const int ntotal = static_cast<int>(instances.size());
 
-      setupWebIO(webio, controls.getFilePrefix()->getPrefix(), instances, ntotal);
+      setupWebIO(webio, controls.getPrefix(), instances, ntotal);
       assignFilenamesToInstances(webio, instances);
       controls.updateFilenames(webio.m_FileNameList);
 
