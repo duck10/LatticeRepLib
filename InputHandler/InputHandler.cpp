@@ -173,4 +173,21 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
    }
 }
 
+std::vector<LatticeCell> InputHandler::parseRandom(size_t count) {
+   std::vector<LatticeCell> results;
+   results.reserve(count);
+
+   for (size_t i = 0; i < count; ++i) {
+      G6 result = parseRandom();  // Use the parameterless version
+      const LRL_Cell cell = result;
+      if (cell.IsValid()) {
+         std::string numberedLine = "RANDOM #" + std::to_string(i + 1);
+         results.emplace_back(result, "P", numberedLine);
+      }
+      else {
+         std::cerr << ";Warning: Invalid random vector #" << (i + 1) << " ignored" << std::endl;
+      }
+   }
+   return results;
+}
 
