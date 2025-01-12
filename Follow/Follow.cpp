@@ -104,6 +104,8 @@ Path Follow::generatePath(const int trialNum, int perturbationNum, const std::ve
       return Path::generateChord3Path(perturbedPoints[0], perturbedPoints[1], perturbedPoints[2], numPoints);
    case FollowerMode::TRIANGLE:
       return Path::generateTrianglePath(perturbedPoints[0], perturbedPoints[1], perturbedPoints[2], numPoints);
+   case FollowerMode::SPLINE:
+      return Path::generateSplinePath(numPoints);
    default:
       return Path();
    }

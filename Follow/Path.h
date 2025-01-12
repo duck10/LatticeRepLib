@@ -38,6 +38,7 @@ public:
       const LatticeCell& target, int numPoints);
    static Path generateTrianglePath(const LatticeCell& p1, const LatticeCell& p2,
       const LatticeCell& p3, int numPoints);
+   static Path generateSplinePath(const int numPoints);
 
    static S6 MakeInvalidS6() {
       return { 19191.111111111111, 0, 0, 0, 0, 0 };

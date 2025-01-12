@@ -10,7 +10,7 @@
 
 namespace DistanceTypesUtils {
    // Move definition to header
-   inline const std::vector<std::string> VALID_TYPES = {
+   static inline const std::vector<std::string> VALID_TYPES = {
        "CS", "NC", "V7", "R9"
    };
 
