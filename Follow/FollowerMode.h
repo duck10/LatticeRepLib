@@ -12,7 +12,8 @@ enum class FollowerMode {
    LINE,
    CHORD,
    CHORD3,
-   TRIANGLE
+   TRIANGLE,
+   SPLINE
 };
 
 struct FollowerModeUtils {
@@ -23,6 +24,7 @@ struct FollowerModeUtils {
       case FollowerMode::CHORD: return 2;
       case FollowerMode::CHORD3: return 3;
       case FollowerMode::TRIANGLE: return 3;
+      case FollowerMode::SPLINE: return 1;
       default: return 1;
       }
    }
@@ -46,6 +48,7 @@ struct FollowerModeUtils {
       if (upperStr == "CHORD") return FollowerMode::CHORD;
       if (upperStr == "CHORD3") return FollowerMode::CHORD3;
       if (upperStr == "TRIANGLE") return FollowerMode::TRIANGLE;
+      if (upperStr == "SPLINE") return FollowerMode::SPLINE;
 
       std::cerr << ";Warning: Unrecognized mode '" << str
          << "', using default mode POINT" << std::endl;
@@ -57,8 +60,9 @@ struct FollowerModeUtils {
       case FollowerMode::POINT: return "POINT";
       case FollowerMode::LINE: return "LINE";
       case FollowerMode::CHORD: return "CHORD";
-      case FollowerMode::CHORD3: return "CHORD3";
+      case FollowerMode::CHORD3: return "CHORD3"; 
       case FollowerMode::TRIANGLE: return "TRIANGLE";
+      case FollowerMode::SPLINE: return "SPLINE";
       default: return "UNKNOWN";
       }
    }

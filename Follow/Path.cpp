@@ -100,6 +100,8 @@ Path Path::generateChord3Path(const LatticeCell& mobile1, const LatticeCell& mob
    return path;
 }
 
+Path Path::generateSplinePath(const int numPoints) { return Path(); }
+
 Path Path::generateTrianglePath(const LatticeCell& point1, const LatticeCell& point2,
    const LatticeCell& point3, const int numPoints) {
    const S6 p1S6(point1.getCell());

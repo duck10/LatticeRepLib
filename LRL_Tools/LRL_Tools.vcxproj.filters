@@ -95,6 +95,9 @@
     <ClInclude Include="StringMatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TensionSpline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LRL_inverse.cpp">

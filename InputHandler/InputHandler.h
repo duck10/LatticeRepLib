@@ -70,6 +70,14 @@ public:
 
 private:
    static std::vector<std::pair<CommandPredicate, CommandHandler>> handlers;
+   static G6 parseRandom();  // New version without parameters
+   static std::vector<LatticeCell> parseRandom(size_t count);  // New version returning vector
+
+   static void handleSingleLattice(
+      std::vector<LatticeCell>& inputVectors,
+      const std::string& key,
+      const std::vector<std::string>& tokens,
+      const std::string& line);
 };
 
 #endif // INPUT_HANDLER_H

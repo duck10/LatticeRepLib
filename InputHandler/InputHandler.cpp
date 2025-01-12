@@ -102,33 +102,6 @@ G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
    return cell;
 }
 
-void InputHandler::handleLatticeInput(std::vector<LatticeCell>& inputVectors,
-   const std::string& key,
-   const std::vector<std::string>& tokens,
-   const std::string& line) {
-   try {
-      G6 result;
-      std::string latticeType = "P";  // Default to primitive
-      if (key == "G6" || key == "G") result = parseG6(tokens);
-      else if (key == "S6" || key == "S") result = parseS6(tokens);
-      else if (key == "RANDOM") result = parseRandom(tokens);
-      else {
-         result = parseLattice(tokens);
-         latticeType = key;  // Use the key as lattice type for A,B,C,F,I,H
-      }
-      const LRL_Cell cell = result;
-      if (cell.IsValid()) {
-         inputVectors.emplace_back(result, latticeType, line);
-      }
-      else {
-         std::cerr << ";Warning: Invalid input vector ignored" << std::endl;
-      }
-   }
-   catch (const std::exception& e) {
-      std::cerr << ";Warning: Invalid input vector ignored - " << e.what() << std::endl;
-   }
-}
-
 void InputHandler::readMixedInput(BaseControlVariables& controls,
    std::vector<LatticeCell>& cells,
    std::istream& input) {
@@ -173,6 +146,10 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
    }
 }
 
+G6 InputHandler::parseRandom() {
+   return G6(Polar::rand());
+}
+
 std::vector<LatticeCell> InputHandler::parseRandom(size_t count) {
    std::vector<LatticeCell> results;
    results.reserve(count);
@@ -191,3 +168,60 @@ std::vector<LatticeCell> InputHandler::parseRandom(size_t count) {
    return results;
 }
 
+void InputHandler::handleSingleLattice(
+   std::vector<LatticeCell>& inputVectors,
+   const std::string& key,
+   const std::vector<std::string>& tokens,
+   const std::string& line) {
+   G6 result;
+   std::string latticeType = "P";  // Default to primitive
+
+   if (key == "G6" || key == "G") result = parseG6(tokens);
+   else if (key == "S6" || key == "S") result = parseS6(tokens);
+   else if (key == "RANDOM") result = parseRandom();  // Using parameterless version
+   else {
+      result = parseLattice(tokens);
+      latticeType = key;  // Use the key as lattice type for A,B,C,F,I,H
+   }
+
+   const LRL_Cell cell = result;
+   if (cell.IsValid()) {
+      inputVectors.emplace_back(result, latticeType, line);
+   }
+   else {
+      std::cerr << ";Warning: Invalid input vector ignored" << std::endl;
+   }
+}
+
+void InputHandler::handleLatticeInput(
+   std::vector<LatticeCell>& inputVectors,
+   const std::string& key,
+   const std::vector<std::string>& tokens,
+   const std::string& line) {
+   try {
+      if (key == "RANDOM" && tokens.size() > 1) {
+         try {
+            const size_t count = std::stoul(tokens[1]);
+            if (count > 1) {
+               // Use the new vector-returning parseRandom
+               std::vector<LatticeCell> randomResults = parseRandom(count);
+               inputVectors.insert(
+                  inputVectors.end(),
+                  randomResults.begin(),
+                  randomResults.end()
+               );
+               return;
+            }
+         }
+         catch (const std::exception&) {
+            // Fall through to single lattice case if count parsing fails
+         }
+      }
+
+      // Handle single lattice case
+      handleSingleLattice(inputVectors, key, tokens, line);
+   }
+   catch (const std::exception& e) {
+      std::cerr << ";Warning: Invalid input vector ignored - " << e.what() << std::endl;
+   }
+}
