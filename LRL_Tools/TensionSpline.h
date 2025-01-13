@@ -20,24 +20,18 @@ public:
 
 
 
-   static void curv1(int n,
+   static void curv1(
       const std::vector<double>& x,
       const std::vector<double>& y,
-      double slp1,
-      double slpn,
       std::vector<double>& yp,
-      double sigma) {
+      double sigma,
+      double slp1 = -1.0,  // Default values for auto-compute mode
+      double slpn = -1.0) {
 
+      const int n = x.size();
       if (n < 2) throw std::invalid_argument("At least two points required");
 
-      // Check monotonicity for all consecutive pairs
-      for (int i = 1; i < n; i++) {
-         if (x[i] <= x[i - 1]) {
-            throw std::runtime_error("Points must be strictly monotonic in x");
-         }
-      }
-
-      // Workspace for tridiagonal solver
+      // Create temp array internally
       std::vector<double> temp(n);
       double slpp1, slppn;
 
@@ -274,12 +268,11 @@ public:
          }
 
          if (!closed) {
-            curv1(n, x, y, -1, -1, yp, sigma);
+            curv1(x, y, yp, sigma);
          }
          else {
-            throw std::runtime_error("Closed curves not yet implemented");
+            kurvp1(x, y, yp, sigma);
          }
-
          // Store results
          for (int i = 0; i < n; i++) {
             derivatives[i][d] = yp[i];
@@ -325,61 +318,54 @@ public:
       return result;
    }
 
+
+
    template<typename PointType>
    static void calculate(bool closed,
       const std::vector<PointType>& points,
       std::vector<PointType>& derivatives,
       double sigma) {
 
-      const int n = points.size();
-      if (n < 2) throw std::invalid_argument("At least two points required");
-
-      // Extract x coordinates (parameter)
-      std::vector<double> x(n);
-      for (int i = 0; i < n; i++) {
-         x[i] = points[i][0];
-      }
-
-      // Only check monotonicity for open curves
-      if (!closed) {
-         for (int i = 1; i < n; i++) {
-            if (x[i] <= x[i - 1]) {
-               throw std::runtime_error("Points must be strictly monotonic in x");
-            }
-         }
-      }
+      if (points.size() < 2) throw std::invalid_argument("At least two points required");
 
       // Initialize derivatives
-      derivatives.resize(n);
-      std::vector<double> temp(closed ? 2 * n : n);  // Double size for closed curves
+      derivatives.resize(points.size());
 
       // Handle each coordinate after x
       const int dim = points[0].size();
       for (int d = 1; d < dim; d++) {
-         std::vector<double> y(n);
-         std::vector<double> yp(n);
-         for (int i = 0; i < n; i++) {
+         std::vector<double> x(points.size());
+         std::vector<double> y(points.size());
+         std::vector<double> yp(points.size());
+
+         for (size_t i = 0; i < points.size(); i++) {
+            x[i] = points[i][0];
             y[i] = points[i][d];
          }
 
+         // Only check monotonicity for open curves
          if (!closed) {
-            curv1(n, x, y, -1, -1, yp, sigma);
+            for (size_t i = 1; i < x.size(); i++) {
+               if (x[i] <= x[i - 1]) {
+                  throw std::runtime_error("Points must be strictly monotonic in x");
+               }
+            }
+            curv1(x, y, yp, sigma);
          }
          else {
-            kurvp1(n, x, y, yp, temp, sigma);
+            kurvp1(x, y, yp, sigma);
          }
 
          // Store results
-         for (int i = 0; i < n; i++) {
+         for (size_t i = 0; i < points.size(); i++) {
             derivatives[i][d] = yp[i];
          }
       }
    }
 
 
-
    template<typename PointType>
-   static PointType evaluate(double t,
+   static PointType evaluate_forward(double t,  // t is between 0 and 1
       const std::vector<PointType>& points,
       const std::vector<PointType>& derivatives,
       double sigma) {
@@ -406,21 +392,42 @@ public:
             yp[i] = derivatives[i][d];
          }
 
-         result[d] = curv2(t, n, x, y, yp, sigma);
+         result[d] = curv2(t, x.size(), x, y, yp, sigma);
       }
 
       return result;
    }
 
-
-   static void kurvp1(int n,
-      const std::vector<double>& x,
-      const std::vector<double>& y,
-      std::vector<double>& yp,
-      std::vector<double>& temp,
+   template<typename PointType>
+   static PointType evaluate(double t,  // t is between 0 and 1
+      const std::vector<PointType>& points,
+      const std::vector<PointType>& derivatives,
       double sigma) {
 
+      if (t <= 0.5) {
+         // First half - use t*2 to map [0,0.5] to [0,1]
+         return evaluate_forward(t * 2.0, points, derivatives, sigma);
+      }
+      else {
+         // Second half - use (1-t)*2 to map [0.5,1] to [1,0]
+         return evaluate_forward((1.0 - t) * 2.0, points, derivatives, sigma);
+      }
+   }
+
+
+
+
+
+   static void kurvp1(const std::vector<double>& x,
+      const std::vector<double>& y,
+      std::vector<double>& yp,
+      double sigma) {
+
+      const int n = x.size();
       if (n < 2) throw std::invalid_argument("At least two points required");
+
+      // Workspace array
+      std::vector<double> temp(2 * n);  // Double size needed for closed curves
 
       // Calculate initial derivatives and accumulate arclength
       double s = 0.0;

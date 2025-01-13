@@ -132,7 +132,7 @@ G6 Generate(const T& pt) {
    return probe;;
 }
 
-std::string TranslateDeloneToIT(const std::string& s) {
+static std::string TranslateDeloneToIT(const std::string& s) {
 
    std::map<std::string, std::string> m;
    m.insert(std::make_pair("C1", "cI"));
