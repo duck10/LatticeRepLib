@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 
-#include "CmdGenFeatures.h"
+#include "CmdGenControls.h"
 #include "InputHandler.h"
 #include "G6.h"
 #include "LatticeCell.h"
@@ -298,46 +298,28 @@ END
 )";
    std::istringstream inputStream(input);
 
-   CmdGenControlVariables::setupHandlers();
-
-   CmdGenControlVariables controls;
+   CmdGenControls controls;
    std::vector<LatticeCell> vectors;
 
    //InputHandler::readMixedInput(controls, vectors, inputStream);
    InputHandler::readMixedInput(controls, vectors, std::cin);
 
-   std::cout << "Control settings:\n" << controls;
-
+   //std::cout << "Control settings:\n" << controls;
+   // ------------ treat input number to generate ----------------
    // Get the generation count from controls
    int numToGenerate = 1;  // default
 
-
-   if ( argc>1 && std::stoul(argv[1]) > 0) {
-      numToGenerate = std::stoi(argv[1]);
+   if (controls.getCount() > 0)
+   {
+      numToGenerate = int(controls.getCount());
    }
-
-   if (auto* countCtrl = controls.getFeature<GenCountControl>()) {
-      if (countCtrl->getCount() > 0 ) 
-      {
-         numToGenerate = int(countCtrl->getCount());
-      }
-
+   else if (argc > 1 && std::stoul(argv[1]) > 0) {
+      numToGenerate = std::stoi(argv[1]);
    }
 
    numToGenerate = std::max(numToGenerate, 1);
 
-   // Get the type list
-   std::vector<std::string> typeList;
-   if (auto* typeCtrl = controls.getFeature<GenTypeListControl>()) {
-      typeList = typeCtrl->getTypesAsVector();
-   }
-
-   std::cout << "; Generate cells, ngen= " << numToGenerate << std::endl;
-
-   size_t commandLineInputCount = 0;
-   if (argc > 1) {
-      commandLineInputCount = std::stoul(argv[1]);
-   }
+   // ------------ treat input type names  ----------------
 
    std::vector<std::string> names;
    if (argc > 2) {
@@ -345,6 +327,10 @@ END
          names.emplace_back(std::string(argv[i]));
       }
    }
+
+   // Get the type list
+   std::vector<std::string> typeList = controls.getTypesAsVector();
+   std::cout << "; Generate cells, ngen= " << numToGenerate << std::endl;
 
    if (!typeList.empty()) {
       names = typeList;
@@ -354,7 +340,7 @@ END
       names.emplace_back("ALL");
    }
 
-   // echo any input vectors
+   // echo any incoming vectors
    for (const auto& v : vectors) {
       std::cout << v.GetInput() << std::endl;
    }
@@ -363,5 +349,4 @@ END
    {
       CreateCells(numToGenerate, namen);
    }
-
 }
