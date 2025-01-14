@@ -108,7 +108,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\LRL_Tools</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools; ..\InputHandler</AdditionalIncludeDirectories>
       <OpenMPSupport>false</OpenMPSupport>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -149,7 +149,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalIncludeDirectories>..\LRL_Tools</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\LRL_Tools; ..\InputHandler</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>

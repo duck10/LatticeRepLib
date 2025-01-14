@@ -7,6 +7,7 @@
 #include "DeloneFitResults.h"
 //#include "GenerateLatticeTypeExamples.h"
 #include "LRL_ReadLatticeData.h"
+#include "LatticeCell.h"
 #include "PairReporter.h"
 #include "S6.h"
 #include "S6BoundaryTransforms.h"
@@ -133,7 +134,7 @@ public:
       const std::vector<DeloneFitResults>& vDeloneFitResults);
 
    static std::string ProduceSVG(
-      const LRL_ReadLatticeData& input, const S6& reducedCell,
+      const LatticeCell& input, const S6& reducedCell,
       const std::vector<std::pair<std::string, double> >& scores,
       const std::vector<std::string>& projectedCells);
    static std::string BoilerPlate_1();

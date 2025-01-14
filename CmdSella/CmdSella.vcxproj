@@ -146,7 +146,7 @@
     <ClCompile Include="..\LatticeRepresentationLib\BravaisHeirarchy.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
     <ClCompile Include="CmdSella.cpp" />
-    <ClCompile Include="CmdSellaFeatures.cpp" />
+    <ClCompile Include="CmdSellaControls.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InputHandler\InputHandler.vcxproj">
@@ -162,7 +162,8 @@
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\BravaisHeirarchy.h" />
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
-    <ClInclude Include="CmdSellaFeatures.h" />
+    <ClInclude Include="BlockUtils.h" />
+    <ClInclude Include="CmdSellaControls.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
