@@ -332,7 +332,7 @@ std::vector<std::string> BravaisHeirarchy::FormatProjectedCells(const std::vecto
 }
 
 std::string BravaisHeirarchy::ProduceSVG(
-   const LRL_ReadLatticeData& input,
+   const LatticeCell& input,
    const S6& reducedCell,
    const std::vector<std::pair<std::string, double> >& scores,
    const std::vector<std::string>& projectedCells) {
@@ -340,7 +340,7 @@ std::string BravaisHeirarchy::ProduceSVG(
    const std::string inputText = "<text x=\"175\" y=\"175\" font-size=\"25\" >SELLA RESULTS  (Angstroms)"
       "</text>\n";
    const std::string reduced = "<text x=\"175\" y=\"210\" font-size=\"25\" >      " +
-      input.GetStrCell() + "</text>\n";
+      input.GetInput() + "</text>\n";
 
    std::string s =
       BravaisHeirarchy::BoilerPlate_1() +

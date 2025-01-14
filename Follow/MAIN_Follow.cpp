@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "BlockProcessing.h"
 #include "FollowControls.h"
 #include "Follow.h"
 #include "FollowInstance.h"

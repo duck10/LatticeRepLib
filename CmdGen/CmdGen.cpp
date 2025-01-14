@@ -5,7 +5,6 @@
 #include "CmdGenControls.h"
 #include "InputHandler.h"
 #include "G6.h"
-#include "LatticeCell.h"
 #include "LRL_Cell.h"
 #include "Niggli.h"
 #include "NumericTools.h"

@@ -4,9 +4,9 @@
 #include <string>
 #include <utility>
 
-#include "BlockProcessing.h"
+#include "BlockUtils.h"
 #include "BravaisHeirarchy.h"
-#include "CmdSellaFeatures.h"
+#include "CmdSellaControls.h"
 #include "FileOperations.h"
 #include "DeloneFitResults.h"
 #include "GetDate.h"
@@ -133,8 +133,8 @@
 static double g_maxDeltaForMatch = 0.02;
 std::string selectBravaisCase = "";
 
-S6 GetInputSellingReducedVectors(const LRL_ReadLatticeData& input, MatS6& mat) {
-   const S6 s6 = LatticeConverter::SellingReduceCell(input.GetLattice(), input.GetCell(), mat);
+S6 GetInputSellingReducedVectors(const LatticeCell& input, MatS6& mat) {
+   const S6 s6 = LatticeConverter::SellingReduceCell(input.getLatticeType(), input.getCell(), mat);
    return s6;
 }
 
@@ -250,24 +250,16 @@ void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
          // did not find the name
          throw("did not find the name");
       }
-
-
-
-
-
-
-
-      const int i19191 = 19191;
    }
 }
 
-std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLatticeData& input,
+std::string ProcessSella(const bool doProduceSellaGraphics, const LatticeCell& input,
    const std::string& filename) {
 
    std::vector< BravaisChainFailures> outBCF;
    MatS6 oneReductionMatrix;
    const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
-   const S6 oneErrors = 0.1 * input.GetCell();
+   const S6 oneErrors = 0.1 * input.getCell();
    int sumBravaisTypesFound = 0;
 
    std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice = Sella::SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
@@ -281,7 +273,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    //std::cout << theDelonefits << std::endl;
    //std::cout << theBravaisfits << std::endl;
 
-   GrimmerChains gcs(S6(input.GetCell()));
+   GrimmerChains gcs(S6(input.getCell()));
    gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
    gcs.updateChains(theDelonefits, theBravaisfits);  // Instead of CreateGrimmerChains
    gcs.CheckAllGrimmerChains();
@@ -302,7 +294,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LRL_ReadLattic
    //theBravaisfits.CreateMapOFBravaisFits(vDeloneFitResultsForOneInputLattice);
    //std::cout << theBravaisfits << std::endl;
 
-   std::cout << "; " << input.GetStrCell() << " input data" << std::endl << std::endl;
+   std::cout << "; " << input.GetInput() << " input data" << std::endl << std::endl;
 
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneInputLattice);
    std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
@@ -392,57 +384,42 @@ int main(int argc, char* argv[])
    bool doProduceSellaGraphics = true;
 
    std::cout << "; SELLA method symmetry searching\n";
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   std::cout << "; count of input cells " << inputList.size() << std::endl;
 
-   //for (const auto& input : inputList) {
-   //   AnalyzeS6(input.GetCell());
-   //   std::cout << std::endl;
-   //}
-   //exit(0);
+   WebIO webio(argc, argv, "CmdSella", 0);
 
-   WebIO webio(argc, argv, "CmdSella", inputList.size());
-   webio.GetWebBlockSize(argc, argv);
+   CmdSellaControls controls;
+   std::vector<LatticeCell> inputList = InputHandler::handleInput(controls, webio);
+   std::cout << controls << std::endl;
+
+   BlockUtils bu(webio.m_hasWebInstructions);
+   bu.setBlockSize(controls.getBlockSize(), webio.m_hasWebInstructions);
+   bu.setBlockStart(controls.getBlockStart());
+   // st webio size and start for filename generation
+   webio.m_blocksize = bu.blocksize;
+   webio.m_blockstart = bu.blockstart;
    webio.CreateFilenamesAndLinks(inputList.size(), "SEL");
-
-   CmdSellaControlVariables controls;
-   std::vector<LatticeCell> InputList = InputHandler::handleInput(controls, webio);
-
-
-
-   const size_t& blockstart = webio.m_blockstart;
-   const size_t& blocksize = webio.m_blocksize;
 
    const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
    const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
    const std::vector<std::string>& FullfileNameList = webio.m_FullfileNameList;
 
-   std::cout << "; Sella cell block start " << blockstart << std::endl;
-   std::cout << "; Sella cell block size " << blocksize << std::endl;
-   std::cout << std::endl;
-
-   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart + blocksize); ++i)
+   for (size_t i = bu.blockstart; i < (inputList.size()) && (i < bu.blockstart +bu. blocksize); ++i)
    {
       std::cout << "; Sella graphics file(s) " <<
-         i + 1 << "  " << FullfileNameList[i - blockstart] << std::endl;
+         i + 1 << "  " << FullfileNameList[i - bu.blockstart] << std::endl;
    }
 
-   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart + blocksize); ++i)
+   for (size_t i = bu.blockstart; i < (inputList.size()) && (i < bu.blockstart + bu.blocksize); ++i)
    {
       std::cout << ";----------------------------------------------------------" << std::endl;
       std::cout << "; SELLA results for input case " << i << std::endl;
 
-
-
       const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i],
-         RawFileNameList[i - blockstart]);
+         RawFileNameList[i - bu.blockstart]);
       if (doProduceSellaGraphics) {
-         SendSellaToFile(svgOutput, RawFileNameList[i - blockstart]);
-         std::cout << "; Send Sella Plot to graphics file " << FullfileNameList[i - blockstart] << std::endl;
+         SendSellaToFile(svgOutput, RawFileNameList[i - bu.blockstart]);
+         std::cout << "; Send Sella Plot to graphics file " << FullfileNameList[i - bu.blockstart] << std::endl;
       }
    }
-
-
-
-
 }
+
