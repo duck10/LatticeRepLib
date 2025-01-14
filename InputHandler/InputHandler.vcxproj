@@ -147,7 +147,6 @@
     <ClInclude Include="BlockLimits.h" />
     <ClInclude Include="BlockProcessing.h" />
     <ClInclude Include="BlockProcessingUtils.h" />
-    <ClInclude Include="CmdGenFeatures.h" />
     <ClInclude Include="CmdSellaFeatures.h" />
     <ClInclude Include="CmdToS6LFeatures.h" />
     <ClInclude Include="ControlFeatures.h" />
@@ -168,7 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseControlVariables.cpp" />
-    <ClCompile Include="CmdGenFeatures.cpp" />
     <ClCompile Include="CmdSellaFeatures.cpp" />
     <ClCompile Include="CmdToS6LFeatures.cpp" />
     <ClCompile Include="ControlFeatures.cpp" />

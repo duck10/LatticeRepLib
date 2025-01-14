@@ -27,4 +27,4 @@ private:
    }
 };
 
-#endif
+#endif // INPUTHANDLER_CONTROL_FEATURES_H

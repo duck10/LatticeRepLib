@@ -1,14 +1,14 @@
 // test_string_matcher.cpp
-#include "InputHandler.h"
-#include "FollowFeatures.h"
+//#include "InputHandler.h"
+//#include "FollowFeatures.h"
 
 #include <iostream>
 
 int main() {
-   FollowControlVariables::setupHandlers();
+   //FollowControlVariables::setupHandlers();
 
-   FollowControlVariables controls;
-   std::vector<LatticeCell> vectors;
+   //FollowControlVariables controls;
+   //std::vector<LatticeCell> vectors;
 
    std::string input = R"(
 PATHCOUNT 75
@@ -22,17 +22,17 @@ END
 )";
 
 
-   std::istringstream inputStream(input);
-   InputHandler::readMixedInput(controls, vectors, inputStream);
+   //std::istringstream inputStream(input);
+   //InputHandler::readMixedInput(controls, vectors, inputStream);
 
-   std::cout << "Control settings:\n" << controls;
-   std::cout << "Number of lattice vectors: " << vectors.size() << "\n";
-   for (const auto& v : vectors) {
-      std::cout << "\tinput text " << v.GetInput() << std::endl;
-      std::cout << "\tinput cell " << v.getCell() << std::endl;
-      std::cout << "\tinput lattice " << v.getLatticeType() << std::endl;
-      std::cout << "\tinput Niggli reduced vector G6 " << v.getNiggliReducedCell() << std::endl << std::endl;
-   }
+   //std::cout << "Control settings:\n" << controls;
+   //std::cout << "Number of lattice vectors: " << vectors.size() << "\n";
+   //for (const auto& v : vectors) {
+   //   std::cout << "\tinput text " << v.GetInput() << std::endl;
+   //   std::cout << "\tinput cell " << v.getCell() << std::endl;
+   //   std::cout << "\tinput lattice " << v.getLatticeType() << std::endl;
+   //   std::cout << "\tinput Niggli reduced vector G6 " << v.getNiggliReducedCell() << std::endl << std::endl;
+   //}
 
 
 
