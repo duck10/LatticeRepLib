@@ -406,6 +406,10 @@ int main(int argc, char* argv[])
    const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
    const std::vector<std::string>& FullfileNameList = webio.m_FullfileNameList;
 
+   if (controls.getShowControls()) {
+      std::cout << controls << std::endl;
+   }
+
    for (size_t i = bu.blockstart; i < (inputList.size()) && (i < bu.blockstart +bu. blocksize); ++i)
    {
       std::cout << "; Sella graphics file(s) " <<

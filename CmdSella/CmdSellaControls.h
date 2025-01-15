@@ -5,6 +5,7 @@
 #include "BaseControlVariables.h"
 #include "BlockUtils.h"
 #include "InputHandler.h"
+#include "LRL_StringTools.h"
 
 #include <sstream>
 
@@ -22,12 +23,12 @@ public:
 
    CmdSellaControls() {
 
-   InputHandler::registerHandler("BLOCKSIZE", 0.35,
+   InputHandler::registerHandler("BLOCKSIZE", 0.2,
       [this](const BaseControlVariables&, const std::string& value) {
          setBlockSize(std::stoul(value));
       });
 
-   InputHandler::registerHandler("BLOCKSTART", 0.35,
+   InputHandler::registerHandler("BLOCKSTART", 0.2,
       [this](const BaseControlVariables&, const std::string& value) {
          setBlockStart(std::stoul(value));
       });
@@ -38,6 +39,13 @@ public:
          setPrefix(value);
       });
 
+
+   InputHandler::registerHandler("SHOW", .5,
+      [this](BaseControlVariables&, const std::string& value) {
+         showControls = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      }
+   );
+
    }
 
    int getBlockSize() const { return  static_cast<int>(blocksize); }
@@ -45,6 +53,7 @@ public:
    std::string getPrefix() const { return prefix; }
    bool getWebRun() const { return webRun; }
    void setWebRun(const bool webrun) { webRun = webrun; }
+   bool getShowControls() const { return showControls; }
 
 private:
 
@@ -80,6 +89,7 @@ private:
          blockstart = start;
       }
    }
+
    static constexpr size_t MIN_BLOCKSIZE = BlockUtils::MIN_BLOCKSIZE;
    static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
    static constexpr size_t DEFAULT_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
@@ -87,6 +97,7 @@ private:
    size_t blockstart = BlockUtils::MIN_BLOCKSTART;
    size_t blocksize = BlockUtils::DEFAULT_BLOCKSIZE;
    bool webRun = false;
+   bool showControls = false;
 
    // File prefix member
    std::string prefix = "SEL";
