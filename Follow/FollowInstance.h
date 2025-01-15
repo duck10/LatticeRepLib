@@ -68,6 +68,7 @@ public:
          const S6 ortho = S6(vl).norm() * S6(CreateTotallyRandomUnitOrthogonalComponent(S6(vl)));
          double orthonorm = ortho.norm();
          double s6norm = S6(vl).norm();
+         const double d = S6(vl.getCell()).Dot(ortho);
          const S6 s6 = S6(vl) + perturbby * ortho / 100.0;  // perturbation is in percent
          out.emplace_back(s6);
          const S6 diff = (s6 - vl);

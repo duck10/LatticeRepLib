@@ -34,8 +34,5 @@
     <ClInclude Include="CmdSellaControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BlockUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

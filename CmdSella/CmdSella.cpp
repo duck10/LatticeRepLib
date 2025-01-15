@@ -388,13 +388,16 @@ int main(int argc, char* argv[])
    WebIO webio(argc, argv, "CmdSella", 0);
 
    CmdSellaControls controls;
+   controls.setWebRun(webio.m_hasWebInstructions);
    std::vector<LatticeCell> inputList = InputHandler::handleInput(controls, webio);
    std::cout << controls << std::endl;
 
    BlockUtils bu(webio.m_hasWebInstructions);
    bu.setBlockSize(controls.getBlockSize(), webio.m_hasWebInstructions);
    bu.setBlockStart(controls.getBlockStart());
-   // st webio size and start for filename generation
+   // webio block size and start for filename generation
+   // Since the params are not coming in from command line args,
+   //   we can overwrite them with either defaults or control input.
    webio.m_blocksize = bu.blocksize;
    webio.m_blockstart = bu.blockstart;
    webio.CreateFilenamesAndLinks(inputList.size(), "SEL");

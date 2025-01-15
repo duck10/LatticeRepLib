@@ -123,6 +123,7 @@ LatticeCell Follow::perturbVector(const LatticeCell& inputVector, const int pert
    const double dotProduct = inputS6.Dot(randomVector);
    const double inputNormSquared = inputS6.Dot(inputS6);
    const S6 orthogonalVector = randomVector - (dotProduct / inputNormSquared) * inputS6;
+   const double d = orthogonalVector.Dot(inputS6);
 
    // Scale the orthogonal vector
    const double inputNorm = std::sqrt(inputNormSquared);

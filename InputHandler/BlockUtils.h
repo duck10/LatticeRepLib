@@ -17,6 +17,7 @@ public:
    // Block processing members
    static constexpr size_t MIN_BLOCKSIZE = 1;
    static constexpr size_t MAX_BLOCKSIZE = 20;
+   static constexpr size_t MIN_BLOCKSTART = 0;
    static constexpr size_t DEFAULT_BLOCKSIZE = MAX_BLOCKSIZE;
    size_t blockstart = 0;
    size_t blocksize = DEFAULT_BLOCKSIZE;

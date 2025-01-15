@@ -3,6 +3,7 @@
 #define INPUTHANDLER_CMD_SELLA_FEATURES_H
 
 #include "BaseControlVariables.h"
+#include "BlockUtils.h"
 #include "InputHandler.h"
 
 #include <sstream>
@@ -15,24 +16,25 @@ public:
       os << ";   file prefix " << csc.prefix << std::endl;
       os << ";   blockstart " << csc.blockstart << std::endl;
       os << ";   blocksize  " << csc.blocksize << std::endl;
+      os << ";   from the web " << ((csc.webRun) ? "true" : "false");
       return os;
    }
 
    CmdSellaControls() {
 
    InputHandler::registerHandler("BLOCKSIZE", 0.35,
-      [this](BaseControlVariables&, const std::string& value) {
+      [this](const BaseControlVariables&, const std::string& value) {
          setBlockSize(std::stoul(value));
       });
 
    InputHandler::registerHandler("BLOCKSTART", 0.35,
-      [this](BaseControlVariables&, const std::string& value) {
+      [this](const BaseControlVariables&, const std::string& value) {
          setBlockStart(std::stoul(value));
       });
 
 
    InputHandler::registerHandler("PREFIX", 0.35,
-      [this](BaseControlVariables&, const std::string& value) {
+      [this](const BaseControlVariables&, const std::string& value) {
          setPrefix(value);
       });
 
@@ -42,11 +44,12 @@ public:
    int getBlockStart() const { return static_cast<int>(blockstart); }
    std::string getPrefix() const { return prefix; }
    bool getWebRun() const { return webRun; }
+   void setWebRun(const bool webrun) { webRun = webrun; }
 
 private:
 
    // File prefix methods
-   void setPrefix(const std::string& newPrefix) {
+   void setPrefix(const std::string_view& newPrefix) {
       prefix = newPrefix;
    }
 
@@ -77,12 +80,12 @@ private:
          blockstart = start;
       }
    }
-   static constexpr size_t MIN_BLOCKSIZE = 1;
-   static constexpr size_t MAX_BLOCKSIZE = 20;
-   static constexpr size_t DEFAULT_BLOCKSIZE = MAX_BLOCKSIZE;
+   static constexpr size_t MIN_BLOCKSIZE = BlockUtils::MIN_BLOCKSIZE;
+   static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
+   static constexpr size_t DEFAULT_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
 
-   size_t blockstart = 0;
-   size_t blocksize = DEFAULT_BLOCKSIZE;
+   size_t blockstart = BlockUtils::MIN_BLOCKSTART;
+   size_t blocksize = BlockUtils::DEFAULT_BLOCKSIZE;
    bool webRun = false;
 
    // File prefix member
