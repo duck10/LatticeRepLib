@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "BlockProcessing.h"
 #include "FollowControls.h"
 #include "Follow.h"
 #include "FollowInstance.h"
@@ -121,13 +120,7 @@ int main(int argc, char* argv[]) {
       WebLimits wl;
       wl.Update(webio);
 
-      auto blockProcessing = controls.getBlockProcessing();
-
-      blockProcessing.updateLimits(inputVectors.size(), webio.m_hasWebInstructions,
-         [&controls](size_t inputs) {
-            return (inputs / controls.getVectorsPerTrial()) * controls.getPerturbations();
-         });
-      wl.Update(static_cast<int>(blockProcessing.getBlockSize()), static_cast<int>(blockProcessing.getBlockStart()));
+      wl.Update(static_cast<int>(controls.getBlockSize()), static_cast<int>(controls.getBlockStart()));
 
       auto instances = CreateFollowInstanceList(controls, inputVectors);
       const int ntotal = static_cast<int>(instances.size());

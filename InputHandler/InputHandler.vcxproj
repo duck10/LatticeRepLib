@@ -145,43 +145,26 @@
   <ItemGroup>
     <ClInclude Include="BaseControlVariables.h" />
     <ClInclude Include="BlockLimits.h" />
-    <ClInclude Include="BlockProcessing.h" />
-    <ClInclude Include="BlockProcessingUtils.h" />
-    <ClInclude Include="CmdSellaFeatures.h" />
+    <ClInclude Include="BlockUtils.h" />
     <ClInclude Include="CmdToS6LFeatures.h" />
     <ClInclude Include="ControlFeatures.h" />
     <ClInclude Include="DirichletFeatures.h" />
     <ClInclude Include="DistanceTypes.h" />
     <ClInclude Include="DistanceTypesUtils.h" />
-    <ClInclude Include="FilePrefix.h" />
-    <ClInclude Include="FilePrefixFeatures.h" />
-    <ClInclude Include="framework.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="ControlFeature.h" />
     <ClInclude Include="LatticeCell.h" />
     <ClInclude Include="PathControlFeatures.h" />
-    <ClInclude Include="pch.h" />
     <ClInclude Include="PerturbCountControl.h" />
-    <ClInclude Include="ProgramControls.h" />
     <ClInclude Include="ScaleFeatures.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseControlVariables.cpp" />
-    <ClCompile Include="CmdSellaFeatures.cpp" />
     <ClCompile Include="CmdToS6LFeatures.cpp" />
-    <ClCompile Include="ControlFeatures.cpp" />
     <ClCompile Include="DirichletFeatures.cpp" />
     <ClCompile Include="DistanceTypes.cpp" />
-    <ClCompile Include="FilePrefixFeatures.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="PathControlFeatures.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="ProgramControls.cpp" />
     <ClCompile Include="ScaleFeatures.cpp" />
   </ItemGroup>
   <ItemGroup>

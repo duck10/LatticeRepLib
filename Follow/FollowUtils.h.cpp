@@ -1,7 +1,7 @@
-#include "FollowUtils.h"
+//#include "FollowUtils.h"
 #include <random>
 
-
+#include "G6.h"
 
 G6 perturbVector(const G6& vector, double perturbBy) {
    static std::random_device rd;

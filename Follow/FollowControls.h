@@ -2,10 +2,9 @@
 #define FOLLOW_CONTROLS_H
 
 #include "BaseControlVariables.h"
-#include "BlockProcessing.h"
+#include "BlockUtils.h"
 #include "DistanceTypes.h"
 #include "DistanceTypesUtils.h"
-#include "FilePrefix.h"
 #include "FollowerMode.h" 
 #include "FollowerPointsUtils.h"
 #include "GlitchUtils.h"
@@ -22,6 +21,11 @@
 
 class FollowControls : public BaseControlVariables {
 public:
+   friend std::ostream& operator<< (std::ostream& os, const FollowControls& fc) {
+      os << fc.getState();
+      return os;
+   }
+
    static std::atomic<bool> g_running;
    static std::atomic<bool> g_in_input;
 
@@ -137,14 +141,7 @@ public:
 
    }
 
-   // Block processing methods
    std::string  getFilePrefix() const {return prefix;}
-   BlockProcessing getBlockProcessing() const {
-      BlockProcessing bp;
-      bp.setBlockSize(blocksize);
-      bp.setBlockStart(blockstart);
-      bp.setWebRun(webRun);      
-      return bp;}
    DistanceTypes getDistanceTypes() const { 
       DistanceTypes dt;
       dt.setEnabledTypes(getEnabledTypes());
@@ -274,9 +271,9 @@ public:
 
 private:
    // Block processing members
-   static constexpr size_t MIN_BLOCKSIZE = 1;
-   static constexpr size_t MAX_BLOCKSIZE = 20;
-   static constexpr size_t DEFAULT_BLOCKSIZE = MAX_BLOCKSIZE;
+   static constexpr size_t MIN_BLOCKSIZE = BlockUtils::MIN_BLOCKSIZE;
+   static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
+   static constexpr size_t DEFAULT_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
    size_t blockstart = 0;
    size_t blocksize = DEFAULT_BLOCKSIZE;
    bool webRun = false;

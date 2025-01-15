@@ -162,7 +162,6 @@
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\BravaisHeirarchy.h" />
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
-    <ClInclude Include="BlockUtils.h" />
     <ClInclude Include="CmdSellaControls.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
