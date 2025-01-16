@@ -148,7 +148,6 @@
     <ClInclude Include="BlockUtils.h" />
     <ClInclude Include="CmdToS6LFeatures.h" />
     <ClInclude Include="ControlFeatures.h" />
-    <ClInclude Include="DirichletFeatures.h" />
     <ClInclude Include="DistanceTypes.h" />
     <ClInclude Include="DistanceTypesUtils.h" />
     <ClInclude Include="InputHandler.h" />
@@ -161,7 +160,6 @@
   <ItemGroup>
     <ClCompile Include="BaseControlVariables.cpp" />
     <ClCompile Include="CmdToS6LFeatures.cpp" />
-    <ClCompile Include="DirichletFeatures.cpp" />
     <ClCompile Include="DistanceTypes.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="PathControlFeatures.cpp" />
