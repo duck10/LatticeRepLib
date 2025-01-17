@@ -20,7 +20,7 @@
     <ClCompile Include="DirichletCellFaces.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirichletConstants.cpp">
+    <ClCompile Include="DirichletProgramConstants.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ReadDirichletGlobalData.cpp">
@@ -48,13 +48,16 @@
     <ClInclude Include="DirichletCellFaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirichletConstants.h">
+    <ClInclude Include="DirichletProgramConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ReadDirichletGlobalData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dirichlet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirichletConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

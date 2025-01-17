@@ -2,7 +2,7 @@
 #include "ReadDirichletGlobalData.h"
 
 #include "G6.h"
-#include "DirichletConstants.h"
+#include "DirichletProgramConstants.h"
 #include "LRL_RandTools.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
@@ -185,10 +185,10 @@ bool ReadCellData::GetDataFromCIN( const std::vector<ParseData>& parseData  ) {
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 ReadCellData::ReadCellData( ) {
    std::cout << "Input Cell Data, end with \"end\"" << std::endl;
-   const std::vector<ParseData> inputLabels = DirichletConstants::BuildParseStructure( );
+   const std::vector<ParseData> inputLabels = DirichletProgramConstants::BuildParseStructure( );
 
    while( std::cin && GetDataFromCIN( inputLabels ) ) { }
 
-   m_constantData = DirichletConstants::OutputConstants();
+   m_constantData = DirichletProgramConstants::OutputConstants();
    //GLOBAL_Report::globalDataReport = FormatGlobalDataAsString( inputLabels );
 }
