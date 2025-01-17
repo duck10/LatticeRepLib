@@ -1,68 +1,108 @@
-#ifndef DIRICHLETCONSTANTS_H
-#define DIRICHLETCONSTANTS_H
+// DirichletControls.h
+#ifndef INPUTHANDLER_DIRICHLET_FEATURES_H
+#define INPUTHANDLER_DIRICHLET_FEATURES_H
 
-#include "ParseData.h"
+#include "BaseControlVariables.h"
+#include "BlockUtils.h"
+#include "InputHandler.h"
+#include "LRL_StringTools.h"
 
-#include <iostream>     // std::cout, std::endl
-#include <string>
-#include <vector>
+#include <sstream>
 
-/*
-PROPOSED CONTROL PARAMETERS
-ROTATE (to be applied before stereo or plotting, may be multiples)
-number of images
-scale
-Delone Type (as opposed to cells) (where does this go: header or cell section?)
-unit cells
-?? canvas size ??
-hide/show hidden lines
+class DirichletControls : public BaseControlVariables {
+public:
 
-*/
+   friend std::ostream& operator<< (std::ostream& os, const DirichletControls& csc) {
+      os << "; DirichletControls\n";
+      os << ";   file prefix " << csc.prefix << std::endl;
+      os << ";   blockstart " << csc.blockstart << std::endl;
+      os << ";   blocksize  " << csc.blocksize << std::endl;
+      os << ";   from the web " << ((csc.webRun) ? "true" : "false");
+      return os;
+   }
 
-namespace DirichletConstants {
-   extern int    numberOfImages; //ok
-   extern int    imageHeightPx; //ok
-   extern int    latticeLimit; //ok
-   extern int    canvas_x_size; //ok
-   extern int    canvas_y_size; //ok
-   extern int    yposition; //ok
-   extern double rotateX; //ok
-   extern double rotateY;
-   extern double rotateZ;
-   extern double rotateStereo; //ok
-   extern double scale; //ok
-   extern bool timestamp; //ok
-   extern std::vector<std::string> note; //ok
-   extern std::string hiddenLineColor; //ok
-   extern std::string sellingNiggli; //ok
-   extern std::string faceColor; //ok
-   extern std::string fileNamePrefix; //ok
+   DirichletControls() {
 
-   extern std::vector<std::string> cellData; //ok
-   extern std::vector<std::string> inputErrors; //ok
+      InputHandler::registerHandler("BLOCKSIZE", 0.2,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setBlockSize(std::stoul(value));
+         });
 
-   extern std::string S6; //ok
-   extern std::string G6;
-   extern std::string D7;
-   extern std::string C3;
-   extern std::string P; //ok
-   extern std::string I; //ok
-   extern std::string F;
-   extern std::string R;
-   extern std::string H;
-   extern std::string C;
-   extern std::string A;
-   extern std::string B;
-   extern std::string S;
-   extern std::string G;
-   extern std::string V;
-   extern std::string RANDOM; //ok
-
-   std::vector<ParseData> BuildParseStructure(void);
-   std::string OutputConstants(void);
+      InputHandler::registerHandler("BLOCKSTART", 0.2,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setBlockStart(std::stoul(value));
+         });
 
 
-}
+      InputHandler::registerHandler("PREFIX", 0.35,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setPrefix(value);
+         });
 
 
-#endif  // DIRICHLETCONSTANTS_H
+      InputHandler::registerHandler("SHOW", .5,
+         [this](BaseControlVariables&, const std::string& value) {
+            showControls = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
+   }
+
+   int getBlockSize() const { return  static_cast<int>(blocksize); }
+   int getBlockStart() const { return static_cast<int>(blockstart); }
+   std::string getPrefix() const { return prefix; }
+   bool getWebRun() const { return webRun; }
+   void setWebRun(const bool webrun) { webRun = webrun; }
+   bool getShowControls() const { return showControls; }
+
+private:
+
+   // File prefix methods
+   void setPrefix(const std::string_view& newPrefix) {
+      prefix = newPrefix;
+   }
+
+   void setBlockSize(int size) {
+      long long val = static_cast<long long>(size);
+      if (val <= 0) {
+         std::cerr << ";Warning: Blocksize must be positive, using "
+            << DEFAULT_BLOCKSIZE << std::endl;
+         blocksize = DEFAULT_BLOCKSIZE;
+      }
+      else if (webRun && val > MAX_BLOCKSIZE) {
+         std::cerr << ";Warning: Blocksize exceeds web limit, using "
+            << MAX_BLOCKSIZE << std::endl;
+         blocksize = MAX_BLOCKSIZE;
+      }
+      else {
+         blocksize = static_cast<size_t>(val);
+      }
+   }
+
+   void setBlockStart(int start) {
+      long long val = static_cast<long long>(start);
+      if (val < 0) {
+         std::cerr << ";Warning: Blockstart cannot be negative, using 0" << std::endl;
+         blockstart = 0;
+      }
+      else {
+         blockstart = start;
+      }
+   }
+
+   static constexpr size_t MIN_BLOCKSIZE = BlockUtils::MIN_BLOCKSIZE;
+   static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
+   static constexpr size_t DEFAULT_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
+
+   size_t blockstart = BlockUtils::MIN_BLOCKSTART;
+   size_t blocksize = BlockUtils::DEFAULT_BLOCKSIZE;
+   bool webRun = false;
+   bool showControls = false;
+
+   // File prefix member
+   std::string prefix = "DIR";
+
+
+};
+
+#endif // INPUTHANDLER_DIRICHLET_FEATURES_H

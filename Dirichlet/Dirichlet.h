@@ -2,6 +2,7 @@
 #define DIRICHLET_H
 
 #include "DirichletCellFaces.h"
+#include "LatticeCell.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
@@ -22,6 +23,7 @@ public:
    DirichletCell() = default;
    explicit DirichletCell(const std::string& strCellAndLattice);
    explicit DirichletCell(const LRL_ReadLatticeData& inputList);
+   explicit DirichletCell(const LatticeCell& inputList);
    void ProcessInputCell(const std::string& lattice, const LRL_Cell& cell);
 
    std::string GetStrCell() const { return m_strCell; }

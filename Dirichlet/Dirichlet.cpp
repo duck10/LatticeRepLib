@@ -1,6 +1,6 @@
 #include "Dirichlet.h"
 
-#include "DirichletConstants.h"
+#include "DirichletProgramConstants.h"
 #include "D7.h"
 #include "DirichletCellFaces.h"
 #include "GetDate.h"
@@ -35,12 +35,12 @@ std::string DirichletSVG::OutputSVG(const std::vector<std::string>& stereoImages
 
    scell.push_back(stringCell);
    scell.push_back(extra);
-   scell.insert(scell.end(), DirichletConstants::note.begin(), DirichletConstants::note.end());
+   scell.insert(scell.end(), DirichletProgramConstants::note.begin(), DirichletProgramConstants::note.end());
 
-   const std::string header = ImageHeader(DirichletConstants::canvas_x_size, DirichletConstants::canvas_y_size) + "\n";
+   const std::string header = ImageHeader(DirichletProgramConstants::canvas_x_size, DirichletProgramConstants::canvas_y_size) + "\n";
 
    const int x = 100;
-   const int y = DirichletConstants::imageHeightPx + DirichletConstants::yposition + 60;
+   const int y = DirichletProgramConstants::imageHeightPx + DirichletProgramConstants::yposition + 60;
 
    std::ostringstream os;
    os << "<text x = \""
@@ -271,7 +271,7 @@ static std::pair<POINT_LIST, std::vector<Intersection> > ComputeIntersections(co
 
 static std::vector<Vector_3> CreateVectorOfLatticePoints(const Matrix_3x3& m) {
    std::vector<Vector_3> v;
-   const int maxLatticeLimit = DirichletConstants::latticeLimit;
+   const int maxLatticeLimit = DirichletProgramConstants::latticeLimit;
    for (int face = -maxLatticeLimit; face <= maxLatticeLimit; ++face) {
       for (int j = -maxLatticeLimit; j <= maxLatticeLimit; ++j) {
          for (int k = -maxLatticeLimit; k <= maxLatticeLimit; ++k) {
@@ -355,14 +355,39 @@ std::ostream& operator<< (std::ostream& o, const DirichletCell& dc) {
    return o;
 }
 
-DirichletCell::DirichletCell(const LRL_ReadLatticeData& rld)
+//DirichletCell::DirichletCell(const LRL_ReadLatticeData& rld)
+//{
+//   m_cell = rld.GetCell();
+//   if (m_strCell.empty()) m_strCell = rld.GetStrCell();
+//   ////-------------reduce cell
+//   const std::string lattice = rld.GetLattice();
+//   const LRL_Cell cell = rld.GetCell();
+//   if (DirichletProgramConstants::sellingNiggli == "SELLING")
+//      m_reducedCell = LatticeConverter().SellingReduceCell(lattice, cell);
+//   else
+//      m_reducedCell = LatticeConverter().NiggliReduceCell(lattice, cell);
+//
+//   if (m_reducedCell.IsValid()) {
+//      ProcessInputCell("P", m_reducedCell);
+//   }
+//   else {
+//      std::cout << "In DirichletCell, LatticeConverter().NiggliReducedCell returned " <<
+//         m_reducedCell << std::endl;
+//      std::cout << "input cell was   " << cell << std::endl;
+//      std::cout << "In DirichletCell, LatticeConverter().NiggliReducedCell returned " <<
+//         LRL_Cell_Degrees(m_reducedCell) << std::endl;
+//      std::cout << std::setw(11) << std::setprecision(6) << "input cell was   " << LRL_Cell_Degrees(cell) << std::endl;
+//   }
+//}
+
+DirichletCell::DirichletCell(const LatticeCell& lc)
 {
-   m_cell = rld.GetCell();
-   if (m_strCell.empty()) m_strCell = rld.GetStrCell();
+   m_cell = lc.getCell();
+   if (m_strCell.empty()) m_strCell = lc.GetInput();
    ////-------------reduce cell
-   const std::string lattice = rld.GetLattice();
-   const LRL_Cell cell = rld.GetCell();
-   if (DirichletConstants::sellingNiggli == "SELLING")
+   const std::string lattice = lc.getLatticeType();
+   const LRL_Cell cell = lc.getCell();
+   if (DirichletProgramConstants::sellingNiggli == "SELLING")
       m_reducedCell = LatticeConverter().SellingReduceCell(lattice, cell);
    else
       m_reducedCell = LatticeConverter().NiggliReduceCell(lattice, cell);
@@ -379,6 +404,7 @@ DirichletCell::DirichletCell(const LRL_ReadLatticeData& rld)
       std::cout << std::setw(11) << std::setprecision(6) << "input cell was   " << LRL_Cell_Degrees(cell) << std::endl;
    }
 }
+
 
 std::vector<DirichletFace> SortTheFaces(const std::vector<DirichletFace>& dirichletFaces) {
    std::vector<DirichletFace> v(dirichletFaces);
@@ -544,7 +570,7 @@ std::string Dirichlet::DrawOneDirichletRing(const double scale, const ANGLELIST&
       const std::string color = (cm[2] < 0.0) ? "black" : "black";
       //const std::string color = "black";
       const std::string polygonStrokeWidth = (cm[2] < 0.0) ? "2" : "2";
-      s += "  <polygon fill=\"" + /*colors[nColor]*/  std::string(DirichletConstants::faceColor) +
+      s += "  <polygon fill=\"" + /*colors[nColor]*/  std::string(DirichletProgramConstants::faceColor) +
          " \" stroke=\"" + color + "\" stroke-width=\"" + polygonStrokeWidth + "\" points=\"";
       for (size_t point = 0; point < ring.size(); ++point) {
          const Vector_3& v = ring[point].second;
@@ -678,7 +704,7 @@ std::vector<std::string> Dirichlet::DrawDirichletRings(const ANGLESFORFACES& new
       }
    }
 
-   const double scale = DirichletConstants::imageHeightPx * DirichletConstants::scale / maxCoord;
+   const double scale = DirichletProgramConstants::imageHeightPx * DirichletProgramConstants::scale / maxCoord;
    for (size_t cycle = 0; cycle < 1; ++cycle) {
       const ANGLESFORFACES faces(RotateAllFaces(m, sorted));
       m = m2 * m;
@@ -714,7 +740,7 @@ std::vector<std::string> Dirichlet::MadeStereo(const std::vector<std::string>& v
    int xdelta = 200;
 
    std::vector<std::string> vsout;
-   const int yPlace = DirichletConstants::yposition;
+   const int yPlace = DirichletProgramConstants::yposition;
    for (size_t face = 0; face < vsin.size(); ++face) {
       const std::vector<std::string> vs = PlaceSubPicture(xplace, yPlace, vsin[face]); // origin shift
       vsout.push_back(LRL_StringTools::ConcatanateStrings(vs));
@@ -800,13 +826,13 @@ std::string Dirichlet::FaceRecords(const ANGLESFORFACES& rings, const std::vecto
 std::string Dirichlet::CreateStereoSVGText(const DirichletCell& dc) {
    //------------- create rotated image
    static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
-   const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(DirichletConstants::rotateX / degreesPerRad);
-   const Matrix_3x3 m2 = Vector_3(0, 1, 0).Rotmat(DirichletConstants::rotateStereo / degreesPerRad);
+   const Matrix_3x3 m1 = Vector_3(1, 0, 0).Rotmat(DirichletProgramConstants::rotateX / degreesPerRad);
+   const Matrix_3x3 m2 = Vector_3(0, 1, 0).Rotmat(DirichletProgramConstants::rotateStereo / degreesPerRad);
 
    // get the list of faces with their vertices
    const ANGLESFORFACES ringed = dc.GetAnglesForFaces();;
    //-------------create series of images
-   const std::vector<ANGLESFORFACES> rings = CreateSeriesOfImages(ringed, DirichletConstants::numberOfImages, m1, m2);
+   const std::vector<ANGLESFORFACES> rings = CreateSeriesOfImages(ringed, DirichletProgramConstants::numberOfImages, m1, m2);
    const std::vector<std::string> series = DrawSeriesOfObjects(rings);
    const std::vector<std::string> stereoImages = MadeStereo(series);
    const auto vertices = GetVerticesFromFaces(ringed);
@@ -832,7 +858,7 @@ std::string Dirichlet::HandleOneCell(const DirichletCell& dc) {
 
 std::vector<std::string>Dirichlet::RetrieveCellsAsStringsFromDirichletConstants() const {
    std::vector<std::string> strCells;
-   const std::vector<std::string>& cellText = DirichletConstants::cellData;
+   const std::vector<std::string>& cellText = DirichletProgramConstants::cellData;
    for (size_t i = 0; i < cellText.size(); ++i) {
       const std::string s = cellText[i];
       strCells.push_back(s);

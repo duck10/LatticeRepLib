@@ -155,6 +155,7 @@
     <ClInclude Include="LatticeCell.h" />
     <ClInclude Include="PathControlFeatures.h" />
     <ClInclude Include="PerturbCountControl.h" />
+    <ClInclude Include="ProgramSetup.h" />
     <ClInclude Include="ScaleFeatures.h" />
   </ItemGroup>
   <ItemGroup>

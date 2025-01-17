@@ -54,6 +54,9 @@
     <ClInclude Include="BlockUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProgramSetup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputHandler.cpp">

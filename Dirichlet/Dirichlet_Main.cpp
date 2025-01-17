@@ -9,24 +9,35 @@
 
 #include "Dirichlet.h"
 #include "DirichletConstants.h"
+#include "DirichletProgramConstants.h"
 #include "DirichletCellFaces.h"
 #include "FileOperations.h"
-#include "LRL_ReadLatticeData.h"
+#include "InputHandler.h"
+#include "LatticeCell.h"
+#include "ProgramSetup.h"
 #include "ReadDirichletGlobalData.h"
 #include "WebIO.h"
 
 int main(int argc, char* argv[]) {
    LRL_ReadLatticeData reader;
    std::cout << "; Dirichlet (Voronoi) cells" << std::endl;
-   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
-   std::cout << "; count of input cells " << inputList.size() << std::endl;
 
-   WebIO webio(argc, argv, "Dirichlet", inputList.size());
-   webio.GetWebBlockSize(argc, argv);
-   webio.CreateFilenamesAndLinks(inputList.size(), "DC");
+   ProgramSetup<DirichletControls> dc_setup(argc, argv, "Dirichlet");
 
-   const size_t& blockstart= webio.m_blockstart;
-   const size_t& blocksize= webio.m_blocksize;
+
+   //WebIO webio(argc, argv, "Dirichlet", 0);
+   //DirichletControls controls;
+   //controls.setWebRun(webio.m_hasWebInstructions);
+   //std::vector<LatticeCell> inputList = InputHandler::handleInput(controls, webio);
+   //std::cout << controls << std::endl;
+
+   //webio.GetWebBlockSize(argc, argv);
+
+   //const size_t& blockstart=controls.getBlockStart();
+   //const size_t& blocksize= controls.getBlockSize();
+   //webio.m_blocksize = blocksize;
+   //webio.m_blockstart = blockstart;
+   //webio.CreateFilenamesAndLinks(inputList.size(), controls.getPrefix());
 
    const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
    const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
@@ -44,7 +55,7 @@ int main(int argc, char* argv[]) {
    for (size_t whichCell = blockstart; 
        whichCell < inputList.size() && whichCell < blockstart+blocksize; ++whichCell) {
        const DirichletCell dc = DirichletCell(inputList[whichCell]);
-       std::cout << inputList[whichCell].GetStrCell() << std::endl;
+       std::cout << inputList[whichCell].GetInput() << std::endl;
        Dirichlet::ListVertices(dc);
        const std::string svg = Dirichlet::HandleOneCell(dc);
        const std::string fileName = RawFileNameList[whichCell-blockstart];
