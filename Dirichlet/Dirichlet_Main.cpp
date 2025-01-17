@@ -19,52 +19,23 @@
 #include "WebIO.h"
 
 int main(int argc, char* argv[]) {
-   LRL_ReadLatticeData reader;
    std::cout << "; Dirichlet (Voronoi) cells" << std::endl;
 
-   ProgramSetup<DirichletControls> dc_setup(argc, argv, "Dirichlet");
+   const ProgramSetup<DirichletControls> dc_setup(argc, argv, "Dirichlet");
 
-
-   //WebIO webio(argc, argv, "Dirichlet", 0);
-   //DirichletControls controls;
-   //controls.setWebRun(webio.m_hasWebInstructions);
-   //std::vector<LatticeCell> inputList = InputHandler::handleInput(controls, webio);
-   //std::cout << controls << std::endl;
-
-   //webio.GetWebBlockSize(argc, argv);
-
-   //const size_t& blockstart=controls.getBlockStart();
-   //const size_t& blocksize= controls.getBlockSize();
-   //webio.m_blocksize = blocksize;
-   //webio.m_blockstart = blockstart;
-   //webio.CreateFilenamesAndLinks(inputList.size(), controls.getPrefix());
-
-   const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
-   const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
-   const std::vector<std::string>& FullfileNameList = webio.m_FullfileNameList;
-
+   const size_t blockstart = dc_setup.getBlockStart();
+   const size_t blocksize = dc_setup.getBlockSize();
+   const size_t blockend = dc_setup.getBlockEnd();
    std::cout << "; Dirichlet cell block start " << blockstart << std::endl;
    std::cout << "; Dirichlet cell block size " << blocksize << std::endl;
+   std::cout << "; Dirichlet cell block end " << blockend << std::endl;
 
-   for (size_t i = blockstart; i < (inputList.size()) && (i < blockstart + blocksize); ++i)
-   {
-      std::cout << "; Dirichlet graphics file(s) " <<
-         i+1 << "  " << FullfileNameList[i - blockstart] << std::endl;
-   }
+   const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
 
-   for (size_t whichCell = blockstart; 
-       whichCell < inputList.size() && whichCell < blockstart+blocksize; ++whichCell) {
-       const DirichletCell dc = DirichletCell(inputList[whichCell]);
-       std::cout << inputList[whichCell].GetInput() << std::endl;
-       Dirichlet::ListVertices(dc);
-       const std::string svg = Dirichlet::HandleOneCell(dc);
-       const std::string fileName = RawFileNameList[whichCell-blockstart];
-       const std::string fullfileName = FullfileNameList[whichCell-blockstart];
-       if (!svg.empty())
-       {
-           FileOperations::Write(fileName, svg);
-           std::cout << "; Dirichlet graphics file " << fullfileName << std::endl;
-       }
+   for (size_t whichCell = blockstart;
+      whichCell < inputList.size() && whichCell < blockstart + blocksize; ++whichCell) {
+      const std::string svg = Dirichlet::HandleOneCell(DirichletCell(inputList[whichCell]));
+      dc_setup.writeOutputFile(svg, whichCell);
    }
 
    exit(0);
