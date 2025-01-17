@@ -68,6 +68,18 @@ public:
       }
       throw std::out_of_range("File index out of range");
    }
+
+   void writeOutputFile(const std::string& content, size_t index) const {
+      if (content.empty()) return;
+
+      const size_t fileIndex = index - getBlockStart();
+      const std::string& fileName = getRawFileNames()[fileIndex];
+      const std::string& fullFileName = getFullFileNames()[fileIndex];
+
+      FileOperations::Write(fileName, content);
+      std::cout << "; " << m_webio.m_programName << " graphics file " << fullFileName << std::endl;
+   }
+
 private:
    WebIO m_webio;
    ControlType m_controls;
