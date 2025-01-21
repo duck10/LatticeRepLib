@@ -383,8 +383,10 @@ int main(int argc, char* argv[])
 {
    std::cout << "; SELLA method symmetry searching\n";
    const bool doProduceSellaGraphics(true);
+   WebIO webio(argc, argv, "CmdSella",0);
 
    CmdSellaControls controls;
+   controls.setHasWebInput(webio.m_hasWebInstructions);
    const int initblockstart = 0;
    const int initblocksize = 20;
    //const FileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella");
@@ -402,9 +404,15 @@ int main(int argc, char* argv[])
       const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[whichCell],
          dc_setup.getRawFileNames()[whichCell - blockstart]);
       if (doProduceSellaGraphics) {
-         SendSellaToFile(svgOutput, dc_setup.getRawFileNames()[whichCell - blockstart]);
          std::cout << "; Send Sella Plot to graphics file " 
             << dc_setup.getFullFileNameAt(whichCell) << std::endl;
+         if (webio.m_hasWebInstructions) {
+            SendSellaToFile(svgOutput, dc_setup.getBasicFileNames()[whichCell - blockstart]);
+         }
+         else {
+            SendSellaToFile(svgOutput, dc_setup.getBasicFileNames()[whichCell - blockstart]);
+
+         }
       }
    }
 
