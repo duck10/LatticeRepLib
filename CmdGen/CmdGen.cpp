@@ -3,15 +3,20 @@
 #include <map>
 
 #include "CmdGenControls.h"
-#include "InputHandler.h"
+#include "CmdGenTypes.h"
+#include "FileOperations.h"
+#include "GenerateLatticeTypeExamples.h"
 #include "G6.h"
+#include "InputHandler.h"
 #include "LRL_Cell.h"
+#include "LRL_StringTools.h"
 #include "Niggli.h"
 #include "NumericTools.h"
-#include "GenerateLatticeTypeExamples.h"
 #include "Polar.h"
+#include "ProgramSetup.h"
 #include "S6BoundaryTransforms.h"
-#include "LRL_StringTools.h"
+#include "WebIO.h"
+
 /*
 ; test commands for CmdGen verification
 cls
@@ -110,12 +115,6 @@ G6 TryToGetAGoodProjection(const MatS6& projector, const int trials = 500) {
    return probe;
 }
 
-
-static const std::string g_AllowedDelone("CTROMAH");
-static const std::string g_DeloneTypes("hR hP oS oC mS mC mS A1 A2 A3 C1 C3 C5 H4 M1A M1B M2A M2B M3 M4 O1A O1B O2 O3 O4 O5 R1 R3 T1 T2 T5");
-static const std::string g_LatticeTypes("aP cF cI cP hP mC mP oF oI oP oS rP tI tP ");
-static const std::string g_Complex("X x");
-
 G6 Generate(const MatS6& pt) {
    const G6 probe = TryToGetAGoodProjection(pt, 50);
 
@@ -131,36 +130,7 @@ G6 Generate(const T& pt) {
    return probe;;
 }
 
-static std::string TranslateDeloneToIT(const std::string& s) {
-
-   std::map<std::string, std::string> m;
-   m.insert(std::make_pair("C1", "cI"));
-   m.insert(std::make_pair("C3", "cF"));
-   m.insert(std::make_pair("C5", "cP"));
-   m.insert(std::make_pair("T1", "tI"));
-   m.insert(std::make_pair("T2", "tI"));
-   m.insert(std::make_pair("T5", "tP"));
-   m.insert(std::make_pair("R1", "hR"));
-   m.insert(std::make_pair("R3", "hR"));
-   m.insert(std::make_pair("O1A", "oF"));
-   m.insert(std::make_pair("O2", "oI"));
-   m.insert(std::make_pair("O3", "oI"));
-   m.insert(std::make_pair("O4", "oS"));
-   //m.insert(std::make_pair("O4B", "oS"));
-   m.insert(std::make_pair("O5", "oP"));
-   m.insert(std::make_pair("O1B", "oI"));
-   m.insert(std::make_pair("M1A", "mC"));
-   m.insert(std::make_pair("M1B", "mC"));
-   m.insert(std::make_pair("M2", "mC"));
-   m.insert(std::make_pair("M3", "mC"));
-   m.insert(std::make_pair("M4", "mP"));
-   m.insert(std::make_pair("M2B", "mC"));
-   m.insert(std::make_pair("H4", "hP"));   std::string out{ "" };
-   if (m.find(s) != m.end()) out = m[s];
-   return out;
-}
-
-void ForNiggliInput( const int count,
+void ForNiggliInput(const int count,
    const std::vector<std::shared_ptr<GenerateNiggliBase> >& vglb) {
    for (size_t lat = 0; lat < vglb.size(); ++lat) {
       const std::shared_ptr<GenerateNiggliBase> pt = vglb[lat];
@@ -178,7 +148,7 @@ void ForNiggliInput( const int count,
 
 }
 
-void ForDeloneInput( const int count,
+void ForDeloneInput(const int count,
    const std::vector<std::shared_ptr<GenerateDeloneBase> >& ptrDeloneBase) {
    for (size_t lat = 0; lat < ptrDeloneBase.size(); ++lat) {
       const std::shared_ptr<GenerateDeloneBase> pt = ptrDeloneBase[lat];
@@ -198,6 +168,7 @@ void ForDeloneInput( const int count,
 
 void CreateCells(const int count, const std::string& namen) {
    std::string name(namen);
+   ngen = count;
    const int number = getNumber<int>(name);
    const bool isNumIn_1_44 = isNumber<int>(name) && number >= 1 && number <= 44;
    const bool badNumber = isNumber<int>(name) && (number < 1 || number > 44);
@@ -214,6 +185,11 @@ void CreateCells(const int count, const std::string& namen) {
       doNiggli = doDelone = true;
    }
 
+   if (LRL_StringTools::strToupper(name).find("RANDOM") != std::string::npos) {
+      doNiggli = true;
+      doDelone = false;
+      doPolar = true;
+   }
 
    if (LRL_StringTools::strToupper(name) == "GRUBER") doGruber = true;
    else if (count == 1) doNiggli = doDelone = true;
@@ -229,11 +205,6 @@ void CreateCells(const int count, const std::string& namen) {
       doDelone = true;
       doPolar = false;
    }
-   else if (LRL_StringTools::strToupper(name).find("RANDOM") != std::string::npos) {
-      doNiggli = false;
-      doDelone = false;
-      doPolar = true;
-   }
    else if (isNumber<int>(name) && badNumber) doNiggli = doDelone = true;
    else if (isupper(name[0])) doDelone = true; // "A??" will incorrectly come here, but doNiggli already set
    else if (islower(name[0])) doNiggli = doDelone = true;
@@ -241,12 +212,11 @@ void CreateCells(const int count, const std::string& namen) {
       const int i19191 = 19191;
    }
    if (badNumber) name.clear();
-   if (isupper(name[0]) && g_AllowedDelone.find(name[0]) == std::string::npos)
+   if (isupper(name[0]) && CmdGenTypes::g_AllowedDelone.find(name[0]) == std::string::npos)
    {
       doNiggli = doDelone = true;
       name.clear();
    }
-
 
    if (doNiggli) {
       const std::vector<std::shared_ptr<GenerateNiggliBase> > NiggiTypes =
@@ -263,7 +233,7 @@ void CreateCells(const int count, const std::string& namen) {
    }
 
    if (doGruber) {
-      for (size_t i = 0; i < ngen; ++i)
+      for (size_t i = 0; i < 1; ++i)
       {
          std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., 16., 3., 4.   }) << std::endl;// Niggli reduced
          std::cout << "G6 " << G6(std::vector<double>{ 4., 16., 16., 16., 1., 4.   }) << std::endl;
@@ -284,7 +254,7 @@ void CreateCells(const int count, const std::string& namen) {
 
 int main(int argc, char* argv[])
 {
-   static std::string name = ""; // blank or unrecognized gives all types
+   //static std::string name = ""; // blank or unrecognized gives all types
 
 
    std::string input = R"(
@@ -295,15 +265,41 @@ P 10 10 10 90 90 90
 F 12 12 12 90 90 90
 END
 )";
-   std::istringstream inputStream(input);
+
+   std::cout << "; generate unit cells\n";
+   WebIO webio(argc, argv, "CmdGen", 0);
 
    CmdGenControls controls;
-   std::vector<LatticeCell> vectors;
 
-   //InputHandler::readMixedInput(controls, vectors, inputStream);
-   InputHandler::readMixedInput(controls, vectors, std::cin);
+   // if there is web data, update controls before we read from the input file.
+   if (argc == 1) {}
+   else {
+      if (argc > 1) {
+         const std::string s(argv[1]);
+         if (s[0] != '-')
+            controls.setCount(std::stoi(argv[1]));
+      }
+      if (argc > 2) {
+         for (size_t i = 2; i < argc; ++i) {
+            const std::string s(argv[i]);
+            if (s[0] != '-')
+               controls.addType(s);
+         }
+      }
+   }
 
-   //std::cout << "Control settings:\n" << controls;
+
+   // Now create setup which will process input file and override previous values
+   WebFileBlockProgramInput<CmdGenControls> dc_setup(argc, argv, "CmdGen", 0, controls);
+
+   const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
+
+   std::istringstream inputStream(input);
+
+   if (dc_setup.getControls().getShowControls()) {
+      std::cout << dc_setup.getControls() << std::endl;
+   }
+
    // ------------ treat input number to generate ----------------
    // Get the generation count from controls
    int numToGenerate = 1;  // default
@@ -318,7 +314,7 @@ END
 
    numToGenerate = std::max(numToGenerate, 1);
 
-   // ------------ treat input type names  ----------------
+   //// ------------ treat input type names  ----------------
 
    std::vector<std::string> names;
    if (argc > 2) {
@@ -340,7 +336,7 @@ END
    }
 
    // echo any incoming vectors
-   for (const auto& v : vectors) {
+   for (const auto& v : inputList) {
       std::cout << v.GetInput() << std::endl;
    }
 
@@ -348,4 +344,6 @@ END
    {
       CreateCells(numToGenerate, namen);
    }
+
+   return 0;
 }

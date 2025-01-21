@@ -46,6 +46,12 @@ public:
       }
    );
 
+   InputHandler::registerHandler("DOGRAPHICS", .5,
+      [this](BaseControlVariables&, const std::string& value) {
+         doGraphics = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      }
+   );
+
    }
 
    int getBlockSize() const { return  static_cast<int>(blocksize); }
@@ -101,6 +107,7 @@ private:
 
    // File prefix member
    std::string prefix = "SEL";
+   bool doGraphics = true;
 
 
 };

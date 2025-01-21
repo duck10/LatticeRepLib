@@ -57,6 +57,15 @@ public:
       return inputVectors;
    }
 
+   template<typename T>
+   static std::vector<LatticeCell> handleInput(T& controls) {
+      std::vector<LatticeCell> inputVectors;
+
+      std::cout << "; Enter control variables and input vectors (type 'end' to finish):\n";
+      InputHandler::readMixedInput(controls, inputVectors, std::cin);
+      return inputVectors;
+   }
+
 
    static std::vector<std::string> parseInputLine(const std::string& line);
    static void handleLatticeInput(std::vector<LatticeCell>& inputVectors,

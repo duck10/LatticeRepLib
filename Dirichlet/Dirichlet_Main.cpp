@@ -21,14 +21,14 @@
 int main(int argc, char* argv[]) {
    std::cout << "; Dirichlet (Voronoi) cells" << std::endl;
 
-   const ProgramSetup<DirichletControls> dc_setup(argc, argv, "Dirichlet");
+   const WebBlockProgramSetup<DirichletControls> dc_setup(argc, argv, "Dirichlet");
 
    const size_t blockstart = dc_setup.getBlockStart();
    const size_t blocksize = dc_setup.getBlockSize();
    const size_t blockend = dc_setup.getBlockEnd();
-   std::cout << "; Dirichlet cell block start " << blockstart << std::endl;
-   std::cout << "; Dirichlet cell block size " << blocksize << std::endl;
-   std::cout << "; Dirichlet cell block end " << blockend << std::endl;
+   //std::cout << "; Dirichlet cell block start " << blockstart << std::endl;
+   //std::cout << "; Dirichlet cell block size " << blocksize << std::endl;
+   //std::cout << "; Dirichlet cell block end " << blockend << std::endl;
 
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
 

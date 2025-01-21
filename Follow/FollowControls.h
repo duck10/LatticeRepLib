@@ -42,27 +42,27 @@ public:
 
       InputHandler::registerHandler("FILEPREFIX", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
-            setPrefix(value);
+            setPrefix(LRL_StringTools::strToupper(value));
          });
 
       InputHandler::registerHandler("PREFIX", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
-            setPrefix(value);
+            setPrefix(LRL_StringTools::strToupper(value));
          });
 
       InputHandler::registerHandler("TYPE", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
-            handleDistanceType(value);
+            handleDistanceType(LRL_StringTools::strToupper(value));
          });
 
       InputHandler::registerHandler("ENABLE", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
-            handleEnableDistance(value);
+            handleEnableDistance(LRL_StringTools::strToupper(value));
          });
 
       InputHandler::registerHandler("DISABLE", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
-            handleDisableDistance(value);
+            handleDisableDistance(LRL_StringTools::strToupper(value));
          });
 
       InputHandler::registerHandler("MODE", 0.35,
