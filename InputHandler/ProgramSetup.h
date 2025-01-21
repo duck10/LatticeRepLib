@@ -1,6 +1,7 @@
 #ifndef PROGRAM_SETUP_H
 #define PROGRAM_SETUP_H
 
+#include "Webio.h"
 // Basic input handling
 template<typename ControlType>
 class BasicProgramInput {
@@ -32,7 +33,12 @@ public:
    }
 
    void setupFileNames() {
-      CreateFilenamesAndLinks(m_inputList.size(), m_controls.getPrefix());
+      char* dummy[1] ;
+      WebIO webio(0, dummy, m_programName, m_inputList.size());
+     webio.CreateFilenamesAndLinks(m_inputList.size(), m_controls.getPrefix());
+     m_basicfileNameList = webio.m_basicfileNameList;
+     m_FileNameList = webio.m_FileNameList;
+     m_FullfileNameList = webio.m_FullfileNameList;
    }
 
    void printBlockInfo() {
