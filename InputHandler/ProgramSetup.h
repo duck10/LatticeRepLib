@@ -29,16 +29,17 @@ public:
       : m_blockStart(blockStart), m_blockSize(blockSize), m_programName(programName), m_controls(controls)
    {
       m_inputList = InputHandler::handleInput(m_controls);
-      setupFileNames();
+      setupFileNames(m_controls.getHasWebInput());
    }
 
-   void setupFileNames() {
-      char* dummy[1] ;
+   void setupFileNames(const bool webRun) {
+      char* dummy[1];
       WebIO webio(0, dummy, m_programName, m_inputList.size());
-     webio.CreateFilenamesAndLinks(m_inputList.size(), m_controls.getPrefix());
-     m_basicfileNameList = webio.m_basicfileNameList;
-     m_FileNameList = webio.m_FileNameList;
-     m_FullfileNameList = webio.m_FullfileNameList;
+      webio.m_hasWebInstructions = webRun;
+      webio.CreateFilenamesAndLinks(m_inputList.size(), m_controls.getPrefix());
+      m_basicfileNameList = webio.m_basicfileNameList;
+      m_FileNameList = webio.m_FileNameList;
+      m_FullfileNameList = webio.m_FullfileNameList;
    }
 
    void printBlockInfo() {
