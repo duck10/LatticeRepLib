@@ -385,8 +385,10 @@ int main(int argc, char* argv[])
    const bool doProduceSellaGraphics(true);
 
    CmdSellaControls controls;
+   const int initblockstart = 0;
+   const int initblocksize = 20;
    //const FileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella");
-   const FileBlockProgramInput<CmdSellaControls> dc_setup("CmdSella", 0,0,controls);
+   const FileBlockProgramInput<CmdSellaControls> dc_setup("CmdSella", initblockstart, initblocksize,controls);
 
    const size_t blockstart = dc_setup.getBlockStart();
    const size_t blocksize = dc_setup.getBlockSize();
