@@ -70,10 +70,6 @@ public:
       return out;
    }
 
-   bool getShowControls() const {
-      return showControls;
-   }
-
    bool getWebRun() const { return webRun; }
    void setWebRun(const bool webrun) { webRun = webrun; }
 

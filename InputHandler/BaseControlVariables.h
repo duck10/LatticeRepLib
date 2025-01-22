@@ -11,6 +11,8 @@
 class BaseControlVariables {
 protected:
    std::vector<std::unique_ptr<ControlFeature>> features;
+   bool webRun = false;
+   bool showControls = false;
 
 public:
    virtual ~BaseControlVariables() = default;
@@ -41,6 +43,13 @@ public:
       }
       return oss.str();
    }
+
+   bool getWebRun() const { return webRun; }
+   void setWebRun(const bool webrun) { webRun = webrun; }
+   void setHasWebInput(const bool b) { webRun = b; }
+   bool getHasWebInput() const { return webRun; }
+   bool getShowControls() const { return showControls; }
+   void setShowContols(const bool b) { showControls = b; }
 
    friend std::ostream& operator<<(std::ostream& os, const BaseControlVariables& cv);
 };
