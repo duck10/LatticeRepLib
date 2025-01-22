@@ -54,6 +54,8 @@ public:
    bool getWebRun() const { return webRun; }
    void setWebRun(const bool webrun) { webRun = webrun; }
    bool getShowControls() const { return showControls; }
+   void setHasWebInput(const bool b) { m_hasWebInput = b; }
+   bool getHasWebInput() const { return m_hasWebInput; }
 
 private:
 
@@ -101,6 +103,7 @@ private:
 
    // File prefix member
    std::string prefix = "DIR";
+   bool m_hasWebInput = true;
 
 
 };
