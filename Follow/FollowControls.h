@@ -235,7 +235,6 @@ public:
 
    size_t getBlockStart() const { return blockstart; }
    size_t getBlockSize() const { return blocksize; }
-   void setWebRun(bool web) { webRun = web; }
    std::string getPrefix() const { return prefix; }
    const std::set<std::string>& getEnabledTypes() const { return enabledTypes; }
 
@@ -276,7 +275,6 @@ private:
    static constexpr size_t DEFAULT_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
    size_t blockstart = 0;
    size_t blocksize = DEFAULT_BLOCKSIZE;
-   bool webRun = false;
 
    // File prefix member
    std::string prefix = "FOL";
@@ -290,7 +288,6 @@ private:
    double perturbBy = 0.1;
    int numFollowerPoints = 100;
    bool printDistanceData = false;
-   bool showControls = false;
    bool glitchesOnly = false;
    bool shouldDetectGlitches = true;
    double glitchThresholdPercent = 4.0;
