@@ -104,7 +104,7 @@ public:
    static RI rand();
    static std::vector<S6> ResetZeros(const std::vector<S6>& vs);
    static S6 ResetZeros(const S6& vs);
-   static S6 AllPositive(const S6& s);
+   static S6 MakeAllPositive(const S6& s);
    static int CountZeros(const S6& s6);
    static std::pair<S6, std::string>   MakeRI(const LRL_ReadLatticeData& input, const S6& positiveRed);
 

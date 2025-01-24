@@ -30,19 +30,10 @@
     <ClInclude Include="InputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ControlFeatures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CmdToS6LFeatures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BlockLimits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseControlVariables.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ControlFeature.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DistanceTypes.h">
@@ -66,9 +57,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PathControlFeatures.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CmdToS6LFeatures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BaseControlVariables.cpp">
