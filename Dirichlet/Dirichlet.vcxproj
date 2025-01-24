@@ -156,7 +156,6 @@
     <ClCompile Include="DirichletCellFaces.cpp" />
     <ClCompile Include="DirichletProgramConstants.cpp" />
     <ClCompile Include="Dirichlet_Main.cpp" />
-    <ClCompile Include="ReadDirichletGlobalData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InputHandler\InputHandler.vcxproj">
@@ -176,10 +175,8 @@
     <ClInclude Include="..\LRL_Tools\FileOperations.h" />
     <ClInclude Include="Dirichlet.h" />
     <ClInclude Include="DirichletCellFaces.h" />
-    <ClInclude Include="DirichletConstants.h" />
+    <ClInclude Include="DirichletControls.h" />
     <ClInclude Include="DirichletProgramConstants.h" />
-    <ClInclude Include="ParseData.h" />
-    <ClInclude Include="ReadDirichletGlobalData.h" />
     <ClInclude Include="SVG_Tools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

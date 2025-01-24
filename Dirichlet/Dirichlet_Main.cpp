@@ -8,14 +8,13 @@
 #include <vector>
 
 #include "Dirichlet.h"
-#include "DirichletConstants.h"
+#include "DirichletControls.h"
 #include "DirichletProgramConstants.h"
 #include "DirichletCellFaces.h"
 #include "FileOperations.h"
 #include "InputHandler.h"
 #include "LatticeCell.h"
 #include "ProgramSetup.h"
-#include "ReadDirichletGlobalData.h"
 #include "WebIO.h"
 
 int main(int argc, char* argv[]) {
@@ -32,11 +31,12 @@ int main(int argc, char* argv[]) {
    const size_t blockstart = dc_setup.getBlockStart();
    const size_t blocksize = dc_setup.getBlockSize();
    const size_t blockend = dc_setup.getBlockEnd();
-   //std::cout << "; Dirichlet cell block start " << blockstart << std::endl;
-   //std::cout << "; Dirichlet cell block size " << blocksize << std::endl;
-   //std::cout << "; Dirichlet cell block end " << blockend << std::endl;
 
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
+
+   if (controls.getShowControls()) {
+      std::cout << controls << std::endl;
+   }
 
    for (size_t whichCell = blockstart;
       whichCell < inputList.size() && whichCell < blockstart + blocksize; ++whichCell) {

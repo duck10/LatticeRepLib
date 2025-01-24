@@ -23,9 +23,6 @@
     <ClCompile Include="DirichletProgramConstants.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReadDirichletGlobalData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Dirichlet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,22 +39,16 @@
     <ClInclude Include="..\LRL_Tools\FileOperations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ParseData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DirichletCellFaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirichletProgramConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ReadDirichletGlobalData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Dirichlet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirichletConstants.h">
+    <ClInclude Include="DirichletControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

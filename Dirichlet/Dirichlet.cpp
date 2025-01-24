@@ -11,7 +11,7 @@
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_ToString.h"
-#include "ReadDirichletGlobalData.h"
+//#include "ReadDirichletGlobalData.h"
 #include "SVG_Tools.h"
 #include "TriangleAreaFromSides.h"
 #include "LRL_Vector3.h"
@@ -838,7 +838,7 @@ std::string Dirichlet::CreateStereoSVGText(const DirichletCell& dc) {
    const auto vertices = GetVerticesFromFaces(ringed);
    const std::vector<Vector_3> indices = DirichletCell::RecoverIndicesOfFaces(dc.GetCartesianMatrix(), ringed);
    const std::string records = FaceRecords(ringed, indices);
-   const std::string constants = ReadCellData::GetConstantsAsString();
+   //const std::string constants = ReadCellData::GetConstantsAsString();
    const Cell_Faces cellFaces = dc.GetCellFaces();
 
    //std::cout << LRL_ToString(indices) << std::endl;
@@ -847,7 +847,7 @@ std::string Dirichlet::CreateStereoSVGText(const DirichletCell& dc) {
    const DirichletSVG dsvg(dc);
    const std::string strCell = dc.GetStrCell();
    const std::string svg = dsvg.OutputSVG(stereoImages, cellFaces,
-      records + "\nGlobal Constants\n" + constants);
+      records );
    return svg;
 }
 
