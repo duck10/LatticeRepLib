@@ -42,7 +42,7 @@ public:
       m_FullfileNameList = webio.m_FullfileNameList;
    }
 
-   void printBlockInfo() {
+   void printBlockInfo() const {
       std::cout << "; " << m_programName << " block start " << m_blockStart << std::endl;
       std::cout << "; " << m_programName << " block size " << m_blockSize << std::endl;
 
@@ -114,7 +114,6 @@ public:
    {
       m_controls.setWebRun(m_webio.m_hasWebInstructions);
       m_inputList = InputHandler::handleInput(m_controls, m_webio);
-      std::cout << m_controls << std::endl;
    }
 
    const WebIO& getWebIO() const { return m_webio; }
@@ -140,7 +139,6 @@ public:
 
       setupBlockProcessing(argc, argv);
       setupFileNames();
-      //printBlockInfo();
    }
 
    void setupBlockProcessing(int argc, char* argv[]) {
@@ -153,7 +151,7 @@ public:
       m_webio.CreateFilenamesAndLinks(m_inputList.size(), m_controls.getPrefix());
    }
 
-   void printBlockInfo() {
+   void printBlockInfo() const {
       std::cout << "; " << m_webio.m_programName << " block start " << m_controls.getBlockStart() << std::endl;
       std::cout << "; " << m_webio.m_programName << " block size " << m_controls.getBlockSize() << std::endl;
 

@@ -344,7 +344,7 @@ std::pair<S6, std::string>   RI::MakeRI(const LRL_ReadLatticeData& input, const 
    }
 
    if (likeRI.size() > 1 || likeRI.empty()) {
-      std::cout << input.GetStrCell() << std::endl;
+      //std::cout << input.GetStrCell() << std::endl;
       RI::OutputVector(likeRI);
       throw; "bad likeRI";
    }
@@ -456,7 +456,7 @@ std::vector<S6> RI::ResortElements_1_3(const std::vector<S6>& vs) {
    return sort4;
 }
 
-S6 RI::AllPositive(const S6& s) {
+S6 RI::MakeAllPositive(const S6& s) {
    S6 out(s);
    for (size_t i = 0; i < 6; ++i) {
       out[i] = -out[i];
