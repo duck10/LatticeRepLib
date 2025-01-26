@@ -37,6 +37,17 @@ public:
             }
          });
 
+      // Register handler for FORMAT command
+      InputHandler::registerHandler("TYPE", 0.35,
+         [this](const BaseControlVariables&, const std::string& value) {
+            format = LRL_StringTools::strToupper(value);
+            if (format.empty()) format = "RS"; // Default to both if empty
+            else if (format.find('R') == std::string::npos && format.find('S') == std::string::npos) {
+               std::cerr << ";Warning: Invalid format. Using default 'RS'" << std::endl;
+               format = "RS";
+            }
+         });
+
       // Also register handler for ROOT and LINEAR commands for compatibility
       InputHandler::registerHandler("ROOT", 0.35,
          [this](const BaseControlVariables&, const std::string& value) {

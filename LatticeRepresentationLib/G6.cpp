@@ -385,39 +385,10 @@ G6 G6::operator- (const G6& v) const {
 }
 
 G6 G6::InverseG6Vector(void) const {
-   G6 v(*this);
-   throw "this code is broken LCA 2024-05-26 -- the angle components are wrong";
-   double a = sqrt(v[G6_AA_idx]);
-   double b = sqrt(v[G6_BB_idx]);
-   double c = sqrt(v[G6_CC_idx]);
-   double cosalpha = 0.5*v[G6_2BC_idx] / v[G6_BB_idx] / v[G6_CC_idx];
-   double cosbeta = 0.5*v[G6_2AC_idx] / v[G6_AA_idx] / v[G6_CC_idx];
-   double cosgamma = 0.5*v[G6_2AB_idx] / v[G6_AA_idx] / v[G6_BB_idx];
 
-   const double sinalpha = sqrt(1.0 - cosalpha*cosalpha);
-   const double sinbeta = sqrt(1.0 - cosbeta *cosbeta);
-   const double singamma = sqrt(1.0 - cosgamma*cosgamma);
-
-   const double volume = a*b*c*sqrt(1.0 - cosalpha*cosalpha - cosbeta*cosbeta - cosgamma*cosgamma) -
-      2.0*cosalpha*cosbeta*cosgamma;
-
-   const double astar = b*c*sinalpha / volume;
-   const double bstar = a*c*sinbeta / volume;
-   const double cstar = a*b*singamma / volume;
-
-   const double cosalphastar = (cosbeta *cosgamma - cosalpha) / std::fabs(sinbeta *singamma);
-   const double cosbetastar = (cosalpha*cosgamma - cosbeta) / std::fabs(sinalpha*singamma);
-   const double cosgammastar = (cosalpha*cosbeta - cosgamma) / std::fabs(sinalpha*sinbeta);
-
-   G6 vout;
-   vout[0] = astar*astar;
-   vout[1] = bstar*bstar;
-   vout[2] = cstar*cstar;
-   vout[3] = 2.0*bstar*cstar*cosalphastar;
-   vout[4] = 2.0*astar*cstar*cosbetastar;
-   vout[5] = 2.0*astar*bstar*cosgammastar;
-
-   return vout;
+   LRL_Cell cell(*this);
+   LRL_Cell inv = cell.Inverse();
+   return inv;
 }
 
 G6 G6::sort(const G6& g6) {

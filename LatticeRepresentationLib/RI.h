@@ -51,12 +51,15 @@ public:
    RI(const D13& d13);
    RI(const LRL_Cell& c);
    RI(const VecN& v);
-   RI(const S6& ds);
-   RI(const G6& ds);
-   RI(const C3& c3);
-   RI(const B4& dt);
    RI(const std::string& s);
    RI(const std::vector<double>& v);
+
+   template<typename T>
+   RI(const T& ds)
+   {
+      const S6 pss = MakeRI("P", S6(ds));
+      m_vec = pss.GetVector();
+   }
 
    RI& operator= (const RI& v);
    RI& operator= (const std::string& s);
@@ -106,7 +109,8 @@ public:
    static S6 ResetZeros(const S6& vs);
    static S6 MakeAllPositive(const S6& s);
    static int CountZeros(const S6& s6);
-   static std::pair<S6, std::string>   MakeRI(const LRL_ReadLatticeData& input, const S6& positiveRed);
+   static std::pair<S6, std::string> MakeRI(const LRL_ReadLatticeData& input, const S6& positiveRed);
+   static S6 MakeRI(const std::string& lattice, const S6& positiveRed);
 
 
 protected:

@@ -1,7 +1,16 @@
 #ifndef PROGRAM_SETUP_H
 #define PROGRAM_SETUP_H
 
-#include "Webio.h"
+#include "FileOperations.h"
+#include "WebIO.h"
+
+class Writer {
+public:
+   static void Write(const std::string& fileName, const std::string& fcontent) {
+      FileOperations::Write(fileName, fcontent);
+   }
+};
+
 // Basic input handling
 template<typename ControlType>
 class BasicProgramInput {
@@ -20,6 +29,7 @@ private:
    ControlType& m_controls;  // Reference instead of object
    std::vector<LatticeCell> m_inputList;
 };
+
 
 // File block input handling
 template<typename ControlType>
@@ -86,10 +96,10 @@ public:
       if (content.empty()) return;
 
       const size_t fileIndex = index - m_blockStart;
-      const std::string& fileName = getRawFileNames()[fileIndex];
+      const std::string fileName = getRawFileNames()[fileIndex];
       const std::string& fullFileName = getFullFileNames()[fileIndex];
 
-      FileOperations::Write(fileName, content);
+      Writer::Write(fileName, content);
       std::cout << "; " << m_programName << " graphics file " << fullFileName << std::endl;
    }
 
@@ -126,6 +136,7 @@ private:
    ControlType& m_controls;
    std::vector<LatticeCell> m_inputList;
 };
+
 
 // Web and file block input handling
 template<typename ControlType>
@@ -204,7 +215,7 @@ public:
       const std::string& fileName = getRawFileNames()[fileIndex];
       const std::string& fullFileName = getFullFileNames()[fileIndex];
 
-      FileOperations::Write(fileName, content);
+      Writer::Write(fileName, content);
       std::cout << "; " << m_webio.m_programName << " graphics file " << fullFileName << std::endl;
    }
 
