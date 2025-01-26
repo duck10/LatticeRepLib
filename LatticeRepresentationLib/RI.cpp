@@ -58,54 +58,8 @@ RI::RI(const double d1, const double d2, const double d3, const double d4, const
 }
 
 RI::RI(const LRL_Cell& c) {
-   static const double pi = 4.0 * atan(1.0);
-   static const double twopi = 2.0 * pi;
-   m_dim = 6;
-   m_vec.resize(6);
-   throw; // "needs to implemented"
-
-   bool b1 = c.GetValid();
-   bool b2 = c[3] < pi;
-   bool b3 = c[4] < pi;
-   bool b4 = c[5] < pi;
-   bool b5 = (c[3] + c[4] + c[5]) < twopi;
-   m_valid = b1 && b2 && b3 && b4 && b5;
-   m_vec.SetValid(m_valid);
-   const LRL_ReadLatticeData input;
-   const std::pair<S6, std::string> pss = MakeRI(input, c);
-   m_vec = pss.first.GetVector();
-}
-
-RI::RI(const S6& ds)
-{
-   const LRL_ReadLatticeData input;
-   const std::pair<S6, std::string> pss = MakeRI(input, -ds);
-   m_vec = pss.first.GetVector();
-
-   //throw; // this needs to be implemented differently
-   // here is the S6L code
-   //S6L::S6L(const S6 & ds)
-   //   :m_dim(6)
-   //   , m_valid(true)
-   //{
-   //   S6 s6out;
-   //   const bool b = Selling::Reduce(ds, (s6out));
-   //   const double s1 = sqrt(-s6out[0]);
-   //   const double s2 = sqrt(-s6out[1]);
-   //   const double s3 = sqrt(-s6out[2]);
-   //   const double s4 = sqrt(-s6out[3]);
-   //   const double s5 = sqrt(-s6out[4]);
-   //   const double s6 = sqrt(-s6out[5]);
-   //   m_vec = std::vector<double>{ s1, s2, s3, s4, s5, s6 };
-   //}
-
-}
-
-RI::RI(const G6& ds)
-{
-   const LRL_ReadLatticeData input;
-   const std::pair<S6, std::string> pss = MakeRI(input, ds);
-   m_vec = pss.first.GetVector();
+   const S6 s6 = RI::MakeRI("P", c);
+   m_vec = s6.GetVector();
 }
 
 std::vector<S6> RI::GenerateReflections(const S6& s6) {
@@ -293,6 +247,75 @@ void RI::OutputVector(const std::vector<S6>& vs) {
       std::cout << vs[i] << std::endl;
    }
 }
+
+S6 RI::MakeRI(const std::string& lattice, const S6& s6) {
+
+   S6 red;
+   Selling::Reduce(s6, red);
+   const S6 negativeReduced(-red);
+   // generate 24 reflections
+   const std::vector<S6> allRefls = RI::GenerateReflections(negativeReduced);
+   const std::vector<S6> sqrted = DoSqrt(allRefls);
+   const std::vector<S6> resetZeros1 = ResetZeros(sqrted);
+
+   // treat all zero vectors
+   if (resetZeros1.empty()) {
+      return S6{ 0, 0, 0, 0, 0, 0 };
+   }
+   // remove unsort examples
+   const std::vector<S6> firstElementDmin = KeepDminFirst(resetZeros1);
+   // treat all zero vectors
+   if (firstElementDmin.empty()) {
+      return S6{ 0, 0, 0, 0, 0, 0 };
+   }
+   const std::vector<S6> secondElement = KeepSecondMin(firstElementDmin);
+   // set near zeros to zero (probably not needed)
+   if (secondElement.empty()) {
+      return S6{ 0, 0, 0, 0, 0, 0 };
+   }
+   const std::vector<S6> resetZeros2 = ResetZeros(secondElement);
+   if (resetZeros2.empty()) {
+      return S6{ 0, 0, 0, 0, 0, 0 };
+   }
+   // remove actual near duplicates
+   const std::vector<S6> allSorted = ResortElements_1_3(resetZeros2);
+   // remove actual near duplicates, because sorting values can generate them
+   const std::vector<S6> noDups2 = RI::EliminateDuplicates(allSorted);
+   std::vector<S6> likeRI(noDups2);
+
+   if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && likeRI[0][3] == 0) {
+      const S6 s62 = RI::Resort_V3(likeRI[0]);
+      likeRI.clear();
+      likeRI.emplace_back(s62);
+   }
+   else if (likeRI.size() > 1 && CountZeros(likeRI[0]) == 0) {
+      const S6 s62 = RI::Resort_V1(likeRI[0]);
+      likeRI.clear();
+      likeRI.emplace_back(s62);
+   }
+   else if (likeRI.size() > 1 && likeRI[0][0] == 0.0 && CountZeros(likeRI[0]) == 1) {
+      const S6 s62 = RI::Resort_V2(likeRI[0]);
+      likeRI.clear();
+      likeRI.emplace_back(s62);
+   }
+
+   if (likeRI.size() > 1 || likeRI.empty()) {
+      //std::cout << input.GetStrCell() << std::endl;
+      RI::OutputVector(likeRI);
+      throw; "bad likeRI";
+   }
+   std::vector<S6> summary;
+   //summary.emplace_back(likeRI[0]);
+
+   for (size_t i = 0; i < likeRI.size(); ++i) {
+      const std::string RI = RI::OutputRootInvariants(likeRI[i]);
+      //const std::string line = "; SL " + LRL_ToString(likeRI[i], RI);
+   }
+   const std::pair<S6, std::string> pss = std::make_pair(likeRI[0], RI::OutputRootInvariants(likeRI[0]));
+
+   return pss.first;
+}
+
 
 std::pair<S6, std::string>   RI::MakeRI(const LRL_ReadLatticeData& input, const S6& positiveRed) {
    //// this is the calculation (at least my attempt) to compute Bright and Kurlin's "Root Invariant"
