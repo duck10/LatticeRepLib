@@ -57,7 +57,7 @@ public:
    int getBlockSize() const { return  static_cast<int>(blocksize); }
    int getBlockStart() const { return static_cast<int>(blockstart); }
    std::string getPrefix() const { return prefix; }
-
+   bool DoGraphics() const { return doGraphics; }
 private:
 
    // File prefix methods

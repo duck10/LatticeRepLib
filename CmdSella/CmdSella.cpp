@@ -382,7 +382,6 @@ void AnalyzeS6(const S6 s6) {
 int main(int argc, char* argv[])
 {
    std::cout << "; SELLA method symmetry searching\n";
-   const bool doProduceSellaGraphics(true);
    WebIO webio(argc, argv, "CmdSella",0);
 
    CmdSellaControls controls;
@@ -395,8 +394,13 @@ int main(int argc, char* argv[])
    const size_t blocksize = dc_setup.getBlockSize();
    const size_t blockend = dc_setup.getBlockEnd();
 
+   if (controls.getShowControls()) {
+      std::cout << controls << std::endl;
+   }
+
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
 
+   const bool doProduceSellaGraphics = controls.DoGraphics();
    for (size_t whichCell = blockstart;
       whichCell < inputList.size() && whichCell < blockstart + blocksize; ++whichCell) {
 
@@ -416,54 +420,5 @@ int main(int argc, char* argv[])
    }
 
    exit(0);
-
-
-   //bool doProduceSellaGraphics = true;
-
-   //std::cout << "; SELLA method symmetry searching\n";
-
-   //WebIO webio(argc, argv, "CmdSella", 0);
-
-   //CmdSellaControls controls;
-   //controls.setWebRun(webio.m_hasWebInstructions);
-   //std::vector<LatticeCell> inputList = InputHandler::handleInput(controls, webio);
-   //std::cout << controls << std::endl;
-
-   //BlockUtils bu(webio.m_hasWebInstructions);
-   //bu.setBlockSize(controls.getBlockSize(), webio.m_hasWebInstructions);
-   //bu.setBlockStart(controls.getBlockStart());
-   //// webio block size and start for filename generation
-   //// Since the params are not coming in from command line args,
-   ////   we can overwrite them with either defaults or control input.
-   //webio.m_blocksize = bu.blocksize;
-   //webio.m_blockstart = bu.blockstart;
-   //webio.CreateFilenamesAndLinks(inputList.size(), "SEL");
-
-   //const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
-   //const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
-   //const std::vector<std::string>& FullfileNameList = webio.m_FullfileNameList;
-
-   //if (controls.getShowControls()) {
-   //   std::cout << controls << std::endl;
-   //}
-
-   //for (size_t i = bu.blockstart; i < (inputList.size()) && (i < bu.blockstart +bu. blocksize); ++i)
-   //{
-   //   std::cout << "; Sella graphics file(s) " <<
-   //      i + 1 << "  " << FullfileNameList[i - bu.blockstart] << std::endl;
-   //}
-
-   //for (size_t i = bu.blockstart; i < (inputList.size()) && (i < bu.blockstart + bu.blocksize); ++i)
-   //{
-   //   std::cout << ";----------------------------------------------------------" << std::endl;
-   //   std::cout << "; SELLA results for input case " << i << std::endl;
-
-   //   const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[i],
-   //      RawFileNameList[i - bu.blockstart]);
-   //   if (doProduceSellaGraphics) {
-   //      SendSellaToFile(svgOutput, RawFileNameList[i - bu.blockstart]);
-   //      std::cout << "; Send Sella Plot to graphics file " << FullfileNameList[i - bu.blockstart] << std::endl;
-   //   }
-   //}
 }
 
