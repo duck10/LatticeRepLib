@@ -1,24 +1,40 @@
-
 #include <iostream>
 
+#include "CmdToCellControls.h"
 #include "LRL_ReadLatticeData.h"
+#include "ProgramSetup.h"
 
-
-int main()
-{
+int main() {
    std::cout << "; To Cell" << std::endl;
-   const std::string latticeTypes("aAbBcCiIfFpPhHrR");
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      const size_t n = latticeTypes.find(inputList[i].GetLattice());
-      const std::string inputDataType = inputList[i].GetInputDataType();
+   try {
+      CmdToCellControls controls;
+      const BasicProgramInput<CmdToCellControls> dc_setup("CmdToCell", controls);
 
-      std::string lattice;
-      if (inputDataType.size() > 2) lattice = "P";
-      else if(n == std::string::npos) lattice = "P";
-      else lattice = std::string(inputList[i].GetLattice());
+      if (dc_setup.getInputList().empty()) {
+         throw std::runtime_error("; No input vectors provided");
+      }
 
-      std::cout << lattice  << " " <<LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
+      if (controls.shouldShowControls()) {
+         std::cout << controls << std::endl;
+      }
+
+      const std::string latticeTypes("aAbBcCiIfFpPhHrR");
+
+      for (const auto& input : dc_setup.getInputList()) {
+         const size_t n = latticeTypes.find(input.getLatticeType());
+
+         std::string lattice;
+         if (n == std::string::npos) lattice = "P";
+         else lattice = std::string(input.getLatticeType());
+
+         std::cout << lattice << " " << LRL_Cell_Degrees(input.getCell()) << std::endl;
+      }
+
+      return 0;
+   }
+   catch (const std::exception& e) {
+      std::cerr << "; An error occurred: " << e.what() << std::endl;
+      return 1;
    }
 }
