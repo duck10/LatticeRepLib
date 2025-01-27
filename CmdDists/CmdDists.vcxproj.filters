@@ -18,5 +18,16 @@
     <ClCompile Include="CmdDists.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CmdDistsControls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
