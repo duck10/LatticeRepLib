@@ -150,15 +150,12 @@
     <ClInclude Include="DistanceTypesUtils.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LatticeCell.h" />
-    <ClInclude Include="PathControlFeatures.h" />
-    <ClInclude Include="PerturbCountControl.h" />
     <ClInclude Include="ProgramSetup.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseControlVariables.cpp" />
     <ClCompile Include="DistanceTypes.cpp" />
     <ClCompile Include="InputHandler.cpp" />
-    <ClCompile Include="PathControlFeatures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
