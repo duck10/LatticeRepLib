@@ -1,20 +1,20 @@
-
 #include <iostream>
 
+#include "CmdLMControls.h"
+#include "LatticeCell.h"
 #include "LatticeConverter.h"
 #include "LRL_LatticeMatcher.h"
-#include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
+#include "ProgramSetup.h"
 #include "S6.h"
 
-
-std::vector<S6> GetInputSellingReducedVectors(const std::vector<LRL_ReadLatticeData>& input) {
+std::vector<S6> GetInputSellingReducedVectors(const std::vector<LatticeCell>& input) {
    std::vector<S6> v;
    LatticeConverter converter;
 
    MatS6 mat;
    for (size_t i = 0; i < input.size(); ++i) {
-      const S6 s6 = converter.SellingReduceCell(input[i].GetLattice(), input[i].GetCell(), mat);
+      const S6 s6 = converter.SellingReduceCell(input[i].getLatticeType(), input[i].getCell(), mat);
       v.push_back(s6);
    }
    return v;
@@ -42,31 +42,38 @@ MatS6 GetMatrixToReturnToReference(const std::string& referenceLattice, const LR
    return  MatS6::Inverse(mat_primitive_reduced);
 }
 
-int main()
-{
-   std::vector<S6> vLat;
+int main() {
    std::cout << "; Lattice Matching" << std::endl;
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
-   if (inputList.empty()) {
-      std::cout << "Lattice match requires something to match to" << std::endl;
-   } else {
-      const std::string referenceLattice = inputList[0].GetLattice();
-      const MatS6 mat_reference = GetMatrixToReturnToReference(referenceLattice, inputList[0].GetCell()); // NOTE: input cell
 
-      vLat = GetInputSellingReducedVectors(inputList);
+   try {
+      CmdLMControls controls;
+      const BasicProgramInput<CmdLMControls> dc_setup("CmdLM", controls);
+
+      if (dc_setup.getInputList().empty()) {
+         throw std::runtime_error("; Lattice match requires something to match to");
+      }
+
+      if (controls.shouldShowControls()) {
+         std::cout << controls << std::endl;
+      }
+
+      const std::string referenceLattice = dc_setup.getInputList()[0].getLatticeType();
+      const MatS6 mat_reference = GetMatrixToReturnToReference(referenceLattice, dc_setup.getInputList()[0].getCell());
+
+      std::vector<S6> vLat = GetInputSellingReducedVectors(dc_setup.getInputList());
 
       LRL_LatticeMatcher lm;
       lm.SetRecursionDepth(2);
       lm.SetReferenceLattice(vLat[0]); // Note that this uses the reduced cell
 
-      //lm.PrintMVtree();
-
       const std::vector<S6> vs = lm.MatchReference(vLat, mat_reference);
-       const std::vector<double> angles(lm.GetAngleAgreements());
-     //for (size_t i = 0; i < vs.size(); ++i) {
-      //   std::cout << i << " " << angles[i] << std::endl;
-      //}
+      const std::vector<double> angles(lm.GetAngleAgreements());
       std::cout << ListOutput(vs, angles, referenceLattice);
-   }
 
+      return 0;
+   }
+   catch (const std::exception& e) {
+      std::cerr << "; An error occurred: " << e.what() << std::endl;
+      return 1;
+   }
 }

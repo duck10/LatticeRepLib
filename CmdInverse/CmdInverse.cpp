@@ -2,33 +2,47 @@
 #include <string>
 #include <vector>
 
+#include "CmdInverseControls.h"
 #include "LRL_Cell.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_WriteLatticeData.h"
+#include "ProgramSetup.h"
 
-static std::string UpdateInverseLatticeType(const std::string& lattice) {
+static std::string UpdateInverseLatticeTypeToInverseType(const std::string& lattice) {
    if (LRL_StringTools::strToupper(lattice) == "F") return "I";
    else if (LRL_StringTools::strToupper(lattice) == "I") return "F";
    else return lattice;
 }
 
-int main()
-{
+int main() {
    std::cout << "; ToInverse (to reciprocal cell)" << std::endl;
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
 
-   LRL_WriteLatticeData writercout;
-   writercout.SetPrecision(7);
+   try {
+      CmdInverseControls controls;
+      const BasicProgramInput<CmdInverseControls> dc_setup("CmdInverse", controls);
 
-   //LRL_WriteLatticeData writercerr;
-   //writercerr.SetPrecision(12);
+      if (dc_setup.getInputList().empty()) {
+         throw std::runtime_error("; No input vectors provided");
+      }
 
-   for (const auto& data : inputList)
-   {
-      const std::string lattice(UpdateInverseLatticeType(data.GetLattice()));
-      const LRL_Cell inverse(data.GetCell().Inverse());
-      std::cout << writercout.WriteLatticeAndCell(lattice, inverse);
-      //std::cout << writercerr.WriteLatticeAndCell(lattice, inverse);
+      if (controls.shouldShowControls()) {
+         std::cout << controls << std::endl;
+      }
+
+      LRL_WriteLatticeData writercout;
+      writercout.SetPrecision(7);
+
+      for (const auto& input : dc_setup.getInputList()) {
+         const std::string lattice(UpdateInverseLatticeTypeToInverseType(input.getLatticeType()));
+         const LRL_Cell inverse(input.getCell().Inverse());
+         std::cout << writercout.WriteLatticeAndCell(lattice, inverse);
+      }
+
+      return 0;
+   }
+   catch (const std::exception& e) {
+      std::cerr << "; An error occurred: " << e.what() << std::endl;
+      return 1;
    }
 }
