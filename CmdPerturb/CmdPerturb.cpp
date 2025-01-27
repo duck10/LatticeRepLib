@@ -2,19 +2,21 @@
 #include <string>
 #include <vector>
 
-//#include "BasisBase.h" // this has CreateUnitOrthogonalVector
+#include "CmdPerturbControls.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
 #include "NCDist.h"
+#include "ProgramSetup.h"
 #include "rhrand.h"
 #include "S6.h"
+
 
 double delta = 1.0;
 size_t ngen = 20;
 
 const std::string latticeNames = "pifrhcPIFRHC";
-RHrand ran;
+static RHrand ran;
 
 
 template<typename T>
@@ -98,40 +100,61 @@ void OutputPerturbedCell(const std::string& lattice, const S6& perturbed,
       std::cout << lattice + " " << cell << "  perturbed  " + label << std::endl;
 }
 
-void HandleOneInputCell(const LRL_ReadLatticeData& inputlattice) {
-   const std::string lattice = inputlattice.GetLattice();
 
-   const std::string strcel = inputlattice.GetStrCell();
+void HandleOneInputCell(const LatticeCell& inputlattice, const CmdPerturbControls& controls) {
+   const std::string lattice = inputlattice.getLatticeType();
+   const std::string strcel = inputlattice.GetInput();
 
-   std::cout << "\n" << strcel << "    original input cell" << std::endl;
+   std::cout << "\n" << strcel << ";    original input cell" << std::endl;
 
    const size_t pos = strcel.find("IT#");
    const std::string label = (pos != std::string::npos) ? strcel.substr(pos) : "";
-   for (size_t k = 0; k < ngen; ++k) {
-      const G6 perturbed = PerturbOneVector(inputlattice.GetCell());
+   for (size_t k = 0; k < controls.getPerturbCount(); ++k) {
+      const G6 perturbed = PerturbOneVector(inputlattice.getCell());
       OutputPerturbedCell(lattice, perturbed, label);
    }
 }
 
-int main(int argc, char* argv[])
-{
-   if (argc > 1) {
-      ngen = atoi(argv[1]);
-      if (argc > 2) {
-         const double d = atof(argv[2]);
-         if (d != 0.0) delta = atof(argv[2]);
+int main(int argc, char* argv[]) {
+   std::cout << "; Perturb vectors" << std::endl;
+
+   try {
+      // Get command line parameters if provided
+      int cmdCount = 20;
+      double cmdDelta = 1.0;
+      if (argc > 1) {
+         cmdCount = atoi(argv[1]);
+         if (argc > 2) {
+            const double d = atof(argv[2]);
+            if (d != 0.0) cmdDelta = d;
+         }
       }
+
+      CmdPerturbControls controls(cmdCount, cmdDelta);
+      const BasicProgramInput<CmdPerturbControls> dc_setup("CmdPerturb", controls);
+
+      if (dc_setup.getInputList().empty()) {
+         throw std::runtime_error("; No input vectors provided");
+      }
+
+      if (controls.shouldShowControls()) {
+         std::cout << controls << std::endl;
+      }
+
+      LRL_ReadLatticeData reader;
+      for (const auto& input : dc_setup.getInputList()) {
+         HandleOneInputCell(input, controls);
+      }
+
+      std::cout << LRL_ToString("; CmdPerturb: number of cells to produce = ",
+         controls.getPerturbCount(),
+         " orthogonal perturbation of ",
+         controls.getPerturbDelta(), "/1000\n\n");
+
+      return 0;
    }
-
-   std::cout << "; Perturb vectors" << std::endl;;
-
-   LRL_ReadLatticeData reader;
-   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      HandleOneInputCell(inputList[i]);
+   catch (const std::exception& e) {
+      std::cerr << "; An error occurred: " << e.what() << std::endl;
+      return 1;
    }
-
-   std::cout << "; " + LRL_ToString(reader.GetIncomingSemicolons()) << std::endl;
-   std::cout << LRL_ToString("; CmdPerturb: number of cells to produce = ", ngen,
-      " orthogonal perturbation of ", delta, "/1000\n\n");
 }
