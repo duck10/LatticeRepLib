@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "LRL_ReadLatticeData.h"
+#include "LatticeCell.h"
 #include "Polar.h"
 
 template<typename T>
@@ -26,11 +26,11 @@ double Max(const S6& s);
 double Max(const Polar& p);
 
 template<typename T>
-std::vector<T> ConvertInput(const std::vector<LRL_ReadLatticeData>& inputList) {
+std::vector<T> ConvertInput(const std::vector<LatticeCell>& inputList) {
    std::vector<T> v;
 
    for (const auto& input : inputList) {
-      v.emplace_back(T(input.GetCell()));
+      v.emplace_back(T(input.getCell()));
    }
    return v;
 }

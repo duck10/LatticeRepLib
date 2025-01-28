@@ -22,5 +22,8 @@
     <ClInclude Include="PlotPolar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlotPolarControls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
