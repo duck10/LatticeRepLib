@@ -1,21 +1,5 @@
-
-#include "C3Plot.h"
-#include "ColorTables.h"
-#include "GetDate.h"
-#include "LRL_DataToSVG.h"
-#include "LRL_CreateFileName.h"
-#include "LRL_MinMaxTools.h"
-#include "LRL_ReadLatticeData.h"
-#include "LRL_ToString.h"
-#include "LRL_Vector3.h"
-#include "Plots.h"
-#include "S6.h"
-#include "Vector_2.h"
-#include "WebIO.h"
-
 #include <algorithm>
 #include <cmath>
-#include <ctime>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -23,15 +7,31 @@
 #include <utility>
 #include <vector>
 
-static std::string MakeThePlot( const size_t whichPlot, const int wx, const int wy, const std::string& s) {
+#include "C3Plot.h"
+#include "PlotC3Controls.h"
+#include "ColorTables.h"
+#include "GetDate.h"
+#include "LRL_CreateFileName.h"
+#include "LRL_DataToSVG.h"
+#include "LRL_MinMaxTools.h"
+#include "LRL_ReadLatticeData.h"
+#include "LRL_ToString.h"
+#include "LRL_Vector3.h"
+#include "Plots.h"
+#include "ProgramSetup.h"
+#include "S6.h"
+#include "Vector_2.h"
+#include "WebIO.h"
+
+static std::string MakeThePlot(const size_t whichPlot, const int wx, const int wy, const std::string& s) {
    const std::string sScaler = std::to_string(whichPlot);
-   const std::string sScalerP3 = std::to_string(whichPlot+3);
+   const std::string sScalerP3 = std::to_string(whichPlot + 3);
    //<g transform = "translate(150,975) scale(1 -1)">
    const std::string x1 = LRL_DataToSVG_ToQuotedString(-0);
    const std::string y1 = LRL_DataToSVG_ToQuotedString(0);
    const std::string x2 = LRL_DataToSVG_ToQuotedString(0);
    const std::string y2 = LRL_DataToSVG_ToQuotedString(-std::min(wx, wy));
-   const std::string x3 = LRL_DataToSVG_ToQuotedString(-std::min(wx,wy));
+   const std::string x3 = LRL_DataToSVG_ToQuotedString(-std::min(wx, wy));
    const std::string y3 = LRL_DataToSVG_ToQuotedString(0);
 
    const std::string line1 = "\n<line x1=" + x1 + " y1 = " + y1 + " x2 =" + x2
@@ -58,17 +58,17 @@ static std::string MakeThePlot( const size_t whichPlot, const int wx, const int 
       "<g transform = \"translate(0,0)\" >\n"
       "<text   x = \"-480\" y = \"-20\"  font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -s </text>\n"
       "<g transform = \"translate(30,10)\">\n"
-      "<text  x = \"-480\" y = \"-20\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >"+sScaler+"</text >\n"
+      "<text  x = \"-480\" y = \"-20\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >" + sScaler + "</text >\n"
       "</g>\n"
       "</g>\n"
 
       "<g transform = \"translate(0,0)\" >\n"
       "<text  x = \"-60\" y = \"-450\" font-size = \"40\" font-family = \"Arial, Helvetica, sans-serif\" > -s </text>\n"
       "<g transform = \"translate(30,10)\">\n"
-      "<text x = \"-60\" y = \"-450\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >"+sScalerP3+"</text >\n"
+      "<text x = \"-60\" y = \"-450\"  font-size = \"30\" font-family = \"Arial, Helvetica, sans-serif\" >" + sScalerP3 + "</text >\n"
       "</g>\n"
       "</g>\n"
-   "</g>\n";
+      "</g>\n";
 
    return plotc3;;
 }
@@ -82,15 +82,15 @@ static std::string WrapSVG(const std::string& fileName,
    return    "\n\n" + s + "." + "</g>";
 }
 
-static void ListInput(const std::vector<LRL_ReadLatticeData>& inputList) {
+static void ListInput(const std::vector<LatticeCell>& inputList) {
    for (size_t i = 0; i < std::min(size_t(5), inputList.size()); ++i) {
-      std::cout << inputList[i].GetLattice() << "  " << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
+      std::cout << inputList[i].getLatticeType() << "  " << LRL_Cell_Degrees(inputList[i].getCell()) << std::endl;
    }
 
    if (inputList.size() > 5) {
       std::cout << " ..." << std::endl;
       for (size_t i = inputList.size() - 3; i < inputList.size(); ++i) {
-         std::cout << inputList[i].GetLattice() << "  " << LRL_Cell_Degrees(inputList[i].GetCell()) << std::endl;
+         std::cout << inputList[i].getLatticeType() << "  " << LRL_Cell_Degrees(inputList[i].getCell()) << std::endl;
       }
 
    }
@@ -116,8 +116,8 @@ static std::string PrepareLegend(const double x, const double y, const size_t nD
 
    out += count;
 
-   if (nData==0) {
-      std::cout << "; "+programName+" requires at least one lattice" << std::endl;
+   if (nData == 0) {
+      std::cout << "; " + programName + " requires at least one lattice" << std::endl;
    }
 
    return out;
@@ -147,7 +147,7 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
       << x
       << "\" y = \""
       << y + 40
-      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  "+ programName+"   "
+      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  " + programName + "   "
       << GetDate()
       << " </text>\n";
    s += os.str();;
@@ -161,9 +161,9 @@ std::string  PrepareColorGuide(const ColorRange& colorRange, const int xint, con
    const size_t nguides = 9;
    std::string out;
 
-   for ( size_t i=0; i<=nguides; ++i ) 
+   for (size_t i = 0; i <= nguides; ++i)
    {
-      const double frac = double(i) / double(nguides-1);
+      const double frac = double(i) / double(nguides - 1);
       colorRange.GetRGBFromRangeFraction(frac, r, g, b);
       const std::string circle = "";
       const std::string x = std::to_string(xint + i * 15);
@@ -177,71 +177,76 @@ std::string  PrepareColorGuide(const ColorRange& colorRange, const int xint, con
    return out;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
    const std::string programName("PlotC3");
    const std::string dataName("S6");
-   const std::string prefixName("PLT");
    const ColorRange colorRange(0xFFFF00, 0x1589FF);
 
-   std::cout << "; "+programName << std::endl;
+   std::cout << "; " + programName << std::endl;
 
-   WebIO webio(argc, argv, programName, 1);
-   webio.GetWebBlockSize(argc, argv);
-   webio.CreateFilenamesAndLinks(1, prefixName);
+   try {
+      WebIO webio(argc, argv, programName, 1);
 
-   const size_t& blockstart = webio.m_blockstart;
-   const size_t& blocksize = webio.m_blocksize;
+      CmdPlotC3Controls controls;
+      const BasicProgramInput<CmdPlotC3Controls> dc_setup("CmdPlotC3", controls);
 
-   const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
-   const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
-   const std::vector<std::string>& FullfileNameList = webio.m_FullfileNameList;
-   const std::string& filename = basicfileNameList[0];
-   const std::string& graphicsFileName = RawFileNameList[0];
 
-   //std::cout << "; PlotC3 cell block start " << blockstart << std::endl;
-   //std::cout << "; PlotC3 cell block size " << blocksize << std::endl;
+      webio.CreateFilenamesAndLinks(1, controls.getPrefix());
 
-   for (size_t i = blockstart; (i < blockstart + blocksize); ++i)
-   {
-      std::cout << "; "+programName+" graphics file(s) " <<
-         i+1 << "  " << FullfileNameList[i - blockstart] << std::endl;
+      const std::vector<std::string>& basicfileNameList = webio.m_basicfileNameList;
+      const std::vector<std::string>& RawFileNameList = webio.m_FileNameList;
+      const std::vector<std::string>& FullfileNameList = webio.m_FullfileNameList;
+      const std::string& filename = basicfileNameList[0];
+      const std::string& graphicsFileName = RawFileNameList[0];
+
+      if (dc_setup.getInputList().empty()) {
+         throw std::runtime_error("; No input vectors provided");
+      }
+
+      if (controls.shouldShowControls()) {
+         std::cout << controls << std::endl;
+      }
+
+      std::cout << "; " + programName + " graphics file " << webio.m_FullfileNameList[0] << std::endl;
+
+      C3Plot thePlot(graphicsFileName, 1200, 500, 500, 500);
+
+      std::string svgOutput;
+      const std::string intro = thePlot.GetIntro(webio.m_basicfileNameList[0]);
+      svgOutput += intro;
+
+      const std::vector<S6> vData = ConvertInput<S6>(dc_setup.getInputList());
+      std::pair<double, double> minmax = GetMinMaxPlot(vData);
+      if (abs(minmax.second) < 1.0E-5) minmax.second = 0.0;
+      const std::string dataRange =
+         LRL_ToString("; The " + dataName + " data value range is ", minmax.first, " to ", minmax.second);
+      const std::string legend = AddTextAtBottom(350, 550, dataRange, programName) +
+         PrepareColorGuide(colorRange, 850, 550);
+
+      svgOutput += legend;
+
+      ColorRange colRange(0xFFFF00, 0x1589FF); // nice yellow to blue
+
+      const bool drawConnectingLines = false;
+      if (drawConnectingLines) {
+         svgOutput += MakeThePlot(1, 500, 500, thePlot.CreatePolylineFromPoints(1, ".5", vData));
+         svgOutput += MakeThePlot(2, 1100, 500, thePlot.CreatePolylineFromPoints(2, ".5", vData));
+         svgOutput += MakeThePlot(3, 1700, 500, thePlot.CreatePolylineFromPoints(3, ".5", vData));
+      }
+
+      svgOutput += MakeThePlot(1, 500, 500, "  " + thePlot.DrawCells(1, vData, colRange));
+      svgOutput += MakeThePlot(2, 1100, 500, "  " + thePlot.DrawCells(2, vData, colRange));
+      svgOutput += MakeThePlot(3, 1700, 500, "  " + thePlot.DrawCells(3, vData, colRange));
+
+      std::cout << dataRange << std::endl << std::endl;
+      ListInput(dc_setup.getInputList());
+      thePlot.SendFrameToFile(graphicsFileName, svgOutput + thePlot.GetFoot());
+      std::cout << PrepareLegend(600, 600, vData.size(), programName);
+
+      return 0;
    }
-
-   LRL_ReadLatticeData reader;
-   const std::vector<LRL_ReadLatticeData> inputList = reader.ReadLatticeData();
-  
-   C3Plot thePlot(filename, 1200, 500, 500, 500);
-
-   std::string svgOutput;
-   const std::string intro = thePlot.GetIntro(filename);
-   svgOutput += intro;
-
-   const std::vector<S6> vData = ConvertInput<S6>(inputList);
-   std::pair<double, double> minmax = GetMinMaxPlot(vData);
-   if (abs(minmax.second) < 1.0E-5) minmax.second = 0.0;
-   const std::string dataRange = 
-      LRL_ToString("; The "+dataName+" data value range is ", minmax.first, " to ", minmax.second);
-   const std::string legend = AddTextAtBottom(350, 550, dataRange, programName) +
-      PrepareColorGuide(colorRange, 850, 550);
-
-   svgOutput += legend;
-
-   ColorRange colRange(0xFFFF00, 0x1589FF); // nice yellow to blue
-
-   if (bool drawConnectingLines = false)
-   {
-      svgOutput += MakeThePlot(1, 500, 500, thePlot.CreatePolylineFromPoints(1, ".5", vData));
-      svgOutput += MakeThePlot(2, 1100, 500, thePlot.CreatePolylineFromPoints(2, ".5", vData));
-      svgOutput += MakeThePlot(3, 1700, 500, thePlot.CreatePolylineFromPoints(3, ".5", vData));
+   catch (const std::exception& e) {
+      std::cerr << "; An error occurred: " << e.what() << std::endl;
+      return 1;
    }
-
-   svgOutput += MakeThePlot(1, 500, 500, "  " + thePlot.DrawCells(1, vData, colRange));
-   svgOutput += MakeThePlot(2, 1100, 500, "  " + thePlot.DrawCells(2, vData, colRange));
-   svgOutput += MakeThePlot(3, 1700, 500, "  " + thePlot.DrawCells(3, vData, colRange));
-
-   std::cout << dataRange << std::endl << std::endl;
-   ListInput(inputList);
-   thePlot.SendFrameToFile(graphicsFileName, svgOutput + thePlot.GetFoot());
-   std::cout << PrepareLegend(600, 600, vData.size(), programName);
 }

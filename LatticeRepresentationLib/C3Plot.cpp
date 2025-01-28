@@ -139,20 +139,23 @@ C3Plot::C3Plot(const std::string& filename, const int wx, const int wy, const in
    , m_gx(gx)
    , m_gy(gy)
    , m_svgIntro(BuildIntro(filename))
-   , m_svgFoot("\n</g> <!--end of scale=0.6-->\n</svg>")
+   , m_svgFoot("\n</g> <!--end of scale=0.6-->\n</svg>\0")
 {
+   std::cout << filename << std::endl;
 }
 
 std::string C3Plot::BuildIntro(const std::string& filename) const {
    const std::string swx = LRL_DataToSVG_ToQuotedString(m_wx);
    const std::string swy = LRL_DataToSVG_ToQuotedString(m_wy);
 
-   return
+   const std::string returnvalue = 
    "<svg width=" + swx + " height=" + swy +
       " viewBox=\"1 0  " + LRL_DataToSVG(m_wx, " ", m_wy) +
       "\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" \nxmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
       "\n<desc>File name  = " + filename + " </desc> """ +
-      "\n <g transform=\"scale(0.6)\">\n";
+      "\n <g transform=\"scale(0.6)\">\n\0";
+
+   return returnvalue;
 }
 
 
