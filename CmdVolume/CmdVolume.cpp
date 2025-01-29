@@ -1,16 +1,34 @@
-
 #include <iostream>
 
-#include "LRL_ReadLatticeData.h"
+#include "CmdVolumeControls.h"
+#include "ProgramSetup.h"
 
-
-int main()
-{
-   const std::vector<LRL_ReadLatticeData> inputList = LRL_ReadLatticeData().ReadLatticeData();
+int main() {
    std::cout << "; Volume" << std::endl;
-   for (size_t i = 0; i < inputList.size(); ++i) {
-      const LRL_Cell cell(inputList[i].GetCell());
-      const double volume = cell.Volume();
-      std::cout << "  " << inputList[i].GetLattice() << " " << LRL_Cell_Degrees(cell) << "  Volume = " << volume << std::endl;
+
+   try {
+      CmdVolumeControls controls;
+      const BasicProgramInput<CmdVolumeControls> dc_setup("CmdVolume", controls);
+
+      if (dc_setup.getInputList().empty()) {
+         throw std::runtime_error("; No input vectors provided");
+      }
+
+      if (controls.shouldShowControls()) {
+         std::cout << controls << std::endl;
+      }
+
+      for (const auto& input : dc_setup.getInputList()) {
+         const LRL_Cell cell(input.getCell());
+         const double volume = cell.Volume();
+         std::cout << "  " << input.getLatticeType() << " "
+            << LRL_Cell_Degrees(cell) << "  Volume = " << volume << std::endl;
+      }
+
+      return 0;
+   }
+   catch (const std::exception& e) {
+      std::cerr << "; An error occurred: " << e.what() << std::endl;
+      return 1;
    }
 }
