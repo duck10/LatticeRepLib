@@ -63,7 +63,7 @@ private:
    }
 
    static constexpr int DEFAULT_COUNT = 20;
-   static constexpr double DEFAULT_DELTA = 1.0;
+   static constexpr double DEFAULT_DELTA = 4.0;
 
    int perturbCount;
    double perturbDelta;
