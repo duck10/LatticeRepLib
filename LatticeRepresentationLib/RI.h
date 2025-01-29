@@ -1,7 +1,7 @@
 #ifndef RI_H
 #define RI_H
 
-
+#include "LatticeCell.h"
 #ifdef _MSC_VER
 
 #define USE_LOCAL_HEADERS
@@ -74,10 +74,16 @@ public:
    RI& operator+= (const RI& v);
    RI& operator-= (const RI& v);
    RI operator+ (const RI& v) const;
-   RI operator- (const RI& v) const;
+   RI operator- (const RI& v) const {
+      const RI u(*this);
+      return { u[0] - v[0], u[1] - v[1], u[2] - v[2], u[3] - v[3], u[4] - v[4], u[5] - v[5] };
+   }
    RI operator* (const double d) const;
    RI operator/ (const double d) const;
-   RI operator- (void) const; // unary
+   RI operator- (void) const {
+      const RI& s(*this);
+      return { -s[0],-s[1],-s[2],-s[3],-s[4],-s[5] };
+   } // unary
    bool operator== (const RI& ri) const;
    bool operator!= (const RI& ri) const;
 
@@ -109,7 +115,7 @@ public:
    static S6 ResetZeros(const S6& vs);
    static S6 MakeAllPositive(const S6& s);
    static int CountZeros(const S6& s6);
-   static std::pair<S6, std::string> MakeRI(const LRL_ReadLatticeData& input, const S6& positiveRed);
+   static std::pair<S6, std::string> MakeRI(const LatticeCell& input, const S6& positiveRed);
    static S6 MakeRI(const std::string& lattice, const S6& positiveRed);
 
 

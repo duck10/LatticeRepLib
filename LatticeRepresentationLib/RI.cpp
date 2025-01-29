@@ -46,7 +46,7 @@ RI::RI(const double v[6])
 {
    m_dim = 6;
    m_vec.resize(6);
-   const LRL_ReadLatticeData input;
+   const LatticeCell input(m_vec);
    const std::pair<S6, std::string> pss = MakeRI(input, v);
    m_vec = pss.first.GetVector();
 }
@@ -76,7 +76,7 @@ RI::RI(const VecN& v) {
    if (v.size() == 6) {
       m_dim = 6;
       m_valid = true;
-      const LRL_ReadLatticeData input;
+      const LatticeCell input(v);
       const std::pair<S6, std::string> pss = MakeRI(input, v);
       m_vec = pss.first.GetVector();
    }
@@ -317,7 +317,7 @@ S6 RI::MakeRI(const std::string& lattice, const S6& s6) {
 }
 
 
-std::pair<S6, std::string>   RI::MakeRI(const LRL_ReadLatticeData& input, const S6& positiveRed) {
+std::pair<S6, std::string>   RI::MakeRI(const LatticeCell& input, const S6& positiveRed) {
    //// this is the calculation (at least my attempt) to compute Bright and Kurlin's "Root Invariant"
 
    // generate 24 reflections
@@ -385,9 +385,8 @@ std::pair<S6, std::string>   RI::MakeRI(const LRL_ReadLatticeData& input, const 
 
 RI RI::rand() {
    const S6 s6rand{ S6::randDeloneReduced() };
-   const std::pair<S6, std::string> pss = MakeRI(LRL_ReadLatticeData(), -s6rand);
-   const RI ri = pss.first;
-   return ri;
+   const S6 pss = MakeRI("P", -s6rand);
+   return pss;
 }
 
 std::vector<S6> RI::ResetZeros(const std::vector<S6>& vs) {

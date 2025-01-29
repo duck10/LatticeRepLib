@@ -6,12 +6,21 @@
 #include "G6.h"
 #include "NCDist.h"
 #include "R9Dist.h"
+#include "RI.h"
 #include "S6.h"
 #include "V7Dist.h"
 #include "Selling.h"
 
 #include <memory>
 #include <string>
+
+/*
+HOW TO ADD A NEW DISTANCE TYPE
+1. add the idenifier to the list of VALID_TYPES in DistanceTypesUtils
+2. add a new branch in the DistanceFactory constructor
+3. add a new class in Distance.h
+  That should do the job, once it is compilable.
+*/
 
 class Distance {
 public:
@@ -58,6 +67,26 @@ public:
    std::string getColor() const override { return "#FF0000"; }  // Red
 };
 
+class RIDistance : public Distance {
+public:
+   template<typename T>
+   static double distRI(const T& t1, const T& t2) {
+      return ((RI(t1) - RI(t2)).norm());
+   }
+
+   double dist(const S6& s1, const S6& s2) const override {return distRI(s1,s2);}
+   double dist(const G6& g1, const G6& g2) const override {return distRI(g1,g2);}
+
+   std::string getName() const override {
+      return "RI";
+   }
+
+   std::string getColor() const override {
+      return "#FF00FF";  // Magenta
+   }
+};
+
+
 // Distance_V7Dist.h
 class V7Distance : public Distance {
 public:
@@ -97,4 +126,6 @@ public:
       return "#FF00FF";  // Magenta
    }
 };
+
+
 #endif // DISTANCE_H
