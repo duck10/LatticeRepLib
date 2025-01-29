@@ -17,6 +17,7 @@
 /*
 HOW TO ADD A NEW DISTANCE TYPE
 1. add the idenifier to the list of VALID_TYPES in DistanceTypesUtils
+        (currently this is in folder InputHandler so it can be used generally, which it is not.)
 2. add a new branch in the DistanceFactory constructor
 3. add a new class in Distance.h
   That should do the job, once it is compilable.
