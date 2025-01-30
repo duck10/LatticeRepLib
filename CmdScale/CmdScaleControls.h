@@ -52,7 +52,7 @@ public:
       }
    }
 
-   std::string scaleType = "VOLUME";  // Default to S6
+   std::string scaleType = "VOLUME";  // Default to VOLUME
    bool hasWebInput = false;
 };
 

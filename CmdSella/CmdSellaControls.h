@@ -33,8 +33,12 @@ public:
          setBlockStart(std::stoul(value));
       });
 
-
    InputHandler::registerHandler("PREFIX", 0.35,
+      [this](const BaseControlVariables&, const std::string& value) {
+         setPrefix(value);
+      });
+
+   InputHandler::registerHandler("FILEPREFIX", 0.35,
       [this](const BaseControlVariables&, const std::string& value) {
          setPrefix(value);
       });
