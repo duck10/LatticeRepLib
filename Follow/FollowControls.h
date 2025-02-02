@@ -121,12 +121,6 @@ public:
          }
       );
 
-      InputHandler::registerHandler("SHOW", .5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showControls = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
-
       InputHandler::registerHandler("SHOWMARKERS", .2,
          [this](BaseControlVariables&, const std::string& value) {
             showDataMarkers = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());

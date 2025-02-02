@@ -17,11 +17,6 @@ public:
    }
 
    CmdPathControls(int commandLinePathLength = 20) : pathLength(commandLinePathLength) {
-      InputHandler::registerHandler("SHOW", .5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showControls = (value == "1" || value == "TRUE" || value.empty());
-         }
-      );
 
       InputHandler::registerHandler("LENGTH", 0.35,
          [this](BaseControlVariables&, const std::string& value) {

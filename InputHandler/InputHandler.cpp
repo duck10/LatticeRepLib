@@ -107,6 +107,9 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
    std::istream& input) {
    std::string line;
    while (std::getline(input, line)) {
+      if (controls.getEcho() || LRL_StringTools::strToupper(line)=="ECHO") {
+         std::cout << line << std::endl;
+      }
       if (line.empty() || line[0] == ';') continue;
       std::string rawline(line);
       std::transform(line.begin(), line.end(), line.begin(), ::toupper);
