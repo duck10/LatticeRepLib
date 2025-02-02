@@ -33,7 +33,9 @@ void Follow::PrintPathData(const Path& path) const {
    }
 }
 
-bool Follow::processPerturbation(int trialNum, int perturbationNum, const FollowInstance& instance) {
+bool Follow::processPerturbation(int trialNum, 
+   int perturbationNum, const FollowInstance& instance,
+   const std::vector<LatticeCell>& cells) {
    distfuncs = DistanceFactory::createEnabledDistances(controls.getDistanceTypes());
    if (distfuncs.empty()) {
       std::cerr << "; No distance types enabled - please enable at least one type" << std::endl;
@@ -41,7 +43,7 @@ bool Follow::processPerturbation(int trialNum, int perturbationNum, const Follow
    }
 
    std::string curfilename = instance.GetRawFileName();
-   const Path path = generatePath(trialNum, perturbationNum, instance.GetFollowSeed());
+   const Path path = generatePath(trialNum, perturbationNum, instance.GetFollowSeed(), cells);
    if (path.empty()) {
       std::cerr << "; Failed to generate valid path" << std::endl;
       return false;
@@ -90,7 +92,9 @@ bool Follow::processPerturbation(int trialNum, int perturbationNum, const Follow
    return true;
 }
 
-Path Follow::generatePath(const int trialNum, int perturbationNum, const std::vector<LatticeCell>& perturbedPoints) {
+Path Follow::generatePath(const int trialNum, const int perturbationNum, 
+   const std::vector<LatticeCell>& perturbedPoints,
+   const std::vector<LatticeCell>& cells) const {
 
    const int numPoints = controls.getNumPoints();
    switch (controls.getMode()) {
@@ -105,7 +109,7 @@ Path Follow::generatePath(const int trialNum, int perturbationNum, const std::ve
    case FollowerMode::TRIANGLE:
       return Path::generateTrianglePath(perturbedPoints[0], perturbedPoints[1], perturbedPoints[2], numPoints);
    case FollowerMode::SPLINE:
-      return Path::generateSplinePath(numPoints);
+      return Path::generateSplinePath(numPoints, cells);
    default:
       return Path();
    }

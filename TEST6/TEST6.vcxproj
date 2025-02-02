@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="earlierTestCode.cpp" />
     <ClCompile Include="TEST6.cpp" />
   </ItemGroup>
   <ItemGroup>

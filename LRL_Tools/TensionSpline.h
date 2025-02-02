@@ -17,6 +17,32 @@ public:
    // yp - output array for derivative information
    // sigma - tension factor (sign indicates if slopes are used)
 
+      /**
+    * @brief Determines the parameters necessary to compute an interpolatory spline under tension
+    *        through a sequence of functional values. The slopes at the two ends of the curve may
+    *        be specified or omitted. For actual computation of points on the curve, curv2()
+    *        should be called.
+    *
+    * @param n     The number of values to be interpolated (n >= 2)
+    * @param x     Array of n increasing abscissae of the functional values
+    * @param y     Array of n ordinates of the values (y[k] is the functional value corresponding to x[k])
+    * @param slp1  Desired value for the first derivative of the curve at x[0]
+    *              (ignored if sigma is negative)
+    * @param slpn  Desired value for the first derivative of the curve at x[n-1]
+    *              (ignored if sigma is negative)
+    * @param yp    Output array of length n containing values proportional to the second
+    *              derivative of the curve at the given nodes
+    * @param temp  Scratch storage array of length n
+    * @param sigma Tension factor (non-zero). Indicates the curviness desired:
+    *             - If |sigma| is nearly zero (e.g., 0.001), the result is approximately a cubic spline
+    *             - If |sigma| is large (e.g., 50), the result is nearly a polygonal line
+    *             - The sign of sigma indicates whether derivative information has been input:
+    *               - If sigma is negative, endpoint derivatives will be determined internally
+    *               - A standard value is approximately 1 in absolute value
+    *
+    * @note The function assumes x values are strictly increasing
+    * @note n, x, y, slp1, slpn and sigma are unaltered by the function
+    */
 
 
 
@@ -78,7 +104,7 @@ public:
 
          // Calculate coefficients
          const double c1_end = (delnn + delnm1) / (delnn * delnm1);
-         const double c2_end =-delnn / (delnm1 * deln);
+         const double c2_end = -delnn / (delnm1 * deln);
          const double c3_end = delnm1 / (delnn * deln);
          //std::cout << "coefficients: c1_end=" << c1_end << " c2_end=" << c2_end << " c3_end=" << c3_end << "\n";
 
@@ -206,26 +232,28 @@ public:
       //std::cout << "exps = " << exps << " sinhd2 = " << sinhd2 << "\n";
       //std::cout << "sinhs = " << sinhs << "\n";
 
-      double tension_term = (yp[i] * sinhd1 + yp[i - 1] * sinhd2) / sinhs;
-      double linear_term = ((y[i] - yp[i]) * del1 + (y[i - 1] - yp[i - 1]) * del2) / dels;
+      const double tension_term = (yp[i] * sinhd1 + yp[i - 1] * sinhd2) / sinhs;
+      const double linear_term = ((y[i] - yp[i]) * del1 + (y[i - 1] - yp[i - 1]) * del2) / dels;
 
       //std::cout << "tension_term = " << tension_term << "\n";
       //std::cout << "linear_term = " << linear_term << "\n";
       //std::cout << "final result = " << tension_term + linear_term << "\n";
-
-      return tension_term + linear_term;
+      const double result = tension_term + linear_term;
+      return result;
    }
 
 
 
 
    static void calculate(bool closed,
-      const std::vector<std::vector<double>>& points,
+      const std::vector<double>& xvals,               // separate x values
+      const std::vector<std::vector<double>>& points, // y values only
       std::vector<std::vector<double>>& derivatives,
       double sigma) {
 
       const int n = points.size();
       if (n < 2) throw std::invalid_argument("At least two points required");
+      if (xvals.size() != n) throw std::invalid_argument("X values must match number of points");
 
       // Basic validation
       if (points[0].empty()) throw std::invalid_argument("Points cannot be empty");
@@ -238,29 +266,12 @@ public:
          }
       }
 
-      // Extract x coordinates (parameter)
-      std::vector<double> x(n);
-      for (int i = 0; i < n; i++) {
-         x[i] = points[i][0];
-      }
+      // Initialize derivatives array to correct size
+      derivatives.clear();
+      derivatives.resize(n, std::vector<double>(dim));  // Resize with correct dimensions
 
-      // Check x monotonicity for open curves
-      if (!closed) {
-         for (int i = 1; i < n; i++) {
-            if (x[i] <= x[i - 1]) {
-               throw std::runtime_error("Points must be strictly monotonic in x");
-            }
-         }
-      }
-
-      // Initialize derivatives array
-      derivatives.resize(n);
-      for (auto& d : derivatives) {
-         d.resize(dim);
-      }
-
-      // Handle each component after x
-      for (int d = 1; d < dim; d++) {
+      // Handle each component
+      for (int d = 0; d < dim; d++) {
          std::vector<double> y(n);
          std::vector<double> yp(n);
          for (int i = 0; i < n; i++) {
@@ -268,10 +279,10 @@ public:
          }
 
          if (!closed) {
-            curv1(x, y, yp, sigma);
+            curv1(xvals, y, yp, sigma);
          }
          else {
-            kurvp1(x, y, yp, sigma);
+            kurvp1(xvals, y, yp, sigma);
          }
          // Store results
          for (int i = 0; i < n; i++) {
@@ -280,30 +291,27 @@ public:
       }
    }
 
-   static std::vector<double> evaluate(double t,
-      const std::vector<std::vector<double>>& points,
+   static std::vector<double> evaluate(const double t,
+      const std::vector<double>& xvals,              // separate x values
+      const std::vector<std::vector<double>>& points, // y values only
       const std::vector<std::vector<double>>& derivatives,
-      double sigma) {
+      const double sigma) {
 
       int n = static_cast<int>(points.size());
       if (n == 0) throw std::invalid_argument("No points provided");
       if (derivatives.size() != n) throw std::invalid_argument("Derivatives array size mismatch");
+      if (xvals.size() != n) throw std::invalid_argument("X values must match number of points");
 
       const int dim = static_cast<int>(points[0].size());
-      if (dim < 2) throw std::invalid_argument("Points must be at least 2D");
+      if (dim < 1) throw std::invalid_argument("Points must be at least 1D");
 
-      // Extract x coordinates
-      std::vector<double> x(n);
-      for (int i = 0; i < n; i++) {
-         x[i] = points[i][0];
-      }
+      //std::cout << "dim = " << dim << std::endl;
 
       // Prepare result vector
       std::vector<double> result(dim);
-      result[0] = t;  // First component is parameter value
 
       // Evaluate each component
-      for (int d = 1; d < dim; d++) {
+      for (int d = 0; d < dim; d++) {
          // Extract component values and derivatives
          std::vector<double> y(n), yp(n);
          for (int i = 0; i < n; i++) {
@@ -311,197 +319,196 @@ public:
             yp[i] = derivatives[i][d];
          }
 
+         //std::cout << "Evaluating component " << d << std::endl;
          // Use existing curv2
-         result[d] = curv2(t, n, x, y, yp, sigma);
+         result[d] = curv2(t, n, xvals, y, yp, sigma);
+         //std::cout << "result[" << d << "] = " << result[d] << std::endl;
       }
-
       return result;
    }
 
+      template<typename PointType>
+      static void calculate(bool closed,
+         const std::vector<PointType>&points,
+         std::vector<PointType>&derivatives,
+         double sigma) {
+
+         if (points.size() < 2) throw std::invalid_argument("At least two points required");
+
+         // Initialize derivatives
+         derivatives.resize(points.size());
+
+         // Handle each coordinate after x
+         const int dim = points[0].size();
+         for (int d = 1; d < dim; d++) {
+            std::vector<double> x(points.size());
+            std::vector<double> y(points.size());
+            std::vector<double> yp(points.size());
+
+            for (size_t i = 0; i < points.size(); i++) {
+               x[i] = points[i][0];
+               y[i] = points[i][d];
+            }
+
+            // Only check monotonicity for open curves
+            if (!closed) {
+               for (size_t i = 1; i < x.size(); i++) {
+                  if (x[i] <= x[i - 1]) {
+                     throw std::runtime_error("Points must be strictly monotonic in x");
+                  }
+               }
+               curv1(x, y, yp, sigma);
+            }
+            else {
+               kurvp1(x, y, yp, sigma);
+            }
+
+            // Store results
+            for (size_t i = 0; i < points.size(); i++) {
+               derivatives[i][d] = yp[i];
+            }
+         }
+      }
 
 
-   template<typename PointType>
-   static void calculate(bool closed,
-      const std::vector<PointType>& points,
-      std::vector<PointType>& derivatives,
-      double sigma) {
+      template<typename PointType>
+      static PointType evaluate_forward(double t,  // t is between 0 and 1
+         const std::vector<PointType>&points,
+         const std::vector<PointType>&derivatives,
+         double sigma) {
 
-      if (points.size() < 2) throw std::invalid_argument("At least two points required");
+         const int n = points.size();
+         if (n == 0) throw std::invalid_argument("No points provided");
+         if (derivatives.size() != n) throw std::invalid_argument("Derivatives array size mismatch");
 
-      // Initialize derivatives
-      derivatives.resize(points.size());
-
-      // Handle each coordinate after x
-      const int dim = points[0].size();
-      for (int d = 1; d < dim; d++) {
-         std::vector<double> x(points.size());
-         std::vector<double> y(points.size());
-         std::vector<double> yp(points.size());
-
-         for (size_t i = 0; i < points.size(); i++) {
+         // Extract x coordinates
+         std::vector<double> x(n);
+         for (int i = 0; i < n; i++) {
             x[i] = points[i][0];
-            y[i] = points[i][d];
          }
 
-         // Only check monotonicity for open curves
-         if (!closed) {
-            for (size_t i = 1; i < x.size(); i++) {
-               if (x[i] <= x[i - 1]) {
-                  throw std::runtime_error("Points must be strictly monotonic in x");
-               }
+         PointType result;
+         result[0] = t;
+
+         // Evaluate each coordinate
+         const int dim = points[0].size();
+         for (int d = 1; d < dim; d++) {
+            std::vector<double> y(n), yp(n);
+            for (int i = 0; i < n; i++) {
+               y[i] = points[i][d];
+               yp[i] = derivatives[i][d];
             }
-            curv1(x, y, yp, sigma);
+
+            result[d] = curv2(t, x.size(), x, y, yp, sigma);
+         }
+
+         return result;
+      }
+
+      template<typename PointType>
+      static PointType evaluate(double t,  // t is between 0 and 1
+         const std::vector<PointType>&points,
+         const std::vector<PointType>&derivatives,
+         double sigma) {
+
+         if (t <= 0.5) {
+            // First half - use t*2 to map [0,0.5] to [0,1]
+            return evaluate_forward(t * 2.0, points, derivatives, sigma);
          }
          else {
-            kurvp1(x, y, yp, sigma);
-         }
-
-         // Store results
-         for (size_t i = 0; i < points.size(); i++) {
-            derivatives[i][d] = yp[i];
-         }
-      }
-   }
-
-
-   template<typename PointType>
-   static PointType evaluate_forward(double t,  // t is between 0 and 1
-      const std::vector<PointType>& points,
-      const std::vector<PointType>& derivatives,
-      double sigma) {
-
-      const int n = points.size();
-      if (n == 0) throw std::invalid_argument("No points provided");
-      if (derivatives.size() != n) throw std::invalid_argument("Derivatives array size mismatch");
-
-      // Extract x coordinates
-      std::vector<double> x(n);
-      for (int i = 0; i < n; i++) {
-         x[i] = points[i][0];
-      }
-
-      PointType result;
-      result[0] = t;
-
-      // Evaluate each coordinate
-      const int dim = points[0].size();
-      for (int d = 1; d < dim; d++) {
-         std::vector<double> y(n), yp(n);
-         for (int i = 0; i < n; i++) {
-            y[i] = points[i][d];
-            yp[i] = derivatives[i][d];
-         }
-
-         result[d] = curv2(t, x.size(), x, y, yp, sigma);
-      }
-
-      return result;
-   }
-
-   template<typename PointType>
-   static PointType evaluate(double t,  // t is between 0 and 1
-      const std::vector<PointType>& points,
-      const std::vector<PointType>& derivatives,
-      double sigma) {
-
-      if (t <= 0.5) {
-         // First half - use t*2 to map [0,0.5] to [0,1]
-         return evaluate_forward(t * 2.0, points, derivatives, sigma);
-      }
-      else {
-         // Second half - use (1-t)*2 to map [0.5,1] to [1,0]
-         return evaluate_forward((1.0 - t) * 2.0, points, derivatives, sigma);
-      }
-   }
-
-
-
-
-
-   static void kurvp1(const std::vector<double>& x,
-      const std::vector<double>& y,
-      std::vector<double>& yp,
-      double sigma) {
-
-      const int n = x.size();
-      if (n < 2) throw std::invalid_argument("At least two points required");
-
-      // Workspace array
-      std::vector<double> temp(2 * n);  // Double size needed for closed curves
-
-      // Calculate initial derivatives and accumulate arclength
-      double s = 0.0;
-      std::vector<double> dels(n);
-
-      // First point
-      double delx1 = x[1] - x[0];
-      double dely1 = y[1] - y[0];
-      dels[0] = std::sqrt(delx1 * delx1 + dely1 * dely1);
-      s = dels[0];
-      yp[0] = dely1 / dels[0];
-
-      // Interior points
-      for (int i = 1; i < n - 1; i++) {
-         double delx2 = x[i + 1] - x[i];
-         double dely2 = y[i + 1] - y[i];
-         dels[i] = std::sqrt(delx2 * delx2 + dely2 * dely2);
-         s += dels[i];
-         yp[i] = dely2 / dels[i] - yp[i - 1];
-      }
-
-      // Last point connecting back to start
-      double delxn = x[0] - x[n - 1];
-      double delyn = y[0] - y[n - 1];
-      dels[n - 1] = std::sqrt(delxn * delxn + delyn * delyn);
-      s += dels[n - 1];
-      yp[n - 1] = delyn / dels[n - 1] - yp[n - 2];
-
-      // Denormalize tension factor for closed curve
-      double sigmap = std::abs(sigma) * n / s;
-
-      // Forward elimination with periodic boundary
-      double dels1 = sigmap * dels[0];
-      double exps = std::exp(dels1);
-      double sinhs = 0.5 * (exps - 1.0 / exps);
-      double sinhin = 1.0 / (dels[0] * sinhs);
-      double diag1 = sinhin * (dels1 * 0.5 * (exps + 1.0 / exps) - sinhs);
-      double diagin = 1.0 / diag1;
-      double spdiag = sinhin * (sinhs - dels1);
-      temp[0] = diagin * spdiag;
-
-      // Interior points
-      double diag2 = 0.0;
-      for (int i = 1; i < n; i++) {
-         dels1 = sigmap * dels[i];
-         exps = std::exp(dels1);
-         sinhs = 0.5 * (exps - 1.0 / exps);
-         sinhin = 1.0 / (dels[i] * sinhs);
-         diag2 = sinhin * (dels1 * 0.5 * (exps + 1.0 / exps) - sinhs);
-
-         if (i < n - 1) {
-            diagin = 1.0 / (diag1 + diag2 - spdiag * temp[i - 1]);
-            yp[i] = diagin * (yp[i] - spdiag * yp[i - 1]);
-            temp[n + i] = -diagin * temp[n + i - 1] * spdiag;
-            if (i == 1) temp[n + 1] = -diagin * spdiag;
-            spdiag = sinhin * (sinhs - dels1);
-            temp[i] = diagin * spdiag;
-            diag1 = diag2;
+            // Second half - use (1-t)*2 to map [0.5,1] to [1,0]
+            return evaluate_forward((1.0 - t) * 2.0, points, derivatives, sigma);
          }
       }
 
-      // Special handling for last point connecting back to first
-      temp[n - 1] = temp[2 * n - 1] - temp[n - 1];
-      diagin = 1.0 / (diag1 + diag2 + spdiag * temp[0] + spdiag * temp[n - 1]);
-      yp[n - 1] = diagin * (yp[n - 1] - spdiag * yp[0] - spdiag * yp[n - 2]);
 
-      // Back substitution
-      for (int i = 0; i < n - 1; i++) {
-         yp[i] = yp[i] + temp[i] * yp[n - 1];
+
+
+
+      static void kurvp1(const std::vector<double>&x,
+         const std::vector<double>&y,
+         std::vector<double>&yp,
+         double sigma) {
+
+         const int n = x.size();
+         if (n < 2) throw std::invalid_argument("At least two points required");
+
+         // Workspace array
+         std::vector<double> temp(2 * n);  // Double size needed for closed curves
+
+         // Calculate initial derivatives and accumulate arclength
+         double s = 0.0;
+         std::vector<double> dels(n);
+
+         // First point
+         double delx1 = x[1] - x[0];
+         double dely1 = y[1] - y[0];
+         dels[0] = std::sqrt(delx1 * delx1 + dely1 * dely1);
+         s = dels[0];
+         yp[0] = dely1 / dels[0];
+
+         // Interior points
+         for (int i = 1; i < n - 1; i++) {
+            double delx2 = x[i + 1] - x[i];
+            double dely2 = y[i + 1] - y[i];
+            dels[i] = std::sqrt(delx2 * delx2 + dely2 * dely2);
+            s += dels[i];
+            yp[i] = dely2 / dels[i] - yp[i - 1];
+         }
+
+         // Last point connecting back to start
+         double delxn = x[0] - x[n - 1];
+         double delyn = y[0] - y[n - 1];
+         dels[n - 1] = std::sqrt(delxn * delxn + delyn * delyn);
+         s += dels[n - 1];
+         yp[n - 1] = delyn / dels[n - 1] - yp[n - 2];
+
+         // Denormalize tension factor for closed curve
+         double sigmap = std::abs(sigma) * n / s;
+
+         // Forward elimination with periodic boundary
+         double dels1 = sigmap * dels[0];
+         double exps = std::exp(dels1);
+         double sinhs = 0.5 * (exps - 1.0 / exps);
+         double sinhin = 1.0 / (dels[0] * sinhs);
+         double diag1 = sinhin * (dels1 * 0.5 * (exps + 1.0 / exps) - sinhs);
+         double diagin = 1.0 / diag1;
+         double spdiag = sinhin * (sinhs - dels1);
+         temp[0] = diagin * spdiag;
+
+         // Interior points
+         double diag2 = 0.0;
+         for (int i = 1; i < n; i++) {
+            dels1 = sigmap * dels[i];
+            exps = std::exp(dels1);
+            sinhs = 0.5 * (exps - 1.0 / exps);
+            sinhin = 1.0 / (dels[i] * sinhs);
+            diag2 = sinhin * (dels1 * 0.5 * (exps + 1.0 / exps) - sinhs);
+
+            if (i < n - 1) {
+               diagin = 1.0 / (diag1 + diag2 - spdiag * temp[i - 1]);
+               yp[i] = diagin * (yp[i] - spdiag * yp[i - 1]);
+               temp[n + i] = -diagin * temp[n + i - 1] * spdiag;
+               if (i == 1) temp[n + 1] = -diagin * spdiag;
+               spdiag = sinhin * (sinhs - dels1);
+               temp[i] = diagin * spdiag;
+               diag1 = diag2;
+            }
+         }
+
+         // Special handling for last point connecting back to first
+         temp[n - 1] = temp[2 * n - 1] - temp[n - 1];
+         diagin = 1.0 / (diag1 + diag2 + spdiag * temp[0] + spdiag * temp[n - 1]);
+         yp[n - 1] = diagin * (yp[n - 1] - spdiag * yp[0] - spdiag * yp[n - 2]);
+
+         // Back substitution
+         for (int i = 0; i < n - 1; i++) {
+            yp[i] = yp[i] + temp[i] * yp[n - 1];
+         }
       }
-   }
 
 
-};
+   };
 
 #endif // TENSION_SPLINE_H
 

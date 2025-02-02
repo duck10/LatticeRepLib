@@ -61,13 +61,14 @@ static void processInstances(
    const std::vector<FollowInstance>& instances,
    size_t blockStart,
    size_t blockEnd,
-   FollowControls& controls)
+   FollowControls& controls,
+   const std::vector<LatticeCell>& cells)
 {
    Follow follow(controls);
    for (size_t i = blockStart; i < blockEnd && i < instances.size(); ++i) {
       if (follow.processPerturbation(instances[i].GetTrial(),
          instances[i].GetPerturbation(),
-         instances[i]))
+         instances[i], cells))
       {
          std::cout << "; Follow graphics file(s) "
             << i << "  " << instances[i].GetFullFileName() << std::endl;
@@ -103,6 +104,8 @@ int main(int argc, char* argv[]) {
 
       // Create and process instances
       auto instances = CreateFollowInstanceList(controls, dc_setup.getInputList());
+      if (controls.getMode() == FollowerMode::SPLINE)
+         instances.resize(1);
 
       // Assign filenames to instances
       assignFilenamesToInstances(
@@ -122,7 +125,8 @@ int main(int argc, char* argv[]) {
          instances,
          dc_setup.getBlockStart(),
          dc_setup.getBlockEnd(),
-         controls);
+         controls,
+         dc_setup.getInputList());
 
       return 0;
    }

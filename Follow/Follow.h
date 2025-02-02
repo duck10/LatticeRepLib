@@ -11,11 +11,14 @@ class Follow {
 public:
    explicit Follow(FollowControls& controls);
 
-   bool processPerturbation(int trialNum, int perturbationNum, const FollowInstance& instance);
+   bool processPerturbation(int trialNum, int perturbationNum, const FollowInstance& instance,
+      const std::vector<LatticeCell>& cells);
    void PrintPathData(const Path& path) const;
 
 private:
-   Path generatePath(const int trialNum, int perturbationNum, const std::vector<LatticeCell>& perturbedPoints);
+   Path generatePath(const int trialNum, const int perturbationNum, 
+      const std::vector<LatticeCell>& perturbedPoints,
+      const std::vector<LatticeCell>& cells) const;
    LatticeCell perturbVector(const LatticeCell& inputVector, const int perturbationIndex) const;
 
 private:
