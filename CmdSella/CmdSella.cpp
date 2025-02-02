@@ -279,7 +279,6 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LatticeCell& i
    gcs.updateChains(theDelonefits, theBravaisfits);  // Instead of CreateGrimmerChains
    gcs.CheckAllGrimmerChains();
    //std::cout << gcs << std::endl;
-   //std::cout << gcs << std::endl;
 
    {
       if (gcs.HasFailure()) {

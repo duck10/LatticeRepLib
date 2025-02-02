@@ -1,4 +1,8 @@
+#include "LRL_Cell_Degrees.h"
 #include "Path.h"
+#include "TensionSpline.h"
+
+#include <algorithm>
 
 
 Path Path::generatePointPath(const LatticeCell& startPoint, const int numPoints) {
@@ -100,7 +104,46 @@ Path Path::generateChord3Path(const LatticeCell& mobile1, const LatticeCell& mob
    return path;
 }
 
-Path Path::generateSplinePath(const int numPoints) { return Path(); }
+Path Path::generateSplinePath( const int numPoints, const std::vector<LatticeCell>& cells) {
+   std::vector<std::vector<double>> derivatives;
+   std::vector<std::vector<double>> vpoints;
+   const double sigma = -0.2;
+
+   for (const auto& c : cells) {
+      vpoints.emplace_back((S6(c.getCell()).GetVector()));
+   }
+
+   double pathSum = 0.0;
+   std::vector<double> xvals;
+   for (const auto& c : cells) {
+      const S6 currentPoint = c.getCell();
+      const double delta = (currentPoint - S6(cells[0].getCell())).norm();
+      pathSum += delta;
+      if (xvals.empty()) {
+         xvals.emplace_back(0.0);
+      }
+      else {
+         xvals.emplace_back(pathSum);
+      }
+   }
+
+   for ( auto& x : xvals) {
+      x /= xvals.back();
+   }
+
+   TensionSpline::calculate(false, xvals, vpoints, derivatives, sigma);
+   const S6 finalPoint = S6(vpoints.back());
+   Path path;
+   for (size_t i = 0; i < numPoints; ++i) {
+      std::vector<double> s6Point = TensionSpline::evaluate(double(i) / (numPoints-1), xvals, vpoints, derivatives, -.1);
+
+      const auto pt1 = LatticeCell(S6(s6Point), "P");
+      const auto pt2 = LatticeCell(finalPoint, "P");
+      path.emplace_back(pt1,pt2);
+   }
+
+   return path; 
+}
 
 Path Path::generateTrianglePath(const LatticeCell& point1, const LatticeCell& point2,
    const LatticeCell& point3, const int numPoints) {

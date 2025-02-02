@@ -24,7 +24,7 @@ struct FollowerModeUtils {
       case FollowerMode::CHORD: return 2;
       case FollowerMode::CHORD3: return 3;
       case FollowerMode::TRIANGLE: return 3;
-      case FollowerMode::SPLINE: return 1;
+      case FollowerMode::SPLINE: return 2;
       default: return 1;
       }
    }
