@@ -13,11 +13,6 @@ public:
    }
 
    CmdPlotPolarControls() {
-      InputHandler::registerHandler("SHOW", .5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showControls = (value == "1" || value == "TRUE" || value.empty());
-         }
-      );
 
       InputHandler::registerHandler("PREFIX", 0.35,
          [this](BaseControlVariables&, const std::string& value) {

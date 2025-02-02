@@ -20,11 +20,6 @@ public:
 
    CmdToS6LControlVariables() {
 
-      InputHandler::registerHandler("SHOW", .5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showControls = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
 
       // Register handler for FORMAT command
       InputHandler::registerHandler("FORMAT", 0.35,

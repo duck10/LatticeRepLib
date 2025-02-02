@@ -22,11 +22,6 @@ public:
 
    CmdScaleControls() {
 
-      InputHandler::registerHandler("SHOW", .5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showControls = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
 
       // Register handler for TYPE command
       InputHandler::registerHandler("TYPE", 0.35,

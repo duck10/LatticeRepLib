@@ -39,13 +39,6 @@ public:
             setPrefix(value);
          });
 
-
-      InputHandler::registerHandler("SHOW", .5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showControls = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
-
    }
 
    int getBlockSize() const { return  static_cast<int>(blocksize); }

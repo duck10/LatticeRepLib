@@ -60,10 +60,9 @@ static void ProcessInputs(const std::vector<LatticeCell>& inputList,
       const LRL_Cell cell = LatticeConverter::MakePrimitiveCell(input.getLatticeType(), input.getCell());
       S6 red;
       const bool b = Selling::Reduce(cell, red);
-      const S6 s6(RI::MakeAllPositive(red));
+      const S6 s6Pos(RI::MakeAllPositive(red));
 
-      LRL_ReadLatticeData dummy;
-      RIs.emplace_back(RI::MakeRI(dummy, s6));
+      RIs.emplace_back(s6Pos, "P");
       SLs.emplace_back(red);
    }
 

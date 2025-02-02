@@ -31,13 +31,6 @@ public:
             generateCount = CmdGenUtils::validatePointCount(stoi(value));
          });
 
-
-      InputHandler::registerHandler("SHOW", .5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showControls = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.size()==0);
-         }
-      );
-
       InputHandler::registerHandler("TYPE", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
             std::istringstream iss(value);
