@@ -238,6 +238,7 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    writeGridAndAxes(width, height, margin, maxDist, allDistances);
    writePlotData(width, height, margin, maxDist, allDistances, distfuncs);
    writeLegend(width, margin, allDistances, distfuncs);
+   writeGlitchComments(distfuncs);
    writeMetadata(trial, perturbation, datetime.str());
    WriteDistanceSummary(allDistances);
 
@@ -248,94 +249,22 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
 void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxDist,
    const std::vector<std::vector<double>>& allDistances,
    const std::vector<std::unique_ptr<Distance>>& distfuncs) {
-   int leftMargin = margin;
-   LinearAxis xAxis, yAxis;
 
-   double actualMaxDist = 0.0;
-   for (const auto& distfuncs : allDistances) {
-      for (double d : distfuncs) {
-         if (d > 0 && !std::isnan(d) && d != MakeInvalidS6()[0]) {
-            actualMaxDist = std::max(actualMaxDist, d);
-         }
-      }
-   }
-
-   const AxisLimits xLimits = xAxis.LinearAxisLimits(0., double(allDistances[0].size() - 1));
-   const AxisLimits yLimits = yAxis.LinearAxisLimits(0., double(actualMaxDist));
-   const double xMin = xLimits.GetMin();
-   const double yMin = yLimits.GetMin();
-   const double plotWidth = width - leftMargin - margin;
-   const double plotHeight = height - 2 * margin;
-   const double xScale = plotWidth / (xLimits.GetMax() - xMin);
-   const double yScale = plotHeight / (yLimits.GetMax() - yMin);
-
-   const double invalidMarker = MakeInvalidS6()[0];
+   PlotDimensions dims = calculatePlotDimensions(width, height, margin, allDistances);
 
    for (size_t i = 0; i < allDistances.size(); ++i) {
-      const auto& distanceValues = allDistances[i];
-      if (distanceValues.empty()) continue;
+      if (allDistances[i].empty()) continue;
 
-      std::string color = ColorTables::interpolateColor(i, allDistances.size());
-      std::string pathId = "Path" + std::to_string(i);
-
-      controls;
-      svg << "\n\n<path class=\"" << pathId << "\" d=\"";
-      bool inLine = false;
-
-      for (size_t j = 0; j < distanceValues.size(); ++j) {
-         const double currentValue = distanceValues[j];
-         if (currentValue < 0.0 || std::isnan(currentValue) || currentValue == invalidMarker) {
-            inLine = false;
-            continue;
-         }
-         const double x = leftMargin + (j - xMin) * xScale;
-         const double y = height - margin - (currentValue - yMin) * yScale;
-
-         if (!inLine) {
-            svg << "M" << x << "," << y;
-            inLine = true;
-         }
-         else {
-            svg << " L" << x << "," << y;
-         }
-      }
-
-      svg << R"(" stroke=")" << color << R"(" fill="none" stroke-width="2"/>\n)";
+      const std::string color = ColorTables::interpolateColor(i, allDistances.size());
+      drawPlotLine(allDistances[i], dims, color, i);
 
       if (controls.shouldShowMarkers()) {
-         for (size_t j = 0; j < distanceValues.size(); ++j) {
-            const double currentValue = distanceValues[j];
-            if (currentValue >= 0 && !std::isnan(currentValue) && currentValue != invalidMarker) {
-               const double x = leftMargin + (j - xMin) * xScale;
-               const double y = height - margin - (currentValue - yMin) * yScale;
-               if (!std::isnan(y)) {
-                  svg << R"(<circle cx=")" << x << R"(" cy=")" << y
-                     << R"(" r="3" fill=")" << color << R"("/>)" << "\n";
-               }
-            }
-         }
-         svg << "\n";
+         drawMarkers(allDistances[i], dims, color);
       }
 
-      for (const auto& glitch : glitches) {
-         if (glitch.distanceType != distfuncs[i]->getName()) continue;
-         if (glitch.value == -19191.0) continue;
-
-         const double x = leftMargin + (glitch.index - xMin) * xScale;
-         const double y = height - margin - (glitch.value - yMin) * yScale;
-
-         svg << "\n" << R"(<line x1=")" << x << R"(" y1=")" << (height - margin)
-            << R"(" x2=")" << x << R"(" y2=")" << margin
-            << R"(" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="5,5"/>)";
-         svg << "\n" << R"(<path class="GlitchMarker" d="M)" << (x - 5) << " " << y << " L" << x << " "
-            << (y - 5) << " L" << (x + 5) << " " << y << " L" << x
-            << " " << (y + 5) << R"( Z" fill="#0000FF" stroke="black" stroke-width="1"/>)";
-         svg << "\n" << R"(<text class="GlitchIndex" x=")" << x << R"(" y=")" << (margin - 5)
-            << R"(" text-anchor="middle" font-size="12" fill="#0000FF">)" << glitch.index << R"(</text>)";
-      }
+      drawGlitches(dims, distfuncs[i]->getName());
    }
 }
-
 
 
 void SvgPlotWriter::writeLegend(int width, int margin,
@@ -433,4 +362,137 @@ std::string SvgPlotWriter::WriteDistanceSummary(const std::vector<std::vector<do
    svg << os.str();
    return os.str();
 }
+
+SvgPlotWriter::PlotDimensions SvgPlotWriter::calculatePlotDimensions(int width, int height, int margin,
+   const std::vector<std::vector<double>>& allDistances) const {
+   PlotDimensions dims;
+   dims.leftMargin = margin;
+   dims.height = height;
+   dims.margin = margin;
+
+   double actualMaxDist = 0.0;
+   for (const auto& distfuncs : allDistances) {
+      for (double d : distfuncs) {
+         if (d > 0 && !std::isnan(d) && d != MakeInvalidS6()[0]) {
+            actualMaxDist = std::max(actualMaxDist, d);
+         }
+      }
+   }
+
+   LinearAxis xAxis, yAxis;
+   const AxisLimits xLimits = xAxis.LinearAxisLimits(0., double(allDistances[0].size() - 1));
+   const AxisLimits yLimits = yAxis.LinearAxisLimits(0., double(actualMaxDist));
+
+   dims.xMin = xLimits.GetMin();
+   dims.yMin = yLimits.GetMin();
+   dims.plotWidth = width - dims.leftMargin - margin;
+   dims.plotHeight = height - 2 * margin;
+   dims.xScale = dims.plotWidth / (xLimits.GetMax() - dims.xMin);
+   dims.yScale = dims.plotHeight / (yLimits.GetMax() - dims.yMin);
+
+   return dims;
+}
+
+void SvgPlotWriter::drawPlotLine(const std::vector<double>& values,
+   const PlotDimensions& dims, const std::string& color, size_t pathIndex) {
+
+   std::string pathId = "Path" + std::to_string(pathIndex);
+   svg << "\n\n<path id=\"" << pathId << "\" d=\"";
+   bool inLine = false;
+   const double invalidMarker = MakeInvalidS6()[0];
+
+   for (size_t j = 0; j < values.size(); ++j) {
+      const double currentValue = values[j];
+      if (currentValue < 0.0 || std::isnan(currentValue) || currentValue == invalidMarker) {
+         inLine = false;
+         continue;
+      }
+      const double x = dims.leftMargin + (j - dims.xMin) * dims.xScale;
+      const double y = dims.height - dims.margin - (currentValue - dims.yMin) * dims.yScale;
+
+      if (!inLine) {
+         svg << "M" << x << "," << y;
+         inLine = true;
+      }
+      else {
+         svg << " L" << x << "," << y;
+      }
+   }
+   svg << R"(" stroke=")" << color << R"(" fill="none" stroke-width="2"/>\n)";
+}
+
+void SvgPlotWriter::drawMarkers(const std::vector<double>& values,
+   const PlotDimensions& dims, const std::string& color) {
+
+   const double invalidMarker = MakeInvalidS6()[0];
+   for (size_t j = 0; j < values.size(); ++j) {
+      const double currentValue = values[j];
+      if (currentValue >= 0 && !std::isnan(currentValue) && currentValue != invalidMarker) {
+         const double x = dims.leftMargin + (j - dims.xMin) * dims.xScale;
+         const double y = dims.height - dims.margin - (currentValue - dims.yMin) * dims.yScale;
+         if (!std::isnan(y)) {
+            svg << R"(<circle cx=")" << x << R"(" cy=")" << y
+               << R"(" r="3" fill=")" << color << R"("/>)" << "\n";
+         }
+      }
+   }
+   svg << "\n";
+}
+
+void SvgPlotWriter::drawGlitches(const PlotDimensions& dims, const std::string& distanceType) {
+   for (const auto& glitch : glitches) {
+      if (glitch.distanceType != distanceType) continue;
+      if (glitch.value == -19191.0) continue;
+
+      const double x = dims.leftMargin + (glitch.index - dims.xMin) * dims.xScale;
+      const double y = dims.height - dims.margin - (glitch.value - dims.yMin) * dims.yScale;
+
+      drawGlitchLine(x, dims.height, dims.margin);
+      drawGlitchMarker(x, y);
+      drawGlitchIndex(x, y, dims.margin, glitch.index);
+   }
+}
+
+void SvgPlotWriter::drawGlitchLine(double x, int height, int margin) {
+   svg << "\n" << R"(<line x1=")" << x << R"(" y1=")" << (height - margin)
+      << R"(" x2=")" << x << R"(" y2=")" << margin
+      << R"(" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="5,5"/>)";
+}
+
+void SvgPlotWriter::drawGlitchMarker(double x, double y) {
+   svg << "\n" << R"(<path id="GlitchMarker" d="M)" << (x - 5) << " " << y
+      << " L" << x << " " << (y - 5) << " L" << (x + 5) << " " << y
+      << " L" << x << " " << (y + 5)
+      << R"( Z" fill="#0000FF" stroke="black" stroke-width="1"/>)";
+}
+
+void SvgPlotWriter::drawGlitchIndex(double x, double y, int margin, size_t index) {
+   svg << "\n" << R"(<text id="GlitchIndex" x=")" << x << R"(" y=")" << (margin - 5)
+      << R"(" text-anchor="middle" font-size="12" fill="#0000FF">)" << index << R"(</text>)";
+}
+
+void SvgPlotWriter::writeGlitchComments(const std::vector<std::unique_ptr<Distance>>& distfuncs) {
+   svg << "\n<!--\nGlitch Summary\n";
+   for (const auto& distfunc : distfuncs) {
+      const std::string& distType = distfunc->getName();
+      std::vector<Glitch> typeGlitches;
+
+      std::copy_if(glitches.begin(), glitches.end(), std::back_inserter(typeGlitches),
+         [&distType](const Glitch& g) { return g.distanceType == distType; });
+
+      std::sort(typeGlitches.begin(), typeGlitches.end(),
+         [](const Glitch& a, const Glitch& b) { return a.changePercent > b.changePercent; });
+
+      const size_t numToShow = std::min(size_t(10), typeGlitches.size());
+      if (numToShow > 0) {
+         svg << "\n" << distType << " glitches:\n";
+         for (size_t j = 0; j < numToShow; ++j) {
+            svg << typeGlitches[j] << "\n";
+         }
+      }
+   }
+   svg << "-->\n\n";
+}
+
+
 
