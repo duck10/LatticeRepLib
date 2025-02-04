@@ -8,8 +8,8 @@ class CheckInputControls : public BaseControlVariables {
 public:
    friend std::ostream& operator<< (std::ostream& os, const CheckInputControls& ctrl) {
       os << "; CmdCheckInputControls\n";
-      os << "; webRun " << ctrl.getHasWebInput() << std::endl;
-      os << "; echo " << (ctrl.getEcho()) ? "true" : "false";
+      os << "; webRun "<<  ((ctrl.getHasWebInput()) ? "true" : "false") << std::endl;
+      os << "; echo " << ((ctrl.getEcho()) ? "true" : "false") << std::endl;
       return os;
    }
 };

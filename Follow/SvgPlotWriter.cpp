@@ -1,7 +1,6 @@
 ﻿#pragma warning(disable: 4996)
 
 #include "FollowControls.h"
-#include "GlitchDetector.h"
 #include "LinearAxis.h"
 #include "PathPoint.h"
 #include "SvgPlotWriter.h"
@@ -15,11 +14,11 @@
 #include <iostream>
 #include <sstream>
 
-SvgPlotWriter::SvgPlotWriter(std::ofstream& outSvg, const FollowControls& controls,
-   GlitchDetector& detector)
+SvgPlotWriter::SvgPlotWriter(std::ofstream& outSvg, const FollowControls& controls)
    : svg(outSvg)
-   , glitchDetector(detector)
-   , controls(controls) {}
+   , controls(controls)
+   , glitches() {}
+
 
 static S6 MakeInvalidS6() {
    return { 19191.111111111111, 0, 0, 0, 0, 0 };
@@ -237,7 +236,7 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    writeHeader(width, height);
    writeTitle(width, datetime.str(), trial, perturbation);
    writeGridAndAxes(width, height, margin, maxDist, allDistances);
-   writePlotData(width, height, margin, maxDist, allDistances);
+   writePlotData(width, height, margin, maxDist, allDistances, distfuncs);
    writeLegend(width, margin, allDistances, distfuncs);
    writeMetadata(trial, perturbation, datetime.str());
    WriteDistanceSummary(allDistances);
@@ -245,8 +244,10 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    svg << "</svg>\n";
 }
 
+
 void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxDist,
-   const std::vector<std::vector<double>>& allDistances) {
+   const std::vector<std::vector<double>>& allDistances,
+   const std::vector<std::unique_ptr<Distance>>& distfuncs) {
    int leftMargin = margin;
    LinearAxis xAxis, yAxis;
 
@@ -273,10 +274,6 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
    for (size_t i = 0; i < allDistances.size(); ++i) {
       const auto& distanceValues = allDistances[i];
       if (distanceValues.empty()) continue;
-
-      if (controls.isGlitchDetectionEnabled()) {
-         glitches = glitchDetector.detectGlitches(distanceValues, controls.getGlitchThreshold(), 5);
-      }
 
       std::string color = ColorTables::interpolateColor(i, allDistances.size());
       std::string pathId = "Path" + std::to_string(i);
@@ -321,25 +318,26 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
       }
 
       for (const auto& glitch : glitches) {
-         size_t j = glitch.index;
-         const double currentValue = distanceValues[j];
-         if (currentValue >= 0 && !std::isnan(currentValue) && currentValue != invalidMarker) {
-            const double x = leftMargin + (j - xMin) * xScale;
-            const double y = height - margin - (currentValue - yMin) * yScale;
-            if (!std::isnan(y)) {
-               svg << "\n" << R"(<line id="GlitchLine" x1=")" << x << R"(" y1=")" << (height - margin)
-                  << R"(" x2=")" << x << R"(" y2=")" << margin
-                  << R"(" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="5,5"/>)";
-               svg << "\n" << R"(<path id="GlitchMarker" d="M)" << (x - 5) << " " << y << " L" << x << " "
-                  << (y - 5) << " L" << (x + 5) << " " << y << " L" << x
-                  << " " << (y + 5) << R"( Z" fill="#0000FF" stroke="black" stroke-width="1"/>)";
-               svg << "\n" << R"(<text id="GlitchIndex" x=")" << x << R"(" y=")" << (margin - 5)
-                  << R"(" text-anchor="middle" font-size="12" fill="#0000FF">)" << j << R"(</text>)";
-            }
-         }
+         if (glitch.distanceType != distfuncs[i]->getName()) continue;
+         if (glitch.value == -19191.0) continue;
+
+         const double x = leftMargin + (glitch.index - xMin) * xScale;
+         const double y = height - margin - (glitch.value - yMin) * yScale;
+
+         svg << "\n" << R"(<line x1=")" << x << R"(" y1=")" << (height - margin)
+            << R"(" x2=")" << x << R"(" y2=")" << margin
+            << R"(" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="5,5"/>)";
+         svg << "\n" << R"(<path id="GlitchMarker" d="M)" << (x - 5) << " " << y << " L" << x << " "
+            << (y - 5) << " L" << (x + 5) << " " << y << " L" << x
+            << " " << (y + 5) << R"( Z" fill="#0000FF" stroke="black" stroke-width="1"/>)";
+         svg << "\n" << R"(<text id="GlitchIndex" x=")" << x << R"(" y=")" << (margin - 5)
+            << R"(" text-anchor="middle" font-size="12" fill="#0000FF">)" << glitch.index << R"(</text>)";
       }
    }
 }
+
+
+
 void SvgPlotWriter::writeLegend(int width, int margin,
    const std::vector<std::vector<double>>& allDistances,
    const std::vector<std::unique_ptr<Distance>>& distfuncs) {
@@ -417,7 +415,7 @@ std::string SvgPlotWriter::WriteDistanceSummary(const std::vector<std::vector<do
       os << "<pathsummary>\n";
       for (size_t i = 0; i < onePath.size(); ++i) {
          if (i < 5 || i > onePath.size() - 6) {
-            if ( onePath[i] != -19191) 
+            if (onePath[i] != -19191)
             {
                os << i << "  " << onePath[i] << std::endl;
             }

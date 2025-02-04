@@ -7,7 +7,6 @@
 #include "Niggli.h"
 #include "Polar.h"
 #include "SvgPlotWriter.h"
-
 #include <algorithm>
 #include <cmath>
 #include <chrono>
@@ -17,12 +16,11 @@
 #include <iostream>
 #include <random>
 #include <vector>
-
 #include "PathPoint.h"
 
 Follow::Follow(FollowControls& followControls)
    : controls(followControls)
-   , glitchDetector()
+   , allDistances(std::vector<std::vector<double>>())
 {
    distfuncs = DistanceFactory::createEnabledDistances(controls.getDistanceTypes());
 }
@@ -33,13 +31,48 @@ void Follow::PrintPathData(const Path& path) const {
    }
 }
 
-bool Follow::processPerturbation(int trialNum, 
+
+std::vector<Glitch> Follow::DetectGlitchesWithS6Data(
+   const std::vector<double>& distances,
+   const Path& path,
+   const std::string& distanceType) const {
+   auto glitches = Glitch::DetectGlitches(distances, controls.getGlitchThreshold(), 5);
+
+   for (auto& g : glitches) {
+      const size_t idx = g.index;
+      const auto& [point1, point2] = path[idx];
+      g.value = distances[idx];
+      g.atPoint = S6Pair(static_cast<S6>(point1.getCell()), static_cast<S6>(point2.getCell()));
+
+      if (idx > 0) {
+         const auto& [before1, before2] = path[idx - 1];
+         g.beforePoint = S6Pair(static_cast<S6>(before1.getCell()), static_cast<S6>(before2.getCell()));
+      }
+      else {
+         g.beforePoint = g.atPoint;
+      }
+
+      if (idx < path.size() - 1) {
+         const auto& [after1, after2] = path[idx + 1];
+         g.afterPoint = S6Pair(static_cast<S6>(after1.getCell()), static_cast<S6>(after2.getCell()));
+      }
+      else {
+         g.afterPoint = g.atPoint;
+      }
+
+      g.distanceType = distanceType;
+   }
+   return glitches;
+}
+
+
+bool Follow::processPerturbation(int trialNum,
    int perturbationNum, const FollowInstance& instance,
    const std::vector<LatticeCell>& cells) {
    distfuncs = DistanceFactory::createEnabledDistances(controls.getDistanceTypes());
    if (distfuncs.empty()) {
       std::cerr << "; No distance types enabled - please enable at least one type" << std::endl;
-      return false;  // Exit before creating file
+      return false;
    }
 
    std::string curfilename = instance.GetRawFileName();
@@ -52,8 +85,6 @@ bool Follow::processPerturbation(int trialNum,
       std::cerr << "; Empty output filename" << std::endl;
       return false;
    }
-   if (path.empty()) return false;
-   if (curfilename.empty()) return false;
 
    if (controls.shouldPrintDistanceData()) {
       PrintPathData(path);
@@ -69,7 +100,7 @@ bool Follow::processPerturbation(int trialNum,
                static_cast<S6>(point2.getCell())));
          }
          else {
-            pathDists.emplace_back(-19191.0);
+            pathDists.emplace_back(-19191.0);  // This is happening at index 28
          }
       }
       allDistances.push_back(pathDists);
@@ -82,8 +113,16 @@ bool Follow::processPerturbation(int trialNum,
 
    std::ofstream svgfile(curfilename);
    if (svgfile.is_open()) {
-      SvgPlotWriter writer(svgfile, controls, glitchDetector);
-      writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);
+      SvgPlotWriter writer(svgfile, controls);
+
+      if (controls.isGlitchDetectionEnabled()) {
+         std::vector<Glitch> allGlitches;
+         for (size_t distIdx = 0; distIdx < allDistances.size(); ++distIdx) {
+            auto glitches = DetectGlitchesWithS6Data(allDistances[distIdx], path, distfuncs[distIdx]->getName());
+            allGlitches.insert(allGlitches.end(), glitches.begin(), glitches.end());
+         }
+         writer.setGlitches(allGlitches);
+      }      writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);
    }
    else {
       std::cerr << ";Warning: Unable to open output file" << std::endl;
@@ -92,7 +131,7 @@ bool Follow::processPerturbation(int trialNum,
    return true;
 }
 
-Path Follow::generatePath(const int trialNum, const int perturbationNum, 
+Path Follow::generatePath(const int trialNum, const int perturbationNum,
    const std::vector<LatticeCell>& perturbedPoints,
    const std::vector<LatticeCell>& cells) const {
 
@@ -117,24 +156,21 @@ Path Follow::generatePath(const int trialNum, const int perturbationNum,
 
 LatticeCell Follow::perturbVector(const LatticeCell& inputVector, const int perturbationIndex) const {
    if (perturbationIndex == 0) {
-      return inputVector;  // No perturbation for first case
+      return inputVector;
    }
 
    const S6 randomVector = S6(Polar::rand());
    const S6 inputS6 = S6(inputVector.getCell());
 
-   // Compute orthogonal component
    const double dotProduct = inputS6.Dot(randomVector);
    const double inputNormSquared = inputS6.Dot(inputS6);
    const S6 orthogonalVector = randomVector - (dotProduct / inputNormSquared) * inputS6;
    const double d = orthogonalVector.Dot(inputS6);
 
-   // Scale the orthogonal vector
    const double inputNorm = std::sqrt(inputNormSquared);
    const double orthogonalNorm = std::sqrt(orthogonalVector.Dot(orthogonalVector));
    const double scaleFactor = inputNorm * controls.getPerturbBy() / orthogonalNorm;
    const S6 scaledOrthogonalVector = scaleFactor * orthogonalVector;
 
-   // Return perturbed vector with same lattice type
    return LatticeCell(G6(inputS6 + scaledOrthogonalVector), inputVector.getLatticeType());
 }
