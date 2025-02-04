@@ -135,6 +135,7 @@
     <ClCompile Include="Follow.cpp" />
     <ClCompile Include="FollowControls.cpp" />
     <ClCompile Include="FollowerMode.cpp" />
+    <ClCompile Include="GlitchTypes.cpp" />
     <ClCompile Include="MAIN_Follow.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="SvgPlotWriter.cpp" />

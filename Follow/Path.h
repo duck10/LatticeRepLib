@@ -18,7 +18,7 @@
 class Path : public std::vector<std::pair<LatticeCell, LatticeCell>> {
 public:
    friend std::ostream& operator<<(std::ostream& os, const Path& path) {
-      std::cout << "; the path" << std::endl;
+      os << "; the path" << std::endl;
       for (const auto& [point1, point2] : path) {
          const S6 p1(point1.getCell());
          const S6 p2(point2.getCell());

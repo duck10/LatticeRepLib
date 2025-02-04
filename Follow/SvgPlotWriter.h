@@ -8,7 +8,6 @@
 #include "Distance.h"
 #include "FollowControls.h"
 #include "GlitchTypes.h"  
-#include "GlitchDetector.h"
 
 class ColorTables {
 public:
@@ -31,7 +30,9 @@ struct DataPoint {
 
 class SvgPlotWriter {
 public:
-   SvgPlotWriter(std::ofstream& svgfile, const FollowControls& controls, GlitchDetector& detector);
+   SvgPlotWriter(std::ofstream& svgfile, const FollowControls& controls);
+
+   void setGlitches(const std::vector<Glitch>& glitches) { this->glitches = glitches; }
 
    void writePlot(const std::vector<std::vector<double>>& allDistances,
       const std::vector<std::unique_ptr<Distance>>& distfuncs,
@@ -48,8 +49,10 @@ private:
       double yMin, double yMax, double yStepSize,
       double xScale, double yScale, bool useScientific);
    void writePlotData(int width, int height, int margin, double maxDist,
-      const std::vector<std::vector<double>>& allDistances);
-   void writeLegend(int width, int margin,
+      const std::vector<std::vector<double>>& allDistances,
+      const std::vector<std::unique_ptr<Distance>>& distfuncs);
+
+      void writeLegend(int width, int margin,
       const std::vector<std::vector<double>>& allDistances,
       const std::vector<std::unique_ptr<Distance>>& distfuncs);
    void writeMetadata(int trial, int perturbation, const std::string& datetime);
@@ -57,7 +60,6 @@ private:
    std::string WriteDistanceSummary(const std::vector<std::vector<double>>& alldistances) const;
 
    std::ofstream& svg;
-   GlitchDetector& glitchDetector;
    const FollowControls& controls;
    std::vector<Glitch> glitches;
 };
