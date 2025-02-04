@@ -96,7 +96,7 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin, double m
    const double yScale = plotHeight / (yMax - yMin);
 
    // Draw grid lines with clipping
-   svg << "\n" << "<g id=\"GRIDLINE\" clip-path = \"url(#plot-area)\" stroke=\"#e0e0e0\" stroke-width=\"1\">\n";
+   svg << "\n" << "<g class=\"GRIDLINE\" clip-path = \"url(#plot-area)\" stroke=\"#e0e0e0\" stroke-width=\"1\">\n";
    // Draw vertical grid lines
    for (double x = xMin; x <= xMax; x += xStepSize) {
       const double xPos = leftMargin + (x - xMin) * xScale;
@@ -128,7 +128,7 @@ void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int m
       exponent = static_cast<int>(std::floor(std::log10(yMax)));
    }
 
-   svg << "<g id=\"X-AXIS\">\n";
+   svg << "<g class=\"X-AXIS\">\n";
    // First clear the area where the x-axis will be drawn
    svg << "<rect x=\"" << leftMargin << "\" y=\"" << (height - margin)
       << "\" width=\"" << (width - leftMargin - margin) << "\" height=\"" << margin
@@ -155,7 +155,7 @@ void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int m
       << "\" text-anchor=\"middle\" font-size=\"14\">Point Index</text>\n";
    svg << "</g>\n\n";
 
-   svg << "<g id=\"Y-AXIS\">\n";
+   svg << "<g class=\"Y-AXIS\">\n";
    // Draw y-axis line
    svg << "<line x1=\"" << leftMargin << "\" y1=\"" << margin
       << "\" x2=\"" << leftMargin << "\" y2=\"" << (height - margin)
@@ -279,7 +279,7 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
       std::string pathId = "Path" + std::to_string(i);
 
       controls;
-      svg << "\n\n<path id=\"" << pathId << "\" d=\"";
+      svg << "\n\n<path class=\"" << pathId << "\" d=\"";
       bool inLine = false;
 
       for (size_t j = 0; j < distanceValues.size(); ++j) {
@@ -327,10 +327,10 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
          svg << "\n" << R"(<line x1=")" << x << R"(" y1=")" << (height - margin)
             << R"(" x2=")" << x << R"(" y2=")" << margin
             << R"(" stroke="#0000FF" stroke-width="1.5" stroke-dasharray="5,5"/>)";
-         svg << "\n" << R"(<path id="GlitchMarker" d="M)" << (x - 5) << " " << y << " L" << x << " "
+         svg << "\n" << R"(<path class="GlitchMarker" d="M)" << (x - 5) << " " << y << " L" << x << " "
             << (y - 5) << " L" << (x + 5) << " " << y << " L" << x
             << " " << (y + 5) << R"( Z" fill="#0000FF" stroke="black" stroke-width="1"/>)";
-         svg << "\n" << R"(<text id="GlitchIndex" x=")" << x << R"(" y=")" << (margin - 5)
+         svg << "\n" << R"(<text class="GlitchIndex" x=")" << x << R"(" y=")" << (margin - 5)
             << R"(" text-anchor="middle" font-size="12" fill="#0000FF">)" << glitch.index << R"(</text>)";
       }
    }
@@ -365,7 +365,7 @@ void SvgPlotWriter::writeLegend(int width, int margin,
       (bestX > 0.7) ? width - margin - 100 :
       (width / 2) - 50;
 
-   svg << "\n" << R"(<g id="LEGEND" transform="translate()" << xOffset << "," << margin + 20 << ")\">\n"
+   svg << "\n" << R"(<g class="LEGEND" transform="translate()" << xOffset << "," << margin + 20 << ")\">\n"
       << "<rect x=\"-5\" y=\"-15\" width=\"90\" height=\""
       << (distfuncs.size() * 20 + 10) << R"(" fill="white" stroke="black"/>)" << "\n";
 
