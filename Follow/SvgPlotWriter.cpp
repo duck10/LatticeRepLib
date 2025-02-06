@@ -483,6 +483,16 @@ void SvgPlotWriter::writeGlitchComments(const std::vector<std::unique_ptr<Distan
       std::sort(typeGlitches.begin(), typeGlitches.end(),
          [](const Glitch& a, const Glitch& b) { return a.changePercent > b.changePercent; });
 
+
+      // Alternative methods using std::ranges
+      //
+      //   auto typeGlitches = glitches | std::ranges::views::filter(
+      //      [&distType](const Glitch& g) { return g.distanceType == distType; })
+      //   | std::ranges::to<std::vector>();
+      //std::ranges::sort(typeGlitches, std::ranges::greater{}, &Glitch::changePercent);
+      //
+
+
       const size_t numToShow = std::min(size_t(10), typeGlitches.size());
       if (numToShow > 0) {
          svg << "\n" << distType << " glitches:\n";

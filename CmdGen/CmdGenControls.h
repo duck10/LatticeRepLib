@@ -24,7 +24,6 @@ public:
    }
 
    CmdGenControls() {
-      InputHandler::clearHandlers();
 
       InputHandler::registerHandler("COUNT", 0.35,
          [this](BaseControlVariables&, const std::string& value) {

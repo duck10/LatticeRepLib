@@ -27,6 +27,8 @@ public:
    double getTheta(const std::string& input, const std::string& command) const {
       return matcher(toUpper(input), toUpper(command));
    }
+
+   double getThreshold() const { return matchThreshold; }
 };
 
 #endif // STRING_MATCHER_H
