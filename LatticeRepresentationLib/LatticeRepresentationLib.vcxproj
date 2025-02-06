@@ -286,6 +286,7 @@
     <ClInclude Include="R9Dist.h" />
     <ClInclude Include="Radial.h" />
     <ClInclude Include="ReadTypedData.h" />
+    <ClInclude Include="RegistryTest.h" />
     <ClInclude Include="RI.h" />
     <ClInclude Include="S6.h" />
     <ClInclude Include="S6BoundaryTransforms.h" />
