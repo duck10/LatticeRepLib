@@ -18,7 +18,24 @@ int main() {
       std::cout << "WEB_INPUT executed with value: " << value << std::endl;
       });
 
-   std::cout << "testing various match thresholds\n";
+   commands.registerCommand("BLOCK_START", [](const std::string& value) {
+      std::cout << "BLOCK_START executed with value: " << value << std::endl;
+      });
+
+   commands.registerCommand("BLOCK_SIZE", [](const std::string& value) {
+      std::cout << "BLOCK_SIZE executed with value: " << value << std::endl;
+      });
+
+   std::cout << "testing various match thresholds for BLOCKT\n";
+   for (const double& d : { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 }) {
+      std::cout << d << " ";
+      const bool result = commands.executeCommand("BLOCKSt", d, "TRUE");
+      if (!result) {
+         std::cout << "failed\n";
+      }
+   }
+
+   std::cout << "testing various match thresholds for SHOWONTROL\n";
    for (const double& d : { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 }) {
       std::cout << d << " ";
       const bool result = commands.executeCommand("SHOWONTROL", d, "TRUE");
@@ -31,8 +48,8 @@ int main() {
    std::cout << "\nTesting exact matches:\n";
    std::cout << "=====================\n";
    commands.executeCommand("SHOW_CONTROLS", "TRUE");
-   commands.executeCommand("ECHO", "1");
-   commands.executeCommand("WEB_INPUT", "");
+   commands.executeCommand("ECHO", "17");
+   commands.executeCommand("WEB_INPUT", "blank");
 
    std::cout << "\nTesting fuzzy matches:\n";
    std::cout << "=====================\n";

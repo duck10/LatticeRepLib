@@ -252,6 +252,7 @@ public:
          << ";Glitch Threshold Percent: " << glitchThresholdPercent << "\n"
          << ";Show Data Markers: " << (showDataMarkers ? "Yes" : "No") << "\n"
          << ";File Prefix: " << prefix << "\n\n"
+         << ";Web run: " << ((this->getHasWebInput()) ? "true" : "false") << "\n"
          << ";Blockstart: " << blockstart << "\n"
          << ";Blocksize: " << blocksize << "\n\n"
          << ";Enabled Distances: ";
