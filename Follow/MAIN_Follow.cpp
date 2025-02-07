@@ -87,10 +87,11 @@ int main(int argc, char* argv[]) {
 
       const FileBlockProgramInput<FollowControls> dc_setup("Follow", 0, 20, controls);
 
+      if (controls.shouldShowControls()) {
+         std::cout << controls.getState() << "\n";
+      }
+
       if (dc_setup.getInputList().empty()) {
-         if (controls.shouldShowControls()) {
-            std::cout << controls.getState() << "\n";
-         }
          throw std::runtime_error("; No input vectors provided");
       }
 
