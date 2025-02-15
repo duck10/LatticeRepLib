@@ -23,16 +23,20 @@ public:
 
    DirichletControls() {
 
-      InputHandler::registerHandler("BLOCKSIZE", 0.2,
+      InputHandler::registerHandler("BLOCKSIZE", 0.35,
          [this](const BaseControlVariables&, const std::string& value) {
             setBlockSize(std::stoul(value));
          });
 
-      InputHandler::registerHandler("BLOCKSTART", 0.2,
+      InputHandler::registerHandler("BLOCKSTART", 0.35,
          [this](const BaseControlVariables&, const std::string& value) {
             setBlockStart(std::stoul(value));
          });
 
+      InputHandler::registerHandler("FILEPREFIX", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            setPrefix(LRL_StringTools::strToupper(value));
+         });
 
       InputHandler::registerHandler("PREFIX", 0.35,
          [this](const BaseControlVariables&, const std::string& value) {

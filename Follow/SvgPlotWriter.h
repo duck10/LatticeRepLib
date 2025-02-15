@@ -9,6 +9,13 @@
 #include "FollowControls.h"
 #include "GlitchTypes.h"  
 
+struct LineStyle {
+   std::string color;
+   std::string dashArray;
+   std::string markerType;
+   static std::vector<LineStyle> getStyles(size_t count);
+};
+
 class ColorTables {
 public:
    static std::string interpolateColor(size_t index, size_t total) {
@@ -40,25 +47,36 @@ public:
       int width = 800, int height = 400);
 
 private:
+   static constexpr int PLOT_LINE_WIDTH = 3;
+   static constexpr int NUM_MARKERS = 8;
+
    void writeHeader(int width, int height);
    void writeTitle(int width, const std::string& datetime, int trial, int perturbation);
    void writeGridAndAxes(int width, int height, int margin, double maxDist,
       const std::vector<std::vector<double>>& allDistances);
-   void writeAxisLabels(int leftMargin, int width, int height, int margin,
-      double xMin, double xMax, double xStepSize,
-      double yMin, double yMax, double yStepSize,
-      double xScale, double yScale, bool useScientific);
+
+   void writeGrid(int width, int height, int leftMargin, int margin,
+      const AxisLimits& xLimits, const AxisLimits& yLimits,
+      double xScale, double yScale);
+
+
    void writePlotData(int width, int height, int margin, double maxDist,
       const std::vector<std::vector<double>>& allDistances,
       const std::vector<std::unique_ptr<Distance>>& distfuncs);
+   void writeXAxis(int width, int height, int leftMargin, int margin,
+      const AxisLimits& limits, double xScale);
 
-      void writeLegend(int width, int margin,
+
+   void writeYAxis(int leftMargin, int height, int margin,
+      const AxisLimits& limits, double yScale);
+
+
+   void writeLegend(int width, int margin,
       const std::vector<std::vector<double>>& allDistances,
       const std::vector<std::unique_ptr<Distance>>& distfuncs);
    void writeMetadata(int trial, int perturbation, const std::string& datetime);
    std::string reportGlitches(const int n = 2);
    std::string WriteDistanceSummary(const std::vector<std::vector<double>>& alldistances) const;
-
 
 private:
    struct PlotDimensions {
@@ -71,19 +89,13 @@ private:
       const std::vector<std::vector<double>>& allDistances) const;
 
    void drawPlotLine(const std::vector<double>& values, const PlotDimensions& dims,
-      const std::string& color, size_t pathIndex);
-
-   void drawMarkers(const std::vector<double>& values, const PlotDimensions& dims,
-      const std::string& color);
+      const LineStyle& style);
 
    void drawGlitches(const PlotDimensions& dims, const std::string& distanceType);
 
    void drawGlitchLine(double x, int height, int margin);
-
    void drawGlitchMarker(double x, double y);
-
    void drawGlitchIndex(double x, double y, int margin, size_t index);
-
    void writeGlitchComments(const std::vector<std::unique_ptr<Distance>>& distfuncs);
 
    std::ofstream& svg;
@@ -92,3 +104,6 @@ private:
 };
 
 #endif // SVGPLOTWRITER_H
+
+
+

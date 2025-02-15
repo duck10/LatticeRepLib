@@ -52,27 +52,33 @@ G6::G6(const double v[6])
 }
 
 G6::G6(const LRL_Cell& c) {
-   static const double pi = 4.0*atan(1.0);
-   static const double twopi = 2.0*pi;
-   m_dim = 6;
+   if (!c.IsValid()) {
+      (*this).SetValid(false);
+   }
+   else
+   {
+      static const double pi = 4.0 * atan(1.0);
+      static const double twopi = 2.0 * pi;
+      m_dim = 6;
 
-   m_vec.resize(6);
-   m_valid = c.GetValid();
-   m_vec[G6_AA_idx] = c[0] * c[0];
-   m_vec[G6_BB_idx] = c[1] * c[1];
-   m_vec[G6_CC_idx] = c[2] * c[2];
-   m_vec[G6_2BC_idx] = 2.0 * c[1] * c[2] * cos(c[3]);
-   m_vec[G6_2AC_idx] = 2.0 * c[0] * c[2] * cos(c[4]);
-   m_vec[G6_2AB_idx] = 2.0 * c[0] * c[1] * cos(c[5]);
-   for (size_t i = 3; i<6; ++i) if (std::fabs(m_vec[i]) < 1.0E-10) m_vec[i] = 0.0;
+      m_vec.resize(6);
+      m_valid = c.GetValid();
+      m_vec[G6_AA_idx] = c[0] * c[0];
+      m_vec[G6_BB_idx] = c[1] * c[1];
+      m_vec[G6_CC_idx] = c[2] * c[2];
+      m_vec[G6_2BC_idx] = 2.0 * c[1] * c[2] * cos(c[3]);
+      m_vec[G6_2AC_idx] = 2.0 * c[0] * c[2] * cos(c[4]);
+      m_vec[G6_2AB_idx] = 2.0 * c[0] * c[1] * cos(c[5]);
+      for (size_t i = 3; i < 6; ++i) if (std::fabs(m_vec[i]) < 1.0E-10) m_vec[i] = 0.0;
 
-   bool b1 = c.GetValid();
-   bool b2 = c[3] < pi;
-   bool b3 = c[4] < pi;
-   bool b4 = c[5] < pi;
-   bool b5 = (c[3] + c[4] + c[5])< twopi;
-   m_valid = b1 && b2 && b3 && b4 && b5;
-   m_vec.SetValid(m_valid);
+      bool b1 = c.GetValid();
+      bool b2 = c[3] < pi;
+      bool b3 = c[4] < pi;
+      bool b4 = c[5] < pi;
+      bool b5 = (c[3] + c[4] + c[5]) < twopi;
+      m_valid = b1 && b2 && b3 && b4 && b5;
+      m_vec.SetValid(m_valid);
+   }
 }
 
 G6::G6(const S6& ds)

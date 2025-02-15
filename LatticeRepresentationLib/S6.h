@@ -160,6 +160,7 @@ public:
    static S6 Reflection22(const S6& din);
    static S6 Reflection23(const S6& din);
    static S6 Reflection24(const S6& din);
+   static S6 MakeInvalidS6();
 protected:
    static S6 RandomUnreduceOne(const S6& s6);
    static S6 RandomUnreduceTwo(const S6& s6);

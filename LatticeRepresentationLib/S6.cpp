@@ -77,17 +77,30 @@ S6::S6(const double v[6])
    u = (-g5 - g4 - 2.0*g3) / 2.0;
 }
 
+S6 S6::MakeInvalidS6() {
+   S6 badS6 = S6{19191.111111111111, 0, 0, 0, 0, 0};
+   badS6.m_valid = false;
+   return badS6;
+}
+
+
 S6::S6(const LRL_Cell& c)
    : S6()
 {
-   static const double pi = 4.0*atan(1.0);
-   static const double twopi = 2.0*pi;
-      (*this) = Path::MakeInvalidS6();
+   if (!c.IsValid())
+   {
+      m_valid = false;
+      (*this) = S6{ 19191.111111111111, 0, 0, 0, 0, 0 };
+   }
+   else {
+      static const double pi = 4.0 * atan(1.0);
+      static const double twopi = 2.0 * pi;
 
-   (*this) = G6(c);
-   const bool btest1 = c.GetValid();
-   const bool btest2 = (c[3] + c[4] + c[5])< twopi;
-   m_valid = btest1 && c[3] < pi && c[4] < pi && c[5] < pi && btest2;
+      (*this) = G6(c);
+      const bool btest1 = c.GetValid();
+      const bool btest2 = (c[3] + c[4] + c[5]) < twopi;
+      m_valid = btest1 && c[3] < pi && c[4] < pi && c[5] < pi && btest2;
+   }
 }
 
 S6::S6(const D7& v7)

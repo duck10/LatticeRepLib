@@ -19,6 +19,7 @@ class Path : public std::vector<std::pair<LatticeCell, LatticeCell>> {
 public:
    friend std::ostream& operator<<(std::ostream& os, const Path& path) {
       os << "; the path" << std::endl;
+      int count = 0;
       for (const auto& [point1, point2] : path) {
          const S6 p1(point1.getCell());
          const S6 p2(point2.getCell());
@@ -26,7 +27,9 @@ public:
          const std::string invalid2 = (p2.IsValid()) ? "" : " invalid";
          os << "; " << point1.getLatticeType() << " " << p1 << invalid1
             << "\n; " << point2.getLatticeType() << " " << p2 << invalid2
-            << ";--------  end of path ----------------- \n\n";
+            << ";--------  end of path -----------------  index " << count << "\n\n";
+
+         ++count;
       }
       return os;
    }
@@ -39,10 +42,6 @@ public:
    static Path generateTrianglePath(const LatticeCell& p1, const LatticeCell& p2,
       const LatticeCell& p3, int numPoints);
    static Path generateSplinePath( const int numPoints,  const std::vector<LatticeCell>& cells);
-
-   static S6 MakeInvalidS6() {
-      return { 19191.111111111111, 0, 0, 0, 0, 0 };
-   }
 
    static bool PathPointIsValid(const S6& p) {
       return(LRL_Cell(p).IsValid());

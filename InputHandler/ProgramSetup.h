@@ -1,8 +1,10 @@
 #ifndef PROGRAM_SETUP_H
 #define PROGRAM_SETUP_H
 
+#include "InputHandler.h"
 #include "FileOperations.h"
 #include "WebIO.h"
+#include "LatticeCell.h"
 
 class Writer {
 public:
@@ -26,17 +28,20 @@ public:
    const std::vector<LatticeCell>& getInputList() const { return m_inputList; }
 
 private:
-   ControlType& m_controls;  // Reference instead of object
+   ControlType& m_controls;
    std::vector<LatticeCell> m_inputList;
 };
-
 
 // File block input handling
 template<typename ControlType>
 class FileBlockProgramInput {
 public:
-   FileBlockProgramInput(const std::string& programName, size_t blockStart, size_t blockSize, ControlType& controls)
-      : m_blockStart(blockStart), m_blockSize(blockSize), m_programName(programName), m_controls(controls)
+   FileBlockProgramInput(const std::string& programName,
+      int blockStart,
+      int blockSize,
+      ControlType& controls)
+      : m_programName(programName)
+      , m_controls(controls)
    {
       m_inputList = InputHandler::handleInput(m_controls);
       setupFileNames(m_controls.getHasWebInput());
@@ -53,39 +58,31 @@ public:
    }
 
    void printBlockInfo() const {
-      std::cout << "; " << m_programName << " block start " << m_blockStart << std::endl;
-      std::cout << "; " << m_programName << " block size " << m_blockSize << std::endl;
+      std::cout << "; " << m_programName << " block start " << m_controls.getBlockStart() << std::endl;
+      std::cout << "; " << m_programName << " block size " << m_controls.getBlockSize() << std::endl;
 
-      for (size_t i = m_blockStart;
-         i < m_inputList.size() && i < m_blockStart + m_blockSize;
+      for (size_t i = m_controls.getBlockStart();
+         i < m_inputList.size() && i < m_controls.getBlockStart() + m_controls.getBlockSize();
          ++i) {
          std::cout << "; " << m_programName << " graphics file(s) "
-            << i + 1 << "  " << m_FullfileNameList[i - m_blockStart] << std::endl;
+            << i + 1 << "  " << m_FullfileNameList[i - m_controls.getBlockStart()] << std::endl;
       }
    }
 
-   // Access methods
-   const ControlType& getControls() const { return m_controls; }
-   ControlType& getControls() { return m_controls; }
+   // Access methods matching original interface
+   size_t getBlockStart() const { return static_cast<size_t>(m_controls.getBlockStart()); }
+   size_t getBlockSize() const { return static_cast<size_t>(m_controls.getBlockSize()); }
+   size_t getBlockEnd() const { return std::min(m_inputList.size(), getBlockStart() + getBlockSize()); }
+
    const std::vector<LatticeCell>& getInputList() const { return m_inputList; }
    const std::vector<std::string>& getBasicFileNames() const { return m_basicfileNameList; }
    const std::vector<std::string>& getRawFileNames() const { return m_FileNameList; }
    const std::vector<std::string>& getFullFileNames() const { return m_FullfileNameList; }
-   size_t getBlockStart() const { return m_blockStart; }
-   size_t getBlockSize() const { return m_blockSize; }
-   size_t getBlockEnd() const { return std::min(m_inputList.size(), m_blockStart + m_blockSize); }
+   const ControlType& getControls() const { return m_controls; }
+   ControlType& getControls() { return m_controls; }
 
-   // Get input item at specific block index
-   const LatticeCell& getInputAt(size_t blockIndex) const {
-      if (blockIndex >= m_blockStart && blockIndex < getBlockEnd()) {
-         return m_inputList[blockIndex];
-      }
-      throw std::out_of_range("Block index out of range");
-   }
-
-   // Get filename at specific block index
    const std::string& getFullFileNameAt(size_t blockIndex) const {
-      size_t fileIndex = blockIndex - m_blockStart;
+      size_t fileIndex = blockIndex - getBlockStart();
       if (fileIndex < m_FullfileNameList.size()) {
          return m_FullfileNameList[fileIndex];
       }

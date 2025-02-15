@@ -20,7 +20,7 @@ Path Path::generatePointPath(const LatticeCell& startPoint, const int numPoints)
    for (int i = 0; i < numPoints; ++i) {
       const double t = i / static_cast<double>(numPoints - 1);
       S6 currentS6 = startS6 * (1.0 - t) + endS6 * t;
-      if (!PathPointIsValid(currentS6)) currentS6 = MakeInvalidS6();
+      if (!PathPointIsValid(currentS6)) currentS6 = S6::MakeInvalidS6();
 
       path.emplace_back(LatticeCell(G6(currentS6), latticeType),
          LatticeCell(G6(endS6), latticeType));
@@ -40,7 +40,7 @@ Path Path::generateLinePath(const LatticeCell& startPoint, const LatticeCell& en
    for (int i = 0; i < numPoints; ++i) {
       const double t = i / static_cast<double>(numPoints - 1);
       S6 currentS6 = startS6 * (1.0 - t) + endS6 * t;
-      if (!PathPointIsValid(currentS6)) currentS6 = MakeInvalidS6();
+      if (!PathPointIsValid(currentS6)) currentS6 = S6::MakeInvalidS6();
       path.emplace_back(LatticeCell(G6(currentS6), startType),
          LatticeCell(G6(endS6), endType));
    }
@@ -68,8 +68,8 @@ Path Path::generateChordPath(const LatticeCell& point1, const LatticeCell& point
       const double t = i / static_cast<double>(numPoints - 1);
       S6 mobile1 = p1S6 * (1.0 - t) + reduced1 * t;
       S6 mobile2 = p2S6 * (1.0 - t) + reduced2 * t;
-      if (!PathPointIsValid(mobile1)) mobile1 = MakeInvalidS6();
-      if (!PathPointIsValid(mobile2)) mobile2 = MakeInvalidS6();
+      if (!PathPointIsValid(mobile1)) mobile1 = S6::MakeInvalidS6();
+      if (!PathPointIsValid(mobile2)) mobile2 = S6::MakeInvalidS6();
       path.emplace_back(LatticeCell(G6(mobile1), type1),
          LatticeCell(G6(mobile2), type2));
    }
@@ -96,8 +96,8 @@ Path Path::generateChord3Path(const LatticeCell& mobile1, const LatticeCell& mob
       S6 currentMidpoint = initialMidpoint * (1.0 - t) + targetS6 * t;
       S6 point1 = currentMidpoint - initialDirection * (separation * 0.5);
       S6 point2 = currentMidpoint + initialDirection * (separation * 0.5);
-      if (!PathPointIsValid(point1)) point1 = MakeInvalidS6();
-      if (!PathPointIsValid(point2)) point2 = MakeInvalidS6();
+      if (!PathPointIsValid(point1)) point1 = S6::MakeInvalidS6();
+      if (!PathPointIsValid(point2)) point2 = S6::MakeInvalidS6();
       path.emplace_back(LatticeCell(G6(point1), type1),
          LatticeCell(G6(point2), type2));
    }
@@ -160,8 +160,8 @@ Path Path::generateTrianglePath(const LatticeCell& point1, const LatticeCell& po
       const double t = i / static_cast<double>(numPoints - 1);
       S6 mobile1 = p1S6 * (1.0 - t) + p3S6 * t;
       S6 mobile2 = p2S6 * (1.0 - t) + p3S6 * t;
-      if (!PathPointIsValid(mobile1)) mobile1 = MakeInvalidS6();
-      if (!PathPointIsValid(mobile2)) mobile2 = MakeInvalidS6();
+      if (!PathPointIsValid(mobile1)) mobile1 = S6::MakeInvalidS6();
+      if (!PathPointIsValid(mobile2)) mobile2 = S6::MakeInvalidS6();
       path.emplace_back(LatticeCell(G6(mobile1), type1),
          LatticeCell(G6(mobile2), type2));
    }

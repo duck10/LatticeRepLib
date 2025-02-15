@@ -24,6 +24,9 @@
     <ClCompile Include="S6BoundaryTransforms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\LRL_Tools\LinearAxis.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LRL_Tools\TNear.h">
@@ -36,6 +39,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="S6BoundaryTransforms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WilkinsonScale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\LRL_Tools\LinearAxis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

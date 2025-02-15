@@ -1,5 +1,6 @@
 // D7_Follower.cpp : Defines the entry point for the console application.
 //
+#pragma warning(disble: 4189) // unused variables
 
 #include <algorithm>
 #include <ctime>

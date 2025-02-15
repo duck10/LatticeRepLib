@@ -54,7 +54,7 @@ public:
       double slp1 = -1.0,  // Default values for auto-compute mode
       double slpn = -1.0) {
 
-      const int n = x.size();
+      const int n = static_cast<int>(x.size());
       if (n < 2) throw std::invalid_argument("At least two points required");
 
       // Create temp array internally
@@ -251,14 +251,14 @@ public:
       std::vector<std::vector<double>>& derivatives,
       double sigma) {
 
-      const int n = points.size();
+      const int n = static_cast<int>(points.size());
       if (n < 2) throw std::invalid_argument("At least two points required");
       if (xvals.size() != n) throw std::invalid_argument("X values must match number of points");
 
       // Basic validation
       if (points[0].empty()) throw std::invalid_argument("Points cannot be empty");
 
-      const int dim = points[0].size();
+      const int dim = static_cast<int>(points[0].size());
       // Check all points have same dimension
       for (const auto& p : points) {
          if (p.size() != dim) {
@@ -430,7 +430,7 @@ public:
          std::vector<double>&yp,
          double sigma) {
 
-         const int n = x.size();
+         const int n = static_cast<int>(x.size());
          if (n < 2) throw std::invalid_argument("At least two points required");
 
          // Workspace array

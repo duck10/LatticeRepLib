@@ -20,7 +20,7 @@
 int main(int argc, char* argv[]) {
    std::cout << "; Dirichlet (Voronoi) cells" << std::endl;
 
-   WebIO webio(argc, argv, "CmdSella", 0);
+   WebIO webio(argc, argv, "Dirichlet", 0);
 
    DirichletControls controls;
    controls.setHasWebInput(webio.m_hasWebInstructions);
