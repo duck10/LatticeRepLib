@@ -65,7 +65,6 @@ public:
       const LRL_Path<S6> pathCS = m_multiFollow.GetCS( );
       const LRL_Path<S6> pathLM = m_multiFollow.GetLM();
       const LRL_Path<DC> pathDC = m_multiFollow.GetDC();
-      const LRL_Path<R9> pathR9 = m_multiFollow.GetR9();
 
       const std::string nameS6Dist = pathS6.GetDistances().empty() ? "" : "S6Dist ";
       const std::string nameG6Dist = pathG6.GetDistances().empty() ? "" : "NCDist ";
@@ -73,9 +72,8 @@ public:
       const std::string nameCS6Dist = pathCS.GetDistances().empty()? "" : "CS6Dist ";
       const std::string nameLMDist = pathLM.GetDistances().empty() ? "" : "LMDist ";
       const std::string nameDCDist = pathDC.GetDistances().empty() ? "" : "DCDist ";
-      const std::string nameR9Dist = pathR9.GetDistances().empty() ? "" : "R9Dist ";
 
-      return nameS6Dist + nameG6Dist + nameD7Dist + nameCS6Dist + nameLMDist + nameDCDist + nameR9Dist;
+      return nameS6Dist + nameG6Dist + nameD7Dist + nameCS6Dist + nameLMDist + nameDCDist;
    }
 
    void GetDistancesToVectorsAndPoints(
@@ -85,14 +83,12 @@ public:
       std::vector<std::pair<S6, S6> >& pointsCS,
       std::vector<std::pair<S6, S6> >& pointsLM,
       std::vector<std::pair<DC, DC> >& pointsDC,
-      std::vector<std::pair<R9, R9> >& pointsR9,
       std::vector<double>& distancesS6,
       std::vector<double>& distancesG6,
       std::vector<double>& distancesD7,
       std::vector<double>& distancesCS,
       std::vector<double>& distancesLM,
-      std::vector<double>& distancesDC,
-      std::vector<double>& distancesR9)
+      std::vector<double>& distancesDC)
    {
       LRL_Path<S6> pathS6 = m_multiFollow.GetS6();
       LRL_Path<G6> pathG6 = m_multiFollow.GetG6();
@@ -100,7 +96,6 @@ public:
       LRL_Path<S6> pathCS = m_multiFollow.GetCS( );
       LRL_Path<S6> pathLM = m_multiFollow.GetLM();
       LRL_Path<DC> pathDC = m_multiFollow.GetDC();
-      LRL_Path<R9> pathR9 = m_multiFollow.GetR9();
 
       pointsS6 = pathS6.GetPath();
       pointsG6 = pathG6.GetPath();
@@ -108,7 +103,6 @@ public:
       pointsCS = pathCS.GetPath( );
       pointsLM = pathLM.GetPath();
       pointsDC = pathDC.GetPath();
-      pointsR9 = pathR9.GetPath();
 
       distancesS6 = pathS6.GetDistances();
       distancesG6 = pathG6.GetDistances();
@@ -116,7 +110,6 @@ public:
       distancesCS = pathCS.GetDistances( );
       distancesLM = pathLM.GetDistances();
       distancesDC = pathDC.GetDistances();
-      distancesR9 = pathR9.GetDistances();
    }
 
    template <typename T>
@@ -135,8 +128,7 @@ public:
          + GetComputeTime(m_multiFollow.GetD7(), "   D7Dist  ")
          + GetComputeTime(m_multiFollow.GetCS(), "   CS6Dist ")
          + GetComputeTime(m_multiFollow.GetLM(), "   LMDist  ")
-         + GetComputeTime(m_multiFollow.GetDC(), "   DCDist  ")
-         + GetComputeTime(m_multiFollow.GetR9(), "   R9Dist  ");
+         + GetComputeTime(m_multiFollow.GetDC(), "   DCDist  ");
       txt += LRL_ToString("\nINPUT (in S6) FollowerMode ", FollowerConstants::globalFollowerMode, ":\n INPUT ", m_multiFollow.GetInputVectors(), "\n\n");
 
 
@@ -192,7 +184,6 @@ public:
          std::vector<double> distancesCS;
          std::vector<double> distancesLM;
          std::vector<double> distancesDC;
-         std::vector<double> distancesR9;
 
          std::vector<std::pair<S6, S6> > pointsS6;
          std::vector<std::pair<G6, G6> > pointsG6;
@@ -200,12 +191,11 @@ public:
          std::vector<std::pair<S6, S6> > pointsCS;
          std::vector<std::pair<S6, S6> > pointsLM;
          std::vector<std::pair<DC, DC> > pointsDC;
-         std::vector<std::pair<R9, R9> > pointsR9;
 
          GetDistancesToVectorsAndPoints(pointsS6, pointsG6, pointsD7, pointsCS, pointsLM,
-            pointsDC, pointsR9,
+            pointsDC,
             distancesS6, distancesG6, distancesD7, distancesCS, distancesLM,
-            distancesDC, distancesR9);
+            distancesDC);
 
          std::vector<std::string> glitches = PopulateGlitchStrings();
 

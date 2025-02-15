@@ -184,7 +184,7 @@ private:
       Prepare2CellElements(minEdgeA, maxEdgeA, 0, c);
       Prepare2CellElements(minEdgeB, maxEdgeB, 1, c);
       Prepare2CellElements(minEdgeC, maxEdgeC, 2, c);
-      PrepareAngles(c[3], c[4], c[5]);
+      PrepareAnglesInRadians(c[3], c[4], c[5]);
       c.SetValid(true); // PrepareAngles has checked the angles
       return c;
    }
@@ -207,22 +207,22 @@ private:
       r3 = a3 / sum;
    }
 
-   void PrepareAngles( double& a3, double& a4, double& a5 ) {
+   void PrepareAnglesInRadians( double& a3, double& a4, double& a5 ) {
       static const double thirtyDegreesRad = 30.0 / 180.0 * 4 * atan(1.0);
       static const double sixtyDegreesRad = 2.0*thirtyDegreesRad;
       static const double ninetyDegreesRad = 3.0*thirtyDegreesRad;
       static const double oneeightyDegreesRad = 6.0*thirtyDegreesRad;
-      static const double threesRadixtyDegreesRad = 12.0*thirtyDegreesRad;
+      static const double threesixtyDegreesRad = 12.0*thirtyDegreesRad;
       static const double tenDegreesRad = thirtyDegreesRad / 3.0;
       static const double oneDegreeRad = thirtyDegreesRad / 30.0;
 
       double totalAngles = 0.0;
       while ( totalAngles < 2.0*tenDegreesRad)
-         totalAngles = rhrandGRL.urand() * threesRadixtyDegreesRad;
+         totalAngles = rhrandGRL.urand() * threesixtyDegreesRad;
       double r1, r2, r3;
 
       a3 = DBL_MAX; // force at least one pass
-      while (a3 > oneeightyDegreesRad || a4 > oneeightyDegreesRad || a5 > oneeightyDegreesRad || a3 + a4 + a5 > threesRadixtyDegreesRad ||
+      while (a3 > oneeightyDegreesRad || a4 > oneeightyDegreesRad || a5 > oneeightyDegreesRad || a3 + a4 + a5 > threesixtyDegreesRad ||
          (a3 + a4 + a5 - 2.0*maxNC(a3, a4, a5) < 0.0)  || 
          a3 < oneDegreeRad || a4 < oneDegreeRad || a5 < oneDegreeRad)
       {
