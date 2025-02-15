@@ -82,6 +82,7 @@ S6::S6(const LRL_Cell& c)
 {
    static const double pi = 4.0*atan(1.0);
    static const double twopi = 2.0*pi;
+      (*this) = Path::MakeInvalidS6();
 
    (*this) = G6(c);
    const bool btest1 = c.GetValid();
