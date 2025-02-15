@@ -27,9 +27,6 @@
 
 int randSeed1 = 19191;
 
-const double thirtyDegrees = 30.0 / 180.0 * 4 * atan(1.0);
-const double sixtyDegrees = 2.0*thirtyDegrees;
-const double ninetyDegrees = 3.0*thirtyDegrees;
 const double oneeightyDegrees = 180.0;
 const double threesixtyDegrees = 360.0;
 

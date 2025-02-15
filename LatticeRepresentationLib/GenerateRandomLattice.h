@@ -208,23 +208,23 @@ private:
    }
 
    void PrepareAngles( double& a3, double& a4, double& a5 ) {
-      static const double thirtyDegrees = 30.0 / 180.0 * 4 * atan(1.0);
-      static const double sixtyDegrees = 2.0*thirtyDegrees;
-      static const double ninetyDegrees = 3.0*thirtyDegrees;
-      static const double oneeightyDegrees = 6.0*thirtyDegrees;
-      static const double threesixtyDegrees = 12.0*thirtyDegrees;
-      static const double tenDegrees = thirtyDegrees / 3.0;
-      static const double oneDegree = thirtyDegrees / 30.0;
+      static const double thirtyDegreesRad = 30.0 / 180.0 * 4 * atan(1.0);
+      static const double sixtyDegreesRad = 2.0*thirtyDegreesRad;
+      static const double ninetyDegreesRad = 3.0*thirtyDegreesRad;
+      static const double oneeightyDegreesRad = 6.0*thirtyDegreesRad;
+      static const double threesRadixtyDegreesRad = 12.0*thirtyDegreesRad;
+      static const double tenDegreesRad = thirtyDegreesRad / 3.0;
+      static const double oneDegreeRad = thirtyDegreesRad / 30.0;
 
       double totalAngles = 0.0;
-      while ( totalAngles < 2.0*tenDegrees)
-         totalAngles = rhrandGRL.urand() * threesixtyDegrees;
+      while ( totalAngles < 2.0*tenDegreesRad)
+         totalAngles = rhrandGRL.urand() * threesRadixtyDegreesRad;
       double r1, r2, r3;
 
       a3 = DBL_MAX; // force at least one pass
-      while (a3 > oneeightyDegrees || a4 > oneeightyDegrees || a5 > oneeightyDegrees || a3 + a4 + a5 > threesixtyDegrees ||
+      while (a3 > oneeightyDegreesRad || a4 > oneeightyDegreesRad || a5 > oneeightyDegreesRad || a3 + a4 + a5 > threesRadixtyDegreesRad ||
          (a3 + a4 + a5 - 2.0*maxNC(a3, a4, a5) < 0.0)  || 
-         a3 < oneDegree || a4 < oneDegree || a5 < oneDegree)
+         a3 < oneDegreeRad || a4 < oneDegreeRad || a5 < oneDegreeRad)
       {
          GenerateThreeRandomFractionsThatSumToOne(r1, r2, r3);
          a3 = r1 * totalAngles;

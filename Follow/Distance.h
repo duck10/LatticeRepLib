@@ -6,7 +6,6 @@
 #include "DC7u.h"
 #include "G6.h"
 #include "NCDist.h"
-#include "R9Dist.h"
 #include "RI.h"
 #include "S6.h"
 #include "V7Dist.h"
@@ -106,26 +105,6 @@ public:
 
    std::string getColor() const override {
       return "#0000FF";  // Blue
-   }
-};
-
-// Distance_R9Dist.h
-class R9Distance : public Distance {
-public:
-   double dist(const S6& s1, const S6& s2) const override {
-      return R9Dist(s1.data(), s2.data());
-   }
-
-   double dist(const G6& g1, const G6& g2) const override {
-      return R9Dist(S6(g1).data(), S6(g2).data());
-   }
-
-   std::string getName() const override {
-      return "R9";
-   }
-
-   std::string getColor() const override {
-      return "#FF00FF";  // Magenta
    }
 };
 

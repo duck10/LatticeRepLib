@@ -23,12 +23,12 @@ public:
 
    CmdSellaControls() {
 
-   InputHandler::registerHandler("BLOCKSIZE", 0.2,
+   InputHandler::registerHandler("BLOCKSIZE", 0.34,
       [this](const BaseControlVariables&, const std::string& value) {
          setBlockSize(std::stoul(value));
       });
 
-   InputHandler::registerHandler("BLOCKSTART", 0.2,
+   InputHandler::registerHandler("BLOCKSTART", 0.35,
       [this](const BaseControlVariables&, const std::string& value) {
          setBlockStart(std::stoul(value));
       });

@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\LRL_Tools\LinearAxis.cpp" />
     <ClCompile Include="Investigate_S6_Boundaries.cpp" />
     <ClCompile Include="MAIN_Testbed.cpp" />
     <ClCompile Include="S6BoundaryTransforms.cpp" />
@@ -168,10 +169,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\LRL_Tools\LinearAxis.h" />
     <ClInclude Include="..\LRL_Tools\TNear.h" />
     <ClInclude Include="..\LRL_Tools\triple.h" />
     <ClInclude Include="Investigate_S6_Boundaries.h" />
     <ClInclude Include="S6BoundaryTransforms.h" />
+    <ClInclude Include="WilkinsonScale.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,7 @@
 ﻿#pragma warning(disable: 4996)
 
 #include "FollowControls.h"
-#include "LinearAxis.h"
+#include "NiceAxisScaling.h"
 #include "PathPoint.h"
 #include "SvgPlotWriter.h"
 
@@ -14,30 +14,50 @@
 #include <iostream>
 #include <sstream>
 
+std::vector<LineStyle> LineStyle::getStyles(size_t count) {
+   std::vector<LineStyle> styles;
+   static const std::vector<std::string> colors = {
+       "#000000", "#E69F00", "#56B4E9", "#009E73",
+       "#FFA07A", "#0072B2", "#D55E00", "#CC79A7"
+   };
+   static const std::vector<std::string> dashPatterns = {
+       "", "5,5", "2,2", "8,3,2,3",
+       "8,3,2,3,2,3", "10,3", "3,5", "8,8"
+   };
+   static const std::vector<std::string> markers = {
+       "M-6,0 L6,0 M0,-6 L0,6",         // plus
+       "M-4.5,-4.5 L4.5,4.5 M-4.5,4.5 L4.5,-4.5", // X
+       "M0,-6 L6,6 L-6,6 Z",            // triangle
+       "M-4.5,0 A4.5,4.5 0 1,0 4.5,0 A4.5,4.5 0 1,0 -4.5,0", // circle
+       "M-4.5,-4.5 L4.5,-4.5 L4.5,4.5 L-4.5,4.5 Z", // square
+       "M-6,0 L6,0 M-3,-3 L3,3\" stroke-width=\"3.5", // cross with thicker stroke
+       "M-4.5,-4.5 L4.5,-4.5 L4.5,4.5 L-4.5,4.5 L-4.5,-4.5", // diamond
+       "M-6,-3 L0,6 L6,-3 Z",           // inverted triangle
+       "M0,0 L4.5,-6 L-4.5,-6 L4.5,6 L-4.5,6 Z"  // bowtie
+   };
+
+   for (size_t i = 0; i < count; ++i) {
+      styles.push_back({
+          colors[i % colors.size()],
+          dashPatterns[i % dashPatterns.size()],
+          markers[i % markers.size()]
+         });
+   }
+   return styles;
+}
+
 SvgPlotWriter::SvgPlotWriter(std::ofstream& outSvg, const FollowControls& controls)
    : svg(outSvg)
    , controls(controls)
    , glitches() {}
 
-
-static S6 MakeInvalidS6() {
-   return { 19191.111111111111, 0, 0, 0, 0, 0 };
-}
-
-// In SvgPlotWriter.h
-static bool compareDescending(
-   const std::pair<double, size_t>& a,
-   const std::pair<double, size_t>& b) {
-   return a.first > b.first;
-}
-
-// Update reportGlitches to match
 std::string SvgPlotWriter::reportGlitches(const int n) {
    std::vector<std::pair<double, size_t>> sorted;
    for (const auto& g : glitches) {
       sorted.emplace_back(g.value, g.index);
    }
-   std::sort(sorted.begin(), sorted.end(), compareDescending);
+   std::sort(sorted.begin(), sorted.end(),
+      [](const auto& a, const auto& b) { return a.first > b.first; });
 
    std::stringstream os;
    for (size_t i = 0; i < std::min(size_t(n), sorted.size()); ++i) {
@@ -49,7 +69,7 @@ std::string SvgPlotWriter::reportGlitches(const int n) {
 
 void SvgPlotWriter::writeHeader(int width, int height) {
    svg << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-      << "<svg width=\"" << width << "\" height=\"" << height
+      << "<svg width=\"" << (width + 200) << "\" height=\"" << height
       << "\" xmlns=\"http://www.w3.org/2000/svg\">\n"
       << "<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n";
 }
@@ -64,13 +84,134 @@ void SvgPlotWriter::writeTitle(int width, const std::string& datetime,
       << R"( ()" << datetime << R"()</text>)";
 }
 
+void SvgPlotWriter::writeGrid(int width, int height, int leftMargin, int margin,
+   const AxisLimits& xLimits, const AxisLimits& yLimits,
+   double xScale, double yScale) {
+   svg << "\n<g class=\"GRIDLINE\" clip-path=\"url(#plot-area)\" stroke=\"#e0e0e0\" stroke-width=\"1\">\n";
+
+   // Build vertical grid lines path
+   std::ostringstream vGridStr;
+   auto xTicks = xLimits.GetTicksWithLabels();
+   for (const auto& tick : xTicks) {
+      if (tick.position == xLimits.GetMin()) continue; // Skip first tick (axis line)
+      const double xPos = leftMargin + (tick.position - xLimits.GetMin()) * xScale;
+      vGridStr << "M " << xPos << "," << margin << " "
+         << "L " << xPos << "," << (height - margin) << " ";
+   }
+
+   // Build horizontal grid lines path
+   std::ostringstream hGridStr;
+   auto yTicks = yLimits.GetTicksWithLabels();
+   for (const auto& tick : yTicks) {
+      if (tick.position == yLimits.GetMin()) continue; // Skip first tick (axis line)
+      const double yPos = height - margin - (tick.position - yLimits.GetMin()) * yScale;
+      if (yPos >= margin && yPos <= height - margin) {
+         hGridStr << "M " << leftMargin << "," << yPos << " "
+            << "L " << (width - margin) << "," << yPos << " ";
+      }
+   }
+
+   // Write the grid paths
+   svg << "  <path d=\"" << vGridStr.str() << "\" />\n";
+   svg << "  <path d=\"" << hGridStr.str() << "\" />\n";
+   svg << "</g>\n";
+}
+
+
+void SvgPlotWriter::writeYAxis(int leftMargin, int height, int margin,
+   const AxisLimits& limits, double yScale) {
+   svg << "<g class=\"Y-AXIS\">\n";
+
+   // Build path for axis line and ticks
+   std::ostringstream pathStr;
+
+   // Main axis line
+   pathStr << "M " << leftMargin << "," << margin << " "
+      << "L " << leftMargin << "," << (height - margin) << " ";
+
+   // Add tick marks
+   const int tickLength = 5;
+   auto ticks = limits.GetTicksWithLabels();
+   for (const auto& tick : ticks) {
+      const double yPos = height - margin - (tick.position - limits.GetMin()) * yScale;
+      if (yPos >= margin && yPos <= height - margin) {
+         pathStr << "M " << (leftMargin - tickLength) << "," << yPos << " "
+            << "L " << leftMargin << "," << yPos << " ";
+      }
+   }
+
+   // Write the path
+   svg << "  <path d=\"" << pathStr.str() << "\" stroke=\"black\" stroke-width=\"1\"/>\n";
+
+   // Add labels
+   for (const auto& tick : ticks) {
+      const double yPos = height - margin - (tick.position - limits.GetMin()) * yScale;
+      if (yPos >= margin && yPos <= height - margin) {
+         svg << "  <text x=\"" << (leftMargin - 10)
+            << "\" y=\"" << (yPos + 5)
+            << "\" text-anchor=\"end\" font-size=\"12\">"
+            << tick.label
+            << "</text>\n";
+      }
+   }
+
+   // Add Y-axis label
+   svg << "  <text x=\"10\" y=\"" << (height / 2)
+      << "\" text-anchor=\"middle\" font-size=\"14\" "
+      << "transform=\"rotate(-90 10 " << (height / 2) << ")\">Distance</text>\n";
+
+   svg << "</g>\n";
+}
+
+void SvgPlotWriter::writeXAxis(int width, int height, int leftMargin, int margin,
+   const AxisLimits& limits, double xScale) {
+   svg << "<g class=\"X-AXIS\">\n";
+
+   // Build path for axis line and ticks
+   std::ostringstream pathStr;
+
+   // Main axis line
+   pathStr << "M " << leftMargin << "," << (height - margin) << " "
+      << "L " << (width - margin) << "," << (height - margin) << " ";
+
+   // Add tick marks
+   const int tickLength = 5;
+   auto ticks = limits.GetTicksWithLabels();
+   for (const auto& tick : ticks) {
+      const double xPos = leftMargin + (tick.position - limits.GetMin()) * xScale;
+      if (xPos >= leftMargin && xPos <= width - margin) {
+         pathStr << "M " << xPos << "," << (height - margin) << " "
+            << "L " << xPos << "," << (height - margin + tickLength) << " ";
+      }
+   }
+
+   // Write the path
+   svg << "  <path d=\"" << pathStr.str() << "\" stroke=\"black\" stroke-width=\"1\"/>\n";
+
+   // Add labels
+   for (const auto& tick : ticks) {
+      const double xPos = leftMargin + (tick.position - limits.GetMin()) * xScale;
+      if (xPos >= leftMargin && xPos <= width - margin) {
+         svg << "  <text x=\"" << xPos
+            << "\" y=\"" << (height - margin + 20)
+            << "\" text-anchor=\"middle\" font-size=\"12\">"
+            << tick.label
+            << "</text>\n";
+      }
+   }
+
+   // Add X-axis label
+   svg << "  <text x=\"" << (width / 2) << "\" y=\"" << (height - 10)
+      << "\" text-anchor=\"middle\" font-size=\"14\">Point Index</text>\n";
+
+   svg << "</g>\n";
+}
+
 void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin, double maxDist,
    const std::vector<std::vector<double>>& allDistances) {
+   const int leftMargin = margin;
 
-   bool useScientific = maxDist >= 1000;
-   const int leftMargin = margin;  // No extra margin needed since we don't use scientific notation for numbers
-
-   // Define clip path
+   // Write clip path definition
    svg << R"(<defs>)" << '\n'
       << R"(  <clipPath id="plot-area">)" << '\n'
       << R"(    <rect x=")" << leftMargin << R"(" y=")" << margin
@@ -79,132 +220,28 @@ void SvgPlotWriter::writeGridAndAxes(int width, int height, int margin, double m
       << R"(  </clipPath>)" << '\n'
       << R"(</defs>)" << '\n';
 
-   LinearAxis xAxis, yAxis;
+   // Calculate axis properties using NiceAxisScaling
+   NiceAxisScaling xAxis, yAxis;
    const AxisLimits xLimits = xAxis.LinearAxisLimits(0, double(allDistances[0].size() - 1));
    const AxisLimits yLimits = yAxis.LinearAxisLimits(0, double(maxDist));
 
-   const double xMin = xLimits.GetMin();
-   const double xMax = xLimits.GetMax();
-   const double xStepSize = xLimits.GetStepSize();
-   const double yMin = yLimits.GetMin();
-   const double yMax = yLimits.GetMax();
-   const double yStepSize = yLimits.GetStepSize();
-
+   // Calculate scales
    const double plotWidth = width - leftMargin - margin;
    const double plotHeight = height - 2 * margin;
-   const double xScale = plotWidth / (xMax - xMin);
-   const double yScale = plotHeight / (yMax - yMin);
+   const double xScale = plotWidth / (xLimits.GetMax() - xLimits.GetMin());
+   const double yScale = plotHeight / (yLimits.GetMax() - yLimits.GetMin());
 
-   // Draw grid lines with clipping
-   svg << "\n" << "<g class=\"GRIDLINE\" clip-path = \"url(#plot-area)\" stroke=\"#e0e0e0\" stroke-width=\"1\">\n";
-   // Draw vertical grid lines
-   for (double x = xMin; x <= xMax; x += xStepSize) {
-      const double xPos = leftMargin + (x - xMin) * xScale;
-      svg << "  <line x1=\"" << xPos << "\" y1=\"" << margin << "\" "
-         << "x2=\"" << xPos << "\" y2=\"" << (height - margin) << "\"/>\n";
-   }
+   // Write grid first (behind axes)
+   writeGrid(width, height, leftMargin, margin, xLimits, yLimits, xScale, yScale);
 
-   // Draw horizontal grid lines
-   for (double y = yMin; y <= yMax; y += yStepSize) {
-      const double yPos = height - margin - (y - yMin) * yScale;
-      if (yPos >= margin && yPos <= height - margin) {
-         svg << "  <line x1=\"" << leftMargin << "\" y1=\"" << yPos << "\" "
-            << "x2=\"" << (width - margin) << "\" y2=\"" << yPos << "\"/>\n";
-      }
-   }
-   svg << "</g>\n\n";
-
-   writeAxisLabels(leftMargin, width, height, margin, xMin, xMax, xStepSize,
-      yMin, yMax, yStepSize, xScale, yScale, useScientific);
+   // Write axes
+   writeYAxis(leftMargin, height, margin, yLimits, yScale);
+   writeXAxis(width, height, leftMargin, margin, xLimits, xScale);
 }
 
-void SvgPlotWriter::writeAxisLabels(int leftMargin, int width, int height, int margin,
-   const double xMin, double xMax, double xStepSize, double yMin, double yMax, double yStepSize,
-   const double xScale, double yScale, bool useScientific) {
 
-   // Calculate the exponent for the axis label if values are large
-   int exponent = 0;
-   if (yMax >= 1000) {
-      exponent = static_cast<int>(std::floor(std::log10(yMax)));
-   }
 
-   svg << "<g class=\"X-AXIS\">\n";
-   // First clear the area where the x-axis will be drawn
-   svg << "<rect x=\"" << leftMargin << "\" y=\"" << (height - margin)
-      << "\" width=\"" << (width - leftMargin - margin) << "\" height=\"" << margin
-      << "\" fill=\"white\"/>\n";
 
-   // Draw x-axis line
-   svg << "<line x1=\"" << leftMargin << "\" y1=\"" << (height - margin)
-      << "\" x2=\"" << (width - margin) << "\" y2=\"" << (height - margin)
-      << "\" stroke=\"black\"/>\n";
-
-   // Draw x-axis tick marks and labels
-   for (double x = xMin; x <= xMax; x += xStepSize) {
-      double xPos = leftMargin + (x - xMin) * xScale;
-      svg << "<line x1=\"" << xPos << "\" y1=\"" << (height - margin)
-         << "\" x2=\"" << xPos << "\" y2=\"" << (height - margin + 5)
-         << "\" stroke=\"black\"/>\n";
-      svg << "<text x=\"" << xPos << "\" y=\"" << (height - margin + 20)
-         << "\" text-anchor=\"middle\" font-size=\"12\">"
-         << static_cast<int>(std::round(x)) << "</text>\n";
-   }
-
-   // Draw x-axis label
-   svg << "<text x=\"" << (width / 2) << "\" y=\"" << (height - 10)
-      << "\" text-anchor=\"middle\" font-size=\"14\">Point Index</text>\n";
-   svg << "</g>\n\n";
-
-   svg << "<g class=\"Y-AXIS\">\n";
-   // Draw y-axis line
-   svg << "<line x1=\"" << leftMargin << "\" y1=\"" << margin
-      << "\" x2=\"" << leftMargin << "\" y2=\"" << (height - margin)
-      << "\" stroke=\"black\"/>\n";
-
-   // Draw y-axis tick marks and labels
-   for (double y = yMin; y <= yMax; y += yStepSize) {
-      const double yPos = height - margin - (y - yMin) * yScale;
-      if (yPos >= margin && yPos <= height - margin) {
-         svg << "<line x1=\"" << (leftMargin - 5) << "\" y1=\"" << yPos
-            << "\" x2=\"" << leftMargin << "\" y2=\"" << yPos
-            << "\" stroke=\"black\"/>\n";
-
-         std::ostringstream labelStream;
-         labelStream << std::fixed << std::setprecision(1);
-         if (exponent > 0) {
-            double scaledValue = y / std::pow(10.0, exponent);
-            labelStream << std::fixed << std::setprecision(1);
-            if (scaledValue < 10) {
-               labelStream << std::setprecision(2);  // More precision for small numbers
-            }
-            labelStream << scaledValue;
-         }
-         else {
-            labelStream << y;
-         }
-
-         svg << "<text x=\"" << (leftMargin - 10) << "\" y=\"" << (yPos + 5)
-            << "\" text-anchor=\"end\" font-size=\"12\">"
-            << labelStream.str() << "</text>\n";
-      }
-   }
-
-   // Draw y-axis label with scale indicator and exponent
-   const int yAxisLabelOffset = 40;
-   svg << R"(<text x=")" << (leftMargin - yAxisLabelOffset)
-      << R"(" y=")" << (height / 2)
-      << R"(" text-anchor="middle" font-size="14" transform="rotate(-90 )"
-      << (leftMargin - yAxisLabelOffset) << " " << (height / 2) << ")\">"
-      << "Distance";
-
-   if (exponent > 0) {
-      svg << R"( (x10^)" << exponent << R"()</text>)";
-   }
-   else {
-      svg << R"(</text>)";
-   }
-   svg << "</g>\n\n";
-}
 
 void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistances,
    const std::vector<std::unique_ptr<Distance>>& distfuncs,
@@ -216,17 +253,17 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
    struct tm* timeinfo = localtime(&now_time);
    std::ostringstream datetime;
-   datetime << (timeinfo->tm_year + 1900) << "/"  // Year
-      << std::setfill('0') << std::setw(2) << (timeinfo->tm_mon + 1) << "/"  // Month
-      << std::setfill('0') << std::setw(2) << timeinfo->tm_mday << " "  // Day
-      << std::setfill('0') << std::setw(2) << timeinfo->tm_hour << ":"  // Hour
-      << std::setfill('0') << std::setw(2) << timeinfo->tm_min << ":"  // Minute
-      << std::setfill('0') << std::setw(2) << timeinfo->tm_sec;  // Second
+   datetime << (timeinfo->tm_year + 1900) << "/"
+      << std::setfill('0') << std::setw(2) << (timeinfo->tm_mon + 1) << "/"
+      << std::setfill('0') << std::setw(2) << timeinfo->tm_mday << " "
+      << std::setfill('0') << std::setw(2) << timeinfo->tm_hour << ":"
+      << std::setfill('0') << std::setw(2) << timeinfo->tm_min << ":"
+      << std::setfill('0') << std::setw(2) << timeinfo->tm_sec;
 
    double maxDist = 0.0;
-   for (const auto& distfuncs : allDistances) {
-      if (!distfuncs.empty()) {
-         maxDist = std::max(maxDist, *std::max_element(distfuncs.begin(), distfuncs.end()));
+   for (const auto& distances : allDistances) {
+      if (!distances.empty()) {
+         maxDist = std::max(maxDist, *std::max_element(distances.begin(), distances.end()));
       }
    }
    maxDist = std::ceil(maxDist * 1.1);
@@ -245,66 +282,54 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    svg << "</svg>\n";
 }
 
-
 void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxDist,
    const std::vector<std::vector<double>>& allDistances,
    const std::vector<std::unique_ptr<Distance>>& distfuncs) {
 
    PlotDimensions dims = calculatePlotDimensions(width, height, margin, allDistances);
+   auto styles = LineStyle::getStyles(allDistances.size());
 
    for (size_t i = 0; i < allDistances.size(); ++i) {
       if (allDistances[i].empty()) continue;
-
-      const std::string color = ColorTables::interpolateColor(i, allDistances.size());
-      drawPlotLine(allDistances[i], dims, color, i);
-
-      if (controls.shouldShowMarkers()) {
-         drawMarkers(allDistances[i], dims, color);
-      }
-
+      drawPlotLine(allDistances[i], dims, styles[i]);
       drawGlitches(dims, distfuncs[i]->getName());
    }
 }
-
 
 void SvgPlotWriter::writeLegend(int width, int margin,
    const std::vector<std::vector<double>>& allDistances,
    const std::vector<std::unique_ptr<Distance>>& distfuncs) {
 
-   std::vector<DataPoint> sampledPoints;
-   for (const auto& distfuncs : allDistances) {
-      if (!distfuncs.empty()) {
-         size_t len = distfuncs.size();
-         sampledPoints.push_back({ 0.0, distfuncs[0], 0 });
-         sampledPoints.push_back({ 0.5, distfuncs[len / 2], len / 2 });
-         sampledPoints.push_back({ 1.0, distfuncs[len - 1], len - 1 });
-      }
-   }
+   auto styles = LineStyle::getStyles(distfuncs.size());
+   const int plotWidth = width - 2 * margin;
+   const int xOffset = margin + plotWidth + 20;
+   const int yOffset = margin + 20;
+   const int lineLength = 80;  // Increased from 40
 
-   double minY = std::numeric_limits<double>::max();
-   double bestX = 1.0;
-   for (const auto& point : sampledPoints) {
-      if (point.y < minY) {
-         minY = point.y;
-         bestX = point.x;
-      }
-   }
-
-   const int xOffset = (bestX < 0.3) ? margin + 20 :
-      (bestX > 0.7) ? width - margin - 100 :
-      (width / 2) - 50;
-
-   svg << "\n" << R"(<g class="LEGEND" transform="translate()" << xOffset << "," << margin + 20 << ")\">\n"
-      << "<rect x=\"-5\" y=\"-15\" width=\"90\" height=\""
-      << (distfuncs.size() * 20 + 10) << R"(" fill="white" stroke="black"/>)" << "\n";
+   svg << "\n<g class=\"LEGEND\" transform=\"translate(" << xOffset << "," << yOffset << ")\">\n"
+      << "<rect x=\"-5\" y=\"-15\" width=\"140\" height=\""
+      << (distfuncs.size() * 25 + 10) << "\" fill=\"white\" stroke=\"black\"/>\n";
 
    for (size_t i = 0; i < distfuncs.size(); ++i) {
-      std::string color = ColorTables::interpolateColor(i, distfuncs.size());
-      svg << R"(<line x1="0" y1=")" << (i * 20) << R"(" x2="20" y2=")" << (i * 20)
-         << R"(" stroke=")" << color << R"(" stroke-width="10"/>)" << "\n"
-         << R"(<text x="25" y=")" << (i * 20 + 5)
-         << R"(" font-family="Arial" font-size="12">)"
-         << distfuncs[i]->getName() << R"(</text>)" << "\n";
+      const auto& style = styles[i];
+      svg << "<line x1=\"0\" y1=\"" << (i * 25) << "\" x2=\"" << lineLength << "\" y2=\"" << (i * 25)
+         << "\" stroke=\"" << style.color << "\" stroke-width=\"" << PLOT_LINE_WIDTH << "\"";
+      if (!style.dashArray.empty()) {
+         svg << " stroke-dasharray=\"" << style.dashArray << "\"";
+      }
+      svg << "/>\n";
+
+      if (controls.shouldShowMarkers()) {
+         for (int x : {0, lineLength / 2, lineLength}) {
+            svg << "<path d=\"" << style.markerType << "\" "
+               << "transform=\"translate(" << x << "," << (i * 25) << ")\" "
+               << "stroke=\"" << style.color << "\" fill=\"none\"/>\n";
+         }
+      }
+
+      svg << "<text x=\"" << (lineLength + 5) << "\" y=\"" << (i * 25 + 5)
+         << "\" font-family=\"Arial\" font-size=\"14\">"
+         << distfuncs[i]->getName() << "</text>\n";
    }
    svg << "</g>\n\n";
 }
@@ -325,9 +350,9 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
       << "    <printDistanceData>" << (controls.shouldPrintDistanceData() ? "true" : "false") << "</printDistanceData>\n"
       << "    <enabledDistances>\n";
 
-   const auto xxxx = controls.getDistanceTypes().getEnabledTypes();
+   const auto enabledTypes = controls.getDistanceTypes().getEnabledTypes();
 
-   for (const auto& distType : xxxx) {
+   for (const auto& distType : enabledTypes) {
       svg << "      <distance>" << distType << "</distance>\n";
    }
 
@@ -338,7 +363,6 @@ void SvgPlotWriter::writeMetadata(int trial, int perturbation, const std::string
 }
 
 std::string SvgPlotWriter::WriteDistanceSummary(const std::vector<std::vector<double>>& alldistances) const {
-
    std::stringstream os;
    for (const auto& onePath : alldistances) {
       os << "<pathsummary>\n";
@@ -354,7 +378,7 @@ std::string SvgPlotWriter::WriteDistanceSummary(const std::vector<std::vector<do
          }
          if (i == 5)
          {
-            os << " ... ..." << std::endl;;
+            os << " ... ..." << std::endl;
          }
       }
       os << "</pathsummary>\n";
@@ -373,13 +397,13 @@ SvgPlotWriter::PlotDimensions SvgPlotWriter::calculatePlotDimensions(int width, 
    double actualMaxDist = 0.0;
    for (const auto& distfuncs : allDistances) {
       for (double d : distfuncs) {
-         if (d > 0 && !std::isnan(d) && d != MakeInvalidS6()[0]) {
+         if (d > 0 && !std::isnan(d) && d != S6::MakeInvalidS6()[0]) {
             actualMaxDist = std::max(actualMaxDist, d);
          }
       }
    }
 
-   LinearAxis xAxis, yAxis;
+   NiceAxisScaling xAxis, yAxis;
    const AxisLimits xLimits = xAxis.LinearAxisLimits(0., double(allDistances[0].size() - 1));
    const AxisLimits yLimits = yAxis.LinearAxisLimits(0., double(actualMaxDist));
 
@@ -394,12 +418,11 @@ SvgPlotWriter::PlotDimensions SvgPlotWriter::calculatePlotDimensions(int width, 
 }
 
 void SvgPlotWriter::drawPlotLine(const std::vector<double>& values,
-   const PlotDimensions& dims, const std::string& color, size_t pathIndex) {
+   const PlotDimensions& dims, const LineStyle& style) {
 
-   std::string pathId = "Path" + std::to_string(pathIndex);
-   svg << "\n\n<path id=\"" << pathId << "\" d=\"";
+   svg << "\n\n<path d=\"";
    bool inLine = false;
-   const double invalidMarker = MakeInvalidS6()[0];
+   const double invalidMarker = 19191.111111111111;
 
    for (size_t j = 0; j < values.size(); ++j) {
       const double currentValue = values[j];
@@ -418,25 +441,27 @@ void SvgPlotWriter::drawPlotLine(const std::vector<double>& values,
          svg << " L" << x << "," << y;
       }
    }
-   svg << R"(" stroke=")" << color << R"(" fill="none" stroke-width="2"/>\n)";
-}
+   svg << "\" stroke=\"" << style.color << "\" fill=\"none\" stroke-width=\"" << PLOT_LINE_WIDTH << "\"";
+   if (!style.dashArray.empty()) {
+      svg << " stroke-dasharray=\"" << style.dashArray << "\"";
+   }
+   svg << "/>\n";
 
-void SvgPlotWriter::drawMarkers(const std::vector<double>& values,
-   const PlotDimensions& dims, const std::string& color) {
+   if (controls.shouldShowMarkers()) {
+      const int interval = std::max(1, static_cast<int>(values.size() / NUM_MARKERS));
 
-   const double invalidMarker = MakeInvalidS6()[0];
-   for (size_t j = 0; j < values.size(); ++j) {
-      const double currentValue = values[j];
-      if (currentValue >= 0 && !std::isnan(currentValue) && currentValue != invalidMarker) {
+      for (size_t j = 0; j < values.size(); j += interval) {
+         const double currentValue = values[j];
+         if (currentValue < 0.0 || std::isnan(currentValue) || currentValue == invalidMarker) continue;
+
          const double x = dims.leftMargin + (j - dims.xMin) * dims.xScale;
          const double y = dims.height - dims.margin - (currentValue - dims.yMin) * dims.yScale;
-         if (!std::isnan(y)) {
-            svg << R"(<circle cx=")" << x << R"(" cy=")" << y
-               << R"(" r="3" fill=")" << color << R"("/>)" << "\n";
-         }
+
+         svg << "<path d=\"" << style.markerType << "\" "
+            << "transform=\"translate(" << x << "," << y << ")\" "
+            << "stroke=\"" << style.color << "\" fill=\"none\"/>\n";
       }
    }
-   svg << "\n";
 }
 
 void SvgPlotWriter::drawGlitches(const PlotDimensions& dims, const std::string& distanceType) {
@@ -483,16 +508,6 @@ void SvgPlotWriter::writeGlitchComments(const std::vector<std::unique_ptr<Distan
       std::sort(typeGlitches.begin(), typeGlitches.end(),
          [](const Glitch& a, const Glitch& b) { return a.changePercent > b.changePercent; });
 
-
-      // Alternative methods using std::ranges
-      //
-      //   auto typeGlitches = glitches | std::ranges::views::filter(
-      //      [&distType](const Glitch& g) { return g.distanceType == distType; })
-      //   | std::ranges::to<std::vector>();
-      //std::ranges::sort(typeGlitches, std::ranges::greater{}, &Glitch::changePercent);
-      //
-
-
       const size_t numToShow = std::min(size_t(10), typeGlitches.size());
       if (numToShow > 0) {
          svg << "\n" << distType << " glitches:\n";
@@ -503,6 +518,3 @@ void SvgPlotWriter::writeGlitchComments(const std::vector<std::unique_ptr<Distan
    }
    svg << "-->\n\n";
 }
-
-
-

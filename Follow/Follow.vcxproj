@@ -137,6 +137,7 @@
     <ClCompile Include="FollowerMode.cpp" />
     <ClCompile Include="GlitchTypes.cpp" />
     <ClCompile Include="MAIN_Follow.cpp" />
+    <ClCompile Include="NiceAxisScaling.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="SvgPlotWriter.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="GlitchDetector.h" />
     <ClInclude Include="GlitchTypes.h" />
     <ClInclude Include="GlitchUtils.h" />
+    <ClInclude Include="NiceAxisScaling.h" />
     <ClInclude Include="OutlierFinder.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PathPoint.h" />

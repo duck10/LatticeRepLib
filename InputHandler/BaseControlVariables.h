@@ -22,17 +22,22 @@ public:
 
    BaseControlVariables() {
       InputHandler::registerHandler("ECHO", .5,
-         [this](BaseControlVariables&, const std::string& value) {
+         [this](BaseControlVariables& controls, const std::string& value) {
             echo = (value == "1" || value == "TRUE" || value.empty());
          }
       );
 
       InputHandler::registerHandler("SHOW", .5,
-         [this](BaseControlVariables&, const std::string& value) {
+         [this](BaseControlVariables& controls, const std::string& value) {
             showControls = (value == "1" || value == "TRUE" || value.empty());
          }
       );
 
+      InputHandler::registerHandler("WEB_INPUT", .5,
+         [this](BaseControlVariables& controls, const std::string& value) {
+            webRun = (value == "1" || value == "TRUE" || value.empty());
+         }
+      );
    }
 
    template<typename T>
@@ -73,5 +78,13 @@ public:
 
    friend std::ostream& operator<<(std::ostream& os, const BaseControlVariables& cv);
 };
+
+inline std::ostream& operator<<(std::ostream& os, const BaseControlVariables& cv) {
+   os << ";Control Variables:\n";
+   for (const auto& feature : cv.features) {
+      feature->writeToStream(os);
+   }
+   return os;
+}
 
 #endif // BASE_CONTROL_VARIABLES_H

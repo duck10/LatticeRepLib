@@ -5,13 +5,13 @@
 #include <string>
 #include <vector>
 
+#include "ProgramSetup.h"
 #include "FileOperations.h"
 #include "Follow.h"
 #include "FollowControls.h"
 #include "FollowInstance.h"
 #include "InputHandler.h"
 #include "LatticeCell.h"
-#include "ProgramSetup.h"
 #include "WebIO.h"
 
 static std::vector<FollowInstance> CreateFollowInstanceList(

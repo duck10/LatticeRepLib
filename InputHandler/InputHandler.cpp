@@ -1,53 +1,18 @@
-#include "BaseControlVariables.h"
 #include "InputHandler.h"
-#include "LatticeCell.h"
-#include "Polar.h"
-#include "LRL_Cell.h"
+#include "BaseControlVariables.h"
+#include "LRL_StringTools.h"
+#include "CommandSystem.h"
 
-#include <iostream>
+// Initialize static member
+CommandSystem InputHandler::commandSystem;
 
-std::vector<std::pair<InputHandler::CommandPredicate, InputHandler::CommandHandler>> InputHandler::handlers;
-
-void InputHandler::registerHandler(CommandPredicate predicate, CommandHandler handler) {
-   handlers.emplace_back(predicate, handler);
-}
-
-//void InputHandler::registerHandler(const std::string& command, double threshold, CommandHandler handler) {
-//   StringMatcher matcher(threshold);
-//   registerHandler(
-//      [command, matcher](const std::string& cmd) {
-//         return matcher.matches(cmd, command);
-//      },
-//      handler
-//   );
-//}
-
-void InputHandler::clearHandlers() {
-   handlers.clear();
-}
-
-bool InputHandler::handleCommand(BaseControlVariables& controls,
-   const std::string& command,
-   const std::string& value) {
-   //std::cerr << ";Debug: Handling command: " << command << std::endl;
-   for (const auto& [predicate, handler] : handlers) {
-      if (predicate(command)) {
-         handler(controls, value);
-         return true;
-      }
-   }
-   std::cerr << ";Warning: Unrecognized command '" << command << "'" << std::endl;
-   return false;
-}
-
-std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
-   std::vector<std::string> tokens;
-   std::istringstream iss(line);
-   std::string token;
-   while (iss >> token) {
-      tokens.push_back(token);
-   }
-   return tokens;
+bool InputHandler::isLattice(const std::string& s) {
+   const std::string upperKey = LRL_StringTools::strToupper(s);
+   return (upperKey == "RANDOM" || upperKey == "R" ||
+      upperKey == "G6" || upperKey == "G" || upperKey == "S6" || upperKey == "S" ||
+      upperKey == "P" || upperKey == "A" || upperKey == "B" || upperKey == "C" ||
+      upperKey == "F" || upperKey == "I" || upperKey == "H" || upperKey == "U" ||
+      upperKey == "DC7U");
 }
 
 G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
@@ -59,7 +24,7 @@ G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
       try {
          result[i] = std::stod(tokens[i + 1]);
       }
-      catch (const std::exception) {
+      catch (const std::exception&) {
          throw std::runtime_error("Invalid G6 input: failed to parse " + tokens[i + 1] + " as double");
       }
    }
@@ -75,16 +40,11 @@ S6 InputHandler::parseS6(const std::vector<std::string>& tokens) {
       try {
          result[i] = std::stod(tokens[i + 1]);
       }
-      catch (const std::exception) {
+      catch (const std::exception&) {
          throw std::runtime_error("Invalid S6 input: failed to parse " + tokens[i + 1] + " as double");
       }
    }
    return result;
-}
-
-G6 InputHandler::parseRandom(const std::vector<std::string>& tokens) {
-   // Don't check token count for random
-   return G6(Polar::rand());
 }
 
 G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
@@ -102,58 +62,6 @@ G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
    return cell;
 }
 
-static bool isLattice(const std::string& s) {
-   const std::string upperKey = LRL_StringTools::strToupper(s);
-   return (upperKey == "RANDOM" || upperKey == "R" ||  // Add "R"
-      upperKey == "G6" || upperKey == "G" || upperKey == "S6" || upperKey == "S" ||
-      upperKey == "P" || upperKey == "A" || upperKey == "B" || upperKey == "C" ||
-      upperKey == "F" || upperKey == "I" || upperKey == "H");
-}
-
-void InputHandler::readMixedInput(BaseControlVariables& controls,
-   std::vector<LatticeCell>& cells,
-   std::istream& input) {
-   std::string line;
-   while (std::getline(input, line)) {
-      if (line.empty() || line[0] == ';') continue;
-      std::string rawline(line);
-      // Parse line into tokens
-      const std::vector<std::string> tokens = parseInputLine(line);
-      if (tokens.empty()) continue;
-
-      if (controls.getEcho() || LRL_StringTools::strToupper(tokens[0]) == "ECHO") {
-         std::cout << line << std::endl;
-      }
-      if (LRL_StringTools::strToupper(tokens[0]) == "END") {
-         break;
-      }
-
-      try {
-         // Try to handle as lattice input first
-         std::string upperKey = LRL_StringTools::strToupper(tokens[0]);  // Make a copy
-         if (isLattice(upperKey)) {
-            handleLatticeInput(cells, upperKey, tokens, rawline);  // Use original key for handling
-            continue;
-         }
-
-         // If not a lattice command, try as a control command
-         std::string rest;
-         const std::vector<std::string> rawTokens = parseInputLine(rawline);
-         for (size_t i = 1; i < tokens.size(); ++i) {
-            rest += rawTokens[i];
-            if (i < rawTokens.size() - 1) rest += " ";
-         }
-
-         if (!handleCommand(controls,rawTokens[0], rest)) {
-            std::cerr << ";Warning: Unrecognized command '" << rawTokens[0] << "'" << std::endl;
-         }
-      }
-      catch (const std::exception& e) {
-         std::cerr << ";Warning: Failed to parse input: " << e.what() << std::endl;
-      }
-   }
-}
-
 G6 InputHandler::parseRandom() {
    return G6(Polar::rand());
 }
@@ -163,7 +71,7 @@ std::vector<LatticeCell> InputHandler::parseRandom(size_t count) {
    results.reserve(count);
 
    for (size_t i = 0; i < count; ++i) {
-      G6 result = parseRandom();  // Use the parameterless version
+      G6 result = parseRandom();
       const LRL_Cell cell = result;
       if (cell.IsValid()) {
          std::string numberedLine = "RANDOM #" + std::to_string(i + 1);
@@ -186,7 +94,8 @@ void InputHandler::handleSingleLattice(
 
    if (key == "G6" || key == "G") result = parseG6(tokens);
    else if (key == "S6" || key == "S") result = parseS6(tokens);
-   else if (key == "RANDOM") result = parseRandom();  // Using parameterless version
+   else if (key == "RANDOM" || key == "R") result = parseRandom();
+   //else if (key == "U") result = parseDC7u(tokens);
    else {
       result = parseLattice(tokens);
       latticeType = key;  // Use the key as lattice type for A,B,C,F,I,H
@@ -201,8 +110,74 @@ void InputHandler::handleSingleLattice(
    }
 }
 
-void InputHandler::handleLatticeInput(
-   std::vector<LatticeCell>& inputVectors,
+void InputHandler::registerHandler(const std::string& command, double threshold, CommandHandler handler) {
+   commandSystem.registerCommand(command, handler);
+}
+
+void InputHandler::clearHandlers() {
+   commandSystem.clear();
+}
+
+bool InputHandler::handleCommand(BaseControlVariables& controls,
+   const std::string& command,
+   const std::string& value) {
+   return commandSystem.executeCommand(controls, command, value);
+}
+
+std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
+   std::vector<std::string> tokens;
+   std::istringstream iss(line);
+   std::string token;
+   while (iss >> token) {
+      tokens.push_back(token);
+   }
+   return tokens;
+}
+
+void InputHandler::readMixedInput(BaseControlVariables& controls,
+   std::vector<LatticeCell>& cells,
+   std::istream& input) {
+   std::string line;
+   while (std::getline(input, line)) {
+      if (line.empty() || line[0] == ';') continue;
+      std::string rawline(line);
+      const std::vector<std::string> tokens = parseInputLine(line);
+      if (tokens.empty()) continue;
+
+      if (controls.getEcho() || LRL_StringTools::strToupper(tokens[0]) == "ECHO") {
+         std::cout << line << std::endl;
+      }
+      if (LRL_StringTools::strToupper(tokens[0]) == "END") {
+         break;
+      }
+
+      try {
+         // Try to handle as lattice input first
+         std::string upperKey = LRL_StringTools::strToupper(tokens[0]);
+         if (isLattice(upperKey)) {
+            handleLatticeInput(cells, upperKey, tokens, rawline);
+            continue;
+         }
+
+         // If not a lattice command, try as a control command
+         std::string rest;
+         const std::vector<std::string> rawTokens = parseInputLine(rawline);
+         for (size_t i = 1; i < tokens.size(); ++i) {
+            rest += rawTokens[i];
+            if (i < rawTokens.size() - 1) rest += " ";
+         }
+
+         if (!handleCommand(controls, rawTokens[0], rest)) {
+            std::cerr << ";Warning: Unrecognized command '" << rawTokens[0] << "'" << std::endl;
+         }
+      }
+      catch (const std::exception& e) {
+         std::cerr << ";Warning: Failed to parse input: " << e.what() << std::endl;
+      }
+   }
+}
+
+void InputHandler::handleLatticeInput(std::vector<LatticeCell>& inputVectors,
    const std::string& key,
    const std::vector<std::string>& tokens,
    const std::string& line) {
@@ -211,7 +186,6 @@ void InputHandler::handleLatticeInput(
          try {
             const size_t count = std::stoul(tokens[1]);
             if (count > 1) {
-               // Use the new vector-returning parseRandom
                std::vector<LatticeCell> randomResults = parseRandom(count);
                inputVectors.insert(
                   inputVectors.end(),

@@ -1,3 +1,4 @@
+#pragma warning(disable: 4189) // unused variables
 #ifndef V7DIST_H
 #define V7DIST_H
 
