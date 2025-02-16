@@ -4,6 +4,11 @@ COMMAND = CmdPrim
 all:	$(COMMAND)
 
 $(COMMAND):	$(COMMAND).cpp \
+	../InputHandler/BaseControlVariables.h ../InputHandler/BaseControlVariables.cpp ../InputHandler/BlockLimits.h \
+	../InputHandler/ControlFeature.h ../InputHandler/ControlFeatures.h ../InputHandler/ControlFeatures.cpp \
+	../InputHandler/DistanceTypes.h ../InputHandler/DistanceTypes.cpp ../InputHandler/DistanceTypesUtils.h \
+	../InputHandler/InputHandler.h ../InputHandler/InputHandler.cpp \
+	../InputHandler/LatticeCell.h \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/ColorTables.h ../LatticeRepresentationLib/ColorTables.cpp \
@@ -13,6 +18,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/D7_ClassifySubboundaries.cpp ../LatticeRepresentationLib/D7.cpp \
 	../LatticeRepresentationLib/D7_Subboundary.cpp ../LatticeRepresentationLib/Delone.cpp \
 	../LatticeRepresentationLib/DeloneFitResults.cpp \
+	../LatticeRepresentationLib/EnhancedS6.cpp ../LatticeRepresentationLib/EnhancedS6.h \
 	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
 	../LRL_Tools/HSV.cpp ../LRL_Tools/HSV.h ../LRL_Tools/RGB.cpp ../LRL_Tools/RGB.h \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
@@ -25,13 +31,19 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/MatD13.cpp \
 	../LatticeRepresentationLib/MatD7.cpp ../LatticeRepresentationLib/MatG6.cpp ../LatticeRepresentationLib/MatMN.cpp \
 	../LatticeRepresentationLib/MatN.cpp ../LatticeRepresentationLib/MatS6.cpp ../LatticeRepresentationLib/Niggli.cpp \
+	../LatticeRepresentationLib/Polar.h ../LatticeRepresentationLib/Polar.cpp \
 	../LatticeRepresentationLib/S6.cpp ../LatticeRepresentationLib/S6Dist.cpp \
 	../LatticeRepresentationLib/S6_Matrices.cpp ../LatticeRepresentationLib/Selling.cpp \
 	../LatticeRepresentationLib/S6BoundaryTransforms.h ../LatticeRepresentationLib/S6BoundaryTransforms.cpp \
 	../LatticeRepresentationLib/Sella.cpp \
 	../LatticeRepresentationLib/VecN.cpp  ../LatticeRepresentationLib/V7.cpp ../LRL_Tools/LRL_Vector3.cpp \
+	../LatticeRepresentationLib/Vector_2.h ../LatticeRepresentationLib/Vector_2.cpp \
 	../LatticeRepresentationLib/LRL_WriteLatticeData.h ../LatticeRepresentationLib/LRL_WriteLatticeData.cpp
-	$(CXX) -I ../LatticeRepresentationLib -I ../LRL_Tools -o $(COMMAND) $(COMMAND).cpp \
+	$(CXX) -I . -I ../LatticeRepresentationLib -I ../LRL_Tools -I ../InputHandler -o $(COMMAND) $(COMMAND).cpp \
+	../InputHandler/BaseControlVariables.cpp  \
+	../InputHandler/ControlFeatures.cpp \
+	../InputHandler/DistanceTypes.cpp \
+	../InputHandler/InputHandler.cpp \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/ColorTables.cpp \
@@ -53,11 +65,13 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/MatD13.cpp \
 	../LatticeRepresentationLib/MatD7.cpp ../LatticeRepresentationLib/MatG6.cpp ../LatticeRepresentationLib/MatMN.cpp \
 	../LatticeRepresentationLib/MatN.cpp ../LatticeRepresentationLib/MatS6.cpp ../LatticeRepresentationLib/Niggli.cpp \
+	../LatticeRepresentationLib/Polar.cpp \
 	../LatticeRepresentationLib/S6.cpp ../LatticeRepresentationLib/S6Dist.cpp \
 	../LatticeRepresentationLib/S6_Matrices.cpp ../LatticeRepresentationLib/Selling.cpp \
 	../LatticeRepresentationLib/S6BoundaryTransforms.cpp \
 	../LatticeRepresentationLib/Sella.cpp \
 	../LatticeRepresentationLib/VecN.cpp  ../LatticeRepresentationLib/V7.cpp ../LRL_Tools/LRL_Vector3.cpp \
+	../LatticeRepresentationLib/Vector_2.cpp \
 	../LatticeRepresentationLib/LRL_WriteLatticeData.cpp
 
 clean:
