@@ -23,6 +23,7 @@ COMMANDS  =  \
 	CmdToDC \
 	CmdToG6 \
 	CmdToP3 \
+	CmdToRI \
 	CmdToS6 \
 	CmdToS6L \
 	CmdToU \
@@ -55,7 +56,7 @@ SOURCES  =  \
 	CmdToDC/CmdToDC.cpp \
 	CmdToG6/CmdToG6.cpp \
 	CmdToP3/CmdToP3.cpp \
-	CmdToV7/CmdToV7.cpp \
+	CmdToRI/CmdToRI.cpp \
 	CmdToS6/CmdToS6.cpp \
 	CmdToS6L/CmdToS6L.cpp \
 	CmdToU/CmdToU.cpp \
@@ -68,7 +69,7 @@ SOURCES  =  \
 
 BINS  =  \
 	CheckInput/CheckInput \
-	CmdCmplx/CmdCmplx.cpp \
+	CmdCmplx/CmdCmplx \
 	CmdDelone/CmdDelone \
 	CmdDists/CmdDists \
 	CmdGen/CmdGen \
@@ -88,6 +89,7 @@ BINS  =  \
 	CmdToDC/CmdToDC \
 	CmdToG6/CmdToG6 \
 	CmdToP3/CmdToP3 \
+	CmdToRI/CmdToRI \
 	CmdToS6/CmdToS6 \
 	CmdToS6L/CmdToS6L \
 	CmdToU/CmdToU \
@@ -176,6 +178,9 @@ CmdToG6/CmdToG6:  CmdToG6/CmdToG6.cpp $(BIN)
 
 CmdToP3/CmdToP3:  CmdToP3/CmdToP3.cpp $(BIN)
 	  (cd CmdToP3;  make all; cp CmdToP3 $(BIN))
+
+CmdToRI/CmdToRI:  CmdToRI/CmdToRI.cpp $(BIN)
+	  (cd CmdToRI;  make all; cp CmdToRI $(BIN))
 
 CmdToS6/CmdToS6:  CmdToS6/CmdToS6.cpp $(BIN)
 	  (cd CmdToS6;  make all; cp CmdToS6 $(BIN))
