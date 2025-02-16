@@ -387,7 +387,7 @@ int main(int argc, char* argv[])
    controls.setHasWebInput(webio.m_hasWebInstructions);
    const int initblockstart = controls.getBlockStart();
    const int initblocksize = controls.getBlockSize();
-   const FileBlockProgramInput<CmdSellaControls> dc_setup("CmdSella", initblockstart, initblocksize,controls);
+   const WebFileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella",0,controls);
 
    const size_t blockstart = dc_setup.getBlockStart();
    const size_t blocksize = dc_setup.getBlockSize();
