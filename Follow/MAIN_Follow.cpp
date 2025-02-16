@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
       FollowControls controls;
       controls.setWebRun(webio.m_hasWebInstructions);
 
-      const FileBlockProgramInput<FollowControls> dc_setup("Follow", 0, 20, controls);
+      const WebFileBlockProgramInput<FollowControls> dc_setup(argc, argv, "Follow", 0, controls);
 
       if (controls.shouldShowControls()) {
          std::cout << controls.getState() << "\n";
