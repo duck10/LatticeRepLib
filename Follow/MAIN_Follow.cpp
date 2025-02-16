@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
       }
 
       // Process instances for the current block
-      processInstances(
+      Follow::processInstances(
          instances,
          dc_setup.getBlockStart(),
          dc_setup.getBlockEnd(),

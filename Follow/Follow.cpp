@@ -174,3 +174,65 @@ LatticeCell Follow::perturbVector(const LatticeCell& inputVector, const int pert
 
    return LatticeCell(G6(inputS6 + scaledOrthogonalVector), inputVector.getLatticeType());
 }
+
+std::vector<FollowInstance> Follow::CreateFollowInstanceList(
+   const FollowControls& controls,
+   const std::vector<LatticeCell>& cells)
+{
+   std::vector<FollowInstance> instances;
+   const size_t vectorsNeeded = controls.getVectorsPerTrial();
+   const size_t numCompleteSets = cells.size() / vectorsNeeded;
+   instances.reserve(numCompleteSets * controls.getPerturbations());  // Pre-allocate space
+
+   for (size_t i = 0; i < numCompleteSets; ++i) {
+      std::vector<LatticeCell> starter;
+      starter.reserve(vectorsNeeded);  // Pre-allocate space
+
+      const size_t baseIndex = i * vectorsNeeded;
+      for (size_t j = 0; j < vectorsNeeded; ++j) {
+         starter.emplace_back(cells[baseIndex + j]);
+      }
+
+      // Handle unperturbed case
+      instances.emplace_back(starter, static_cast<int>(i), 0);
+
+      // Handle perturbations
+      for (size_t kk = 1; kk < controls.getPerturbations(); ++kk) {
+         auto perturbedCells = FollowInstance::Perturb(starter, controls.getPerturbBy());
+         instances.emplace_back(std::move(perturbedCells),
+            static_cast<int>(i),
+            static_cast<int>(kk));
+      }
+   }
+   return instances;
+}
+
+void Follow::assignFilenamesToInstances(
+   const std::vector<std::string>& rawNames,
+   const std::vector<std::string>& basicNames,
+   const std::vector<std::string>& fullNames,
+   std::vector<FollowInstance>& instances)
+{
+   for (size_t i = 0; i < instances.size() && i < rawNames.size(); ++i) {
+      instances[i].AddFileNames(rawNames[i], basicNames[i], fullNames[i]);
+   }
+}
+
+void Follow::processInstances(
+   const std::vector<FollowInstance>& instances,
+   const size_t blockStart,
+   const size_t blockEnd,
+   FollowControls& controls,
+   const std::vector<LatticeCell>& cells)
+{
+   Follow follow(controls);
+   for (size_t i = blockStart; i < blockEnd && i < instances.size(); ++i) {
+      if (follow.processPerturbation(instances[i].GetTrial(),
+         instances[i].GetPerturbation(),
+         instances[i], cells))
+      {
+         std::cout << "; Follow graphics file(s) "
+            << i << "  " << instances[i].GetFullFileName() << std::endl;
+      }
+   }
+}
