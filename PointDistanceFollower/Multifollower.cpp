@@ -325,15 +325,15 @@ std::pair<double, double> MultiFollower::GetMinMax(void) const {
    const std::pair<double, double> pG6 = GetPathMinMax(m_g6path);
    const std::pair<double, double> pD7 = GetPathMinMax(m_d7path);
    const std::pair<double, double> pCS = GetPathMinMax(m_cspath);
-   const std::pair<double, double> pV7 = GetPathMinMax( m_v7path );
+   const std::pair<double, double> pV7 = GetPathMinMax(m_v7path );
    const std::pair<double, double> pLM = GetPathMinMax(m_lmpath);
    const std::pair<double, double> pDC = GetPathMinMax(m_dcpath);
 
-   const double minp = std::min(minNC(pS6.first, pG6.first, pD7.first, pCS.first, pV7.first, pLM.first), 
+   const double minp = minNC(pS6.first, pG6.first, pD7.first, pCS.first, pV7.first, pLM.first,
       pDC.first);
-   const double maxp = std::max(maxNC(pS6.second, pG6.second, pD7.second, pCS.second, pV7.second, pLM.second),
-     pDC.second);
-   return std::make_pair(minp, maxp);
+   const double maxp = maxNC(pS6.second, pG6.second, pD7.second, pCS.second, pV7.second, pLM.second,
+      pDC.second);
+   return { minp, maxp };
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
