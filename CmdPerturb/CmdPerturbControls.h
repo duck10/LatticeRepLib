@@ -37,7 +37,7 @@ public:
 private:
    void setPerturbCount(int count) {
       if (count <= 0) {
-         std::cerr << ";Warning: Perturbation count must be positive, using "
+         std::cout << ";Warning: Perturbation count must be positive, using "
             << DEFAULT_COUNT << std::endl;
          perturbCount = DEFAULT_COUNT;
       }
@@ -48,7 +48,7 @@ private:
 
    void setPerturbDelta(double delta) {
       if (delta <= 0.0) {
-         std::cerr << ";Warning: Perturbation delta must be positive, using "
+         std::cout << ";Warning: Perturbation delta must be positive, using "
             << DEFAULT_DELTA << std::endl;
          perturbDelta = DEFAULT_DELTA;
       }

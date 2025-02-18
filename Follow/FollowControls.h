@@ -237,7 +237,6 @@ public:
 
    std::string getState() const {
       std::ostringstream oss;
-      oss << ";Follower Mode: " << FollowerModeUtils::toString(followerMode) << "\n";
       if (perturbations == 1) {
          oss << ";Perturbations: no perturbations\n";
       }
@@ -245,7 +244,8 @@ public:
          oss << ";Perturbations: " << perturbations << "\n"
             << ";Perturb By: " << perturbBy << "\n";
       }
-      oss << ";Number of Follower Points: " << numFollowerPoints << "\n"
+      oss << ";Follower Mode: " << FollowerModeUtils::toString(followerMode) << "\n"
+         << ";Number of Follower Points: " << numFollowerPoints << "\n"
          << ";Print Distance Data: " << (printDistanceData ? "Yes" : "No") << "\n"
          << ";Glitches Only: " << (glitchesOnly ? "Yes" : "No") << "\n"
          << ";Should Detect Glitches: " << (shouldDetectGlitches ? "Yes" : "No") << "\n"
@@ -278,7 +278,7 @@ private:
    std::set<std::string> enabledTypes{ "CS", "NC" };
 
    // Existing members
-   FollowerMode followerMode;
+   FollowerMode followerMode = FollowerMode::POINT;
    int perturbations = 1;
    double perturbBy = 0.1;
    int numFollowerPoints = 100;

@@ -11,7 +11,7 @@ struct CmdGenUtils {
 
    static int validatePointCount(int count) {
       if (count < MIN_POINTS || count > MAX_POINTS) {
-         std::cerr << ";Warning: Point count to generate " << count << " out of range ["
+         std::cout << ";Warning: Point count to generate " << count << " out of range ["
             << MIN_POINTS << "," << MAX_POINTS << "], using "
             << DEFAULT_POINTS << std::endl;
          return DEFAULT_POINTS;

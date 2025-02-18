@@ -31,7 +31,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.bat">
+    <None Include="CmdGen_test.bat">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

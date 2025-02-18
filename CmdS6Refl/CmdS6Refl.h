@@ -30,7 +30,7 @@ private:
          delta = value;
       }
       else {
-         std::cerr << ";Warning: delta must be positive, using default value" << std::endl;
+         std::cout << ";Warning: delta must be positive, using default value" << std::endl;
          delta = DEFAULT_DELTA;
       }
    }

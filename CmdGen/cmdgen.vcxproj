@@ -163,7 +163,7 @@
     <ClInclude Include="CmdGenUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.bat" />
+    <None Include="CmdGen_test.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

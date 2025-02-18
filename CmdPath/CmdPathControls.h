@@ -43,7 +43,7 @@ public:
 private:
    void setPathLength(int length) {
       if (length <= 0) {
-         std::cerr << ";Warning: Path length must be positive, using "
+         std::cout << ";Warning: Path length must be positive, using "
             << DEFAULT_PATH_LENGTH << std::endl;
          pathLength = DEFAULT_PATH_LENGTH;
       }
