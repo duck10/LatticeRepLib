@@ -1,11 +1,18 @@
-
-
-CXX	?=	g++-9 -g -O3 -std=gnu++17 -fpermissive
+CXX	=	g++-9 -g -O3 -std=gnu++17 -fpermissive
 COMMAND = PlotC3
 
 all:	$(COMMAND)
 
 $(COMMAND):	MAIN_PlotC3.cpp \
+	../InputHandler/BaseControlVariables.cpp  ../InputHandler/BlockUtils.h \
+	../InputHandler/ControlFeature.cpp  ../InputHandler/DistanceTypes.h \
+	../InputHandler/framework.h ../InputHandler/ProgramSetup.h \
+	../InputHandler/BaseControlVariables.h ../InputHandler/CommandSystem.cpp \
+	../InputHandler/ControlFeature.h ../InputHandler/DistanceTypesUtils.cpp  \
+	../InputHandler/InputHandler.cpp ../InputHandler/BlockLimits.h \
+	../InputHandler/CommandSystem.h ../InputHandler/DistanceTypes.cpp \
+	../InputHandler/DistanceTypesUtils.h ../InputHandler/InputHandler.h \
+	../InputHandler/LatticeCell.h \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/ColorTables.h ../LatticeRepresentationLib/ColorTables.cpp \
@@ -36,7 +43,13 @@ $(COMMAND):	MAIN_PlotC3.cpp \
 	../LatticeRepresentationLib/VecN.cpp  ../LatticeRepresentationLib/V7.cpp ../LRL_Tools/LRL_Vector3.cpp \
         ../LatticeRepresentationLib/Vector_2.h ../LatticeRepresentationLib/Vector_2.cpp \
 	../LatticeRepresentationLib/WebIO.h ../LatticeRepresentationLib/WebIO.cpp
-	$(CXX) -I ../LatticeRepresentationLib -I ../LRL_Tools -o $(COMMAND) MAIN_PlotC3.cpp \
+	$(CXX) -I ../LatticeRepresentationLib -I ../InputHandler -I ../LRL_Tools -o $(COMMAND) MAIN_PlotC3.cpp \
+	../InputHandler/BaseControlVariables.cpp \
+        ../InputHandler/ControlFeature.cpp \
+	../InputHandler/CommandSystem.cpp \
+	../InputHandler/DistanceTypesUtils.cpp  \
+	../InputHandler/InputHandler.cpp \
+	../InputHandler/DistanceTypes.cpp \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \
 	../LatticeRepresentationLib/C3Plot.cpp ../LatticeRepresentationLib/CellInputData.cpp \
 	../LatticeRepresentationLib/ColorTables.cpp \
