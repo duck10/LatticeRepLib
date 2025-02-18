@@ -11,6 +11,7 @@
 #include <functional>
 #include <sstream>
 
+
 class BaseControlVariables;  // Forward declaration
 
 class InputHandler {
@@ -30,6 +31,10 @@ private:
       const std::string& line);
 
 public:
+
+   // Global container to store input lines
+   static std::vector<std::string> globalInputLines;
+
    using CommandHandler = std::function<void(BaseControlVariables&, const std::string&)>;
 
    static void registerHandler(const std::string& command, double threshold, CommandHandler handler);
@@ -66,6 +71,11 @@ public:
       readMixedInput(controls, inputVectors, std::cin);
       return inputVectors;
    }
+
+   static std::vector<std::string> GetInputLines() {
+      return InputHandler::globalInputLines;
+   }
+
 };
 
 #endif // INPUT_HANDLER_H

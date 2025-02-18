@@ -18,6 +18,7 @@
 #include <atomic>
 #include <set>
 #include <sstream>
+#include <unordered_set>
 
 class FollowControls : public BaseControlVariables {
 public:
@@ -171,9 +172,22 @@ public:
       }
    }
 
+   std::string replaceCharacters(const std::string& input, const std::string& targets, char replacement) {
+      std::unordered_set<char> targetSet(targets.begin(), targets.end()); // Use a set for efficient look-up
+      std::string result = input;
+
+      for (char& c : result) {
+         if (targetSet.find(c) != targetSet.end()) {
+            c = replacement;
+         }
+      }
+
+      return result;
+   }
+
    // File prefix methods
    void setPrefix(const std::string& newPrefix) {
-      prefix = newPrefix;
+      prefix = replaceCharacters(newPrefix, " ",'_');
    }
 
    // Distance type methods
@@ -245,7 +259,7 @@ public:
             << ";Perturb By: " << perturbBy << "\n";
       }
       oss << ";Follower Mode: " << FollowerModeUtils::toString(followerMode) << "\n"
-         << ";Number of Follower Points: " << numFollowerPoints << "\n"
+          << ";Number of Follower Points: " << numFollowerPoints << "\n"
          << ";Print Distance Data: " << (printDistanceData ? "Yes" : "No") << "\n"
          << ";Glitches Only: " << (glitchesOnly ? "Yes" : "No") << "\n"
          << ";Should Detect Glitches: " << (shouldDetectGlitches ? "Yes" : "No") << "\n"

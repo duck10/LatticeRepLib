@@ -77,6 +77,7 @@ private:
    void writeMetadata(int trial, int perturbation, const std::string& datetime);
    std::string reportGlitches(const int n = 2);
    std::string WriteDistanceSummary(const std::vector<std::vector<double>>& alldistances) const;
+   void writeInputLines() const;
 
 private:
    struct PlotDimensions {
