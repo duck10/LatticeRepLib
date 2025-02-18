@@ -1,6 +1,7 @@
 ﻿#pragma warning(disable: 4996)
 
 #include "FollowControls.h"
+#include "InputHandler.h"
 #include "NiceAxisScaling.h"
 #include "PathPoint.h"
 #include "SvgPlotWriter.h"
@@ -277,9 +278,19 @@ void SvgPlotWriter::writePlot(const std::vector<std::vector<double>>& allDistanc
    writeLegend(width, margin, allDistances, distfuncs);
    writeGlitchComments(distfuncs);
    writeMetadata(trial, perturbation, datetime.str());
+   writeInputLines();
    WriteDistanceSummary(allDistances);
 
    svg << "</svg>\n";
+}
+
+void SvgPlotWriter::writeInputLines() const {
+   svg << "\n<!-- Input text lines\n";
+   for (const auto& g : InputHandler::globalInputLines)
+   {
+      svg << g << std::endl;;
+   }
+   svg << "-->\n\n";
 }
 
 void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxDist,

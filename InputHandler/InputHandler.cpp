@@ -5,6 +5,8 @@
 
 // Initialize static member
 CommandSystem InputHandler::commandSystem;
+std::vector<std::string> InputHandler::globalInputLines;
+
 
 bool InputHandler::isLattice(const std::string& s) {
    const std::string upperKey = LRL_StringTools::strToupper(s);
@@ -139,6 +141,7 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
    std::istream& input) {
    std::string line;
    while (std::getline(input, line)) {
+      globalInputLines.emplace_back(line);
       if (line.empty() || line[0] == ';') continue;
       std::string rawline(line);
       const std::vector<std::string> tokens = parseInputLine(line);
