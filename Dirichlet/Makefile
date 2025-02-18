@@ -8,7 +8,6 @@ $(COMMAND):	Dirichlet_Main.cpp \
 	../InputHandler/BaseControlVariables.h ../InputHandler/BaseControlVariables.cpp \
 	../InputHandler/BlockLimits.h \
 	../InputHandler/ControlFeature.h ../InputHandler/ControlFeature.cpp \
-	../InputHandler/ControlFeatures.h ../InputHandler/ControlFeatures.cpp \
 	../InputHandler/DistanceTypes.h ../InputHandler/DistanceTypes.cpp \
 	../InputHandler/DistanceTypesUtils.h ../InputHandler/DistanceTypesUtils.cpp \
 	../InputHandler/framework.h \
@@ -48,7 +47,6 @@ $(COMMAND):	Dirichlet_Main.cpp \
 	$(CXX) -I . -I ../LatticeRepresentationLib -I ../LRL_Tools -I ../InputHandler -o $(COMMAND) Dirichlet_Main.cpp \
 	DirichletProgramConstants.cpp DirichletCellFaces.cpp  Dirichlet.cpp \
 	../InputHandler/BaseControlVariables.cpp \
-	../InputHandler/ControlFeatures.cpp \
 	../InputHandler/DistanceTypes.cpp \
 	../InputHandler/InputHandler.cpp \
 	../LRL_Tools/SVG_Tools.cpp \

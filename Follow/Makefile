@@ -14,7 +14,6 @@ $(COMMAND): MAIN_Follow.cpp \
 	../InputHandler/BaseControlVariables.h \
 	../InputHandler/BlockLimits.h \
 	../InputHandler/ControlFeature.h ../InputHandler/ControlFeature.cpp \
-	../InputHandler/ControlFeatures.h ../InputHandler/ControlFeatures.cpp \
 	../InputHandler/DistanceTypes.h ../InputHandler/DistanceTypes.cpp \
 	../InputHandler/DistanceTypesUtils.h \
 	../InputHandler/framework.h \
@@ -63,7 +62,6 @@ $(COMMAND): MAIN_Follow.cpp \
 	DistanceFactory.cpp Follow.cpp FollowControls.cpp FollowerMode.cpp FollowUtils.h.cpp \
 	GlitchTypes.cpp Path.cpp SvgPlotWriter.cpp NiceAxisScaling.cpp \
 	../InputHandler/BaseControlVariables.cpp \
-	../InputHandler/ControlFeatures.cpp \
 	../InputHandler/DistanceTypes.cpp \
 	../InputHandler/InputHandler.cpp \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \

@@ -6,7 +6,7 @@ all:	$(COMMAND)
 $(COMMAND):	$(COMMAND).cpp \
 	CmdGenControls.h  CmdGenTypes.h  CmdGenUtils.h \
 	../InputHandler/BaseControlVariables.h ../InputHandler/BaseControlVariables.cpp ../InputHandler/BlockLimits.h \
-	../InputHandler/ControlFeature.h ../InputHandler/ControlFeatures.h ../InputHandler/ControlFeatures.cpp \
+	../InputHandler/ControlFeature.h \
 	../InputHandler/DistanceTypes.h ../InputHandler/DistanceTypes.cpp ../InputHandler/DistanceTypesUtils.h \
 	../InputHandler/InputHandler.h ../InputHandler/InputHandler.cpp \
 	../InputHandler/LatticeCell.h \
@@ -42,7 +42,6 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/WebIO.h ../LatticeRepresentationLib/WebIO.cpp
 	$(CXX) -I . -I ../LatticeRepresentationLib -I ../LRL_Tools -I ../InputHandler -o $(COMMAND) $(COMMAND).cpp \
 	../InputHandler/BaseControlVariables.cpp  \
-        ../InputHandler/ControlFeatures.cpp \
 	../InputHandler/DistanceTypes.cpp \
         ../InputHandler/InputHandler.cpp \
 	../LatticeRepresentationLib/B4.cpp ../LatticeRepresentationLib/C3.cpp \

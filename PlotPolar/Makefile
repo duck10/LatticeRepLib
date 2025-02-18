@@ -8,7 +8,7 @@ all:	$(COMMAND)
 $(COMMAND):	MAIN_PlotPolar.cpp \
 	PlotPolar.cpp PlotPolar.h \
 	../InputHandler/BaseControlVariables.h ../InputHandler/BaseControlVariables.cpp ../InputHandler/BlockLimits.h \
-	../InputHandler/ControlFeature.h ../InputHandler/ControlFeatures.h ../InputHandler/ControlFeatures.cpp \
+	../InputHandler/ControlFeature.h \
 	../InputHandler/DistanceTypes.h ../InputHandler/DistanceTypes.cpp ../InputHandler/DistanceTypesUtils.h \
 	../InputHandler/InputHandler.h ../InputHandler/InputHandler.cpp \
 	../InputHandler/LatticeCell.h \
@@ -49,7 +49,6 @@ $(COMMAND):	MAIN_PlotPolar.cpp \
 	$(CXX) -I . -I ../LatticeRepresentationLib -I ../LRL_Tools -I ../InputHandler -o $(COMMAND) MAIN_PlotPolar.cpp \
         PlotPolar.cpp \
 	../InputHandler/BaseControlVariables.cpp  \
-	../InputHandler/ControlFeatures.cpp \
 	../InputHandler/DistanceTypes.cpp \
 	../InputHandler/InputHandler.cpp \
 	../Radial/Radial.cpp \

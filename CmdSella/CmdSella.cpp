@@ -1,3 +1,5 @@
+/* define LRL_DEBUG 1 */
+
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
@@ -383,6 +385,13 @@ int main(int argc, char* argv[])
    std::cout << "; SELLA method symmetry searching\n";
    WebIO webio(argc, argv, "CmdSella",0);
 
+#ifdef LRL_DEBUG
+    for (size_t ii=0; ii < argc; ii++) {
+      std::cout << ii << ": " <<  argv[ii] << std::endl;
+    }  
+    std::cout  << "webio: " << webio << std::endl;
+#endif
+
    CmdSellaControls controls;
    controls.setHasWebInput(webio.m_hasWebInstructions);
    const int initblockstart = controls.getBlockStart();
@@ -397,6 +406,13 @@ int main(int argc, char* argv[])
       std::cout << controls << std::endl;
    }
 
+#ifdef LRL_DEBUG
+  if (!controls.getShowControls()) {
+      std::cout << controls << std::endl;
+  }
+#endif
+
+
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
 
    const bool doProduceSellaGraphics = controls.DoGraphics();
@@ -409,7 +425,7 @@ int main(int argc, char* argv[])
          std::cout << "; Send Sella Plot to graphics file " 
             << dc_setup.getFullFileNameAt(whichCell) << std::endl;
          if (webio.m_hasWebInstructions) {
-            SendSellaToFile(svgOutput, dc_setup.getBasicFileNames()[whichCell - blockstart]);
+            SendSellaToFile(svgOutput, dc_setup.getRawFileNames()[whichCell - blockstart]);
          }
          else {
             SendSellaToFile(svgOutput, dc_setup.getBasicFileNames()[whichCell - blockstart]);
