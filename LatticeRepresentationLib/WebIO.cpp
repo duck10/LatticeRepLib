@@ -131,6 +131,25 @@ void WebIO::CreateFilenamesAndLinks(const size_t n,
    else {
       m_FullfileNameList = m_FileNameList;
    }
+
+   //std::cout << " m_basicfileNameListfrom CreateListOfFilenames \n";
+   //for (const auto& m :  m_basicfileNameList) {
+   //   std::cout << m << std::endl;
+   //};
+   //std::cout << std::endl;
+
+   //std::cout << " m_FileNameList from CreateRawListOfFilenames \n";
+   //for (const auto& m : m_FileNameList) {
+   //   std::cout << m << std::endl;
+   //};
+   //std::cout << std::endl;
+
+   //std::cout << " m_FullfileNameList from either CreateHTMLListOfFilenames or m_FileNameList \n";
+   //for (const auto& m : m_FullfileNameList) {
+   //   std::cout << m << std::endl;
+   //};
+   //std::cout << std::endl;
+
 }
 
 void WebIO::CompareHtmlFromWebIO(

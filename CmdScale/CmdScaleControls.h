@@ -42,7 +42,7 @@ public:
          scaleType = upperType;
       }
       else {
-         std::cerr << ";Warning: Invalid type. Using default 'VOLUME'" << std::endl;
+         std::cout << ";Warning: Invalid type. Using default 'VOLUME'" << std::endl;
          scaleType = "VOLUME";
       }
    }

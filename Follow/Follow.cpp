@@ -71,18 +71,18 @@ bool Follow::processPerturbation(int trialNum,
    const std::vector<LatticeCell>& cells) {
    distfuncs = DistanceFactory::createEnabledDistances(controls.getDistanceTypes());
    if (distfuncs.empty()) {
-      std::cerr << "; No distance types enabled - please enable at least one type" << std::endl;
+      std::cout << "; No distance types enabled - please enable at least one type" << std::endl;
       return false;
    }
 
    std::string curfilename = instance.GetRawFileName();
    const Path path = generatePath(trialNum, perturbationNum, instance.GetFollowSeed(), cells);
    if (path.empty()) {
-      std::cerr << "; Failed to generate valid path" << std::endl;
+      std::cout << "; Failed to generate valid path" << std::endl;
       return false;
    }
    if (curfilename.empty()) {
-      std::cerr << "; Empty output filename" << std::endl;
+      std::cout << "; Empty output filename" << std::endl;
       return false;
    }
 
@@ -107,7 +107,7 @@ bool Follow::processPerturbation(int trialNum,
    }
 
    if (allDistances.empty()) {
-      std::cerr << "; Error, no paths created\n";
+      std::cout << "; Error, no paths created\n";
       return false;
    }
 
@@ -125,7 +125,7 @@ bool Follow::processPerturbation(int trialNum,
       }      writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);
    }
    else {
-      std::cerr << ";Warning: Unable to open output file" << std::endl;
+      std::cout << ";Warning: Unable to open output file" << std::endl;
       return false;
    }
    return true;
