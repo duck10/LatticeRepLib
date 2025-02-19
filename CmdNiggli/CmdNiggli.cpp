@@ -23,7 +23,11 @@ int main() {
       }
 
       for (const auto& input : dc_setup.getInputList()) {
-         const LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(input.getLatticeType(), input.getCell());
+         LRL_Cell pCell = LatticeConverter::MakePrimitiveCell(input.getLatticeType(), input.getCell());
+         int count = 0;
+         if (!pCell.IsValid()) {
+            continue;
+         }
          G6 g;
          const bool b = Niggli::Reduce(G6(pCell), g);
          std::cout << "G6 " << g << std::endl;

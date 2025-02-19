@@ -586,7 +586,7 @@ void Niggli::MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta) {
 
 bool Niggli::Reduce(const G6& vi, G6& vout) {
    const bool b = Selling::Reduce(vi, vout);
-   return ReduceWithoutMatrices(vout, vout, 1.0E-12);
+   return ReduceWithoutMatrices(vout, vout, 1.0E-8);
 }
 
 bool Niggli::Reduce(const G6& vi, G6& vout, const bool sellingFirst) {
@@ -903,7 +903,8 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
    bool isNearReduced = Niggli::NearRed(vout, delta);
    if (reduceCycleCount >= maxCycle) {
       if (isNearReduced) {
-         std::cout << "THERE IS A REDUCE PROBLEM (B), m_ReductionCycleCount " << reduceCycleCount << std::endl;
+         std::cout << ";THERE IS A REDUCE PROBLEM (B), m_ReductionCycleCount " << reduceCycleCount << std::endl;
+         std::cout << ";but the input cell in ReduceWithoutMatrices is already very nearly reduced\n";
          std::cout << vout << std::endl;
       }
    }

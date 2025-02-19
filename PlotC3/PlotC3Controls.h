@@ -14,22 +14,14 @@ public:
 
    CmdPlotC3Controls() {
 
-      InputHandler::registerHandler("PREFIX", 0.35,
-         [this](BaseControlVariables&, const std::string& value) {
-            setPrefix(value);
-         }
-      );
    }
 
    bool shouldShowControls() const { return showControls; }
    std::string getPrefix() const { return prefix; }
 
 private:
-   void setPrefix(const std::string& newPrefix) {
-      prefix = newPrefix;
-   }
 
-   std::string prefix = "PLT";
+   const std::string prefix = "PLT";
 };
 
 #endif // CMD_PLOT_C3_CONTROLS_H

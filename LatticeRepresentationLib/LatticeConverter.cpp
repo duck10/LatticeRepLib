@@ -46,11 +46,11 @@ LatticeConverter::LatticeConverter(const eOutputType type)
 }
 
 LRL_Cell LatticeConverter::MakePrimitiveCell(const std::string& lattice, const LRL_Cell& cell) {
+   if (lattice == "P") return cell;
    const G6 g6 = G6(cell);
    const MatG6 mLattice = LRL_Cell::LatSymMatG6(lattice, cell);
-   MatG6 m66;
-   G6 redVec;
-   return LRL_Cell(mLattice*g6);
+   const G6 returnG6 = mLattice * g6;
+   return LRL_Cell(returnG6);
 }
 
 void LatticeConverter::SetOutputMaxima(void) { m_OutputType = emaxima; }

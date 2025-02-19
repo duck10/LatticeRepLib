@@ -13,23 +13,14 @@ public:
    }
 
    CmdPlotPolarControls() {
-
-      InputHandler::registerHandler("PREFIX", 0.35,
-         [this](BaseControlVariables&, const std::string& value) {
-            setPrefix(value);
-         }
-      );
    }
 
    bool shouldShowControls() const { return showControls; }
    std::string getPrefix() const { return prefix; }
 
 private:
-   void setPrefix(const std::string& newPrefix) {
-      prefix = newPrefix;
-   }
 
-   std::string prefix = "PPL";
+   const std::string prefix = "PPL";
 };
 
 #endif // CMD_PLOT_POLAR_CONTROLS_H
