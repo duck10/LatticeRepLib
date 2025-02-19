@@ -290,7 +290,7 @@ END
 
 
    // Now create setup which will process input file and override previous values
-   WebFileBlockProgramInput<CmdGenControls> dc_setup(argc, argv, "CmdGen", 0, controls);
+   BasicProgramInput<CmdGenControls> dc_setup("CmdGen", controls);
 
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
 

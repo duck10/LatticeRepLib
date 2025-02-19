@@ -68,7 +68,6 @@ public:
 
    size_t getBlockStart() const { return 0; }
    size_t getBlockSize() const { return 0; }
-   std::string getPrefix() const { return "error"; }
 
 private:
    int generateCount = 5;

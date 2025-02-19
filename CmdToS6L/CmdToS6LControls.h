@@ -61,7 +61,7 @@ public:
    std::string getFormat() const { return format; }
 
 private:
-   std::string prefix = "S6L";
+   const std::string prefix = "S6L";
    std::string format = "RS";  // Default to both Root and Linear
 };
 

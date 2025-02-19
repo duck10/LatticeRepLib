@@ -40,17 +40,6 @@ public:
          [this](BaseControlVariables&, const std::string& value) {
             setBlockStart(std::stoul(value));
          });
-
-      InputHandler::registerHandler("FILEPREFIX", 0.35,
-         [this](BaseControlVariables&, const std::string& value) {
-            setPrefix(LRL_StringTools::strToupper(value));
-         });
-
-      InputHandler::registerHandler("PREFIX", 0.35,
-         [this](BaseControlVariables&, const std::string& value) {
-            setPrefix(LRL_StringTools::strToupper(value));
-         });
-
       InputHandler::registerHandler("TYPE", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
             handleDistanceType(LRL_StringTools::strToupper(value));
@@ -137,6 +126,7 @@ public:
    }
 
    std::string  getFilePrefix() const {return prefix;}
+
    DistanceTypes getDistanceTypes() const { 
       DistanceTypes dt;
       dt.setEnabledTypes(getEnabledTypes());
@@ -183,11 +173,6 @@ public:
       }
 
       return result;
-   }
-
-   // File prefix methods
-   void setPrefix(const std::string& newPrefix) {
-      prefix = replaceCharacters(newPrefix, " ",'_');
    }
 
    // Distance type methods
@@ -286,7 +271,7 @@ private:
    size_t blocksize = DEFAULT_BLOCKSIZE;
 
    // File prefix member
-   std::string prefix = "FOL";
+   const std::string prefix = "FOL";
 
    // Distance types member
    std::set<std::string> enabledTypes{ "CS", "NC" };

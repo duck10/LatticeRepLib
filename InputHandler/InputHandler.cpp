@@ -65,6 +65,10 @@ G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
 }
 
 G6 InputHandler::parseRandom() {
+   Polar resultP = Polar::rand();;
+   while (!G6(resultP).IsValid()) {
+      resultP = Polar::rand();
+   }
    return G6(Polar::rand());
 }
 

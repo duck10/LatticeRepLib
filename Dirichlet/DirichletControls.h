@@ -33,16 +33,6 @@ public:
             setBlockStart(std::stoul(value));
          });
 
-      InputHandler::registerHandler("FILEPREFIX", 0.35,
-         [this](BaseControlVariables&, const std::string& value) {
-            setPrefix(LRL_StringTools::strToupper(value));
-         });
-
-      InputHandler::registerHandler("PREFIX", 0.35,
-         [this](const BaseControlVariables&, const std::string& value) {
-            setPrefix(value);
-         });
-
    }
 
    int getBlockSize() const { return  static_cast<int>(blocksize); }
@@ -50,11 +40,6 @@ public:
    std::string getPrefix() const { return prefix; }
 
 private:
-
-   // File prefix methods
-   void setPrefix(const std::string_view& newPrefix) {
-      prefix = newPrefix;
-   }
 
    void setBlockSize(int size) {
       long long val = static_cast<long long>(size);
@@ -92,7 +77,7 @@ private:
    size_t blocksize = BlockUtils::DEFAULT_BLOCKSIZE;
 
    // File prefix member
-   std::string prefix = "DIR";
+   const std::string prefix = "DIR";
 
 };
 
