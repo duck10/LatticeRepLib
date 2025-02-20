@@ -905,7 +905,6 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
       if (isNearReduced) {
          std::cout << ";THERE IS A REDUCE PROBLEM (B), m_ReductionCycleCount " << reduceCycleCount << std::endl;
          std::cout << ";but the input cell in ReduceWithoutMatrices is already very nearly reduced\n";
-         std::cout << vout << std::endl;
       }
    }
    m_ReductionCycleCount = reduceCycleCount;
