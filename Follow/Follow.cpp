@@ -111,24 +111,33 @@ bool Follow::processPerturbation(int trialNum,
       return false;
    }
 
-   std::ofstream svgfile(curfilename);
-   if (svgfile.is_open()) {
-      SvgPlotWriter writer(svgfile, controls);
+   std::vector<Glitch> allGlitches;
 
-      if (controls.isGlitchDetectionEnabled()) {
-         std::vector<Glitch> allGlitches;
-         for (size_t distIdx = 0; distIdx < allDistances.size(); ++distIdx) {
-            auto glitches = DetectGlitchesWithS6Data(allDistances[distIdx], path, distfuncs[distIdx]->getName());
-            allGlitches.insert(allGlitches.end(), glitches.begin(), glitches.end());
+   if (controls.isGlitchDetectionEnabled()) {
+      for (size_t distIdx = 0; distIdx < allDistances.size(); ++distIdx) {
+         auto glitches = DetectGlitchesWithS6Data(allDistances[distIdx], path, distfuncs[distIdx]->getName());
+         allGlitches.insert(allGlitches.end(), glitches.begin(), glitches.end());
+      }
+   }
+
+   if (!controls.shouldShowOnlyGlitches() || !allGlitches.empty()) {
+      std::ofstream svgfile(curfilename);
+      if (svgfile.is_open()) {
+         SvgPlotWriter writer(svgfile, controls);
+         if (controls.isGlitchDetectionEnabled()) {
+            writer.setGlitches(allGlitches);
          }
-         writer.setGlitches(allGlitches);
-      }      writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);
+         std::cout << "; Follow graphics file(s) "
+            << instance.GetFullFileName() << std::endl;
+
+         writer.writePlot(allDistances, distfuncs, trialNum, perturbationNum);
+      }
+      else {
+         std::cout << "Warning: Unable to open output file" << std::endl;
+         return false;
+      }
+      return true;
    }
-   else {
-      std::cout << ";Warning: Unable to open output file" << std::endl;
-      return false;
-   }
-   return true;
 }
 
 Path Follow::generatePath(const int trialNum, const int perturbationNum,
@@ -231,8 +240,11 @@ void Follow::processInstances(
          instances[i].GetPerturbation(),
          instances[i], cells))
       {
-         std::cout << "; Follow graphics file(s) "
-            << i << "  " << instances[i].GetFullFileName() << std::endl;
+         if ( !controls.shouldShowOnlyGlitches())
+         {
+            std::cout << "; Follow graphics file(s) "
+               << i << "  " << instances[i].GetFullFileName() << std::endl;
+         }
       }
    }
 }

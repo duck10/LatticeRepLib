@@ -65,9 +65,11 @@ G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
 }
 
 G6 InputHandler::parseRandom() {
-   Polar resultP = Polar::rand();;
-   while (!G6(resultP).IsValid()) {
+   Polar resultP = Polar::rand();
+   G6 resultG(resultP);
+   while (!(resultG.IsValid() && LRL_Cell(resultG).IsValid())) {
       resultP = Polar::rand();
+      resultG = resultP;
    }
    return G6(Polar::rand());
 }
@@ -77,15 +79,16 @@ std::vector<LatticeCell> InputHandler::parseRandom(size_t count) {
    results.reserve(count);
 
    for (size_t i = 0; i < count; ++i) {
-      G6 result = parseRandom();
-      const LRL_Cell cell = result;
-      if (cell.IsValid()) {
-         std::string numberedLine = "RANDOM #" + std::to_string(i + 1);
-         results.emplace_back(result, "P", numberedLine);
+      G6 random = parseRandom();
+      LRL_Cell cell = random;
+      int count = 0;
+      while (!cell.IsValid()) {
+         random = parseRandom();
+         cell = random;
+         ++count;
       }
-      else {
-         std::cerr << ";Warning: Invalid random vector #" << (i + 1) << " ignored" << std::endl;
-      }
+      const std::string numberedLine = "RANDOM #" + std::to_string(i + 1);
+      results.emplace_back(random, "P", numberedLine);
    }
    return results;
 }
