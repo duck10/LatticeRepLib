@@ -7,6 +7,9 @@
 #include <sstream>
 #include <vector>
 
+#include "StringMatcher.h"
+#include "TNear.h"
+
 enum class FollowerMode {
    POINT,
    LINE,
@@ -39,16 +42,35 @@ struct FollowerModeUtils {
       return true;
    }
 
+
+   static CNearTree<MatchableString> createModeTree() {
+      CNearTree<MatchableString> tree;
+      tree.insert(MatchableString("POINT"));
+      tree.insert(MatchableString("LINE"));
+      tree.insert(MatchableString("CHORD"));
+      tree.insert(MatchableString("CHORD3"));
+      tree.insert(MatchableString("TRIANGLE"));
+      tree.insert(MatchableString("SPLINE"));
+      return tree;
+   }
+
    static FollowerMode fromString(const std::string& str) {
       std::string upperStr = str;
       std::transform(upperStr.begin(), upperStr.end(), upperStr.begin(), ::toupper);
+      static const auto modeTree = createModeTree();
 
-      if (upperStr == "POINT") return FollowerMode::POINT;
-      if (upperStr == "LINE") return FollowerMode::LINE;
-      if (upperStr == "CHORD") return FollowerMode::CHORD;
-      if (upperStr == "CHORD3") return FollowerMode::CHORD3;
-      if (upperStr == "TRIANGLE") return FollowerMode::TRIANGLE;
-      if (upperStr == "SPLINE") return FollowerMode::SPLINE;
+      MatchableString closest;
+      if (modeTree.NearestNeighbor(0.6, closest, MatchableString(upperStr))) {
+         if (closest.name != upperStr) {
+            std::cerr << ";Mode '" << str << "' corrected to '" << closest.name << "'" << std::endl;
+         }
+         if (closest.name == "POINT") return FollowerMode::POINT;
+         if (closest.name == "LINE") return FollowerMode::LINE;
+         if (closest.name == "CHORD") return FollowerMode::CHORD;
+         if (closest.name == "CHORD3") return FollowerMode::CHORD3;
+         if (closest.name == "TRIANGLE") return FollowerMode::TRIANGLE;
+         if (closest.name == "SPLINE") return FollowerMode::SPLINE;
+      }
 
       std::cerr << ";Warning: Unrecognized mode '" << str
          << "', using default mode POINT" << std::endl;

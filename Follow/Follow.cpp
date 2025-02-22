@@ -138,6 +138,7 @@ bool Follow::processPerturbation(int trialNum,
       }
       return true;
    }
+   return true;
 }
 
 Path Follow::generatePath(const int trialNum, const int perturbationNum,
@@ -240,11 +241,11 @@ void Follow::processInstances(
          instances[i].GetPerturbation(),
          instances[i], cells))
       {
-         if ( !controls.shouldShowOnlyGlitches())
-         {
-            std::cout << "; Follow graphics file(s) "
-               << i << "  " << instances[i].GetFullFileName() << std::endl;
-         }
+         //if (!controls.shouldShowOnlyGlitches())
+         //{
+         //   std::cout << "; Follow graphics file(s) "
+         //      << i << "  " << instances[i].GetFullFileName() << std::endl;
+         //}
       }
    }
 }

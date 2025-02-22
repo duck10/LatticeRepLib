@@ -170,6 +170,9 @@
     <ClInclude Include="PerturbationUtils.h" />
     <ClInclude Include="SvgPlotWriter.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Follow_tests.bat" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
