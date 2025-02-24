@@ -98,9 +98,11 @@ int main(int argc, char* argv[]) {
       std::cout << "; Number of input vectors read: " << dc_setup.getInputList().size() << std::endl;
 
       // Validate vector count
-      std::string errorMsg;
-      if (!FollowerModeUtils::validateVectorCount(controls.getMode(), dc_setup.getInputList().size(), errorMsg)) {
-         throw std::runtime_error(errorMsg);
+      if (!FollowerModeUtils::validateVectorCount(controls.getMode(), dc_setup.getInputList().size())) {
+         throw std::runtime_error("; Not enough vectors for MODE " +
+            FollowerModeUtils::toString(controls.getMode()) +
+            " (have " + std::to_string(dc_setup.getInputList().size()) + ", need " +
+            std::to_string(FollowerModeUtils::getVectorsNeeded(controls.getMode())) + ")");
       }
 
       // Create and process instances
@@ -132,7 +134,7 @@ int main(int argc, char* argv[]) {
       return 0;
    }
    catch (const std::exception& e) {
-      std::cerr << "; An error occurred: " << e.what() << std::endl;
+      std::cout << "; An error occurred: " << e.what() << std::endl;
       return 1;
    }
 }

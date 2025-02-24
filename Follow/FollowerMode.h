@@ -4,11 +4,9 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
-#include <sstream>
-#include <vector>
+#include <array>
 
 #include "StringMatcher.h"
-#include "TNear.h"
 
 enum class FollowerMode {
    POINT,
@@ -19,74 +17,75 @@ enum class FollowerMode {
    SPLINE
 };
 
+struct ModeInfo {
+   std::string name;
+   FollowerMode mode;
+   int vectors_needed;  // Removed const
+};
+
 struct FollowerModeUtils {
+   static constexpr double MODE_MATCH_THRESHOLD = 0.6;
+   static inline StringMatcher matcher{ MODE_MATCH_THRESHOLD };
+
+   static const std::array<ModeInfo, 6>& getModeInfo() {
+      static const std::array<ModeInfo, 6> MODE_INFO = { {
+         {"POINT",    FollowerMode::POINT, 1},
+         {"LINE",     FollowerMode::LINE, 2},
+         {"CHORD",    FollowerMode::CHORD, 2},
+         {"CHORD3",   FollowerMode::CHORD3, 3},
+         {"TRIANGLE", FollowerMode::TRIANGLE, 3},
+         {"SPLINE",   FollowerMode::SPLINE, 2}
+      } };
+      return MODE_INFO;
+   }
+
    static int getVectorsNeeded(FollowerMode mode) {
-      switch (mode) {
-      case FollowerMode::POINT: return 1;
-      case FollowerMode::LINE: return 2;
-      case FollowerMode::CHORD: return 2;
-      case FollowerMode::CHORD3: return 3;
-      case FollowerMode::TRIANGLE: return 3;
-      case FollowerMode::SPLINE: return 2;
-      default: return 1;
+      for (const auto& info : getModeInfo()) {
+         if (info.mode == mode) return info.vectors_needed;
       }
+      return 1;  // Default
    }
 
-   static bool validateVectorCount(FollowerMode mode, size_t vectorCount, std::string& errorMsg) {
+   static bool validateVectorCount(FollowerMode mode, size_t vectorCount) {
       const int needed = getVectorsNeeded(mode);
-      if (vectorCount < needed) {
-         throw std::runtime_error("; Not enough vectors for MODE " + toString(mode) +
-            " (have " + std::to_string(vectorCount) + ", need " +
-            std::to_string(needed) + ")");
-      }
-      return true;
-   }
-
-
-   static CNearTree<MatchableString> createModeTree() {
-      CNearTree<MatchableString> tree;
-      tree.insert(MatchableString("POINT"));
-      tree.insert(MatchableString("LINE"));
-      tree.insert(MatchableString("CHORD"));
-      tree.insert(MatchableString("CHORD3"));
-      tree.insert(MatchableString("TRIANGLE"));
-      tree.insert(MatchableString("SPLINE"));
-      return tree;
+      return vectorCount >= needed;
    }
 
    static FollowerMode fromString(const std::string& str) {
       std::string upperStr = str;
       std::transform(upperStr.begin(), upperStr.end(), upperStr.begin(), ::toupper);
-      static const auto modeTree = createModeTree();
 
-      MatchableString closest;
-      if (modeTree.NearestNeighbor(0.6, closest, MatchableString(upperStr))) {
-         if (closest.name != upperStr) {
-            std::cerr << ";Mode '" << str << "' corrected to '" << closest.name << "'" << std::endl;
+      auto [bestInfo, bestTheta] = std::make_pair(getModeInfo()[0], MODE_MATCH_THRESHOLD);
+
+      for (const auto& info : getModeInfo()) {
+         double theta = matcher.getTheta(upperStr, info.name);
+         if (theta <= bestTheta) {
+            bestTheta = theta;
+            bestInfo = info;  // This assignment now works since we removed const
          }
-         if (closest.name == "POINT") return FollowerMode::POINT;
-         if (closest.name == "LINE") return FollowerMode::LINE;
-         if (closest.name == "CHORD") return FollowerMode::CHORD;
-         if (closest.name == "CHORD3") return FollowerMode::CHORD3;
-         if (closest.name == "TRIANGLE") return FollowerMode::TRIANGLE;
-         if (closest.name == "SPLINE") return FollowerMode::SPLINE;
       }
 
-      std::cerr << ";Warning: Unrecognized mode '" << str
-         << "', using default mode POINT" << std::endl;
-      return FollowerMode::POINT;
+      if (bestTheta > MODE_MATCH_THRESHOLD) {
+         // No acceptable match found
+         std::cout << ";Warning: Unrecognized mode '" << str << "', using default mode POINT" << std::endl;
+         return FollowerMode::POINT;
+      }
+      else if (upperStr != bestInfo.name) {
+         // Close match found, but needed correction
+         std::cout << ";Mode '" << str << "' corrected to '" << bestInfo.name << "'" << std::endl;
+         return bestInfo.mode;
+      }
+      else {
+         // Exact match
+         return bestInfo.mode;
+      }
    }
 
    static std::string toString(FollowerMode mode) {
-      switch (mode) {
-      case FollowerMode::POINT: return "POINT";
-      case FollowerMode::LINE: return "LINE";
-      case FollowerMode::CHORD: return "CHORD";
-      case FollowerMode::CHORD3: return "CHORD3"; 
-      case FollowerMode::TRIANGLE: return "TRIANGLE";
-      case FollowerMode::SPLINE: return "SPLINE";
-      default: return "UNKNOWN";
+      for (const auto& info : getModeInfo()) {
+         if (info.mode == mode) return info.name;
       }
+      return "UNKNOWN";
    }
 };
 

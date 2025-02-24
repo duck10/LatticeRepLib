@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
       return 0;
    }
    catch (const std::exception& e) {
-      std::cerr << "; An error occurred: " << e.what() << std::endl;
+      std::cout << "; An error occurred: " << e.what() << std::endl;
       return 1;
    }
 }
