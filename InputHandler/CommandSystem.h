@@ -12,7 +12,7 @@ class BaseControlVariables;  // Forward declaration
 struct Command {
    std::string name;
    std::function<void(BaseControlVariables&, const std::string&)> handler;
-   static inline StringMatcher matcher{ 0.2 };  // Default threshold
+   static inline StringMatcher matcher{ 0.4 };  // Default threshold
 
    Command(const std::string& n, std::function<void(BaseControlVariables&, const std::string&)> h)
       : name(n), handler(h) {}
@@ -62,7 +62,7 @@ public:
    bool executeCommand(BaseControlVariables& controls,
       const std::string& cmdName,
       const std::string& value) const {
-      return executeCommand(controls, cmdName, 0.2, value);  // Use default threshold
+      return executeCommand(controls, cmdName, 0.4, value);  // Use default threshold
    }
 
    void clear() {

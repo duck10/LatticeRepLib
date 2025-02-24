@@ -95,29 +95,29 @@ public:
             printDistanceData = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
 
-      InputHandler::registerHandler("GLITCHTHRESHOLD", 0.2,
+      InputHandler::registerHandler("GLITCHTHRESHOLD", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
             glitchThresholdPercent = GlitchUtils::validateGlitchThresholdPercent(value);
          });
-      InputHandler::registerHandler("GLITCHESONLY", .2,
+      InputHandler::registerHandler("GLITCHESONLY", .35,
          [this](BaseControlVariables&, const std::string& value) {
             glitchesOnly = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
 
-      InputHandler::registerHandler("DETECTGLITCHES", .2,
+      InputHandler::registerHandler("DETECTGLITCHES", .35,
          [this](BaseControlVariables&, const std::string& value) {
             shouldDetectGlitches = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
 
-      InputHandler::registerHandler("SHOWMARKERS", .2,
+      InputHandler::registerHandler("SHOWMARKERS", .35,
          [this](BaseControlVariables&, const std::string& value) {
             showDataMarkers = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
 
-      InputHandler::registerHandler("SHOWDATAMARKERS", .2,
+      InputHandler::registerHandler("SHOWDATAMARKERS", .35,
          [this](BaseControlVariables&, const std::string& value) {
             showDataMarkers = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
@@ -137,12 +137,12 @@ public:
    void setBlockSize(int size) {
       long long val = static_cast<long long>(size);
       if (val <= 0) {
-         std::cerr << ";Warning: Blocksize must be positive, using "
+         std::cout << ";Warning: Blocksize must be positive, using "
             << DEFAULT_BLOCKSIZE << std::endl;
          blocksize = DEFAULT_BLOCKSIZE;
       }
       else if (webRun && val > MAX_BLOCKSIZE) {
-         std::cerr << ";Warning: Blocksize exceeds web limit, using "
+         std::cout << ";Warning: Blocksize exceeds web limit, using "
             << MAX_BLOCKSIZE << std::endl;
          blocksize = MAX_BLOCKSIZE;
       }
@@ -154,7 +154,7 @@ public:
    void setBlockStart(int start) {
       long long val = static_cast<long long>(start);
       if (val < 0) {
-         std::cerr << ";Warning: Blockstart cannot be negative, using 0" << std::endl;
+         std::cout << ";Warning: Blockstart cannot be negative, using 0" << std::endl;
          blockstart = 0;
       }
       else {
@@ -184,7 +184,7 @@ public:
             enabledTypes.insert(type);
          }
          else {
-            std::cerr << ";Warning: Invalid distance type: " << type << std::endl;
+            std::cout << ";Warning: Invalid distance type: " << type << std::endl;
          }
       }
    }
@@ -201,7 +201,7 @@ public:
             enabledTypes.erase(type);
          }
          else {
-            std::cerr << ";Warning: Invalid distance type: " << type << std::endl;
+            std::cout << ";Warning: Invalid distance type: " << type << std::endl;
          }
       }
    }
