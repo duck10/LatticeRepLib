@@ -51,6 +51,8 @@ public:
       }
    }
 
+   static size_t size() { return 6; }
+
    std::string GetInput() const {
       return inputtext;
    }
