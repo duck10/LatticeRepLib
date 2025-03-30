@@ -285,7 +285,6 @@ int main(int argc,
       std::cout << "      document.getElementById(\"block_\"+tdii+\"c\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"d\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"_running\").style=\"display:none\";" << std::endl;
-      std::cout << "      document.getElementById(\"block_\"+tdii+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "      document.getElementById(\"block_\"+tdii+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -330,9 +329,6 @@ int main(int argc,
       std::cout << std::string("   outdivid.scrollTop = \"0\";") << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).scrollTop=\"0\";")<< std::endl;
       std::cout << " let operation=document.getElementById(\"operation_\"+tdrownum).value;" << std::endl;
-      std::cout << " if (operation!=\"Follow\") {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
-      std::cout << " }" << std::endl;
       std::cout << " if (operation!=\"CmdGen\") {" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << " }" << std::endl;
@@ -359,9 +355,11 @@ int main(int argc,
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdDists\") {" << std::endl;
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdDists([[[\"<font size=-1>]]],[[[<br />")
-      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
+      std::cout << " } else if (operation==\"CmdSauc\") {" << std::endl;
+      std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdSauc([[[\"<font size=-1>]]],[[[<br />")
+      +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdGen\") {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -376,7 +374,6 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdNiggli([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdPath\") {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:inline\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -385,7 +382,6 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdPath([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl;
       std::cout << " } else if (operation==\"CmdPerturb\") {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:inline\";" << std::endl;
@@ -397,7 +393,6 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdS6Refl([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdScale\") {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -433,7 +428,6 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_CmdToS6([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else if (operation==\"CmdToS6L\") {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -457,7 +451,6 @@ int main(int argc,
       std::cout << std::string("   document.getElementById(\"lrl_web_help_\"+tdrownum).innerHTML=")+std::string("LRLWEB_PlotPolar([[[\"<font size=-1>]]],[[[<br />")
       +std::string("]]],[[[<br /></font>\"")]]])+std::string(";") << std::endl; 
       std::cout << " } else {" << std::endl;
-      std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_follow\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdgen\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdpath\").style=\"display:none\";" << std::endl;
       std::cout << "   document.getElementById(\"block_\"+tdrownum+\"b_cmdperturb\").style=\"display:none\";" << std::endl;
@@ -563,9 +556,9 @@ int main(int argc,
       std::cout << "<a name=\"mark_00\" id=\"mark_00\" />" << std::endl;
       std::cout << "<font face=\"Arial,Helvetica,Times\" size=\"3\">" << std::endl;
       std::cout << "<hr />" << std::endl;
-      std::cout << "<center>" << std::endl;
-      std::cout << "rawprefix: " << "'"+tmp_lrl_web+"/'" << ", htmlprefix: "<< "'"+html_tmp_lrl_web+"/'"<<std::endl;
-      std::cout << "</center>" << std::endl;
+      // std::cout << "<center>" << std::endl;
+      // std::cout << "rawprefix: " << "'"+tmp_lrl_web+"/'" << ", htmlprefix: "<< "'"+html_tmp_lrl_web+"/'"<<std::endl;
+      // std::cout << "</center>" << std::endl;
 
       // Dump form 
      if (LRL_WEB_DEBUG)  dumpList(cgi);
@@ -782,7 +775,7 @@ std::string plaintext2html(std::string & dst, std::string src){
     std::cout << "<tr>" << std::endl;
     std::cout << "<td align=center width=300px><a href=\"http://iterate.sf.net/bgaol\" target=\"_blank\"><font size=+1><b>G<sup>6</sup> Bravais General Analysis of Lattices (BGAOL)</b></font></a></td>" << std::endl;
     std::cout << "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>" << std::endl;
-    std::cout << "<td align=center width=300px><a href=\"http://blondie.arcib.org:8084/sauc-1.1.1/\" target=\"_blank\"><font size=+1><b>G<sup>6</sup> Search for Alternative Unit Cells (SAUC)</b></font></a></td>" << std::endl;
+    std::cout << "<td align=center width=300px><a href=\"http://blondie.arcib.org:8083/~yaya/sauc/\" target=\"_blank\"><font size=+1><b>G<sup>6</sup> Search for Alternative Unit Cells (SAUC)</b></font></a></td>" << std::endl;
     std::cout << "</tr>" << std::endl;
     std::cout << "</table>" << std::endl;
 
@@ -1517,12 +1510,14 @@ LRLWEBRUNNING([[[      std::cout << "  ]]],[[[\]]],[[[" << std::endl;]]],[[["+tw
       std::cout << "  <td align=left>" << std::endl;
       std::cout << "  <div id=\"block_"+twodig_array[numop]+"a\" style="+active+">" << std::endl; 
       std::cout << "  <label for=\"operation_"+twodig_array[numop]+"\">Select an operation:</label><br />" << std::endl;
-      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"33\" onchange=\"wchangeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
+      std::cout << "  <select name=\"operation_"+twodig_array[numop]+"\" id=\"operation_"+twodig_array[numop]+"\" size=\"34\" onchange=\"changeoperation(\'"+twodig_array[numop]+"')\">" << std::endl;
       std::cout << "  <optgroup label=\"Information\">" << std::endl;
       selected=operation.compare("NoOp")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"NoOp\"><b>Check Input</b></option>" << std::endl;
       selected=operation.compare("CmdDists")==0?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdDists\"><b>Distances</b>: compute NCDist and CS6Dist distances</option>" << std::endl;
+      selected=operation.compare("CmdSauc")==0?"selected ":"";
+      std::cout << "  <option "+selected+"value=\"CmdSauc\"><b>Cell Search</b>: find similar unit cells</option>" << std::endl;
       selected=(operation.compare("CmdVolume")==0)?"selected ":"";
       std::cout << "  <option "+selected+"value=\"CmdVolume\"><b>Volume</b>:  compute volumes of listed cells</option>" << std::endl;
       std::cout << "  </optgroup>" << std::endl;
@@ -2704,7 +2699,6 @@ function changenumops(){
       document.getElementById("block_"+tdii+"c").style="display:none";
       document.getElementById("block_"+tdii+"d").style="display:none";
       document.getElementById("block_"+tdii+"_running").style="display:none";
-      document.getElementById("block_"+tdii+"b_follow").style="display:none";
       document.getElementById("block_"+tdii+"b_cmdgen").style="display:none";
       document.getElementById("block_"+tdii+"b_cmdpath").style="display:none";
       document.getElementById("block_"+tdii+"b_cmdperturb").style="display:none";
@@ -2747,9 +2741,6 @@ function changeoperation(rownum) {
   document.getElementById("lrl_web_help_"+tdrownum).scrollTop="0";
   outdivid.scrollTop = "0";
   let operation=document.getElementById("operation_"+tdrownum).value;
-  if (operation!="Follow") {
-    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
-  }
   if (operation!="CmdGen") {
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
   }
@@ -2773,8 +2764,9 @@ function changeoperation(rownum) {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdDelone([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
   } else if (operation=="CmdDists") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdDists([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
+  } else if (operation=="CmdSauc") {
+    document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdSauc([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
   } else  if (operation=="CmdGen") {
-    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:inline";
     document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
@@ -2786,7 +2778,6 @@ function changeoperation(rownum) {
  } else if (operation=="CmdNiggli") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdNiggli([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdPath") {
-    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:inline";
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
@@ -2794,7 +2785,6 @@ function changeoperation(rownum) {
     document.getElementById("block_"+tdrownum+"b_cmdtos6l").style="display:none";
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdPath([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
   } else if (operation=="CmdPerturb") {
-    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:inline";
@@ -2804,7 +2794,6 @@ function changeoperation(rownum) {
  } else if (operation=="CmdS6Refl") {
     document.getElementById("lrl_web_help_"+tdrownum).innerHTML=LRLWEB_CmdS6Refl([[["<font size=-1>]]],[[[<br />]]],[[[<br /></font>"]]]);
  } else if (operation=="CmdScale") {
-    document.getElementById("block_"+tdrownum+"b_follow").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdgen").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdpath").style="display:none";
     document.getElementById("block_"+tdrownum+"b_cmdperturb").style="display:none";
@@ -2982,7 +2971,7 @@ Sleeping Dragon line art image by Gordon Dylan Johnson,
 <tr>
 <td align=center width=300px><a href="http://iterate.sf.net/bgaol" target="_blank"><font size=+1><b>G<sup>6</sup> Bravais General Analysis of Lattices (BGAOL)</b></font></a></td>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-<td align=center width=300px><a href="http://blondie.arcib.org:8084/sauc-1.1.1/" target="_blank"><font size=+1><b>G<sup>6</sup> Search for Alternative Unit Cells (SAUC)</b></font></a></td>
+<td align=center width=300px><a href="http://blondie.arcib.org:8083/~yaya/sauc/" target="_blank"><font size=+1><b>G<sup>6</sup> Search for Alternative Unit Cells (SAUC)</b></font></a></td>
 </tr>
 </table>
 <STRONG>
@@ -3035,10 +3024,11 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_01a" style="display:inline"> 
   <label for="operation_01">Select an operation:</label><br />
-  <select name="operation_01" id="operation_01" size="33" onchange="changeoperation('01')">
+  <select name="operation_01" id="operation_01" size="34" onchange="changeoperation('01')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
+  <option value="CmdSauc"><b>Cell Search</b>: find similar unit cells</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
   </optgroup>
   <optgroup label="Graphical Information">
@@ -3079,13 +3069,6 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[01]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
-  <div id="block_01b_follow" style="display:none">
-  <label for="lrl_web_data_01_follow_blockstart">Blockstart:</label>&nbsp;
-  <input id="lrl_web_data_01_follow_blockstart" name="lrl_web_data_01_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
-  <label for="lrl_web_data_01_follow_blocksize">Blocksize:</label>&nbsp;
-  <input id="lrl_web_data_01_follow_blocksize" name="lrl_web_data_01_follow_blocksize" type="number" value="20" />
-  <br />
-  </div>
   <div id="block_01b_cmdgen" style="display:none">
   <label for="lrl_web_data_01_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_01_cmdgen_ngen" name="lrl_web_data_01_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3169,10 +3152,11 @@ LRLWEBRUNNING([[[ ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_02a" style="display:none">
   <label for="operation_02">Select an operation:</label><br />
-  <select name="operation_02" id="operation_02" size="33" onchange="changeoperation('02')">
+  <select name="operation_02" id="operation_02" size="34" onchange="changeoperation('02')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
+  <option value="CmdSauc"><b>Cell Search</b>: find similar unit cells</option>
   <option value="CmdVolume"><b>Volume</b>: compute volumes of listed cells</option>
   </optgroup>
   <optgroup label="Graphical Information">
@@ -3213,13 +3197,6 @@ LRLWEBRUNNING([[[ ]]],[[[]]],[[[]]],[[[02]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
-  <div id="block_02b_follow" style="display:none">
-  <label for="lrl_web_data_02_follow_blockstart">Blockstart:</label>&nbsp;
-  <input id="lrl_web_data_02_follow_blockstart" name="lrl_web_data_02_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
-  <label for="lrl_web_data_02_follow_blocksize">Blocksize:</label>&nbsp;
-  <input id="lrl_web_data_02_follow_blocksize" name="lrl_web_data_02_follow_blocksize" type="number" value="20" />
-  <br />
-  </div>
   <div id="block_02b_cmdgen" style="display:none">
   <label for="lrl_web_data_02_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_02_cmdgen_ngen" name="lrl_web_data_02_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp; 
@@ -3305,10 +3282,11 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_03a" style="display:none"> 
   <label for="operation_03">Select an operation:</label><br />
-  <select name="operation_03" id="operation_03" size="33" onchange="changeoperation('03')">
+  <select name="operation_03" id="operation_03" size="34" onchange="changeoperation('03')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
+  <option value="CmdSauc"><b>Cell Search</b>: find similar unit cells</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
   </optgroup>
   <optgroup label="Graphical Information">
@@ -3349,13 +3327,6 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[03]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
-  <div id="block_03b_follow" style="display:none">
-  <label for="lrl_web_data_03_follow_blockstart">Blockstart:</label>&nbsp;
-  <input id="lrl_web_data_03_follow_blockstart" name="lrl_web_data_03_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
-  <label for="lrl_web_data_03_follow_blocksize">Blocksize:</label>&nbsp;
-  <input id="lrl_web_data_03_follow_blocksize" name="lrl_web_data_03_follow_blocksize" type="number" value="20" />
-  <br />
-  </div>
   <div id="block_03b_cmdgen" style="display:none">
   <label for="lrl_web_data_03_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_03_cmdgen_ngen" name="lrl_web_data_03_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3439,10 +3410,11 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_04a" style="display:none"> 
   <label for="operation_04">Select an operation:</label><br />
-  <select name="operation_04" id="operation_04" size="33" onchange="changeoperation('04')">
+  <select name="operation_04" id="operation_04" size="34" onchange="changeoperation('04')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
+  <option value="CmdSauc"><b>Cell Search</b>: find similar unit cells</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
   </optgroup>
   <optgroup label="Graphical Information">
@@ -3483,13 +3455,6 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[04]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
-  <div id="block_04b_follow" style="display:none">
-  <label for="lrl_web_data_04_follow_blockstart">Blockstart:</label>&nbsp;
-  <input id="lrl_web_data_04_follow_blockstart" name="lrl_web_data_04_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
-  <label for="lrl_web_data_04_follow_blocksize">Blocksize:</label>&nbsp;
-  <input id="lrl_web_data_04_follow_blocksize" name="lrl_web_data_04_follow_blocksize" type="number" value="20" />
-  <br />
-  </div>
   <div id="block_04b_cmdgen" style="display:none">
   <label for="lrl_web_data_04_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_04_cmdgen_ngen" name="lrl_web_data_04_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3573,10 +3538,11 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_05a" style="display:none"> 
   <label for="operation_05">Select an operation:</label><br />
-  <select name="operation_05" id="operation_05" size="33" onchange="changeoperation('05')">
+  <select name="operation_05" id="operation_05" size="34" onchange="changeoperation('05')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
+  <option value="CmdSauc"><b>Cell Search</b>: find similar unit cells</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
   </optgroup>
   <optgroup label="Graphical Information">
@@ -3617,13 +3583,6 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[05]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
-  <div id="block_05b_follow" style="display:none">
-  <label for="lrl_web_data_05_follow_blockstart">Blockstart:</label>&nbsp;
-  <input id="lrl_web_data_05_follow_blockstart" name="lrl_web_data_05_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
-  <label for="lrl_web_data_05_follow_blocksize">Blocksize:</label>&nbsp;
-  <input id="lrl_web_data_05_follow_blocksize" name="lrl_web_data_05_follow_blocksize" type="number" value="20" />
-  <br />
-  </div>
   <div id="block_05b_cmdgen" style="display:none">
   <label for="lrl_web_data_05_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_05_cmdgen_ngen" name="lrl_web_data_05_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3707,10 +3666,11 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_06a" style="display:none"> 
   <label for="operation_06">Select an operation:</label><br />
-  <select name="operation_06" id="operation_06" size="33" onchange="changeoperation('06')">
+  <select name="operation_06" id="operation_06" size="34" onchange="changeoperation('06')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
+  <option value="CmdSauc"><b>Cell Search</b>: find similar unit cells</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
   </optgroup>
   <optgroup label="Graphical Information">
@@ -3751,13 +3711,6 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[06]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
-  <div id="block_06b_follow" style="display:none">
-  <label for="lrl_web_data_06_follow_blockstart">Blockstart:</label>&nbsp;
-  <input id="lrl_web_data_06_follow_blockstart" name="lrl_web_data_06_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
-  <label for="lrl_web_data_06_follow_blocksize">Blocksize:</label>&nbsp;
-  <input id="lrl_web_data_06_follow_blocksize" name="lrl_web_data_06_follow_blocksize" type="number" value="20" />
-  <br />
-  </div>
   <div id="block_06b_cmdgen" style="display:none">
   <label for="lrl_web_data_06_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_06_cmdgen_ngen" name="lrl_web_data_06_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3841,10 +3794,11 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_07a" style="display:none"> 
   <label for="operation_07">Select an operation:</label><br />
-  <select name="operation_07" id="operation_07" size="33" onchange="changeoperation('07')">
+  <select name="operation_07" id="operation_07" size="34" onchange="changeoperation('07')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
+  <option value="CmdSauc"><b>Cell Search</b>: find similar unit cells</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
   </optgroup>
   <optgroup label="Graphical Information">
@@ -3885,13 +3839,6 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[07]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
-  <div id="block_07b_follow" style="display:none">
-  <label for="lrl_web_data_07_follow_blockstart">Blockstart:</label>&nbsp;
-  <input id="lrl_web_data_07_follow_blockstart" name="lrl_web_data_07_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
-  <label for="lrl_web_data_07_follow_blocksize">Blocksize:</label>&nbsp;
-  <input id="lrl_web_data_07_follow_blocksize" name="lrl_web_data_07_follow_blocksize" type="number" value="20" />
-  <br />
-  </div>
   <div id="block_07b_cmdgen" style="display:none">
   <label for="lrl_web_data_07_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_07_cmdgen_ngen" name="lrl_web_data_07_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -3985,10 +3932,11 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   <td align=left>
   <div id="block_08a" style="display:none"> 
   <label for="operation_08">Select an operation:</label><br />
-  <select name="operation_08" id="operation_08" size="33" onchange="changeoperation('08')">
+  <select name="operation_08" id="operation_08" size="34" onchange="changeoperation('08')">
   <optgroup label="Information">
   <option value="NoOp"><b>Check Input</b></option>
   <option value="CmdDists"><b>Distances</b>: compute NCDist and CS<sup>6</sup>Dist distances</option>
+  <option value="CmdSauc"><b>Cell Search</b>: find similar unit cells</option>
   <option value="CmdVolume"><b>Volume</b>:  compute volumes of listed cells</option>
   </optgroup>
   <optgroup label="Graphical Information">
@@ -4029,13 +3977,6 @@ LRLWEBRUNNING([[[  ]]],[[[]]],[[[]]],[[[08]]],LRLWEBHOST/~LRLWEBUSER)
   </div>
   </td>
   <td align=left>
-  <div id="block_08b_follow" style="display:none">
-  <label for="lrl_web_data_08_follow_blockstart">Blockstart:</label>&nbsp;
-  <input id="lrl_web_data_08_follow_blockstart" name="lrl_web_data_08_follow_blockstart" type="number" value="0" />&nbsp;&nbsp;
-  <label for="lrl_web_data_08_follow_blocksize">Blocksize:</label>&nbsp;
-  <input id="lrl_web_data_08_follow_blocksize" name="lrl_web_data_08_follow_blocksize" type="number" value="20" />
-  <br />
-  </div>
   <div id="block_08b_cmdgen" style="display:none">
   <label for="lrl_web_data_08_cmdgen_ngen">Number of each type:</label>&nbsp;
   <input id="lrl_web_data_08_cmdgen_ngen" name="lrl_web_data_08_cmdgen_ngen" type="number" value="1" />&nbsp;&nbsp;
@@ -4380,7 +4321,7 @@ determination of a unique conventional cell. Zeitschrift f&uuml;r Kristallograph
 
 <p>
 <hr />
-Updated 27 November 2024.
+Updated 8 December 2024.
 </font>
 </body>
 </html>]]])

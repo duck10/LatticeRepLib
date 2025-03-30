@@ -14,6 +14,7 @@ COMMANDS  =  \
 	CmdPath \
 	CmdPerturb \
 	CmdS6Refl \
+	CmdSauc \
 	CmdScale \
 	CmdSella  \
 	CmdToB4 \
@@ -47,6 +48,7 @@ SOURCES  =  \
 	CmdPath/CmdPath.cpp \
 	CmdPerturb/CmdPerturb.cpp \
 	CmdS6Refl/CmdS6Refl.cpp \
+	CmdSauc/CmdSauc.cpp \
 	CmdScale/CmdScale.cpp \
 	CmdSella/CmdSella.cpp  \
 	CmdToB4/CmdToB4.cpp \
@@ -80,6 +82,7 @@ BINS  =  \
 	CmdPerturb/CmdPerturb \
 	CmdPrim/CmdPrim \
 	CmdS6Refl/CmdS6Refl \
+	CmdSauc/CmdSauc \
 	CmdScale/CmdScale \
 	CmdSella/CmdSella  \
 	CmdToB4/CmdToB4 \
@@ -151,6 +154,9 @@ CmdPrim/CmdPrim:  CmdPrim/CmdPrim.cpp $(BIN)
 
 CmdS6Refl/CmdS6Refl:  CmdS6Refl/CmdS6Refl.cpp $(BIN)
 	  (cd CmdS6Refl;  make all; cp CmdS6Refl $(BIN))
+
+CmdSauc/CmdSauc:  CmdSauc/CmdSauc.cpp $(BIN)
+	  (cd CmdSauc;  make all; cp CmdSauc $(BIN))
 
 CmdScale/CmdScale:  CmdScale/CmdScale.cpp $(BIN)
 	  (cd CmdScale;  make all; cp CmdScale $(BIN))

@@ -7,7 +7,7 @@ $(COMMAND):	MAIN_PlotC3.cpp \
 	../InputHandler/BaseControlVariables.cpp  ../InputHandler/BlockUtils.h \
 	../InputHandler/ControlFeature.cpp  ../InputHandler/DistanceTypes.h \
 	../InputHandler/framework.h ../InputHandler/ProgramSetup.h \
-	../InputHandler/BaseControlVariables.h ../InputHandler/CommandSystem.cpp \
+	../InputHandler/BaseControlVariables.h \
 	../InputHandler/ControlFeature.h ../InputHandler/DistanceTypesUtils.cpp  \
 	../InputHandler/InputHandler.cpp ../InputHandler/BlockLimits.h \
 	../InputHandler/CommandSystem.h ../InputHandler/DistanceTypes.cpp \
@@ -46,7 +46,6 @@ $(COMMAND):	MAIN_PlotC3.cpp \
 	$(CXX) -I ../LatticeRepresentationLib -I ../InputHandler -I ../LRL_Tools -o $(COMMAND) MAIN_PlotC3.cpp \
 	../InputHandler/BaseControlVariables.cpp \
         ../InputHandler/ControlFeature.cpp \
-	../InputHandler/CommandSystem.cpp \
 	../InputHandler/DistanceTypesUtils.cpp  \
 	../InputHandler/InputHandler.cpp \
 	../InputHandler/DistanceTypes.cpp \

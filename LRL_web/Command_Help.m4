@@ -490,6 +490,40 @@ define([[[LRLWEB_CmdS6Refl]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[end$3]]]]]]dnl
 dnl
 )dnl -----------------------------------------------------
+dnl Command:  CmdSauc
+dnl -------------------
+define([[[LRLWEB_CmdSauc]]],[[[[[[$1 ]]]]]]dnl
+[[[[[[<strong>Command: ]]]]]]dnl
+[[[[[[SAUC search for alternate matching  unit cells</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em>$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Web page listing matching entries in PDB and COD with similar cells$2 ]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> Options for search with SAUC$2]]]]]]dnl
+[[[[[[----  SAUCMETRIC: 1 through 7 for L1, L2, NCDist, V7, D7, S6, or DC7unsrt (default)  $2]]]]]]dnl
+[[[[[[----  NEAREST: Search for the nearest match  $2]]]]]]dnl
+[[[[[[----  SPHERE: Search for matches in a sphere of radius RANGESPHERE  $2]]]]]]dnl
+[[[[[[----  RANGE: Search in a box of size RANGEA by RANGEB by RANGEC by   $2]]]]]]dnl
+[[[[[[----                                 RANGEALPHA by RANGEBETA by RANGEGAMMA  $2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
+[[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
+[[[[[[ All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.$2]]]]]]dnl
+[[[[[[---  RANDOM: Random (valid) unit cell;$2]]]]]]dnl
+[[[[[[---  Crystal lattice input: 'A', 'B', 'C',]]]]]]dnl
+[[[[[[ 'P', 'R', 'F', 'I' followed by three axis lengths]]]]]]dnl
+[[[[[[ and three angles (in degrees);$2]]]]]]dnl
+[[[[[[---  semicolon: lines beginning with a semicolon are treated as comments$2]]]]]]dnl
+[[[[[[---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars,]]]]]]dnl
+[[[[[[ C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell),]]]]]]dnl
+[[[[[[ u for unsorted Dirichlet 7-cells.$2]]]]]]dnl
+[[[[[[---  END: ends the data input section$2]]]]]]dnl
+[[[[[[Examples of unit cell inputs$2]]]]]]dnl
+[[[[[[P 10 20 30 90 111 90$2]]]]]]dnl
+[[[[[[G 100 400 900 0 -215.02 0$2]]]]]]dnl
+[[[[[[S6 0 -107.51 0 7.51 -400 -792.49 $2]]]]]]dnl
+[[[[[[; this is a comment$2]]]]]]dnl
+[[[[[[end$3]]]]]]dnl
+dnl
+)dnl -----------------------------------------------------
 dnl Command:  CmdScale
 dnl -------------------
 define([[[LRLWEB_CmdScale]]],[[[[[[$1 ]]]]]]dnl
@@ -1026,12 +1060,12 @@ define([[[LRLWEB_Follow]]],[[[[[[$1]]]]]]dnl
 [[[[[[<strong>Command: ]]]]]]dnl
 [[[[[[Follow</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> ]]]]]]dnl
-[[[[[[In the default mode (POINT), a single cell is read, and its Niggli-reduced cell is calculated.$2]]]]]]dnl
-[[[[[[Multiple cells can be read, and a graphical output is computed for each input cell.$2]]]]]]dnl
-[[[[[[In space S<sup>6</sup>, a straight line is computed between those points. Then the distances$2]]]]]]dnl
-[[[[[[from points (default: 100 points&ensp; along that line are calculated to the end point (Niggli-reduced cell,$2]]]]]]dnl
-[[[[[[in the POINT case). The graphical output shows those distances for each chosen $2]]]]]]dnl
-[[[[[[distance measure (default: NCDist in G<sup>6</sup> and CS6Dist in S<sup>6</sup>).$2]]]]]]dnl
+[[[[[[This command provides a graphical display of small variations in lattices. In the default mode (POINT),$2]]]]]]dnl
+[[[[[[a single cell is read, and its Niggli-reduced cell is calculated.  Multiple cells can be read, and $2]]]]]]dnl
+[[[[[[a graphical output is computed for each input cell.  In space S<sup>6</sup>, a straight line is computed $2]]]]]]dnl
+[[[[[[between those points. Then the distances from points (default: 100 points&ensp; along that line are $2]]]]]]dnl
+[[[[[[calculated to the end point (Niggli-reduced cell, in the POINT case). The graphical output shows those $2]]]]]]dnl
+[[[[[[distances for each chosen distance measure (default: NCDist in G<sup>6</sup> and CS6Dist in S<sup>6</sup>). $2]]]]]]dnl
 [[[[[[$2]]]]]]dnl
 [[[[[[For more details on the Follower method, see Andrews and Bernstein:$2]]]]]]dnl
 [[[[[[<a href=https://www.cambridge.org/engage/api-gateway/coe/assets/orp/resource/item/63f418f01d2d184063d630a3/original/the-follower-algorithm-and-a-program-using-it-to-explore-spaces.pdf target=_blank>$2]]]]]]dnl
@@ -1064,8 +1098,31 @@ define([[[LRLWEB_Follow]]],[[[[[[$1]]]]]]dnl
 [[[[[[&emsp;numFollowerPoints 77$2]]]]]]dnl
 [[[[[[&emsp;FollowerMode Line$2]]]]]]dnl
 [[[[[[$2]]]]]]dnl
-[[[[[[$3]]]]]]dnl
-
+[[[[[[<hr>]]]]]]dnl
+[[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Valid input is reported as H<sup>6</sup> unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
+[[[[[[Warnings are output for invalid inputs.$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> NA$2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
+[[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
+[[[[[[ All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.$2]]]]]]dnl
+[[[[[[---  RANDOM: Random (valid) unit cell;$2]]]]]]dnl
+[[[[[[---  Crystal lattice input: 'A', 'B', 'C',]]]]]]dnl
+[[[[[[ 'P', 'R', 'F', 'I' followed by three axis lengths]]]]]]dnl
+[[[[[[ and three angles (in degrees);$2]]]]]]dnl
+[[[[[[---  semicolon: lines beginning with a semicolon are treated as comments$2]]]]]]dnl
+[[[[[[---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars,]]]]]]dnl
+[[[[[[ C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell),]]]]]]dnl
+[[[[[[ u for unsorted Dirichlet 7-cells.$2]]]]]]dnl
+[[[[[[---  END: ends the data input section$2]]]]]]dnl
+[[[[[[Examples of unit cell inputs$2]]]]]]dnl
+[[[[[[P 10 20 30 90 111 90$2]]]]]]dnl
+[[[[[[G 100 400 900 0 -215.02 0$2]]]]]]dnl
+[[[[[[S6 0 -107.51 0 7.51 -400 -792.49 $2]]]]]]dnl
+[[[[[[; this is a comment$2]]]]]]dnl
+[[[[[[end$3]]]]]]dnl
 dnl
 )dnl--------------------------------------------------
 dnl Command:  PlotC3

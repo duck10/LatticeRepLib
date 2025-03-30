@@ -12,7 +12,7 @@
 
 class BaseControlVariables {
 protected:
-   std::vector<std::unique_ptr<ControlFeature>> features;
+   std::vector<std::shared_ptr<ControlFeature>> features;
    bool webRun = false;
    bool showControls = false;
    bool echo = false;
