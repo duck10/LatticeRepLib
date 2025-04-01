@@ -17,20 +17,20 @@
 bool caseInsensitiveCompare(const std::string& str1, const std::string& str2);
 
 // Default constants
-#define DEFAULT_A 100.0
-#define DEFAULT_B 100.0
-#define DEFAULT_C 100.0
-#define DEFAULT_ALPHA 90.0
-#define DEFAULT_BETA 90.0
-#define DEFAULT_GAMMA 90.0
-#define DEFAULT_RANGEA 1.0
-#define DEFAULT_RANGEB 1.0
-#define DEFAULT_RANGEC 1.0
-#define DEFAULT_RANGEALPHA 1.0
-#define DEFAULT_RANGEBETA 1.0
-#define DEFAULT_RANGEGAMMA 1.0
-#define DEFAULT_SPACE "DC7UNSRT"
-#define DEFAULT_SAUCMETRIC 7
+constexpr double DEFAULT_A = 100.0;
+constexpr double DEFAULT_B = 100.0;
+constexpr double DEFAULT_C = 100.0;
+constexpr double DEFAULT_ALPHA = 90.0;
+constexpr double DEFAULT_BETA = 90.0;
+constexpr double DEFAULT_GAMMA = 90.0;
+constexpr double DEFAULT_RANGEA = 1.0;
+constexpr double DEFAULT_RANGEB = 1.0;
+constexpr double DEFAULT_RANGEC = 1.0;
+constexpr double DEFAULT_RANGEALPHA = 1.0;
+constexpr double DEFAULT_RANGEBETA = 1.0;
+constexpr double DEFAULT_RANGEGAMMA = 1.0;
+const std::string DEFAULT_SPACE = "DC7UNSRT";
+constexpr int DEFAULT_SAUCMETRIC = 7;
 /*#define DEFAULT_BLOCKSIZE 100*/
 
 void setCellEdgeA(const double);
@@ -51,10 +51,35 @@ void setCellRangeGamma(const double);
 void setCellRangeSphere(const double);
 void setSaucMetric(const double);
 
-// Forward declare class instead of defining it in the header
-class CmdSaucSearchOptions;
+class CmdSaucSearchOptions {
+public:
+   size_t blocksize = 0;      ;
+   size_t blockstart = 0;
+   double A = DEFAULT_A;
+   double B = DEFAULT_B;
+   double C = DEFAULT_C;
+   double Alpha = DEFAULT_ALPHA;
+   double Beta = DEFAULT_BETA;
+   double Gamma = DEFAULT_GAMMA;
 
-// Define full CmdSaucControls class here
+   double RangeA = DEFAULT_RANGEA;
+   double RangeB = DEFAULT_RANGEB;
+   double RangeC = DEFAULT_GAMMA;
+   double RangeAlpha = DEFAULT_RANGEALPHA;
+   double RangeBeta = DEFAULT_RANGEBETA;
+   double RangeGamma = DEFAULT_RANGEBETA;
+
+   double saucSphereRange = 50.0;
+   int SAUCMETRIC = DEFAULT_SAUCMETRIC;
+   std::string SPACE = std::string(DEFAULT_SPACE);
+
+   bool saucNearest = false;
+   bool saucSphere = true;
+   bool saucRange = false;
+
+   CmdSaucSearchOptions() = default;
+};
+
 class CmdSaucControls : public BaseControlVariables {
 public:
     friend std::ostream& operator<< (std::ostream& os, const CmdSaucControls& ctrl);
