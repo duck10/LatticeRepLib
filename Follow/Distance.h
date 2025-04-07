@@ -4,6 +4,7 @@
 #include "CS6Dist.h"
 #include "CS6Dist.cpp"
 #include "DC7u.h"
+#include "DC7uDist.h"
 #include "G6.h"
 #include "NCDist.h"
 #include "RI.h"
@@ -87,9 +88,92 @@ public:
    }
 };
 
-
 // Distance_V7Dist.h
 class V7Distance : public Distance {
+   double V7Dist(const DC7u& v1, const DC7u& v2) const {
+
+      double v1abc[7], v2abc[7], v2acb[7], v2bac[7], v2bca[7], v2cab[7], v2cba[7];
+
+      double distsq, distsqabc, distsqacb, distsqbac, distsqbca, distsqcab, distsqcba;;
+
+      int ii;
+
+      v1abc[DC7u_AA_idx] = v1[DC7u_AA_idx];
+
+      v1abc[DC7u_BB_idx] = v1[DC7u_BB_idx];
+
+      v1abc[DC7u_CC_idx] = v1[DC7u_CC_idx];
+
+      v1abc[DC7u_MIN_BC_diagsq_idx] = v1[DC7u_MIN_BC_diagsq_idx];
+
+      v1abc[DC7u_MIN_AC_diagsq_idx] = v1[DC7u_MIN_AC_diagsq_idx];
+
+      v1abc[DC7u_MIN_AB_diagsq_idx] = v1[DC7u_MIN_AB_diagsq_idx];
+
+      v1abc[DC7u_MIN_ABC_diagsq_idx] = v1[DC7u_MIN_ABC_diagsq_idx];
+
+
+
+      v2cba[DC7u_CC_idx] = v2cab[DC7u_CC_idx] = v2bca[DC7u_BB_idx] = v2bac[DC7u_BB_idx] = v2acb[DC7u_AA_idx] = v2abc[DC7u_AA_idx] = v2[DC7u_AA_idx];
+
+      v2cba[DC7u_BB_idx] = v2cab[DC7u_AA_idx] = v2bca[DC7u_CC_idx] = v2bac[DC7u_AA_idx] = v2acb[DC7u_CC_idx] = v2abc[DC7u_BB_idx] = v2[DC7u_BB_idx];
+
+      v2cba[DC7u_CC_idx] = v2cab[DC7u_BB_idx] = v2bca[DC7u_AA_idx] = v2bac[DC7u_CC_idx] = v2acb[DC7u_BB_idx] = v2abc[DC7u_CC_idx] = v2[DC7u_CC_idx];
+
+      v2cba[DC7u_MIN_AB_diagsq_idx] = v2cab[DC7u_MIN_AB_diagsq_idx] = v2bca[DC7u_MIN_AC_diagsq_idx] = v2bac[DC7u_MIN_AC_diagsq_idx]
+
+         = v2acb[DC7u_MIN_BC_diagsq_idx] = v2abc[DC7u_MIN_BC_diagsq_idx] = v2[DC7u_MIN_BC_diagsq_idx];
+
+         v2cba[DC7u_MIN_AC_diagsq_idx] = v2cab[DC7u_MIN_BC_diagsq_idx] = v2bca[DC7u_MIN_AB_diagsq_idx] = v2bac[DC7u_MIN_BC_diagsq_idx]
+
+            = v2acb[DC7u_MIN_AB_diagsq_idx] = v2abc[DC7u_MIN_AC_diagsq_idx] = v2[DC7u_MIN_AC_diagsq_idx];
+
+            v2cba[DC7u_MIN_BC_diagsq_idx] = v2cab[DC7u_MIN_AC_diagsq_idx] = v2bca[DC7u_MIN_BC_diagsq_idx] = v2bac[DC7u_MIN_AB_diagsq_idx]
+
+               = v2acb[DC7u_MIN_AC_diagsq_idx] = v2abc[DC7u_MIN_AB_diagsq_idx] = v2[DC7u_MIN_AB_diagsq_idx];
+
+               v2cba[DC7u_MIN_ABC_diagsq_idx] = v2cab[DC7u_MIN_ABC_diagsq_idx] = v2bca[DC7u_MIN_ABC_diagsq_idx] = v2bac[DC7u_MIN_ABC_diagsq_idx]
+
+                  = v2acb[DC7u_MIN_ABC_diagsq_idx] = v2abc[DC7u_MIN_ABC_diagsq_idx] = v2[DC7u_MIN_ABC_diagsq_idx];
+
+
+
+                  distsqabc = distsqacb = distsqbac = distsqbca = distsqcab = distsqcba = 0.;
+
+                  for (ii = 0; ii < 7; ii++) {
+
+                     distsqabc += (v1abc - v2abc) * (v1abc - v2abc);
+
+                     distsqacb += (v1abc - v2acb) * (v1abc - v2acb);
+
+                     distsqbac += (v1abc - v2bac) * (v1abc - v2bac);
+
+                     distsqbca += (v1abc - v2bca) * (v1abc - v2bca);
+
+                     distsqcab += (v1abc - v2cab) * (v1abc - v2cab);
+
+                     distsqcba += (v1abc - v2cba) * (v1abc - v2cba);
+
+                  }
+
+                  distsq = distsqabc;
+
+                  if (distsqacb < distsq) { distsq = distsqacb; }
+
+                  if (distsqbac < distsq) { distsq = distsqbac; }
+
+                  if (distsqbca < distsq) { distsq = distsqbca; }
+
+                  if (distsqcab < distsq) { distsq = distsqcab; }
+
+                  if (distsqcba < distsq) { distsq = distsqcba; }
+
+
+
+                  return sqrt(distsq);
+
+   }
+
 public:
    double dist(const S6& s1, const S6& s2) const override {
       return V7Dist(s1, s2);
@@ -112,7 +196,7 @@ public:
 class DC7uDistance : public Distance {
 public:
    double dist(const S6& s1, const S6& s2) const override {
-      return DistanceBetween(s1,s2);
+      return DC7uPermDistanceBetween(s1,s2);
    }
 
    double dist(const G6& g1, const G6& g2) const override {

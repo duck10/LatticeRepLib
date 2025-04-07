@@ -5,7 +5,6 @@
    and making it into a call to the sauc cgi-bin script with arguments:
 
      Centering -- the lattice centering a, A, b, B, c, C, i, I, f, F, p, P, h, H, r, or R
-     A, B, C, Alpha, Beta, Gamma -- the a, b, c, alpha, beta, gamma cell parameters
      RangeA, RangeB, RangeC, RangeAlpha, RangeBeta, RangeGamma -- ranges in Angstroms and Degrees
      RangeSphere -- the size of a search sphere for similarity 2
      Algorithm -- 1 through 7 for L1, L2, NCDist, V7, D7, S6, or DC7unsrt (default)

@@ -162,6 +162,7 @@
     <ClInclude Include="GrimmerTree.h" />
     <ClInclude Include="EnhancedS6.h" />
     <ClInclude Include="RegistryTest.h" />
+    <ClInclude Include="DC7uDist.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

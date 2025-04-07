@@ -13,9 +13,6 @@
 #include <atomic>
 #include <vector>
 
-// Helper function declaration
-bool caseInsensitiveCompare(const std::string& str1, const std::string& str2);
-
 // Default constants
 constexpr double DEFAULT_A = 100.0;
 constexpr double DEFAULT_B = 100.0;
@@ -33,53 +30,10 @@ const std::string DEFAULT_SPACE = "DC7UNSRT";
 constexpr int DEFAULT_SAUCMETRIC = 7;
 /*#define DEFAULT_BLOCKSIZE 100*/
 
-void setCellEdgeA(const double);
-void setCellEdgeB(const double);
-void setCellEdgeC(const double);
-void setCellAngleAlpha(const double);
-void setCellAngleBeta(const double);
-void setCellAngleGamma(const double);
-void setBlockSize(const unsigned long);
-void setBlockStart(const unsigned long);
-void setSpace(std::string);
-void setCellRangeA(const double);
-void setCellRangeB(const double);
-void setCellRangeC(const double);
-void setCellRangeAlpha(const double);
-void setCellRangeBeta(const double);
-void setCellRangeGamma(const double);
-void setCellRangeSphere(const double);
-void setSaucMetric(const double);
+// Forward declare class instead of defining it in the header
+class CmdSaucSearchOptions;
 
-class CmdSaucSearchOptions {
-public:
-   size_t blocksize = 0;      ;
-   size_t blockstart = 0;
-   double A = DEFAULT_A;
-   double B = DEFAULT_B;
-   double C = DEFAULT_C;
-   double Alpha = DEFAULT_ALPHA;
-   double Beta = DEFAULT_BETA;
-   double Gamma = DEFAULT_GAMMA;
-
-   double RangeA = DEFAULT_RANGEA;
-   double RangeB = DEFAULT_RANGEB;
-   double RangeC = DEFAULT_GAMMA;
-   double RangeAlpha = DEFAULT_RANGEALPHA;
-   double RangeBeta = DEFAULT_RANGEBETA;
-   double RangeGamma = DEFAULT_RANGEBETA;
-
-   double saucSphereRange = 50.0;
-   int SAUCMETRIC = DEFAULT_SAUCMETRIC;
-   std::string SPACE = std::string(DEFAULT_SPACE);
-
-   bool saucNearest = false;
-   bool saucSphere = true;
-   bool saucRange = false;
-
-   CmdSaucSearchOptions() = default;
-};
-
+// Define full CmdSaucControls class here
 class CmdSaucControls : public BaseControlVariables {
 public:
     friend std::ostream& operator<< (std::ostream& os, const CmdSaucControls& ctrl);
@@ -102,7 +56,43 @@ public:
     double getRangeBeta() const;
     double getRangeGamma() const;
     double getsaucSphereRange() const;
-    
+
+private:
+   std::string HandleSpace(const std::string& st) const {
+      static const std::string validNumbers("1 2 3 4 5 6 7 ");
+      static const std::vector<std::string>
+         validNames({ "L1", "L2", "NCDist", "V7", "D7", "S6", "DC7UNSRT", "DC7U"});
+      {
+         if (validNumbers.find(st) != std::string::npos) {
+            return validNames[std::stoi(st)];
+         }
+         else {
+            for (const auto& name : validNames) {
+               if (name == st) return st;
+            }
+            return "ERROR in SPACE ASSIGMENT";
+         }
+      }
+   }
+
+private:
+   size_t blocksize = 0;
+   size_t blockstart = 0;
+
+   double RangeA = DEFAULT_RANGEA;
+   double RangeB = DEFAULT_RANGEB;
+   double RangeC = DEFAULT_GAMMA;
+   double RangeAlpha = DEFAULT_RANGEALPHA;
+   double RangeBeta = DEFAULT_RANGEBETA;
+   double RangeGamma = DEFAULT_RANGEBETA;
+
+   double saucSphereRange = 50.0;
+   int SAUCMETRIC = DEFAULT_SAUCMETRIC;
+   std::string SPACE = std::string(DEFAULT_SPACE);
+
+   bool saucNearest = false;
+   bool saucSphere = true;
+   bool saucRange = false;
 };
 
 
