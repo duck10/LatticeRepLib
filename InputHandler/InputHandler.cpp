@@ -148,6 +148,9 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
    std::istream& input) {
    std::string line;
    while (std::getline(input, line)) {
+
+      line.erase(std::remove(line.begin(), line.end(), '\0'), line.end());
+
       globalInputLines.emplace_back(line);
       if (line.empty() || line[0] == ';') continue;
       std::string rawline(line);
