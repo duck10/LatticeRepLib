@@ -130,20 +130,20 @@ inline std::ostream& operator<<(std::ostream& os, const SearchDomain& domain) {
 }
 
 // Fuzzy search function
-template <typename T>
-T fuzzySearch(const std::vector<T>& list, const std::string& input) {
-   double bestScore = std::numeric_limits<double>::max();
-   T bestMatch = list[0]; // Default match
-
-   for (const auto& item : list) {
-      double score = StringMatcher::calculateSimilarity(input, item.name); // Replace with your fuzzy match logic
-      if (score < bestScore) {
-         bestScore = score;
-         bestMatch = item;
-      }
-   }
-   return bestMatch;
-}
+//template <typename T>
+//T fuzzySearch(const std::vector<T>& list, const std::string& input) {
+//   double bestScore = std::numeric_limits<double>::max();
+//   T bestMatch = list[0]; // Default match
+//
+//   for (const auto& item : list) {
+//      double score = StringMatcher::calculateSimilarity(input, item.name); // Replace with your fuzzy match logic
+//      if (score < bestScore) {
+//         bestScore = score;
+//         bestMatch = item;
+//      }
+//   }
+//   return bestMatch;
+//}
 
 //int main() {
 //   // Example fuzzy matching for SearchDomainInfo
