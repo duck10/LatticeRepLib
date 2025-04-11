@@ -37,6 +37,7 @@ class CmdSaucSearchOptions;
 class CmdSaucControls : public BaseControlVariables {
 public:
     friend std::ostream& operator<< (std::ostream& os, const CmdSaucControls& ctrl);
+       InputHandler::registerHandler("SAUCMETRIC", 0.95,
     
     static std::atomic<bool> g_running;
     static std::atomic<bool> g_in_input;
