@@ -149,7 +149,7 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
    std::string line;
    while (std::getline(input, line)) {
 
-      if (*(line.end() - 1) == '\0') {
+      if (!line.empty() && *(line.end() - 1) == '\0') {
          line.pop_back();
       }
 
