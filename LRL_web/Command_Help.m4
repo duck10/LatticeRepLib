@@ -114,31 +114,43 @@ define([[[LRLWEB_CmdGen]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[Lattice types are shown following $2]]]]]]dnl
 [[[[[[the numerical ]]]]]]dnl
 [[[[[[parameters.$2]]]]]]dnl
+[[[[[[Any input lattice descriptions are copied to the output.$2]]]]]]dnl
 [[[[[[<em><u>Parameters:</u></em> (default values in ]]]]]]dnl
-[[[[[[parentheses)$2]]]]]]dnl
+[[[[[[parentheses) (deprecated)$2]]]]]]dnl
 [[[[[[--- The number of cells of each type to be ]]]]]]dnl
 [[[[[[generated (1)$2]]]]]]dnl
-[[[[[[--- The type(s) of selected output requested. ]]]]]]dnl
+[[[[[[--- The type(s) of selected output requested. See Control Parameters $2]]]]]]dnl
+[[[[[[<em><u>Control Parameters</u></em> $2]]]]]]dnl
+[[[[[[Control information is case sensitive. $2]]]]]]dnl
+[[[[[[<em>COUNT:</em> the number of each chosen type to randomly generate (default: 5) $2]]]]]]dnl
+[[[[[[<em>TYPE:</em> $2]]]]]]dnl
 [[[[[[Examples are$2]]]]]]dnl
 [[[[[[--- &quot;all&quot; (default) -- produces examples ]]]]]]dnl
 [[[[[[of each of the 44 Niggli types $2]]]]]]dnl
 [[[[[[(see the International Tables) ]]]]]]dnl
-[[[[[[and also each of the 24 Delone types (all)$2]]]]]]dnl
-[[[[[[--- a number between ]]]]]]dnl
-[[[[[[1 and 44 will generate examples of that Niggli type. For instance,$2]]]]]]dnl
+[[[[[[and also each of the 24 Delone types (all) $2]]]]]]dnl
+[[[[[[--- &quot;<strong>Gruber&quot;</strong> (default&ensp; -- produces the ]]]]]]dnl
+[[[[[[the requested number of copies of the ]]]]]]dnl
+[[[[[[five nearly-Niggli-reduced ]]]]]]dnl
+[[[[[[examples of Gruber, 1973. $2]]]]]]dnl
+[[[[[[--- &quot;<strong>random&quot;</strong> (default&ensp; -- produces the ]]]]]]dnl
+[[[[[[the requested number of random unit cells. $2]]]]]]dnl
+[[[[[[--- a number between]]]]]]dnl
+[[[[[[<strong>1</strong> and <strong>44</strong> will generate ]]]]]]dnl
+[[[[[[examples of that Niggli type. For instance, $2]]]]]]dnl
 [[[[[[24 ]]]]]]dnl
 [[[[[[will create Niggli type 24 (which is hR). {allowed values: 1-44}$2]]]]]]dnl
 [[[[[[--- ]]]]]]dnl
-[[[[[[&quot;m&quot; generates monoclinic examples {allowed types: c, t, h, ]]]]]]dnl
+[[[[[[<strong>&quot;m&quot;</strong> generates monoclinic examples {allowed types: c, t, h, ]]]]]]dnl
 [[[[[[o, m, a}$2]]]]]]dnl
-[[[[[[--- &quot;mC&quot; generates C-centered monoclinic ]]]]]]dnl
-[[[[[[examples {mP, mS, mC, hR, hP, tP, tI, cF, cI, cP, aP}$2]]]]]]dnl
-[[[[[[--- &quot;A1&quot; ]]]]]]dnl
+[[[[[[--- <strong>&quot;mC&quot;</strong> generates C-centered monoclinic ]]]]]]dnl
+[[[[[[examples {mP, mS, mC, hR, hP, tP, tI, cF, cI, cP, aP} $2]]]]]]dnl
+[[[[[[--- <strong>&quot;A1&quot;</strong> ]]]]]]dnl
 [[[[[[generates a general triclinic Delone type with no S<sup>6</sup> zero ]]]]]]dnl
 [[[[[[scalars.$2]]]]]]dnl
-[[[[[[--- &quot;O4&quot; generates the centered orthorhombic ]]]]]]dnl
+[[[[[[--- <strong>&quot;O4&quot;</strong> generates the centered orthorhombic ]]]]]]dnl
 [[[[[[Delone type with signature {00r sst}.$2]]]]]]dnl
-[[[[[[--- &quot;O&quot; will ]]]]]]dnl
+[[[[[[--- <strong>&quot;O&quot;</strong> will ]]]]]]dnl
 [[[[[[generate all orthorhombic Delone types {allowed types: C, T, H, O, M, ]]]]]]dnl
 [[[[[[A}$2]]]]]]dnl
 [[[[[[--- Unrecognized input will generate all ]]]]]]dnl
@@ -185,6 +197,30 @@ define([[[LRLWEB_CmdInverse]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[end$2]]]]]]dnl
 [[[[[[P 7.0711 7.0711 7.0711 60.0000 60.0000 60.0000]]]]]]dnl
 [[[[[[$2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Valid input is reported as H<sup>6</sup> unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
+[[[[[[Warnings are output for invalid inputs.$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> NA$2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
+[[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
+[[[[[[ All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.$2]]]]]]dnl
+[[[[[[---  RANDOM: Random (valid) unit cell;$2]]]]]]dnl
+[[[[[[---  Crystal lattice input: 'A', 'B', 'C',]]]]]]dnl
+[[[[[[ 'P', 'R', 'F', 'I' followed by three axis lengths]]]]]]dnl
+[[[[[[ and three angles (in degrees);$2]]]]]]dnl
+[[[[[[---  semicolon: lines beginning with a semicolon are treated as comments$2]]]]]]dnl
+[[[[[[---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars,]]]]]]dnl
+[[[[[[ C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell),]]]]]]dnl
+[[[[[[ u for unsorted Dirichlet 7-cells.$2]]]]]]dnl
+[[[[[[---  END: ends the data input section$2]]]]]]dnl
+[[[[[[Examples of unit cell inputs$2]]]]]]dnl
+[[[[[[P 10 20 30 90 111 90$2]]]]]]dnl
+[[[[[[G 100 400 900 0 -215.02 0$2]]]]]]dnl
+[[[[[[S6 0 -107.51 0 7.51 -400 -792.49 $2]]]]]]dnl
+[[[[[[; this is a comment$2]]]]]]dnl
 [[[[[[$3]]]]]]dnl
 dnl
 )dnl--------------------------------------------------
@@ -411,7 +447,31 @@ define([[[LRLWEB_CmdPrim]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[f 10 10 10   90 90 90$2]]]]]]dnl
 [[[[[[end$2]]]]]]dnl
 [[[[[[P 7.0711 7.0711 7.0711 60.0000 60.0000 60.0000]]]]]]dnl
-[[[[[[$3]]]]]]dnl
+[[[[[[<hr>]]]]]]dnl
+[[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Valid input is reported as H<sup>6</sup> unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
+[[[[[[Warnings are output for invalid inputs.$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> NA$2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
+[[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
+[[[[[[ All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.$2]]]]]]dnl
+[[[[[[---  RANDOM: Random (valid) unit cell;$2]]]]]]dnl
+[[[[[[---  Crystal lattice input: 'A', 'B', 'C',]]]]]]dnl
+[[[[[[ 'P', 'R', 'F', 'I' followed by three axis lengths]]]]]]dnl
+[[[[[[ and three angles (in degrees);$2]]]]]]dnl
+[[[[[[---  semicolon: lines beginning with a semicolon are treated as comments$2]]]]]]dnl
+[[[[[[---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars,]]]]]]dnl
+[[[[[[ C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell),]]]]]]dnl
+[[[[[[ u for unsorted Dirichlet 7-cells.$2]]]]]]dnl
+[[[[[[---  END: ends the data input section$2]]]]]]dnl
+[[[[[[Examples of unit cell inputs$2]]]]]]dnl
+[[[[[[P 10 20 30 90 111 90$2]]]]]]dnl
+[[[[[[G 100 400 900 0 -215.02 0$2]]]]]]dnl
+[[[[[[S6 0 -107.51 0 7.51 -400 -792.49 $2]]]]]]dnl
+[[[[[[; this is a comment$2]]]]]]dnl
+[[[[[[end$3]]]]]]dnl
 dnl
 )dnl--------------------------------------------------
 dnl Command:  CmdS6Refl
@@ -495,14 +555,27 @@ dnl -------------------
 define([[[LRLWEB_CmdSauc]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[<strong>Command: ]]]]]]dnl
 [[[[[[SAUC search for alternate matching  unit cells</strong>$2]]]]]]dnl
-[[[[[[<em><u>Purpose:</u></em>$2]]]]]]dnl
-[[[[[[<em><u>Output type:</u></em> Web page listing matching entries in PDB and COD with similar cells$2 ]]]]]]dnl
-[[[[[[<em><u>Parameters:</u></em> Options for search with SAUC$2]]]]]]dnl
-[[[[[[----  SAUCMETRIC: 1 through 7 for L1, L2, NCDist, V7, D7, S6, or DC7unsrt (default)  $2]]]]]]dnl
-[[[[[[----  NEAREST: Search for the nearest match  $2]]]]]]dnl
-[[[[[[----  SPHERE: Search for matches in a sphere of radius RANGESPHERE  $2]]]]]]dnl
-[[[[[[----  RANGE: Search in a box of size RANGEA by RANGEB by RANGEC by   $2]]]]]]dnl
-[[[[[[----                                 RANGEALPHA by RANGEBETA by RANGEGAMMA  $2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u> ]]]]]]dnl
+[[[[[[</u></em>allows searching a database of known unit cells ]]]]]]dnl 
+[[[[[[for similar cells; several search methods are available.</em>$ 2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Web page listing matching entries in ]]]]]]dnl  
+[[[[[[PDB and COD with similar cells$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> $2]]]]]]dnl 
+[[[[[[<em><u>Control Parameters</u></em> $2]]]]]]dnl
+[[[[[[Note: Control commands and data values are case-insensitive.$2]]]]]]dnl
+[[[[[[<em>METRIC:</em> the search metric to use for searching (or the chosen space). $2]]]]]]dnl
+[[[[[[&emsp; Allowed values are L1, L2, G6, V7, D7, S6, DC7unsrt or DC7u (default=DC7unsrt) $2]]]]]]dnl
+[[[[[[<em>DOMAIN:</em> allowed values are NEAREST, SPHERE, and RANGE (default=NEAREST) $2]]]]]]dnl
+[[[[[[<em>RANGEA:</em> size of the box in which to search, when RANGE is chosen (default = 1.0) $2]]]]]]dnl
+[[[[[[<em>RANGEB:</em> size of the box in which to search, when RANGE is chosen (default = 1.0) $2]]]]]]dnl
+[[[[[[<em>RANGEC:</em> size of the box in which to search, when RANGE is chosen (default = 1.0) $2]]]]]]dnl
+[[[[[[<em>RANGEALPHA:</em> size of the box in which to search, when RANGE is chosen (default = 1.0) $2]]]]]]dnl
+[[[[[[<em>RANGEBETA:</em> size of the box in which to search, when RANGE is chosen (default = 1.0) $2]]]]]]dnl
+[[[[[[<em>RANGEGAMMA:</em> size of the box in which to search, when RANGE is chosen (default = 1.0) $2]]]]]]dnl
+[[[[[[<em>BLOCKSTART:</em> if multiple svg files are written, specifies the ordinal of the first to write $2]]]]]]dnl
+[[[[[[&emsp; (mostly for use on the website, default=0)$2]]]]]]dnl
+[[[[[[<em>BLOCKSIZE:</em> the number of files to write, starting from BLOCKSTART(mostly for use on the website) $2]]]]]]dnl
+[[[[[[&emsp; (on the web, this is limited to 20) (mostly for use on the website) $2]]]]]]dnl
 [[[[[[<hr />]]]]]]dnl
 [[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
 [[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
@@ -578,7 +651,14 @@ define([[[LRLWEB_CmdSella]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[ ]]]]]]dnl
 [[[[[[<em><u>Parameters:</u></em> ]]]]]]dnl
 [[[[[[choices if only some outputs are needed ]]]]]]dnl
-[[[[[[(all)$2 ]]]]]]dnl
+[[[[[[(all) (deprecated)$2 ]]]]]]dnl
+[[[[[[<em><u>Control Parameters</u></em>$2 ]]]]]]dnl
+[[[[[[Control information is NOT case sensitive, and the control name can be misspelled.$2 ]]]]]]dnl
+[[[[[[<em>DOGRAPHICS:</em> allow to not write output SVG files (default: TRUE $2 ]]]]]]dnl
+[[[[[[<em>BLOCKSTART:</em> if multiple svg files are written, specifies the ordinal of the first to write $2 ]]]]]]dnl
+[[[[[[&emsp; (mostly for use on the website) $2 ]]]]]]dnl
+[[[[[[<em>BLOCKSIZE:</em> the number of files to write, starting from BLOCKSTART(mostly for use on the website) $2 ]]]]]]dnl
+[[[[[[&emsp; (on the web, this is limited to 20) (mostly for use on the website) $2 ]]]]]]dnl
 [[[[[[<hr>]]]]]]dnl
 [[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
@@ -795,7 +875,100 @@ define([[[LRLWEB_CmdToP3]]],[[[[[[$1 ]]]]]]dnl
 [[[[[[g 100 110 120 0 1 2$2]]]]]]dnl
 [[[[[[end$2]]]]]]dnl
 [[[[[[P3 ((6.12323e-16, 10), (0.0478714, 10.488), (0.104447, 10.954))	$2]]]]]]dnl
-[[[[[[$3]]]]]]dnl
+[[[[[[<hr>]]]]]]dnl
+[[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Valid input is reported as H<sup>6</sup> unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
+[[[[[[Warnings are output for invalid inputs.$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> NA$2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
+[[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
+[[[[[[ All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.$2]]]]]]dnl
+[[[[[[---  RANDOM: Random (valid) unit cell;$2]]]]]]dnl
+[[[[[[---  Crystal lattice input: 'A', 'B', 'C',]]]]]]dnl
+[[[[[[ 'P', 'R', 'F', 'I' followed by three axis lengths]]]]]]dnl
+[[[[[[ and three angles (in degrees);$2]]]]]]dnl
+[[[[[[---  semicolon: lines beginning with a semicolon are treated as comments$2]]]]]]dnl
+[[[[[[---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars,]]]]]]dnl
+[[[[[[ C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell),]]]]]]dnl
+[[[[[[ u for unsorted Dirichlet 7-cells.$2]]]]]]dnl
+[[[[[[---  END: ends the data input section$2]]]]]]dnl
+[[[[[[Examples of unit cell inputs$2]]]]]]dnl
+[[[[[[P 10 20 30 90 111 90$2]]]]]]dnl
+[[[[[[G 100 400 900 0 -215.02 0$2]]]]]]dnl
+[[[[[[S6 0 -107.51 0 7.51 -400 -792.49 $2]]]]]]dnl
+[[[[[[; this is a comment$2]]]]]]dnl
+[[[[[[end$3]]]]]]dnl
+dnl
+)dnl--------------------------------------------------
+dnl Command:  CmdToRI
+dnl -------------------
+define([[[LRLWEB_CmdToRI]]],[[[[[[$1 ]]]]]]dnl
+[[[[[[<strong><strong>Command: compute RI (Root Invariant) version of cells</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> convert to RI representation (note that lattice centering is not removed)$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> the RI ]]]]]]dnl
+[[[[[[version of the input $2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> NA $2]]]]]]dnl
+[[[[[[Root invariant (<b>RI</b>) is a lattice representation introduced by ]]]]]]dnl
+[[[[[[Bright and Kurlin (<b>BK</b>) in several papers. <b>RI</b> is best ]]]]]]dnl
+[[[[[[understood as a reordering of the Selling-reduced scalars (space <b>S</b><sup><b>6</b></sup>, ]]]]]]dnl
+[[[[[[s<sub>1</sub>,s<sub>2</sub>, s<sub>3</sub>, s<sub>4</sub>, s<sub>5</sub>,]]]]]]dnl
+[[[[[[s<sub>6</sub>). $2]]]]]]dnl
+[[[[[[<b>Step 1:</b> Create a new vector <i><b>p</b></i> with six elements ]]]]]]dnl
+[[[[[[that the negatives of the Selling-reduced <b>S</b><sup><b>6</b></sup> ]]]]]]dnl
+[[[[[[vector; $2]]]]]]dnl
+[[[[[[<b>Step 2:</b> ]]]]]]dnl
+[[[[[[Revise <i><b>p</b></i> by taking the square root of each element.$2]]]]]]dnl
+[[[[[[<b>Step 3: </b>Exchange ]]]]]]dnl
+[[[[[[the columns of <i><b>p</b></i> to place the column that has the small ]]]]]]dnl
+[[[[[[scalar into the first column.$2]]]]]]dnl
+[[[[[[<b>Step 4:</b> If ]]]]]]dnl
+[[[[[[the smallest element is in the second row, exchange the first row and ]]]]]]dnl
+[[[[[[second row of that column, and do the same for one of the other ]]]]]]dnl
+[[[[[[columns.$2]]]]]]dnl
+[[[[[[<b>Step 5:</b> Using ]]]]]]dnl
+[[[[[[similar logic, place the smallest scalar of the new columns 2 and 3 ]]]]]]dnl
+[[[[[[into the second column and in the first row.$2]]]]]]dnl
+[[[[[[<b>Step 6:</b> If ]]]]]]dnl 
+[[[[[[the first row scalars of columns 1 and 2 are equal, then exchange]]]]]]dnl
+[[[[[[those columns such that the smaller second row scalar is in column 1.]]]]]]dnl
+[[[[[[There is no need to specify the result for the case where the second]]]]]]dnl
+[[[[[[row scalars are equal, because the results would be identical.]]]]]]dnl
+[[[[[[$2]]]]]]dnl
+[[[[[[Above is the logic]]]]]]dnl
+[[[[[[for the case described as <b>V</b><sub><b>1</b></sub> by <b>BK</b>,]]]]]]dnl
+[[[[[[where <b>V</b><sub><b>1</b></sub>..<b>V</b><sub><b>5</b></sub> refer]]]]]]dnl
+[[[[[[to the &ldquo;Voronoi polyhedron&rdquo; types. <b>V</b><sub><b>1</b></sub>]]]]]]dnl
+[[[[[[is the most general case, with no 90 degree angles in the reduced]]]]]]dnl
+[[[[[[cell. The <b>V</b><sub><b>1</b></sub> polyhedra have 14 sides. <b>BK</b>]]]]]]dnl
+[[[[[[also describe separate root invariants for each of the Voronoi types,]]]]]]dnl
+[[[[[[where each <b>RI</b> has fewer than 6 scalars.$2]]]]]]dnl
+[[[[[[<hr>]]]]]]dnl
+[[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
+[[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
+[[[[[[<em><u>Output type:</u></em> Valid input is reported as H<sup>6</sup> unit cell a, b, c, &alpha;, &beta;, &gamma;.$2]]]]]]dnl
+[[[[[[Warnings are output for invalid inputs.$2]]]]]]dnl
+[[[[[[<em><u>Parameters:</u></em> NA$2]]]]]]dnl
+[[[[[[<hr />]]]]]]dnl
+[[[[[[LRL_Web Data Inputs:  There are 5 types of input lines.]]]]]]dnl
+[[[[[[ Except for 'END', they can be combined in any order.$2]]]]]]dnl
+[[[[[[ All these are case-insensitive. If a particular input lattice is invalid, it is rejected<br /> with a message.$2]]]]]]dnl
+[[[[[[---  RANDOM: Random (valid) unit cell;$2]]]]]]dnl
+[[[[[[---  Crystal lattice input: 'A', 'B', 'C',]]]]]]dnl
+[[[[[[ 'P', 'R', 'F', 'I' followed by three axis lengths]]]]]]dnl
+[[[[[[ and three angles (in degrees);$2]]]]]]dnl
+[[[[[[---  semicolon: lines beginning with a semicolon are treated as comments$2]]]]]]dnl
+[[[[[[---  Vector Input: g (or v or g6) for G6 vectors; s (or s6) for S6, Delone/Selling scalars,]]]]]]dnl
+[[[[[[ C3 for C3 input (without parentheses<br />or commas, 'C' would be interpreted as a C-centered unit cell),]]]]]]dnl
+[[[[[[ u for unsorted Dirichlet 7-cells.$2]]]]]]dnl
+[[[[[[---  END: ends the data input section$2]]]]]]dnl
+[[[[[[Examples of unit cell inputs$2]]]]]]dnl
+[[[[[[P 10 20 30 90 111 90$2]]]]]]dnl
+[[[[[[G 100 400 900 0 -215.02 0$2]]]]]]dnl
+[[[[[[S6 0 -107.51 0 7.51 -400 -792.49 $2]]]]]]dnl
+[[[[[[; this is a comment$2]]]]]]dnl
+[[[[[[end$3]]]]]]dnl
 dnl
 )dnl--------------------------------------------------
 dnl Command:  CmdToS6
@@ -1091,13 +1264,23 @@ define([[[LRLWEB_Follow]]],[[[[[[$1]]]]]]dnl
 [[[[[[<em>PERTURBATIONS:</em> how many graphs of slightly different starting point to produce (default: 0)$2]]]]]]dnl
 [[[[[[<em>PERTURBBY:</em> how much to perturb input cells (default: 0.10)$2]]]]]]dnl
 [[[[[[<em>GLITCHTHRESHOLD:</em> how large a change in distance between points to consider are problem (default: 4%)$2]]]]]]dnl
-[[[[[[<em>NUMFOLLOWERPOINTS:</em> the number of distance points to plot (default: 100)$2]]]]]]dnl
-[[[[[[<em>PRINTDISTANCEDATA:</em> whether to send the input points along the S<sup>6</sup> line to output (default: false)$2]]]]]]dnl
+[[[[[[<em>GLITCHSONLY:</em> FALSE (default) causes only files that contain a glitch to be written (default false)$2]]]]]]dnl
+[[[[[[<em>DETECTGLITCHS:</em> TRUE causes glitches to be written on the output graphs (default: true)$2]]]]]]dnl
+[[[[[[<em>POINTS (=NUMFOLLOWERPOINTS):</em> the number of distance points to plot (default: 100)$2]]]]]]dnl
+[[[[[[<em>PRINTDATA (=PRINTDISTANCEDATA):</em> whether to send the input points along the S<sup>6</sup> line to output (default: false)$2]]]]]]dnl
+[[[[[[<em>ENABLE:</em> add distance types to the types that will be displayed on output $2]]]]]]dnl
+[[[[[[&emsp;(defaults are NC and CS; you can add RI or V7 or DC7U(synonym: U))$2]]]]]]dnl
+[[[[[[<em>DISABLE:</em> remove distance types from the list to be shown on the graph$2]]]]]]dnl
+[[[[[[<em>SHOWMARKERS (=SHOWDATAMARKERS):</em> show a marker at each data point on the output line (default: TRUE)$2]]]]]]dnl
+[[[[[[<em>BLOCKSTART:</em> if multiple svg files are written, specifies the ordinal of the first to write$2]]]]]]dnl
+[[[[[[&emsp; (mostly for use on the website)$2]]]]]]dnl
+[[[[[[<em>BLOCKSIZE:</em> the number of files to write, starting from BLOCKSTART(mostly for use on the website)$2]]]]]]dnl
+[[[[[[&emsp; (on the web, this is limited to 20) (mostly for use on the website)$2]]]]]]dnl
 [[[[[[$2]]]]]]dnl
 [[[[[[Sample control input:$2]]]]]]dnl
-[[[[[[&emsp;numFollowerPoints 77$2]]]]]]dnl
-[[[[[[&emsp;FollowerMode Line$2]]]]]]dnl
-[[[[[[$2]]]]]]dnl
+[[[[[[&emsp;Points 77$2]]]]]]dnl
+[[[[[[&emsp;Mode Line$2]]]]]]dnl
+[[[[[[&emsp;Enable V7$2]]]]]]dnl
 [[[[[[<hr>]]]]]]dnl
 [[[[[[<strong>Command: Check Input</strong>$2]]]]]]dnl
 [[[[[[<em><u>Purpose:</u></em> Verify input lattice types and parameters$2]]]]]]dnl
