@@ -22,10 +22,10 @@
 #include "ProgramSetup.h"
 #include "WebIO.h"
 
-void print_sauc(const std::string& lattice, const LRL_Cell_Degrees& mycell, const CmdSaucControls& controls) {
+void proc_sauc(const std::string& lattice, const LRL_Cell_Degrees& mycell, const CmdSaucControls& controls) {
 
-   const int similarity = controls.getsimilarity();
-   const int algorithm = controls.getalgorithm();
+   const int similarity = controls.getSearchDomain();
+   const int algorithm = controls.getSearchMetric();
    const double RangeA = controls.getRangeA();
    const double RangeB = controls.getRangeB();
    const double RangeC = controls.getRangeC();
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
          const LRL_Cell_Degrees mycell = LRL_Cell_Degrees(input.getCell());
 
          std::cout << lattice << " " << mycell << std::endl;
-         print_sauc(lattice, mycell, controls);
+         proc_sauc(lattice, mycell, controls);
       }
 
       return 0;
