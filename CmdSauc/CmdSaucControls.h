@@ -6,6 +6,7 @@
 #include "InputHandler.h"
 #include "LRL_StringTools.h"
 #include "DistanceTypes.h"
+#include "StringMatcher.h"
 
 #include <atomic>
 #include <cmath>
@@ -32,10 +33,12 @@ enum class SearchDomain {
    Range    // Search within a range of x, y, z
 };
 
+
 struct SearchDomainInfo {
    SearchDomain type;  // Enum type
    int index;          // Index value
    std::string name;   // Text name for fuzzy matching
+
 };
 
 static const std::vector<SearchDomainInfo> searchDomains = {
@@ -43,6 +46,7 @@ static const std::vector<SearchDomainInfo> searchDomains = {
     {SearchDomain::Sphere, 2, "SPHERE"},
     {SearchDomain::Range, 3, "RANGE"}
 };
+
 static const SearchDomainInfo DEFAULT_SEARCH_DOMAIN_INFO = searchDomains[0];
 static const SearchDomain DEFAULT_SEARCH_DOMAIN_TYPE = DEFAULT_SEARCH_DOMAIN_INFO.type;
 
@@ -340,55 +344,75 @@ public:
     }
 
 private:
-   MetricType HandleMetric(const std::string& st) const {
-      std::vector<std::string> validNames;
-      std::vector<std::string> validNumbers;
+
+   MetricType MetricTypeFromName(const std::string& st) const {
       for (const auto& m : metricTypes) {
-         validNames.emplace_back(m.name);
-         validNumbers.emplace_back(std::to_string(m.index));
+         if (st == m.name) return m.type;
       }
-
-      // Check if input is a valid number
-      try {
-         int num = std::stoi(st); // Convert to integer
-         if (num > 0 && num <= validNames.size()) {
-            return static_cast<MetricType>(num - 1); // Set metricType
-         }
-      }
-      catch (const std::invalid_argument&) {
-         // Ignore and proceed to name matching
-         std::cout << "; invalid integer input ";
-      }
-
-      // Check if input matches a valid name
-      for (size_t i = 0; i < validNames.size(); ++i) {
-         if (st == validNames[i]) {
-            try {
-               return static_cast<MetricType>(i); // Set metricType
-            }
-            catch (const std::invalid_argument&) {
-               std::cout <<  "ERROR: using default metric type\n";
-               return DEFAULT_METRIC_TYPE;
-            }
-         }
-      }
-
-      std::cout << "ERROR: using default metric type " << DEFAULT_METRIC << std::endl;;
       return DEFAULT_METRIC_TYPE;
    }
 
+   MetricType MetricTypeFromNum(const std::string& st) const {
+      for (const auto& m : metricTypes) {
+         if (st == std::to_string(m.index)) return m.type;
+      }
+      return DEFAULT_METRIC_TYPE;
+   }
 
-   SearchDomain HandleSearchDomain(const std::string& st) const {
-      // Iterate through `searchDomains` to find a match
-      for (const auto& search : searchDomains) {
-         if (st == search.name) {
-            return search.type;         // Return the matching search domain
-         }
+   MetricType HandleMetric(const std::string& st) const {
+      constexpr double matchThreshold = 0.5;
+      VectorStringMatcher matcherName(matchThreshold);
+
+      // Populate the name matcher with valid metric names
+      for (const auto& m : metricTypes) {
+         matcherName.addString(m.name);
       }
 
-      // Fallback to the default search domain
-      std::cout << "ERROR: using default search domain  type " << DEFAULT_SEARCH_DOMAIN_TYPE << std::endl;;
+      // Step 1: Attempt to match by name first
+      std::string resultName;
+      const bool bName = matcherName.findBestMatch(st, resultName);
+      if (bName && matcherName.getTheta(st, resultName) < matchThreshold) {
+         return MetricTypeFromName(resultName);
+      }
+
+      // Step 2: If name matching fails, attempt to parse the input as a number
+      try {
+         int num = std::stoi(st); // Attempt to convert string to integer
+         if (num >= 1 && num <= 7) { // Validate range [1, 7]
+            return MetricTypeFromNum(std::to_string(num)); // Match exact number
+         }
+      }
+      catch (const std::invalid_argument&) {
+         // Input is not a valid number; ignore and fallback to default
+      }
+      catch (const std::out_of_range&) {
+         // Input number is out of range; ignore and fallback to default
+      }
+
+      // Step 3: Fallback to default metric type
+      std::cout << "ERROR: using default Metric " << DEFAULT_METRIC_TYPE << std::endl;;
+      return DEFAULT_METRIC_TYPE;
+   }
+
+   SearchDomain SearchDomainFromName(const std::string& st) const {
+      for (const auto& s : searchDomains) {
+         if (st == s.name) return s.type;
+      }
+      std::cout << "ERROR: using default Domain " << DEFAULT_SEARCH_DOMAIN_TYPE << std::endl;;
       return DEFAULT_SEARCH_DOMAIN_TYPE;
+   }
+
+   SearchDomain HandleSearchDomain(const std::string& st) const {
+   constexpr double matchThreshold = 0.3;
+      VectorStringMatcher matcher(matchThreshold);
+      std::vector<SearchDomainInfo> domains;
+      for (const auto& sd : searchDomains) {
+         matcher.addString(sd.name);
+      }
+
+      std::string result;
+      const bool bName = matcher.findBestMatch(st, result);
+      return SearchDomainFromName(result);
    }
 
    int validateHits(const std::string& st) const {
@@ -438,13 +462,13 @@ private:
    double RangeBeta = DEFAULT_RANGEBETA;
    double RangeGamma = DEFAULT_RANGEGAMMA;
 
-   static inline const double DEFAULT_SPHERE_RADIUS_PERCENT = 50.0;
+   static constexpr double DEFAULT_SPHERE_RADIUS_PERCENT = 50.0;
    double saucSphereRange = DEFAULT_SPHERE_RADIUS_PERCENT;
 
    SearchDomain searchDomain = DEFAULT_SEARCH_DOMAIN_TYPE;
    MetricType metricType = MetricType::DC7UNSRT;
 
-   static inline const int DEFAULT_HITS = 50;
+   static constexpr int DEFAULT_HITS = 50;
    int hits = DEFAULT_HITS;
 };
 
