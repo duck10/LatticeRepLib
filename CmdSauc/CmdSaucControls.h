@@ -22,7 +22,7 @@ static constexpr double DEFAULT_RANGEC = 1.0;
 static constexpr double DEFAULT_RANGEALPHA = 1.0;
 static constexpr double DEFAULT_RANGEBETA = 1.0;
 static constexpr double DEFAULT_RANGEGAMMA = 1.0;
-static const std::string DEFAULT_SPACE = "DC7UNSRT";
+static const std::string DEFAULT_METRIC = "DC7UNSRT";
 static constexpr int DEFAULT_SAUCMETRIC = 7;
 /*#define DEFAULT_BLOCKSIZE 100*/
 
@@ -184,12 +184,18 @@ public:
 
        InputHandler::registerHandler("SPACE", 0.2,
           [this](const BaseControlVariables&, const std::string& value) {
-             SPACE = HandleMetric(LRL_StringTools::strToupper(value));
+             metricType = HandleMetric(LRL_StringTools::strToupper(value));
           });
 
        InputHandler::registerHandler("METRIC", 0.2,
           [this](const BaseControlVariables&, const std::string& value) {
-             SPACE = HandleMetric(LRL_StringTools::strToupper(value));
+             metricType = HandleMetric(LRL_StringTools::strToupper(value));
+          });
+
+       InputHandler::registerHandler("SAUCMETRIC", 0.4,
+          [this](const BaseControlVariables&, const std::string& value) {
+             const std::string upper = LRL_StringTools::strToupper(value);
+             metricType = HandleMetric(LRL_StringTools::strToupper(value));
           });
 
        InputHandler::registerHandler("RANGEA", 0.4,
@@ -227,6 +233,17 @@ public:
              saucSphereRange = std::stod(value);
           });
 
+       InputHandler::registerHandler("SPHERERADIUS", 0.4,
+          [this](const BaseControlVariables&, const std::string& value) {
+             validateSphereRadius(value);
+             saucSphereRange = std::stod(value);
+          });
+       InputHandler::registerHandler("RADIUS", 0.4,
+          [this](const BaseControlVariables&, const std::string& value) {
+             validateSphereRadius(value);
+             saucSphereRange = std::stod(value);
+          });
+
        InputHandler::registerHandler("NEAREST", 0.2,
           [this](const BaseControlVariables&, const std::string& value) {
              searchDomain = HandleSearchDomain("NEAREST");
@@ -242,16 +259,16 @@ public:
              searchDomain = HandleSearchDomain("RANGE");
           });
 
-       InputHandler::registerHandler("SAUCMETRIC", 0.4,
-          [this](const BaseControlVariables&, const std::string& value) {
-             const std::string upper = LRL_StringTools::strToupper(value);
-             SPACE = HandleMetric(LRL_StringTools::strToupper(value));
-          });
-
        InputHandler::registerHandler("DOMAIN", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
              const std::string upper = LRL_StringTools::strToupper(value);
              searchDomain = HandleSearchDomain(upper);
+          });
+
+       InputHandler::registerHandler("HITS", 0.4,
+          [this](const BaseControlVariables&, const std::string& value) {
+             const std::string upper = LRL_StringTools::strToupper(value);
+             hits = validateHits(upper);
           });
     }
     // Accessor methods
@@ -262,8 +279,6 @@ public:
           << ";Web run: " << ((this->getHasWebInput()) ? "true" : "false") << "\n"
           << ";Blockstart: " << blockstart << "\n"
           << ";Blocksize: " << blocksize << "\n"
-          << "; Sauc Metric: " << SAUCMETRIC << "\n"
-          << "; SPACE: " << SPACE << "\n"
           << "; metricType: " << metricType << "\n"
           << ";  RangeA: " << RangeA << "\n"
           << ";  RangeB: " << RangeB << "\n"
@@ -325,7 +340,7 @@ public:
     }
 
 private:
-   std::string HandleMetric(const std::string& st) {
+   MetricType HandleMetric(const std::string& st) const {
       std::vector<std::string> validNames;
       std::vector<std::string> validNumbers;
       for (const auto& m : metricTypes) {
@@ -337,42 +352,33 @@ private:
       try {
          int num = std::stoi(st); // Convert to integer
          if (num > 0 && num <= validNames.size()) {
-            SAUCMETRIC = num;              // Set SAUCMETRIC
-            SPACE = validNames[num - 1];   // Set SPACE
-            metricType = static_cast<MetricType>(num - 1); // Set metricType
-            return validNames[num - 1];    // Return name corresponding to number
+            return static_cast<MetricType>(num - 1); // Set metricType
          }
       }
       catch (const std::invalid_argument&) {
          // Ignore and proceed to name matching
+         std::cout << "; invalid integer input ";
       }
 
       // Check if input matches a valid name
       for (size_t i = 0; i < validNames.size(); ++i) {
          if (st == validNames[i]) {
             try {
-               SAUCMETRIC = std::stoi(validNumbers[i]); // Update SAUCMETRIC
-               SPACE = validNames[i];                  // Set SPACE
-               metricType = static_cast<MetricType>(i); // Set metricType
-               return validNames[i];                   // Return the valid name
+               return static_cast<MetricType>(i); // Set metricType
             }
             catch (const std::invalid_argument&) {
                std::cout <<  "ERROR: using default metric type\n";
-               return metricTypes[DEFAULT_METRIC_TYPE_INDEX].name;
+               return DEFAULT_METRIC_TYPE;
             }
          }
       }
 
-      // Fallback to defaults if no match is found
-      SAUCMETRIC = DEFAULT_SAUCMETRIC;
-      SPACE = DEFAULT_SPACE;
-      metricType = DEFAULT_METRIC_TYPE; // Set metricType to the default
-      std::cout << "ERROR: using default metric type " << DEFAULT_SPACE << std::endl;;
-      return DEFAULT_SPACE;
+      std::cout << "ERROR: using default metric type " << DEFAULT_METRIC << std::endl;;
+      return DEFAULT_METRIC_TYPE;
    }
 
 
-   SearchDomain HandleSearchDomain(const std::string& st) {
+   SearchDomain HandleSearchDomain(const std::string& st) const {
       // Iterate through `searchDomains` to find a match
       for (const auto& search : searchDomains) {
          if (st == search.name) {
@@ -383,6 +389,42 @@ private:
       // Fallback to the default search domain
       std::cout << "ERROR: using default search domain  type " << DEFAULT_SEARCH_DOMAIN_TYPE << std::endl;;
       return DEFAULT_SEARCH_DOMAIN_TYPE;
+   }
+
+   int validateHits(const std::string& st) const {
+      const std::string upper = LRL_StringTools::strToupper(st);
+      try {
+         const int h = std::stoi(st);
+         if (h > 0 && h < 1000) {
+            return h;
+         }
+         else {
+            throw std::invalid_argument("");
+         }
+      }
+      catch (const std::invalid_argument&) {
+         std::cout << ";invalid number of hits requested, using " << DEFAULT_HITS << std::endl;
+         return DEFAULT_HITS;
+      }
+   }
+
+   double validateSphereRadius(const std::string& st) const {
+      const std::string upper = LRL_StringTools::strToupper(st);
+      try {
+         const double radius = std::stod(upper);
+         if (radius > 0.1 && radius < 10.0) {
+            return radius;
+         }
+         else {
+            throw std::invalid_argument("");
+         }
+      }
+
+      catch (const std::invalid_argument&) {
+         std::cout << "; Invalid sphere radius, using default= "
+            << DEFAULT_SPHERE_RADIUS_PERCENT << " percent" << std::endl;
+         return DEFAULT_SPHERE_RADIUS_PERCENT;
+      }
    }
 
 private:
@@ -396,12 +438,14 @@ private:
    double RangeBeta = DEFAULT_RANGEBETA;
    double RangeGamma = DEFAULT_RANGEGAMMA;
 
-   double saucSphereRange = 50.0;
-   int SAUCMETRIC = DEFAULT_SAUCMETRIC;
-   std::string SPACE = std::string(DEFAULT_SPACE);   
+   static inline const double DEFAULT_SPHERE_RADIUS_PERCENT = 50.0;
+   double saucSphereRange = DEFAULT_SPHERE_RADIUS_PERCENT;
 
    SearchDomain searchDomain = DEFAULT_SEARCH_DOMAIN_TYPE;
    MetricType metricType = MetricType::DC7UNSRT;
+
+   static inline const int DEFAULT_HITS = 50;
+   int hits = DEFAULT_HITS;
 };
 
 
