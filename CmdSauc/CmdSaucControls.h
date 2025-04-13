@@ -133,40 +133,6 @@ inline std::ostream& operator<<(std::ostream& os, const MetricType& metric) {
    return os;
 }
 
-
-// Fuzzy search function
-//template <typename T>
-//T fuzzySearch(const std::vector<T>& list, const std::string& input) {
-//   double bestScore = std::numeric_limits<double>::max();
-//   T bestMatch = list[0]; // Default match
-//
-//   for (const auto& item : list) {
-//      double score = StringMatcher::calculateSimilarity(input, item.name); // Replace with your fuzzy match logic
-//      if (score < bestScore) {
-//         bestScore = score;
-//         bestMatch = item;
-//      }
-//   }
-//   return bestMatch;
-//}
-
-//int main() {
-//   // Example fuzzy matching for SearchDomainInfo
-//   std::string inputDomain = "Spher";
-//   SearchDomainInfo matchedDomain = fuzzySearch(searchDomains, inputDomain);
-//   std::cout << "Best match for Search Domain: " << matchedDomain.name
-//      << " (Index: " << matchedDomain.index << ")\n";
-//
-//   // Example fuzzy matching for MetricTypeInfo
-//   std::string inputMetric = "L2";
-//   MetricTypeInfo matchedMetric = fuzzySearch(metricTypes, inputMetric);
-//   std::cout << "Best match for Metric Type: " << matchedMetric.name
-//      << " (Index: " << matchedMetric.index << ")\n";
-//
-//   return 0;
-//}
-
-
 // Define full CmdSaucControls class here
 class CmdSaucControls : public BaseControlVariables {
 public:
@@ -198,54 +164,51 @@ public:
 
        InputHandler::registerHandler("SAUCMETRIC", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             const std::string upper = LRL_StringTools::strToupper(value);
              metricType = HandleMetric(LRL_StringTools::strToupper(value));
           });
 
        InputHandler::registerHandler("RANGEA", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             RangeA = std::stod(value);
+             RangeA = validateRangeLength(value);
           });
 
        InputHandler::registerHandler("RANGEB", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             RangeB = std::stod(value);
+             RangeB = validateRangeLength(value);
           });
 
        InputHandler::registerHandler("RANGEC", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             RangeC = std::stod(value);
+             RangeC = validateRangeLength(value);
           });
 
        InputHandler::registerHandler("RANGEALPHA", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             RangeAlpha = std::stod(value);
+             RangeAlpha = validateRangeAngle(value);
           });
 
        InputHandler::registerHandler("RANGEBETA", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             RangeBeta = std::stod(value);
+             RangeBeta = validateRangeAngle(value);
           });
 
        InputHandler::registerHandler("RANGEGAMMA", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             RangeGamma = std::stod(value);
+             RangeGamma = validateRangeAngle(value);
           });
 
        InputHandler::registerHandler("RANGESPHERE", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             saucSphereRange = std::stod(value);
+             saucSphereRange = validateSphereRadius(value);
           });
 
        InputHandler::registerHandler("SPHERERADIUS", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             validateSphereRadius(value);
-             saucSphereRange = std::stod(value);
+             saucSphereRange = validateSphereRadius(value);
           });
        InputHandler::registerHandler("RADIUS", 0.4,
           [this](const BaseControlVariables&, const std::string& value) {
-             validateSphereRadius(value);
-             saucSphereRange = std::stod(value);
+             saucSphereRange = validateSphereRadius(value);
           });
 
        InputHandler::registerHandler("NEAREST", 0.2,
@@ -291,6 +254,7 @@ public:
           << ";  RangeBeta: " << RangeBeta << "\n"
           << ";  RangeGamma: " << RangeGamma << "\n"
           << ";Sphere Range: " << saucSphereRange << "\n"
+          << ";Hits: " << hits << "\n"
           << ";  searchDomain: " << searchDomain << "\n";
           oss << "\n";
        return oss.str();
@@ -360,7 +324,7 @@ private:
    }
 
    MetricType HandleMetric(const std::string& st) const {
-      constexpr double matchThreshold = 0.5;
+      constexpr double matchThreshold = 0.2;
       VectorStringMatcher matcherName(matchThreshold);
 
       // Populate the name matcher with valid metric names
@@ -448,6 +412,44 @@ private:
          std::cout << "; Invalid sphere radius, using default= "
             << DEFAULT_SPHERE_RADIUS_PERCENT << " percent" << std::endl;
          return DEFAULT_SPHERE_RADIUS_PERCENT;
+      }
+   }
+
+   double validateRangeLength(const std::string& st) const {
+      const std::string upper = LRL_StringTools::strToupper(st);
+      try {
+         const double length = std::stod(upper);
+         if (length > 0.1 && length < 20.0) {
+            return length;
+         }
+         else {
+            throw std::invalid_argument("");
+         }
+      }
+
+      catch (const std::invalid_argument&) {
+         std::cout << "; Invalid RANGE length, using default= "
+            << DEFAULT_RANGEA  << std::endl;
+         return DEFAULT_RANGEA;
+      }
+   }
+
+   double validateRangeAngle(const std::string& st) const {
+      const std::string upper = LRL_StringTools::strToupper(st);
+      try {
+         const double angle = std::stod(upper);
+         if (angle > 0.1 && angle < 10.0) {
+            return angle;
+         }
+         else {
+            throw std::invalid_argument("");
+         }
+      }
+
+      catch (const std::invalid_argument&) {
+         std::cout << "; Invalid angle for RANGE, using default= "
+            << DEFAULT_RANGEGAMMA << std::endl;
+         return DEFAULT_RANGEGAMMA;
       }
    }
 
