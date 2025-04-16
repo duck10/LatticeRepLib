@@ -1,4 +1,4 @@
-#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
+﻿#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
 
 #include "C3.h"
 #include "DeloneFitResults.h"
@@ -9,9 +9,16 @@
 #include "Sella.h"
 
 #include <algorithm>
-#include <set>
-#include <utility>
 #include <cmath>
+#include <iomanip>
+#include <map>
+#include <set>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+
+
 
 const std::map<std::string, double> GrimmerChains::baseDeloneMap = {
    {"A1", 0.0}, {"M1A", 0.0}, {"M1B", 0.0}, {"M2A", 0.0}, {"M4", 0.0},
@@ -80,6 +87,7 @@ const std::vector<std::vector<const BravaisTypeForGrimmer*>> GrimmerChains::chai
 };
 
 
+
 void GrimmerChains::updateFits(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits) {
    m_deloneFits = deloneFits;
    m_bravaisFits = bravaisFits;
@@ -91,24 +99,21 @@ void GrimmerChains::initializeChains() {
    for (const auto& chainTemplate : chainTemplates) {
       std::vector<BravaisTypeForGrimmer> chain;
       for (const auto* btype : chainTemplate) {
-
-
-         auto x1 = btype->GetBravaisType();
-         auto x2 = btype->GetDeloneTypes();
-         auto x3 = btype->GetBravaisType();
-         auto x4 = m_bravaisFits[x3];
-
-
-
-
-         chain.push_back(BravaisTypeForGrimmer(
+         // Create a new BravaisTypeForGrimmer with the template's Delone types
+         BravaisTypeForGrimmer newBType(
             btype->GetBravaisType(),
             btype->GetDeloneTypes(),
-            m_bravaisFits[btype->GetBravaisType()]));
+            m_bravaisFits[btype->GetBravaisType()]);
+
+         // Update the Delone fits from m_deloneFits
+         newBType.UpdateDeloneFits(m_deloneFits.GetValueMap());
+
+         chain.push_back(newBType);
       }
       m_GrimmerChains.emplace_back(chain);
    }
 }
+
 
 DeloneTypeForGrimmer::DeloneTypeForGrimmer(const std::string& deloneName, const std::string bravaisType, const double fit/*=DBL_MAX*/)
    :m_DeloneName(deloneName)
@@ -243,6 +248,120 @@ void GrimmerChains::CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBrav
    initializeChains();
 }
 
+void GrimmerChains::ListAllGrimmerChains(const std::string& st) const {
+   std::cout << "Listing all Grimmer chains:" << std::endl;
+   std::cout << std::string(70, '-') << std::endl;
+
+   for (size_t chainIndex = 0; chainIndex < m_GrimmerChains.size(); ++chainIndex) {
+      const OneGrimmerChain& currentChain = m_GrimmerChains[chainIndex];
+      const std::vector<BravaisTypeForGrimmer>& bravaisChain = currentChain.GetChain();
+
+      std::cout << "Chain " << (chainIndex + 1) << ": ";
+
+      // Print all Bravais types in one line
+      for (size_t pointIndex = 0; pointIndex < bravaisChain.size(); ++pointIndex) {
+         std::cout << bravaisChain[pointIndex].GetBravaisType();
+         if (pointIndex < bravaisChain.size() - 1) {
+            std::cout << "  ";
+         }
+      }
+      std::cout << std::endl;
+
+      // Print all Bravais fits in one line
+      std::cout << "Fits:    ";
+      for (size_t pointIndex = 0; pointIndex < bravaisChain.size(); ++pointIndex) {
+         std::cout << std::fixed << std::setprecision(2) << bravaisChain[pointIndex].GetFit();
+         if (pointIndex < bravaisChain.size() - 1) {
+            std::cout << "  ";
+         }
+      }
+      std::cout << std::endl;
+
+      // Print all associated Delone types with their fits
+      for (size_t pointIndex = 0; pointIndex < bravaisChain.size(); ++pointIndex) {
+         const BravaisTypeForGrimmer& bravaisType = bravaisChain[pointIndex];
+         const std::vector<DeloneTypeForGrimmer>& deloneTypes = bravaisType.GetDeloneTypes();
+
+         std::cout << "  " << bravaisType.GetBravaisType() << " Delone types: ";
+         for (size_t i = 0; i < deloneTypes.size(); ++i) {
+            std::cout << deloneTypes[i].GetDeloneName() << " ("
+               << std::fixed << std::setprecision(2) << deloneTypes[i].GetFit() << ")";
+            if (i < deloneTypes.size() - 1) {
+               std::cout << ", ";
+            }
+         }
+         std::cout << std::endl;
+      }
+
+      // Print a separator between chains
+      std::cout << std::string(70, '-') << std::endl;
+   }
+}
+
+std::string GrimmerChains::GetAllGrimmerChainsAsString() const {
+   std::stringstream ss;
+
+   ss << "Listing all Grimmer chains:" << std::endl;
+   ss << std::string(70, '-') << std::endl;
+
+   for (size_t chainIndex = 0; chainIndex < m_GrimmerChains.size(); ++chainIndex) {
+      const OneGrimmerChain& currentChain = m_GrimmerChains[chainIndex];
+      const std::vector<BravaisTypeForGrimmer>& bravaisChain = currentChain.GetChain();
+
+      ss << "Chain " << (chainIndex + 1) << ": ";
+
+      // Print all Bravais types in one line
+      for (size_t pointIndex = 0; pointIndex < bravaisChain.size(); ++pointIndex) {
+         ss << bravaisChain[pointIndex].GetBravaisType();
+         if (pointIndex < bravaisChain.size() - 1) {
+            ss << "  ";
+         }
+      }
+      ss << std::endl;
+
+      // Print all Bravais fits in one line
+      ss << "Fits:    ";
+      for (size_t pointIndex = 0; pointIndex < bravaisChain.size(); ++pointIndex) {
+         ss << std::fixed << std::setprecision(2) << bravaisChain[pointIndex].GetFit();
+         if (pointIndex < bravaisChain.size() - 1) {
+            ss << "  ";
+         }
+      }
+      ss << std::endl;
+
+      // Print all associated Delone types with their fits
+      for (size_t pointIndex = 0; pointIndex < bravaisChain.size(); ++pointIndex) {
+         const BravaisTypeForGrimmer& bravaisType = bravaisChain[pointIndex];
+         const std::vector<DeloneTypeForGrimmer>& deloneTypes = bravaisType.GetDeloneTypes();
+
+         ss << "  " << bravaisType.GetBravaisType() << " Delone types: ";
+         for (size_t i = 0; i < deloneTypes.size(); ++i) {
+            ss << deloneTypes[i].GetDeloneName() << " ("
+               << std::fixed << std::setprecision(2) << deloneTypes[i].GetFit() << ")";
+            if (i < deloneTypes.size() - 1) {
+               ss << ", ";
+            }
+         }
+         ss << std::endl;
+      }
+
+      // Print a separator between chains
+      ss << std::string(70, '-') << std::endl;
+   }
+
+   return ss.str();
+}
+
+void BravaisTypeForGrimmer::UpdateDeloneFits(const std::map<std::string, double>& deloneFits) {
+   for (auto& deloneType : m_vtypes) {
+      const std::string& deloneName = deloneType.GetDeloneName();
+      if (deloneFits.find(deloneName) != deloneFits.end()) {
+         deloneType.SetFit(deloneFits.at(deloneName));
+      }
+   }
+}
+
+
 void GrimmerChains::CheckAllGrimmerChains()
 {
    m_hasChainFailure = false;
@@ -338,20 +457,619 @@ DeloneFitResults GrimmerChains::Remediation(const std::string& bravaisName, cons
    return dfr;
 }
 
-GrimmerChains GrimmerChains::ReplaceRemediation(const DeloneFitResults& newFit) const {
-   std::vector<OneGrimmerChain> chain;
-   GrimmerChains out(*this);
-   const std::string name = newFit.GetDeloneType();
+// Fixed ReplaceRemediation implementation for GrimmerTree.cpp
 
-   for (auto& oneChain : m_GrimmerChains) {
-      //chain.emplace_back(oneChain);
-      for (auto& b : oneChain.GetChain()) {
-         if (b.GetBravaisType() == name) {
-            const int i19191 = 19191;
-            b.SetFit(newFit.GetRawFit());
+GrimmerChains GrimmerChains::ReplaceRemediation(const DeloneFitResults& newFit) const {
+   GrimmerChains out(*this);
+   const std::string bravaisName = newFit.GetBravaisType();
+   const std::string deloneName = newFit.GetGeneralType();
+   const double newFitValue = newFit.GetRawFit();
+
+   for (auto& oneChain : out.m_GrimmerChains) {
+      std::vector<BravaisTypeForGrimmer> chain = oneChain.GetChain();
+      for (auto& btype : chain) {
+         if (btype.GetBravaisType() == bravaisName) {
+            // Update the Bravais fit
+            btype.SetFit(newFitValue);
+
+            // Update the associated Delone type fits
+            std::vector<DeloneTypeForGrimmer> deloneTypes = btype.GetDeloneTypes();
+            for (auto& deloneType : deloneTypes) {
+               if (deloneType.GetDeloneName() == deloneName) {
+                  deloneType.SetFit(newFitValue);
+               }
+            }
+
+            // Update the chain with modified Delone types
+            btype = BravaisTypeForGrimmer(bravaisName, deloneTypes, newFitValue);
          }
       }
+
+      // Update the chain in the OneGrimmerChain
+      oneChain = OneGrimmerChain(chain);
    }
+
    return out;
 }
 
+
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+#include <unordered_map>
+
+
+// FitData struct for storing type and fit value pairs
+struct FitData {
+   std::string typeName;
+   double fitValue;
+
+   // Default constructor required for std::vector
+   FitData() : typeName(""), fitValue(0.0) {}
+
+   // Constructor with parameters
+   FitData(const std::string& name, double fit) : typeName(name), fitValue(fit) {}
+
+   // For sorting from smallest to highest fit value
+   bool operator<(const FitData& other) const {
+      return fitValue < other.fitValue;
+   }
+};
+
+// Helper for drawing the Y-axis with better distributed grid values
+void CreateBetterYAxisGridValues(std::vector<double>& yAxisValues, double maxValue) {
+   // Clear any existing values
+   yAxisValues.clear();
+
+   // Always start with 0
+   yAxisValues.push_back(0.0);
+
+   // Add 0.3 instead of 0.5 for better placement
+   yAxisValues.push_back(0.3);
+
+   // Add 1.0
+   yAxisValues.push_back(1.0);
+
+   // Add 2.0 and 5.0 (skip 3.0 and 4.0 to avoid overcrowding)
+   yAxisValues.push_back(2.0);
+   yAxisValues.push_back(5.0);
+
+   // Add 10.0, 20.0, 50.0
+   yAxisValues.push_back(10.0);
+   yAxisValues.push_back(20.0);
+   yAxisValues.push_back(50.0);
+
+   // Add 100.0, 200.0, 500.0 if within range
+   if (maxValue > 100.0) {
+      yAxisValues.push_back(100.0);
+   }
+   if (maxValue > 200.0) {
+      yAxisValues.push_back(200.0);
+   }
+   if (maxValue > 500.0) {
+      yAxisValues.push_back(500.0);
+   }
+
+   // Always add max value if it's higher than our predefined values
+   if (maxValue > 500.0) {
+      yAxisValues.push_back(maxValue);
+   }
+}
+
+// Helper function to compress Y-axis values for better visualization
+double CompressYAxisValue(const double value, const double minValue, const double maxValue, const double powerFactor = 0.3) {
+   // Handle out-of-range values
+   if (value <= minValue) return 0.0;
+   if (value >= maxValue) return 1.0;
+
+   // Normalize the value to 0-1 range
+   const double normalizedValue = (value - minValue) / (maxValue - minValue);
+
+   // Apply power function for smooth compression
+   // This gives more space to smaller values
+   return std::pow(normalizedValue, powerFactor);
+}
+
+// Class to collect and process fit data
+class FitDataCollector {
+private:
+   std::map<std::string, double> deloneFits;
+   std::map<std::string, double> pearsonFits;
+   std::map<std::string, std::vector<std::pair<std::string, double>>> pearsonToDeloneMap;
+   std::vector<FitData> sortedDeloneFits;
+   std::vector<FitData> sortedPearsonFits;
+   double maxDeloneFit = 0.0;
+   double maxPearsonFit = 0.0;
+
+public:
+   // Extract fit data from Grimmer chains
+   void collectFitData(const std::vector<OneGrimmerChain>& chains) {
+      for (const auto& chain : chains) {
+         for (const auto& bravaisType : chain.GetChain()) {
+            // Store Bravais (Pearson) type fits
+            const std::string bravaisName = bravaisType.GetBravaisType();
+            const double bravaisFit = bravaisType.GetFit();
+
+            if (pearsonFits.find(bravaisName) == pearsonFits.end() ||
+               pearsonFits[bravaisName] > bravaisFit) {
+               pearsonFits[bravaisName] = bravaisFit;
+            }
+
+            // Store Delone type fits and build Pearson-to-Delone mapping
+            for (const auto& deloneType : bravaisType.GetDeloneTypes()) {
+               const std::string deloneName = deloneType.GetDeloneName();
+               const double deloneFit = deloneType.GetFit();
+
+               if (deloneFits.find(deloneName) == deloneFits.end() ||
+                  deloneFits[deloneName] > deloneFit) {
+                  deloneFits[deloneName] = deloneFit;
+
+                  // Add this Delone type to the corresponding Pearson type
+                  bool found = false;
+                  for (auto& pair : pearsonToDeloneMap[bravaisName]) {
+                     if (pair.first == deloneName) {
+                        pair.second = deloneFit;
+                        found = true;
+                        break;
+                     }
+                  }
+                  if (!found) {
+                     pearsonToDeloneMap[bravaisName].push_back(std::make_pair(deloneName, deloneFit));
+                  }
+               }
+            }
+         }
+      }
+
+      // Convert to sortable vectors
+      for (const auto& pair : deloneFits) {
+         sortedDeloneFits.push_back(FitData(pair.first, pair.second));
+      }
+
+      for (const auto& pair : pearsonFits) {
+         sortedPearsonFits.push_back(FitData(pair.first, pair.second));
+      }
+
+      // Sort from smallest to highest fit value
+      std::sort(sortedDeloneFits.begin(), sortedDeloneFits.end());
+      std::sort(sortedPearsonFits.begin(), sortedPearsonFits.end());
+
+      // Find max fit value for scaling
+      if (!sortedDeloneFits.empty())
+         maxDeloneFit = sortedDeloneFits.back().fitValue;
+      if (!sortedPearsonFits.empty())
+         maxPearsonFit = sortedPearsonFits.back().fitValue;
+
+      // Make sure max values are not zero
+      if (maxDeloneFit <= 0.0) maxDeloneFit = 1.0;
+      if (maxPearsonFit <= 0.0) maxPearsonFit = 1.0;
+   }
+
+   const std::vector<FitData>& getDeloneFits() const { return sortedDeloneFits; }
+   const std::vector<FitData>& getPearsonFits() const { return sortedPearsonFits; }
+   double getMaxDeloneFit() const { return maxDeloneFit; }
+   double getMaxPearsonFit() const { return maxPearsonFit; }
+
+   std::vector<std::pair<std::string, double>> getSortedPearsonList() const {
+      std::vector<std::pair<std::string, double>> sortedPearsonList;
+      for (const auto& pair : pearsonFits) {
+         sortedPearsonList.push_back(std::make_pair(pair.first, pair.second));
+      }
+      std::sort(sortedPearsonList.begin(), sortedPearsonList.end(),
+         [](const auto& a, const auto& b) { return a.second < b.second; });
+      return sortedPearsonList;
+   }
+
+   const std::map<std::string, std::vector<std::pair<std::string, double>>>& getPearsonToDeloneMap() const {
+      return pearsonToDeloneMap;
+   }
+};
+
+// SVG drawing helper for plots
+class SVGPlotDrawer {
+private:
+   std::stringstream& ss;
+   const int plotX;
+   const int plotWidth;
+   const int plotHeight;
+   const std::string axisColor;
+   const std::string gridColor;
+
+public:
+   SVGPlotDrawer(std::stringstream& stream, int x, int width, int height,
+      const std::string& axis_color = "#333333",
+      const std::string& grid_color = "#DDDDDD")
+      : ss(stream), plotX(x), plotWidth(width), plotHeight(height),
+      axisColor(axis_color), gridColor(grid_color) {
+   }
+
+   void drawPlot(int plotY, const std::vector<FitData>& data, const std::string& title,
+      const std::string& lineColor, double maxValue, const double s6Norm) {
+
+      // Create an SVG group for the entire plot for better positioning
+      ss << "  <g id=\"plot_" << title << "\" transform=\"translate(" << plotX << "," << plotY << ")\">\n";
+
+      // Plot border and background (now relative to group)
+      ss << "    <rect x=\"0\" y=\"0\" width=\"" << plotWidth
+         << "\" height=\"" << plotHeight << "\" fill=\"#FFFFFF\" stroke=\"" << axisColor << "\" />\n";
+
+      // Plot title (now relative to group)
+      ss << "    <text x=\"" << (plotWidth / 2) << "\" y=\"-20"
+         << "\" text-anchor=\"middle\" font-family=\"Arial\" font-size=\"16\" font-weight=\"bold\">"
+         << title << "</text>\n";
+
+      // Y-axis label (now relative to group)
+      ss << "    <text x=\"-60\" y=\"" << (plotHeight / 2)
+         << "\" transform=\"rotate(-90,-60," << (plotHeight / 2) << ")\" "
+         << "text-anchor=\"middle\" font-family=\"Arial\" font-size=\"14\">Fit Value</text>\n";
+
+      // X-axis label (now relative to group)
+      ss << "    <text x=\"" << (plotWidth / 2) << "\" y=\"" << (plotHeight + 35)
+         << "\" text-anchor=\"middle\" font-family=\"Arial\" font-size=\"14\">Types (sorted by fit value)</text>\n";
+
+      // Create y-axis ticks with predefined values
+      std::vector<double> yAxisValues;
+      CreateBetterYAxisGridValues(yAxisValues, maxValue);
+
+      drawYAxis(yAxisValues, maxValue);
+      drawNormReferenceLines(s6Norm, maxValue);
+
+      if (!data.empty()) {
+         drawDataPoints(data, lineColor, maxValue);
+      }
+      else {
+         // No data message (now relative to group)
+         ss << "    <text x=\"" << (plotWidth / 2) << "\" y=\"" << (plotHeight / 2)
+            << "\" text-anchor=\"middle\" font-family=\"Arial\" font-size=\"14\" fill=\"#999999\">"
+            << "No data available" << "</text>\n";
+      }
+
+      // Close the main fit list group
+      ss << "  </g>\n";
+   }
+
+private:
+   void drawYAxis(const std::vector<double>& yAxisValues, double maxValue) {
+      // Draw each grid line and label
+      for (double value : yAxisValues) {
+         // Use the compression function to get the relative Y position (0-1)
+         double relativeY = CompressYAxisValue(value, 0.0, maxValue);
+
+         // Convert to actual Y coordinate in the SVG (relative to group)
+         int yPos = plotHeight - relativeY * plotHeight;
+
+         // Start a group for this gridline and label
+         ss << "    <g id=\"grid_" << std::fixed << std::setprecision(3) << value << "\">\n";
+
+         // Grid line
+         ss << "      <line x1=\"0\" y1=\"" << yPos << "\" x2=\"" << plotWidth
+            << "\" y2=\"" << yPos << "\" stroke=\"" << gridColor << "\" stroke-width=\"1\" />\n";
+
+         // Y-axis label with appropriate precision
+         std::stringstream valueStr;
+         if (value == 0.0) {
+            valueStr << "0";
+         }
+         else if (value < 1.5) {
+            valueStr << std::fixed << std::setprecision(3) << value; // 3 decimal places for values under 1.5
+         }
+         else if (value < 10.0) {
+            valueStr << std::fixed << std::setprecision(2) << value; // 2 decimal places for values between 1.5 and 10
+         }
+         else if (value < 100.0) {
+            valueStr << std::fixed << std::setprecision(1) << value;
+         }
+         else {
+            valueStr << std::fixed << std::setprecision(0) << value;
+         }
+
+         ss << "      <text x=\"-5\" y=\"" << (yPos + 5)
+            << "\" text-anchor=\"end\" font-family=\"Arial\" font-size=\"12\">"
+            << valueStr.str() << "</text>\n";
+
+         // Close the group
+         ss << "    </g>\n";
+      }
+   }
+
+   void drawDataPoints(const std::vector<FitData>& data,
+      const std::string& lineColor, double maxValue) {
+      const int pointRadius = 4;
+
+      // Determine X spacing
+      double xSpacing = static_cast<double>(plotWidth - 20) / (data.size() - 1);
+      if (data.size() == 1) xSpacing = 0; // Special case for single point
+
+      // Draw the polyline connecting all points (now relative to group)
+      ss << "    <polyline points=\"";
+      for (size_t i = 0; i < data.size(); i++) {
+         const auto& item = data[i];
+         double xPos = 10 + xSpacing * i;
+         double relativeY = CompressYAxisValue(item.fitValue, 0.0, maxValue);
+         double yPos = plotHeight - relativeY * plotHeight;
+
+         ss << xPos << "," << yPos << " ";
+      }
+      ss << "\" fill=\"none\" stroke=\"" << lineColor << "\" stroke-width=\"2\" />\n";
+
+      // Draw the points and labels (now relative to group)
+      for (size_t i = 0; i < data.size(); i++) {
+         const auto& item = data[i];
+         double xPos = 10 + xSpacing * i;
+
+         // Use the compression function for each data point
+         double relativeY = CompressYAxisValue(item.fitValue, 0.0, maxValue);
+         double yPos = plotHeight - relativeY * plotHeight;
+
+         // Draw the point (now relative to group)
+         ss << "    <circle cx=\"" << xPos << "\" cy=\"" << yPos
+            << "\" r=\"" << pointRadius << "\" fill=\"" << lineColor << "\" />\n";
+
+         // Draw value tooltip on hover
+         ss << "    <title>" << item.typeName << ": "
+            << std::fixed
+            << (item.fitValue < 1.5 ? std::setprecision(3) : std::setprecision(2))
+            << item.fitValue << "</title>\n";
+
+         // Draw type labels (now relative to group)
+         ss << "    <text x=\"" << xPos << "\" y=\"" << (plotHeight + 15)
+            << "\" text-anchor=\"middle\" font-family=\"Arial\" font-size=\"10\" transform=\"rotate(45,"
+            << xPos << "," << (plotHeight + 15) << ")\">"
+            << item.typeName << "</text>\n";
+
+         // Draw vertical guide line for each point (now relative to group)
+         ss << "    <line x1=\"" << xPos << "\" y1=\"" << yPos << "\" x2=\"" << xPos
+            << "\" y2=\"" << plotHeight << "\" stroke=\"" << gridColor
+            << "\" stroke-dasharray=\"2,2\" stroke-width=\"1\" />\n";
+      }
+   }
+
+
+   
+   // Add this method to the private section of the SVGPlotDrawer class in GrimmerTree.cpp
+   void drawNormReferenceLines(const double s6Norm, double maxValue) {
+      // 0.1% reference line
+      const double pointOnePctValue = 0.001 * s6Norm;
+      double relativeY_pointOnePct = CompressYAxisValue(pointOnePctValue, 0.0, maxValue);
+      int yPos_pointOnePct = plotHeight - relativeY_pointOnePct * plotHeight;
+
+      ss << "    <line x1=\"0\" y1=\"" << yPos_pointOnePct << "\" x2=\"" << plotWidth
+         << "\" y2=\"" << yPos_pointOnePct << "\" stroke=\"#00CC00\" stroke-width=\"1\" stroke-dasharray=\"5,3\" />\n";
+      ss << "    <text x=\"" << (plotWidth - 5) << "\" y=\"" << (yPos_pointOnePct - 5)
+         << "\" text-anchor=\"end\" font-family=\"Arial\" font-size=\"12\" fill=\"#00CC00\">"
+         << "0.1% (" << std::fixed << std::setprecision(3) << pointOnePctValue << ")</text>\n";
+
+      // 1% reference line
+      const double onePctValue = 0.01 * s6Norm;
+      double relativeY_1pct = CompressYAxisValue(onePctValue, 0.0, maxValue);
+      int yPos_1pct = plotHeight - relativeY_1pct * plotHeight;
+
+      ss << "    <line x1=\"0\" y1=\"" << yPos_1pct << "\" x2=\"" << plotWidth
+         << "\" y2=\"" << yPos_1pct << "\" stroke=\"#FF6600\" stroke-width=\"1\" stroke-dasharray=\"5,3\" />\n";
+      ss << "    <text x=\"" << (plotWidth - 5) << "\" y=\"" << (yPos_1pct - 5)
+         << "\" text-anchor=\"end\" font-family=\"Arial\" font-size=\"12\" fill=\"#FF6600\">"
+         << "1% (" << std::fixed << std::setprecision(3) << onePctValue << ")</text>\n";
+
+      // 5% reference line
+      const double fivePctValue = 0.05 * s6Norm;
+      double relativeY_5pct = CompressYAxisValue(fivePctValue, 0.0, maxValue);
+      int yPos_5pct = plotHeight - relativeY_5pct * plotHeight;
+
+      ss << "    <line x1=\"0\" y1=\"" << yPos_5pct << "\" x2=\"" << plotWidth
+         << "\" y2=\"" << yPos_5pct << "\" stroke=\"#CC0000\" stroke-width=\"1\" stroke-dasharray=\"5,3\" />\n";
+      ss << "    <text x=\"" << (plotWidth - 5) << "\" y=\"" << (yPos_5pct - 5)
+         << "\" text-anchor=\"end\" font-family=\"Arial\" font-size=\"12\" fill=\"#CC0000\">"
+         << "5% (" << std::fixed << std::setprecision(3) << fivePctValue << ")</text>\n";
+   }
+
+};
+
+// Class to render the mapping list with double columns
+class SVGFitListDrawer {
+private:
+   std::stringstream& ss;
+   const int startX;
+   const int startY;
+
+public:
+   SVGFitListDrawer(std::stringstream& stream, int x, int y)
+      : ss(stream), startX(x), startY(y) {
+   }
+
+   void drawDoubleColumnFitList(
+      const std::vector<std::pair<std::string, double>>& sortedPearsonList,
+      const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap) {
+
+      // Start SVG group for the fit list to make positioning more transparent
+      ss << "  <g id=\"fitList\" transform=\"translate(" << startX << "," << startY << ")\">\n";
+
+      // Draw the title (now using relative positioning within the group)
+      ss << "    <text x=\"0\" y=\"-20\" font-family=\"Arial\" font-size=\"16\" font-weight=\"bold\">"
+         << "Delone Types by Pearson Type" << "</text>\n";
+
+      const int columnWidth = 160;     // Column width
+      const int titleHeight = 20;      // Height for Pearson type titles
+      const int itemHeight = 18;       // Height for Delone type items
+      const int spaceBetweenGroups = 5; // Space between Pearson groups
+
+      // Column positions - first column at x=0, second at x=160 (overlapping slightly)
+      const int leftColX = 0;
+      const int rightColX = 160;      // Moved closer to create overlap with first column
+
+      // Track positions for each column
+      int leftY = 0;
+      int rightY = 0;
+
+      // Count total items to balance columns
+      int totalItems = 0;
+      for (const auto& pearsonPair : sortedPearsonList) {
+         // Count Pearson type + all its Delone types + spacing
+         totalItems += 1 + pearsonToDeloneMap.at(pearsonPair.first).size() + 1;
+      }
+
+      int itemsPerColumn = totalItems / 2 + (totalItems % 2);
+      int currentItemCount = 0;
+
+      for (const auto& pearsonPair : sortedPearsonList) {
+         const std::string& pearsonType = pearsonPair.first;
+         const double pearsonFit = pearsonPair.second;
+
+         // Sort associated Delone types by fit value
+         std::vector<std::pair<std::string, double>> deloneList = pearsonToDeloneMap.at(pearsonType);
+         std::sort(deloneList.begin(), deloneList.end(),
+            [](const auto& a, const auto& b) { return a.second < b.second; });
+
+         // Calculate items in this group (Pearson + Delone types + spacing)
+         int groupItems = 1 + deloneList.size() + 1;
+
+         // Determine which column to use
+         int& currentY = (currentItemCount < itemsPerColumn) ? leftY : rightY;
+         int currentX = (currentItemCount < itemsPerColumn) ? leftColX : rightColX;
+
+         // Draw Pearson type with fit value
+         ss << "    <text x=\"" << currentX << "\" y=\"" << currentY
+            << "\" font-family=\"Arial\" font-size=\"14\" font-weight=\"bold\">"
+            << pearsonType << " ("
+            << std::fixed
+            << (pearsonFit < 1.5 ? std::setprecision(3) : std::setprecision(2))
+            << pearsonFit << ")"
+            << "</text>\n";
+
+         currentY += titleHeight;
+
+         // Draw associated Delone types
+         for (const auto& delonePair : deloneList) {
+            ss << "    <text x=\"" << (currentX + 20) << "\" y=\"" << currentY
+               << "\" font-family=\"Arial\" font-size=\"12\">"
+               << delonePair.first << ": "
+               << std::fixed
+               << (delonePair.second < 1.5 ? std::setprecision(3) : std::setprecision(2))
+               << delonePair.second
+               << "</text>\n";
+
+            currentY += itemHeight;
+         }
+
+         // Add spacing between Pearson types
+         currentY += spaceBetweenGroups;
+
+         // Update total item count
+         currentItemCount += groupItems;
+      }
+
+      // Close the SVG group
+      ss << "  </g>\n";
+   }
+};
+
+std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int height,
+   const std::string& st) const {
+   std::stringstream ss;
+
+   // Define graph dimensions and positions
+   const int plotWidth = (width - 400) * 0.75;    // Make plots 50% wider, but still leave room for columns
+   const int plotHeight = (height - 200) / 2;     // Height of each plot
+   const int topPlotY = 80;                // Y position of top plot
+   const int bottomPlotY = topPlotY + plotHeight + 80; // Y position of bottom plot
+   const int plotX = 100;                  // X position of both plots
+   const int listX = plotX + plotWidth + 40; // X position for the fit list
+
+   // Calculate reduced S6 norm
+   const double reducedS6Norm = m_s6.norm();
+
+   // Colors
+   const std::string lineColorDelone = "#56B4E9";  // Sky blue
+   const std::string lineColorPearson = "#E69F00";  // Orange
+   const std::string axisColor = "#333333";       // Dark gray for axes
+   const std::string gridColor = "#DDDDDD";       // Light gray for grid lines
+
+   // SVG header
+   ss << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
+   ss << "<svg width=\"" << width << "\" height=\"" << height << "\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+
+   // Title
+   ss << "  <text x=\"" << width / 2 << "\" y=\"30\" text-anchor=\"middle\" font-family=\"Arial\" font-size=\"20\" font-weight=\"bold\">"
+      << "SELLA Lattice Fit Analysis   " << st << "</text>\n";
+
+   // Collect and process all fit data
+   FitDataCollector dataCollector;
+   dataCollector.collectFitData(m_GrimmerChains);
+
+   // Draw the plots
+   SVGPlotDrawer plotDrawer(ss, plotX, plotWidth, plotHeight, axisColor, gridColor);
+   plotDrawer.drawPlot(topPlotY, dataCollector.getPearsonFits(), "Pearson Types (Sorted by Fit Value)",
+      lineColorPearson, dataCollector.getMaxPearsonFit(), reducedS6Norm);
+   plotDrawer.drawPlot(bottomPlotY, dataCollector.getDeloneFits(), "Delone Types (Sorted by Fit Value)",
+      lineColorDelone, dataCollector.getMaxDeloneFit(), reducedS6Norm);
+
+   // Draw the double-column fit list
+   SVGFitListDrawer listDrawer(ss, listX, topPlotY);
+   listDrawer.drawDoubleColumnFitList(
+      dataCollector.getSortedPearsonList(),
+      dataCollector.getPearsonToDeloneMap());
+
+   // Add legend under the "Delone Types by Pearson Type" section
+   // Calculate position - 50px below the last column item
+   const int legendY = bottomPlotY +50; // Start at the same height as the bottom plot
+   ss << "  <g id=\"legend\" transform=\"translate(" << listX << "," << legendY << ")\">\n";
+
+   // Legend title
+   ss << "    <text x=\"0\" y=\"0\" font-family=\"Arial\" font-size=\"14\" font-weight=\"bold\">Legend</text>\n";
+
+   // Reference lines explanation
+   ss << "    <text x=\"0\" y=\"25\" font-family=\"Arial\" font-size=\"12\">Reference Lines:</text>\n";
+
+   // 0.1% reference line
+   ss << "    <line x1=\"20\" y1=\"40\" x2=\"50\" y2=\"40\" stroke=\"#00CC00\" stroke-width=\"1\" stroke-dasharray=\"5,3\" />\n";
+   ss << "    <text x=\"60\" y=\"45\" font-family=\"Arial\" font-size=\"12\">0.1% of S6 norm (A^2)</text>\n";
+
+   // 1% reference line
+   ss << "    <line x1=\"20\" y1=\"60\" x2=\"50\" y2=\"60\" stroke=\"#FF6600\" stroke-width=\"1\" stroke-dasharray=\"5,3\" />\n";
+   ss << "    <text x=\"60\" y=\"65\" font-family=\"Arial\" font-size=\"12\">1% of S6 norm (A^2)</text>\n";
+
+   // 5% reference line
+   ss << "    <line x1=\"20\" y1=\"80\" x2=\"50\" y2=\"80\" stroke=\"#CC0000\" stroke-width=\"1\" stroke-dasharray=\"5,3\" />\n";
+   ss << "    <text x=\"60\" y=\"85\" font-family=\"Arial\" font-size=\"12\">5% of S6 norm (A^2)</text>\n";
+
+   // Plot line colors
+   ss << "    <text x=\"0\" y=\"105\" font-family=\"Arial\" font-size=\"12\">Plot Lines:</text>\n";
+
+   // Delone types line
+   ss << "    <line x1=\"20\" y1=\"120\" x2=\"50\" y2=\"120\" stroke=\"" << lineColorDelone << "\" stroke-width=\"2\" />\n";
+   ss << "    <text x=\"60\" y=\"125\" font-family=\"Arial\" font-size=\"12\">Delone types</text>\n";
+
+   // Pearson types line
+   ss << "    <line x1=\"20\" y1=\"140\" x2=\"50\" y2=\"140\" stroke=\"" << lineColorPearson << "\" stroke-width=\"2\" />\n";
+   ss << "    <text x=\"60\" y=\"145\" font-family=\"Arial\" font-size=\"12\">Pearson types</text>\n";
+
+   // Additional explanation
+   ss << "    <text x=\"0\" y=\"165\" font-family=\"Arial\" font-size=\"12\" font-style=\"italic\">"
+      << "Lower fit values indicate better matches</text>\n";
+   ss << "    <text x=\"0\" y=\"185\" font-family=\"Arial\" font-size=\"12\" fill=\"#666666\">"
+      << "Y-axis uses logarithmic compression</text>\n";
+   ss << "    <text x=\"0\" y=\"205\" font-family=\"Arial\" font-size=\"12\" fill=\"#666666\">"
+      << "to emphasize small values</text>\n";
+
+   ss << "  </g>\n";
+
+   // Close SVG
+   ss << "</svg>";
+
+   return ss.str();
+}

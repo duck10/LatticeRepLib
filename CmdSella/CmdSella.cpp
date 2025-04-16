@@ -27,6 +27,7 @@
 #include "S6.h"
 #include "Sella.h"
 #include "Selling.h"
+#include "utility"
 #include "WebIO.h"
 
 
@@ -256,7 +257,7 @@ void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
    }
 }
 
-std::string ProcessSella(const bool doProduceSellaGraphics, const LatticeCell& input,
+std::pair< std::string, std::string> ProcessSella(const bool doProduceSellaGraphics, const LatticeCell& input,
    const std::string& filename) {
 
    std::vector< BravaisChainFailures> outBCF;
@@ -283,7 +284,7 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LatticeCell& i
    //std::cout << gcs << std::endl;
 
    {
-      if (gcs.HasFailure()) {
+      if (gcs.m_hasChainFailure) {  // Use the member variable directly
          GrimmerChainFailure gcf = gcs.GetFirstFailure();
          const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
          const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
@@ -291,10 +292,6 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LatticeCell& i
          gcs = gcs.ReplaceRemediation(revisedFit);
       }
    }
-   //theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
-   //std::cout << theDelonefits << std::endl;
-   //theBravaisfits.CreateMapOFBravaisFits(vDeloneFitResultsForOneInputLattice);
-   //std::cout << theBravaisfits << std::endl;
 
    std::cout << "; " << input.GetInput() << " input data" << std::endl << std::endl;
 
@@ -330,8 +327,17 @@ std::string ProcessSella(const bool doProduceSellaGraphics, const LatticeCell& i
    matches.clear();
    matches.push_back(temp);
 
-   return  BravaisHeirarchy::ProduceSVG(
+   std::string mainSvg = BravaisHeirarchy::ProduceSVG(
       input, oneLattice, scores, matches);
+
+   // Generate the fit plots SVG
+   std::string fitPlotsSvg;
+   if (doProduceSellaGraphics) {
+      fitPlotsSvg = gcs.GenerateSortedFitPlots(900, 700, input.getInput());
+   }
+
+   return std::make_pair(mainSvg, fitPlotsSvg);
+
 }
 
 std::string SendSellaToFile(const std::string& svg, const std::string& filename) {
@@ -380,23 +386,37 @@ void AnalyzeS6(const S6 s6) {
    std::cout << "lowCount " << lowCount << std::endl;
 }
 
+std::string AddSuffixToFilename(const std::string& filename, const std::string& suffix) {
+   size_t dotPos = filename.find_last_of('.');
+   if (dotPos != std::string::npos) {
+      // Extension found, insert suffix before the extension
+      return filename.substr(0, dotPos) + suffix + filename.substr(dotPos);
+   }
+   else {
+      // No extension, append suffix to the end
+      return filename + suffix;
+   }
+}
+
+
+
 int main(int argc, char* argv[])
 {
    std::cout << "; SELLA method symmetry searching\n";
-   WebIO webio(argc, argv, "CmdSella",0);
+   WebIO webio(argc, argv, "CmdSella", 0);
 
 #ifdef LRL_DEBUG
-    for (size_t ii=0; ii < argc; ii++) {
-      std::cout << ii << ": " <<  argv[ii] << std::endl;
-    }  
-    std::cout  << "webio: " << webio << std::endl;
+   for (size_t ii = 0; ii < argc; ii++) {
+      std::cout << ii << ": " << argv[ii] << std::endl;
+   }
+   std::cout << "webio: " << webio << std::endl;
 #endif
 
    CmdSellaControls controls;
    controls.setHasWebInput(webio.m_hasWebInstructions);
    const int initblockstart = controls.getBlockStart();
    const int initblocksize = controls.getBlockSize();
-   const WebFileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella",0,controls);
+   const WebFileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella", 0, controls);
 
    const size_t blockstart = dc_setup.getBlockStart();
    const size_t blocksize = dc_setup.getBlockSize();
@@ -407,9 +427,9 @@ int main(int argc, char* argv[])
    }
 
 #ifdef LRL_DEBUG
-  if (!controls.getShowControls()) {
+   if (!controls.getShowControls()) {
       std::cout << controls << std::endl;
-  }
+   }
 #endif
 
 
@@ -419,21 +439,32 @@ int main(int argc, char* argv[])
    for (size_t whichCell = blockstart;
       whichCell < inputList.size() && whichCell < blockstart + blocksize; ++whichCell) {
 
-      const std::string svgOutput = ProcessSella(doProduceSellaGraphics, inputList[whichCell],
+      // Get both SVGs as a pair
+      const auto [sellaSvg, fitPlotsSvg] = ProcessSella(doProduceSellaGraphics, inputList[whichCell],
          dc_setup.getRawFileNames()[whichCell - blockstart]);
       if (doProduceSellaGraphics) {
-         std::cout << "; Send Sella Plot to graphics file " 
+         // Write Sella plot
+         std::cout << "; Send Sella Plot to graphics file "
             << dc_setup.getFullFileNameAt(whichCell) << std::endl;
+         std::cout << "; Send Sella Plot to graphics file "
+            << AddSuffixToFilename(dc_setup.getFullFileNameAt(whichCell), "_fit_plots") << std::endl;
+
          if (webio.m_hasWebInstructions) {
-            SendSellaToFile(svgOutput, dc_setup.getRawFileNames()[whichCell - blockstart]);
+            SendSellaToFile(sellaSvg, dc_setup.getRawFileNames()[whichCell - blockstart]);
+
+            // Write fit plots immediately after
+            const std::string fitPlotsFilename = AddSuffixToFilename(dc_setup.getRawFileNames()[whichCell - blockstart], "_fit_plots");
+            SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
          }
          else {
-            SendSellaToFile(svgOutput, dc_setup.getBasicFileNames()[whichCell - blockstart]);
+            SendSellaToFile(sellaSvg, dc_setup.getBasicFileNames()[whichCell - blockstart]);
 
+            // Write fit plots immediately after
+            const std::string fitPlotsFilename = AddSuffixToFilename(dc_setup.getBasicFileNames()[whichCell - blockstart], "_fit_plots");
+            SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
          }
       }
    }
 
    exit(0);
 }
-

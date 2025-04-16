@@ -82,6 +82,7 @@ public:
    std::string GetBravaisType() const { return m_name; }
    std::vector<DeloneTypeForGrimmer> GetDeloneTypes() const { return m_vtypes; }
    void PopulateBravaisTypeWithFitValues(std::map<std::string, double>& themap);
+   void UpdateDeloneFits(const std::map<std::string, double>& deloneFits);
 private:
    std::string m_name;
    std::vector<DeloneTypeForGrimmer> m_vtypes;
@@ -180,15 +181,16 @@ private:
 
    static const std::vector<std::vector<const BravaisTypeForGrimmer*>> chainTemplates;
 
+
    // Instance data
    std::vector<OneGrimmerChain> m_GrimmerChains;
    std::vector<GrimmerChainFailure> m_GrimmerFailures;
-   bool m_hasChainFailure;
    S6 m_s6;
    MapOFDeloneFits m_deloneFits;
    MapOfBravaisFits m_bravaisFits;
 
 public:
+   bool m_hasChainFailure;
    friend std::ostream& operator<< (std::ostream& o, const GrimmerChains& obc) {
       if (obc.m_GrimmerChains.empty()) {
          o << "; There Are No Grimmer Chains\n";
@@ -208,7 +210,7 @@ public:
    }
 
    GrimmerChains(const S6& s6) : m_s6(s6), m_hasChainFailure(false) {}
-
+   std::string GenerateSparklinesSVG(int width = 800, int height = 600) const;
    void updateChains(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits) {
       m_deloneFits = deloneFits;
       m_bravaisFits = bravaisFits;
@@ -218,11 +220,15 @@ public:
    void updateFits(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits);
    void CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBravaisFits& theBravaisMap);
    void CheckAllGrimmerChains();
+   void ListAllGrimmerChains(const std::string& st = "") const;
+   std::string GetAllGrimmerChainsAsString() const;
    bool HasFailure() const { return m_hasChainFailure; }
    GrimmerChainFailure GetFirstFailure() const { return m_GrimmerFailures[0]; }
    DeloneFitResults Remediation(const std::string& bravaisName, const double deltaFromZeroAllowed);
    std::vector<OneGrimmerChain> GetChains() const { return m_GrimmerChains; }
    GrimmerChains ReplaceRemediation(const DeloneFitResults& newFit) const;
+   std::string GenerateSortedFitPlots(const int width, const int height, const std::string& st="") const;
+
 
    friend std::ostream& operator<< (std::ostream& o, const GrimmerChains& obc);
 
