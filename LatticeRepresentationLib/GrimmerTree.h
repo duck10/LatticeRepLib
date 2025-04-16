@@ -58,6 +58,7 @@ public:
    auto operator[] (const std::string& s) { return m_valuemap[s]; }
    MapOFDeloneFits() = default;
    std::map<std::string, double> CreateMapOFDeloneFits(std::vector<DeloneFitResults>& fits);
+   const std::map<std::string, double>& GetValueMap() const { return m_valuemap; }
 std::map<std::string, double> GetMap() const { return m_valuemap; }private:
    std::map<std::string, double> m_valuemap;
 };
