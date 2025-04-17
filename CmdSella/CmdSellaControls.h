@@ -76,11 +76,12 @@ private:
    }
 
    static constexpr size_t MIN_BLOCKSIZE = BlockUtils::MIN_BLOCKSIZE;
-   static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
-   static constexpr size_t DEFAULT_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE;
+   static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE/2; // divided by 2 because there are 
+   // two output files !!!!!!!!!!!!!!!!!!
+   static constexpr size_t DEFAULT_BLOCKSIZE = MAX_BLOCKSIZE;
 
    size_t blockstart = BlockUtils::MIN_BLOCKSTART;
-   size_t blocksize = BlockUtils::DEFAULT_BLOCKSIZE;
+   size_t blocksize = MAX_BLOCKSIZE;
 
    // File prefix member
    const std::string prefix = "SEL";
