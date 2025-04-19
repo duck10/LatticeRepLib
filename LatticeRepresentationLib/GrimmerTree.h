@@ -7,6 +7,26 @@
 #include <map>
 #include <vector>
 
+
+// FitData struct for storing type and fit value pairs
+struct FitData {
+   std::string typeName;
+   double fitValue;
+
+   // Default constructor required for std::vector
+   FitData() : typeName(""), fitValue(0.0) {}
+
+   // Constructor with parameters
+   FitData(const std::string& name, double fit) : typeName(name), fitValue(fit) {}
+
+   // For sorting from smallest to highest fit value
+   bool operator<(const FitData& other) const {
+      return fitValue < other.fitValue;
+   }
+};
+
+
+
 class DeloneTypeForGrimmer {
 public:
    friend std::ostream& operator<< (std::ostream& o, const DeloneTypeForGrimmer& dt) {
@@ -140,10 +160,11 @@ private:
 
 class GrimmerChains {
 private:
-   // Static constant data
+   // Static constants
    static const std::map<std::string, double> baseDeloneMap;
    static const std::map<std::string, double> baseBravaisMap;
 
+   // Static DeloneType and BravaisType objects
    static const DeloneTypeForGrimmer m_dtype_a1;
    static const DeloneTypeForGrimmer m_dtype_m1a;
    static const DeloneTypeForGrimmer m_dtype_m1b;
@@ -164,6 +185,7 @@ private:
    static const DeloneTypeForGrimmer m_dtype_c5;
    static const DeloneTypeForGrimmer m_dtype_h4;
 
+   // Static Bravais types
    static const BravaisTypeForGrimmer m_btype_aP;
    static const BravaisTypeForGrimmer m_btype_mP;
    static const BravaisTypeForGrimmer m_btype_mC;
@@ -178,45 +200,27 @@ private:
    static const BravaisTypeForGrimmer m_btype_cF;
    static const BravaisTypeForGrimmer m_btype_cP;
    static const BravaisTypeForGrimmer m_btype_hP;
-
    static const std::vector<std::vector<const BravaisTypeForGrimmer*>> chainTemplates;
 
-
-   // Instance data
+   // Original data structures (kept for compatibility)
    std::vector<OneGrimmerChain> m_GrimmerChains;
    std::vector<GrimmerChainFailure> m_GrimmerFailures;
-   S6 m_s6;
    MapOFDeloneFits m_deloneFits;
    MapOfBravaisFits m_bravaisFits;
+   S6 m_s6;
+   bool m_hasChainFailure;
+
+   // New simplified data structures for visualization
+   std::map<std::string, double> m_deloneTypeFits;  // Delone type -> fit value
+   std::map<std::string, double> m_pearsonTypeFits; // Pearson type -> fit value
+   std::map<std::string, std::vector<std::pair<std::string, double>>> m_pearsonToDeloneMap;
 
 public:
-   bool m_hasChainFailure;
-   friend std::ostream& operator<< (std::ostream& o, const GrimmerChains& obc) {
-      if (obc.m_GrimmerChains.empty()) {
-         o << "; There Are No Grimmer Chains\n";
-      }
-      else
-      {
-         o << "; Grimmer Chains\n";
-         for (const auto& btypeChain : obc.m_GrimmerChains) {
-            o << btypeChain << std::endl;
-         }
-         for (size_t i = 0; i < obc.m_GrimmerFailures.size(); ++i) {
-            o << i << " " << obc.m_GrimmerFailures[i] << std::endl;
-
-         }
-      }
-      return o;
-   }
-
    GrimmerChains(const S6& s6) : m_s6(s6), m_hasChainFailure(false) {}
-   std::string GenerateSparklinesSVG(int width = 800, int height = 600) const;
-   void updateChains(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits) {
-      m_deloneFits = deloneFits;
-      m_bravaisFits = bravaisFits;
-      initializeChains();
-   }
 
+   // Original methods
+   std::string GenerateSparklinesSVG(int width = 800, int height = 600) const;
+   void updateChains(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits);
    void updateFits(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits);
    void CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBravaisFits& theBravaisMap);
    void CheckAllGrimmerChains();
@@ -227,16 +231,43 @@ public:
    DeloneFitResults Remediation(const std::string& bravaisName, const double deltaFromZeroAllowed);
    std::vector<OneGrimmerChain> GetChains() const { return m_GrimmerChains; }
    GrimmerChains ReplaceRemediation(const DeloneFitResults& newFit) const;
-   std::string GenerateSortedFitPlots(const int width, const int height, const std::string& st="") const;
+
+   // New method to update simplified data structures
+   void UpdateFits(const std::vector<DeloneFitResults>& fits);
 
 
-   friend std::ostream& operator<< (std::ostream& o, const GrimmerChains& obc);
+   std::string createDelonePlot(const std::vector<FitData>& deloneFits,
+      const double maxDeloneFit,
+      const int plotWidth,
+      const int plotHeight,
+      const std::string& lineColor,
+      const double s6Norm);
+
+   // Specialized function for Pearson plot
+   std::string createPearsonPlot(const std::vector<FitData>& pearsonFits,
+      const double maxPearsonFit,
+      const int plotWidth,
+      const int plotHeight,
+      const std::string& lineColor,
+      const double s6Norm);
+
+   std::string createTitle(const std::string& mainTitle, const std::string& subTitle, int width);
+
+
+   // Visualization method
+   std::string GenerateSortedFitPlots(const int width, const int height, const std::string& st = "");
 
 private:
    void initializeChains();
-   void PopulateChainsWithFitValues();
-   void BestInBravaisType(const DeloneTypeForGrimmer& type) const;
+
+   std::string createFitList(const std::vector<std::pair<std::string, double>>& sortedPearsonList,
+      const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap) const;
+   std::string createLegend(const std::string& lineColorDelone, const std::string& lineColorPearson) const;
+   std::string createFooter(int width) const;
+   std::string wrapInGroup(const std::string& content, const std::string& id, int translateX, int translateY) const;
+   std::string formatFitValue(double value) const;
 };
+
 
 #endif // GRIMMERTREE_H
 

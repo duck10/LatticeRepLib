@@ -284,7 +284,7 @@ std::pair< std::string, std::string> ProcessSella(const bool doProduceSellaGraph
    //std::cout << gcs << std::endl;
 
    {
-      if (gcs.m_hasChainFailure) {  // Use the member variable directly
+      if (gcs.HasFailure()) {  // Use the member variable directly
          GrimmerChainFailure gcf = gcs.GetFirstFailure();
          const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
          const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
@@ -333,9 +333,11 @@ std::pair< std::string, std::string> ProcessSella(const bool doProduceSellaGraph
    // Generate the fit plots SVG
    std::string fitPlotsSvg;
    if (doProduceSellaGraphics) {
+      // Add this line to update the fit data structures
+      gcs.UpdateFits(vDeloneFitResultsForOneInputLattice);
+
       fitPlotsSvg = gcs.GenerateSortedFitPlots(900, 700, input.getInput());
    }
-
    return std::make_pair(mainSvg, fitPlotsSvg);
 
 }

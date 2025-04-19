@@ -218,23 +218,6 @@ DeloneTypeForGrimmer::DeloneTypeForGrimmer(const std::string& deloneName, const 
 }
 
 
-// FitData struct for storing type and fit value pairs
-struct FitData {
-   std::string typeName;
-   double fitValue;
-
-   // Default constructor required for std::vector
-   FitData() : typeName(""), fitValue(0.0) {}
-
-   // Constructor with parameters
-   FitData(const std::string& name, double fit) : typeName(name), fitValue(fit) {}
-
-   // For sorting from smallest to highest fit value
-   bool operator<(const FitData& other) const {
-      return fitValue < other.fitValue;
-   }
-};
-
 // Class to collect and process fit data
 class FitDataCollector {
 private:
@@ -398,16 +381,7 @@ std::string wrapInGroup(const std::string& content, const std::string& id, int t
    return ss.str();
 }
 
-// Function to generate main title
-std::string createTitle(const std::string& mainTitle, const std::string& subTitle, int width) {
-   std::stringstream ss;
-   ss << "  <text x=\"" << width / 2 << "\" y=\"20\" text-anchor=\"middle\" font-family=\"Arial\" "
-      << "font-size=\"20\" font-weight=\"bold\">" << mainTitle << "</text>\n";
-   // Reduce the y value from 45 to 40 to move subtitle closer to main title
-   ss << "  <text x=\"" << width / 2 << "\" y=\"40\" text-anchor=\"middle\" font-family=\"Arial\" "
-      << "font-size=\"16\">" << subTitle << "</text>\n";
-   return ss.str();
-}
+
 
 std::map<std::string, double> MapOfBravaisFits::CreateMapOFBravaisFits(std::vector<DeloneFitResults>& fits) {
    std::map<std::string, double> valuemap;
@@ -612,9 +586,8 @@ std::string createPlot(const std::string& title,
 
    return ss.str();
 }
-
 // Specialized function for Delone plot
-std::string createDelonePlot(const std::vector<FitData>& deloneFits,
+std::string GrimmerChains::createDelonePlot(const std::vector<FitData>& deloneFits,
    const double maxDeloneFit,
    const int plotWidth,
    const int plotHeight,
@@ -630,7 +603,7 @@ std::string createDelonePlot(const std::vector<FitData>& deloneFits,
 }
 
 // Specialized function for Pearson plot
-std::string createPearsonPlot(const std::vector<FitData>& pearsonFits,
+std::string GrimmerChains::createPearsonPlot(const std::vector<FitData>& pearsonFits,
    const double maxPearsonFit,
    const int plotWidth,
    const int plotHeight,
@@ -808,10 +781,12 @@ std::string createFitListColumn(
 }
 
 // Function to create the double-column fit list
-std::string createFitList(
-   const std::vector<std::pair<std::string, double>>& sortedPearsonList,
-   const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap) {
-
+std::string GrimmerChains::createFitList(const std::vector<std::pair<std::string, double>>& sortedPearsonList,
+   const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap) const
+//std::string GrimmerChains::createFitList(
+//   const std::vector<std::pair<std::string, double>>& sortedPearsonList,
+//   const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap) {
+{
    std::stringstream ss;
 
    // Title for fit list
@@ -862,7 +837,7 @@ std::string createFitList(
 }
 
 // Function to create legend
-std::string createLegend(const std::string& lineColorDelone, const std::string& lineColorPearson) {
+std::string GrimmerChains::createLegend(const std::string& lineColorDelone, const std::string& lineColorPearson) const {
    std::stringstream ss;
 
    // Legend title
@@ -927,9 +902,9 @@ std::string GrimmerGetCurrentDate() {
 }
 
 // Function to create footer
-std::string createFooter(int width) {
+std::string GrimmerChains::createFooter(int width) const {
    std::stringstream ss;
-   ss << "  <text x=\"" << width / 2 << "\" y=\"15\" text-anchor=\"middle\" "
+   ss << "  <text x=\"" << width / 3 << "\" y=\"15\" text-anchor=\"middle\" "
       << "font-family=\"Arial\" font-size=\"12\" fill=\"#666666\">"
       << "Created by SELLA - " << GrimmerGetCurrentDate() << "</text>\n";
    return ss.str();
@@ -937,72 +912,93 @@ std::string createFooter(int width) {
 
 // Main function to generate the SVG
 // In the GenerateSortedFitPlots method:
-std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int height, const std::string& st) const {
-   // Colors
-   const std::string lineColorDelone = "#56B4E9";  // Sky blue
-   const std::string lineColorPearson = "#E69F00";  // Orange
+std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int height, const std::string& st) {
+   // Convert maps to vectors for sorting
+   std::vector<FitData> deloneFits;
+   for (const auto& [name, value] : m_deloneTypeFits) {
+      deloneFits.push_back(FitData(name, value));
+   }
 
-   // Component dimensions and positions - with improved spacing
-   const int titleAreaHeight = 60;     // Increased space for title and subtitle
-   const int plotWidth = (width - 400) * 0.75;
-   const int plotHeight = (height - 300) / 2;  // Reduce plot height to ensure room for everything
-   const int plotX = 100;
-   const int topPlotY = titleAreaHeight + 20;  // Move top plot down to avoid overlap with title
-   const int bottomPlotY = topPlotY + plotHeight + 120; // More space between plots
-   const int listX = plotX + plotWidth + 40;
-   // Adjust the legend and footer positions
-   const int legendY = bottomPlotY + 60;  // Move legend up (was 220, now 60)
-   const int footerY = height - 40;       // Move footer up slightly (was 20, now 40)
+   std::vector<FitData> pearsonFits;
+   for (const auto& [name, value] : m_pearsonTypeFits) {
+      pearsonFits.push_back(FitData(name, value));
+   }
 
+   // Sort by fit value
+   std::sort(deloneFits.begin(), deloneFits.end());
+   std::sort(pearsonFits.begin(), pearsonFits.end());
+
+   // Get Pearson list for fit list display
+   std::vector<std::pair<std::string, double>> sortedPearsonList;
+   for (const auto& pair : m_pearsonTypeFits) {
+      sortedPearsonList.push_back(std::make_pair(pair.first, pair.second));
+   }
+   std::sort(sortedPearsonList.begin(), sortedPearsonList.end(),
+      [](const auto& a, const auto& b) { return a.second < b.second; });
 
    // Calculate reduced S6 norm
    const double s6Norm = m_s6.norm();
 
-   // Collect and process data
-   FitDataCollector dataCollector;
-   dataCollector.collectFitData(m_GrimmerChains);
+   // Define layout parameters
+   const std::string lineColorDelone = "#56B4E9";  // Sky blue
+   const std::string lineColorPearson = "#E69F00";  // Orange
 
-   // Build SVG components
-   std::string titleGroup = createTitle("SELLA Lattice Fit Analysis", st, width);
+   const int titleAreaHeight = 60;
+   const int plotWidth = (width - 400) * 0.75;
+   const int plotHeight = (height - 300) / 2;
+   const int plotX = 100;
+   const int topPlotY = titleAreaHeight + 20;
+   const int bottomPlotY = topPlotY + plotHeight + 120;
+   const int listX = plotX + plotWidth + 40;
+   const int legendY = bottomPlotY + 60;
+   const int footerY = height - 40;
 
-   std::string delonePlotGroup = createDelonePlot(
-      dataCollector.getDeloneFits(),
-      dataCollector.getMaxDeloneFit(),
+   // Find max values for scaling
+   double maxDeloneFit = 1.0;  // Default to 1.0 if no data
+   double maxPearsonFit = 1.0;
+
+   if (!deloneFits.empty())
+      maxDeloneFit = deloneFits.back().fitValue;
+   if (!pearsonFits.empty())
+      maxPearsonFit = pearsonFits.back().fitValue;
+
+   // Now build the SVG components
+   const std::string& titleGroup = createTitle("SELLA Lattice Fit Analysis", st, width);
+
+   const std::string& delonePlotGroup = this->createDelonePlot(
+      deloneFits,
+      maxDeloneFit,
       plotWidth, plotHeight,
       lineColorDelone,
       s6Norm);
 
-   std::string pearsonPlotGroup = createPearsonPlot(
-      dataCollector.getPearsonFits(),
-      dataCollector.getMaxPearsonFit(),
+   const std::string& pearsonPlotGroup = createPearsonPlot(
+      pearsonFits,
+      maxPearsonFit,
       plotWidth, plotHeight,
       lineColorPearson,
       s6Norm);
 
-   std::string fitListGroup = createFitList(
-      dataCollector.getSortedPearsonList(),
-      dataCollector.getPearsonToDeloneMap());
+   const std::string& fitListGroup = createFitList(
+      sortedPearsonList,
+      m_pearsonToDeloneMap);
 
-   std::string legendGroup = createLegend(lineColorDelone, lineColorPearson);
+   const std::string& legendGroup = createLegend(lineColorDelone, lineColorPearson);
 
-   std::string footerGroup = createFooter(width);
+   const std::string& footerGroup = createFooter(width);
 
    // Wrap each component in a group with proper positioning
-   std::string titleGroupPositioned = wrapInGroup(titleGroup, "title", 0, 0);
-   std::string delonePlotGroupPositioned = wrapInGroup(delonePlotGroup, "delonePlot", plotX, topPlotY);
-   std::string pearsonPlotGroupPositioned = wrapInGroup(pearsonPlotGroup, "pearsonPlot", plotX, bottomPlotY);
-   std::string fitListGroupPositioned = wrapInGroup(fitListGroup, "fitList", listX, topPlotY);
-   std::string legendGroupPositioned = wrapInGroup(legendGroup, "legend", listX, legendY);
-   std::string footerGroupPositioned = wrapInGroup(footerGroup, "footer", -60, footerY);
+   const std::string& titleGroupPositioned = wrapInGroup(titleGroup, "title", 0, 0);
+   const std::string& delonePlotGroupPositioned = wrapInGroup(delonePlotGroup, "delonePlot", plotX, topPlotY);
+   const std::string& pearsonPlotGroupPositioned = wrapInGroup(pearsonPlotGroup, "pearsonPlot", plotX, bottomPlotY);
+   const std::string& fitListGroupPositioned = wrapInGroup(fitListGroup, "fitList", listX, topPlotY);
+   const std::string& legendGroupPositioned = wrapInGroup(legendGroup, "legend", listX, legendY);
+   const std::string& footerGroupPositioned = wrapInGroup(footerGroup, "footer", 0, footerY);
 
    // Assemble the SVG
    std::stringstream ss;
    ss << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-
-   // Recommend a minimum height of 800px for comfortable spacing
-   const int recommendedHeight = std::max(height, 800);
-
-   ss << "<svg width=\"" << width << "\" height=\"" << recommendedHeight
+   ss << "<svg width=\"" << width << "\" height=\"" << height
       << "\" xmlns=\"http://www.w3.org/2000/svg\">\n";
 
    // Add all positioned components
@@ -1017,5 +1013,106 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
    ss << "</svg>";
 
    return ss.str();
+}
+
+
+// New method to update simplified data structures
+void GrimmerChains::UpdateFits(const std::vector<DeloneFitResults>& fits) {
+   // Clear existing data
+   std::cout << "UpdateFits called with " << fits.size() << " fit results." << std::endl;
+   m_deloneTypeFits.clear();
+   m_pearsonTypeFits.clear();
+   m_pearsonToDeloneMap.clear();
+
+   // Process each fit result
+   for (const auto& fit : fits) {
+      const std::string deloneName = fit.GetGeneralType();
+      const std::string pearsonName = fit.GetBravaisType();
+      const double fitValue = fit.GetRawFit();
+
+      // Update Delone type fit (keep the best fit)
+      if (m_deloneTypeFits.find(deloneName) == m_deloneTypeFits.end() ||
+         fitValue < m_deloneTypeFits[deloneName]) {
+         m_deloneTypeFits[deloneName] = fitValue;
+      }
+
+      // Update Pearson type fit (keep the best fit)
+      if (m_pearsonTypeFits.find(pearsonName) == m_pearsonTypeFits.end() ||
+         fitValue < m_pearsonTypeFits[pearsonName]) {
+         m_pearsonTypeFits[pearsonName] = fitValue;
+      }
+
+      // Update Pearson-to-Delone mapping
+      bool found = false;
+      for (auto& pair : m_pearsonToDeloneMap[pearsonName]) {
+         if (pair.first == deloneName) {
+            pair.second = fitValue;
+            found = true;
+            break;
+         }
+      }
+      if (!found) {
+         m_pearsonToDeloneMap[pearsonName].push_back(std::make_pair(deloneName, fitValue));
+      }
+   }
+
+   // Create non-const copy to use with the existing methods
+   std::vector<DeloneFitResults> nonConstFits(fits.begin(), fits.end());
+
+   // Update the original data structures directly with the fit data
+   m_deloneFits.CreateMapOFDeloneFits(nonConstFits);
+   m_bravaisFits.CreateMapOFBravaisFits(nonConstFits);
+
+   // Update the GrimmerChains
+   initializeChains();
+}
+
+
+// Helper function for creating a title
+std::string GrimmerChains::createTitle(const std::string& mainTitle, const std::string& subTitle, int width) {
+   std::stringstream ss;
+   ss << "  <text x=\"" << width / 2 << "\" y=\"20\" text-anchor=\"middle\" font-family=\"Arial\" "
+      << "font-size=\"20\" font-weight=\"bold\">" << mainTitle << "</text>\n";
+   ss << "  <text x=\"" << width / 2 << "\" y=\"40\" text-anchor=\"middle\" font-family=\"Arial\" "
+      << "font-size=\"16\">" << subTitle << "</text>\n";
+   return ss.str();
+}
+
+// Helper function for formatting fit values
+std::string GrimmerChains::formatFitValue(double value) const {
+   std::stringstream valueStr;
+   if (value == 0.0) {
+      valueStr << "0";
+   }
+   else if (value < 1.5) {
+      valueStr << std::fixed << std::setprecision(3) << value;
+   }
+   else if (value < 10.0) {
+      valueStr << std::fixed << std::setprecision(2) << value;
+   }
+   else if (value < 100.0) {
+      valueStr << std::fixed << std::setprecision(1) << value;
+   }
+   else {
+      valueStr << std::fixed << std::setprecision(0) << value;
+   }
+   return valueStr.str();
+}
+
+// Helper function for wrapping content in a group
+std::string GrimmerChains::wrapInGroup(const std::string& content, const std::string& id,
+   int translateX, int translateY) const {
+   std::stringstream ss;
+   ss << "  <g id=\"" << id << "\" transform=\"translate(" << translateX
+      << "," << translateY << ")\">\n";
+   ss << content;
+   ss << "  </g>\n";
+   return ss.str();
+}
+
+void GrimmerChains::updateChains(MapOFDeloneFits& deloneFits, MapOfBravaisFits& bravaisFits) {
+   m_deloneFits = deloneFits;
+   m_bravaisFits = bravaisFits;
+   initializeChains();
 }
 
