@@ -103,7 +103,7 @@ void InputHandler::handleSingleLattice(
 
    if (key == "G6" || key == "G") result = parseG6(tokens);
    else if (key == "S6" || key == "S") result = parseS6(tokens);
-   else if (key == "RANDOM" || key == "R") result = parseRandom();
+   else if (key == "RANDOM" ) result = parseRandom();
    //else if (key == "U") result = parseDC7u(tokens);
    else {
       result = parseLattice(tokens);

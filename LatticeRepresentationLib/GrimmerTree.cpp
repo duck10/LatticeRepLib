@@ -315,46 +315,6 @@ public:
 
 
 
-// Helper for drawing the Y-axis with better distributed grid values
-void CreateBetterYAxisGridValues(std::vector<double>& yAxisValues, double maxValue) {
-   // Clear any existing values
-   yAxisValues.clear();
-
-   // Always start with 0
-   yAxisValues.push_back(0.0);
-
-   // Add 0.3 instead of 0.5 for better placement
-   yAxisValues.push_back(0.3);
-
-   // Add 1.0
-   yAxisValues.push_back(1.0);
-
-   // Add 2.0 and 5.0 (skip 3.0 and 4.0 to avoid overcrowding)
-   yAxisValues.push_back(2.0);
-   yAxisValues.push_back(5.0);
-
-   // Add 10.0, 20.0, 50.0
-   yAxisValues.push_back(10.0);
-   yAxisValues.push_back(20.0);
-   yAxisValues.push_back(50.0);
-
-   // Add 100.0, 200.0, 500.0 if within range
-   if (maxValue > 100.0) {
-      yAxisValues.push_back(100.0);
-   }
-   if (maxValue > 200.0) {
-      yAxisValues.push_back(200.0);
-   }
-   if (maxValue > 500.0) {
-      yAxisValues.push_back(500.0);
-   }
-
-   // Always add max value if it's higher than our predefined values
-   if (maxValue > 500.0) {
-      yAxisValues.push_back(maxValue);
-   }
-}
-
 // Helper function to compress Y-axis values for better visualization
 double CompressYAxisValue(const double value, const double minValue, const double maxValue, const double powerFactor = 0.3) {
    // Handle out-of-range values
@@ -370,6 +330,42 @@ double CompressYAxisValue(const double value, const double minValue, const doubl
    // This gives more space to smaller values
    return std::pow(normalizedValue, powerFactor);
 }
+
+std::vector<double> CreateBetterYAxisGridValues(const double maxValue, const int plotHeight) {
+   // Always include these standard reference values if they're below maxValue
+   std::vector<double> standardValues = {
+       0.0, 1.0, 10.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0
+   };
+
+   std::vector<double> yAxisValues;
+
+   // Keep all standard values that are below maxValue * 1.1
+   for (double value : standardValues) {
+      if (value <= maxValue * 1.1) {
+         yAxisValues.push_back(value);
+      }
+   }
+
+   // Add the maxValue if it's significantly higher than the last standard value
+   if (!yAxisValues.empty() && maxValue > yAxisValues.back() * 1.2) {
+      // Round up to a nice number
+      double roundedMax = maxValue;
+      if (maxValue > 10 && maxValue < 100) {
+         roundedMax = std::ceil(maxValue / 10.0) * 10.0; // Round to nearest 10
+      }
+      else if (maxValue >= 100 && maxValue < 1000) {
+         roundedMax = std::ceil(maxValue / 100.0) * 100.0; // Round to nearest 100
+      }
+      else if (maxValue >= 1000) {
+         roundedMax = std::ceil(maxValue / 1000.0) * 1000.0; // Round to nearest 1000
+      }
+
+      yAxisValues.push_back(roundedMax);
+   }
+
+   return yAxisValues;
+}
+
 
 
 // 1. Helper function to wrap content in an SVG group with translation
@@ -465,8 +461,7 @@ std::string createPlot(const std::string& title,
       "middle", "Arial", 14);
 
    // Draw Y-axis and gridlines
-   std::vector<double> yAxisValues;
-   CreateBetterYAxisGridValues(yAxisValues, maxFit);
+   const std::vector<double> yAxisValues = CreateBetterYAxisGridValues( maxFit, plotHeight);
 
    for (double value : yAxisValues) {
       double relativeY = CompressYAxisValue(value, 0.0, maxFit);
@@ -738,8 +733,17 @@ GrimmerChainFailure OneGrimmerChain::CheckOneGrimmerChain()
    return fails;
 }
 
+// Implementation of createTitle method for GrimmerChains
+std::string GrimmerChains::createTitle(const std::string& mainTitle, const std::string& subTitle, int width) {
+   std::stringstream ss;
+   ss << "  <text x=\"" << width / 2 << "\" y=\"20\" text-anchor=\"middle\" font-family=\"Arial\" "
+      << "font-size=\"20\" font-weight=\"bold\">" << mainTitle << "</text>\n";
+   ss << "  <text x=\"" << width / 2 << "\" y=\"40\" text-anchor=\"middle\" font-family=\"Arial\" "
+      << "font-size=\"16\">" << subTitle << "</text>\n";
+   return ss.str();
+}
 
-// Function to create a single column of the fit list
+// Also need to fix the createFitListColumn function to ensure proper asterisk display
 std::string createFitListColumn(
    const std::vector<std::pair<std::string, double>>& items,
    const std::map<std::string, std::vector<std::pair<std::string, double>>>& itemDetails) {
@@ -754,24 +758,45 @@ std::string createFitListColumn(
       const std::string& typeName = item.first;
       const double typeValue = item.second;
 
-      // Draw type with fit value
+      // Draw type with fit value, marking invalid values
       ss << "  <text x=\"0\" y=\"" << yPos << "\" font-family=\"Arial\" "
          << "font-size=\"14\" font-weight=\"bold\">"
-         << typeName << " (" << std::fixed
-         << (typeValue < 1.5 ? std::setprecision(3) : std::setprecision(2))
-         << typeValue << ")</text>\n";
+         << typeName << " (";
+
+      // Explicitly check for DBL_MAX values and negative values
+      if (typeValue >= DBL_MAX || typeValue < 0.0) {
+         ss << "*";  // Use asterisk for invalid values
+      }
+      else {
+         ss << std::fixed
+            << (typeValue < 1.5 ? std::setprecision(3) : std::setprecision(2))
+            << typeValue;
+      }
+
+      ss << ")</text>\n";
 
       yPos += titleHeight;
 
       // Draw associated details
-      for (const auto& detail : itemDetails.at(typeName)) {
-         ss << "  <text x=\"20\" y=\"" << yPos << "\" font-family=\"Arial\" "
-            << "font-size=\"12\">"
-            << detail.first << ": " << std::fixed
-            << (detail.second < 1.5 ? std::setprecision(3) : std::setprecision(2))
-            << detail.second << "</text>\n";
+      if (itemDetails.find(typeName) != itemDetails.end()) {
+         for (const auto& detail : itemDetails.at(typeName)) {
+            ss << "  <text x=\"20\" y=\"" << yPos << "\" font-family=\"Arial\" "
+               << "font-size=\"12\">"
+               << detail.first << ": ";
 
-         yPos += itemHeight;
+            if (detail.second >= DBL_MAX || detail.second < 0.0) {
+               ss << "*";  // Use asterisk for invalid values
+            }
+            else {
+               ss << std::fixed
+                  << (detail.second < 1.5 ? std::setprecision(3) : std::setprecision(2))
+                  << detail.second;
+            }
+
+            ss << "</text>\n";
+
+            yPos += itemHeight;
+         }
       }
 
       yPos += spaceBetweenGroups;
@@ -780,12 +805,10 @@ std::string createFitListColumn(
    return ss.str();
 }
 
+
 // Function to create the double-column fit list
 std::string GrimmerChains::createFitList(const std::vector<std::pair<std::string, double>>& sortedPearsonList,
    const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap) const
-//std::string GrimmerChains::createFitList(
-//   const std::vector<std::pair<std::string, double>>& sortedPearsonList,
-//   const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap) {
 {
    std::stringstream ss;
 
@@ -911,30 +934,45 @@ std::string GrimmerChains::createFooter(int width) const {
 }
 
 // Main function to generate the SVG
-// In the GenerateSortedFitPlots method:
+// Modified GenerateSortedFitPlots method with a simpler approach
 std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int height, const std::string& st) {
-   // Convert maps to vectors for sorting
-   std::vector<FitData> deloneFits;
+   // Convert maps to vectors for sorting (including all values for the list display)
+   std::vector<FitData> allDeloneFits;
    for (const auto& [name, value] : m_deloneTypeFits) {
-      deloneFits.push_back(FitData(name, value));
+      allDeloneFits.push_back(FitData(name, value));
    }
 
-   std::vector<FitData> pearsonFits;
+   std::vector<FitData> allPearsonFits;
    for (const auto& [name, value] : m_pearsonTypeFits) {
-      pearsonFits.push_back(FitData(name, value));
+      allPearsonFits.push_back(FitData(name, value));
    }
 
-   // Sort by fit value
-   std::sort(deloneFits.begin(), deloneFits.end());
-   std::sort(pearsonFits.begin(), pearsonFits.end());
+   // Create filtered versions for plotting (excluding DBL_MAX values)
+   std::vector<FitData> plotDeloneFits;
+   for (const auto& fit : allDeloneFits) {
+      if (fit.fitValue < DBL_MAX && fit.fitValue >= 0.0) {
+         plotDeloneFits.push_back(fit);
+      }
+   }
+
+   std::vector<FitData> plotPearsonFits;
+   for (const auto& fit : allPearsonFits) {
+      if (fit.fitValue < DBL_MAX && fit.fitValue >= 0.0) {
+         plotPearsonFits.push_back(fit);
+      }
+   }
+
+   // Sort all versions by fit value
+   std::sort(allDeloneFits.begin(), allDeloneFits.end());
+   std::sort(allPearsonFits.begin(), allPearsonFits.end());
+   std::sort(plotDeloneFits.begin(), plotDeloneFits.end());
+   std::sort(plotPearsonFits.begin(), plotPearsonFits.end());
 
    // Get Pearson list for fit list display
    std::vector<std::pair<std::string, double>> sortedPearsonList;
-   for (const auto& pair : m_pearsonTypeFits) {
-      sortedPearsonList.push_back(std::make_pair(pair.first, pair.second));
+   for (const auto& fit : allPearsonFits) {
+      sortedPearsonList.push_back(std::make_pair(fit.typeName, fit.fitValue));
    }
-   std::sort(sortedPearsonList.begin(), sortedPearsonList.end(),
-      [](const auto& a, const auto& b) { return a.second < b.second; });
 
    // Calculate reduced S6 norm
    const double s6Norm = m_s6.norm();
@@ -953,32 +991,37 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
    const int legendY = bottomPlotY + 60;
    const int footerY = height - 40;
 
-   // Find max values for scaling
+   // Find max values for scaling from the filtered plot data
    double maxDeloneFit = 1.0;  // Default to 1.0 if no data
    double maxPearsonFit = 1.0;
 
-   if (!deloneFits.empty())
-      maxDeloneFit = deloneFits.back().fitValue;
-   if (!pearsonFits.empty())
-      maxPearsonFit = pearsonFits.back().fitValue;
+   if (!plotDeloneFits.empty()) {
+      maxDeloneFit = plotDeloneFits.back().fitValue;
+   }
+
+   if (!plotPearsonFits.empty()) {
+      maxPearsonFit = plotPearsonFits.back().fitValue;
+   }
 
    // Now build the SVG components
    const std::string& titleGroup = createTitle("SELLA Lattice Fit Analysis", st, width);
 
+   // Use the filtered datasets for the plots
    const std::string& delonePlotGroup = this->createDelonePlot(
-      deloneFits,
+      plotDeloneFits,
       maxDeloneFit,
       plotWidth, plotHeight,
       lineColorDelone,
       s6Norm);
 
    const std::string& pearsonPlotGroup = createPearsonPlot(
-      pearsonFits,
+      plotPearsonFits,
       maxPearsonFit,
       plotWidth, plotHeight,
       lineColorPearson,
       s6Norm);
 
+   // Use the complete dataset for the fit list (with asterisks for DBL_MAX values)
    const std::string& fitListGroup = createFitList(
       sortedPearsonList,
       m_pearsonToDeloneMap);
@@ -1015,11 +1058,9 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
    return ss.str();
 }
 
-
 // New method to update simplified data structures
 void GrimmerChains::UpdateFits(const std::vector<DeloneFitResults>& fits) {
    // Clear existing data
-   std::cout << "UpdateFits called with " << fits.size() << " fit results." << std::endl;
    m_deloneTypeFits.clear();
    m_pearsonTypeFits.clear();
    m_pearsonToDeloneMap.clear();
@@ -1030,15 +1071,20 @@ void GrimmerChains::UpdateFits(const std::vector<DeloneFitResults>& fits) {
       const std::string pearsonName = fit.GetBravaisType();
       const double fitValue = fit.GetRawFit();
 
+      // For DBL_MAX values, we want to store them and mark them with asterisks later
+      // Instead of skipping, we store them as-is
+
       // Update Delone type fit (keep the best fit)
       if (m_deloneTypeFits.find(deloneName) == m_deloneTypeFits.end() ||
-         fitValue < m_deloneTypeFits[deloneName]) {
+         (fitValue < m_deloneTypeFits[deloneName] ||
+            (m_deloneTypeFits[deloneName] >= DBL_MAX && fitValue >= DBL_MAX))) {
          m_deloneTypeFits[deloneName] = fitValue;
       }
 
       // Update Pearson type fit (keep the best fit)
       if (m_pearsonTypeFits.find(pearsonName) == m_pearsonTypeFits.end() ||
-         fitValue < m_pearsonTypeFits[pearsonName]) {
+         (fitValue < m_pearsonTypeFits[pearsonName] ||
+            (m_pearsonTypeFits[pearsonName] >= DBL_MAX && fitValue >= DBL_MAX))) {
          m_pearsonTypeFits[pearsonName] = fitValue;
       }
 
@@ -1046,7 +1092,10 @@ void GrimmerChains::UpdateFits(const std::vector<DeloneFitResults>& fits) {
       bool found = false;
       for (auto& pair : m_pearsonToDeloneMap[pearsonName]) {
          if (pair.first == deloneName) {
-            pair.second = fitValue;
+            // Only update if the new value is better or both are DBL_MAX
+            if (fitValue < pair.second || (pair.second >= DBL_MAX && fitValue >= DBL_MAX)) {
+               pair.second = fitValue;
+            }
             found = true;
             break;
          }
@@ -1056,47 +1105,22 @@ void GrimmerChains::UpdateFits(const std::vector<DeloneFitResults>& fits) {
       }
    }
 
-   // Create non-const copy to use with the existing methods
-   std::vector<DeloneFitResults> nonConstFits(fits.begin(), fits.end());
+   // Create non-const copy for the original data structures
+   // Only filter out DBL_MAX values for the original fitting mechanisms
+   // but keep them for display purposes
+   std::vector<DeloneFitResults> nonConstFits;
+   for (const auto& fit : fits) {
+      if (fit.GetRawFit() < DBL_MAX) {
+         nonConstFits.push_back(fit);
+      }
+   }
 
-   // Update the original data structures directly with the fit data
+   // Update the original data structures with the filtered fit data
    m_deloneFits.CreateMapOFDeloneFits(nonConstFits);
    m_bravaisFits.CreateMapOFBravaisFits(nonConstFits);
 
    // Update the GrimmerChains
    initializeChains();
-}
-
-
-// Helper function for creating a title
-std::string GrimmerChains::createTitle(const std::string& mainTitle, const std::string& subTitle, int width) {
-   std::stringstream ss;
-   ss << "  <text x=\"" << width / 2 << "\" y=\"20\" text-anchor=\"middle\" font-family=\"Arial\" "
-      << "font-size=\"20\" font-weight=\"bold\">" << mainTitle << "</text>\n";
-   ss << "  <text x=\"" << width / 2 << "\" y=\"40\" text-anchor=\"middle\" font-family=\"Arial\" "
-      << "font-size=\"16\">" << subTitle << "</text>\n";
-   return ss.str();
-}
-
-// Helper function for formatting fit values
-std::string GrimmerChains::formatFitValue(double value) const {
-   std::stringstream valueStr;
-   if (value == 0.0) {
-      valueStr << "0";
-   }
-   else if (value < 1.5) {
-      valueStr << std::fixed << std::setprecision(3) << value;
-   }
-   else if (value < 10.0) {
-      valueStr << std::fixed << std::setprecision(2) << value;
-   }
-   else if (value < 100.0) {
-      valueStr << std::fixed << std::setprecision(1) << value;
-   }
-   else {
-      valueStr << std::fixed << std::setprecision(0) << value;
-   }
-   return valueStr.str();
 }
 
 // Helper function for wrapping content in a group
