@@ -388,18 +388,21 @@ void AnalyzeS6(const S6 s6) {
    std::cout << "lowCount " << lowCount << std::endl;
 }
 
-std::string AddSuffixToFilename(const std::string& filename, const std::string& suffix) {
-   size_t dotPos = filename.find_last_of('.');
-   if (dotPos != std::string::npos) {
-      // Extension found, insert suffix before the extension
-      return filename.substr(0, dotPos) + suffix + filename.substr(dotPos);
-   }
-   else {
-      // No extension, append suffix to the end
-      return filename + suffix;
-   }
-}
+std::string AddSuffixToAllSvgOccurrences(const std::string& input, const std::string& suffix) {
+   std::string result = input;
+   std::string pattern = ".svg";
+   size_t pos = 0;
 
+   // Find and process each occurrence of ".svg"
+   while ((pos = result.find(pattern, pos)) != std::string::npos) {
+      // Insert the suffix before ".svg"
+      result.insert(pos, suffix);
+      // Update position to look for next occurrence, accounting for the added suffix
+      pos += suffix.length() + pattern.length();
+   }
+
+   return result;
+}
 
 
 int main(int argc, char* argv[])
@@ -449,20 +452,20 @@ int main(int argc, char* argv[])
          std::cout << "; Send Sella Plot to graphics file "
             << dc_setup.getFullFileNameAt(whichCell) << std::endl;
          std::cout << "; Send Sella Plot to graphics file "
-            << AddSuffixToFilename(dc_setup.getFullFileNameAt(whichCell), "_fit_plots") << std::endl;
+            << AddSuffixToAllSvgOccurrences(dc_setup.getFullFileNameAt(whichCell), "_fit_plots") << std::endl;
 
          if (webio.m_hasWebInstructions) {
             SendSellaToFile(sellaSvg, dc_setup.getRawFileNames()[whichCell - blockstart]);
 
             // Write fit plots immediately after
-            const std::string fitPlotsFilename = AddSuffixToFilename(dc_setup.getRawFileNames()[whichCell - blockstart], "_fit_plots");
+            const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getRawFileNames()[whichCell - blockstart], "_fit_plots");
             SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
          }
          else {
             SendSellaToFile(sellaSvg, dc_setup.getBasicFileNames()[whichCell - blockstart]);
 
             // Write fit plots immediately after
-            const std::string fitPlotsFilename = AddSuffixToFilename(dc_setup.getBasicFileNames()[whichCell - blockstart], "_fit_plots");
+            const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getBasicFileNames()[whichCell - blockstart], "_fit_plots");
             SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
          }
       }
