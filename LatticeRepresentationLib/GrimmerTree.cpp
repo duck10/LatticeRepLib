@@ -438,14 +438,10 @@ void GrimmerChains::CheckAllGrimmerChains()
    }
 }
 
-// Function to create a plot with common elements and styling
-std::string createPlot(const std::string& title,
-   const std::vector<FitData>& data,
-   const double maxFit,
-   const int plotWidth,
-   const int plotHeight,
-   const std::string& lineColor,
-   const double s6Norm) {
+// Create basic plot structure: border, title, axes labels
+std::string createPlotStructure(const std::string& title,
+   int plotWidth,
+   int plotHeight) {
    std::stringstream ss;
 
    // Plot border and background
@@ -463,8 +459,15 @@ std::string createPlot(const std::string& title,
    ss << SVGUtil::createText("Types (sorted by fit value)", plotWidth / 2, plotHeight + 35,
       "middle", "Arial", 14);
 
-   // Draw Y-axis and gridlines
-   const std::vector<double> yAxisValues = CreateBetterYAxisGridValues( maxFit, plotHeight);
+   return ss.str();
+}
+
+// Create y-axis and gridlines
+std::string createYAxisAndGridlines(const std::vector<double>& yAxisValues,
+   double maxFit,
+   int plotWidth,
+   int plotHeight) {
+   std::stringstream ss;
 
    for (double value : yAxisValues) {
       double relativeY = CompressYAxisValue(value, 0.0, maxFit);
@@ -494,7 +497,16 @@ std::string createPlot(const std::string& title,
       ss << SVGUtil::createText(valueStr.str(), -5, yPos + 5, "end", "Arial", 12);
    }
 
-   // Draw reference lines for S6 norm
+   return ss.str();
+}
+
+// Create reference lines (0.1%, 1%, 5% of S6 norm)
+std::string createReferenceLines(double s6Norm,
+   double maxFit,
+   int plotWidth,
+   int plotHeight) {
+   std::stringstream ss;
+
    // 0.1% reference line
    const double pointOnePctValue = 0.001 * s6Norm;
    double relativeY_pointOnePct = CompressYAxisValue(pointOnePctValue, 0.0, maxFit);
@@ -528,7 +540,17 @@ std::string createPlot(const std::string& title,
       plotWidth - 5, yPos_5pct - 5, "end", "Arial", 12,
       "normal", "#CC0000");
 
-   // Draw data points
+   return ss.str();
+}
+
+// Plot the data points and connecting lines
+std::string plotDataPoints(const std::vector<FitData>& data,
+   double maxFit,
+   int plotWidth,
+   int plotHeight,
+   const std::string& lineColor) {
+   std::stringstream ss;
+
    if (!data.empty()) {
       const int pointRadius = 4;
 
@@ -584,6 +606,34 @@ std::string createPlot(const std::string& title,
 
    return ss.str();
 }
+
+// Main plotting function that calls the other functions
+std::string createPlot(const std::string& title,
+   const std::vector<FitData>& data,
+   const double maxFit,
+   const int plotWidth,
+   const int plotHeight,
+   const std::string& lineColor,
+   const double s6Norm) {
+   std::stringstream ss;
+
+   // Create basic plot structure
+   ss << createPlotStructure(title, plotWidth, plotHeight);
+
+   // Create Y-axis and gridlines
+   const std::vector<double> yAxisValues = CreateBetterYAxisGridValues(maxFit, plotHeight);
+   ss << createYAxisAndGridlines(yAxisValues, maxFit, plotWidth, plotHeight);
+
+   // Create reference lines
+   ss << createReferenceLines(s6Norm, maxFit, plotWidth, plotHeight);
+
+   // Plot the data points
+   ss << plotDataPoints(data, maxFit, plotWidth, plotHeight, lineColor);
+
+   return ss.str();
+}
+
+
 // Specialized function for Delone plot
 std::string GrimmerChains::createDelonePlot(const std::vector<FitData>& deloneFits,
    const double maxDeloneFit,
@@ -1011,7 +1061,7 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
    std::string stCell = st;
    std::string upper = LRL_StringTools::strToupper(st);
    if (upper.find("RANDOM") != std::string::npos) {
-      stCell += "n " + LRL_ToString(LRL_Cell_Degrees(m_s6));
+      stCell += "   " + LRL_ToString(LRL_Cell_Degrees(m_s6));
    }
    // Now build the SVG components
    const std::string& titleGroup = createTitle("SELLA Lattice Fit Analysis", stCell, width);
