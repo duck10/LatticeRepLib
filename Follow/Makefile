@@ -1,4 +1,4 @@
-CXX	?=	g++-9 -g -O3 -std=gnu++17 -fpermissive
+CXX	=	g++-9 -g -O0 -std=gnu++17 -fpermissive
 COMMAND = Follow
 DEBUGFLAG = "-g"
 
