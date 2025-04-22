@@ -4,6 +4,9 @@
 #include "DeloneFitResults.h"
 #include "DeloneTypeList.h"
 #include "GrimmerTree.h"
+#include "LRL_Cell_Degrees.h"
+#include "LRL_StringTools.h"
+#include "LRL_ToString.h"
 #include "S6.h"
 #include "S6BoundaryTransforms.h"
 #include "Sella.h"
@@ -1003,10 +1006,15 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
       maxPearsonFit = plotPearsonFits.back().fitValue;
    }
 
-   // Now build the SVG components
-   const std::string& titleGroup = createTitle("SELLA Lattice Fit Analysis", st, width);
 
    // Use the filtered datasets for the plots
+   std::string stCell = st;
+   std::string upper = LRL_StringTools::strToupper(st);
+   if (upper.find("RANDOM") != std::string::npos) {
+      stCell += "n " + LRL_ToString(LRL_Cell_Degrees(m_s6));
+   }
+   // Now build the SVG components
+   const std::string& titleGroup = createTitle("SELLA Lattice Fit Analysis", stCell, width);
    const std::string& delonePlotGroup = this->createDelonePlot(
       plotDeloneFits,
       maxDeloneFit,
