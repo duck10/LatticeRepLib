@@ -17,7 +17,7 @@ static int randSeed1 = 19191;
 
 std::ostream& operator<< (std::ostream& o, const B4& dt) {
    for (size_t i = 0; i < 4; ++i)
-      o << dt.m_vec[i];
+      o << dt.m_vec[i] << " ";
    return o;
 }
 

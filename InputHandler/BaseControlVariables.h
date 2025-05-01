@@ -33,6 +33,12 @@ public:
          }
       );
 
+      InputHandler::registerHandler("SHOWCONTROLS", .5,
+         [this](BaseControlVariables& controls, const std::string& value) {
+            showControls = (value == "1" || value == "TRUE" || value.empty());
+         }
+      );
+
       InputHandler::registerHandler("WEB_INPUT", .5,
          [this](BaseControlVariables& controls, const std::string& value) {
             webRun = (value == "1" || value == "TRUE" || value.empty());

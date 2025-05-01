@@ -45,6 +45,11 @@ public:
    P3 operator-(const P3& p3) const;
    P3 operator+(const P3& p3) const;
 
+   static double DistanceBetween(const P3& p1, const P3& p2) {
+      const P3 diff = p1 - p2;
+      return diff.norm();
+   }
+
 private:
    std::vector<std::pair<double, double> > m_p3;
 };

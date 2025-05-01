@@ -427,6 +427,16 @@ Matrix_3x3 adjoint( void ) const {
    m[0]*m[4] - m[3]*m[1]);    //m2[8] =
 }
 
+bool operator==(const Matrix_3x3& other) const {
+   for (int i = 0; i < 9; ++i) {
+      // For integer matrices, exact comparison
+      if ((*this)[i] != other[i]) {
+         return false;
+      }
+   }
+   return true;
+}
+
     //matrix-vector operations
 //-----------------------------------------------------------------------------
 // Name: MV()
@@ -450,6 +460,8 @@ inline Vector_3 MV ( const Vector_3& v ) const
 
     //operations on matrices only
     Matrix_3x3 operator*  ( const Matrix_3x3& mm ) const;
+
+
 
 //-----------------------------------------------------------------------------
 // Name: operator+()
@@ -748,6 +760,15 @@ double& operator[]( const int& i )
 static Vector_3 UnitV( const Vector_3& v ) { return( v/v.Norm( ) ); }
 static Matrix_3x3 UnitMatrix( void ) { return( Matrix_3x3( 1.0,0.0,0.0, 0.0,1.0,0.0, 0.0,0.0,1.0 ) ); }
 
+inline bool operator<(const Matrix_3x3& lhs, const Matrix_3x3& rhs) {
+   // Compare elements lexicographically
+   for (int i = 0; i < 9; i++) {
+      if (std::abs(lhs[i] - rhs[i]) > 1e-10) {
+         return lhs[i] < rhs[i];
+      }
+   }
+   return false; // They're equal
+}
 
 #endif  //  vector_3_INCLUDED
 

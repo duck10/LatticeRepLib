@@ -54,7 +54,7 @@ public:
    Vector_3  operator[] (const size_t n) const;
    Vector_3& operator[] (const size_t n);
 
-   double DistanceBetween( const B4& v1, const B4& v2 );
+   static double DistanceBetween( const B4& v1, const B4& v2 );
    size_t size(void) const { return 4; }
    double norm(void) const;
    double norm(const B4& dt) const;
@@ -79,6 +79,32 @@ public:
    static B4 randDeloneReduced(const double d);
    static B4 randDeloneUnreduced(const double d);
    static std::string GetName(void) { return "B4, Delone Tetrahedron"; }
+
+   B4 operator*(const Matrix_3x3& matrix) const {
+      Vector_3 result[4];
+
+      // For each output vector
+      for (int i = 0; i < 3; ++i) {
+         result[i] = Vector_3(0, 0, 0);
+
+         // Calculate linear combination of input vectors
+         for (int j = 0; j < 3; ++j) {
+            if (matrix[i * 3 + j] != 0) {
+               result[i] = result[i] + matrix[i * 3 + j] * m_vec[j];
+            }
+         }
+      }
+
+      // Calculate the fourth vector to maintain sum = 0
+      result[3] = -(result[0] + result[1] + result[2]);
+
+      return B4(result[0], result[1], result[2], result[3]);
+   }
+
+   // Add a friend operator for pre-multiplication
+   friend B4 operator*(const Matrix_3x3& matrix, const B4& b4) {
+      return b4 * matrix;
+   }
 
 protected:
    std::vector<Vector_3> m_vec;
