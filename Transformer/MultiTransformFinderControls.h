@@ -1,64 +1,112 @@
-#ifndef MULTI_TRANSFORM_FINDER_CONTROLS_H
-#define MULTI_TRANSFORM_FINDER_CONTROLS_H
+#ifndef MULTITRANSFORMFINDERCONTROLS_H
+#define MULTITRANSFORMFINDERCONTROLS_H
 
 #include "BaseControlVariables.h"
 #include "InputHandler.h"
-#include "LRL_StringTools.h"
-
-#include <sstream>
+#include <iostream>
+#include <string>
 
 class MultiTransformFinderControls : public BaseControlVariables {
 public:
-   friend std::ostream& operator<< (std::ostream& os, const MultiTransformFinderControls& ctrl) {
-      os << "; MultiTransformFinder Controls" << std::endl;
-      os << ";   Distance Threshold: " << ctrl.distanceThreshold << std::endl;
-      os << ";   Max Results: " << ctrl.maxResults << std::endl;
-      os << ";   Include Identity Matrix: " << (ctrl.includeIdentityMatrix ? "Yes" : "No") << std::endl;
+   friend std::ostream& operator<< (std::ostream& os, const MultiTransformFinderControls& mtfc) {
+      os << "; MultiTransformFinderControls\n";
+      os << "; show details " << (mtfc.m_showDetails ? "true" : "false") << std::endl;
+      os << "; show extra transform info " << (mtfc.m_showExtraTransformInfo ? "true" : "false") << std::endl;
+      os << "; matrix search depth " << mtfc.m_maxMatrixSearchDepth << std::endl;
+      os << "; max transformations to show " << mtfc.m_maxTransformationsToShow << std::endl;
+      os << "; max transformation distance " << mtfc.m_maxTransformationDistance << std::endl;
+      os << "; distance threshold " << mtfc.m_distanceThreshold << std::endl;
+      os << "; include identity matrix " << (mtfc.m_includeIdentityMatrix ? "true" : "false") << std::endl;
       return os;
    }
 
    MultiTransformFinderControls() {
-      // Register handlers for control variables
-      // Note: The base class handles "show" automatically to set showControls
-
-      InputHandler::registerHandler("DISTANCETHRESHOLD", 0.3,
+      // Register handlers for control parameters
+      InputHandler::registerHandler("SHOWDETAILS", 0.31,
          [this](const BaseControlVariables&, const std::string& value) {
-            distanceThreshold = std::stod(value);
+            setShowDetails(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
 
-      InputHandler::registerHandler("MAXRESULTS", 0.4,
+      InputHandler::registerHandler("DETAILS", 0.32,
          [this](const BaseControlVariables&, const std::string& value) {
-            maxResults = std::stoul(value);
+            setShowDetails(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
 
-      InputHandler::registerHandler("INCLUDEIDENTITYMATRIX", 0.5,
-         [this](BaseControlVariables&, const std::string& value) {
-            includeIdentityMatrix = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      InputHandler::registerHandler("SHOWTRANSFORMINFO", 0.33,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setShowExtraTransformInfo(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
 
-      InputHandler::registerHandler("SHOWDETAILS", 0.5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showDetails = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      InputHandler::registerHandler("MATRIXSEARCHDEPTH", 0.34,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setMaxMatrixSearchDepth(std::stoi(value));
          });
 
-      InputHandler::registerHandler("DETAILS", 0.5,
-         [this](BaseControlVariables&, const std::string& value) {
-            showDetails = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      InputHandler::registerHandler("MAXTRANSFORMS", 0.35,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setMaxTransformationsToShow(std::stoi(value));
          });
-      }
 
-   double getDistanceThreshold() const { return distanceThreshold; }
-   size_t getMaxResults() const { return maxResults; }
-   bool shouldIncludeIdentity() const { return includeIdentityMatrix; }
-   bool shouldShowControls() const { return showControls; }
-   bool shouldShowDetails() const { return showDetails; }
+      InputHandler::registerHandler("MAXDISTANCE", 0.36,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setMaxTransformationDistance(std::stod(value));
+         });
+
+      InputHandler::registerHandler("DISTANCETHRESHOLD", 0.37,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setDistanceThreshold(std::stod(value));
+         });
+
+      InputHandler::registerHandler("INCLUDEIDENTITY", 0.38,
+         [this](const BaseControlVariables&, const std::string& value) {
+            setIncludeIdentityMatrix(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         });
+
+      InputHandler::registerHandler("SORTBY", 0.39,
+         [this](const BaseControlVariables&, const std::string& value) {
+            std::string upperValue = LRL_StringTools::strToupper(value);
+            if (upperValue == "S6" || upperValue == "P3") {
+               setSortBy(upperValue);
+            }
+            else {
+               std::cout << "Warning: Unknown sort option: " << value << ". Using default (P3)." << std::endl;
+               setSortBy("P3");
+            }
+         });
+   }
+
+   // Getters
+   bool shouldShowDetails() const { return m_showDetails; }
+   bool shouldShowExtraTransformInfo() const { return m_showExtraTransformInfo; }
+   int getMaxMatrixSearchDepth() const { return m_maxMatrixSearchDepth; }
+   int getMaxTransformationsToShow() const { return m_maxTransformationsToShow; }
+   double getMaxTransformationDistance() const { return m_maxTransformationDistance; }
+   double getDistanceThreshold() const { return m_distanceThreshold; }
+   bool shouldIncludeIdentityMatrix() const { return m_includeIdentityMatrix; }
+
+   // Setters
+   void setShowDetails(const bool b) { m_showDetails = b; }
+   void setShowExtraTransformInfo(const bool b) { m_showExtraTransformInfo = b; }
+   void setMaxMatrixSearchDepth(const int depth) { m_maxMatrixSearchDepth = depth; }
+   void setMaxTransformationsToShow(const int count) { m_maxTransformationsToShow = count; }
+   void setMaxTransformationDistance(const double distance) { m_maxTransformationDistance = distance; }
+   void setDistanceThreshold(const double threshold) { m_distanceThreshold = threshold; }
+   void setIncludeIdentityMatrix(const bool b) { m_includeIdentityMatrix = b; }
+
+   bool shouldSortByP3() const { return m_sortBy == "P3"; }
+   std::string getSortBy() const { return m_sortBy; }
+   void setSortBy(const std::string& sortBy) { m_sortBy = sortBy; }
 
 private:
-   double distanceThreshold = 50.0;
-   size_t maxResults = 5;
-   bool includeIdentityMatrix = true;
-   bool showDetails = false;
+   std::string m_sortBy = "P3"; // Default to P3 distance
+   bool m_showDetails = false;
+   bool m_showExtraTransformInfo = false;
+   int m_maxMatrixSearchDepth = 3;
+   int m_maxTransformationsToShow = 3;
+   double m_maxTransformationDistance = 100.0;
+   double m_distanceThreshold = 50.0;
+   bool m_includeIdentityMatrix = true;
 };
 
-#endif // MULTI_TRANSFORM_FINDER_CONTROLS_H
+#endif // MULTITRANSFORMFINDERCONTROLS_H
 

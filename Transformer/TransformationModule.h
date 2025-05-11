@@ -1,31 +1,42 @@
-#ifndef TRANSFORMATION_MODULE_H
-#define TRANSFORMATION_MODULE_H
+#ifndef TRANSFORMATIONMODULE_H
+#define TRANSFORMATIONMODULE_H
 
-#include "LatticeCell.h"
 #include "B4Matcher.h"
-#include "MultiTransformFinderControls.h"
+#include "LRL_Cell.h"
 #include <vector>
-#include <limits>
 
-// Structure to hold transformation results
-struct TransformationResult {
-   std::vector<B4Matcher::TransformResult> transformations;
-   double bestDistance;
+// Forward declarations
+class MultiTransformFinderControls;
+
+// Result structure
+struct TransformationModuleResult {
    bool isValid;
+   std::vector<B4Matcher::TransformResult> transformations;
    int duplicatesRemoved;
 
-   TransformationResult()
-      : bestDistance(std::numeric_limits<double>::max()),
-      isValid(false),
-      duplicatesRemoved(0) {
-   }
+   TransformationModuleResult() : isValid(false), duplicatesRemoved(0) {}
 };
 
-// Core transformation function for primitive cells
-TransformationResult calculatePrimitiveTransformation(
-   const LatticeCell& cellToTransform,
-   const LatticeCell& referenceCell,
-   const MultiTransformFinderControls& controls);
+class TransformationModule {
+private:
+   const MultiTransformFinderControls& m_controls;
 
-#endif // TRANSFORMATION_MODULE_H
+   // Helper method to check for duplicate matrices
+   bool isMatrixDuplicate(
+      const Matrix_3x3& m1,
+      const Matrix_3x3& m2,
+      double tolerance = 1e-6) const;
 
+public:
+   // Constructor
+   TransformationModule(const MultiTransformFinderControls& controls)
+      : m_controls(controls) {
+   }
+
+   // Main method to find transformations
+   TransformationModuleResult FindBestTransformations(
+      const LRL_Cell& cellToTransform,
+      const LRL_Cell& referenceCell) const;
+};
+
+#endif // TRANSFORMATIONMODULE_H

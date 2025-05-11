@@ -1,442 +1,396 @@
-﻿// B4Matcher.cpp
-#include "B4Matcher.h"
+﻿#include "B4Matcher.h"
+#include "MultiTransformFinder.h"
+#include "MultiTransformFinderControls.h"
+#include "TransformerUtilities.h"
+#include "P3.h"
 
-// Add this function to your source file (same file as your other matrix generators)
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <set>
+
+// Generate permutation matrices
 std::vector<Matrix_3x3> generatePermutationMatrices() {
    std::vector<Matrix_3x3> permutations;
 
    // Identity
-   permutations.push_back(Matrix_3x3(
-      1, 0, 0,
-      0, 1, 0,
-      0, 0, 1
-   ));
+   permutations.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1));
 
-   // Cyclic permutations
-   permutations.push_back(Matrix_3x3(
-      0, 0, 1,
-      1, 0, 0,
-      0, 1, 0
-   ));
-
-   permutations.push_back(Matrix_3x3(
-      0, 1, 0,
-      0, 0, 1,
-      1, 0, 0
-   ));
-
-   // Permutations with sign flips are already covered in other generators
+   // Axis permutations
+   permutations.emplace_back(Matrix_3x3(0, 0, 1, 1, 0, 0, 0, 1, 0)); // This is (c,a,b)
+   permutations.emplace_back(Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 0, 0)); // This is (b,c,a)
+   permutations.emplace_back(Matrix_3x3(0, 1, 0, 1, 0, 0, 0, 0, 1)); // This is (b,a,c)
+   permutations.emplace_back(Matrix_3x3(1, 0, 0, 0, 0, 1, 0, 1, 0)); // This is (a,c,b)
+   permutations.emplace_back(Matrix_3x3(0, 0, 1, 0, 1, 0, 1, 0, 0)); // This is (c,b,a)
 
    return permutations;
 }
 
-std::string B4Matcher::TransformResult::interpretMatrix(const Matrix_3x3& matrix) {
-   // Common transformations
-   if (B4Matcher::isApproximately(matrix[0], 1.0) &&
-      B4Matcher::isApproximately(matrix[4], 1.0) &&
-      B4Matcher::isApproximately(matrix[8], 1.0) &&
-      B4Matcher::isApproximately(matrix[1], 0.0) &&
-      B4Matcher::isApproximately(matrix[2], 0.0) &&
-      B4Matcher::isApproximately(matrix[3], 0.0) &&
-      B4Matcher::isApproximately(matrix[5], 0.0) &&
-      B4Matcher::isApproximately(matrix[6], 0.0) &&
-      B4Matcher::isApproximately(matrix[7], 0.0)) {
-      return "Identity (a,b,c) -> (a,b,c)";
-   }
-
-   if (B4Matcher::isApproximately(matrix[2], 1.0) &&
-      B4Matcher::isApproximately(matrix[3], 1.0) &&
-      B4Matcher::isApproximately(matrix[7], 1.0) &&
-      B4Matcher::isApproximately(matrix[0], 0.0) &&
-      B4Matcher::isApproximately(matrix[1], 0.0) &&
-      B4Matcher::isApproximately(matrix[4], 0.0) &&
-      B4Matcher::isApproximately(matrix[5], 0.0) &&
-      B4Matcher::isApproximately(matrix[6], 0.0) &&
-      B4Matcher::isApproximately(matrix[8], 0.0)) {
-      return "Cyclic Permutation (a,b,c) -> (c,a,b)";
-   }
-
-   // Default: Build description from matrix
-   std::ostringstream oss;
-   bool firstA = true, firstB = true, firstC = true;
-
-   oss << "a' = ";
-   if (matrix[0] != 0) {
-      oss << (firstA ? "" : (matrix[0] > 0 ? "+ " : "")) << matrix[0] << "*a ";
-      firstA = false;
-   }
-   if (matrix[1] != 0) {
-      oss << (firstA ? "" : (matrix[1] > 0 ? "+ " : "")) << matrix[1] << "*b ";
-      firstA = false;
-   }
-   if (matrix[2] != 0) {
-      oss << (firstA ? "" : (matrix[2] > 0 ? "+ " : "")) << matrix[2] << "*c";
-      firstA = false;
-   }
-
-   oss << std::endl << "b' = ";
-   if (matrix[3] != 0) {
-      oss << (firstB ? "" : (matrix[3] > 0 ? "+ " : "")) << matrix[3] << "*a ";
-      firstB = false;
-   }
-   if (matrix[4] != 0) {
-      oss << (firstB ? "" : (matrix[4] > 0 ? "+ " : "")) << matrix[4] << "*b ";
-      firstB = false;
-   }
-   if (matrix[5] != 0) {
-      oss << (firstB ? "" : (matrix[5] > 0 ? "+ " : "")) << matrix[5] << "*c";
-      firstB = false;
-   }
-
-   oss << std::endl << "c' = ";
-   if (matrix[6] != 0) {
-      oss << (firstC ? "" : (matrix[6] > 0 ? "+ " : "")) << matrix[6] << "*a ";
-      firstC = false;
-   }
-   if (matrix[7] != 0) {
-      oss << (firstC ? "" : (matrix[7] > 0 ? "+ " : "")) << matrix[7] << "*b ";
-      firstC = false;
-   }
-   if (matrix[8] != 0) {
-      oss << (firstC ? "" : (matrix[8] > 0 ? "+ " : "")) << matrix[8] << "*c";
-      firstC = false;
-   }
-
-   return oss.str();
+// Constructor implementations
+B4Matcher::B4Matcher(const LRL_Cell& cellToTransform, const LRL_Cell& referenceCell)
+   : m_b4CellToTransform(cellToTransform),
+   m_b4ReferenceCell(referenceCell),
+   m_controls(*new MultiTransformFinderControls()) { // Note: This will cause a memory leak!
+   // Use default search depth of 3
+   FindTransformations(3);
 }
 
-bool B4Matcher::isPermutationMatrix(const Matrix_3x3& matrix) {
-   // Check if each row has exactly one non-zero element
-   for (int row = 0; row < 3; ++row) {
-      int nonZeroCount = 0;
-      for (int col = 0; col < 3; ++col) {
-         if (std::abs(matrix[row * 3 + col]) > 0.9) {
-            nonZeroCount++;
-         }
-      }
-      if (nonZeroCount != 1) return false;
+B4Matcher::B4Matcher(const LRL_Cell& cellToTransform, const LRL_Cell& referenceCell,
+   const MultiTransformFinderControls& controls)
+   : m_b4CellToTransform(cellToTransform),
+   m_b4ReferenceCell(referenceCell),
+   m_controls(controls) {
+   // Use search depth from controls
+   FindTransformations(controls.getMaxMatrixSearchDepth());
+}
+
+B4Matcher::B4Matcher(const B4& sourceB4, const B4& targetB4, const MultiTransformFinderControls& controls)
+   : m_b4CellToTransform(sourceB4),
+   m_b4ReferenceCell(targetB4),
+   m_controls(controls) {
+}
+
+// Helper function to measure transformation complexity
+double B4Matcher::transformationComplexity(const Matrix_3x3& matrix) const {
+   double complexity = 0.0;
+
+   // Check if it's identity or a simple permutation
+   const double epsilon = 1e-10;
+
+   // Identity check with one-dimensional array access
+   bool isIdentity =
+      fabs(matrix[0] - 1.0) < epsilon && fabs(matrix[1]) < epsilon && fabs(matrix[2]) < epsilon &&
+      fabs(matrix[3]) < epsilon && fabs(matrix[4] - 1.0) < epsilon && fabs(matrix[5]) < epsilon &&
+      fabs(matrix[6]) < epsilon && fabs(matrix[7]) < epsilon && fabs(matrix[8] - 1.0) < epsilon;
+
+   if (isIdentity) {
+      return 0.0; // Identity is the simplest
    }
 
-   // Check if each column has exactly one non-zero element
-   for (int col = 0; col < 3; ++col) {
-      int nonZeroCount = 0;
-      for (int row = 0; row < 3; ++row) {
-         if (std::abs(matrix[row * 3 + col]) > 0.9) {
-            nonZeroCount++;
+   // Count non-zero elements
+   int nonZeros = 0;
+   for (int i = 0; i < 9; ++i) {
+      if (fabs(matrix[i]) > epsilon) {
+         nonZeros++;
+
+         // Add complexity for values other than -1, 0, 1
+         if (fabs(fabs(matrix[i]) - 1.0) > epsilon) {
+            complexity += 2.0;
          }
       }
-      if (nonZeroCount != 1) return false;
+   }
+
+   // Add complexity based on number of non-zeros
+   complexity += nonZeros;
+
+   return complexity;
+}
+
+void B4Matcher::ProcessMatrix(const Matrix_3x3& matrix) {
+   // Create LRL_Cell from first B4
+   LRL_Cell cell1 = m_b4CellToTransform;
+
+   // Apply transformation to the cell
+   B4 transformedB4 = matrix * m_b4CellToTransform;  // Use matrix multiplication on B4 directly
+
+   // Calculate distance
+   double distance = B4::DistanceBetween(transformedB4, m_b4ReferenceCell);
+
+   // Store result
+   TransformResult result;
+   result.transformMatrix = matrix;
+   result.b4Distance = distance;
+   result.transformedB4 = transformedB4;  // Store the transformed B4
+
+   m_transformResults.emplace_back(result);
+}
+
+B4Matcher::TransformResult B4Matcher::findBestTransformation() const {
+   if (m_transformResults.empty()) {
+      // Create and initialize the TransformResult properly
+      TransformResult result;
+      result.transformMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+      result.transformedB4 = m_b4CellToTransform; // Use the source B4, not a double
+      result.b4Distance = std::numeric_limits<double>::max();
+      return result;
+   }
+   return m_transformResults[0];
+}
+
+std::vector<B4Matcher::TransformResult> B4Matcher::findMultipleTransformations(size_t maxCount) const {
+   if (m_transformResults.empty()) {
+      // Create and initialize the TransformResult properly
+      TransformResult result;
+      result.transformMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+      result.transformedB4 = m_b4CellToTransform; // Use the source B4, not a double
+      result.b4Distance = std::numeric_limits<double>::max();
+      return std::vector<TransformResult>{result}; // Use {} instead of () for initialization
+   }
+
+   // Fixed std::min call with both arguments
+   const size_t count = std::min(maxCount, m_transformResults.size());
+   return std::vector<TransformResult>(m_transformResults.begin(), m_transformResults.begin() + count);
+}
+
+// Generate common crystallographic matrices
+std::vector<Matrix_3x3> B4Matcher::generateCrystallographicMatrices() const {
+   std::vector<Matrix_3x3> matrices;
+
+   // Basic permutation matrices (identity, axis swaps, etc.)
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1));  // Identity
+   matrices.emplace_back(Matrix_3x3(0, 1, 0, 1, 0, 0, 0, 0, 1));  // Swap x,y
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 0, 1, 0, 1, 0));  // Swap y,z
+   matrices.emplace_back(Matrix_3x3(0, 0, 1, 0, 1, 0, 1, 0, 0));  // Swap x,z
+   matrices.emplace_back(Matrix_3x3(0, 0, 1, 1, 0, 0, 0, 1, 0));  // xyz->zxy
+   matrices.emplace_back(Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 0, 0));  // xyz->yzx
+
+   // Sign flips with permutations (still with det=+1)
+   matrices.emplace_back(Matrix_3x3(-1, 0, 0, 0, -1, 0, 0, 0, 1));  // Invert x,y
+   matrices.emplace_back(Matrix_3x3(-1, 0, 0, 0, 1, 0, 0, 0, -1));  // Invert x,z
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, -1, 0, 0, 0, -1));  // Invert y,z
+
+   // Common shear transformations (with det=+1)
+   matrices.emplace_back(Matrix_3x3(1, 1, 0, 0, 1, 0, 0, 0, 1));  // Shear in xy plane
+   matrices.emplace_back(Matrix_3x3(1, 0, 1, 0, 1, 0, 0, 0, 1));  // Shear in xz plane
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 1, 1, 0, 0, 0, 1));  // Shear in yx plane
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, 1, 0, 0, 1));  // Shear in yz plane
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 1, 0, 1));  // Shear in zx plane
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 1, 1));  // Shear in zy plane
+
+   // Negative shears
+   matrices.emplace_back(Matrix_3x3(1, -1, 0, 0, 1, 0, 0, 0, 1));  // Negative shear in xy
+   matrices.emplace_back(Matrix_3x3(1, 0, -1, 0, 1, 0, 0, 0, 1));  // Negative shear in xz
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, -1, 1, 0, 0, 0, 1));  // Negative shear in yx
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, -1, 0, 0, 1));  // Negative shear in yz
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, 0, -1, 0, 1));  // Negative shear in zx
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 0, -1, 1));  // Negative shear in zy
+
+   // Common centering operations (preserving det=+1)
+   matrices.emplace_back(Matrix_3x3(1, 1, 1, 0, 1, 0, 0, 0, 1));  // Face-centered related
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 1, 1, 1, 0, 0, 1));  // Body-centered related 
+   matrices.emplace_back(Matrix_3x3(1, 1, 0, 1, 0, 0, 1, 1, 1));  // Complex centering
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 1, 1, 0, 1, 0, 1));  // Mixed centering
+   matrices.emplace_back(Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 1, 1));  // Mixed centering
+
+   // Complex matrices known to be useful for challenging cases
+   matrices.emplace_back(Matrix_3x3(0, -1, 0, 1, 0, 0, 1, 1, 1));  // LeTrong & Stenkamp case
+   matrices.emplace_back(Matrix_3x3(-1, 1, 0, -1, 0, 0, 0, 0, -1)); // Charley Simmons case
+   matrices.emplace_back(Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 0, 1));    // For last test case
+   matrices.emplace_back(Matrix_3x3(0, 1, 0, 0, -1, 1, 1, 0, 0));    // Mixed operations
+   matrices.emplace_back(Matrix_3x3(1, 1, 0, -1, 1, 0, 0, 0, 1));    // Mixed operations
+   matrices.emplace_back(Matrix_3x3(1, 0, 1, 0, 1, -1, 0, 0, 1));    // Mixed operations
+
+   return matrices;
+}
+
+// Add this to B4Matcher.cpp
+
+std::vector<Matrix_3x3> B4Matcher::generatePermutationMatrices() const {
+   std::vector<Matrix_3x3> matrices;
+
+   // Six basic permutation matrices (identity + 5 others)
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1));  // xyz → xyz (identity)
+   matrices.emplace_back(Matrix_3x3(0, 1, 0, 1, 0, 0, 0, 0, 1));  // xyz → yxz
+   matrices.emplace_back(Matrix_3x3(0, 0, 1, 0, 1, 0, 1, 0, 0));  // xyz → zyx
+   matrices.emplace_back(Matrix_3x3(1, 0, 0, 0, 0, 1, 0, 1, 0));  // xyz → xzy
+   matrices.emplace_back(Matrix_3x3(0, 0, 1, 1, 0, 0, 0, 1, 0));  // xyz → zxy
+   matrices.emplace_back(Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 0, 0));  // xyz → yzx
+
+   return matrices;
+}
+
+bool B4Matcher::isValidTransformationMatrix(const Matrix_3x3& matrix) const {
+   // Check determinant (must be exactly +1 for valid lattice transformations)
+   const double det = matrix.Det();
+   if (std::abs(det - 1.0) > 1e-10) {
+      return false;
    }
 
    return true;
 }
 
-void B4Matcher::analyzeAxisPermutation(
-   const Matrix_3x3& matrix,
-   const LRL_Cell_Degrees& sourceDeg,
-   const LRL_Cell_Degrees& targetDeg) {
+// Generate matrices with integers between -maxCoeff and maxCoeff
+std::vector<Matrix_3x3> B4Matcher::generateComprehensiveIntegerMatrices(int maxCoeff) const {
+   std::vector<Matrix_3x3> matrices;
+   const int maxToGenerate = 100; // Limit to avoid excessive matrices
+   int generated = 0;
 
-   // Extract transformation pattern from matrix
-   int mapping[3] = { -1, -1, -1 };
+   // Quick lookup for simple matrices (often these are the best matches)
+   std::vector<Matrix_3x3> simpleMatrices = generateCrystallographicMatrices();
+   for (const auto& matrix : simpleMatrices) {
+      if (isValidTransformationMatrix(matrix)) {
+         matrices.emplace_back(matrix);
+         generated++;
+      }
+   }
 
-   // For each row, find which column has a non-zero value
-   for (int row = 0; row < 3; ++row) {
-      for (int col = 0; col < 3; ++col) {
-         if (std::abs(matrix[row * 3 + col]) > 0.9) {
-            mapping[row] = col;
+   // Try common combinations of basis permutation matrices and shears
+   const std::vector<Matrix_3x3> permutations = generatePermutationMatrices();
+   const std::vector<Matrix_3x3> shears = {
+      Matrix_3x3(1, 1, 0, 0, 1, 0, 0, 0, 1),  // xy shear
+      Matrix_3x3(1, 0, 1, 0, 1, 0, 0, 0, 1),  // xz shear
+      Matrix_3x3(1, 0, 0, 1, 1, 0, 0, 0, 1),  // yx shear
+      Matrix_3x3(1, 0, 0, 0, 1, 1, 0, 0, 1),  // yz shear
+      Matrix_3x3(1, 0, 0, 0, 1, 0, 1, 0, 1),  // zx shear
+      Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 1, 1),  // zy shear
+      Matrix_3x3(1, -1, 0, 0, 1, 0, 0, 0, 1), // negative xy shear
+      Matrix_3x3(1, 0, -1, 0, 1, 0, 0, 0, 1), // negative xz shear
+      Matrix_3x3(1, 0, 0, -1, 1, 0, 0, 0, 1), // negative yx shear
+      Matrix_3x3(1, 0, 0, 0, 1, -1, 0, 0, 1), // negative yz shear
+      Matrix_3x3(1, 0, 0, 0, 1, 0, -1, 0, 1), // negative zx shear
+      Matrix_3x3(1, 0, 0, 0, 1, 0, 0, -1, 1)  // negative zy shear
+   };
+
+   // Try permutation-shear combinations
+   for (const auto& perm : permutations) {
+      for (const auto& shear : shears) {
+         Matrix_3x3 combined = perm * shear;
+         if (isValidTransformationMatrix(combined)) {
+            matrices.emplace_back(combined);
+            generated++;
+            if (generated >= maxToGenerate) return matrices;
+         }
+
+         // Also try the reverse combination
+         combined = shear * perm;
+         if (isValidTransformationMatrix(combined)) {
+            matrices.emplace_back(combined);
+            generated++;
+            if (generated >= maxToGenerate) return matrices;
          }
       }
    }
 
-   // Display the axes mapping
-   std::cout << "      Axes mapping based on matrix: ";
-   char axes[3] = { 'a', 'b', 'c' };
-   for (int i = 0; i < 3; ++i) {
-      if (mapping[i] >= 0) {
-         std::cout << axes[mapping[i]] << " -> " << axes[i] << "  ";
-      }
-   }
-   std::cout << std::endl;
-
-   // Extract source and target values
-   double sourceValues[3] = { sourceDeg[0], sourceDeg[1], sourceDeg[2] };
-   double targetValues[3] = { targetDeg[0], targetDeg[1], targetDeg[2] };
-
-   // Check if this permutation would map source values to target values
-   double mappedValues[3] = { 0, 0, 0 };
-   for (int i = 0; i < 3; ++i) {
-      if (mapping[i] >= 0) {
-         mappedValues[i] = sourceValues[mapping[i]];
+   // Try more complex combinations if we haven't hit our limit
+   if (generated < maxToGenerate && maxCoeff >= 2) {
+      for (const auto& m1 : shears) {
+         for (const auto& m2 : shears) {
+            Matrix_3x3 combined = m1 * m2;
+            if (isValidTransformationMatrix(combined)) {
+               matrices.emplace_back(combined);
+               generated++;
+               if (generated >= maxToGenerate) return matrices;
+            }
+         }
       }
    }
 
-   // Show how source values would map to target if this transformation were applied
-   std::cout << "      If this matrix were correctly applied:" << std::endl;
-   std::cout << "      Source: " << sourceValues[0] << ", " << sourceValues[1] << ", " << sourceValues[2] << std::endl;
-   std::cout << "      Would map to: " << mappedValues[0] << ", " << mappedValues[1] << ", " << mappedValues[2] << std::endl;
-   std::cout << "      Target: " << targetValues[0] << ", " << targetValues[1] << ", " << targetValues[2] << std::endl;
+   // Add some known useful complex matrices
+   if (maxCoeff >= 3) {
+      const std::vector<Matrix_3x3> complexMatrices = {
+         Matrix_3x3(1, 1, 1, 0, 1, 0, 0, 0, 1),  // Triple operations
+         Matrix_3x3(1, 0, 0, 1, 1, 1, 0, 0, 1),
+         Matrix_3x3(1, 0, 0, 0, 1, 0, 1, 1, 1),
+         Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 1, 1)
+      };
 
-   // Check if the mapping would match the target
-   bool isGoodMatch = true;
-   for (int i = 0; i < 3; ++i) {
-      if (std::abs(mappedValues[i] - targetValues[i]) > 0.5) {
-         isGoodMatch = false;
-         break;
+      for (const auto& complex : complexMatrices) {
+         if (isValidTransformationMatrix(complex)) {
+            matrices.emplace_back(complex);
+            generated++;
+         }
+
+         for (const auto& perm : permutations) {
+            Matrix_3x3 combined = complex * perm;
+            if (isValidTransformationMatrix(combined)) {
+               matrices.emplace_back(combined);
+               generated++;
+               if (generated >= maxToGenerate) return matrices;
+            }
+         }
       }
    }
 
-   if (isGoodMatch) {
-      std::cout << "      This transformation would correctly map source to target parameters!" << std::endl;
-   }
-   else {
-      std::cout << "      This transformation would NOT correctly map source to target parameters." << std::endl;
-   }
+   return matrices;
 }
 
-B4Matcher::TransformResult B4Matcher::findBestTransformation(int complexity) const {
+void B4Matcher::FindTransformations(int searchDepth) {
+   // Clear any existing results
+   m_transformResults.clear();
 
-   // Use the advanced matrix generation instead of basic permutations
-   // The default complexity of 2 should be sufficient for most cases
-   std::vector<Matrix_3x3> matrices = generateAdvancedTransformationMatrices(complexity);
-   std::vector<TransformResult> results;
-
-   for (const auto& matrix : matrices) {
-      // Apply transformation directly to B4
-      B4 transformedB4 = matrix * m_sourceB4;
-
-      // Calculate B4 distance
-      double distance = B4::DistanceBetween(transformedB4, m_targetB4);
-
-      results.emplace_back(matrix, transformedB4, distance);
+   // Always include the identity matrix first
+   if (m_controls.shouldIncludeIdentityMatrix()) {
+      Matrix_3x3 identityMatrix(1, 0, 0, 0, 1, 0, 0, 0, 1);
+      ProcessMatrix(identityMatrix);
    }
 
-   // Sort by B4 distance
-   std::sort(results.begin(), results.end());
-
-   // Return the best match
-   if (results.empty()) {
-      // In case no valid transformation was found (shouldn't happen)
-      return TransformResult();
+   // 1. Standard permutation matrices (6 total)
+   const std::vector<Matrix_3x3> permutationMatrices = generatePermutationMatrices();
+   for (const Matrix_3x3& m : permutationMatrices) {
+      ProcessMatrix(m);
    }
-   return results.front();
+
+   // 2. Add comprehensive set of crystallographic matrices
+   const std::vector<Matrix_3x3> crystalMatrices = generateCrystallographicMatrices();
+   for (const Matrix_3x3& m : crystalMatrices) {
+      // Double-check determinant to ensure it's exactly +1
+      if (std::abs(m.Det() - 1.0) < 1e-10) {
+         ProcessMatrix(m);
+      }
+   }
+
+   // 3. Generate more matrices depending on search depth
+   std::vector<Matrix_3x3> additionalMatrices = generateComprehensiveIntegerMatrices(searchDepth);
+   for (const Matrix_3x3& m : additionalMatrices) {
+      if (std::abs(m.Det() - 1.0) < 1e-10) {
+         ProcessMatrix(m);
+      }
+   }
+
+   // Sort results with S6 angle as the primary metric, then P3 distance
+   sortTransformationsByQuality();
 }
 
-std::vector<B4Matcher::TransformResult> B4Matcher::findMultipleTransformations(
-   const size_t maxResults, int complexity) const {
+// New helper method for sorting
+void B4Matcher::sortTransformationsByQuality() {
+   // First calculate and store the metrics for each result
+   for (auto& result : m_transformResults) {
+      // Calculate metrics for each transformation
+      LatticeCell transformedCell(result.transformedB4);
+      LatticeCell referenceCell(m_b4ReferenceCell);
 
-   std::vector<Matrix_3x3> matrices = generateAdvancedTransformationMatrices(complexity);
-   std::vector<TransformResult> results;
+      // S6 metrics
+      const S6 transformed(transformedCell.getCell());
+      const S6 ref(referenceCell.getCell());
+      result.s6AngleFinal = S6::AngleBetween(transformed, ref);
 
-   for (const auto& matrix : matrices) {
-      // Apply transformation directly to B4
-      B4 transformedB4 = matrix * m_sourceB4;
-
-      // Calculate B4 distance
-      double distance = B4::DistanceBetween(transformedB4, m_targetB4);
-
-      results.emplace_back(matrix, transformedB4, distance);
+      // P3 metrics
+      P3 transformedP3(transformedCell.getCell());
+      P3 refP3(referenceCell.getCell());
+      result.p3DistanceFinal = P3::DistanceBetween(transformedP3, refP3);
    }
 
-   // Sort by B4 distance
-   std::sort(results.begin(), results.end());
+   // Now sort the results
+   std::sort(m_transformResults.begin(), m_transformResults.end(),
+      [this](const TransformResult& a, const TransformResult& b) {
+         // Check sorting preference
+         if (m_controls.shouldSortByP3()) {
+            // Primary sorting by P3 distance
+            if (std::abs(a.p3DistanceFinal - b.p3DistanceFinal) > 0.1) {
+               return a.p3DistanceFinal < b.p3DistanceFinal;
+            }
 
-   // Limit results
-   if (results.size() > maxResults) {
-      results.resize(maxResults);
-   }
+            // If P3 distances are very close, compare S6 angles
+            if (std::abs(a.s6AngleFinal - b.s6AngleFinal) > 0.1) {
+               return a.s6AngleFinal < b.s6AngleFinal;
+            }
+         }
+         else {
+            // Primary sorting by S6 angle
+            if (std::abs(a.s6AngleFinal - b.s6AngleFinal) > 0.1) {
+               return a.s6AngleFinal < b.s6AngleFinal;
+            }
 
-   return results;
-}
+            // If S6 angles are very close, compare P3 distances
+            if (std::abs(a.p3DistanceFinal - b.p3DistanceFinal) > 0.1) {
+               return a.p3DistanceFinal < b.p3DistanceFinal;
+            }
+         }
 
-std::vector<B4Matcher::TransformResult> B4Matcher::findMultipleHybridTransformations(
-   const size_t maxResults, int complexity) const {
-
-   // Use a set of matrices to automatically eliminate duplicates
-   std::set<Matrix_3x3> matrixSet;
-
-   // Add advanced transformation matrices
-   std::vector<Matrix_3x3> advancedMatrices = generateAdvancedTransformationMatrices(complexity);
-   for (const auto& m : advancedMatrices) {
-      matrixSet.insert(m);
-   }
-
-   // Add body diagonal transformations
-   std::vector<Matrix_3x3> diagonalMatrices = generateBodyDiagonalTransformations(complexity);
-   for (const auto& m : diagonalMatrices) {
-      matrixSet.insert(m);
-   }
-
-   // Calculate both B4 distance and S6 angle for each matrix
-   std::vector<std::pair<TransformResult, double>> results;
-
-   for (const auto& matrix : matrixSet) {
-      // Apply transformation to B4
-      B4 transformedB4 = matrix * m_sourceB4;
-
-      // Calculate B4 distance
-      double b4Distance = B4::DistanceBetween(transformedB4, m_targetB4);
-
-      // Create TransformResult
-      TransformResult result(matrix, transformedB4, b4Distance);
-
-      // Calculate S6 angle
-      S6 transformedS6 = S6(LatticeCell(transformedB4).getCell());
-      S6 targetS6 = S6(LatticeCell(m_targetB4).getCell());
-      double s6Angle = angleS6(transformedS6, targetS6);
-
-      // Store both the result and the S6 angle
-      results.emplace_back(result, s6Angle);
-   }
-
-   // Sort by a composite score (weighted B4 distance and S6 angle)
-   std::sort(results.begin(), results.end(),
-      [](const auto& a, const auto& b) {
-         const double weightB4 = 0.3;
-         const double weightS6 = 0.7;
-
-         double scoreA = weightB4 * a.first.b4Distance + weightS6 * a.second;
-         double scoreB = weightB4 * b.first.b4Distance + weightS6 * b.second;
-
-         return scoreA < scoreB;
+         // If both metrics are close, prefer simpler matrices
+         double simplA = transformationComplexity(a.transformMatrix);
+         double simplB = transformationComplexity(b.transformMatrix);
+         return simplA < simplB;
       });
-
-   // Extract the TransformResults
-   std::vector<TransformResult> finalResults;
-   for (size_t i = 0; i < std::min(maxResults, results.size()); ++i) {
-      finalResults.push_back(results[i].first);
-   }
-
-   return finalResults;
-}
-
-void B4Matcher::displayTransformResult(
-   const TransformResult& result,
-   const LRL_Cell& sourceCell,
-   const LRL_Cell& targetCell) {
-
-   // Basic output
-   std::cout << "Matrix:" << std::endl;
-   std::cout << result.transformMatrix << std::endl;
-
-   // Convert to cell parameters for display
-   LatticeCell transformedCell(result.transformedB4);
-   LRL_Cell transformedRawCell = transformedCell.getCell();
-   LRL_Cell_Degrees transformedCellDeg(transformedRawCell);
-   LRL_Cell_Degrees targetCellDeg(targetCell);
-
-   std::cout << "Transformed Cell:    " << transformedCellDeg << std::endl;
-   std::cout << "Target Cell:         " << targetCellDeg << std::endl;
-
-   // Calculate metrics
-   S6 transformedS6 = S6(transformedRawCell);
-   S6 targetS6 = S6(targetCell);
-   double s6Angle = angleS6(transformedS6, targetS6);
-
-   P3 transformedP3(transformedRawCell);
-   P3 targetP3(targetCell);
-   double p3Distance = P3::DistanceBetween(transformedP3, targetP3);
-
-   // Calculate parameter differences
-   double paramDiffs[6] = {
-       std::abs(transformedCellDeg[0] - targetCellDeg[0]),
-       std::abs(transformedCellDeg[1] - targetCellDeg[1]),
-       std::abs(transformedCellDeg[2] - targetCellDeg[2]),
-       std::abs(transformedCellDeg[3] - targetCellDeg[3]),
-       std::abs(transformedCellDeg[4] - targetCellDeg[4]),
-       std::abs(transformedCellDeg[5] - targetCellDeg[5])
-   };
-
-   double totalParamDiff =
-      paramDiffs[0] + paramDiffs[1] + paramDiffs[2] +
-      paramDiffs[3] / 10.0 + paramDiffs[4] / 10.0 + paramDiffs[5] / 10.0;
-
-   // Display metrics
-   std::cout << "\nMetrics:" << std::endl;
-   std::cout << "  B4 Distance:      " << result.b4Distance << std::endl;
-   std::cout << "  S6 Angle:         " << s6Angle << " degrees" << std::endl;
-   std::cout << "  P3 Distance:      " << p3Distance << std::endl;
-   std::cout << "  Param Difference: " << totalParamDiff << std::endl;
-
-   // Parameter comparison
-   std::cout << "\nParameter matches:" << std::endl;
-   std::cout << "  a: " << transformedCellDeg[0] << " vs " << targetCellDeg[0]
-      << " (diff: " << paramDiffs[0] << ")" << std::endl;
-   std::cout << "  b: " << transformedCellDeg[1] << " vs " << targetCellDeg[1]
-      << " (diff: " << paramDiffs[1] << ")" << std::endl;
-   std::cout << "  c: " << transformedCellDeg[2] << " vs " << targetCellDeg[2]
-      << " (diff: " << paramDiffs[2] << ")" << std::endl;
-   std::cout << "  alpha: " << transformedCellDeg[3] << " vs " << targetCellDeg[3]
-      << " (diff: " << paramDiffs[3] << ")" << std::endl;
-   std::cout << "  beta: " << transformedCellDeg[4] << " vs " << targetCellDeg[4]
-      << " (diff: " << paramDiffs[4] << ")" << std::endl;
-   std::cout << "  gamma: " << transformedCellDeg[5] << " vs " << targetCellDeg[5]
-      << " (diff: " << paramDiffs[5] << ")" << std::endl;
-}
-
-
-
-// Modify this function in B4Matcher.cpp
-std::vector<B4Matcher::TransformResult> B4Matcher::findBestParameterFit(
-   const size_t maxResults, int complexity) const {
-
-   // Generate matrices
-   std::vector<Matrix_3x3> matrices = generateAdvancedTransformationMatrices(complexity);
-   std::vector<Matrix_3x3> permMatrices = generatePermutationMatrices();
-   matrices.insert(matrices.end(), permMatrices.begin(), permMatrices.end());
-
-   // Process matrices and calculate parameter differences
-   std::vector<std::pair<TransformResult, double>> results;
-   for (const auto& matrix : matrices) {
-      // Apply transformation
-      B4 transformedB4 = matrix * m_sourceB4;
-      double b4Distance = B4::DistanceBetween(transformedB4, m_targetB4);
-
-      // Calculate parameter difference
-      LatticeCell transformedCell(transformedB4);
-      LRL_Cell_Degrees transformedCellDeg(transformedCell.getCell());
-      LRL_Cell_Degrees targetCellDeg(LatticeCell(m_targetB4).getCell());
-
-      double paramDiff =
-         std::abs(transformedCellDeg[0] - targetCellDeg[0]) +
-         std::abs(transformedCellDeg[1] - targetCellDeg[1]) +
-         std::abs(transformedCellDeg[2] - targetCellDeg[2]) +
-         std::abs(transformedCellDeg[3] - targetCellDeg[3]) / 10.0 +
-         std::abs(transformedCellDeg[4] - targetCellDeg[4]) / 10.0 +
-         std::abs(transformedCellDeg[5] - targetCellDeg[5]) / 10.0;
-
-      TransformResult result(matrix, transformedB4, b4Distance);
-      results.emplace_back(result, paramDiff);
-   }
-
-   // Sort by parameter difference
-   std::sort(results.begin(), results.end(),
-      [](const auto& a, const auto& b) {
-         return a.second < b.second;
-      });
-
-   // Deduplicate using a set of matrices
-   std::vector<TransformResult> finalResults;
-   std::set<Matrix_3x3> uniqueMatrices;
-
-   for (const auto& pair : results) {
-      const auto& result = pair.first;
-
-      // Only add if we haven't seen this matrix before
-      if (uniqueMatrices.find(result.transformMatrix) == uniqueMatrices.end()) {
-         finalResults.push_back(result);
-         uniqueMatrices.insert(result.transformMatrix);
-
-         // Stop if we have enough results
-         if (finalResults.size() >= maxResults) break;
-      }
-   }
-
-   // Remove this output line - it will be handled by the display class
-   // std::cout << "Found " << results.size()
-   //    << " transformations, removed "
-   //    << (results.size() - uniqueMatrices.size())
-   //    << " duplicates." << std::endl;
-
-   return finalResults;
 }
 

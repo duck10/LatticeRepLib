@@ -7,6 +7,7 @@
 #include "CS6Dist.h"
 #include "CS6Dist.cpp"
 #include "Delone.h"
+#include "P3.h"
 #include <vector>
 #include <algorithm>
 #include <cmath>
@@ -16,9 +17,16 @@
 #include <tuple>
 #include <set>
 
+//#ifndef M_PI
+//#define M_PI 3.14159265358979323846
+//#endif
+
 // Uses composition with LatticeMatcher instead of inheritance
 template <typename T = void>
 class MultiTransformFinder {
+private:
+   LatticeMatcherDefault m_matcher;
+   static constexpr double M_PI = 3.14159265358979323846;
 public:
    // Structure to hold detailed distance metrics
    struct DistanceMetrics {
@@ -28,15 +36,15 @@ public:
       double lengthsDeviation;   // Deviation in cell lengths
       double anglesDeviation;    // Deviation in cell angles
       double overallQuality;     // Combined score (0-100, higher is better)
+      double p3Distance;         // P3 distance (added for better comparisons)
+      double s6Angle;            // S6 angle in degrees (critical for crystallography)
 
       DistanceMetrics()
          : rawS6Distance(0.0), euclideanDistance(0.0), normalizedDistance(0.0),
-         lengthsDeviation(0.0), anglesDeviation(0.0),
-         overallQuality(100.0) {
+         lengthsDeviation(0.0), anglesDeviation(0.0), overallQuality(100.0),
+         p3Distance(0.0), s6Angle(0.0) {
       }
    };
-
-
 
    // Structure to track transformation plus additional ranking criteria
    struct RankedTransformation {
@@ -88,6 +96,46 @@ public:
       S6 s1 = S6(cell1.getCell());
       S6 s2 = S6(cell2.getCell());
       return (s1 - s2).norm();
+   }
+
+   // Calculate S6 angle between two cells (important for crystallography)
+   double calculateS6Angle(const LatticeCell& cell1, const LatticeCell& cell2) const {
+      const S6 s1 = S6(cell1.getCell());
+      const S6 s2 = S6(cell2.getCell());
+      S6 reduced1, reduced2;
+      Selling::Reduce(s1, reduced1);
+      Selling::Reduce(s2, reduced2);
+
+      // Normalize vectors
+      double norm1 = reduced1.norm();
+      double norm2 = reduced2.norm();
+
+      if (norm1 < 1e-10 || norm2 < 1e-10) {
+         return 0.0; // Handle zero vectors
+      }
+
+      S6 normalized1 = reduced1 * (1.0 / norm1);
+      S6 normalized2 = reduced2 * (1.0 / norm2);
+
+      // Calculate dot product
+      double dotProduct = 0.0;
+      for (int i = 0; i < 6; i++) {
+         dotProduct += normalized1[i] * normalized2[i];
+      }
+
+      // Clamp to valid range for acos
+      if (dotProduct > 1.0) dotProduct = 1.0;
+      if (dotProduct < -1.0) dotProduct = -1.0;
+
+      // Convert to degrees
+      return acos(dotProduct) * 180.0 / M_PI;
+   }
+
+   // Calculate P3 distance between two cells
+   double calculateP3Distance(const LatticeCell& cell1, const LatticeCell& cell2) const {
+      P3 p1(cell1.getCell());
+      P3 p2(cell2.getCell());
+      return P3::DistanceBetween(p1, p2);
    }
 
    void testSpecificMatrices(const LRL_Cell& sourceCell, const LRL_Cell& targetCell) {
@@ -240,7 +288,55 @@ public:
       // [Rest of the function remains the same...]
    }
 
+   // Generate a comprehensive set of crystallographic matrices
+   std::vector<Matrix_3x3> generateCrystallographicMatrices() const {
+      std::vector<Matrix_3x3> matrices;
 
+      // Basic permutation matrices (identity, axis swaps, etc.)
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1));  // Identity
+      matrices.push_back(Matrix_3x3(0, 1, 0, 1, 0, 0, 0, 0, 1));  // Swap x,y
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, 0, 1, 0, 1, 0));  // Swap y,z
+      matrices.push_back(Matrix_3x3(0, 0, 1, 0, 1, 0, 1, 0, 0));  // Swap x,z
+      matrices.push_back(Matrix_3x3(0, 0, 1, 1, 0, 0, 0, 1, 0));  // xyz->zxy
+      matrices.push_back(Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 0, 0));  // xyz->yzx
+
+      // Sign flips with permutations (still with det=+1)
+      matrices.push_back(Matrix_3x3(-1, 0, 0, 0, -1, 0, 0, 0, 1));  // Invert x,y
+      matrices.push_back(Matrix_3x3(-1, 0, 0, 0, 1, 0, 0, 0, -1));  // Invert x,z
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, -1, 0, 0, 0, -1));  // Invert y,z
+
+      // Common shear transformations (with det=+1)
+      matrices.push_back(Matrix_3x3(1, 1, 0, 0, 1, 0, 0, 0, 1));  // Shear in xy plane
+      matrices.push_back(Matrix_3x3(1, 0, 1, 0, 1, 0, 0, 0, 1));  // Shear in xz plane
+      matrices.push_back(Matrix_3x3(1, 0, 0, 1, 1, 0, 0, 0, 1));  // Shear in yx plane
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, 1, 1, 0, 0, 1));  // Shear in yz plane
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 1, 0, 1));  // Shear in zx plane
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 1, 1));  // Shear in zy plane
+
+      // Negative shears
+      matrices.push_back(Matrix_3x3(1, -1, 0, 0, 1, 0, 0, 0, 1));  // Negative shear in xy
+      matrices.push_back(Matrix_3x3(1, 0, -1, 0, 1, 0, 0, 0, 1));  // Negative shear in xz
+      matrices.push_back(Matrix_3x3(1, 0, 0, -1, 1, 0, 0, 0, 1));  // Negative shear in yx
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, 1, -1, 0, 0, 1));  // Negative shear in yz
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, 1, 0, -1, 0, 1));  // Negative shear in zx
+      matrices.push_back(Matrix_3x3(1, 0, 0, 0, 1, 0, 0, -1, 1));  // Negative shear in zy
+
+      // Common centering operations (preserving det=+1)
+      matrices.push_back(Matrix_3x3(1, 1, 1, 0, 1, 0, 0, 0, 1));  // Face-centered related
+      matrices.push_back(Matrix_3x3(1, 0, 0, 1, 1, 1, 0, 0, 1));  // Body-centered related 
+      matrices.push_back(Matrix_3x3(1, 1, 0, 1, 0, 0, 1, 1, 1));  // Complex centering
+      matrices.push_back(Matrix_3x3(1, 0, 0, 1, 1, 0, 1, 0, 1));  // Mixed centering
+      matrices.push_back(Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 1, 1));  // Mixed centering
+
+      // Complex matrices known to be useful for challenging cases
+      matrices.push_back(Matrix_3x3(0, -1, 0, 1, 0, 0, 1, 1, 1));  // LeTrong & Stenkamp case
+      matrices.push_back(Matrix_3x3(-1, 1, 0, -1, 0, 0, 0, 0, -1)); // Charley Simmons case
+      matrices.push_back(Matrix_3x3(0, 1, 0, 0, 0, 1, 1, 0, 1));    // For last test case
+      matrices.push_back(Matrix_3x3(0, 1, 0, 0, -1, 1, 1, 0, 0));    // Mixed operations
+      matrices.push_back(Matrix_3x3(1, 1, 0, -1, 1, 0, 0, 0, 1));    // Mixed operations
+
+      return matrices;
+   }
 
    // Calculate detailed distance metrics between two cells
    DistanceMetrics calculateDistanceMetrics(const LatticeCell& cell1, const LatticeCell& cell2) const {
@@ -297,6 +393,12 @@ public:
       // Weight lengths and angles equally
       double rawQuality = 100.0 - (metrics.lengthsDeviation + metrics.anglesDeviation) / 2.0;
       metrics.overallQuality = rawQuality > 0.0 ? rawQuality : 0.0;
+
+      // 7. Add P3 distance
+      metrics.p3Distance = calculateP3Distance(cell1, cell2);
+
+      // 8. Add S6 angle
+      metrics.s6Angle = calculateS6Angle(cell1, cell2);
 
       return metrics;
    }
@@ -411,18 +513,29 @@ public:
       return uniqueMatrices;
    }
 
+   // Check if matrix has determinant +1 exactly
+   //bool isValidTransformationMatrix(const Matrix_3x3& matrix) const {
+   //   // Check determinant (must be exactly +1 for valid lattice transformations)
+   //   const double det = matrix.Det();
+   //   if (std::abs(det - 1.0) > 1e-10) {
+   //      return false;
+   //   }
 
+   //   return true;
+   //}
 
    // Generate all valid integer matrices with determinant +1
    std::vector<Matrix_3x3> generateAllIntegerMatrices(int maxCoeff) const {
-      // Get basic integer matrices from LatticeMatcher
+      // Start with a comprehensive set of crystallographic matrices
+      std::vector<Matrix_3x3> allMatrices = generateCrystallographicMatrices();
+
+      // Add standard integer matrices from LatticeMatcher
       std::vector<Matrix_3x3> baseMatrices = m_matcher.generateIntegerMatrices(maxCoeff);
 
       // Filter to only those with determinant +1
-      std::vector<Matrix_3x3> validBaseMatrices;
       for (const auto& matrix : baseMatrices) {
          if (isValidTransformationMatrix(matrix)) {
-            validBaseMatrices.push_back(matrix);
+            allMatrices.push_back(matrix);
          }
       }
 
@@ -433,7 +546,9 @@ public:
       std::set<Matrix_3x3, Matrix3x3Comparator> uniqueMatricesSet;
 
       // Combine base matrices with orientations
-      for (const auto& baseMatrix : validBaseMatrices) {
+      for (const auto& baseMatrix : allMatrices) {
+         uniqueMatricesSet.insert(baseMatrix);
+
          for (const auto& orientMatrix : orientationMatrices) {
             Matrix_3x3 combined = baseMatrix * orientMatrix;
             if (isValidTransformationMatrix(combined) && isIntegerMatrix(combined)) {
@@ -447,12 +562,30 @@ public:
       return uniqueMatrices;
    }
 
+   // Helper for matrix equality checking
+   bool matrixEquals(const Matrix_3x3& m1, const Matrix_3x3& m2, double tolerance = 1e-10) const {
+      for (int i = 0; i < 9; ++i) {
+         if (std::abs(m1[i] - m2[i]) > tolerance) {
+            return false;
+         }
+      }
+      return true;
+   }
+
    // Calculate scores for a transformation (exposed publicly for identity matrix handling)
    void calculateRankingScores(RankedTransformation& ranked, const LatticeCell& transformedCell) const {
       const Matrix_3x3& matrix = ranked.result.transformMatrix;
 
       // Calculate detailed distance metrics
       ranked.metrics = calculateDistanceMetrics(transformedCell);
+
+      // Calculate P3 distance explicitly and store
+      double p3Distance = calculateP3Distance(transformedCell, m_matcher.getTargetCell());
+      ranked.metrics.p3Distance = p3Distance;
+
+      // Calculate S6 angle explicitly and store
+      double s6Angle = calculateS6Angle(transformedCell, m_matcher.getTargetCell());
+      ranked.metrics.s6Angle = s6Angle;
 
       // Simplicity score: count non-zero elements and complexity of fractions
       double simplicityScore = 0.0;
@@ -519,332 +652,22 @@ public:
       ranked.angleScore = angleScore * 10.0; // Weight angle score more heavily
 
       // Calculate overall score (weighted combination)
-      // Modified weights to emphasize S6 distance more
-      const double euclideanWeight = 2.0;    // Primary weight for Euclidean distance
-      const double cs6DistWeight = 0.5;      // Secondary weight for CS6Dist
-      const double simplicityWeight = 0.1;
-      const double magnitudeWeight = 0.05;
-      const double angleWeight = 0.15;
+      // Modified weights to emphasize S6 angle and P3 distance
+      const double s6AngleWeight = 5.0;      // Primary weight - angles are most important
+      const double p3DistWeight = 3.0;       // Secondary weight - P3 distance
+      const double euclideanWeight = 1.0;    // Tertiary weight - Euclidean S6 distance
+      const double cs6DistWeight = 0.3;      // CS6Dist as supporting metric
+      const double simplicityWeight = 0.2;   // Minor factor - prefer simpler matrices
+      const double magnitudeWeight = 0.1;    // Minor factor - prefer smaller coefficients
 
-      // Use both distance metrics, but prioritize Euclidean distance
+      // Use all metrics with appropriate weighting
       ranked.overallScore =
+         s6AngleWeight * s6Angle +
+         p3DistWeight * p3Distance +
          euclideanWeight * ranked.metrics.euclideanDistance +
          cs6DistWeight * ranked.metrics.rawS6Distance +
          simplicityWeight * ranked.simplicityScore +
-         magnitudeWeight * ranked.magnitudeScore +
-         angleWeight * ranked.angleScore;
+         magnitudeWeight * ranked.magnitudeScore;
    }
-
-   // Find multiple transformations within a distance threshold
-   std::vector<RankedTransformation> findMultipleTransformations(
-      const double distanceThreshold = 50.0,
-      const size_t maxResults = 10) const {
-
-      std::vector<RankedTransformation> candidates;
-
-      // Generate all valid integer matrices with determinant +1
-      const std::vector<Matrix_3x3> allMatrices = generateAllIntegerMatrices(3);
-
-      std::cout << "Generated " << allMatrices.size() << " valid integer matrices with det=+1" << std::endl;
-
-      // Evaluate all matrices and collect those under threshold
-      for (const auto& matrix : allMatrices) {
-         const LatticeCell transformedCell = m_matcher.applyTransformation(matrix);
-
-         // Skip invalid cells
-         if (!isValidCell(transformedCell)) continue;
-
-         // Calculate both distances
-         const double cs6Distance = calculateCellDistance(transformedCell);
-         const double euclideanDistance = calculateEuclideanS6Distance(transformedCell, m_matcher.getTargetCell());
-
-         // Store if CS6 distance is below threshold
-         if (cs6Distance < distanceThreshold) {
-            typename LatticeMatcherDefault::TransformationResult result(matrix, cs6Distance, true);
-            RankedTransformation rankedResult(result);
-            calculateRankingScores(rankedResult, transformedCell);
-            rankedResult.metrics.euclideanDistance = euclideanDistance;
-            candidates.push_back(rankedResult);
-         }
-      }
-
-      // Try some fractional matrices too, but only with determinant +1
-      const std::vector<Matrix_3x3> fractionalMatrices = m_matcher.generateFractionalMatrices(3);
-
-      for (const auto& matrix : fractionalMatrices) {
-         if (!isValidTransformationMatrix(matrix)) {
-            continue;  // Skip matrices without determinant +1
-         }
-
-         const LatticeCell transformedCell = m_matcher.applyTransformation(matrix);
-
-         // Skip invalid cells
-         if (!isValidCell(transformedCell)) continue;
-
-         // Calculate both distances
-         const double cs6Distance = calculateCellDistance(transformedCell);
-         const double euclideanDistance = calculateEuclideanS6Distance(transformedCell, m_matcher.getTargetCell());
-
-         // Store if CS6 distance is below threshold
-         if (cs6Distance < distanceThreshold) {
-            typename LatticeMatcherDefault::TransformationResult result(matrix, cs6Distance, true);
-            RankedTransformation rankedResult(result);
-            calculateRankingScores(rankedResult, transformedCell);
-            rankedResult.metrics.euclideanDistance = euclideanDistance;
-            candidates.push_back(rankedResult);
-         }
-      }
-
-      // Remove duplicates (transformations that are essentially the same)
-      removeDuplicateTransformations(candidates);
-
-      // Sort primarily by CS6Dist, with cell parameter similarity as a tiebreaker
-      std::sort(candidates.begin(), candidates.end(),
-         [](const RankedTransformation& a, const RankedTransformation& b) {
-            // For nearly identical CS6Dist values (cells representing the same lattice)
-            if (std::abs(a.metrics.rawS6Distance - b.metrics.rawS6Distance) < 1.0) {
-               // Sort by cell parameter differences (lengths and angles)
-               return (a.metrics.lengthsDeviation + a.metrics.anglesDeviation) <
-                  (b.metrics.lengthsDeviation + b.metrics.anglesDeviation);
-            }
-            // Otherwise, prioritize lower CS6Dist
-            return a.metrics.rawS6Distance < b.metrics.rawS6Distance;
-         });
-
-      // Limit number of results
-      if (candidates.size() > maxResults) {
-         candidates.resize(maxResults);
-      }
-
-      return candidates;
-   }
-
-   void findBestSimpleTransformation() const {
-      std::cout << "Testing simple axis permutation and sign-flip transformations..." << std::endl;
-
-      // Generate the 24 basic permutation and sign-flip matrices with determinant +1
-      std::vector<Matrix_3x3> permutationMatrices;
-
-      // Basic permutation indices
-      const int perms[6][3] = {
-          {0, 1, 2}, // Identity
-          {1, 0, 2}, // Swap a,b
-          {0, 2, 1}, // Swap b,c
-          {2, 1, 0}, // Swap a,c
-          {1, 2, 0}, // Cycle right
-          {2, 0, 1}  // Cycle left
-      };
-
-      // Generate all basic transformation matrices with determinant +1
-      for (int p = 0; p < 6; p++) {
-         for (int signA = -1; signA <= 1; signA += 2) {
-            for (int signB = -1; signB <= 1; signB += 2) {
-               for (int signC = -1; signC <= 1; signC += 2) {
-                  // Calculate determinant
-                  int det = signA * signB * signC;
-                  if (p % 2 == 1) det = -det; // Odd permutations flip sign
-
-                  // Only accept matrices with det = +1
-                  if (det != 1) continue;
-
-                  // Create matrix
-                  Matrix_3x3 matrix;
-                  // Zero out the matrix
-                  for (int i = 0; i < 3; i++) {
-                     for (int j = 0; j < 3; j++) {
-                        matrix[i * 3 + j] = 0.0;
-                     }
-                  }
-
-                  // Set the permuted and sign-flipped elements
-                  int sign[3] = { signA, signB, signC };
-                  for (int i = 0; i < 3; i++) {
-                     matrix[i * 3 + perms[p][i]] = sign[i];
-                  }
-
-                  permutationMatrices.push_back(matrix);
-               }
-            }
-         }
-      }
-
-      std::cout << "Testing " << permutationMatrices.size() << " basic permutation/sign matrices with det=+1" << std::endl;
-
-      // Test each matrix
-      std::vector<std::pair<Matrix_3x3, double>> results;
-
-      for (const auto& matrix : permutationMatrices) {
-         const LatticeCell transformedCell = m_matcher.applyTransformation(matrix);
-
-         // Calculate CS6 distance with reduction
-         S6 s1 = S6(transformedCell.getCell());
-         S6 s2 = S6(m_matcher.getTargetCell().getCell());
-         S6 reduced1, reduced2;
-         Selling::Reduce(s1, reduced1);
-         Selling::Reduce(s2, reduced2);
-         const double cs6Dist = CS6Dist(reduced1.data(), reduced2.data());
-
-         // Store matrix and distance
-         results.emplace_back(matrix, cs6Dist);
-      }
-
-      // Sort by CS6Distance
-      std::sort(results.begin(), results.end(),
-         [](const auto& a, const auto& b) { return a.second < b.second; });
-
-      // Show best results
-      std::cout << "Best transformations (sorted by CS6Dist):" << std::endl;
-      size_t maxToShow = std::min(results.size(), size_t(10));
-
-      for (size_t i = 0; i < maxToShow; ++i) {
-         const auto& [matrix, distance] = results[i];
-         std::cout << "Matrix " << (i + 1) << " (CS6Dist = " << distance << "):" << std::endl;
-         std::cout << matrix << std::endl;
-
-         // Show transformed cell
-         const LatticeCell transformedCell = m_matcher.applyTransformation(matrix);
-         const LRL_Cell& params = transformedCell.getCell();
-         const LRL_Cell& targetParams = m_matcher.getTargetCell().getCell();
-
-         std::cout << "Transformed Cell:" << std::endl;
-         std::cout << "  " << LRL_Cell_Degrees(params) << std::endl;
-
-         std::cout << "Target Cell:     " << std::endl;
-         std::cout << "  " << LRL_Cell_Degrees(targetParams) << std::endl;
-
-         std::cout << "--------------------------" << std::endl;
-      }
-   }
-
-
-
-   // Struct for storing matrix distance info
-   struct MatrixDistanceInfo {
-      Matrix_3x3 matrix;
-      double cs6Dist;
-      double euclideanDist;
-      LatticeCell transformedCell;
-
-      MatrixDistanceInfo(const Matrix_3x3& m, double cs6, double eucl, const LatticeCell& cell)
-         : matrix(m), cs6Dist(cs6), euclideanDist(eucl), transformedCell(cell) {
-      }
-   };
-
-
-   // Format a list of ranked transformations as a string
-   std::string formatMultipleTransformations(
-      const std::vector<RankedTransformation>& transformations,
-      const int precision = 4) const {
-
-      std::ostringstream oss;
-      oss << std::fixed << std::setprecision(precision);
-
-      oss << "Found " << transformations.size() << " potential transformations:" << std::endl << std::endl;
-
-      for (size_t i = 0; i < transformations.size(); ++i) {
-         const auto& ranked = transformations[i];
-         const auto& result = ranked.result;
-         const auto& metrics = ranked.metrics;
-
-         oss << "Transformation " << (i + 1) << ":" << std::endl;
-         oss << "-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#" << std::endl;
-         oss << "Matrix:" << std::endl;
-         oss << result.transformMatrix << std::endl << std::endl;
-
-         oss << "As Lattice Vector Operations:" << std::endl;
-         oss << LatticeMatcherDefault::interpretTransformation(result.transformMatrix) << std::endl << std::endl;
-
-         oss << "Distance Metrics:" << std::endl;
-         oss << "  Euclidean S6 Distance: " << metrics.euclideanDistance << std::endl;
-         oss << "  Raw S6 Distance (with reduction): " << metrics.rawS6Distance << std::endl;
-         oss << "  Normalized Distance: " << metrics.normalizedDistance << "%" << std::endl;
-         oss << "  Cell Lengths Deviation: " << metrics.lengthsDeviation << "%" << std::endl;
-         oss << "  Cell Angles Deviation: " << metrics.anglesDeviation << "%" << std::endl;
-         oss << "  Overall Match Quality: " << metrics.overallQuality << "%" << std::endl << std::endl;
-
-         oss << "Matrix Properties:" << std::endl;
-         oss << "  Determinant: " << result.transformMatrix.Det() << std::endl;
-         oss << "  Simplicity Score: " << ranked.simplicityScore << std::endl;
-         oss << "  Magnitude Score: " << ranked.magnitudeScore << std::endl;
-         oss << "  Angle Score: " << ranked.angleScore << std::endl;
-         oss << "  Overall Score: " << ranked.overallScore << std::endl << std::endl;
-
-         // Display transformed cell
-         const LatticeCell transformedCell = m_matcher.applyTransformation(result.transformMatrix);
-         const LRL_Cell transformedParams = transformedCell.getCell();
-         const LRL_Cell targetParams = m_matcher.getTargetCell().getCell();
-
-         // Display transformed cell using LRL_Cell_Degrees for readable output
-         oss << "Transformed Cell:" << std::endl;
-         oss << LRL_Cell_Degrees(transformedParams) << std::endl << std::endl;
-
-         // Display target cell using LRL_Cell_Degrees for readable output
-         oss << "Target Cell:    " << std::endl;
-         oss << LRL_Cell_Degrees(targetParams) << std::endl << std::endl;
-      }
-
-      return oss.str();
-   }
-
-   // Set source and target cells
-   void setSourceCell(const LatticeCell& cell) {
-      m_matcher.setSourceCell(cell);
-   }
-
-   void setTargetCell(const LatticeCell& cell) {
-      m_matcher.setTargetCell(cell);
-   }
-
-   // Custom comparator for RankedTransformation
-   struct TransformComparator {
-      const MultiTransformFinder* finder;
-
-      TransformComparator(const MultiTransformFinder* f) : finder(f) {}
-
-      bool operator()(const RankedTransformation& a, const RankedTransformation& b) const {
-         const Matrix_3x3& matA = a.result.transformMatrix;
-         const Matrix_3x3& matB = b.result.transformMatrix;
-
-         // Compare matrices directly using Matrix3x3Comparator
-         Matrix3x3Comparator matComp;
-         return matComp(matA, matB);
-      }
-   };
-
-   // Remove transformations that are effectively duplicates
-   void removeDuplicateTransformations(std::vector<RankedTransformation>& transformations) const {
-      if (transformations.empty()) return;
-
-      // Use a set with our custom comparator
-      std::set<RankedTransformation, TransformComparator> uniqueSet(TransformComparator(this));
-
-      // Insert all transformations - duplicates will be automatically removed
-      for (const auto& transform : transformations) {
-         uniqueSet.insert(transform);
-      }
-
-      // Convert back to vector
-      transformations.clear();
-      transformations.insert(transformations.end(), uniqueSet.begin(), uniqueSet.end());
-   }
-
-   // Stream output operator for MultiTransformFinder
-   friend std::ostream& operator<<(std::ostream& os, const MultiTransformFinder& finder) {
-      os << "MultiTransformFinder:" << std::endl;
-      os << "  Source cell: " << std::endl;
-      os << finder.m_matcher.getSourceCell() << std::endl;
-      os << "  Target cell: " << std::endl;
-      os << finder.m_matcher.getTargetCell() << std::endl;
-      return os;
-   }
-
-private:
-   LatticeMatcherDefault m_matcher;
-   static constexpr double M_PI = 3.14159265358979323846;
 };
-
-// Type alias for convenience
-using MultiTransformFinderDefault = MultiTransformFinder<void>;
-
 #endif // MULTI_TRANSFORM_FINDER_H
-

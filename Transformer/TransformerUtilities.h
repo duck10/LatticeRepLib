@@ -1,46 +1,191 @@
-// TransformerUtilities.h
 #ifndef TRANSFORMER_UTILITIES_H
 #define TRANSFORMER_UTILITIES_H
 
-#include "LRL_Vector3.h"
 #include "LRL_Cell.h"
+#include "Matrix_3x3.h"
 #include "B4.h"
-#include "LRL_Cell_Degrees.h"
-#include "LRL_StringTools.h"
-#include "LatticeCell.h"
+#include "P3.h"
 #include "S6.h"
-#include "Selling.h"
 #include "CS6Dist.h"
+#include "CS6Dist.cpp"
+#include "LatticeCell.h"
+#include "Selling.h"
+#include "MultiTransformFinderControls.h"
+#include "LRL_StringTools.h"
 #include <vector>
-#include <iostream>
-#include <iomanip>
 #include <cmath>
+#include <iostream>
 
-static constexpr double M_PI = 3.14159265358979323846;
+// Define M_PI if it's not already defined
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 
-// Using inline functions prevents multiple definition errors
+// None - Primitive(P)
+static const Matrix_3x3 primitive{
+    1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0
+};
+// Body - Centered(I)
+static const Matrix_3x3 bodyCentered{
+    0.5, 0.5, 0.5,
+    -0.5, 0.5, 0.5,
+    -0.5, -0.5, 0.5
+};
+// Face - Centered(F)
+static const Matrix_3x3 faceCentered{
+    0.5, 0.0, 0.5,
+    0.5, 0.5, 0.0,
+    0.0, 0.5, 0.5
+};
+// Base - Centered(A) - correctly places lattice points at the centers of the bc faces
+static const Matrix_3x3 aCentered{
+    1.0, 0.0, 0.0,
+    0.0, 0.5, 0.5,
+    0.0, -0.5, 0.5
+};
+// Base - Centered(B) - correctly places lattice points at the centers of the ac faces
+static const Matrix_3x3 bCentered{
+    0.5, 0.0, 0.5,
+    0.0, 1.0, 0.0,
+    -0.5, 0.0, 0.5
+};
+// Base - Centered(C) - correctly places lattice points at the centers of the ab faces
+static const Matrix_3x3 cCentered{
+    0.5, 0.5, 0.0,
+    -0.5, 0.5, 0.0,
+    0.0, 0.0, 1.0
+};
+// Rhombohedral(R)
+static const Matrix_3x3 rhombohedral{
+    2.0 / 3.0, -1.0 / 3.0, -1.0 / 3.0,
+    1.0 / 3.0,  1.0 / 3.0, -2.0 / 3.0,
+    1.0 / 3.0,  1.0 / 3.0,  1.0 / 3.0
+};
+
+// Function to convert from centered to primitive lattice
+inline Matrix_3x3 ToPrimitive(const std::string& s, const LRL_Cell& cell) {
+   const std::string upper = LRL_StringTools::strToupper(s);
+   if (s.empty() || s == "P") return primitive;
+   if (s == "I") return bodyCentered;
+   if (s == "F") return faceCentered;
+   if (s == "A") return aCentered;
+   if (s == "B") return bCentered;
+   if (s == "C") return cCentered;
+   if (s == "H" || s == "R") {
+      const double& alpha = cell[3];
+      const double& beta = cell[4];
+      const double& gamma = cell[5];
+      if ((gamma - 120.0 / 180.0 * M_PI) > 1.0E-2) {
+         return primitive;
+      }
+      else {
+         return rhombohedral;
+      }
+   }
+   // unknown input or empty lattice
+   return primitive;
+}
+
+
+
+// Function to display detailed transformation information
+inline void showTransformationInfo(const LatticeCell& mobileCell, const LatticeCell& referenceCell) {
+   std::cout << "\n--- TRANSFORMATION DETAILS ---" << std::endl;
+
+   // Show centering type information
+   std::cout << "Mobile cell centering: " <<
+      (mobileCell.getLatticeType().empty() ? "P" : mobileCell.getLatticeType()) << std::endl;
+   std::cout << "Reference cell centering: " <<
+      (referenceCell.getLatticeType().empty() ? "P" : referenceCell.getLatticeType()) << std::endl;
+
+   // Show cells in G6 representation
+   G6 mobileG6 = mobileCell.toPrimitive();
+   G6 refG6 = referenceCell.toPrimitive();
+   std::cout << "Mobile cell G6: " << mobileG6 << std::endl;
+   std::cout << "Reference cell G6: " << refG6 << std::endl;
+
+   // Show cells in S6 representation
+   S6 mobileS6 = S6(mobileCell.getCell());
+   S6 refS6 = S6(referenceCell.getCell());
+   std::cout << "Mobile cell S6: " << mobileS6 << std::endl;
+   std::cout << "Reference cell S6: " << refS6 << std::endl;
+
+   // Calculate the centering matrices
+   Matrix_3x3 mobileToPrimitive = ToPrimitive(mobileCell.getLatticeType(), mobileCell.getCell());
+   Matrix_3x3 refToPrimitive = ToPrimitive(referenceCell.getLatticeType(), referenceCell.getCell());
+
+   std::cout << "Mobile-to-primitive matrix:" << std::endl;
+   std::cout << mobileToPrimitive << std::endl;
+
+   std::cout << "Reference-to-primitive matrix:" << std::endl;
+   std::cout << refToPrimitive << std::endl;
+
+   // Show Niggli-reduced cell information
+   G6 mobileNiggli = mobileCell.getNiggliReducedCell();
+   G6 refNiggli = referenceCell.getNiggliReducedCell();
+   std::cout << "Mobile cell (Niggli reduced): " << mobileNiggli << std::endl;
+   std::cout << "Reference cell (Niggli reduced): " << refNiggli << std::endl;
+
+   std::cout << "--- END TRANSFORMATION DETAILS ---\n" << std::endl;
+}
+
+// Function to show usage information
+inline void showUsageInformation(const MultiTransformFinderControls& controls) {
+   std::cout << "Error: Need at least two cells for transformation." << std::endl;
+   std::cout << "Usage: Transformer [options] [reference_cell] [mobile_cell1] [mobile_cell2] ..." << std::endl;
+   std::cout << "Options:" << std::endl;
+   std::cout << "  SHOWDETAILS or DETAILS [true/false]  - Show detailed output" << std::endl;
+   std::cout << "  SHOWTRANSFORMINFO [true/false]       - Show extra transformation details" << std::endl;
+   std::cout << "  MATRIXSEARCHDEPTH [number]           - Set maximum search depth for matrices" << std::endl;
+   std::cout << "  MAXTRANSFORMS [number]               - Set maximum transformations to display" << std::endl;
+   std::cout << "  MAXDISTANCE [number]                 - Set maximum allowed transformation distance" << std::endl;
+   std::cout << "  DISTANCETHRESHOLD [number]           - Set distance threshold for transformations" << std::endl;
+   std::cout << "  INCLUDEIDENTITY [true/false]         - Include identity matrix in results" << std::endl;
+   std::cout << "  SHOWCONTROLS or SHOW [true/false]    - Show control settings" << std::endl;
+}
+
+// Generate basic permutation matrices
 inline std::vector<Matrix_3x3> generateBasicPermutationMatrices() {
    std::vector<Matrix_3x3> permutationMatrices;
 
-   // Basic permutation indices with only even permutations (det = +1)
-   const int evenPerms[3][3] = {
-       {0, 1, 2}, // Identity (a,b,c) - even
-       {1, 2, 0}, // Cycle right (b,c,a) - even
-       {2, 0, 1}  // Cycle left (c,a,b) - even
+   // Basic permutation indices
+   const int perms[6][3] = {
+       {0, 1, 2}, // Identity
+       {0, 2, 1}, // Swap b,c
+       {1, 0, 2}, // Swap a,b
+       {1, 2, 0}, // Cycle right
+       {2, 0, 1}, // Cycle left
+       {2, 1, 0}  // Swap a,c
    };
 
-   // Generate matrices with det = +1
-   for (int p = 0; p < 3; p++) {
+   // Generate all basic transformation matrices with determinant +1
+   for (int p = 0; p < 6; p++) {
       for (int signA = -1; signA <= 1; signA += 2) {
          for (int signB = -1; signB <= 1; signB += 2) {
             for (int signC = -1; signC <= 1; signC += 2) {
-               // Only accept sign combinations with product = +1
-               if (signA * signB * signC != 1) continue;
+               // Calculate permutation parity
+               int inversions = 0;
+               for (int i = 0; i < 3; i++) {
+                  for (int j = i + 1; j < 3; j++) {
+                     if (perms[p][i] > perms[p][j]) {
+                        inversions++;
+                     }
+                  }
+               }
+               bool isOdd = (inversions % 2 == 1);
+
+               // Calculate determinant sign
+               int det = signA * signB * signC;
+               if (isOdd) det = -det;
+
+               // Only accept matrices with det = +1
+               if (det != 1) continue;
 
                // Create matrix
                Matrix_3x3 matrix;
-
                // Zero out the matrix
                for (int i = 0; i < 3; i++) {
                   for (int j = 0; j < 3; j++) {
@@ -51,14 +196,10 @@ inline std::vector<Matrix_3x3> generateBasicPermutationMatrices() {
                // Set the permuted and sign-flipped elements
                int signs[3] = { signA, signB, signC };
                for (int i = 0; i < 3; i++) {
-                  matrix[i * 3 + evenPerms[p][i]] = signs[i];
+                  matrix[i * 3 + perms[p][i]] = signs[i];
                }
 
-               // Double-check the determinant
-               const double det = matrix.Det();
-               if (det > 0.0) {
-                  permutationMatrices.push_back(matrix);
-               }
+               permutationMatrices.push_back(matrix);
             }
          }
       }
@@ -67,7 +208,6 @@ inline std::vector<Matrix_3x3> generateBasicPermutationMatrices() {
    return permutationMatrices;
 }
 
-
 inline void testSpecificMatricesWithB4(const LRL_Cell& sourceCell, const LRL_Cell& targetCell) {
    std::cout << "Testing specific transformation matrices using B4..." << std::endl;
 
@@ -75,46 +215,25 @@ inline void testSpecificMatricesWithB4(const LRL_Cell& sourceCell, const LRL_Cel
    std::vector<Matrix_3x3> matricesToTest;
 
    // 1. Identity
-   Matrix_3x3 identity(
+   matricesToTest.push_back(Matrix_3x3(
       1, 0, 0,
       0, 1, 0,
       0, 0, 1
-   );
-   double detIdentity = identity.Det();
-   if (std::abs(detIdentity - 1.0) < 1e-10) {
-      matricesToTest.push_back(identity);
-   }
-   else {
-      std::cout << "Skipping identity matrix with determinant " << detIdentity << std::endl;
-   }
+   ));
 
-   // 2. Cyclic permutation
-   Matrix_3x3 permCyclic(
+   // 2. Permutation (swap a and c)
+   matricesToTest.push_back(Matrix_3x3(
       0, 0, 1,
       1, 0, 0,
       0, 1, 0
-   );
-   double detCyclic = permCyclic.Det();
-   if (std::abs(detCyclic - 1.0) < 1e-10) {
-      matricesToTest.push_back(permCyclic);
-   }
-   else {
-      std::cout << "Skipping cyclic permutation matrix with determinant " << detCyclic << std::endl;
-   }
+   ));
 
-   // 3. Complex matrix
-   Matrix_3x3 complex(
+   // 3. Complex matrix from previous tests
+   matricesToTest.push_back(Matrix_3x3(
       3, -3, -1,
       1, 2, 2,
       -3, -1, -2
-   );
-   double detComplex = complex.Det();
-   if (std::abs(detComplex - 1.0) < 1e-10) {
-      matricesToTest.push_back(complex);
-   }
-   else {
-      std::cout << "Skipping complex matrix with determinant " << detComplex << std::endl;
-   }
+   ));
 
    std::cout << "Testing " << matricesToTest.size() << " specific transformation matrices..." << std::endl;
 
@@ -175,307 +294,128 @@ inline void testSpecificMatricesWithB4(const LRL_Cell& sourceCell, const LRL_Cel
    }
 }
 
-// For backward compatibility
-inline void testTransformationMatrices(const LRL_Cell& sourceCell, const LRL_Cell& targetCell) {
-   testSpecificMatricesWithB4(sourceCell, targetCell);
+// Calculate S6 angle between two S6 vectors
+inline double angleS6(const S6& s1, const S6& s2) {
+   // Make reduced copies to ensure we're comparing properly reduced cells
+   S6 reduced1, reduced2;
+   Selling::Reduce(s1, reduced1);
+   Selling::Reduce(s2, reduced2);
+
+   // Normalize the vectors for angle calculation
+   const double norm1 = reduced1.norm();
+   const double norm2 = reduced2.norm();
+
+   if (norm1 < 1e-10 || norm2 < 1e-10) {
+      return 0.0; // Handle zero or near-zero vectors
+   }
+
+   S6 normalized1 = reduced1 * (1.0 / norm1);
+   S6 normalized2 = reduced2 * (1.0 / norm2);
+
+   // Calculate dot product
+   double dotProduct = 0.0;
+   for (int i = 0; i < 6; i++) {
+      dotProduct += normalized1[i] * normalized2[i];
+   }
+
+   // Clamp to valid range for acos
+   if (dotProduct > 1.0) dotProduct = 1.0;
+   if (dotProduct < -1.0) dotProduct = -1.0;
+
+   // Convert to degrees
+   return acos(dotProduct) * 180.0 / M_PI;
 }
 
-inline std::vector<Matrix_3x3> generateAdvancedTransformationMatrices(int complexity = 2) {
-   std::set<Matrix_3x3> matrixSet; // Use set to automatically eliminate duplicates
-
-   // Start with the identity matrix
-   Matrix_3x3 identity;
-   for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-         identity[i * 3 + j] = (i == j) ? 1.0 : 0.0;
-      }
-   }
-   matrixSet.insert(identity);
-
-   // Generate elementary unimodular matrices
-   // These are the "elementary row operations" that preserve det = +1
-
-   // 1. Row swaps with sign flips (to keep det = +1)
-   for (int i = 0; i < 3; i++) {
-      for (int j = i + 1; j < 3; j++) {
-         Matrix_3x3 swapMatrix = identity;
-         swapMatrix[i * 3 + i] = 0.0;
-         swapMatrix[i * 3 + j] = 1.0;
-         swapMatrix[j * 3 + i] = 1.0;
-         swapMatrix[j * 3 + j] = 0.0;
-
-         // Double-check determinant
-         double det = swapMatrix.Det();
-         if (det < 0.0) {
-            // Flip a sign to make det = +1
-            swapMatrix[i * 3 + j] = -1.0;
-         }
-         matrixSet.insert(swapMatrix);
-      }
-   }
-
-   // 2. Add multiples of one row to another
-   // For each coefficient from -complexity to +complexity
-   for (int coeff = -complexity; coeff <= complexity; coeff++) {
-      // Skip 0
-      if (coeff == 0) continue;
-
-      for (int i = 0; i < 3; i++) {
-         for (int j = 0; j < 3; j++) {
-            if (i == j) continue; // Skip diagonal
-
-            Matrix_3x3 addMatrix = identity;
-            addMatrix[i * 3 + j] = coeff;
-            matrixSet.insert(addMatrix);
-         }
-      }
-   }
-
-   // 3. Generate combined transformations by matrix multiplication
-   // Take products of the elementary matrices (up to a certain number of combinations)
-   const int MAX_COMBINATIONS = 3;
-   std::vector<Matrix_3x3> baseMatrices(matrixSet.begin(), matrixSet.end()); // Convert set to vector
-
-   for (int combo = 2; combo <= MAX_COMBINATIONS; combo++) {
-      std::set<Matrix_3x3> newMatrixSet;
-
-      // Multiply each existing matrix by each elementary matrix
-      for (const auto& baseMatrix : matrixSet) {
-         for (const auto& elemMatrix : baseMatrices) {
-            Matrix_3x3 productMatrix = baseMatrix * elemMatrix;
-
-            // Check if matrix has reasonable entries (not too large)
-            bool isReasonable = true;
-            for (int i = 0; i < 9; i++) {
-               if (std::abs(productMatrix[i]) > complexity * 2) {
-                  isReasonable = false;
-                  break;
-               }
-            }
-
-            if (isReasonable) {
-               // Ensure all matrices have integer entries (within numerical precision)
-               for (int i = 0; i < 9; i++) {
-                  productMatrix[i] = std::round(productMatrix[i]);
-               }
-
-               // Final check of determinant
-               double det = productMatrix.Det();
-               if (std::abs(det - 1.0) < 1e-10) {
-                  newMatrixSet.insert(productMatrix);
-               }
-            }
-         }
-      }
-
-      // Add the new matrices to our set
-      matrixSet.insert(newMatrixSet.begin(), newMatrixSet.end());
-
-      // Limit the total number of matrices
-      if (matrixSet.size() > 1000) {
-         break;
-      }
-   }
-
-   // Convert set back to vector for return
-   return std::vector<Matrix_3x3>(matrixSet.begin(), matrixSet.end());
+// Calculate P3 distance between two cells
+// This is a simplified version that assumes P3 has appropriate distance calculation
+inline double getP3Distance(const LRL_Cell& cell1, const LRL_Cell& cell2) {
+   P3 p1(cell1);
+   P3 p2(cell2);
+   return P3::DistanceBetween(p1, p2);
 }
 
+//// Check if a matrix is a valid transformation matrix (det = +1)
+//inline bool isValidTransformationMatrix(const Matrix_3x3& matrix) {
+//   const double det = matrix.Det();
+//   const double epsilon = 1e-10;
+//   return std::abs(det - 1.0) < epsilon;
+//}
 
-inline std::vector<Matrix_3x3> generateBodyDiagonalTransformations(int complexity = 2) {
-   std::set<Matrix_3x3> matrixSet; // Use set to eliminate duplicates
-
-   // Basic transformations that involve the body diagonal
-
-   // Transformations of type: c' = -a-b+c (and permutations)
-   Matrix_3x3 m1(
-      1, 0, 0,
-      0, 1, 0,
-      -1, -1, 1
-   );
-   matrixSet.insert(m1);
-
-   // Additional key transformations for handling obtuse/acute angles
-   Matrix_3x3 m2(
-      -1, 0, 0,
-      0, -1, 0,
-      1, 1, 1
-   );
-   matrixSet.insert(m2);
-
-   Matrix_3x3 m3(
-      -1, 0, 0,
-      0, 1, 0,
-      1, -1, -1
-   );
-   matrixSet.insert(m3);
-
-   Matrix_3x3 m4(
-      1, 0, 0,
-      0, -1, 0,
-      -1, 1, -1
-   );
-   matrixSet.insert(m4);
-
-   // Generate cyclic permutations of these basic transformations
-   std::vector<Matrix_3x3> baseMatrices(matrixSet.begin(), matrixSet.end());
-   for (const Matrix_3x3& base : baseMatrices) {
-      // Cyclic permutation patterns
-      Matrix_3x3 cycle1 = Matrix_3x3(
-         0, 0, 1,
-         1, 0, 0,
-         0, 1, 0
-      ) * base;
-
-      Matrix_3x3 cycle2 = Matrix_3x3(
-         0, 1, 0,
-         0, 0, 1,
-         1, 0, 0
-      ) * base;
-
-      if (std::abs(cycle1.Det() - 1.0) < 1e-10) matrixSet.insert(cycle1);
-      if (std::abs(cycle2.Det() - 1.0) < 1e-10) matrixSet.insert(cycle2);
-   }
-
-   // Add compound transformations if complexity > 1
-   if (complexity > 1) {
-      std::vector<Matrix_3x3> compoundMatrices;
-      baseMatrices = std::vector<Matrix_3x3>(matrixSet.begin(), matrixSet.end());
-
-      for (size_t i = 0; i < baseMatrices.size(); ++i) {
-         for (size_t j = i; j < baseMatrices.size(); ++j) {
-            Matrix_3x3 compound = baseMatrices[i] * baseMatrices[j];
-            if (std::abs(compound.Det() - 1.0) < 1e-10) {
-               compoundMatrices.push_back(compound);
-            }
-
-            // Try reverse order too
-            compound = baseMatrices[j] * baseMatrices[i];
-            if (std::abs(compound.Det() - 1.0) < 1e-10) {
-               compoundMatrices.push_back(compound);
-            }
-         }
-      }
-
-      // Add valid compound matrices
-      for (const Matrix_3x3& m : compoundMatrices) {
-         matrixSet.insert(m);
-      }
-   }
-
-   // Check validity and convert set to vector
-   std::vector<Matrix_3x3> validMatrices;
-   for (const auto& matrix : matrixSet) {
-      if (std::abs(matrix.Det() - 1.0) < 1e-10) {
-         validMatrices.push_back(matrix);
-      }
-   }
-
-   return validMatrices;
-}
-
-
-// Add to LatticeMatcher.h or B4Matcher.h
-static double angleS6(const S6& s1, const S6& s2) {
-   const S6 s1n = s1 / s1.Norm();
-   const S6 s2n = s2 / s2.Norm();
-
-   double cosFit =
-      s1n[0] * s2n[0] + s1n[1] * s2n[1] +
-      s1n[2] * s2n[2] + s1n[3] * s2n[3] +
-      s1n[4] * s2n[4] + s1n[5] * s2n[5];
-
-   cosFit = std::min(std::max(cosFit, -1.0), 1.0);  // Ensure in valid range
-   const double angle = acos(cosFit) * 180.0 / M_PI;
-   return angle;
-}
-
-// None - Primitive(P)
-static const Matrix_3x3 primitive{
-    1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0
-};
-
-// Body - Centered(I)
-static const Matrix_3x3 bodyCentered{
-    0.5, 0.5, 0.5,
-    -0.5, 0.5, 0.5,
-    -0.5, -0.5, 0.5
-};
-
-// Face - Centered(F)
-static const Matrix_3x3 faceCentered{
-    0.5, 0.0, 0.5,
-    0.5, 0.5, 0.0,
-    0.0, 0.5, 0.5
-};
-
-// Base - Centered(A) - correctly places lattice points at the centers of the bc faces
-static const Matrix_3x3 aCentered{
-    1.0, 0.0, 0.0,
-    0.0, 0.5, 0.5,
-    0.0, -0.5, 0.5
-};
-
-// Base - Centered(B) - correctly places lattice points at the centers of the ac faces
-static const Matrix_3x3 bCentered{
-    0.5, 0.0, 0.5,
-    0.0, 1.0, 0.0,
-    -0.5, 0.0, 0.5
-};
-
-// Base - Centered(C) - correctly places lattice points at the centers of the ab faces
-static const Matrix_3x3 cCentered{
-    0.5, 0.5, 0.0,
-    -0.5, 0.5, 0.0,
-    0.0, 0.0, 1.0
-};
-
-// Rhombohedral(R)
-static const Matrix_3x3 rhombohedral{
-    2.0 / 3.0, -1.0 / 3.0, -1.0 / 3.0,
-    1.0 / 3.0,  1.0 / 3.0, -2.0 / 3.0,
-    1.0 / 3.0,  1.0 / 3.0,  1.0 / 3.0
-};
-
-static Matrix_3x3 ToPrimitive(const std::string& s, const LRL_Cell& cell) {
-   const std::string upper = LRL_StringTools::strToupper(s);
-   if (s.empty() || s == "P") return primitive;
-   if (s == "I") return bodyCentered;
-   if (s == "F") return faceCentered;
-   if (s == "A") return aCentered;
-   if (s == "B") return bCentered;
-   if (s == "C") return cCentered;
-   if (s == "H" || s == "R") {
-      const double& alpha = cell[3];
-      const double& beta = cell[4];
-      const double& gamma = cell[5];
-      if ((gamma - 120.0 / 180.0 * M_PI) > 1.0E-2) {
-         return primitive;
-      }
-      else {
-         return rhombohedral;
-      }
-   }
-   // unknown input or empty lattice
-   return primitive;
-}
-
-static Matrix_3x3 ToPrimitive(const LatticeCell& cell) {
-   return ToPrimitive(cell.getLatticeType(), cell.getCell());
-}
-
-// In LRL_Cell.h or a new utility header
 inline LRL_Cell operator*(const Matrix_3x3& matrix, const LRL_Cell& cell) {
-   // Convert LRL_Cell to B4
+   // Convert cell to B4 representation
    B4 b4Cell(cell);
 
-   // Apply transformation
+   // Apply transformation in B4 space
    B4 transformedB4 = matrix * b4Cell;
 
    // Convert back to LRL_Cell
    return LRL_Cell(transformedB4);
+}
+
+// Function to get the complete transformation matrix from mobile cell to reference cell
+inline Matrix_3x3 getCompleteTransformationMatrix(
+   const LatticeCell& mobileCell,
+   const LatticeCell& referenceCell,
+   const Matrix_3x3& primitiveToPrivitiveMatrix) {
+
+   // Get the centering matrices
+   Matrix_3x3 mobileToPrimitive = ToPrimitive(mobileCell.getLatticeType(), mobileCell.getCell());
+   Matrix_3x3 refToPrimitive = ToPrimitive(referenceCell.getLatticeType(), referenceCell.getCell());
+
+   // Calculate primitive-to-reference centering matrix (inverse of refToPrimitive)
+   Matrix_3x3 primitiveToRef = refToPrimitive.Inver();
+
+   // Compose the transformations:
+   // primitiveToRef * primitiveToPrivitiveMatrix * mobileToPrimitive
+   Matrix_3x3 completeTransformation = primitiveToRef * primitiveToPrivitiveMatrix * mobileToPrimitive;
+
+   return completeTransformation;
+}
+
+// Function to verify the transformation produces expected results
+inline void verifyTransformation(
+   const LatticeCell& mobileCell,
+   const LatticeCell& referenceCell,
+   const Matrix_3x3& transformationMatrix) {
+
+   // Convert mobile cell to B4
+   B4 mobileB4(mobileCell.getCell());
+
+   // Apply transformation
+   B4 transformedB4 = transformationMatrix * mobileB4;
+
+   // Convert back to cell
+   LRL_Cell transformedCell(transformedB4);
+
+   // Display results
+   std::cout << "\n--- TRANSFORMATION VERIFICATION ---" << std::endl;
+   std::cout << "Original mobile cell: " << LRL_Cell_Degrees(mobileCell.getCell()) << std::endl;
+   std::cout << "Transformed cell:     " << LRL_Cell_Degrees(transformedCell) << std::endl;
+   std::cout << "Reference cell:       " << LRL_Cell_Degrees(referenceCell.getCell()) << std::endl;
+
+   // Calculate and display differences
+   std::cout << "\nDifferences between transformed and reference cell:" << std::endl;
+   for (int i = 0; i < 6; ++i) {
+      double diff = transformedCell[i] - referenceCell.getCell()[i];
+      std::cout << "Param " << i << ": " << diff;
+      if (i >= 3) std::cout << " degrees";
+      std::cout << std::endl;
+   }
+
+   // Calculate S6 distance
+   S6 s1 = S6(transformedCell);
+   S6 s2 = S6(referenceCell.getCell());
+   S6 reduced1, reduced2;
+   Selling::Reduce(s1, reduced1);
+   Selling::Reduce(s2, reduced2);
+   const double cs6Dist = CS6Dist(reduced1.data(), reduced2.data());
+
+   // Calculate S6 angle
+   const double s6Angle = angleS6(s1, s2);
+
+   std::cout << "CS6 Distance: " << cs6Dist << std::endl;
+   std::cout << "S6 Angle: " << s6Angle << " degrees" << std::endl;
+   std::cout << "--- END VERIFICATION ---\n" << std::endl;
 }
 
 

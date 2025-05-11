@@ -43,6 +43,7 @@ public:
    G6(const B4& dt);
    G6(const std::string& s);
    G6(const std::vector<double>& v);
+   G6(const double a, const double b, const double c, const double d, const double e, const double f);
    ~G6(void) {}
 
    G6& operator= (const G6& v);

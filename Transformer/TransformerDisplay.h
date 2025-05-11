@@ -9,6 +9,7 @@
 #include "S6.h"
 #include "P3.h"
 #include "LRL_Vector3.h"
+#include "LatticeTransformer.h"
 
 class TransformerDisplay {
 private:
@@ -17,45 +18,26 @@ private:
 public:
    TransformerDisplay(const MultiTransformFinderControls& controls);
 
+   // Display input cells
    void showInputCells(const LatticeCell& cellToTransform, const LatticeCell& referenceCell) const;
 
-   void displayTransformResult(
-      const B4Matcher::TransformResult& result,
-      const LRL_Cell& cellToTransform,
-      const LRL_Cell& referenceCell) const;
-
-   // New method for centered lattices
-   void displayCenteredTransformResult(
+   // Display a single transformation with complete centering
+   void displayCompleteTransformResult(
       const B4Matcher::TransformResult& result,
       const LatticeCell& cellToTransform,
-      const LatticeCell& referenceCell,
-      const Matrix_3x3& inputToPrimitiveMatrix,
-      const Matrix_3x3& primitiveTransformMatrix,
-      const Matrix_3x3& referenceToPrimitiveMatrix) const;
+      const LatticeCell& referenceCell) const;
 
+   // Display B4 matcher results (for debugging)
    void showB4MatcherResults(const B4Matcher& matcher,
       const LatticeCell& cellToTransform,
       const LatticeCell& referenceCell) const;
 
-   void showB4Transformations(const B4Matcher& matcher,
-      const LatticeCell& cellToTransform,
+   // Display transformation results with complete centering
+   void showCompleteTransformations(
+      const CompleteTransformationResult& result,
+      const LatticeCell& sourceCell,
       const LatticeCell& referenceCell) const;
 
-   // Original method - keep the same parameter names for backward compatibility
-   void showParameterTransformations(
-      const std::vector<B4Matcher::TransformResult>& paramTransformations,
-      const LatticeCell& sourceCell,
-      const LatticeCell& targetCell,
-      int duplicatesRemoved = 0) const;
-
-   // New overloaded method for centered lattices
-   void showParameterTransformationsWithCentering(
-      const std::vector<B4Matcher::TransformResult>& paramTransformations,
-      const LatticeCell& sourceCell,
-      const LatticeCell& targetCell,
-      int duplicatesRemoved,
-      const Matrix_3x3& inputToPrimitiveMatrix,
-      const Matrix_3x3& referenceToPrimitiveMatrix) const;
 };
 
 #endif // TRANSFORMERDISPLAY_H

@@ -148,7 +148,7 @@
     <ClInclude Include="B4Matcher.h" />
     <ClInclude Include="LatticeMatcher.h" />
     <ClInclude Include="LatticeTransformer.h" />
-    <ClInclude Include="MatrixVerifier.h" />
+    <ClInclude Include="Matrix_3x3.h" />
     <ClInclude Include="MultiTransformFinder.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />
     <ClInclude Include="TransformationModule.h" />
@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="B4Matcher.cpp" />
     <ClCompile Include="LatticeTransformer.cpp" />
+    <ClCompile Include="MultiTransformFinder.cpp" />
     <ClCompile Include="MultiTransformFinderTest.cpp" />
     <ClCompile Include="TransformationModule.cpp" />
     <ClCompile Include="TransformerDisplay.cpp" />

@@ -262,6 +262,18 @@ G6::G6(const std::vector<double>& v) {
    m_valid = true;
 }
 
+G6::G6(const double a, const double b, const double c, const double d, const double e, const double f)  {
+   G6& g(*this);
+   m_vec.resize(6);
+   g[0] = a;
+   g[1] = b;
+   g[2] = c;
+   g[3] = d;
+   g[4] = e;
+   g[5] = f;
+}
+
+
 double G6::DistanceBetween(const G6& v1, const G6& v2) {
    double sum = 0.0;
    for (size_t i = 0; i < 6; ++i)  sum += (v1[i] - v2[i])*(v1[i] - v2[i]);

@@ -5,6 +5,7 @@
 #include "LatticeCell.h"
 #include "B4.h"
 #include "CS6Dist.h"
+#include "CS6Dist.cpp"
 #include "NCDist.h"
 #include "S6.h"
 #include "Selling.h"

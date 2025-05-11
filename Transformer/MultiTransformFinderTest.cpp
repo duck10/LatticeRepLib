@@ -1,127 +1,107 @@
-﻿#include <iostream>
-#include <vector>
-#include <algorithm>
-
-#include "B4.h"
-#include "CS6Dist.h"
-#include "CS6Dist.cpp"
+﻿#include "MultiTransformFinderControls.h"
 #include "LatticeCell.h"
-#include "LRL_Cell_Degrees.h"
-#include "LRL_Cell.h"
-#include "LRL_Vector3.h"
-#include "B4.h"
-#include "S6.h"
-#include "Selling.h"
-#include "ProgramSetup.h"
-#include "MultiTransformFinderControls.h"
 #include "B4Matcher.h"
-#include "TransformerUtilities.h"
 #include "TransformerDisplay.h"
-#include "TransformationModule.h"
 #include "LatticeTransformer.h"
+#include "TransformerUtilities.h"
+#include "InputHandler.h"
+#include "ProgramSetup.h"
+#include "LRL_Cell.h"
+#include "Niggli.h"
+#include "G6.h"
 
-int main() {
-   // Setup program and load controls
-   MultiTransformFinderControls controls;
-   const BasicProgramInput<MultiTransformFinderControls> program_setup("MultiTransformFinder", controls);
-   const std::vector<LatticeCell>& inputList = program_setup.getInputList();
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stdexcept>
 
-   // Check if we have enough input cells
-   if (inputList.size() < 2) {
-      throw std::runtime_error("; Need at least two lattices (reference and cells to transform) for transformation");
-   }
+int main(int argc, char* argv[]) {
 
-   // Show controls if enabled
-   if (controls.shouldShowControls()) {
-      std::cout << controls << std::endl;
-   }
+   //const Matrix_3x3 m33 = { 1,-1,0, 0,1,0, 0,-1,1 };
+   //const LRL_Cell c3 = { 1,2,1,90,90, 90 };
+   //const LRL_Cell out = m33 * c3;
+   //std::cout << m33 << std::endl << std::endl;
+   //std::cout << "P " << LRL_Cell_Degrees(c3) << std::endl;
+   //std::cout << "P " << LRL_Cell_Degrees(out) << std::endl;
+   //exit(0);
 
-   // Create display helper
-   TransformerDisplay display(controls);
+   //const LRL_Cell cell(LRL_Cell::rand());
+   //const Matrix_3x3 toC = cCentered;
+   //const Matrix_3x3 toF = faceCentered;
+   //const LRL_Cell_Degrees outC = toC.Inver() * cell;
+   //const LRL_Cell_Degrees outF = toF.Inver() * cell;
+   //std::cout << "C " << outC << std::endl;
+   //std::cout << "F " << outF << std::endl;
+   //exit(0);
 
-   // Create lattice transformer
-   LatticeTransformer transformer(controls);
+   //G6 junk;
+   //MatG6 mjunk;
+   //Niggli::Reduce(junk, mjunk, junk, 19191.);
 
-   // First cell is the reference
-   const LatticeCell& referenceCell = inputList[0];
+   try {
+      // initialize controls
+      MultiTransformFinderControls controls;
 
-   // Process each cell to transform against the reference
-   for (size_t i = 1; i < inputList.size(); ++i) {
-      const LatticeCell& cellToTransform = inputList[i];
+      // Initialize program using  BasicProgramInput system
+      const BasicProgramInput<MultiTransformFinderControls> program_setup("Transformer", controls);
+      const std::vector<LatticeCell>& inputList = program_setup.getInputList();
 
-      // Display the cell pair
-      display.showInputCells(cellToTransform, referenceCell);
-
-      // ------------------------ Layer 1 & 2: Calculate transformations ----------------------------
-      // This handles both centering conversions and primitive transformations
-      CompleteTransformationResult result = transformer.transformLattice(
-         cellToTransform, referenceCell);
-
-      // Show centering information in detailed mode
-      if (controls.shouldShowDetails() && result.hasCentering) {
-         std::cout << "Centering conversion performed:" << std::endl;
-         std::cout << "  Input cell centering: "
-            << (result.inputCenteringType.empty() ? "P" : result.inputCenteringType)
-            << std::endl;
-         std::cout << "  Reference cell centering: "
-            << (result.referenceCenteringType.empty() ? "P" : result.referenceCenteringType)
-            << std::endl;
-
-         // Display centering-to-primitive matrices
-         std::cout << "Input cell to primitive matrix:" << std::endl;
-         std::cout << result.inputToPrimitiveMatrix << std::endl;
-
-         std::cout << "Reference cell to primitive matrix:" << std::endl;
-         std::cout << result.referenceToPrimitiveMatrix << std::endl;
+      // Show control settings if requested
+      if (controls.getShowControls()) {
+         std::cout << controls << std::endl;
       }
 
-      // Show additional information for primitive cells in detailed mode
-      if (controls.shouldShowDetails() && !result.hasCentering) {
-         // Only show detailed B4Matcher results for primitive cells
-         B4Matcher matcher(cellToTransform.getCell(), referenceCell.getCell());
-
-         // Show B4 matcher results
-         display.showB4MatcherResults(matcher, cellToTransform, referenceCell);
-
-         // Show B4 transformations
-         display.showB4Transformations(matcher, cellToTransform, referenceCell);
+      // Need at least two cells (reference and at least one mobile)
+      if (inputList.size() < 2) {
+         showUsageInformation(controls);
+         return 1;
       }
 
-      // ------------------------ Layer 3: Display transformation results --------------------------
-      if (result.primitiveResult.isValid) {
-         // Choose the appropriate display method based on centering
-         if (result.hasCentering) {
-            // Use the centered display method
-            display.showParameterTransformationsWithCentering(
-               result.primitiveResult.transformations,
-               cellToTransform,
-               referenceCell,
-               result.primitiveResult.duplicatesRemoved,
-               result.inputToPrimitiveMatrix,
-               result.referenceToPrimitiveMatrix);
-         }
-         else {
-            // Use the original display method for primitive cells
-            display.showParameterTransformations(
-               result.primitiveResult.transformations,
-               cellToTransform,
-               referenceCell,
-               result.primitiveResult.duplicatesRemoved);
+      // Get the reference cell (first one in the list)
+      const LatticeCell& referenceCell = inputList[0];
+
+      // Create lattice transformer
+      LatticeTransformer transformer(controls);
+
+      // Process each mobile cell (all cells after the first one)
+      for (size_t i = 1; i < inputList.size(); ++i) {
+         const LatticeCell& mobileCell = inputList[i];
+
+         // Add a separator between multiple transformations
+         if (i >= 1) {
+            std::cout << "\n\n=#==#==#==#==#==#==#==#==#==#==#==#==#==#==#==\n";
+            std::cout << "Transformation (Cell to Match to reference) " << i << " of " << (inputList.size() - 1) << "\n";
+            std::cout << "=#==#==#==#==#==#==#==#==#==#==#==#==#==#==#==\n\n";
          }
 
-         // No need for the additional verification section anymore
-         // since the correct metrics are shown directly in the display
-      }
-      else {
-         std::cout << "\nCould not find valid transformations for this cell pair." << std::endl;
+         // Create display handler
+         TransformerDisplay display(controls);
+         // Show input cells for this comparison
+         display.showInputCells(mobileCell, referenceCell);
+
+         // If show extra transform info is enabled, show additional information
+         if (controls.shouldShowExtraTransformInfo()) {
+            // Use the utility function to show transformation info
+            showTransformationInfo(mobileCell, referenceCell);
+         }
+
+         // Transform lattice with complete centering handling
+         CompleteTransformationResult result = transformer.transformLattice(
+            mobileCell, referenceCell);
+
+         // Display the results
+         display.showCompleteTransformations(result, mobileCell, referenceCell);
       }
 
-      // Add a separator between cell pairs if processing multiple inputs
-      if (i < inputList.size() - 1) {
-         std::cout << "\n===============================================\n" << std::endl;
-      }
+      return 0;
    }
-
-   return 0;
+   catch (const std::exception& ex) {
+      std::cerr << "Error: " << ex.what() << std::endl;
+      return 1;
+   }
+   catch (...) {
+      std::cerr << "Unknown error occurred" << std::endl;
+      return 1;
+   }
 }
 

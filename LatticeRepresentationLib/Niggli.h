@@ -43,6 +43,8 @@ public:
    static bool ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta);
    static void ShowStoreResults();
 
+   static bool ReduceWithTransforms(const G6& vi, MatG6& mG6, Matrix_3x3& m3d, G6& vout, const double delta);
+
    template<typename TVEC>
    static bool Reduce(const TVEC& vi, TVEC& vout) {
       G6 g6out;
