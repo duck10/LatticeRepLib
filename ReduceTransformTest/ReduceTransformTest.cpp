@@ -211,25 +211,16 @@ void TestMatrixCorrespondence(const MatG6& matG6, const Matrix_3x3& mat3D, const
       std::cout << "Using provided test cell: " << randomCell << std::endl;
    }
    else {
-      // Generate a random cell with sensible values
-      std::random_device rd;
-      std::mt19937 gen(rd());
-      std::uniform_real_distribution<> distLength(5.0, 15.0);     // For cell lengths
-      std::uniform_real_distribution<> distAngle(60.0, 120.0);    // For cell angles in degrees
+      // Generate a proper random cell using either G6::rand() or Polar::rand()
+      // Option 1: Using G6::rand() if available
+      // randomCell = G6::rand();
 
-      // Create a cell with random but reasonable parameters
-      LRL_Cell randomLRLCell(
-         distLength(gen),
-         distLength(gen),
-         distLength(gen),
-         distAngle(gen),
-         distAngle(gen),
-         distAngle(gen)
-      );
+      // Option 2: Using Polar::rand() which returns an LRL_Cell
+      LRL_Cell polarCell = Polar::rand();
+      randomCell = G6(polarCell);
 
-      randomCell = G6(randomLRLCell);
       std::cout << "Generated random cell: " << randomCell << std::endl;
-      std::cout << "Cell parameters: " << randomLRLCell << std::endl;
+      std::cout << "Cell parameters: " << LRL_Cell(randomCell) << std::endl;
    }
 
    // Apply the G6 transformation
@@ -330,6 +321,7 @@ void TestMatrixCorrespondence(const MatG6& matG6, const Matrix_3x3& mat3D, const
 
    std::cout << std::endl;
 }
+
 
 // Function to test all standard matrix pairs
 void TestAllMatrixPairs() {

@@ -236,6 +236,7 @@ bool TestMatrices3D(const MatG6& m6, const Matrix_3x3& m3) {
     
    const G6 prodg6 = m6 * cellg6;
    const LRL_Cell xxx = m3 * cell;
+   return xxx.IsValid();
 }
 
 static StoreResults<double, PairReporter<S6, S6>> g_bestVectors;

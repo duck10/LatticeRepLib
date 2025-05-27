@@ -25,7 +25,7 @@ public:
 
    const ControlType& getControls() const { return m_controls; }
    ControlType& getControls() { return m_controls; }
-   const std::vector<LatticeCell>& getInputList() const { return m_inputList; }
+   std::vector<LatticeCell>& getInputList() { return m_inputList; }
 
 private:
    ControlType& m_controls;

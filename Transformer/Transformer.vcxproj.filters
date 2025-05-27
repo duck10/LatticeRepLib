@@ -18,9 +18,6 @@
     <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MultiTransformFinder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LatticeMatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -45,6 +42,18 @@
     <ClInclude Include="Matrix_3x3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CenteringTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformationMatrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformationReservoir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MultiTransformFinderTest.cpp">
@@ -62,7 +71,10 @@
     <ClCompile Include="LatticeTransformer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MultiTransformFinder.cpp">
+    <ClCompile Include="..\LatticeRepresentationLib\Niggli.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformerUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

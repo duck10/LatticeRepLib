@@ -14,23 +14,15 @@
 class TransformerDisplay {
 private:
    const MultiTransformFinderControls& m_controls;
+   void displayParameterDifferences(const LRL_Cell& transformed,
+      const LRL_Cell& reference) const;
+
 
 public:
    TransformerDisplay(const MultiTransformFinderControls& controls);
 
    // Display input cells
    void showInputCells(const LatticeCell& cellToTransform, const LatticeCell& referenceCell) const;
-
-   // Display a single transformation with complete centering
-   void displayCompleteTransformResult(
-      const B4Matcher::TransformResult& result,
-      const LatticeCell& cellToTransform,
-      const LatticeCell& referenceCell) const;
-
-   // Display B4 matcher results (for debugging)
-   void showB4MatcherResults(const B4Matcher& matcher,
-      const LatticeCell& cellToTransform,
-      const LatticeCell& referenceCell) const;
 
    // Display transformation results with complete centering
    void showCompleteTransformations(

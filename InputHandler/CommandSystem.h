@@ -53,7 +53,7 @@ public:
       Command closest;
       Command probe(LRL_StringTools::strToupper(cmdName), nullptr);
       if (commandTree.NearestNeighbor(threshold, closest, probe)) {
-         closest.handler(controls, value);
+         closest.handler(controls, LRL_StringTools::strToupper(value));
          return true;
       }
       return false;

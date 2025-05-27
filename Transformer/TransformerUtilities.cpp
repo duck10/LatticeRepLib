@@ -1,156 +1,109 @@
 // TransformerUtilities.cpp
 #include "TransformerUtilities.h"
-#include "LRL_Cell_Degrees.h"
 #include "LatticeCell.h"
-#include "S6.h"
-#include "Selling.h"
+#include "LRL_Cell_Degrees.h"
 #include "CS6Dist.h"
 #include "CS6Dist.cpp"
-#include <iostream>
+#include "S6.h"
+#include "Selling.h"
+
 #include <iomanip>
+#include <iostream>
+#include <sstream>
 
-std::vector<Matrix_3x3> generateBasicPermutationMatrices() {
-   std::vector<Matrix_3x3> permutationMatrices;
 
-   // Basic permutation indices
-   const int perms[6][3] = {
-       {0, 1, 2}, // Identity
-       {0, 2, 1}, // Swap b,c
-       {1, 0, 2}, // Swap a,b
-       {1, 2, 0}, // Cycle right
-       {2, 0, 1}, // Cycle left
-       {2, 1, 0}  // Swap a,c
-   };
+inline Matrix_3x3 calculateNiggliMatrix(const LRL_Cell& cell, bool showDetails = false) {
+   // Get the G6 representation of the cell
+   G6 g6Cell = cell; // Direct conversion using assignment operator
 
-   // Generate all basic transformation matrices with determinant +1
-   for (int p = 0; p < 6; p++) {
-      for (int signA = -1; signA <= 1; signA += 2) {
-         for (int signB = -1; signB <= 1; signB += 2) {
-            for (int signC = -1; signC <= 1; signC += 2) {
-               // Calculate permutation parity
-               int inversions = 0;
-               for (int i = 0; i < 3; i++) {
-                  for (int j = i + 1; j < 3; j++) {
-                     if (perms[p][i] > perms[p][j]) {
-                        inversions++;
-                     }
-                  }
-               }
-               bool isOdd = (inversions % 2 == 1);
+   // Output variables for the reduction
+   G6 g6Reduced;
+   MatG6 g6Matrix;
+   Matrix_3x3 m3d;
 
-               // Calculate determinant sign
-               int det = signA * signB * signC;
-               if (isOdd) det = -det;
+   // Perform Niggli reduction with transform tracking
+   bool success = Niggli::ReduceWithTransforms(g6Cell, g6Matrix, m3d, g6Reduced);
+   std::cout << "reduced cell in calculateNiggliMatrix " << LRL_Cell_Degrees(g6Reduced);
 
-               // Only accept matrices with det = +1
-               if (det != 1) continue;
-
-               // Create matrix
-               Matrix_3x3 matrix;
-               // Zero out the matrix
-               for (int i = 0; i < 3; i++) {
-                  for (int j = 0; j < 3; j++) {
-                     matrix[i * 3 + j] = 0.0;
-                  }
-               }
-
-               // Set the permuted and sign-flipped elements
-               int signs[3] = { signA, signB, signC };
-               for (int i = 0; i < 3; i++) {
-                  matrix[i * 3 + perms[p][i]] = signs[i];
-               }
-
-               permutationMatrices.push_back(matrix);
-            }
-         }
-      }
+   if (!success) {
+      std::cerr << "Warning: Niggli reduction failed for cell " << LRL_Cell_Degrees(cell) << std::endl;
+      // Return identity matrix as fallback
+      return Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
    }
 
-   return permutationMatrices;
+   // The m3d matrix is the transformation matrix we need
+   if (showDetails) {
+      std::cout << "Niggli reduction matrix determinant: " << m3d.Det() << std::endl;
+      std::cout << "Original cell: " << LRL_Cell_Degrees(cell) << std::endl;
+      std::cout << "Reduced cell: " << LRL_Cell_Degrees(g6Reduced) << std::endl;
+
+      // Verify the transformation
+      LRL_Cell reducedCell = m3d * cell;
+      std::cout << "Transformed cell: " << LRL_Cell_Degrees(reducedCell) << std::endl;
+      std::cout << "Distance between reduced and transformed: "
+         << LRL_Cell::DistanceBetween(reducedCell, LRL_Cell(g6Reduced)) << std::endl;
+   }
+
+   return m3d;
 }
 
-void testSpecificMatricesWithB4(const LRL_Cell& sourceCell, const LRL_Cell& targetCell) {
-   std::cout << "Testing specific transformation matrices using B4..." << std::endl;
 
-   // Define matrices to test
-   std::vector<Matrix_3x3> matricesToTest;
+void showUsageInformation(const MultiTransformFinderControls& controls) {
+   std::cout << "Transformer: Tool for finding transformations between lattice cells" << std::endl;
+   std::cout << "Usage: transformer [options] [INPUT_FILE]" << std::endl;
+   std::cout << "Options:" << std::endl;
+   std::cout << "  useniggli [true/false]  Enable/disable Niggli reduction" << std::endl;
+   // Add more options as needed
+}
 
-   // 1. Identity
-   matricesToTest.push_back(Matrix_3x3(
-      1, 0, 0,
-      0, 1, 0,
-      0, 0, 1
-   ));
 
-   // 2. Permutation (swap a and c)
-   matricesToTest.push_back(Matrix_3x3(
-      0, 0, 1,
-      1, 0, 0,
-      0, 1, 0
-   ));
+void showTransformationInfo(const LatticeCell& mobileCell, const LatticeCell& referenceCell) {
+   std::cout << "\n--- TRANSFORMATION DETAILS ---" << std::endl;
 
-   // 3. Complex matrix from previous tests
-   matricesToTest.push_back(Matrix_3x3(
-      3, -3, -1,
-      1, 2, 2,
-      -3, -1, -2
-   ));
+   // Show centering type information
+   std::cout << "Mobile cell centering: " <<
+      (mobileCell.getLatticeType().empty() ? "P" : mobileCell.getLatticeType()) << std::endl;
+   std::cout << "Reference cell centering: " <<
+      (referenceCell.getLatticeType().empty() ? "P" : referenceCell.getLatticeType()) << std::endl;
 
-   std::cout << "Testing " << matricesToTest.size() << " specific transformation matrices..." << std::endl;
+   // Show cells in G6 representation
+   G6 mobileG6 = mobileCell.toPrimitive();
+   G6 refG6 = referenceCell.toPrimitive();
+   std::cout << "Mobile cell G6: " << mobileG6 << std::endl;
+   std::cout << "Reference cell G6: " << refG6 << std::endl;
 
-   std::cout << "Source Cell:\n        " << LRL_Cell_Degrees(sourceCell) << std::endl;
-   std::cout << "Target Cell:\n        " << LRL_Cell_Degrees(targetCell) << std::endl;
+   // Show cells in S6 representation
+   S6 mobileS6 = S6(mobileCell.getCell());
+   S6 refS6 = S6(referenceCell.getCell());
+   std::cout << "Mobile cell S6: " << mobileS6 << std::endl;
+   std::cout << "Reference cell S6: " << refS6 << std::endl;
 
-   std::cout << "\nTesting each transformation matrix:\n" << std::endl;
+   // Calculate the centering matrices
+   Matrix_3x3 mobileToPrimitive = ToPrimitive(mobileCell.getLatticeType(), mobileCell.getCell());
+   Matrix_3x3 refToPrimitive = ToPrimitive(referenceCell.getLatticeType(), referenceCell.getCell());
 
-   // Create B4 representations
-   const B4 sourceB4(sourceCell);
-   const B4 targetB4(targetCell);
+   std::cout << "Mobile-to-primitive matrix:" << std::endl;
+   std::cout << mobileToPrimitive << std::endl;
 
-   // Test each matrix
-   int count = 0;
-   for (const auto& matrix : matricesToTest) {
-      count++;
-      std::cout << "Matrix " << count << ":" << std::endl;
-      std::cout << matrix << std::endl;
+   std::cout << "Reference-to-primitive matrix:" << std::endl;
+   std::cout << refToPrimitive << std::endl;
 
-      // Calculate determinant
-      double det = matrix.Det();
-      std::cout << "Determinant: " << det << std::endl;
+   // Show Niggli-reduced cell information
+   G6 mobileNiggli = mobileCell.getNiggliReducedCell();
+   G6 refNiggli = referenceCell.getNiggliReducedCell();
+   std::cout << "Mobile cell (Niggli reduced): " << mobileNiggli << std::endl;
+   std::cout << "Reference cell (Niggli reduced): " << refNiggli << std::endl;
 
-      // Apply transformation directly to B4
-      std::cout << sourceB4 << std::endl;
-      const B4 transformedB4 = matrix * sourceB4;
-      std::cout << "transformedB4 " << transformedB4 << std::endl;
+   std::cout << "--- END TRANSFORMATION DETAILS ---\n" << std::endl;
+}
 
-      // Construct the transformed cell (for display only)
-      const LatticeCell transformedCell = LatticeCell(transformedB4);
-
-      std::cout << "Transformed Cell (B):\n      " << (transformedCell.getCell()) << std::endl;
-      std::cout << "Transformed Cell (B):\n        " << LRL_Cell_Degrees(transformedCell.getCell()) << std::endl;
-
-      // Calculate distances
-      S6 s1 = S6(transformedCell.getCell());
-      S6 s2 = S6(targetCell);
-      S6 reduced1, reduced2;
-      Selling::Reduce(s1, reduced1);
-      Selling::Reduce(s2, reduced2);
-      const double cs6Dist = CS6Dist(reduced1.data(), reduced2.data());
-
-      // Calculate B4 distance
-      const double b4Distance = B4::DistanceBetween(transformedB4, targetB4);
-
-      // Calculate Euclidean distance (for reference)
-      double euclideanDist = 0.0;
-      for (int i = 0; i < 6; i++) {
-         double diff = s1[i] - s2[i];
-         euclideanDist += diff * diff;
-      }
-      euclideanDist = std::sqrt(euclideanDist);
-
-      std::cout << "B4 Distance = " << b4Distance << std::endl;
-      std::cout << "CS6Dist = " << cs6Dist << ", Euclidean Dist = " << euclideanDist << std::endl;
-
-      std::cout << "--------------------------" << std::endl;
+std::vector<LatticeCell> RunTests( MultiTransformFinderControls& controls, const int n) {
+   std::stringstream ss;
+   std::vector<LatticeCell> cells;
+   if (n == 1) {
+      ss << "show \n random 3 \n  end\n";
+      InputHandler::readMixedInput( controls, cells, ss);
+      std::vector<LatticeCell> cells = InputHandler::handleInput(controls);
    }
+   return cells;
 }

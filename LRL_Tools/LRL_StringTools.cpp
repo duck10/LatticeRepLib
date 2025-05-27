@@ -75,3 +75,16 @@ std::vector<std::string> LRL_StringTools::SplitBetweenBlanks(const std::string& 
 
    return(str);
 }
+
+std::string LRL_StringTools::indentLines(const std::string& input, int numSpaces) {
+   std::stringstream inputStream(input);
+   std::stringstream outputStream;
+   std::string line;
+   std::string prefix(numSpaces, ' '); // Create a string with numSpaces blanks
+
+   while (std::getline(inputStream, line)) {
+      outputStream << prefix << line << '\n';
+   }
+
+   return outputStream.str();
+}

@@ -596,6 +596,11 @@ Matrix_3x3 Transpose ( void ) const
 }
 
 
+Matrix_3x3 Inverse( void) const 
+{
+   return (*this).Inver();
+}
+
 //-----------------------------------------------------------------------------
 // Name: Inver()
 // Description: returns the inverse of a matrix
@@ -697,6 +702,10 @@ void UnitMatrix ( void )
         1.0,0.0,0.0,
         0.0,1.0,0.0,
         0.0,0.0,1.0    );
+}
+
+double Determinant(void) const {
+   return Det();
 }
 
 //-----------------------------------------------------------------------------

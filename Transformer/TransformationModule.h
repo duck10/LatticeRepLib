@@ -5,38 +5,41 @@
 #include "LRL_Cell.h"
 #include <vector>
 
-// Forward declarations
-class MultiTransformFinderControls;
-
-// Result structure
+// In TransformationModule.h, make sure the TransformationModuleResult struct has:
 struct TransformationModuleResult {
+   Matrix_3x3 transformMatrix;
+   LRL_Cell transformedCell;
+   double p3Distance;
+   double s6Angle;
    bool isValid;
    std::vector<B4Matcher::TransformResult> transformations;
-   int duplicatesRemoved;
+   size_t duplicatesRemoved;
 
-   TransformationModuleResult() : isValid(false), duplicatesRemoved(0) {}
+   TransformationModuleResult()
+      : transformMatrix()
+      , transformedCell()
+      , p3Distance(0.0)
+      , s6Angle(0.0)
+      , isValid(false)
+      , duplicatesRemoved(0)
+   {
+   }
 };
+
+
+
+// Forward declarations
+class MultiTransformFinderControls;
 
 class TransformationModule {
 private:
    const MultiTransformFinderControls& m_controls;
-
-   // Helper method to check for duplicate matrices
-   bool isMatrixDuplicate(
-      const Matrix_3x3& m1,
-      const Matrix_3x3& m2,
-      double tolerance = 1e-6) const;
 
 public:
    // Constructor
    TransformationModule(const MultiTransformFinderControls& controls)
       : m_controls(controls) {
    }
-
-   // Main method to find transformations
-   TransformationModuleResult FindBestTransformations(
-      const LRL_Cell& cellToTransform,
-      const LRL_Cell& referenceCell) const;
 };
 
 #endif // TRANSFORMATIONMODULE_H

@@ -76,7 +76,7 @@ public:
 
    double operator[] (const size_t n) const;
    double& operator[](const size_t n);
-   double DistanceBetween(const LRL_Cell& v1, const LRL_Cell& v2);
+   static double DistanceBetween(const LRL_Cell& v1, const LRL_Cell& v2);
    size_t size(void) const { return 6; }
    double norm() const { return (*this).Volume();}
    double norm(const LRL_Cell& cell) const { return cell.Volume();}

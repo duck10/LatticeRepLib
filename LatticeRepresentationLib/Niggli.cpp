@@ -97,8 +97,15 @@ const static MatG6 R12("1 0 0 0 0 0   0 1 0 0 0 0   1 1 1 -1 -1 1   0 -2 0 1 0 -
 // Standard presentation matrices
 const Matrix_3x3 spnull_3D(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0); // Identity
 
-const Matrix_3x3 sp1_3D(0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-const Matrix_3x3 sp2_3D(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0);
+// Corrected sp1_3D: swap a and b, then negate c to maintain det = +1
+const Matrix_3x3 sp1_3D(0.0, 1.0, 0.0,    // new a = old b
+   1.0, 0.0, 0.0,    // new b = old a
+   0.0, 0.0, -1.0);  // new c = -old c (changed from +1.0)
+
+// Corrected sp2_3D: swap b and c, then negate a to maintain det = +1
+const Matrix_3x3 sp2_3D(-1.0, 0.0, 0.0,   // new a = -old a (changed from +1.0)
+   0.0, 0.0, 1.0,    // new b = old c
+   0.0, 1.0, 0.0);   // new c = old b
 
 const Matrix_3x3 sp34a_3D(1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0);
 const Matrix_3x3 sp34b_3D(-1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0);
@@ -1578,6 +1585,10 @@ bool Niggli::ReduceWithTransforms(const G6& vi, MatG6& mG6, Matrix_3x3& m3d, G6&
             return false;
          }
       }
+      const double det = m3d.Det();
+      if (std::abs(det - 1.0) > 0.001) {
+         std::cout << "3D transformation determinant not 1.0\n";
+      }
 
       ++count;
    }
@@ -1598,9 +1609,62 @@ bool Niggli::ReduceWithTransforms(const G6& vi, MatG6& mG6, Matrix_3x3& m3d, G6&
    // If the G6 transformation is accurate but there are numerical issues with the 3D matrix,
    // we can try a sanity check to adjust the 3D matrix by verifying its determinant
    const double det = m3d.Det();
-   if (std::abs(det) - 1.0 > 0.001) {
+   if (std::abs(det - 1.0) > 0.001) {
       std::cout << "3D transformation determinant not 1.0\n";
    }
-
+   if (m3d.Det() < 0.0) {
+      std::cout << "ERROR IN NIGGLI REDUCTION COMPUTING 3D TRANSFORMATION\n";
+   }
    return (count < maxCycle) || isNearReduced;
+}
+
+
+void Niggli::CheckAllNiggliMatrixDeterminants() {
+   const double tolerance = 1e-10;
+   bool allCorrect = true;
+
+   auto checkMatrix = [&](const Matrix_3x3& m, const std::string& name) {
+      double det = m.Det();
+      if (std::abs(det - 1.0) > tolerance) {
+         std::cout << "ERROR: " << name << " has determinant " << det
+            << " (should be +1)" << std::endl;
+         allCorrect = false;
+
+         // Show the matrix for debugging
+         std::cout << "  Matrix: ";
+         for (int i = 0; i < 9; ++i) {
+            std::cout << m[i] << " ";
+            if (i % 3 == 2) std::cout << " | ";
+         }
+         std::cout << std::endl;
+      }
+      };
+
+   std::cout << "=== Checking Niggli 3D Matrix Determinants ===" << std::endl;
+
+   // Check standard presentation matrices
+   checkMatrix(spnull_3D, "spnull_3D");
+   checkMatrix(sp1_3D, "sp1_3D");
+   checkMatrix(sp2_3D, "sp2_3D");
+   checkMatrix(sp34a_3D, "sp34a_3D");
+   checkMatrix(sp34b_3D, "sp34b_3D");
+   checkMatrix(sp34c_3D, "sp34c_3D");
+
+   // Check reduction operation matrices
+   checkMatrix(R5_Plus_3D, "R5_Plus_3D");
+   checkMatrix(R5_Minus_3D, "R5_Minus_3D");
+   checkMatrix(R6_Plus_3D, "R6_Plus_3D");
+   checkMatrix(R6_Minus_3D, "R6_Minus_3D");
+   checkMatrix(R7_Plus_3D, "R7_Plus_3D");
+   checkMatrix(R7_Minus_3D, "R7_Minus_3D");
+   checkMatrix(R8_3D, "R8_3D");
+   checkMatrix(R12_3D, "R12_3D");
+
+   if (allCorrect) {
+      std::cout << "All Niggli 3D matrices have correct determinant (+1)" << std::endl;
+   }
+   else {
+      std::cout << "Some Niggli 3D matrices have incorrect determinants!" << std::endl;
+   }
+   std::cout << "===========================================" << std::endl;
 }

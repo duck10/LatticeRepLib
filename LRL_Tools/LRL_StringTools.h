@@ -17,6 +17,7 @@ public:
    static bool not_space(const char c);
    static bool space(const char c);
 
+   static std::string indentLines(const std::string& input, int numSpaces);
 };
 
 #endif  // LRL_StringTools_H

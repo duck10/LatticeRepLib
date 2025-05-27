@@ -146,22 +146,26 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="B4Matcher.h" />
+    <ClInclude Include="CenteringTest.h" />
     <ClInclude Include="LatticeMatcher.h" />
     <ClInclude Include="LatticeTransformer.h" />
     <ClInclude Include="Matrix_3x3.h" />
-    <ClInclude Include="MultiTransformFinder.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />
+    <ClInclude Include="TransformationMatrices.h" />
     <ClInclude Include="TransformationModule.h" />
+    <ClInclude Include="TransformationReservoir.h" />
     <ClInclude Include="TransformerDisplay.h" />
+    <ClInclude Include="TransformResult.h" />
     <ClInclude Include="TransformerUtilities.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\LatticeRepresentationLib\Niggli.cpp" />
     <ClCompile Include="B4Matcher.cpp" />
     <ClCompile Include="LatticeTransformer.cpp" />
-    <ClCompile Include="MultiTransformFinder.cpp" />
     <ClCompile Include="MultiTransformFinderTest.cpp" />
     <ClCompile Include="TransformationModule.cpp" />
     <ClCompile Include="TransformerDisplay.cpp" />
+    <ClCompile Include="TransformerUtilities.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

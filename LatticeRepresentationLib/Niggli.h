@@ -1,6 +1,7 @@
 #ifndef REDUCER_H
 #define REDUCER_H
 
+#include "LRL_Vector3.h"
 #include "MatG6.h"
 #include "G6.h"
 
@@ -43,7 +44,7 @@ public:
    static bool ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta);
    static void ShowStoreResults();
 
-   static bool ReduceWithTransforms(const G6& vi, MatG6& mG6, Matrix_3x3& m3d, G6& vout, const double delta);
+   static bool ReduceWithTransforms(const G6& vi, MatG6& mG6, Matrix_3x3& m3d, G6& vout, const double delta=0.0);
 
    template<typename TVEC>
    static bool Reduce(const TVEC& vi, TVEC& vout) {
@@ -77,6 +78,7 @@ private:
    Niggli(void);
 
 public:
+   static void CheckAllNiggliMatrixDeterminants();
 
 };
 
