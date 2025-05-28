@@ -149,8 +149,10 @@
     <ClInclude Include="CenteringTest.h" />
     <ClInclude Include="LatticeMatcher.h" />
     <ClInclude Include="LatticeTransformer.h" />
+    <ClInclude Include="MatrixSets_B4Matcher..h" />
     <ClInclude Include="Matrix_3x3.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />
+    <ClInclude Include="NiggliMatrices.h" />
     <ClInclude Include="TransformationMatrices.h" />
     <ClInclude Include="TransformationModule.h" />
     <ClInclude Include="TransformationReservoir.h" />

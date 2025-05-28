@@ -54,6 +54,12 @@
     <ClInclude Include="TransformationReservoir.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MatrixSets_B4Matcher..h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NiggliMatrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MultiTransformFinderTest.cpp">

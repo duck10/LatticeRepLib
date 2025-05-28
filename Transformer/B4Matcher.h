@@ -50,6 +50,17 @@ private:
    const MultiTransformFinderControls& m_controls;  // Controls for transformation search
    std::vector<TransformResult> m_transformResults;  // Results from transformation
    std::vector<Matrix_3x3> generatePriorityOrderedMatrices() const;
+   std::set<Matrix_3x3> generateExtendedShearMatrices() const;
+
+   std::set<Matrix_3x3> loadBasicMatrices() const;
+   std::set<Matrix_3x3> generatePermutationShearCombinations(
+      const std::set<Matrix_3x3>& existingMatrices,
+      size_t maxTotalMatrices) const;
+   bool isPermutationMatrix(const Matrix_3x3& matrix) const;
+   bool hasValidDeterminant(const Matrix_3x3& matrix) const;
+   std::set<Matrix_3x3> generateTripleCombinations() const;
+   std::set<Matrix_3x3> generateShearShearCombinations(
+      const std::set<Matrix_3x3>& existingMatrices) const;
 
    // Helper methods for matrix generation and processing
    bool isValidTransformationMatrix(const Matrix_3x3& matrix) const;

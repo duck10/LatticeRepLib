@@ -49,7 +49,7 @@ public:
       // Calculate quality metrics
       double p3Dist = TransformerUtilities::getP3Distance(transformed, targetCell);
       double ncDist = CalculateNCDist(transformed, targetCell);
-      double s6Angle = S6::AngleBetween(S6(transformed), S6(targetCell));
+      double s6Angle = TransformerUtilities::angleS6(S6(transformed), S6(targetCell));
 
       // Early rejection for obviously bad transformations
       if (p3Dist > maxAcceptableDistance) {

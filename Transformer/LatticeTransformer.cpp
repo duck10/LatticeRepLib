@@ -171,7 +171,7 @@ CompleteTransformationResult LatticeTransformer::transformLattice(
       // Calculate metrics for the final transformation
       S6 transformedS6(transform.transformedCompleteCell);
       S6 referenceS6(referenceCell.getCell());
-      transform.s6AngleFinal = S6::AngleBetween(transformedS6, referenceS6);
+      transform.s6AngleFinal = TransformerUtilities::angleS6(transformedS6, referenceS6);
       transform.p3DistanceFinal = P3::DistanceBetween(
          transform.transformedCompleteCell, referenceCell.getCell());
 

@@ -65,7 +65,7 @@ namespace TransformerUtilities {
    }
 
    inline  double angleS6(const S6& s1, const S6& s2) {
-      return (s1.Dot(s2)) / s1.norm() / s2.norm();
+      return acos(s1.Dot(s2) / s1.norm() / s2.norm()) * 180/4.0/atan(1.0);
    }
 
    // Calculate the Niggli reduction matrix for a cell
