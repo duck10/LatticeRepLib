@@ -146,28 +146,56 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="B4Matcher.h" />
+    <ClInclude Include="BasicProgramInput.h" />
+    <ClInclude Include="BidirectionalMatrixMatcher.h" />
+    <ClInclude Include="CenteringExperiment.h" />
     <ClInclude Include="CenteringTest.h" />
+    <ClInclude Include="ComparisonStats.h" />
     <ClInclude Include="LatticeMatcher.h" />
     <ClInclude Include="LatticeTransformer.h" />
-    <ClInclude Include="MatrixSets_B4Matcher..h" />
+    <ClInclude Include="MatrixSets_B4Matcher.h" />
     <ClInclude Include="Matrix_3x3.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />
     <ClInclude Include="NiggliMatrices.h" />
+    <ClInclude Include="ProductionLatticeMatcher.h" />
+    <ClInclude Include="SingularityFixes.h" />
     <ClInclude Include="TransformationMatrices.h" />
     <ClInclude Include="TransformationModule.h" />
     <ClInclude Include="TransformationReservoir.h" />
     <ClInclude Include="TransformerDisplay.h" />
     <ClInclude Include="TransformResult.h" />
     <ClInclude Include="TransformerUtilities.h" />
+    <ClInclude Include="UnifiedMatchResult.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\LatticeRepresentationLib\Niggli.cpp" />
     <ClCompile Include="B4Matcher.cpp" />
+    <ClCompile Include="BidirectionalMatrixMatcher.cpp" />
+    <ClCompile Include="BidirectionalTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="CenteringExperiment.cpp" />
     <ClCompile Include="LatticeTransformer.cpp" />
-    <ClCompile Include="MultiTransformFinderTest.cpp" />
+    <ClCompile Include="MAIN_ARCHIVED.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="MultiTransformFinderTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="ProductionLatticeMatcher.cpp" />
     <ClCompile Include="TransformationModule.cpp" />
     <ClCompile Include="TransformerDisplay.cpp" />
     <ClCompile Include="TransformerUtilities.cpp" />
+    <ClCompile Include="WorkingTestWithExisting.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="create_test.bat">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

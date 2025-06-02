@@ -1,589 +1,501 @@
-﻿#pragma warning(disable: 4101) // Visual Studio 
-#pragma warning(disable: 4566) // Visual Studio 
+﻿// GuidedMatrixCloud.cpp
+// Navigate P3 space using iterative matrix transformations toward target
 
-
-//#include "LRL_Cell.h"
-//#include "LRL_Cell_Degrees.h"
-//#include "Matrix_3x3.h"
-//#include "LatticeCell.h"
-//#include "G6.h"
-//#include "NCDist.h"
-//#include "P3.h"
-//#include "TransformerUtilities.h"
-//#include "LatticeTransformer.h"
-//#include <iostream>
-//#include <iomanip>
-//
-//void verifyCenteringMatrices() {
-//   std::cout << "=== Verifying C Centering Matrices ===" << std::endl;
-//
-//   // Standard C to P matrix
-//   const Matrix_3x3 C_to_P_standard(
-//      0.5, 0.5, 0,
-//      -0.5, 0.5, 0,
-//      0, 0, 1
-//   );
-//
-//   // Let's also check the IUCr standard
-//   const Matrix_3x3 C_to_P_IUCr(
-//      1.0, 0.0, 0.0,
-//      0.0, 0.5, 0.5,
-//      0.0, -0.5, 0.5
-//   );
-//
-//   // Test cells
-//   const LRL_Cell cCell(10, 20, 30, 90, 99, 90);  // C-centered
-//   const LRL_Cell pCell(10, 11.18, 30, 94.012, 99, 63.435);  // P primitive
-//
-//   std::cout << "C-centered cell: " << LRL_Cell_Degrees(cCell) << std::endl;
-//   std::cout << "P primitive cell: " << LRL_Cell_Degrees(pCell) << std::endl;
-//
-//   // Test different C to P matrices
-//   std::cout << "\n--- Testing standard C to P matrix ---" << std::endl;
-//   std::cout << "Matrix:" << std::endl;
-//   std::cout << C_to_P_standard << std::endl;
-//
-//   const LRL_Cell primFromC_standard = C_to_P_standard * cCell;
-//   std::cout << "Primitive from C: " << LRL_Cell_Degrees(primFromC_standard) << std::endl;
-//
-//   // Check NCDist
-//   G6 g6_standard(primFromC_standard);
-//   G6 g6_p(pCell);
-//   double ncDist_standard = NCDist(g6_standard.data(), g6_p.data());
-//   std::cout << "NCDist to P cell: " << ncDist_standard << std::endl;
-//
-//   std::cout << "\n--- Testing IUCr C to P matrix ---" << std::endl;
-//   std::cout << "Matrix:" << std::endl;
-//   std::cout << C_to_P_IUCr << std::endl;
-//
-//   const LRL_Cell primFromC_IUCr = C_to_P_IUCr * cCell;
-//   std::cout << "Primitive from C: " << LRL_Cell_Degrees(primFromC_IUCr) << std::endl;
-//
-//   G6 g6_IUCr(primFromC_IUCr);
-//   double ncDist_IUCr = NCDist(g6_IUCr.data(), g6_p.data());
-//   std::cout << "NCDist to P cell: " << ncDist_IUCr << std::endl;
-//
-//   // Check what matrix is actually being used
-//   std::cout << "\n--- Testing what LatticeTransformer uses ---" << std::endl;
-//
-//   LatticeCell latticeCellC(cCell, "C");
-//   MultiTransformFinderControls controls;
-//   controls.setShowDetails(false);
-//
-//   LatticeTransformer transformer(controls);
-//
-//   // Just get the centering matrix
-//   const Matrix_3x3 toPrimitive = ToPrimitive("C", cCell);
-//   std::cout << "ToPrimitive(\"C\") returns:" << std::endl;
-//   std::cout << toPrimitive << std::endl;
-//
-//   // Check if it matches either standard
-//   bool matchesStandard = true;
-//   bool matchesIUCr = true;
-//
-//   for (int i = 0; i < 9; ++i) {
-//      if (std::abs(toPrimitive[i] - C_to_P_standard[i]) > 1e-10) {
-//         matchesStandard = false;
-//      }
-//      if (std::abs(toPrimitive[i] - C_to_P_IUCr[i]) > 1e-10) {
-//         matchesIUCr = false;
-//      }
-//   }
-//
-//   std::cout << "\nMatches standard C to P: " << (matchesStandard ? "YES" : "NO") << std::endl;
-//   std::cout << "Matches IUCr C to P: " << (matchesIUCr ? "YES" : "NO") << std::endl;
-//
-//   // Test the complete transformation with the actual matrix
-//   const LRL_Cell primFromC_actual = toPrimitive * cCell;
-//   std::cout << "\nPrimitive from C (actual): " << LRL_Cell_Degrees(primFromC_actual) << std::endl;
-//
-//   G6 g6_actual(primFromC_actual);
-//   double ncDist_actual = NCDist(g6_actual.data(), g6_p.data());
-//   std::cout << "NCDist to P cell: " << ncDist_actual << std::endl;
-//
-//   // Find the best transformation between primitive forms
-//   std::cout << "\n=== Finding best transformation ===" << std::endl;
-//
-//   // Test matrix from our earlier analysis
-//   const Matrix_3x3 bestMatrix(-1, 1, 0, 0, 1, 0, 0, 0, -1);
-//
-//   // Apply to each primitive form
-//   std::cout << "\nUsing standard C to P:" << std::endl;
-//   LRL_Cell transformed_standard = bestMatrix * primFromC_standard;
-//   double p3_standard = P3::DistanceBetween(transformed_standard, pCell);
-//   std::cout << "P3 distance: " << p3_standard << " Å" << std::endl;
-//
-//   std::cout << "\nUsing IUCr C to P:" << std::endl;
-//   LRL_Cell transformed_IUCr = bestMatrix * primFromC_IUCr;
-//   double p3_IUCr = P3::DistanceBetween(transformed_IUCr, pCell);
-//   std::cout << "P3 distance: " << p3_IUCr << " Å" << std::endl;
-//
-//   std::cout << "\nUsing actual C to P:" << std::endl;
-//   LRL_Cell transformed_actual = bestMatrix * primFromC_actual;
-//   double p3_actual = P3::DistanceBetween(transformed_actual, pCell);
-//   std::cout << "P3 distance: " << p3_actual << " Å" << std::endl;
-//}
-//
-//int main() {
-//   std::cout << std::fixed << std::setprecision(8);
-//   verifyCenteringMatrices();
-//   return 0;
-//}
-
-#include "MultiTransformFinderControls.h"
-#include "LatticeCell.h"
-#include "B4Matcher.h"
-#include "TransformerDisplay.h"
-#include "LatticeTransformer.h"
-#include "TransformationMatrices.h"
-#include "TransformerUtilities.h"
-#include "InputHandler.h"
-#include "ProgramSetup.h"
 #include "LRL_Cell.h"
-#include "Niggli.h"
-#include "G6.h"
-
+#include "LRL_Cell_Degrees.h"
+#include "Matrix_3x3.h"
+#include "TransformerUtilities.h"
+#include "TransformationMatrices.h"
+#include "NiggliMatrices.h"
 #include <iostream>
 #include <vector>
-#include <string>
-#include <stdexcept>
+#include <iomanip>
+#include <cmath>
+#include <algorithm>
 
+class GuidedMatrixCloud {
+private:
+   struct CloudPoint {
+      LRL_Cell cell;
+      Matrix_3x3 totalTransformation;
+      double distanceToReference;
+      double distanceToLine;
+      double distanceAlongLine;
+      double distanceFromMobile;
+      int iterationFound;
+      std::string lastMatrixUsed;
 
-void testDirectTransformation() {
-   // Input cell and reference cell
-   const double DEG_TO_RAD = 1.0;
-   LRL_Cell inputCell(30.0, 1.0, 2.0, DEG_TO_RAD * 55.0, DEG_TO_RAD * 33.0, DEG_TO_RAD * 44.0);
-   LRL_Cell referenceCell(1.0, 2.0, 30.0, DEG_TO_RAD * 33.0, DEG_TO_RAD * 44.0, DEG_TO_RAD * 55.0);
+      CloudPoint(const LRL_Cell& c, const Matrix_3x3& trans, double distRef, double distLine, double distAlong, double distMobile, int iter, const std::string& matrix)
+         : cell(c), totalTransformation(trans), distanceToReference(distRef), distanceToLine(distLine), distanceAlongLine(distAlong), distanceFromMobile(distMobile), iterationFound(iter), lastMatrixUsed(matrix) {
+      }
+   };
 
-   std::cout << "\n===== TESTING ALL PERMUTATION MATRICES =====\n" << std::endl;
+   static std::vector<Matrix_3x3> getAllTransformationMatrices() {
+      // NOW USE THE COMPLETE MATRIX SET including Niggli matrices!
+      std::vector<Matrix_3x3> allMatrices;
 
-   // Get all permutation matrices from MatrixSets
-   std::vector<Matrix_3x3> allPermutations = MatrixSets::getAllPermutationMatrices();
+      // Add all Niggli matrices AND their inverses (as in ProductionLatticeMatcher)
+      std::cout << "Loading Niggli matrices and their inverses..." << std::endl;
+      for (const auto& matrix : NiggliMatrices::ALL_NIGGLI_MATRICES) {
+         allMatrices.push_back(matrix);
+         try {
+            const Matrix_3x3 inverse = matrix.Inverse();
+            if (std::abs(inverse.Det()) > 1e-10) {
+               if (!(matrix == inverse)) {  // Avoid duplicates for self-inverse matrices
+                  allMatrices.push_back(inverse);
+               }
+            }
+         }
+         catch (...) {
+            continue;  // Skip matrices that can't be inverted
+         }
+      }
+      std::cout << "Niggli matrices (with inverses): " << allMatrices.size() << std::endl;
 
-   std::cout << "Input cell: " << LRL_Cell_Degrees(inputCell) << std::endl;
-   std::cout << "Reference cell: " << LRL_Cell_Degrees(referenceCell) << std::endl;
-   std::cout << "\nTesting " << allPermutations.size() << " permutation matrices:" << std::endl;
-
-   // Track best transformation
-   double bestDistance = std::numeric_limits<double>::max();
-   Matrix_3x3 bestMatrix;
-   LRL_Cell bestTransformed;
-   std::string bestMatrixName;
-
-   // Test each matrix
-   for (size_t i = 0; i < allPermutations.size(); ++i) {
-      const Matrix_3x3& matrix = allPermutations[i];
-
-      // Get matrix name if available
-      std::string matrixName = MatrixSets::getPermutationName(matrix);
-      if (matrixName == "Unknown permutation") {
-         matrixName = "Matrix #" + std::to_string(i);
+      // Add all 24 crystallographic transformations 
+      const auto permutations = MatrixSets::getAllPermutationMatrices();
+      std::cout << "Adding crystallographic matrices: " << permutations.size() << std::endl;
+      for (const auto& matrix : permutations) {
+         allMatrices.push_back(matrix);
       }
 
-      // Apply transformation
-      LRL_Cell transformedCell = matrix * inputCell;
+      // Add shear matrices with inverses
+      std::cout << "Adding shear matrices with inverses..." << std::endl;
+      size_t shearStart = allMatrices.size();
+      for (const auto& matrix : MatrixSets::SHEARS) {
+         allMatrices.push_back(matrix);
+         try {
+            const Matrix_3x3 inverse = matrix.Inverse();
+            if (std::abs(inverse.Det()) > 1e-10) {
+               if (!(matrix == inverse)) {
+                  allMatrices.push_back(inverse);
+               }
+            }
+         }
+         catch (...) {
+            continue;
+         }
+      }
+      std::cout << "Shear matrices (with inverses): " << (allMatrices.size() - shearStart) << std::endl;
 
-      // Calculate distance metric
-      double distance = P3::DistanceBetween(transformedCell, referenceCell);
+      // Add complex matrices with inverses
+      std::cout << "Adding complex matrices with inverses..." << std::endl;
+      size_t complexStart = allMatrices.size();
+      for (const auto& matrix : MatrixSets::COMPLEX) {
+         allMatrices.push_back(matrix);
+         try {
+            const Matrix_3x3 inverse = matrix.Inverse();
+            if (std::abs(inverse.Det()) > 1e-10) {
+               if (!(matrix == inverse)) {
+                  allMatrices.push_back(inverse);
+               }
+            }
+         }
+         catch (...) {
+            continue;
+         }
+      }
+      std::cout << "Complex matrices (with inverses): " << (allMatrices.size() - complexStart) << std::endl;
 
-      // Output results
-      std::cout << "\n" << matrixName << std::endl;
-      std::cout << "Matrix: " << matrix << std::endl;
-      std::cout << "Det: " << matrix.Det() << std::endl;
-      std::cout << "Transformed cell: " << LRL_Cell_Degrees(transformedCell) << std::endl;
-      std::cout << "P3 Distance: " << distance << std::endl;
+      // Add B4Matcher matrices if available
+      // Note: These might be in a different header or namespace
+      std::cout << "Total matrices loaded: " << allMatrices.size() << std::endl;
 
-      // Update best if this is better
-      if (distance < bestDistance) {
-         bestDistance = distance;
-         bestMatrix = matrix;
-         bestTransformed = transformedCell;
-         bestMatrixName = matrixName;
+      if (allMatrices.size() >= 70) {
+         std::cout << "SUCCESS: Using comprehensive matrix set!" << std::endl;
+      }
+      else {
+         std::cout << "WARNING: Still missing some matrices (expected ~78, got " << allMatrices.size() << ")" << std::endl;
+      }
+
+      return allMatrices;
+   }
+
+   static double calculateDistanceAlongLine(const LRL_Cell& mobile, const LRL_Cell& reference, const LRL_Cell& point) {
+      // Calculate how far along the mobile->reference line the point is
+      // Returns 0.0 at mobile, 1.0 at reference, >1.0 past reference
+
+      try {
+         double totalDistance = TransformerUtilities::getP3Distance(mobile, reference);
+         double pointToReference = TransformerUtilities::getP3Distance(point, reference);
+         double mobileToPoint = TransformerUtilities::getP3Distance(mobile, point);
+
+         if (totalDistance < 1e-10) return 0.0;  // mobile == reference
+
+         // Use cosine rule to find projection
+         double cosTheta = (totalDistance * totalDistance + mobileToPoint * mobileToPoint - pointToReference * pointToReference)
+            / (2.0 * totalDistance * mobileToPoint);
+
+         // Clamp cosine to valid range
+         cosTheta = std::max(-1.0, std::min(1.0, cosTheta));
+
+         double projectionDistance = mobileToPoint * cosTheta;
+         return projectionDistance / totalDistance;
+
+      }
+      catch (...) {
+         return -1.0;  // Error case
       }
    }
 
-   // Report the best transformation
-   std::cout << "\n===== BEST TRANSFORMATION =====\n" << std::endl;
-   std::cout << "Best matrix: " << bestMatrixName << std::endl;
-   std::cout << "Matrix: " << bestMatrix << std::endl;
-   std::cout << "Transformed cell: " << LRL_Cell_Degrees(bestTransformed) << std::endl;
-   std::cout << "P3 Distance: " << bestDistance << std::endl;
+   static double calculateDistanceToLine(const LRL_Cell& mobile, const LRL_Cell& reference, const LRL_Cell& point) {
+      // Calculate perpendicular distance from point to the mobile->reference line
 
-   // Test original cyclic permutation for comparison
-   std::cout << "\n===== ORIGINAL TEST FOR COMPARISON =====\n" << std::endl;
+      try {
+         double totalDistance = TransformerUtilities::getP3Distance(mobile, reference);
+         double pointToReference = TransformerUtilities::getP3Distance(point, reference);
+         double mobileToPoint = TransformerUtilities::getP3Distance(mobile, point);
 
-   // Create the cyclic permutation matrix
-   Matrix_3x3 cyclicPerm(0.0, 1.0, 0.0,
-      0.0, 0.0, 1.0,
-      1.0, 0.0, 0.0);
+         if (totalDistance < 1e-10) return mobileToPoint;  // mobile == reference, return distance to mobile
 
-   // Apply transformation and verify
-   LRL_Cell transformedCell = cyclicPerm * inputCell;
-   std::cout << "Cyclic permutation matrix (xyz->yzx):" << std::endl;
-   std::cout << "Matrix: " << cyclicPerm << std::endl;
-   std::cout << "Det: " << cyclicPerm.Det() << std::endl;
-   std::cout << "Transformed cell: " << LRL_Cell_Degrees(transformedCell) << std::endl;
-   std::cout << "P3 Distance: " << P3::DistanceBetween(transformedCell, referenceCell) << std::endl;
+         // Special case: if point is exactly mobile or reference, distance to line is 0
+         if (mobileToPoint < 1e-10) return 0.0;  // point == mobile
+         if (pointToReference < 1e-10) return 0.0;  // point == reference
 
-   // Test shear matrices
-   std::cout << "\n===== TESTING SHEAR MATRICES =====\n" << std::endl;
-   std::vector<Matrix_3x3> allShears = MatrixSets::SHEARS;
+         // Use triangle area method: Area = 0.5 * base * height
+         // So height (perpendicular distance) = 2 * Area / base
 
-      std::cout << "Testing " << allShears.size() << " shear matrices:\n" << std::endl;
+         // Calculate area using Heron's formula
+         double s = (totalDistance + pointToReference + mobileToPoint) / 2.0;  // semi-perimeter
+         double area_squared = s * (s - totalDistance) * (s - pointToReference) * (s - mobileToPoint);
 
-   // Track best shear transformation
-   double bestShearDistance = std::numeric_limits<double>::max();
-   Matrix_3x3 bestShearMatrix;
-   LRL_Cell bestShearTransformed;
-   int bestShearIndex = -1;
+         // Check for degenerate triangle (points are collinear)
+         if (area_squared <= 1e-20) {
+            // Points are collinear, so perpendicular distance is 0
+            return 0.0;
+         }
 
-   // Test each shear matrix
-   for (size_t i = 0; i < allShears.size(); ++i) {
-      const Matrix_3x3& matrix = allShears[i];
+         double area = std::sqrt(area_squared);
+         double perpendicularDistance = (2.0 * area) / totalDistance;
 
-      // Apply transformation
-      LRL_Cell transformedCell = matrix * inputCell;
+         return perpendicularDistance;
 
-      // Calculate distance metric
-      double distance = P3::DistanceBetween(transformedCell, referenceCell);
-
-      // Output results
-      std::cout << "Shear Matrix #" << i << std::endl;
-      std::cout << "Matrix: " << matrix << std::endl;
-      std::cout << "Det: " << matrix.Det() << std::endl;
-      std::cout << "Transformed cell: " << LRL_Cell_Degrees(transformedCell) << std::endl;
-      std::cout << "P3 Distance: " << distance << std::endl << std::endl;
-
-      // Update best if this is better
-      if (distance < bestShearDistance) {
-         bestShearDistance = distance;
-         bestShearMatrix = matrix;
-         bestShearTransformed = transformedCell;
-         bestShearIndex = i;
+      }
+      catch (...) {
+         return 1e10;  // Error case, return large distance
       }
    }
 
-   // Report the best shear transformation
-   std::cout << "Best shear matrix: #" << bestShearIndex << std::endl;
-   std::cout << "Matrix: " << bestShearMatrix << std::endl;
-   std::cout << "Transformed cell: " << LRL_Cell_Degrees(bestShearTransformed) << std::endl;
-   std::cout << "P3 Distance: " << bestShearDistance << std::endl;
+public:
 
+   struct GuidedCloudResult {
+      bool success;
+      LRL_Cell finalCell;
+      Matrix_3x3 totalTransformation;
+      double finalDistance;
+      int iterations;
+      std::vector<CloudPoint> path;
+      std::string summary;
+   };
 
-   if (bestDistance < bestShearDistance) {
-      std::cout << "Permutation matrices perform better for this test case." << std::endl;
+   /**
+    * Apply guided matrix cloud algorithm with line-projection focus
+    */
+   static GuidedCloudResult guidedMatrixCloud(const LRL_Cell& mobile, const LRL_Cell& reference,
+      double targetThreshold = 0.1, int maxIterations = 30) {
+
+      std::cout << "=== GUIDED MATRIX CLOUD ALGORITHM (Line Projection Focus) ===" << std::endl;
+      std::cout << "Mobile: " << LRL_Cell_Degrees(mobile) << std::endl;
+      std::cout << "Reference: " << LRL_Cell_Degrees(reference) << std::endl;
+      std::cout << "Initial P3 distance: " << std::fixed << std::setprecision(6)
+         << TransformerUtilities::getP3Distance(mobile, reference) << std::endl;
+      std::cout << "Strategy: Target line position 1.0 with bounded progress" << std::endl;
+      std::cout << std::string(80, '-') << std::endl;
+
+      GuidedCloudResult result;
+      result.success = false;
+      result.iterations = 0;
+
+      auto allMatrices = getAllTransformationMatrices();
+      std::cout << "Using " << allMatrices.size() << " transformation matrices" << std::endl;
+
+      // Start with mobile cell
+      LRL_Cell currentCell = mobile;
+      Matrix_3x3 identityMatrix;
+      identityMatrix.UnitMatrix();
+      Matrix_3x3 totalTransformation = identityMatrix;
+
+      double currentDistance = TransformerUtilities::getP3Distance(currentCell, reference);
+      double currentLineDistance = calculateDistanceToLine(mobile, reference, currentCell);
+      double currentLinePosition = calculateDistanceAlongLine(mobile, reference, currentCell);
+      double currentMobileDistance = 0.0;  // Start at mobile
+
+      // Track visited states to prevent oscillation
+      std::vector<CloudPoint> visitedPoints;
+
+      // Track the path
+      result.path.push_back(CloudPoint(currentCell, totalTransformation, currentDistance, currentLineDistance, currentLinePosition, currentMobileDistance, 0, "START"));
+      visitedPoints.push_back(result.path.back());
+
+      for (int iteration = 1; iteration <= maxIterations; iteration++) {
+         result.iterations = iteration;
+
+         std::cout << "\n--- Iteration " << iteration << " ---" << std::endl;
+         std::cout << "Current distance to reference: " << std::fixed << std::setprecision(6) << currentDistance << std::endl;
+         std::cout << "Current line position: " << std::fixed << std::setprecision(3) << currentLinePosition << std::endl;
+         std::cout << "Current distance from mobile: " << std::fixed << std::setprecision(6) << currentMobileDistance << std::endl;
+
+         // Check if we've reached target - either close to reference OR close to line position 1.0
+         if (currentDistance < targetThreshold ||
+            (std::abs(currentLinePosition - 1.0) < 0.05 && currentDistance < 1.0)) {
+            std::cout << "*** TARGET REACHED! ***" << std::endl;
+            if (currentDistance < targetThreshold) {
+               std::cout << "Success: Reference distance < " << targetThreshold << std::endl;
+            }
+            else {
+               std::cout << "Success: Line position ≈ 1.0 and reasonable reference distance" << std::endl;
+            }
+            result.success = true;
+            break;
+         }
+
+         // Collect all candidate points and sort them
+         std::vector<CloudPoint> candidates;
+
+         for (size_t i = 0; i < allMatrices.size(); i++) {
+            try {
+               LRL_Cell candidateCell = allMatrices[i] * currentCell;
+               double candidateDistanceToRef = TransformerUtilities::getP3Distance(candidateCell, reference);
+               double candidateDistanceToLine = calculateDistanceToLine(mobile, reference, candidateCell);
+               double candidateLinePosition = calculateDistanceAlongLine(mobile, reference, candidateCell);
+               double candidateMobileDistance = TransformerUtilities::getP3Distance(mobile, candidateCell);
+
+               Matrix_3x3 newTotalTransformation = allMatrices[i] * totalTransformation;
+               std::string matrixName = MatrixSets::getPermutationName(allMatrices[i]);
+
+               candidates.push_back(CloudPoint(candidateCell, newTotalTransformation, candidateDistanceToRef,
+                  candidateDistanceToLine, candidateLinePosition, candidateMobileDistance, iteration, matrixName));
+
+            }
+            catch (...) {
+               // Skip invalid transformations
+            }
+         }
+
+         // Sort candidates by proximity to target line position (1.0) with bounded progress
+         std::sort(candidates.begin(), candidates.end(), [&currentLinePosition](const CloudPoint& a, const CloudPoint& b) {
+            // Only consider candidates that make reasonable progress (bounded)
+            const double maxAllowedPosition = std::max(currentLinePosition + 0.3, 1.2);  // Allow modest progress or slight overshoot
+            const double minAllowedPosition = currentLinePosition - 0.1;  // Allow slight retreat
+
+            // Filter out candidates that are too far
+            bool aValid = (a.distanceAlongLine >= minAllowedPosition && a.distanceAlongLine <= maxAllowedPosition);
+            bool bValid = (b.distanceAlongLine >= minAllowedPosition && b.distanceAlongLine <= maxAllowedPosition);
+
+            if (aValid && !bValid) return true;   // a is valid, b is not
+            if (!aValid && bValid) return false;  // b is valid, a is not
+            if (!aValid && !bValid) {
+               // Both invalid, pick the one closer to current position
+               return std::abs(a.distanceAlongLine - currentLinePosition) < std::abs(b.distanceAlongLine - currentLinePosition);
+            }
+
+            // Both valid - prefer the one closer to target line position 1.0
+            double aDistanceFromTarget = std::abs(a.distanceAlongLine - 1.0);
+            double bDistanceFromTarget = std::abs(b.distanceAlongLine - 1.0);
+
+            return aDistanceFromTarget < bDistanceFromTarget;
+            });
+
+         // Find the best candidate that we haven't visited recently
+         CloudPoint bestPoint = candidates[0];  // This is now the one with maximum line position
+         bool foundNewPoint = false;
+
+         // Print top 5 candidates to see what we're choosing from
+         const double maxAllowed = std::max(currentLinePosition + 0.3, 1.2);
+         const double minAllowed = currentLinePosition - 0.1;
+
+         std::cout << "Allowed range: [" << std::fixed << std::setprecision(3) << minAllowed
+            << ", " << maxAllowed << "]" << std::endl;
+         std::cout << "Top 5 candidates by proximity to target (line pos 1.0):" << std::endl;
+
+         for (size_t i = 0; i < std::min(size_t(5), candidates.size()); i++) {
+            bool inRange = (candidates[i].distanceAlongLine >= minAllowed &&
+               candidates[i].distanceAlongLine <= maxAllowed);
+            std::cout << "  " << i + 1 << ". pos=" << std::fixed << std::setprecision(3) << candidates[i].distanceAlongLine
+               << " P3=" << std::setprecision(6) << candidates[i].distanceToReference
+               << " target_dist=" << std::setprecision(3) << std::abs(candidates[i].distanceAlongLine - 1.0)
+               << " " << (inRange ? "✓" : "✗")
+               << " matrix=" << candidates[i].lastMatrixUsed << std::endl;
+         }
+
+         for (const auto& candidate : candidates) {
+            // Check if this candidate is too similar to recent visited points
+            bool tooSimilar = false;
+
+            for (int checkBack = std::max(0, (int)visitedPoints.size() - 3); checkBack < (int)visitedPoints.size(); checkBack++) {
+               double distanceToVisited = TransformerUtilities::getP3Distance(candidate.cell, visitedPoints[checkBack].cell);
+               if (distanceToVisited < 0.001) {  // Very close to a recent point
+                  tooSimilar = true;
+                  break;
+               }
+            }
+
+            if (!tooSimilar) {
+               bestPoint = candidate;
+               foundNewPoint = true;
+               std::cout << "Selected: pos=" << std::fixed << std::setprecision(3) << bestPoint.distanceAlongLine
+                  << " (target_dist=" << std::setprecision(3) << std::abs(bestPoint.distanceAlongLine - 1.0) << ")"
+                  << " P3=" << std::setprecision(6) << bestPoint.distanceToReference
+                  << " matrix=" << bestPoint.lastMatrixUsed << std::endl;
+               break;
+            }
+         }
+
+         if (!foundNewPoint) {
+            std::cout << "All good candidates are too similar to recent points - taking best available" << std::endl;
+            bestPoint = candidates[0];
+         }
+
+         // Update current state
+         currentCell = bestPoint.cell;
+         totalTransformation = bestPoint.totalTransformation;
+         currentDistance = bestPoint.distanceToReference;
+         currentLineDistance = bestPoint.distanceToLine;
+         currentLinePosition = bestPoint.distanceAlongLine;
+         currentMobileDistance = bestPoint.distanceFromMobile;
+
+         result.path.push_back(bestPoint);
+         visitedPoints.push_back(bestPoint);
+
+         std::cout << "Best matrix: " << bestPoint.lastMatrixUsed << std::endl;
+         std::cout << "New distance to reference: " << std::fixed << std::setprecision(6) << currentDistance << std::endl;
+         std::cout << "New line position: " << std::fixed << std::setprecision(3) << currentLinePosition << std::endl;
+         std::cout << "New distance from mobile: " << std::fixed << std::setprecision(6) << currentMobileDistance << std::endl;
+
+         // Check for progress - if we're not making any progress, try more aggressive exploration
+         if (iteration > 5 && currentDistance > result.path[iteration - 3].distanceToReference) {
+            std::cout << "No progress in recent iterations - may need different approach" << std::endl;
+            if (iteration > 10) break;  // Stop after reasonable attempt
+         }
+      }
+
+      result.finalCell = currentCell;
+      result.totalTransformation = totalTransformation;
+      result.finalDistance = currentDistance;
+
+      // Generate summary
+      std::ostringstream summary;
+      summary << "Line projection guided cloud completed in " << result.iterations << " iterations. ";
+      if (result.success) {
+         summary << "SUCCESS: Reached target";
+      }
+      else {
+         summary << "Best result: ref distance " << std::fixed << std::setprecision(6) << currentDistance
+            << ", line position " << currentLinePosition;
+      }
+      result.summary = summary.str();
+
+      return result;
    }
-   else {
-      std::cout << "Shear matrices perform better for this test case." << std::endl;
+
+   /**
+    * Print detailed results
+    */
+   static void printResults(const GuidedCloudResult& result) {
+      std::cout << "\n" << std::string(80, '=') << std::endl;
+      std::cout << "GUIDED MATRIX CLOUD RESULTS" << std::endl;
+      std::cout << std::string(80, '=') << std::endl;
+
+      std::cout << "\nSummary: " << result.summary << std::endl;
+
+      if (result.success) {
+         std::cout << "\n*** SOLUTION FOUND! ***" << std::endl;
+         std::cout << "Final cell: " << LRL_Cell_Degrees(result.finalCell) << std::endl;
+         std::cout << "Total transformation matrix:" << std::endl;
+         std::cout << result.totalTransformation << std::endl;
+      }
+      else {
+         std::cout << "\nBest result achieved:" << std::endl;
+         std::cout << "Final cell: " << LRL_Cell_Degrees(result.finalCell) << std::endl;
+         std::cout << "Final distance: " << std::fixed << std::setprecision(6) << result.finalDistance << std::endl;
+         std::cout << "Improvement: " << std::fixed << std::setprecision(1)
+            << (100.0 * (1.0 - result.finalDistance / result.path[0].distanceToReference)) << "%" << std::endl;
+      }
+
+      std::cout << "\nPath summary:" << std::endl;
+      for (size_t i = 0; i < result.path.size(); i++) {
+         const auto& point = result.path[i];
+         std::cout << "Step " << std::setw(2) << i << ": "
+            << std::setw(25) << point.lastMatrixUsed
+            << " → P3=" << std::fixed << std::setprecision(6) << point.distanceToReference
+            << " line=" << std::setprecision(6) << point.distanceToLine
+            << " mobile=" << std::setprecision(6) << point.distanceFromMobile
+            << " pos=" << std::setprecision(3) << point.distanceAlongLine << std::endl;
+      }
    }
-}
+};
 
-
-void testMatrixDeterminants() {
-   std::cout << "\n===== CHECKING DETERMINANTS OF ALL MATRICES =====\n" << std::endl;
-
-   const double epsilon = 1e-10;
-   bool allValid = true;
-
-   // Check individual permutation matrices
-   std::cout << "PERMUTATION MATRICES:\n" << std::endl;
-
-   // Check Identity
-   double det = MatrixSets::IDENTITY.Det();
-   bool valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "IDENTITY: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   // Check permutation matrices
-   det = MatrixSets::PERM_CYCLIC_1.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "PERM_CYCLIC_1: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::PERM_CYCLIC_2.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "PERM_CYCLIC_2: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   // Check odd permutations
-   det = MatrixSets::PERM_SWAP_XY.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "PERM_SWAP_XY: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::PERM_SWAP_YZ.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "PERM_SWAP_YZ: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::PERM_SWAP_XZ.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "PERM_SWAP_XZ: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   // Check sign flips
-   det = MatrixSets::FLIP_XY.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "FLIP_XY: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::FLIP_XZ.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "FLIP_XZ: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::FLIP_YZ.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "FLIP_YZ: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   // Check complex matrices
-   det = MatrixSets::COMPLEX_1.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "COMPLEX_1: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::COMPLEX_2.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "COMPLEX_2: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   // Check shear matrices
-   std::cout << "\nSHEAR MATRICES:\n" << std::endl;
-
-   det = MatrixSets::SHEAR_XY.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_XY: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_XZ.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_XZ: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_YX.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_YX: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_YZ.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_YZ: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_ZX.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_ZX: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_ZY.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_ZY: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_XY_NEG.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_XY_NEG: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_XZ_NEG.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_XZ_NEG: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_YX_NEG.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_YX_NEG: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_YZ_NEG.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_YZ_NEG: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_ZX_NEG.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_ZX_NEG: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   det = MatrixSets::SHEAR_ZY_NEG.Det();
-   valid = std::abs(det - 1.0) < epsilon;
-   std::cout << "SHEAR_ZY_NEG: det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-   allValid &= valid;
-
-   // Check all matrices in arrays
-   std::cout << "\nCHECKING ALL MATRICES IN ARRAYS:\n" << std::endl;
-
-   // Check PERMUTATIONS array
-   std::cout << "PERMUTATIONS array (" << sizeof(MatrixSets::PERMUTATIONS) / sizeof(MatrixSets::PERMUTATIONS[0]) << " matrices):" << std::endl;
-   int i = 0;
-   for (const auto& matrix : MatrixSets::PERMUTATIONS) {
-      ++i;
-      det =matrix.Det();
-      valid = std::abs(det - 1.0) < epsilon;
-      std::cout << "  Matrix #" << i << ": det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-      allValid &= valid;
-   }
-
-   // Check SHEARS array
-   std::cout << "\nSHEARS array (" << sizeof(MatrixSets::SHEARS) / sizeof(MatrixSets::SHEARS[0]) << " matrices):" << std::endl;
-   for (int i = 0; i < sizeof(MatrixSets::SHEARS) / sizeof(MatrixSets::SHEARS[0]); ++i) {
-      det = MatrixSets::SHEARS[i].Det();
-      valid = std::abs(det - 1.0) < epsilon;
-      std::cout << "  Matrix #" << i << ": det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-      allValid &= valid;
-   }
-
-   // Check COMPLEX array
-   std::cout << "\nCOMPLEX array (" << sizeof(MatrixSets::COMPLEX) / sizeof(MatrixSets::COMPLEX[0]) << " matrices):" << std::endl;
-   for (int i = 0; i < sizeof(MatrixSets::COMPLEX) / sizeof(MatrixSets::COMPLEX[0]); ++i) {
-      det = MatrixSets::COMPLEX[i].Det();
-      valid = std::abs(det - 1.0) < epsilon;
-      std::cout << "  Matrix #" << i << ": det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-      allValid &= valid;
-   }
-
-   // Check matrices returned by utility functions
-   std::cout << "\nCHECKING MATRICES FROM UTILITY FUNCTIONS:\n" << std::endl;
-
-
-   // Check getAllPermutationMatrices
-   std::vector<Matrix_3x3> allPerms = MatrixSets::getAllPermutationMatrices();
-   std::cout << "\ngetAllPermutationMatrices (" << allPerms.size() << " matrices):" << std::endl;
-   for (size_t i = 0; i < allPerms.size(); ++i) {
-      det = allPerms[i].Det();
-      valid = std::abs(det - 1.0) < epsilon;
-      std::cout << "  Matrix #" << i << ": det = " << det << (valid ? " ✓" : " ✗") << std::endl;
-      allValid &= valid;
-   }
-
-   // Final summary
-   std::cout << "\n===== DETERMINANT CHECK SUMMARY =====\n" << std::endl;
-   if (allValid) {
-      std::cout << "ALL MATRICES HAVE DETERMINANT = +1 ✓" << std::endl;
-   }
-   else {
-      std::cout << "WARNING: SOME MATRICES DO NOT HAVE DETERMINANT = +1 ✗" << std::endl;
-      std::cout << "Check the details above to identify problematic matrices." << std::endl;
-   }
-}
-
-int main(int argc, char* argv[]) {
-
-   //Matrix_3x3 m1(-1, 1, -1,      0, 1, -1,      - 1, 0, -1);
-   //Matrix_3x3 miInverse = m1.Inverse();
-   //std::cout << " m1\n" << m1 << std::endl;
-   //std::cout << " miInverse\n" << miInverse << std::endl;
-
-   // In main or another test function
-   std::vector<Matrix_3x3> completeGroup = MatrixSets::getAllPermutationMatrices();
-
-   //const Matrix_3x3 m33 = { 1,-1,0, 0,1,0, 0,-1,1 };
-   //const LRL_Cell c3 = { 1,2,1,90,90, 90 };
-   //const LRL_Cell out = m33 * c3;
-   //std::cout << m33 << std::endl << std::endl;
-   //std::cout << "P " << LRL_Cell_Degrees(c3) << std::endl;
-   //std::cout << "P " << LRL_Cell_Degrees(out) << std::endl;
-   //exit(0);
-
-   //const LRL_Cell cell(LRL_Cell::rand());
-   //const Matrix_3x3 toC = cCentered;
-   //const Matrix_3x3 toF = faceCentered;
-   //const LRL_Cell_Degrees outC = toC.Inver() * cell;
-   //const LRL_Cell_Degrees outF = toF.Inver() * cell;
-   //std::cout << "C " << outC << std::endl;
-   //std::cout << "F " << outF << std::endl;
-   //exit(0);
-
-   //G6 junk;
-   //MatG6 mjunk;
-   //Niggli::Reduce(junk, mjunk, junk, 19191.);
-
+int main() {
    try {
-      // initialize controls
-      MultiTransformFinderControls controls;
+      // Test multiple difficult cases
+      std::vector<std::pair<std::string, std::string>> testCases = {
+         // Case 1: All-60° (already solved)
+         {"9.023 9.028 9.029 60.018 60.022 60.018", "9.030 9.030 9.030 120.000 120.000 90.000"},
 
-      // Initialize program using  BasicProgramInput system
-      BasicProgramInput<MultiTransformFinderControls> program_setup("Transformer", controls);
-      std::vector<LatticeCell>& inputList = program_setup.getInputList();
+         // Case 2: Near-cubic with small distortions
+         {"8.999 9.001 8.998 89.95 90.05 89.98", "9.000 9.000 9.000 90.000 90.000 90.000"},
 
-      if (controls.shouldRunTests()) {
-         //const std::vector<LatticeCell> testCells = RunTests(controls, 1);
-         //inputList.insert(inputList.end(),testCells.begin(), testCells.end());
-      }
+         // Case 3: 60°/120° boundary case
+         {"10.1 10.2 10.3 60.1 119.9 60.2", "10.0 10.0 10.0 120.0 120.0 90.0"},
 
-      if ( controls.shouldShowDetails())
-      {
-         testDirectTransformation();
-         testMatrixDeterminants();
-         testPermutationGroupClosure();
-         Niggli::CheckAllNiggliMatrixDeterminants();
-         // Save the complete group for future use by updating your TransformationMatrices.h
-         // You could output them to a file for manual inclusion
-         std::cout << "\nComplete group matrices:" << std::endl;
-         for (size_t i = 0; i < completeGroup.size(); ++i) {
-            //std::cout << "Matrix #" << i << ":" << std::endl;
-            //std::cout << completeGroup[i] << std::endl;
+         // Case 4: Rhombohedral edge case
+         {"7.071 7.071 7.071 60.05 60.05 60.05", "10.0 10.0 5.0 90.0 90.0 120.0"}
+      };
+
+      for (size_t i = 0; i < testCases.size(); i++) {
+         std::cout << "\n" << std::string(100, '=') << std::endl;
+         std::cout << "TESTING CASE " << (i + 1) << std::endl;
+         std::cout << std::string(100, '=') << std::endl;
+
+         const LRL_Cell mobileCell(testCases[i].first);
+         const LRL_Cell referenceCell(testCases[i].second);
+
+         auto result = GuidedMatrixCloud::guidedMatrixCloud(mobileCell, referenceCell, 0.1, 15);
+         GuidedMatrixCloud::printResults(result);
+
+         std::cout << "\n" << std::string(50, '-') << " CASE " << (i + 1) << " SUMMARY " << std::string(50, '-') << std::endl;
+         if (result.success) {
+            std::cout << "✓ SOLVED: P3 = " << std::fixed << std::setprecision(6) << result.finalDistance << std::endl;
+            std::cout << "Final transformation matrix:" << std::endl << result.totalTransformation << std::endl;
+         }
+         else {
+            std::cout << "✗ FAILED: Best P3 = " << std::fixed << std::setprecision(6) << result.finalDistance << std::endl;
+            std::cout << "Improvement: " << std::fixed << std::setprecision(1)
+               << (100.0 * (1.0 - result.finalDistance / result.path[0].distanceToReference)) << "%" << std::endl;
          }
       }
 
+      std::cout << "\n" << std::string(100, '=') << std::endl;
+      std::cout << "OVERALL ALGORITHM ASSESSMENT" << std::endl;
+      std::cout << std::string(100, '=') << std::endl;
 
-      // Show control settings if requested
-      if (controls.getShowControls()) {
-         std::cout << controls << std::endl;
+      int solved = 0;
+      for (size_t i = 0; i < testCases.size(); i++) {
+         const LRL_Cell mobileCell(testCases[i].first);
+         const LRL_Cell referenceCell(testCases[i].second);
+
+         auto result = GuidedMatrixCloud::guidedMatrixCloud(mobileCell, referenceCell, 0.1, 15);
+         if (result.success) solved++;
       }
 
-      // Need at least two cells (reference and at least one mobile)
-      if (inputList.size() < 2) {
-         showUsageInformation(controls);
-         return 1;
+      std::cout << "Cases solved: " << solved << "/" << testCases.size() << std::endl;
+      std::cout << "Success rate: " << std::fixed << std::setprecision(1)
+         << (100.0 * solved / testCases.size()) << "%" << std::endl;
+
+      if (solved == testCases.size()) {
+         std::cout << "🎉 ALGORITHM APPEARS ROBUST across multiple boundary cases!" << std::endl;
+      }
+      else if (solved > 0) {
+         std::cout << "⚠️  ALGORITHM shows promise but needs refinement for some cases" << std::endl;
+      }
+      else {
+         std::cout << "❌ ALGORITHM needs fundamental improvements" << std::endl;
       }
 
-      // Get the reference cell (first one in the list)
-      const LatticeCell& referenceCell = inputList[0];
-
-      // Create lattice transformer
-      LatticeTransformer transformer(controls);
-
-      // Process each mobile cell (all cells after the first one)
-      for (size_t i = 1; i < inputList.size(); ++i) {
-         const LatticeCell& mobileCell = inputList[i];
-
-         // Add a separator between multiple transformations
-         if (i >= 1) {
-            std::cout << "\n\n=#==#==#==#==#==#==#==#==#==#==#==#==#==#==#===#==#==#==#==#==#==#==#==#==#==#==#==#==#==#==\n";
-            std::cout << "Transformation (Cell to Match to reference) " << i << " of " << (inputList.size() - 1) << "\n";
-            std::cout << "=#==#==#==#==#==#==#==#==#==#==#==#==#==#==#===#==#==#==#==#==#==#==#==#==#==#==#==#==#==#==\n\n";
-         }
-
-         // Create display handler
-         TransformerDisplay display(controls);
-         // Show input cells for this comparison
-         display.showInputCells(mobileCell, referenceCell);
-
-         // If show extra transform info is enabled, show additional information
-         if (controls.shouldShowExtraTransformInfo()) {
-            // Use the utility function to show transformation info
-            showTransformationInfo(mobileCell, referenceCell);
-         }
-
-         // Transform lattice with complete centering handling
-         CompleteTransformationResult result = transformer.transformLattice(
-            mobileCell, referenceCell);
-
-         // Display the results
-         display.showCompleteTransformations(result, mobileCell, referenceCell);
-      }
-
-      return 0;
    }
    catch (const std::exception& ex) {
       std::cerr << "Error: " << ex.what() << std::endl;
       return 1;
    }
-   catch (...) {
-      std::cerr << "Unknown error occurred" << std::endl;
-      return 1;
-   }
+   return 0;
 }
-

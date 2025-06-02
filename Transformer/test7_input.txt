@@ -1,0 +1,9 @@
+; Test 7: Algorithm comparison 
+; Copy and paste these lines when prompted: 
+DETAILS true 
+COMPARESTRATEGIES true 
+TESTALL true 
+DISTANCETHRESHOLD 5.0 
+P 7.2 8.9 11.6 78.4 95.2 103.7 
+P 11.6 7.2 8.9 103.7 78.4 95.2 
+end 

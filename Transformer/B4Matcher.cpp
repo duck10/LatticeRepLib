@@ -1,5 +1,5 @@
 ﻿#include "B4Matcher.h"
-#include "MatrixSets_B4Matcher..h"
+#include "MatrixSets_B4Matcher.h"
 #include "LRL_Cell.h"
 #include "NiggliMatrices.h"
 #include "TransformationMatrices.h"
@@ -425,7 +425,7 @@ void B4Matcher::FindTransformationsWithReservoir() {
       }
    }
 
-   std::cout << "Found " << m_transformResults.size() << " valid transformations." << std::endl;
+   //std::cout << "Found " << m_transformResults.size() << " valid transformations." << std::endl;
 }
 
 // Add this function to B4Matcher.cpp (or create a separate utility file)

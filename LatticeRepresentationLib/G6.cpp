@@ -271,6 +271,7 @@ G6::G6(const double a, const double b, const double c, const double d, const dou
    g[3] = d;
    g[4] = e;
    g[5] = f;
+   m_valid = true;
 }
 
 

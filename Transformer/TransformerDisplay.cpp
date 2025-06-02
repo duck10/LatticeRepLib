@@ -64,7 +64,7 @@ void TransformerDisplay::showCompleteTransformations(
 
       const LRL_Cell reducedReference = NiggliReduce(referenceCell);
       const LRL_Cell reducedMobile = NiggliReduce(mobileCell);
-      const double niggliDistance = CalculateNCDist(reducedMobile, reducedReference);
+      const double niggliDistance = CalculateNCDistWithReduction(reducedMobile, reducedReference);
 
 
 

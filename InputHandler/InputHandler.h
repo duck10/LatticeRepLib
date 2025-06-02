@@ -29,7 +29,7 @@ private:
       const std::string& key,
       const std::vector<std::string>& tokens,
       const std::string& line);
-
+   static std::vector<std::string> reorderLatticeTokens(const std::vector<std::string>& tokens);
 public:
 
    // Global container to store input lines

@@ -9,7 +9,7 @@ LatticeTransformer::LatticeTransformer(const MultiTransformFinderControls& contr
 
 CompleteTransformationResult LatticeTransformer::transformLattice(
    const LatticeCell& cellToTransform,
-   const LatticeCell& referenceCell)
+   const LatticeCell& referenceCell) const
 {
    CompleteTransformationResult result;
 

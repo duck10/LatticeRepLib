@@ -1,0 +1,9 @@
+; Test 5: Bidirectional search 
+; Copy and paste these lines when prompted: 
+DETAILS true 
+TESTBIDIRECTIONAL true 
+MAXITERATIONS 50 
+DISTANCETHRESHOLD 2.0 
+P 11.2 13.7 9.8 125.6 67.3 102.8 
+P 13.7 9.8 11.2 102.8 125.6 67.3 
+end 

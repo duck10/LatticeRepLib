@@ -2,11 +2,17 @@
 #include "BaseControlVariables.h"
 #include "LRL_StringTools.h"
 #include "CommandSystem.h"
+#include <regex>
 
 // Initialize static member
 CommandSystem InputHandler::commandSystem;
 std::vector<std::string> InputHandler::globalInputLines;
 
+// Input cleaning utility function
+std::string cleanLatticeInput(std::string str) {
+   const std::regex reg("[^a-zA-Z0-9.; +-]");
+   return std::regex_replace(str, reg, " ");
+}
 
 bool InputHandler::isLattice(const std::string& s) {
    const std::string upperKey = LRL_StringTools::strToupper(s);
@@ -103,7 +109,7 @@ void InputHandler::handleSingleLattice(
 
    if (key == "G6" || key == "G") result = parseG6(tokens);
    else if (key == "S6" || key == "S") result = parseS6(tokens);
-   else if (key == "RANDOM" ) result = parseRandom();
+   else if (key == "RANDOM") result = parseRandom();
    //else if (key == "U") result = parseDC7u(tokens);
    else {
       result = parseLattice(tokens);
@@ -143,60 +149,6 @@ std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
    return tokens;
 }
 
-void InputHandler::readMixedInput(BaseControlVariables& controls,
-   std::vector<LatticeCell>& cells,
-   std::istream& input) {
-   std::string line;
-   while (std::getline(input, line)) {
-
-      if (!line.empty() && *(line.end() - 1) == '\0') {
-         line.pop_back();
-      }
-
-      for (char& c : line) {
-         if (!std::isprint(static_cast<unsigned char>(c))) {
-            c = ' '; // Replace non-printable characters
-         }
-      }
-
-      globalInputLines.emplace_back(line);
-      if (line.empty() || line[0] == ';') continue;
-      std::string rawline(line);
-      const std::vector<std::string> tokens = parseInputLine(line);
-      if (tokens.empty()) continue;
-
-      if (controls.getEcho() || LRL_StringTools::strToupper(tokens[0]) == "ECHO") {
-         std::cout << line << std::endl;
-      }
-      if (LRL_StringTools::strToupper(tokens[0]) == "END") {
-         break;
-      }
-
-      try {
-         // Try to handle as lattice input first
-         std::string upperKey = LRL_StringTools::strToupper(tokens[0]);
-         if (isLattice(upperKey)) {
-            handleLatticeInput(cells, upperKey, tokens, rawline);
-            continue;
-         }
-
-         // If not a lattice command, try as a control command
-         std::string rest;
-         const std::vector<std::string> rawTokens = parseInputLine(rawline);
-         for (size_t i = 1; i < tokens.size(); ++i) {
-            rest += rawTokens[i];
-            if (i < rawTokens.size() - 1) rest += " ";
-         }
-
-         if (!handleCommand(controls, rawTokens[0], rest)) {
-            std::cerr << ";Warning: Unrecognized command '" << rawTokens[0] << "'" << std::endl;
-         }
-      }
-      catch (const std::exception& e) {
-         std::cerr << ";Warning: Failed to parse input: " << e.what() << std::endl;
-      }
-   }
-}
 
 void InputHandler::handleLatticeInput(std::vector<LatticeCell>& inputVectors,
    const std::string& key,
@@ -228,3 +180,107 @@ void InputHandler::handleLatticeInput(std::vector<LatticeCell>& inputVectors,
       std::cerr << ";Warning: Invalid input vector ignored - " << e.what() << std::endl;
    }
 }
+
+// Add this function to InputHandler class (in InputHandler.cpp)
+
+// Function to reorder tokens if lattice designator is at the end
+std::vector<std::string> InputHandler::reorderLatticeTokens(const std::vector<std::string>& tokens) {
+   if (tokens.size() < 2) {
+      return tokens; // Not enough tokens to reorder
+   }
+
+   // Check if first token is already a lattice designator
+   std::string firstUpper = LRL_StringTools::strToupper(tokens[0]);
+   if (isLattice(firstUpper)) {
+      return tokens; // Already in correct order
+   }
+
+   // Check if last token is a lattice designator
+   std::string lastUpper = LRL_StringTools::strToupper(tokens.back());
+   if (isLattice(lastUpper)) {
+      // Reorder: move last token to first position
+      std::vector<std::string> reordered;
+      reordered.reserve(tokens.size());
+
+      // Add the lattice designator first
+      reordered.push_back(tokens.back());
+
+      // Add all tokens except the last one
+      for (size_t i = 0; i < tokens.size() - 1; ++i) {
+         reordered.push_back(tokens[i]);
+      }
+
+      return reordered;
+   }
+
+   return tokens; // No reordering needed
+}
+
+void InputHandler::readMixedInput(BaseControlVariables& controls,
+   std::vector<LatticeCell>& cells,
+   std::istream& input) {
+   std::string line;
+   while (std::getline(input, line)) {
+
+      if (!line.empty() && *(line.end() - 1) == '\0') {
+         line.pop_back();
+      }
+
+      // Apply comprehensive input cleaning
+      line = cleanLatticeInput(line);
+
+      // Additional cleanup for any remaining non-printable characters
+      for (char& c : line) {
+         if (!std::isprint(static_cast<unsigned char>(c))) {
+            c = ' '; // Replace non-printable characters
+         }
+      }
+
+      globalInputLines.emplace_back(line);
+      if (line.empty() || line[0] == ';') continue;
+      std::string rawline(line);
+
+      // Parse tokens and reorder if necessary
+      std::vector<std::string> tokens = parseInputLine(line);
+      tokens = reorderLatticeTokens(tokens); // NEW: Reorder tokens if needed
+
+      if (tokens.empty()) continue;
+
+      if (controls.getEcho() || LRL_StringTools::strToupper(tokens[0]) == "ECHO") {
+         std::cout << line << std::endl;
+      }
+      if (LRL_StringTools::strToupper(tokens[0]) == "END") {
+         break;
+      }
+
+      try {
+         // Try to handle as lattice input first
+         std::string upperKey = LRL_StringTools::strToupper(tokens[0]);
+         if (isLattice(upperKey)) {
+            // Reconstruct line from reordered tokens for consistent processing
+            std::string reorderedLine;
+            for (size_t i = 0; i < tokens.size(); ++i) {
+               reorderedLine += tokens[i];
+               if (i < tokens.size() - 1) reorderedLine += " ";
+            }
+            handleLatticeInput(cells, upperKey, tokens, reorderedLine);
+            continue;
+         }
+
+         // If not a lattice command, try as a control command
+         std::string rest;
+         for (size_t i = 1; i < tokens.size(); ++i) {
+            rest += tokens[i];  // Use reordered tokens
+            if (i < tokens.size() - 1) rest += " ";
+         }
+
+         if (!handleCommand(controls, tokens[0], rest)) {  // Use reordered tokens
+            std::cerr << ";Warning: Unrecognized command '" << tokens[0] << "'" << std::endl;
+         }
+      }
+      catch (const std::exception& e) {
+         std::cerr << ";Warning: Failed to parse input: " << e.what() << std::endl;
+      }
+   }
+}
+

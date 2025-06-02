@@ -177,7 +177,7 @@ public:
    void ShowResults(void) const {
       std::cout << GetHerald() << std::endl;
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
-      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > indexToSort(PrepareListOfItemsSortedByCount());
+      std::vector<std::pair<size_t, SampleData<TKEY, TDATA> > > indexToSort(PrepareListOfItemsSortedByCount());
 
       for (size_t i = 0; i < indexToSort.size(); ++i) {
          if (!m_itemSeparator.empty()) std::cout << m_itemSeparator << std::endl;
@@ -208,7 +208,7 @@ public:
 
    void AppendTitle(const std::string s) { m_title += " " + s; }
 
-   void SetMaxItemStore(const int n) { m_nmax = n; }
+   void SetMaxItemStore(const size_t n) { m_nmax = n; }
    void SetItemSeparator(const std::string& s) { m_itemSeparator = s; }
    void SetValueSeparator(const std::string& s) { m_valueSeparator = s; }
    bool HasKey(const TKEY& key) const { return (m_tree.find(key) != m_tree.end()); }
@@ -284,7 +284,7 @@ public:
    }
 
    void ShowTableOfKeysVersusCount() const {
-      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > v(PrepareListOfItemsSortedByCount());
+      std::vector<std::pair<size_t, SampleData<TKEY, TDATA> > > v(PrepareListOfItemsSortedByCount());
       if (!v.empty()) std::cout << m_title << "\n" << "item   count   " << m_keyName << std::endl;
       for (size_t i = 0; i<v.size(); ++i) {
          std::cout << i << "      " << v[i].first << "       " << v[i].second.m_key << std::endl;
@@ -294,15 +294,15 @@ public:
 
 private:
 
-   std::vector<std::pair<int, SampleData<TKEY, TDATA> > > PrepareListOfItemsSortedByCount(void) const {
+   std::vector<std::pair<size_t, SampleData<TKEY, TDATA> > > PrepareListOfItemsSortedByCount(void) const {
       typename std::map<TKEY, SampleData<TKEY, TDATA> >::const_iterator it;
-      std::vector<std::pair<int, SampleData<TKEY, TDATA> > > indexToSort;
+      std::vector<std::pair<size_t, SampleData<TKEY, TDATA> > > indexToSort;
 
       for (it = m_tree.begin(); it != m_tree.end(); ++it) {
          indexToSort.push_back(std::make_pair((*it).second.m_countPerKey, (*it).second));
       }
 
-      std::sort(indexToSort.begin(), indexToSort.end(), std::greater<std::pair<int, SampleData<TKEY, TDATA> > >());
+      std::sort(indexToSort.begin(), indexToSort.end(), std::greater<std::pair<size_t, SampleData<TKEY, TDATA> > >());
       return indexToSort;
    }
 

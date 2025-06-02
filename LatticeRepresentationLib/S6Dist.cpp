@@ -103,7 +103,7 @@ std::pair<double, size_t> S6Dist::MinForListOfS6(const std::vector<S6>& v1, cons
    const double diff = std::abs(dmin - 37.183);
    std::pair<double, size_t> p = std::make_pair(m_dmin, 0);
    const std::string itemA = LRL_ToString(v1[0]) + std::string("\n") + LRL_ToString(s6min);
-   const int nzero = s6min.CountZeros();
+   const int nzero = int(s6min.CountZeros());
    if (m_s6Debug)
       g_debug.Store(dmin, itemA);
    g_bestVectors.Store(dmin, std::make_pair(v1[0], s6min));
@@ -116,7 +116,7 @@ std::pair<double, size_t> S6Dist::MinForListOfS6(const std::vector<S6>& v1, cons
          g_bestVectors.Store(std::min(dmin, (v1[i] - (*it)).norm()), std::make_pair(v1[i], *it));
          if (m_s6Debug /*&& it != tree.end()*/) {
             item = LRL_ToString(v1[i]) + std::string("\n") + LRL_ToString(*it);
-            const int nzero2 = (*it).CountZeros();
+            const int nzero2 = int((*it).CountZeros());
             g_debug.Store(std::min(dmin, (v1[i] - (*it)).norm()), item);
          }
          if (it != tree.end()) {
@@ -158,7 +158,7 @@ std::pair<double, size_t> S6Dist::MinForListOfS6(const std::vector<S6>& v1, cons
             g_bestVectors.Store(dmin, std::make_pair(v1[iouter], v2[ptemp.second]));
             if (m_s6Debug) {
                const std::string item = LRL_ToString(v1[iouter]) + std::string("\n ") + LRL_ToString(v2[ptemp.second]);
-               const int nzero = v2[ptemp.second].CountZeros();
+               const int nzero = int(v2[ptemp.second].CountZeros());
                g_debug.Store(dmin, item);
             }
             if (ptemp.first < dmin) {
@@ -189,7 +189,7 @@ std::pair<double, size_t> S6Dist::MinForListOfS6(const S6& d1, const std::vector
             g_bestVectors.Store(dmin, std::make_pair(d1, v[i]));
             if (m_s6Debug) {
                const std::string item = LRL_ToString(d1) + std::string("\n") + LRL_ToString(v[i]);
-               const int nzero = v[i].CountZeros();
+               const int nzero = int(v[i].CountZeros());
                g_debug.Store(dmin, item);
             }
          }

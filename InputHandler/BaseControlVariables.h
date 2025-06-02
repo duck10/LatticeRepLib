@@ -17,6 +17,9 @@ protected:
    bool showControls = false;
    bool echo = false;
 
+   BaseControlVariables(const BaseControlVariables&) = delete;
+   BaseControlVariables& operator=(const BaseControlVariables&) = delete;
+
 public:
    virtual ~BaseControlVariables() = default;
 
@@ -78,6 +81,7 @@ public:
    void setHasWebInput(const bool b) { webRun = b; }
    bool getHasWebInput() const { return webRun; }
    bool getShowControls() const { return showControls; }
+   bool getShouldControls() const { return showControls; }
    void setShowContols(const bool b) { showControls = b; }
    bool getEcho() const { return echo; }
    void setEcho(const bool b) { echo = b; }

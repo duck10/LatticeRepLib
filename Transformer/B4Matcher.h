@@ -15,6 +15,25 @@ class MultiTransformFinderControls; // Forward declaration
 
 class B4Matcher {
 public:
+
+   friend inline std::ostream& operator<<(std::ostream& os, const B4Matcher& matcher) {
+      os << "B4Matcher:\n";
+      os << "  Source B4: " << matcher.getSourceB4() << "\n";
+      os << "  Target B4: " << matcher.getTargetB4() << "\n";
+      os << "  Transformations found: " << matcher.size() << "\n";
+
+      // Show first few transformations if any
+      size_t maxShow = std::min(static_cast<size_t>(3), matcher.size());
+      for (size_t i = 0; i < maxShow; ++i) {
+         const auto& transform = matcher.getTransform(i);
+         os << "  Transform " << (i + 1) << ": P3=" << transform.p3DistanceFinal
+            << ", B4Dist=" << transform.b4Distance << "\n";
+      }
+
+      return os;
+   }
+
+
    // Now using the global TransformResult struct
    typedef TransformResult TransformResult;
 

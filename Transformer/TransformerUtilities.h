@@ -18,6 +18,7 @@
 #include "MultiTransformFinderControls.h"
 #include "LRL_StringTools.h"
 #include "TransformResult.h" // Include the shared TransformResult
+#include "TransformerUtilities.h"
 
 #include <vector>
 #include <cmath>
@@ -81,7 +82,7 @@ namespace TransformerUtilities {
       // Perform Niggli reduction with transform tracking
       bool success = Niggli::ReduceWithTransforms(g6Cell, g6Matrix, m3d, g6Reduced, 0.001);
       const LRL_Cell_Degrees cellRed = LRL_Cell(g6Reduced);
-      std::cout << "cellRed in calculateNiggliMatrix " << cellRed << std::endl;
+      //std::cout << "cellRed in calculateNiggliMatrix " << cellRed << std::endl;
 
       if (!success) {
          std::cerr << "Warning: Niggli reduction failed for cell " << LRL_Cell_Degrees(cell) << std::endl;
@@ -104,6 +105,22 @@ namespace TransformerUtilities {
 
       return m3d;
    }
+
+
+   // Simple matrix application helper
+   static LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
+      const B4 b4Cell(cell);
+      const B4 transformedB4 = matrix * b4Cell;
+      return LRL_Cell(transformedB4);
+   }
+
+   static double calculateP3Distance(const LRL_Cell& cell1, const LRL_Cell& cell2) {
+      const P3 p3_1(cell1);
+      const P3 p3_2(cell2);
+      return (p3_1 - p3_2).norm();
+   }
+
+
 } // namespace TransformerUtilities
 
 
@@ -192,12 +209,30 @@ static LRL_Cell NiggliReduce(const LatticeCell& cell) {
    G6 reduced;;
    const bool success = Niggli::Reduce(g6Primitive, reduced);
 
-   std::cout << " reduced cell in NiggliReduce " << LRL_Cell_Degrees(LRL_Cell(reduced)) << std::endl;
    return reduced;
 }
 
-static double CalculateNCDist(const LRL_Cell& c1, const LRL_Cell& c2) {
-   return NCDist(G6(c1).data(), G6(c2).data());
+static double CalculateNCDistWithReduction(const LRL_Cell& c1, const LRL_Cell& c2) {
+   G6 out1;
+   G6 out2;
+   Niggli::Reduce(c1, out1);
+   Niggli::Reduce(c2, out2);
+   return NCDist(out1.data(),out2.data());
 }
+
+
+// Simple matrix application helper
+static LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
+   const B4 b4Cell(cell);
+   const B4 transformedB4 = matrix * b4Cell;
+   return LRL_Cell(transformedB4);
+}
+
+static double calculateP3Distance(const LRL_Cell& cell1, const LRL_Cell& cell2) {
+   const P3 p3_1(cell1);
+   const P3 p3_2(cell2);
+   return (p3_1 - p3_2).norm();
+}
+
 
 #endif // TRANSFORMER_UTILITIES_H

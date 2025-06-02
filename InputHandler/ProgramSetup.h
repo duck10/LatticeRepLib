@@ -5,11 +5,30 @@
 #include "FileOperations.h"
 #include "WebIO.h"
 #include "LatticeCell.h"
+#include <regex>
 
 class Writer {
 public:
    static void Write(const std::string& fileName, const std::string& fcontent) {
       FileOperations::Write(fileName, fcontent);
+   }
+};
+
+// Input cleaning utility
+class InputCleaner {
+public:
+   static std::string replaceTabsAndCommas(std::string str) {
+      const std::regex reg("[^a-zA-Z0-9.; +-]");
+      return std::regex_replace(str, reg, " ");
+   }
+
+   static std::vector<std::string> cleanInputStrings(const std::vector<std::string>& inputStrings) {
+      std::vector<std::string> cleaned;
+      cleaned.reserve(inputStrings.size());
+      for (const auto& str : inputStrings) {
+         cleaned.push_back(replaceTabsAndCommas(str));
+      }
+      return cleaned;
    }
 };
 
@@ -25,6 +44,7 @@ public:
 
    const ControlType& getControls() const { return m_controls; }
    ControlType& getControls() { return m_controls; }
+   const std::vector<LatticeCell>& getInputList() const { return m_inputList; }
    std::vector<LatticeCell>& getInputList() { return m_inputList; }
 
 private:
@@ -174,7 +194,7 @@ public:
    // Access methods
    const WebIO& getWebIO() const { return m_webio; }
    const ControlType& getControls() const { return m_controls; }  // for const objects
-   ControlType& getControls() { return m_controls; }       
+   ControlType& getControls() { return m_controls; }
 
    const std::vector<LatticeCell>& getInputList() const { return m_inputList; }
    const std::vector<std::string>& getBasicFileNames() const { return m_webio.m_basicfileNameList; }
@@ -220,7 +240,6 @@ private:
    WebIO m_webio;
    ControlType& m_controls;
    std::vector<LatticeCell> m_inputList;
-}; 
+};
 
 #endif // PROGRAM_SETUP_H
-

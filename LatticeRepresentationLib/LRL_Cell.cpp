@@ -27,7 +27,9 @@
 
 int randSeed1 = 19191;
 
+#ifndef M_PI
 static const double M_PI = 4.0 * atan(1.0);
+#endif
 
 const double oneeightyDegrees = 180.0;
 const double threesixtyDegrees = 360.0;

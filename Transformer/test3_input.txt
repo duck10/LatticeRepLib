@@ -1,0 +1,9 @@
+; Test 3: B4Matcher test 
+; Copy and paste these lines when prompted: 
+DETAILS true 
+MAXMATRICES 1500 
+COMBINATIONDEPTH 3 
+DISTANCETHRESHOLD 10.0 
+P 12.5 8.7 15.2 110.5 95.8 88.2 
+P 15.2 12.5 8.7 88.2 110.5 95.8 
+end 

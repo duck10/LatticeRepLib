@@ -1,0 +1,11 @@
+; Test 4: Progressive guided cloud 
+; Copy and paste these lines when prompted: 
+DETAILS true 
+TESTSTRATEGY GUIDED 
+CLOUDRADIUS 2.5 
+CLOUDSTEPS 50 
+MAXITERATIONS 100 
+DISTANCETHRESHOLD 0.5 
+P 6.2 7.8 9.4 103.2 87.6 91.4 
+P 9.4 6.2 7.8 91.4 103.2 87.6 
+end 

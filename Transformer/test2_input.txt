@@ -1,0 +1,8 @@
+; Test 2: Niggli reduction needed 
+; Copy and paste these lines when prompted: 
+DETAILS true 
+USENIGGLI true 
+DISTANCETHRESHOLD 1.0 
+P 8.0 9.0 10.0 80.0 85.0 95.0 
+P 8.1 8.9 10.1 100.0 95.0 85.0 
+end 

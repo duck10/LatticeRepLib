@@ -1,0 +1,9 @@
+transformer 
+maxtransforms 1 
+MAXDISTANCE 50 
+show 
+useniggli true 
+DISTANCETHRESHOLD 2 
+P 11.334 11.334 7.712 90.040 89.989 124.108 
+P 11.331 11.331 7.710 90.000 90.000 124.088 
+end 

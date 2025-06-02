@@ -57,6 +57,13 @@ struct CompleteTransformationResult {
 
 
 class LatticeTransformer {
+public:
+   friend inline std::ostream& operator<<(std::ostream& os, const LatticeTransformer& transformer) {
+      os << "LatticeTransformer:\n";
+      os << "  Controls: [summary of key settings]\n";  // You can expand this
+      return os;
+   }
+
 private:
    const MultiTransformFinderControls& m_controls;
 
@@ -75,7 +82,7 @@ public:
    // Main transformation method
    CompleteTransformationResult transformLattice(
       const LatticeCell& cellToTransform,
-      const LatticeCell& referenceCell);
+      const LatticeCell& referenceCell) const;
 
    void debugConvergencePattern(
       const LatticeCell& cellToTransform,
