@@ -82,7 +82,7 @@ public:
    bool getHasWebInput() const { return webRun; }
    bool getShowControls() const { return showControls; }
    bool getShouldControls() const { return showControls; }
-   void setShowContols(const bool b) { showControls = b; }
+   void setShowControls(const bool b) { showControls = b; }
    bool getEcho() const { return echo; }
    void setEcho(const bool b) { echo = b; }
 

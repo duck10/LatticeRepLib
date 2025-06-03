@@ -58,7 +58,7 @@ S6 MakeMorePerturbationAttempts(const double scale, const S6& s6, S6& out) {
    return out;
 }
 
-G6 PerturbOneVector(const S6& base)
+G6 PerturbOneVector(const S6& base, const int delta)
 {
    const double scale = base.norm();
    const S6 perturber = scale * CreateTotallyRandomUnitOrthogonalComponent(base) / 1000.0;
@@ -110,7 +110,7 @@ void HandleOneInputCell(const LatticeCell& inputlattice, const CmdPerturbControl
    const size_t pos = strcel.find("IT#");
    const std::string label = (pos != std::string::npos) ? strcel.substr(pos) : "";
    for (size_t k = 0; k < controls.getPerturbCount(); ++k) {
-      const G6 perturbed = PerturbOneVector(inputlattice.getCell());
+      const G6 perturbed = PerturbOneVector(inputlattice.getCell(), controls.getPerturbDelta());
       OutputPerturbedCell(lattice, perturbed, label);
    }
 }
