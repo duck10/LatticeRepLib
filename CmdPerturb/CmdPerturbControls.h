@@ -32,7 +32,6 @@ public:
 
    int getPerturbCount() const { return perturbCount; }
    double getPerturbDelta() const { return perturbDelta; }
-   bool shouldShowControls() const { return showControls; }
 
 private:
    void setPerturbCount(int count) {

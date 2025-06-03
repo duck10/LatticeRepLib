@@ -58,7 +58,7 @@ S6 MakeMorePerturbationAttempts(const double scale, const S6& s6, S6& out) {
    return out;
 }
 
-G6 PerturbOneVector(const S6& base, const int delta)
+G6 PerturbOneVector(const S6& base, const double delta)
 {
    const double scale = base.norm();
    const S6 perturber = scale * CreateTotallyRandomUnitOrthogonalComponent(base) / 1000.0;
