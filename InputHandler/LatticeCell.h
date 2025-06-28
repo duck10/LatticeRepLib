@@ -21,8 +21,16 @@ public:
    LatticeCell(const G6& c, const std::string& type = "P", const std::string& inputReadIn = "")
       : cell(c)
       , latticeType(type)
-   , inputtext(inputReadIn)
-   {}
+      , inputtext(inputReadIn)
+   {
+   }
+
+   LatticeCell( const std::string& type, const G6& c, const std::string& inputReadIn = "")
+      : cell(c)
+      , latticeType(type)
+      , inputtext(inputReadIn)
+   {
+   }
 
    LatticeCell(const B4& b4) {
       cell = LRL_Cell(b4);

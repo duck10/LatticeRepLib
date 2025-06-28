@@ -17,8 +17,8 @@ protected:
    bool showControls = false;
    bool echo = false;
 
-   BaseControlVariables(const BaseControlVariables&) = delete;
-   BaseControlVariables& operator=(const BaseControlVariables&) = delete;
+   //BaseControlVariables(const BaseControlVariables&) = delete;
+   //BaseControlVariables& operator=(const BaseControlVariables&) = delete;
 
 public:
    virtual ~BaseControlVariables() = default;

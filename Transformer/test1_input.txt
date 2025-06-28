@@ -1,6 +1,0 @@
-; Test 1: Simple direct match 
-; Copy and paste these lines when prompted: 
-DETAILS true 
-DISTANCETHRESHOLD 5.0 
-P 10.0 10.1 10.2 90.0 90.1 90.2 
-P 10.05 10.15 10.25 90.05 90.15 90.25 

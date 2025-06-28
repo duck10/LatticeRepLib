@@ -1,7 +1,0 @@
-; Test 6: 90-degree singularity 
-; Copy and paste these lines when prompted: 
-DETAILS true 
-DISTANCETHRESHOLD 1.0 
-P 8.5 8.5 12.0 89.5 90.5 90.0 
-P 8.5 8.5 12.0 90.5 89.5 90.0 
-end 

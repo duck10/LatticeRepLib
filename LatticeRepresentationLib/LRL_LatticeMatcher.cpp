@@ -4,12 +4,14 @@
 #include "LRL_LatticeMatcher.h"
 
 #include <cfloat>
+#include <sstream>
 
 #include "B4.h"
 #include "C3.h"
 #include "G6.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_ToString.h"
+#include "P3.h"
 #include "S6.h"
 
 #include "Selling.h"
@@ -49,13 +51,13 @@ std::vector<MatS6> LRL_LatticeMatcher::BuildMatrixBase() {
    // Expand the seed sequence 
    std::vector<MatS6> base;
    for (size_t i = 0; i < redc.size(); ++i) {
-      for ( auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+      for (auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
          base.push_back(redc[i].first * (*k));
       }
    }
 
    m_matrixTree.clear();
-   for ( size_t i=0; i<base.size(); ++i)
+   for (size_t i = 0; i < base.size(); ++i)
       m_matrixTree.insert(base[i]);
    for (size_t i = 0; i < refl_one.size(); ++i)
       m_matrixTree.insert(refl_one[i]);
@@ -63,7 +65,7 @@ std::vector<MatS6> LRL_LatticeMatcher::BuildMatrixBase() {
    for (size_t k = 0; k < m_matrixGenerationRecursionDepth; ++k) {
       for (size_t i = 0; i < base.size(); ++i) {
          const size_t msize = m_matrixTree.size();
-         for ( auto m= m_matrixTree.begin(); m!= m_matrixTree.end(); ++m) {
+         for (auto m = m_matrixTree.begin(); m != m_matrixTree.end(); ++m) {
             const MatS6 temp = base[i] * (*m);
             const bool returnvalue = StoreMatS6IfUnique(temp);
          }
@@ -108,7 +110,7 @@ LRL_LatticeMatcher::LRL_LatticeMatcher(const int matrixGenerationRecursionDepth,
 
 void LRL_LatticeMatcher::FillReflections() {
    static const std::vector<MatS6> refl = MatS6::GetReflections();
-   for ( size_t i=0; i<refl.size(); ++i)
+   for (size_t i = 0; i < refl.size(); ++i)
       m_matrixTree.insert(refl[i]);
 }
 
@@ -125,7 +127,7 @@ void LRL_LatticeMatcher::ExpandReflections(const MatS6& m) {
    StoreMatS6IfUnique(m);
    const size_t currentMatrixTreeSize = m_matrixTree.size();
    for (size_t i = 0; i < refl_one.size(); ++i) {
-      for ( auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+      for (auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
          const MatS6 mi = refl_one[i] * (*k);
          StoreMatS6IfUnique(mi);
       }
@@ -136,7 +138,7 @@ void LRL_LatticeMatcher::ExpandBoundaries(const MatS6& m) {
    StoreMatS6IfUnique(m);
    const size_t currentMatrixTreeSize = m_matrixTree.size();
    for (size_t i = 0; i < redc.size(); ++i) {
-      for ( auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
+      for (auto k = m_matrixTree.begin(); k != m_matrixTree.end(); ++k) {
          const MatS6 mi = redc[i].first * (*k);
          StoreMatS6IfUnique(mi);
       }
@@ -223,7 +225,7 @@ void LRL_LatticeMatcher::SetReferenceLattice(const S6& newReference) {
 void LRL_LatticeMatcher::BuildReferenceTree(const S6& reference) {
    const double normReference = m_reducedReference.norm();
    const Scaler_MV scale(reference);
-   for ( auto i = m_matrixTree.begin(); i != m_matrixTree.end(); ++i ) {
+   for (auto i = m_matrixTree.begin(); i != m_matrixTree.end(); ++i) {
       const S6 scaledMV = scale.Scale(*i * reference);
       StoreMV_IfUnique(scaledMV, MatS6::Inverse(*i));
    }
@@ -309,11 +311,11 @@ std::vector<S6> LRL_LatticeMatcher::MatchReference(const std::vector<S6>& sample
    return out;
 }
 
-S6 LRL_LatticeMatcher::MatchReference(const S6& sample)  {
+S6 LRL_LatticeMatcher::MatchReference(const S6& sample) {
 
    //const std::vector<S6> expandedSample = ExpandVectorByBoundaries(ExpandVectorByReflections(sample));
    //const std::vector<S6> expandedSample(ExpandVectorByReflections(sample));
-   const std::vector<S6> expandedSample(std::vector<S6>(1,sample));
+   const std::vector<S6> expandedSample(std::vector<S6>(1, sample));
 
    const std::vector<S6> matches = MatchReferenceForExpandedSample(expandedSample);
    //std::cout << matches.size() << std::endl;
@@ -347,6 +349,39 @@ double LRL_LatticeMatcher::Angle6(const S6& s1, const S6& s2) const {
    return angle;
 }
 
+double LRL_LatticeMatcher::CalculateP3Agreement(const S6& s1, const S6& s2) const {
+   const P3 p3_1(s1);
+   const P3 p3_2(s2);
+   return (p3_1 - p3_2).norm();
+}
+
+void LRL_LatticeMatcher::SetNewP3Agreement(double p3_agreement) {
+   m_P3Agreement.push_back(p3_agreement);
+}
+
+std::string LRL_LatticeMatcher::ListOutput(const std::vector<S6>& vs, const std::string& referenceLattice) const {
+   std::ostringstream ostr;
+   for (size_t i2 = 0; i2 < vs.size(); ++i2) {
+      ostr << referenceLattice + "  " << LRL_Cell_Degrees(vs[i2]);
+
+      // Add angle agreement if available
+      if (i2 < m_angleAgreement.size()) {
+         ostr << LRL_ToString("(", m_angleAgreement[i2], " degrees in S6)");
+      }
+
+      // Add P3 agreement if available
+      if (i2 < m_P3Agreement.size()) {
+         ostr << LRL_ToString(" (P3 agreement: ", m_P3Agreement[i2], ")");
+      }
+
+      if (i2 == 0) {
+         ostr << "   REFERENCE";
+      }
+      ostr << std::endl;
+   }
+   return ostr.str();
+}
+
 S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) {
    const static bool debug = false;
    std::pair<double, MV_Pair> closest = FindClosest(sample);
@@ -366,11 +401,16 @@ S6 LRL_LatticeMatcher::InternalMatchReference(const S6& sample) {
 
    const S6 best = FindBestAmongMany(vClosest, sample);
    const double angle = Angle6(m_originalReducedReference, best);
-   SetNewAngleAgreement( (angle<1.0E-4) ? 0,0 : angle);
+   SetNewAngleAgreement((angle < 1.0E-4) ? 0.0 : angle);
+
+   // Calculate and store P3 agreement
+   const double p3_agreement = CalculateP3Agreement(m_originalReducedReference, best);
+   SetNewP3Agreement(p3_agreement);
+
    return best;
 }
 
-void LRL_LatticeMatcher::SetNewAngleAgreement( double angle) {
+void LRL_LatticeMatcher::SetNewAngleAgreement(double angle) {
    m_angleAgreement.push_back(angle);
 }
 

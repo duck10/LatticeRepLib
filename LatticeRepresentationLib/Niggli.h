@@ -38,7 +38,7 @@ public:
    static bool NearRed(const G6& gvec, const double delta = 0.0);
    static void MKnorm(const G6& vi, MatG6& m, G6& vout, const double delta);
    static bool IsNiggli(const S6& s);
-   static bool IsNiggli(const G6& s);
+   static bool IsNiggli(const G6& s, const double delta = 1.0e-6);
    static bool IsNiggli(const D7& s);
    static void MKnormWithoutMatrices(const G6& vi, G6& vout, const double delta);
    static bool ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta);

@@ -20,22 +20,6 @@ std::vector<S6> GetInputSellingReducedVectors(const std::vector<LatticeCell>& in
    return v;
 }
 
-std::string ListOutput(const std::vector<S6>& vs,
-   const std::vector<double>& angles,
-   const std::string& referenceLattice) {
-
-   std::ostringstream ostr;
-   for (size_t i2 = 0; i2 < vs.size(); ++i2) {
-      ostr << referenceLattice + "  " << LRL_Cell_Degrees(vs[i2]);
-      ostr << LRL_ToString("(", angles[i2], " degrees in S6)");
-      if (i2 == 0) {
-         ostr << "   REFERENCE";
-      }
-      ostr << std::endl;
-   }
-   return ostr.str();
-}
-
 MatS6 GetMatrixToReturnToReference(const std::string& referenceLattice, const LRL_Cell& cell) {
    MatS6 mat_primitive_reduced;
    const LRL_Cell cell_reference = LatticeConverter::SellingReduceCell(referenceLattice, cell, mat_primitive_reduced);
@@ -67,8 +51,9 @@ int main() {
       lm.SetReferenceLattice(vLat[0]); // Note that this uses the reduced cell
 
       const std::vector<S6> vs = lm.MatchReference(vLat, mat_reference);
-      const std::vector<double> angles(lm.GetAngleAgreements());
-      std::cout << ListOutput(vs, angles, referenceLattice);
+
+      // Now use the member function instead of the standalone function
+      std::cout << lm.ListOutput(vs, referenceLattice);
 
       return 0;
    }

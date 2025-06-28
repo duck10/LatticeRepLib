@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <set>
 #include <vector>
 
 #pragma warning( disable : 4505) // unreferenced local function has been removed
@@ -437,6 +438,29 @@ bool operator==(const Matrix_3x3& other) const {
    return true;
 }
 
+double norm() const {
+   const Matrix_3x3& mat(*this);
+   double sum = 0;
+   for (int i = 0; i < 9; ++i)
+      sum += mat[i] * mat[i];
+   return sqrt(sum);
+}
+
+static double norm(const Matrix_3x3& mat) {
+   double sum = 0;
+   for (int i = 0; i < 9; ++i)
+      sum += mat[i] * mat[i];
+   return sqrt(sum);
+}
+
+double Norm() const {
+   return (*this).norm();
+}
+
+static double Norm(const Matrix_3x3& m) {
+   return m.norm();
+}
+
     //matrix-vector operations
 //-----------------------------------------------------------------------------
 // Name: MV()
@@ -759,6 +783,60 @@ double& operator[]( const int& i )
     return (m[n]);
 }
 
+static std::vector<Matrix_3x3> generateUnimodularMatrices() {
+   /*
+   this function generates a subset of the unimodular matrices with determinant +1
+   and elements 0/+1/-1. It is a restricted subset of group GL(n,Z). 
+   */
+   std::set<Matrix_3x3> result;
+
+   // Allowed values: -1, 0, 1
+   static const double values[3] = { -1, 0, 1 };
+
+   // Generate all possible 3x3 matrices with elements from {-1, 0, 1}
+   for (int a00 = 0; a00 < 3; a00++) {
+      for (int a01 = 0; a01 < 3; a01++) {
+         for (int a02 = 0; a02 < 3; a02++) {
+            for (int a10 = 0; a10 < 3; a10++) {
+               for (int a11 = 0; a11 < 3; a11++) {
+                  for (int a12 = 0; a12 < 3; a12++) {
+                     for (int a20 = 0; a20 < 3; a20++) {
+                        for (int a21 = 0; a21 < 3; a21++) {
+                           for (int a22 = 0; a22 < 3; a22++) {
+                              // Debug: print when we hit the target indices
+                              if (a00 == 2 && a01 == 1 && a02 == 1 && a10 == 1 && a11 == 0 && a12 == 1 && a20 == 1 && a21 == 1 && a22 == 0) {
+                                 std::cout << "Hit target indices!" << std::endl;
+                                 std::cout << "values: " << values[a00] << "," << values[a01] << "," << values[a02] << ","
+                                    << values[a10] << "," << values[a11] << "," << values[a12] << ","
+                                    << values[a20] << "," << values[a21] << "," << values[a22] << std::endl;
+                              }
+
+                              Matrix_3x3 mat = {
+                                  values[a00], values[a01], values[a02],
+                                  values[a10], values[a11], values[a12],
+                                  values[a20], values[a21], values[a22]
+                              };
+
+                              // Debug: check for the specific matrix
+                              if (a00 == 2 && a01 == 1 && a02 == 1 && a10 == 1 && a11 == 0 && a12 == 1 && a20 == 1 && a21 == 1 && a22 == 0) {
+                                 std::cout << "Found target matrix, Det = " << mat.Det() << std::endl;
+                              }
+
+                              if (mat.Det() == 1) {
+                                 result.insert(mat);
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   return { result.begin(),result.end() };
+}
 
 }; // end of class Matrix_3x3
 
@@ -778,6 +856,7 @@ inline bool operator<(const Matrix_3x3& lhs, const Matrix_3x3& rhs) {
    }
    return false; // They're equal
 }
+
 
 #endif  //  vector_3_INCLUDED
 

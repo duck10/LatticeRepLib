@@ -29,5 +29,8 @@
     <ClInclude Include="Matrix_3x3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MultiTransformFinderControls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
