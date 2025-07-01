@@ -35,7 +35,7 @@ public:
 
    // Equality check
    bool operator==(const LatticeMatchResult& other) const {
-      return std::abs(m_p3Distance - other.m_p3Distance) < 1e-10 &&
+      return 
          m_transformationMatrix == other.m_transformationMatrix;
    }
 

@@ -10,11 +10,10 @@
 
 std::vector<S6> GetInputSellingReducedVectors(const std::vector<LatticeCell>& input) {
    std::vector<S6> v;
-   LatticeConverter converter;
 
    MatS6 mat;
    for (size_t i = 0; i < input.size(); ++i) {
-      const S6 s6 = converter.SellingReduceCell(input[i].getLatticeType(), input[i].getCell(), mat);
+      const S6 s6 = LatticeConverter::SellingReduceCell(input[i].getLatticeType(), input[i].getCell(), mat);
       v.push_back(s6);
    }
    return v;

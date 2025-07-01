@@ -111,9 +111,24 @@ void VariousFits(const LRL_Cell& reference, const LRL_Cell& mobile) {
    std::cout << "---------------------------" << std::endl;
 }
 
+inline  double angleS6(const S6& s1, const S6& s2) {
+   return acos(s1.Dot(s2) / s1.norm() / s2.norm()) * 180 / 4.0 / atan(1.0);
+}
+
 // Example usage
 int main() {
 
+   for (size_t i = 0; i < 2000; ++i) {
+      const LRL_Cell cell1 = Polar::rand();
+      const LRL_Cell cell2 = Polar::rand();
+      const double p3diff = (P3(cell1) - P3(cell2)).norm();
+      const double s6angle = angleS6(cell1, cell2);
+      const double g6diff = (G6(cell1) - G6(cell2)).norm();
+      std::cout << p3diff << "  " << g6diff << std::endl;
+
+   }
+
+   exit(0);
    bool found = false;
    for (size_t i = 0; i < unimodular_matrices.size(); ++i) {
       const Matrix_3x3& current = unimodular_matrices[i];

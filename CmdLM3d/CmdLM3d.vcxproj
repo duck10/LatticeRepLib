@@ -24,9 +24,10 @@
     <ClCompile Include="TransformerUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LatticeMatchReservoir.h" />
+    <ClInclude Include="FlexibleTestMode.h" />
     <ClInclude Include="LatticeMatchResult.h" />
     <ClInclude Include="MatrixCellOperator.h" />
+    <ClInclude Include="MatrixSimplicityRanker.h" />
     <ClInclude Include="Matrix_3x3.h" />
     <ClInclude Include="MobileComparisonResult.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />

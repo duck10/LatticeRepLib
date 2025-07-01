@@ -56,17 +56,34 @@ public:
       InputHandler::registerHandler("TEST", 0.43,
          [this](const BaseControlVariables&, const std::string& value) {
             try {
-               setTestNumber(std::stoi(value));
+               if (value.empty() || LRL_StringTools::strToupper(value) == "TEST") {
+                  // Just "test" with no number - set to 0 (run all tests)
+                  setTestNumber(0);
+               }
+               else {
+                  // "test" followed by a number - parse and set
+                  int testNum = std::stoi(value);
+                  if (testNum < 0) {
+                     // Negative numbers should show test list
+                     setTestNumber(999);
+                  }
+                  else {
+                     setTestNumber(testNum);
+                  }
+               }
             }
             catch (const std::exception& e) {
-               std::cout << "Warning: test number: " << value << ". Using default." << std::endl;
+               std::cout << "Warning: Invalid test number: " << value << ". Using default (all tests)." << std::endl;
+               setTestNumber(0);  // Default to all tests
             }
          });
+
 
       InputHandler::registerHandler("COMPARISONMODE", 0.45,
          [this](const BaseControlVariables&, const std::string& value) {
             setComparisonMode(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
+
       InputHandler::registerHandler("CSVOUTPUT", 0.46,
          [this](const BaseControlVariables&, const std::string& value) {
             setCsvOutput(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
@@ -82,7 +99,7 @@ public:
    double getNiggliDelta() const { return m_niggliDelta; }
    void setNiggliDelta(double delta) { m_niggliDelta = delta; }
 
-   bool shouldRunTests() const { return m_testNumber != 0; }
+   bool shouldRunTests() const { return m_testNumber >= 0; }
    bool shouldRunComparisonMode() const { return m_comparisonMode; }
    void setComparisonMode(bool mode) { m_comparisonMode = mode; }
    bool shouldOutputCsv() const { return m_csvOutput; }
@@ -94,7 +111,7 @@ private:
    // Niggli reduction parameters
    double m_niggliDelta = 1.0e-5;
    // Other parameters
-   int m_testNumber = 0;
+   int m_testNumber = -1;
    bool m_comparisonMode = true;
    bool m_csvOutput = false;
 

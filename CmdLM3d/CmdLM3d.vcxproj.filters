@@ -26,9 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LatticeMatchReservoir.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LatticeMatchResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -69,6 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UnifiedReservoir.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FlexibleTestMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixSimplicityRanker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

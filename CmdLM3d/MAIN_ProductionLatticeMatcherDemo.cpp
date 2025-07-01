@@ -8,6 +8,7 @@
 #include <set>
 #include <sstream>
 
+#include "FlexibleTestMode.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h" 
 #include "LRL_StringTools.h"
@@ -21,6 +22,7 @@
 #include "ProductionLatticeMatcherSystem.h"
 #include "InputHandler.h"
 #include "ProgramSetup.h"
+#include "MatrixSimplicityRanker.h"
 
 // Forward declaration for comparison mode
 void displayCompactResult(const MobileComparisonResult& result, 
@@ -143,46 +145,51 @@ void displayP3DistanceHistogram(const std::vector<LatticeMatchResult>& allResult
 
    // Display results in groups of 10 for readability
    const int groupSize = 10;
-   for (size_t start = 0; start < distanceWithIndex.size(); start += groupSize) {
-      size_t end = std::min(start + groupSize, distanceWithIndex.size());
+   //for (size_t start = 0; start < distanceWithIndex.size(); start += groupSize) {
+   //   size_t end = std::min(start + groupSize, distanceWithIndex.size());
 
-      std::cout << "Results " << (start + 1) << "-" << end << " (sorted by P3 distance):" << std::endl;
+   //   std::cout << "Results " << (start + 1) << "-" << end << " (sorted by P3 distance):" << std::endl;
 
-      for (size_t i = start; i < end; ++i) {
-         double dist = distanceWithIndex[i].first;
-         int originalIndex = distanceWithIndex[i].second;
+   //   for (size_t i = start; i < end; ++i) {
+   //      double dist = distanceWithIndex[i].first;
+   //      int originalIndex = distanceWithIndex[i].second;
 
-         // Create bar (scale to 50 characters max)
-         int barLength = 0;
-         if (range > 1e-12) {  // Avoid division by zero
-            barLength = static_cast<int>(((dist - minDist) / range) * 50);
-         }
+   //      // Create bar (scale to 50 characters max)
+   //      int barLength = 0;
+   //      if (range > 1e-12) {  // Avoid division by zero
+   //         barLength = static_cast<int>(((dist - minDist) / range) * 50);
+   //      }
 
-         // Show result number, distance, and bar
-         std::cout << std::setw(3) << (i + 1) << " (orig #" << std::setw(2) << originalIndex << "): "
-            << std::scientific << std::setprecision(3) << dist << " ";
+   //      // Show result number, distance, and bar
+   //      std::cout << std::setw(3) << (i + 1) << " (orig #" << std::setw(2) << originalIndex << "): "
+   //         << std::scientific << std::setprecision(3) << dist << " ";
 
-         // Print bar with adaptive quality assessment
-         if (barLength == 0) {
-            // For minimum values, show vertical bar with adaptive quality
-            std::cout << "| " << qualityLabel;
-         }
-         else {
-            // For non-minimum values, show proportional bars
-            for (int j = 0; j < barLength; ++j) {
-               std::cout << "#";
-            }
-         }
-         std::cout << std::endl;
-      }
-      std::cout << std::endl;
-   }
+   //      // Print bar with adaptive quality assessment
+   //      if (barLength == 0) {
+   //         // For minimum values, show vertical bar with adaptive quality
+   //         std::cout << "| " << qualityLabel;
+   //      }
+   //      else {
+   //         // For non-minimum values, show proportional bars
+   //         for (int j = 0; j < barLength; ++j) {
+   //            std::cout << "#";
+   //         }
+   //      }
+   //      std::cout << std::endl;
+   //   }
+   //   std::cout << std::endl;
+   //}
 }
 
 void displayResults(const std::vector<LatticeMatchResult>& allResults,
    const MultiTransformFinderControls& controls,
    const LatticeCell& reference) {
-
+   if (controls.shouldShowDetails()) {
+      std::cout << "DEBUG: First 5 results entering displayResults:" << std::endl;
+      for (size_t i = 0; i < std::min(size_t(5), allResults.size()); ++i) {
+         std::cout << "  " << (i + 1) << ": P3=" << allResults[i].getP3Distance() << std::endl;
+      }
+   }
    if (allResults.empty()) {
       std::cout << "No results generated - this should never happen!" << std::endl;
       return;
@@ -242,7 +249,6 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
       // Display matrix groups (limit to 10 cells per group)
       std::cout << "Matrix Groups: " << matrixGroups.size() << " unique transformations" << std::endl;
       for (const auto& [matrixKey, results] : matrixGroups) {
-         std::cout << "  Group with " << results.size() << " matches:" << std::endl;
 
          // Show up to 10 transformed cells from this group
          int cellsToShow = std::min(10, (int)results.size());
@@ -442,11 +448,19 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
       std::cout << "Quality: " << qualityString << " ("
          << std::fixed << std::setprecision(3) << distance << " Å)" << std::endl;
 
+
+
       if (controls.shouldShowDetails())
       {
          std::cout << "Description: " << result.getDescription() << std::endl;
       }
       std::cout << "P3 Distance: " << std::fixed << std::setprecision(3) << distance << std::endl;
+
+      // ADD S6 ANGLE CALCULATION HERE
+      const S6 referenceS6(reference.getCell());
+      const S6 transformedS6(result.getTransformedMobile());
+      double s6Angle = TransformerUtilities::angleS6(referenceS6, transformedS6);
+      std::cout << "S6 Angle: " << std::fixed << std::setprecision(2) << s6Angle << "°" << std::endl;
 
       // Display transformation matrix (keep your existing format)
       std::cout << "Transformation Matrix:" << std::endl;
@@ -1092,6 +1106,10 @@ void runInputListMode(const std::vector<LatticeCell>& inputList, const MultiTran
             }
             else {
                // Display full detailed results for this mobile
+               //if (controls.shouldShowDetails())
+               //{
+               //   verifyMatrixCellConsistency(results, mobile.getCell());
+               //}
                displayResults(results, controls, reference);
             }
          }
@@ -1104,35 +1122,82 @@ void runInputListMode(const std::vector<LatticeCell>& inputList, const MultiTran
 }
 
 
-      int main() {
-         try {
-            std::cout << "=== PRODUCTION LATTICE MATCHER SYSTEM ===" << std::endl;
-            std::cout << "4-Layer Architecture Demonstration" << std::endl;
+void verifyMatrixCellConsistency(const std::vector<LatticeMatchResult>& results,
+   const LRL_Cell& originalMobile) {
+   std::cout << "\n=== MATRIX-CELL CONSISTENCY CHECK ===" << std::endl;
+   std::cout << "Original mobile: " << LRL_Cell_Degrees(originalMobile) << std::endl;
 
-            // Setup input handling using your actual system
-             // Setup controls and input handling
-            MultiTransformFinderControls controls;
-            const BasicProgramInput<MultiTransformFinderControls> program_setup("ProductionLatticeMatcher", controls);
+   for (size_t i = 0; i < results.size(); ++i) {
+      const auto& result = results[i];
+      const Matrix_3x3& matrix = result.getTransformationMatrix();
 
-            if (controls.shouldShowControls()) {
-               std::cout << controls << std::endl;
-            }
-
-            // Get input list
-            const std::vector<LatticeCell>& inputList = program_setup.getInputList();
-
-            if (inputList.size() < 2) {
-               std::cout << "Need at least 2 input cells." << std::endl;
-               return 0;
-            }
-
-            // Process the input list using configured controls (from input handling)
-            runInputListMode(inputList, controls);
-
-            return 0;
-         }
-         catch (const std::exception& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
-            return -1;
-         }
+      std::cout << "\nResult " << (i + 1) << ":" << std::endl;
+      std::cout << "Matrix: [";
+      for (int j = 0; j < 9; ++j) {
+         std::cout << std::fixed << std::setprecision(4) << matrix[j];
+         if (j < 8) std::cout << " ";
       }
+      std::cout << "]" << std::endl;
+
+      // Calculate what the transformed cell SHOULD be
+      LRL_Cell calculatedTransformed = matrix * originalMobile;
+      std::cout << "Calculated (matrix × mobile): " << LRL_Cell_Degrees(calculatedTransformed) << std::endl;
+
+      // Show what's actually stored
+      std::cout << "Stored transformed cell:      " << LRL_Cell_Degrees(result.getTransformedMobile()) << std::endl;
+
+      // Check if they match
+      double cellDifference = LRL_Cell::DistanceBetween(result.getTransformedMobile(), calculatedTransformed);
+      std::cout << "Difference: " << cellDifference << std::endl;
+
+      if (cellDifference > 1e-6) {
+         std::cout << "*** ERROR: Matrix and stored cell are inconsistent! ***" << std::endl;
+      }
+      else {
+         std::cout << "*** OK: Matrix and cell are consistent ***" << std::endl;
+      }
+   }
+   std::cout << "=== END CONSISTENCY CHECK ===" << std::endl;
+}
+//
+//void runFlexibleTestMode(const MultiTransformFinderControls& controls) {
+//   FlexibleTestRunner runner;
+//   runner.setupStandardTests();
+//   runner.runAllTests(controls);
+//}
+
+int main() {
+
+   try {
+      std::cout << "=== PRODUCTION LATTICE MATCHER SYSTEM ===" << std::endl;
+      std::cout << "4-Layer Architecture Demonstration" << std::endl;
+
+      // Setup input handling using your actual system
+         // Setup controls and input handling
+      MultiTransformFinderControls controls;
+      const BasicProgramInput<MultiTransformFinderControls> program_setup("ProductionLatticeMatcher", controls);
+
+      if (controls.shouldShowControls()) {
+         std::cout << controls << std::endl;
+      }
+
+      if (controls.shouldRunTests()) {
+         runFlexibleTestMode(controls);
+         return 0;
+      }
+
+
+      // Get input list
+      const std::vector<LatticeCell>& inputList = program_setup.getInputList();
+
+
+      // Process the input list using configured controls (from input handling)
+      runInputListMode(inputList, controls);
+
+      return 0;
+   }
+   catch (const std::exception& e) {
+      std::cerr << "Error: " << e.what() << std::endl;
+      return -1;
+   }
+}

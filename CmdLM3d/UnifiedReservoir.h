@@ -18,34 +18,38 @@ private:
 
 public:
    // Constructor - no distance filtering, that's the caller's job
-   explicit UnifiedReservoir(size_t maxSize = 50)
+   explicit UnifiedReservoir(size_t maxSize = 1000)
       : m_maxReservoirSize(maxSize) {
       m_reservoir.reserve(maxSize);
    }
 
    // Add a result to the reservoir - ALWAYS accepts, no filtering
    void add(const ResultType& result) {
-      // Check for duplicates (avoid adding essentially identical results)
+      // Check for true duplicates (identical matrices only)
       for (const auto& existing : m_reservoir) {
          if (result == existing) {
-            return;  // Already have this result
+            return;  // Already have this exact result
          }
       }
 
-      // If reservoir not full, just add it
       if (m_reservoir.size() < m_maxReservoirSize) {
-         m_reservoir.push_back(result);
-         std::sort(m_reservoir.begin(), m_reservoir.end());  // Keep sorted by quality
-         return;
+         // Reservoir not full - insert in sorted order
+         auto insert_pos = std::lower_bound(m_reservoir.begin(), m_reservoir.end(), result);
+         m_reservoir.insert(insert_pos, result);
       }
+      else {
+         // Reservoir is full - check if better than worst (last element)
+         if (result < m_reservoir.back()) {
+            // Remove worst element
+            m_reservoir.pop_back();
 
-      // If better than worst in reservoir, replace worst
-      if (result < m_reservoir.back()) {
-         m_reservoir.back() = result;
-         std::sort(m_reservoir.begin(), m_reservoir.end());  // Re-sort
+            // Insert new result in correct sorted position
+            auto insert_pos = std::lower_bound(m_reservoir.begin(), m_reservoir.end(), result);
+            m_reservoir.insert(insert_pos, result);
+         }
       }
-      // Note: If not better than worst, we just ignore it (reservoir full of better results)
    }
+
 
    // Backward compatibility - calls add() and always returns true
    bool tryAdd(const ResultType& result) {
