@@ -32,6 +32,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/MatD13.cpp \
 	../LatticeRepresentationLib/MatD7.cpp ../LatticeRepresentationLib/MatG6.cpp ../LatticeRepresentationLib/MatMN.cpp \
 	../LatticeRepresentationLib/MatN.cpp ../LatticeRepresentationLib/MatS6.cpp ../LatticeRepresentationLib/Niggli.cpp \
+	../LatticeRepresentationLib/P3.h ../LatticeRepresentationLib/P3.cpp \
 	../LatticeRepresentationLib/Polar.h ../LatticeRepresentationLib/Polar.cpp \
 	../LatticeRepresentationLib/S6.cpp ../LatticeRepresentationLib/S6Dist.cpp \
 	../LatticeRepresentationLib/S6_Matrices.cpp ../LatticeRepresentationLib/Selling.cpp \
@@ -65,6 +66,7 @@ $(COMMAND):	$(COMMAND).cpp \
 	../LatticeRepresentationLib/MatD13.cpp \
 	../LatticeRepresentationLib/MatD7.cpp ../LatticeRepresentationLib/MatG6.cpp ../LatticeRepresentationLib/MatMN.cpp \
 	../LatticeRepresentationLib/MatN.cpp ../LatticeRepresentationLib/MatS6.cpp ../LatticeRepresentationLib/Niggli.cpp \
+        ../LatticeRepresentationLib/P3.cpp \
 	../LatticeRepresentationLib/Polar.cpp \
 	../LatticeRepresentationLib/S6.cpp ../LatticeRepresentationLib/S6Dist.cpp \
 	../LatticeRepresentationLib/S6_Matrices.cpp ../LatticeRepresentationLib/Selling.cpp \
