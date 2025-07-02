@@ -60,7 +60,7 @@ public:
    explicit NiggliReductionCoordinator(const MultiTransformFinderControls& controls)
       : m_controls(controls)
       , m_matcher(controls)
-      , m_integrationReservoir(1000)  // Reduce from 50 to 10 to force better deduplication
+      , m_integrationReservoir(500)  // Reduce from 50 to 10 to force better deduplication
    {
    }
 
@@ -201,7 +201,7 @@ CoreUnimodularMatcher::findBestMatches(const LRL_Cell& reference,
       // Create result and try to add to reservoir
       LatticeMatchResult result(matrix, p3Distance, 19191.,
          transformedMobile, description);
-      m_reservoir.tryAdd(result);
+      m_reservoir.add(result);
    }
 
    std::vector<LatticeMatchResult> results = m_reservoir.getAllResults();
@@ -373,8 +373,8 @@ inline void NiggliReductionCoordinator::integrateResultsIntoReservoir(
          placeholderTransformedCell,  // Will be corrected in Layer 2
          caseDescription + ": " + result.getDescription());
 
-      // The reservoir will automatically deduplicate by P3 distance and keep only the best results
-      m_integrationReservoir.tryAdd(finalResult);
+      // The reservoir will automatically deduplicate and keep only the best results
+      m_integrationReservoir.add(finalResult);
    }
 }
 

@@ -18,7 +18,7 @@ private:
 
 public:
    // Constructor - no distance filtering, that's the caller's job
-   explicit UnifiedReservoir(size_t maxSize = 1000)
+   explicit UnifiedReservoir(size_t maxSize = 500)
       : m_maxReservoirSize(maxSize) {
       m_reservoir.reserve(maxSize);
    }
@@ -50,12 +50,6 @@ public:
       }
    }
 
-
-   // Backward compatibility - calls add() and always returns true
-   bool tryAdd(const ResultType& result) {
-      add(result);
-      return true;  // Always succeeds now
-   }
 
    // Get all results, sorted by quality
    std::vector<ResultType> getAllResults() const {
