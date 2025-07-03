@@ -9,7 +9,8 @@ COMMANDS  =  \
 	CmdGen \
 	CmdInverse \
 	CmdPrim \
-	CmdLM \
+	CmdLMP3 \
+	CmdLMS6 \
 	CmdNiggli \
 	CmdPath \
 	CmdPerturb \
@@ -43,7 +44,8 @@ SOURCES  =  \
 	CmdGen/CmdGen.cpp \
 	CmdInverse/CmdInverse.cpp \
 	CmdPrim/CmdPrim.cpp \
-	CmdLM/CmdLM.cpp \
+	CmdLMP3/CmdLMP3.cpp \
+	CmdLMS6/CmdLMS6.cpp \
 	CmdNiggli/CmdNiggli.cpp \
 	CmdPath/CmdPath.cpp \
 	CmdPerturb/CmdPerturb.cpp \
@@ -76,7 +78,8 @@ BINS  =  \
 	CmdDists/CmdDists \
 	CmdGen/CmdGen \
 	CmdInverse/CmdInverse \
-	CmdLM/CmdLM \
+	CmdLMP3/CmdLMP3 \
+	CmdLMS6/CmdLMS6 \
 	CmdNiggli/CmdNiggli \
 	CmdPath/CmdPath \
 	CmdPerturb/CmdPerturb \
@@ -137,8 +140,11 @@ CmdGen/CmdGen:  CmdGen/CmdGen.cpp $(BIN)
 CmdInverse/CmdInverse:  CmdInverse/CmdInverse.cpp $(BIN)
 	  (cd CmdInverse;  make all; cp CmdInverse $(BIN))
 
-CmdLM/CmdLM:  CmdLM/CmdLM.cpp $(BIN)
-	  (cd CmdLM;  make all; cp CmdLM $(BIN))
+CmdLMP3/CmdLMP3:  CmdLMP3/CmdLMP3.cpp $(BIN)
+	  (cd CmdLMP3;  make all; cp CmdLMP3 $(BIN))
+
+CmdLMS6/CmdLMS6:  CmdLMS6/CmdLMS6.cpp $(BIN)
+	  (cd CmdLMS6;  make all; cp CmdLMS6 $(BIN))
 
 CmdNiggli/CmdNiggli:  CmdNiggli/CmdNiggli.cpp $(BIN)
 	  (cd CmdNiggli;  make all; cp CmdNiggli $(BIN))

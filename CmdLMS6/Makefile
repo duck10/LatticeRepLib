@@ -1,5 +1,5 @@
 CXX	?=	g++-9 -g -O3 -std=gnu++17 -fpermissive
-COMMAND = CmdLM
+COMMAND = CmdLMS6
 
 all:	$(COMMAND)
 
