@@ -46,5 +46,8 @@
     <ClInclude Include="InsetData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZoomInset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

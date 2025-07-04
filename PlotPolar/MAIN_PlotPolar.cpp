@@ -62,7 +62,7 @@ static std::string PrepareLegend(const double x, const double y, const size_t nD
 }
 
 static std::string AddTextAtBottom(const int x, const int y, const std::string& dataRange,
-   const std::string& programName) {
+   const std::string& programName, const std::string& title = "") {
    std::string s = "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y) + "\""
       " font-size = \"20\" " +
       " font-family = \"Arial, Helvetica, sans-serif \">" + LRL_DataToSVG(dataRange) + "</text>\n";
@@ -77,6 +77,7 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
       "<!--#######################################################-->\n"
       "<!--<text x=\"1150\" y=\"920\" font-size = \"20\"  font-family = \"Arial, Helvetica, sans - serif \"> REPLACEABLE</text>-->\n";
 
+   // Add the program name and date
    std::ostringstream os;
    os << "<text x = \""
       << x
@@ -86,8 +87,20 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
       << GetDate()
       << " </text>\n";
    s += os.str();
+
+   // Add title if provided - positioned in lower right area
+   if (!title.empty()) {
+      s += "<text x=\"" + LRL_DataToSVG(x) + "\" y=\"" + LRL_DataToSVG(y + 120) + "\" " +
+         "font-size=\"24\" font-weight=\"bold\" " +
+         "font-family=\"Arial, Helvetica, sans-serif\" fill=\"#333\">" +
+         title + "</text>\n";
+   }
+
    return s;
 }
+
+
+
 
 std::string PrepareColorGuide(const ColorRange& colorRange, const int xint, const int yint) {
    unsigned long r;
@@ -206,9 +219,8 @@ int main(int argc, char* argv[]) {
       if (abs(minmax.second) < 1.0E-5) minmax.second = 0.0;
       const std::string dataRange =
          LRL_ToString("; The " + dataName + " data value range is ", minmax.first, " to ", minmax.second);
-      const std::string legend = AddTextAtBottom(1150, 800, dataRange, programName) +
+      const std::string legend = AddTextAtBottom(1150, 800, dataRange, programName, controls.getTitle()) +
          PrepareColorGuide(colorRange, 1150, 750);
-
       svgOutput += legend;
 
       // Create individual plots using the new architecture - REFACTORED

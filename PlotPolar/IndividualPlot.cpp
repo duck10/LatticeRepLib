@@ -1,5 +1,6 @@
 #include "IndividualPlot.h"
 #include "Vector_2.h"
+#include "ZoomInset.h"
 
 IndividualPlot::IndividualPlot(const size_t whichCoordinate, const int plotX, const int plotY, const int plotSize,
    const PlotPolarControls& controls)
@@ -8,7 +9,7 @@ IndividualPlot::IndividualPlot(const size_t whichCoordinate, const int plotX, co
    , m_plotY(plotY)
    , m_plotSize(plotSize)
    , m_pColRange(nullptr)
-   , m_insetData()  // Default zero-size inset
+   , m_zoomInset()  // Default zero-size inset
    , m_controls(controls)
 {
 }
@@ -53,32 +54,23 @@ std::string IndividualPlot::writeAxes() const {
 
 
 void IndividualPlot::autoDetectInset(const double insetX, const double insetY, const double insetSize) {
-if ( m_controls.shouldShowDetails())
-   {
-      std::cout << "; DEBUG: autoDetectInset called with size=" << insetSize << " for coordinate " << m_whichCoordinate << std::endl;
-   }
+   std::cout << "; DEBUG: autoDetectInset called with size=" << insetSize << " for coordinate " << m_whichCoordinate << std::endl;
 
    if (m_plottedData.size() < 5 || m_pColRange == nullptr) {
-      m_insetData = InsetData(); // Empty inset
+      m_zoomInset = ZoomInset(); // Empty zoom inset
       return;
    }
 
-   // Auto-detect cluster using the new clean approach
-   m_insetData = autoDetectCluster(m_whichCoordinate, m_plottedData, m_controls.getClusterPercent());
-   if (!m_insetData.isEmpty() && m_controls.shouldShowDetails()) {
-      std::cout << "; DEBUG: Creating inset with size=" << insetSize
-         << " center=(" << m_insetData.center[0] << "," << m_insetData.center[1] << ")"
-         << " extents=(" << m_insetData.extents[0] << "," << m_insetData.extents[1] << ")"
-         << " points=" << m_insetData.pointIndices.size() << std::endl;
+   // Create zoom inset - it handles everything internally
+   m_zoomInset = ZoomInset(m_plottedData, m_whichCoordinate, insetX, insetY, insetSize, m_controls.getClusterPercent());
+
+   if (m_zoomInset.isEnabled()) {
+      std::cout << "; Plot " << m_whichCoordinate << ": Zoom inset enabled" << std::endl;
    }
    else {
-      if ( m_controls.shouldShowDetails())
-      {
-         std::cout << "; DEBUG: No valid cluster detected for coordinate " << m_whichCoordinate << std::endl;
-      }
+      std::cout << "; Plot " << m_whichCoordinate << ": Zoom inset disabled" << std::endl;
    }
 }
-
 
 std::string IndividualPlot::writePoints() const {
    if (m_pColRange == nullptr) {
@@ -102,15 +94,14 @@ std::string IndividualPlot::writePoints() const {
          "cx=\"" + LRL_DataToSVG(plotX) + "\" cy=\"" + LRL_DataToSVG(plotY) + "\"/>\n";
    }
 
-   // Add zoom box INSIDE the Y-flip transform using the clean approach
-   if (!m_insetData.isEmpty()) {
-      points += writeZoomBox(m_insetData);
+   // ZoomInset now handles its own zoom box rendering
+   if (m_zoomInset.isEnabled()) {
+      points += m_zoomInset.writeZoomBox();  // Just the zoom box part
    }
 
    points += "</g>\n";
    return points;
 }
-
 
 std::string IndividualPlot::writeLabels() const {
    const std::string coordStr = std::to_string(m_whichCoordinate);
@@ -158,129 +149,91 @@ std::string IndividualPlot::writeLabels() const {
 }
 
 std::string IndividualPlot::writeInsetAndZoomBox() const {
-   if (m_insetData.isEmpty() || m_pColRange == nullptr) {
+   if (m_pColRange == nullptr) {
       return "";
    }
 
-   std::string result;
-
-   // Add the inset content
-   const double insetX = 200.0;  // Default inset position
-   const double insetY = -300.0;
-   const double insetSize = 270.0;
-
-   // Create the inset group with positioning
-   result += "<g transform=\"translate(" + LRL_DataToSVG(insetX) + "," + LRL_DataToSVG(insetY) + ")\">\n";
-
-   // Inset background and border
-   result += "<rect x=\"0\" y=\"0\" width=\"" + LRL_DataToSVG(insetSize) +
-      "\" height=\"" + LRL_DataToSVG(insetSize) +
-      "\" fill=\"white\" stroke=\"orange\" stroke-width=\"2\"/>\n";
-
-   // Title and build timestamp
-   result += "<text x=\"" + LRL_DataToSVG(insetSize / 2.0) + "\" y=\"15\" " +
-      "text-anchor=\"middle\" font-size=\"15\" fill=\"orange\">Zoom View</text>\n";
-
-   // Calculate and display magnification factor
-   const double maxExtent = std::max(m_insetData.extents[0], m_insetData.extents[1]);
-   const double magnification = (insetSize * 0.8 * 0.8) / (2.0 * maxExtent);
-
-   std::ostringstream magStream;
-   magStream << std::fixed << std::setprecision(1) << magnification << "x";
-   const double magX = insetSize - 5;
-   const double magY = insetSize - 5;
-   result += "<text x=\"" + LRL_DataToSVG(magX) + "\" y=\"" + LRL_DataToSVG(magY) + "\" " +
-      "text-anchor=\"end\" font-size=\"20\" fill=\"blue\">" + magStream.str() + "</text>\n";
-
-   // Add the actual inset content using the clean new approach
-   result += writeInsetContent(m_insetData, m_whichCoordinate, m_plottedData, *m_pColRange, insetSize);
-
-   result += "</g>\n"; // End inset group
-
-   // Add connector lines using simple approach
-   result += writeConvexHullConnectorLines(insetX, insetY, insetSize);
-
-   return result;
+   // ZoomInset handles everything: inset content + connector lines
+   return m_zoomInset.writeSVG(m_plottedData, m_whichCoordinate, *m_pColRange);
 }
 
-
-std::string IndividualPlot::writeConvexHullConnectorLines(const double insetX, const double insetY, const double insetSize) const {
-   if (m_insetData.isEmpty()) {
-      return "";
-   }
-
-   std::string result;
-
-   // All points (zoom + inset corners) - using the ORIGINAL WORKING logic
-   struct Point {
-      double x, y;
-      bool isZoom;
-      Point(double x_, double y_, bool zoom) : x(x_), y(y_), isZoom(zoom) {}
-   };
-
-   std::vector<Point> points;
-
-   // Add zoom corners using InsetData bounds - EXACT original coordinates
-   points.emplace_back(m_insetData.minX(), -m_insetData.minY(), true);  // NW zoom
-   points.emplace_back(m_insetData.maxX(), -m_insetData.minY(), true);  // NE zoom  
-   points.emplace_back(m_insetData.maxX(), -m_insetData.maxY(), true);  // SE zoom
-   points.emplace_back(m_insetData.minX(), -m_insetData.maxY(), true);  // SW zoom
-
-   // Add inset corners - EXACT original coordinates
-   points.emplace_back(insetX, insetY, false);                          // NW inset
-   points.emplace_back(insetX + insetSize, insetY, false);              // NE inset
-   points.emplace_back(insetX + insetSize, insetY + insetSize, false);  // SE inset
-   points.emplace_back(insetX, insetY + insetSize, false);              // SW inset
-
-   // Convex hull using Graham scan - EXACT ORIGINAL ALGORITHM
-   auto cross = [](const Point& o, const Point& a, const Point& b) {
-      return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
-      };
-
-   // Find bottom-most point (or left-most if tie)
-   size_t minIdx = 0;
-   for (size_t i = 1; i < points.size(); i++) {
-      if (points[i].y < points[minIdx].y ||
-         (points[i].y == points[minIdx].y && points[i].x < points[minIdx].x)) {
-         minIdx = i;
-      }
-   }
-   std::swap(points[0], points[minIdx]);
-
-   // Sort points by polar angle with respect to points[0]
-   Point pivot = points[0];
-   std::sort(points.begin() + 1, points.end(), [&](const Point& a, const Point& b) {
-      double crossProd = cross(pivot, a, b);
-      if (crossProd == 0) {
-         // Collinear points - sort by distance
-         double distA = (a.x - pivot.x) * (a.x - pivot.x) + (a.y - pivot.y) * (a.y - pivot.y);
-         double distB = (b.x - pivot.x) * (b.x - pivot.x) + (b.y - pivot.y) * (b.y - pivot.y);
-         return distA < distB;
-      }
-      return crossProd > 0;
-      });
-
-   // Build convex hull
-   std::vector<Point> hull;
-   for (const Point& p : points) {
-      while (hull.size() >= 2 && cross(hull[hull.size() - 2], hull[hull.size() - 1], p) <= 0) {
-         hull.pop_back();
-      }
-      hull.push_back(p);
-   }
-
-   // Find connector lines (hull edges connecting zoom to inset points)
-   for (size_t i = 0; i < hull.size(); i++) {
-      size_t next = (i + 1) % hull.size();
-
-      // Check if this hull edge connects a zoom point to an inset point
-      if (hull[i].isZoom != hull[next].isZoom) {
-         result += "<line x1=\"" + LRL_DataToSVG(hull[i].x) + "\" y1=\"" + LRL_DataToSVG(hull[i].y) +
-            "\" x2=\"" + LRL_DataToSVG(hull[next].x) + "\" y2=\"" + LRL_DataToSVG(hull[next].y) +
-            "\" stroke=\"orange\" stroke-width=\"1\" stroke-dasharray=\"5,5\"/>\n";
-      }
-   }
-
-   return result;
-}
+//std::string IndividualPlot::writeConvexHullConnectorLines(const double insetX, const double insetY, const double insetSize) const {
+//   if (m_insetData.isEmpty()) {
+//      return "";
+//   }
+//
+//   std::string result;
+//
+//   // All points (zoom + inset corners) - using the ORIGINAL WORKING logic
+//   struct Point {
+//      double x, y;
+//      bool isZoom;
+//      Point(double x_, double y_, bool zoom) : x(x_), y(y_), isZoom(zoom) {}
+//   };
+//
+//   std::vector<Point> points;
+//
+//   // Add zoom corners using InsetData bounds - EXACT original coordinates
+//   points.emplace_back(m_insetData.minX(), -m_insetData.minY(), true);  // NW zoom
+//   points.emplace_back(m_insetData.maxX(), -m_insetData.minY(), true);  // NE zoom  
+//   points.emplace_back(m_insetData.maxX(), -m_insetData.maxY(), true);  // SE zoom
+//   points.emplace_back(m_insetData.minX(), -m_insetData.maxY(), true);  // SW zoom
+//
+//   // Add inset corners - EXACT original coordinates
+//   points.emplace_back(insetX, insetY, false);                          // NW inset
+//   points.emplace_back(insetX + insetSize, insetY, false);              // NE inset
+//   points.emplace_back(insetX + insetSize, insetY + insetSize, false);  // SE inset
+//   points.emplace_back(insetX, insetY + insetSize, false);              // SW inset
+//
+//   // Convex hull using Graham scan - EXACT ORIGINAL ALGORITHM
+//   auto cross = [](const Point& o, const Point& a, const Point& b) {
+//      return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+//      };
+//
+//   // Find bottom-most point (or left-most if tie)
+//   size_t minIdx = 0;
+//   for (size_t i = 1; i < points.size(); i++) {
+//      if (points[i].y < points[minIdx].y ||
+//         (points[i].y == points[minIdx].y && points[i].x < points[minIdx].x)) {
+//         minIdx = i;
+//      }
+//   }
+//   std::swap(points[0], points[minIdx]);
+//
+//   // Sort points by polar angle with respect to points[0]
+//   Point pivot = points[0];
+//   std::sort(points.begin() + 1, points.end(), [&](const Point& a, const Point& b) {
+//      double crossProd = cross(pivot, a, b);
+//      if (crossProd == 0) {
+//         // Collinear points - sort by distance
+//         double distA = (a.x - pivot.x) * (a.x - pivot.x) + (a.y - pivot.y) * (a.y - pivot.y);
+//         double distB = (b.x - pivot.x) * (b.x - pivot.x) + (b.y - pivot.y) * (b.y - pivot.y);
+//         return distA < distB;
+//      }
+//      return crossProd > 0;
+//      });
+//
+//   // Build convex hull
+//   std::vector<Point> hull;
+//   for (const Point& p : points) {
+//      while (hull.size() >= 2 && cross(hull[hull.size() - 2], hull[hull.size() - 1], p) <= 0) {
+//         hull.pop_back();
+//      }
+//      hull.push_back(p);
+//   }
+//
+//   // Find connector lines (hull edges connecting zoom to inset points)
+//   for (size_t i = 0; i < hull.size(); i++) {
+//      size_t next = (i + 1) % hull.size();
+//
+//      // Check if this hull edge connects a zoom point to an inset point
+//      if (hull[i].isZoom != hull[next].isZoom) {
+//         result += "<line x1=\"" + LRL_DataToSVG(hull[i].x) + "\" y1=\"" + LRL_DataToSVG(hull[i].y) +
+//            "\" x2=\"" + LRL_DataToSVG(hull[next].x) + "\" y2=\"" + LRL_DataToSVG(hull[next].y) +
+//            "\" stroke=\"orange\" stroke-width=\"1\" stroke-dasharray=\"5,5\"/>\n";
+//      }
+//   }
+//
+//   return result;
+//}
 

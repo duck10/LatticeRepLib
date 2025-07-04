@@ -48,6 +48,9 @@ public:
       os << "; PlotPolarControls\n";
       os << "; Inset size " << ctrl.insetSize << std::endl;
       os << "; Cluster inclusion fraction " << ctrl.m_clusterPercent << std::endl;
+      if (!ctrl.m_title.empty()) {
+         os << "; Title: " << ctrl.m_title << std::endl;
+      }
       return os;
    }
 
@@ -70,8 +73,33 @@ public:
 
       InputHandler::registerHandler("TITLE", 0.30,
          [this](const BaseControlVariables&, const std::string& value) {
-            m_title = value;
+            m_title = convertFromAllCaps(value);
          });
+   }
+
+   // Utility function to convert ALL CAPS to Title Case
+   std::string convertFromAllCaps(const std::string& input) const {
+      if (input.empty()) return input;
+
+      std::string result;
+      result.reserve(input.length());
+
+      bool capitalize = true;
+      for (char c : input) {
+         if (std::isspace(c)) {
+            result += c;
+            capitalize = true;
+         }
+         else if (capitalize) {
+            result += std::toupper(c);
+            capitalize = false;
+         }
+         else {
+            result += std::tolower(c);
+         }
+      }
+
+      return result;
    }
 
    std::string getPrefix() const { return prefix; }
@@ -86,6 +114,7 @@ public:
    void setShowDetails(const bool b) { m_showDetails = b; }
    double getClusterPercent() const { return m_clusterPercent; }
    void setClusterPercent(double percent) { m_clusterPercent = percent; }
+   std::string getTitle() const { return m_title; }  // Added getter for title
 
 private:
    const std::string prefix = "PPL";

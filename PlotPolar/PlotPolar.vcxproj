@@ -155,6 +155,7 @@
     <ClInclude Include="PlotPolarControls.h" />
     <ClInclude Include="PlotInset.h" />
     <ClInclude Include="PlottedPolar.h" />
+    <ClInclude Include="ZoomInset.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

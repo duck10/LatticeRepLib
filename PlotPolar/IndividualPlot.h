@@ -12,6 +12,7 @@
 #include "ColorTables.h"
 #include "LRL_ToString.h"
 #include "LRL_DataToSVG.h"
+#include "ZoomInset.h"
 
 class IndividualPlot {
 public:
@@ -32,7 +33,8 @@ public:
    int getPlotX() const { return m_plotX; }
    int getPlotY() const { return m_plotY; }
    int getPlotSize() const { return m_plotSize; }
-   bool hasInset() const { return !m_insetData.isEmpty(); }
+   bool hasInset() const { return m_zoomInset.isEnabled(); }
+
 
    friend std::ostream& operator<<(std::ostream& os, const IndividualPlot& plot) {
       os << "IndividualPlot: coord=" << plot.m_whichCoordinate
@@ -51,14 +53,14 @@ private:
    std::vector<PlottedPolar> m_plottedData;  // Already in plot coordinates
    const ColorRange* m_pColRange;            // Pointer to color mapping
 
-   InsetData m_insetData;           // New clean inset data structure
+   ZoomInset m_zoomInset;           // New clean inset data structure
 
    // Internal methods
    std::string writeAxes() const;
    std::string writePoints() const;
    std::string writeLabels() const;
    std::string writeInsetAndZoomBox() const;
-   std::string writeConvexHullConnectorLines(const double insetX, const double insetY, const double insetSize) const;
+   //std::string writeConvexHullConnectorLines(const double insetX, const double insetY, const double insetSize) const;
 };
 
 #endif // INDIVIDUALPLOT_H
