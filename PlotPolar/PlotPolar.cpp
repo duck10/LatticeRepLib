@@ -56,7 +56,7 @@ std::string PlotPolar::DrawCells(const size_t scalar, const std::vector<Polar>& 
       unsigned long r;
       unsigned long g;
       unsigned long b;
-      const double frac = (vPolar.size()==1) ? 1.0 : double(i) / double(vPolar.size() - 1);
+      const double frac = (vPolar.size() == 1) ? 1.0 : double(i) / double(vPolar.size() - 1);
       colRange.GetRGBFromRangeFraction(frac, r, g, b);
 
       const std::string s = std::string("<circle  r=\"10\" stroke = \"black\" stroke-width=\"0.5\""
@@ -71,6 +71,89 @@ std::string PlotPolar::DrawCells(const size_t scalar, const std::vector<Polar>& 
    return transform;
 }
 
+PlotPolar::ZoomRegion PlotPolar::AutoDetectClusterRegion(const size_t whichPlot, const std::vector<Polar>& vData) const {
+   ZoomRegion region;
+
+   if (vData.size() < 5) {
+      region.hasCluster = false;
+      return region;
+   }
+
+   // Extract coordinates for this plot
+   std::vector<std::pair<double, double>> points;
+   for (const Polar& polar : vData) {
+      const Vector_2& coords = polar[whichPlot - 1];
+      points.emplace_back(coords[0], coords[1]);
+   }
+
+   // Find the densest region using a sliding window approach
+   const size_t minPointsForCluster = std::max(size_t(5), vData.size() / 4);
+
+   double bestDensity = 0.0;
+   double bestMinX = 19191.0;
+   double bestMaxX = 19191.0;
+   double bestMinY = 19191.0;
+   double bestMaxY = 19191.0;
+   size_t bestCount = 0;
+
+   // Get data bounds
+   double dataMinX = points[0].first;
+   double dataMaxX = points[0].first;
+   double dataMinY = points[0].second;
+   double dataMaxY = points[0].second;
+
+   for (const std::pair<double, double>& point : points) {
+      dataMinX = std::min(dataMinX, point.first);
+      dataMaxX = std::max(dataMaxX, point.first);
+      dataMinY = std::min(dataMinY, point.second);
+      dataMaxY = std::max(dataMaxY, point.second);
+   }
+
+   // Try different window sizes
+   const double dataWidth = dataMaxX - dataMinX;
+   const double dataHeight = dataMaxY - dataMinY;
+
+   for (double windowSize = 0.2; windowSize <= 0.8; windowSize += 0.1) {
+      const double windowWidth = dataWidth * windowSize;
+      const double windowHeight = dataHeight * windowSize;
+
+      // Slide window across data space
+      for (double x = dataMinX; x <= dataMaxX - windowWidth; x += windowWidth * 0.1) {
+         for (double y = dataMinY; y <= dataMaxY - windowHeight; y += windowHeight * 0.1) {
+            size_t pointsInWindow = 0;
+
+            for (const std::pair<double, double>& point : points) {
+               if (point.first >= x && point.first <= x + windowWidth &&
+                  point.second >= y && point.second <= y + windowHeight) {
+                  pointsInWindow++;
+               }
+            }
+
+            const double density = double(pointsInWindow) / (windowWidth * windowHeight);
+
+            if (pointsInWindow >= minPointsForCluster && density > bestDensity) {
+               bestDensity = density;
+               bestMinX = x;
+               bestMaxX = x + windowWidth;
+               bestMinY = y;
+               bestMaxY = y + windowHeight;
+               bestCount = pointsInWindow;
+            }
+         }
+      }
+   }
+
+   if (bestCount >= minPointsForCluster) {
+      region.hasCluster = true;
+      region.minX = bestMinX;
+      region.maxX = bestMaxX;
+      region.minY = bestMinY;
+      region.maxY = bestMaxY;
+      region.pointCount = bestCount;
+   }
+
+   return region;
+}
 
 PlotPolar::PlotPolar(const std::string& filename, const int wx, const int wy, const int gx, const int gy)
    : m_wx(wx)

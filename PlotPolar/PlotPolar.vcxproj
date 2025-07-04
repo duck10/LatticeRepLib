@@ -131,8 +131,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IndividualPlot.cpp" />
+    <ClCompile Include="InsetData.cpp" />
     <ClCompile Include="MAIN_PlotPolar.cpp" />
     <ClCompile Include="PlotPolar.cpp" />
+    <ClCompile Include="PlotInset.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InputHandler\InputHandler.vcxproj">
@@ -146,8 +149,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IndividualPlot.h" />
+    <ClInclude Include="InsetData.h" />
     <ClInclude Include="PlotPolar.h" />
     <ClInclude Include="PlotPolarControls.h" />
+    <ClInclude Include="PlotInset.h" />
+    <ClInclude Include="PlottedPolar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

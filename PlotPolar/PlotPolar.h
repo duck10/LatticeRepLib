@@ -1,5 +1,5 @@
-#ifndef PlotPolar_H
-#define PlotPolar_H
+#ifndef PLOTPOLAR_H
+#define PLOTPOLAR_H
 
 #include <string>
 #include <vector>
@@ -10,6 +10,33 @@
 
 class PlotPolar {
 public:
+   struct ZoomRegion {
+      bool hasCluster;
+      double minX;
+      double maxX;
+      double minY;
+      double maxY;
+      size_t pointCount;
+
+      ZoomRegion()
+         : hasCluster(false)
+         , minX(19191.0)
+         , maxX(19191.0)
+         , minY(19191.0)
+         , maxY(19191.0)
+         , pointCount(0)
+      {
+      }
+
+      friend std::ostream& operator<<(std::ostream& os, const ZoomRegion& region) {
+         os << "ZoomRegion: hasCluster=" << (region.hasCluster ? "true" : "false")
+            << " bounds=(" << region.minX << "," << region.minY
+            << ") to (" << region.maxX << "," << region.maxY
+            << ") points=" << region.pointCount;
+         return os;
+      }
+   };
+
    PlotPolar(const std::string& filename, const int wx, const int wy, const int gx, const int gy);
 
    std::string GetIntro(const std::string& filename) const { return m_svgIntro; }
@@ -17,6 +44,7 @@ public:
    double CellScale(const std::vector<Polar>& v);
    double CellScaleFactor() const;
    std::string DrawCells(const size_t scalar, const std::vector<Polar>& v, const ColorRange& colRange);
+   ZoomRegion AutoDetectClusterRegion(const size_t whichPlot, const std::vector<Polar>& vData) const;
    double GetWx() const { return m_wx; }
    double GetWy() const { return m_wy; }
    double GetGx() const { return m_gx; }
@@ -72,4 +100,5 @@ public:
 
 };
 
-#endif  // PlotPolar_H
+#endif  // PLOTPOLAR_H
+

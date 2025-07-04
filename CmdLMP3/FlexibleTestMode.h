@@ -160,6 +160,7 @@ private:
       }
 
       std::cout << "Found " << results.size() << " results" << std::endl;
+      const std::string referenceCentering = test.inputCells[0].getLatticeType();
 
       // Show actual results
       std::cout << "\nActual results:" << std::endl;
@@ -182,7 +183,8 @@ private:
             << result.getP3Distance() << std::endl;
          std::cout << "    S6 angle: " << std::fixed << std::setprecision(2)
             << s6Angle << "°" << std::endl;
-         std::cout << "    Transformed: " << LRL_Cell_Degrees(result.getTransformedMobile()) << std::endl;
+         std::cout << "    Transformed: " << LRL_Cell_Degrees(result.getTransformedMobile())
+            << "[" << referenceCentering << "]" << std::endl;
       }
 
       // Validate results

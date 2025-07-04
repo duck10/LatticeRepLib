@@ -1169,8 +1169,7 @@ void verifyMatrixCellConsistency(const std::vector<LatticeMatchResult>& results,
 int main() {
 
    try {
-      std::cout << "=== PRODUCTION LATTICE MATCHER SYSTEM ===" << std::endl;
-      std::cout << "4-Layer Architecture Demonstration" << std::endl;
+      std::cout << "=== P3 LATTICE MATCHING ===" << std::endl;
 
       // Setup input handling using your actual system
          // Setup controls and input handling

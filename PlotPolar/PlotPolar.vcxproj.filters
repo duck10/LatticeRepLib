@@ -17,12 +17,33 @@
     <ClCompile Include="PlotPolar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlotInset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndividualPlot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InsetData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PlotPolar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlotPolarControls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlotInset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndividualPlot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlottedPolar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InsetData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
