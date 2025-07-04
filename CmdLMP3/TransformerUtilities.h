@@ -44,7 +44,7 @@
 //}
 
 
-static double CalculateNCDistWithReduction(const LRL_Cell& c1, const LRL_Cell& c2) {
+double CalculateNCDistWithReduction(const LRL_Cell& c1, const LRL_Cell& c2) {
    G6 out1;
    G6 out2;
    Niggli::Reduce(c1, out1);
