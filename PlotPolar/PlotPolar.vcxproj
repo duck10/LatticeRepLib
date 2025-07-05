@@ -70,6 +70,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -135,7 +143,6 @@
     <ClCompile Include="InsetData.cpp" />
     <ClCompile Include="MAIN_PlotPolar.cpp" />
     <ClCompile Include="PlotPolar.cpp" />
-    <ClCompile Include="PlotInset.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InputHandler\InputHandler.vcxproj">
@@ -153,7 +160,6 @@
     <ClInclude Include="InsetData.h" />
     <ClInclude Include="PlotPolar.h" />
     <ClInclude Include="PlotPolarControls.h" />
-    <ClInclude Include="PlotInset.h" />
     <ClInclude Include="PlottedPolar.h" />
     <ClInclude Include="ZoomInset.h" />
   </ItemGroup>

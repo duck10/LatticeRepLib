@@ -196,7 +196,6 @@ CoreUnimodularMatcher::findBestMatches(const LRL_Cell& reference,
 
       // Calculate P3 distance
       const double p3Distance = calculateP3Distance(reference, transformedMobile);
-      //const double ncDistance = CalculateNCDistWithReduction(reference, transformedMobile);
 
       // Create result and try to add to reservoir
       LatticeMatchResult result(matrix, p3Distance, 19191.,
@@ -238,12 +237,6 @@ static std::vector<LatticeMatchResult> addNCDistanceToResults(
 }
 
 // Layer 3 Implementation
-// CORRECT SOLUTION: Sequential merge with matrix correction at each step
-// Replace the performFourWayMatching method in NiggliReductionCoordinator
-
-// CORRECT SOLUTION: Sequential merge with matrix correction at each step
-// Replace the performFourWayMatching method in NiggliReductionCoordinator
-
 // CORRECT SOLUTION: Sequential merge with matrix correction at each step
 // Replace the performFourWayMatching method in NiggliReductionCoordinator
 
@@ -509,14 +502,6 @@ ProductionLatticeMatcherSystem::processInputList(const std::vector<LatticeCell>&
 
       allResults.insert(allResults.end(), results.begin(), results.end());
    }
-
-   // Sort all results by P3 distance
-   //allResults = MatrixSimplicityRanker::rankByQualityAwareSimplicity(
-   //   allResults, reference.getCell(), 0.1);
-
-
-   //allResults = MatrixSimplicityRanker::rankByQualityAwareSimplicity(
-   //   allResults, reference.getCell(), 0.1);
 
    if ( m_controls.shouldShowDetails())
    {

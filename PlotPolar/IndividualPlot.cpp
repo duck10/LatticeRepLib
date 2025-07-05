@@ -54,7 +54,10 @@ std::string IndividualPlot::writeAxes() const {
 
 
 void IndividualPlot::autoDetectInset(const double insetX, const double insetY, const double insetSize) {
-   std::cout << "; DEBUG: autoDetectInset called with size=" << insetSize << " for coordinate " << m_whichCoordinate << std::endl;
+   if (m_controls.shouldShowDetails())
+   {
+      std::cout << "; DEBUG: autoDetectInset called with size=" << insetSize << " for coordinate " << m_whichCoordinate << std::endl;
+   }
 
    if (m_plottedData.size() < 5 || m_pColRange == nullptr) {
       m_zoomInset = ZoomInset(); // Empty zoom inset

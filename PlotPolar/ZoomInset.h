@@ -90,9 +90,10 @@ private:
 
          // Check if this hull edge connects a zoom point to an inset point
          if (hull[i].isZoom != hull[next].isZoom) {
+            // draw connector lines
             result += "<line x1=\"" + LRL_DataToSVG(hull[i].x) + "\" y1=\"" + LRL_DataToSVG(hull[i].y) +
                "\" x2=\"" + LRL_DataToSVG(hull[next].x) + "\" y2=\"" + LRL_DataToSVG(hull[next].y) +
-               "\" stroke=\"orange\" stroke-width=\"1\" stroke-dasharray=\"5,5\"/>\n";
+               "\" stroke=\"orange\" stroke-width=\"3\" stroke-dasharray=\"9, 4, 3\"/>\n";
          }
       }
 

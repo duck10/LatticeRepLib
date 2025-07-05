@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include "InsetData.h"  // Changed from PlotInset.h
+#include "InsetData.h"
 #include "PlotPolarControls.h"
 #include "PlottedPolar.h"
 #include "ColorTables.h"

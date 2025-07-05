@@ -89,9 +89,6 @@ std::string writeInsetContent(const InsetData& insetData, const size_t whichCoor
    const double maxExtent = std::max(insetData.extents[0], insetData.extents[1]);
    const double scale = (contentSize * 0.4) / maxExtent;  // Always use 80% of content radius
 
-   // Draw axes to match the scaled data extent
-   const double axisLen = maxExtent * scale;  // Axes exactly match data extent
-
    // Y-flip transform to match main plot
    content += "<g transform=\"scale(1,-1)\">\n";
 
@@ -140,7 +137,8 @@ std::string writeZoomBox(const InsetData& insetData) {
    const double y = insetData.minY() - marginY;
    const double width = insetData.width() + 2 * marginX;
    const double height = insetData.height() + 2 * marginY;
-
+   
+   // draw the zoom box
    return "<rect x=\"" + LRL_DataToSVG(x) + "\" y=\"" + LRL_DataToSVG(y) +
       "\" width=\"" + LRL_DataToSVG(width) + "\" height=\"" + LRL_DataToSVG(height) +
       "\" fill=\"none\" stroke=\"orange\" stroke-width=\"3\" stroke-dasharray=\"10,5\"/>\n";

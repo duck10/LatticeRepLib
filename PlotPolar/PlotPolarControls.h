@@ -46,10 +46,11 @@ class PlotPolarControls : public BaseControlVariables {
 public:
    friend std::ostream& operator<< (std::ostream& os, const PlotPolarControls& ctrl) {
       os << "; PlotPolarControls\n";
-      os << "; Inset size " << ctrl.insetSize << std::endl;
-      os << "; Cluster inclusion fraction " << ctrl.m_clusterPercent << std::endl;
+      os << "; Inset size (INSETSIZE) " << ctrl.insetSize << std::endl;
+      os << "; Cluster inclusion fraction (CLUSTERFRACTION) " << ctrl.m_clusterPercent << std::endl;
+      os << "; Show details " << ctrl.m_showDetails << std::endl;
       if (!ctrl.m_title.empty()) {
-         os << "; Title: " << ctrl.m_title << std::endl;
+         os << "; Title: (TITLE) " << ctrl.m_title << std::endl;
       }
       return os;
    }

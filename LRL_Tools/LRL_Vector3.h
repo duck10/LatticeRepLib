@@ -383,6 +383,7 @@ Matrix_3x3( const Matrix_3x3& o )
 }
 
 Matrix_3x3(const std::string& s) {
+   for (size_t i = 0; i < 9; ++i) m[i] = 0.0;
    std::istringstream istr(s);
    double d;
    int i = 0;

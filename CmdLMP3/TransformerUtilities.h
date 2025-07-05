@@ -44,13 +44,7 @@
 //}
 
 
-double CalculateNCDistWithReduction(const LRL_Cell& c1, const LRL_Cell& c2) {
-   G6 out1;
-   G6 out2;
-   Niggli::Reduce(c1, out1);
-   Niggli::Reduce(c2, out2);
-   return NCDist(out1.data(), out2.data());
-}
+double CalculateNCDistWithReduction(const LRL_Cell& c1, const LRL_Cell& c2);
 
 
 namespace TransformerUtilities {
@@ -80,13 +74,13 @@ namespace TransformerUtilities {
 
 
    // Simple matrix application helper
-   static LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
+   inline LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
       const B4 b4Cell(cell);
       const B4 transformedB4 = matrix * b4Cell;
       return LRL_Cell(transformedB4);
    }
 
-   static double calculateP3Distance(const LRL_Cell& cell1, const LRL_Cell& cell2) {
+   inline double calculateP3Distance(const LRL_Cell& cell1, const LRL_Cell& cell2) {
       const P3 p3_1(cell1);
       const P3 p3_2(cell2);
       //std::cout << "DEBUG P3_1: " << p3_1 << std::endl;
@@ -125,14 +119,14 @@ namespace TransformerUtilities {
       bool success;
    };
 
-   static PrimitiveConversionResult convertToPrimitiveComplete(
+   inline PrimitiveConversionResult convertToPrimitiveComplete(
       const LatticeCell& lattice);
 
-   static PrimitiveConversionResult convertToPrimitiveComplete(
+   inline PrimitiveConversionResult convertToPrimitiveComplete(
       const LatticeCell& lattice,
       const MultiTransformFinderControls& controls);
 
-   static LRL_Cell convertToPrimitive(const LatticeCell& lattice,
+   inline LRL_Cell convertToPrimitive(const LatticeCell& lattice,
       Matrix_3x3& centeringTransform,
       const MultiTransformFinderControls& controls);
 
@@ -253,7 +247,7 @@ void showUsageInformation(const MultiTransformFinderControls& controls);
 
 std::vector<LatticeCell> RunTests( MultiTransformFinderControls& controls, const int n);
 
-static LRL_Cell NiggliReduce(const LatticeCell& cell) {
+inline LRL_Cell NiggliReduce(const LatticeCell& cell) {
    const G6 g6Primitive = LatticeConverter::MakePrimitiveCell(cell.getLatticeType(), cell.getCell());
    G6 reduced;;
    const bool success = Niggli::Reduce(g6Primitive, reduced);
@@ -262,13 +256,13 @@ static LRL_Cell NiggliReduce(const LatticeCell& cell) {
 
 
 // Simple matrix application helper
-static LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
+inline LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
    const B4 b4Cell(cell);
    const B4 transformedB4 = matrix * b4Cell;
    return LRL_Cell(transformedB4);
 }
 
-static double calculateP3Distance(const LRL_Cell& cell1, const LRL_Cell& cell2) {
+inline double calculateP3Distance(const LRL_Cell& cell1, const LRL_Cell& cell2) {
    const P3 p3_1(cell1);
    const P3 p3_2(cell2);
    //std::cout << "DEBUG P3_1: " << p3_1 << std::endl;

@@ -38,16 +38,6 @@ static void ListInput(const std::vector<LatticeCell>& inputList) {
    }
 }
 
-static std::string CellPrecision2(const S6& s) {
-   std::stringstream os;
-   const LRL_Cell_Degrees cell(s);
-   os << std::fixed << std::setprecision(2);
-   for (size_t i = 0; i < 6; ++i) {
-      os << cell[i] << "  ";
-   }
-   return os.str();
-}
-
 static std::string PrepareLegend(const double x, const double y, const size_t nData,
    const std::string& programName) {
    std::string out;
@@ -62,13 +52,43 @@ static std::string PrepareLegend(const double x, const double y, const size_t nD
 }
 
 static std::string AddTextAtBottom(const int x, const int y, const std::string& dataRange,
-   const std::string& programName, const std::string& title = "") {
-   std::string s = "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y) + "\""
+   const std::string& programName, const std::string& title = "",
+   const double clusterPercent = 0.0, const size_t totalPoints = 0, const bool hasZoomInsets = false) {
+
+   int currentY = y;
+
+   std::string s = "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(currentY) + "\""
       " font-size = \"20\" " +
       " font-family = \"Arial, Helvetica, sans-serif \">" + LRL_DataToSVG(dataRange) + "</text>\n";
 
+   // Add zoom selection information only if there are actually zoom insets
+   if (hasZoomInsets && clusterPercent > 0.0 && totalPoints > 0) {
+      currentY += 25;  // Move down for zoom line
+      const size_t selectedPoints = static_cast<size_t>(totalPoints * clusterPercent);
+      const int zoomPercentage = static_cast<int>(clusterPercent * 100);
+
+      s += "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(currentY) + "\""
+         " font-size = \"18\" " +
+         " font-family = \"Arial, Helvetica, sans-serif \">" +
+         "; Zoom boxes contain " + std::to_string(zoomPercentage) + "% of data points (" +
+         std::to_string(selectedPoints) + " of " + std::to_string(totalPoints) + ")" +
+         "</text>\n";
+      currentY += 25;  // Add space after zoom line
+   }
+
+   // Add the program name and date - using currentY for proper spacing
+   std::ostringstream os;
+   os << "<text x = \""
+      << x
+      << "\" y = \""
+      << currentY + 40
+      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  " + programName + "   "
+      << GetDate()
+      << " </text>\n";
+   s += os.str();
+
    s += "<!--#######################################################-->\n"
-      "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(y + 80) + "\""
+      "<text x = \"" + LRL_DataToSVG(x) + "\" y = \"" + LRL_DataToSVG(currentY + 80) + "\""
       " font-size = \"20\" " +
       " font-family = \"Arial, Helvetica, sans-serif \">\n" +
       ""  // INSERT TEXT HERE
@@ -77,20 +97,9 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
       "<!--#######################################################-->\n"
       "<!--<text x=\"1150\" y=\"920\" font-size = \"20\"  font-family = \"Arial, Helvetica, sans - serif \"> REPLACEABLE</text>-->\n";
 
-   // Add the program name and date
-   std::ostringstream os;
-   os << "<text x = \""
-      << x
-      << "\" y = \""
-      << y + 40
-      << "\"  font-size = \"20\" font-family = \"Arial, Helvetica, sans-serif\" >LRL-WEB  " + programName + "   "
-      << GetDate()
-      << " </text>\n";
-   s += os.str();
-
    // Add title if provided - positioned in lower right area
    if (!title.empty()) {
-      s += "<text x=\"" + LRL_DataToSVG(x) + "\" y=\"" + LRL_DataToSVG(y + 120) + "\" " +
+      s += "<text x=\"" + LRL_DataToSVG(x) + "\" y=\"" + LRL_DataToSVG(currentY + 120) + "\" " +
          "font-size=\"24\" font-weight=\"bold\" " +
          "font-family=\"Arial, Helvetica, sans-serif\" fill=\"#333\">" +
          title + "</text>\n";
@@ -98,7 +107,6 @@ static std::string AddTextAtBottom(const int x, const int y, const std::string& 
 
    return s;
 }
-
 
 
 
@@ -206,7 +214,7 @@ int main(int argc, char* argv[]) {
       }
 
       // Calculate scaling using existing PlotPolar class
-      const double cellScale = thePlot.CellScale(vData);
+      thePlot.CellScale(vData);  // Initialize m_maxScalar
       const double scaleFactor = thePlot.CellScaleFactor();
       if (controls.shouldShowDetails()) {
          std::cout << "; Scale factor: " << scaleFactor << std::endl;
@@ -219,11 +227,8 @@ int main(int argc, char* argv[]) {
       if (abs(minmax.second) < 1.0E-5) minmax.second = 0.0;
       const std::string dataRange =
          LRL_ToString("; The " + dataName + " data value range is ", minmax.first, " to ", minmax.second);
-      const std::string legend = AddTextAtBottom(1150, 800, dataRange, programName, controls.getTitle()) +
-         PrepareColorGuide(colorRange, 1150, 750);
-      svgOutput += legend;
 
-      // Create individual plots using the new architecture - REFACTORED
+      // Create individual plots using the new architecture
       const ColorRange colRange(0xFFFF00, 0x1589FF);
 
       // Plot configurations: {coordinate, x, y, size}
@@ -233,15 +238,27 @@ int main(int argc, char* argv[]) {
          {3, 500, 1100, 500}    // Plot 3
       };
 
-      // Create and render all plots
+      // Create and render all plots - track zoom insets
+      bool hasAnyZoomInsets = false;
       for (const auto& config : plotConfigs) {
          auto [coordinate, x, y, size] = config;
          IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colRange);
+         if (plot.hasInset()) {
+            hasAnyZoomInsets = true;
+         }
          svgOutput += plot.writeSVG();
       }
 
       std::cout << dataRange << std::endl << std::endl;
       ListInput(dc_setup.getInputList());
+
+      // Create legend with zoom information
+      const std::string legend = AddTextAtBottom(1150, 800, dataRange, programName, controls.getTitle(),
+         controls.getClusterPercent(), vData.size(), hasAnyZoomInsets) +
+         PrepareColorGuide(colorRange, 1150, 750);
+
+      svgOutput += legend;
+
       thePlot.SendFrameToFile(graphicsFileName, svgOutput + thePlot.GetFoot());
       std::cout << PrepareLegend(600, 600, vData.size(), programName);
 
@@ -252,4 +269,5 @@ int main(int argc, char* argv[]) {
       return 1;
    }
 }
+
 

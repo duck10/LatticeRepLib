@@ -109,6 +109,15 @@ std::vector<LatticeCell> RunTests( MultiTransformFinderControls& controls, const
    return cells;
 }
 
+double CalculateNCDistWithReduction(const LRL_Cell& c1, const LRL_Cell& c2) {
+   G6 out1;
+   G6 out2;
+   Niggli::Reduce(c1, out1);
+   Niggli::Reduce(c2, out2);
+   return NCDist(out1.data(), out2.data());
+}
+
+
 //LRL_Cell TransformerUtilities::convertToPrimitive(
 //   const LatticeCell& lattice,
 //   Matrix_3x3& centeringTransform,

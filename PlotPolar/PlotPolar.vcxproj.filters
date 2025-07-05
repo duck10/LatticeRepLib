@@ -17,9 +17,6 @@
     <ClCompile Include="PlotPolar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlotInset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IndividualPlot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -32,9 +29,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlotPolarControls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlotInset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IndividualPlot.h">
