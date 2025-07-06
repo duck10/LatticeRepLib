@@ -1,16 +1,20 @@
 #include "IndividualPlot.h"
 #include "Vector_2.h"
 #include "ZoomInset.h"
+#include "LinearAxis.h"
+#include <sstream>
+#include <iomanip>
 
 IndividualPlot::IndividualPlot(const size_t whichCoordinate, const int plotX, const int plotY, const int plotSize,
-   const PlotPolarControls& controls)
+   const PlotPolarControls& controls, const double scaleFactor)
    : m_whichCoordinate(whichCoordinate)
    , m_plotX(plotX)
    , m_plotY(plotY)
    , m_plotSize(plotSize)
    , m_pColRange(nullptr)
-   , m_zoomInset()  // Default zero-size inset
+   , m_zoomInset()
    , m_controls(controls)
+   , m_scaleFactor(scaleFactor)  // Initialize scale factor
 {
 }
 
@@ -19,6 +23,54 @@ void IndividualPlot::setPlottedData(const std::vector<PlottedPolar>& plottedData
    m_pColRange = &colRange;
 }
 
+std::pair<double, std::string> calculateDataTickValue(const std::vector<PlottedPolar>& plottedData,
+   size_t coordinate, double scaleFactor) {
+   if (plottedData.empty() || scaleFactor == 0.0) {
+      return { 100.0, "1.0" };  // Fallback
+   }
+
+   // Reverse engineer the original data range from the scaled pixel data
+   double maxPixelVal = 0.0;
+   for (const PlottedPolar& plotted : plottedData) {
+      const Vector_2& coords = plotted[coordinate - 1];
+      maxPixelVal = std::max(maxPixelVal, std::max(std::abs(coords[0]), std::abs(coords[1])));
+   }
+
+   // Convert back to data coordinates
+   double maxDataVal = maxPixelVal / scaleFactor;
+
+   // Use LinearAxis to find nice tick spacing in data coordinates
+   LinearAxis axis;
+   axis.SetStepSizeList();
+   AxisLimits limits = axis.LinearAxisLimits(0.0, maxDataVal);
+
+   double stepSize = limits.GetStepSize();
+   double dataTickValue = stepSize * std::floor(maxDataVal / stepSize);
+
+   if (dataTickValue > maxDataVal * 0.8) {
+      dataTickValue -= stepSize;
+   }
+
+   if (dataTickValue <= 0) {
+      dataTickValue = stepSize;
+   }
+
+   // Format the data value for the label
+   std::ostringstream oss;
+   if (dataTickValue >= 10.0) {
+      oss << std::fixed << std::setprecision(0) << dataTickValue;
+   }
+   else if (dataTickValue >= 1.0) {
+      oss << std::fixed << std::setprecision(1) << dataTickValue;
+   }
+   else {
+      oss << std::fixed << std::setprecision(2) << dataTickValue;
+   }
+
+   // Return the pixel position and data label
+   double pixelPosition = dataTickValue * scaleFactor;
+   return std::make_pair(pixelPosition, oss.str());
+}
 
 
 std::string IndividualPlot::writeSVG() const {
@@ -51,13 +103,44 @@ std::string IndividualPlot::writeAxes() const {
    const std::string negAxisSize = LRL_DataToSVG_ToQuotedString(-m_plotSize);
    const std::string zero = LRL_DataToSVG_ToQuotedString(0);
 
-   // Vertical axis (Y)
-   std::string axes = "<line x1=" + zero + " y1=" + zero + " x2=" + zero +
+   // Use the stored scale factor
+   auto [pixelTickValue, dataLabel] = calculateDataTickValue(m_plottedData, m_whichCoordinate, m_scaleFactor);
+
+   std::string axes;
+
+   // Y axis
+   axes += "<!-- Y axis -->\n";
+   axes += "<line x1=" + zero + " y1=" + zero + " x2=" + zero +
       " y2=" + negAxisSize + " stroke-width=\"2\" stroke=\"black\"/>\n";
 
-   // Horizontal axis (X)  
+   // Y axis tick
+   axes += "<line x1=\"-5\" y1=\"" + LRL_DataToSVG(-pixelTickValue) + "\" " +
+      "x2=\"5\" y2=\"" + LRL_DataToSVG(-pixelTickValue) + "\" " +
+      "stroke-width=\"2\" stroke=\"black\"/>\n";
+   axes += "<text x=\"-15\" y=\"" + LRL_DataToSVG(-pixelTickValue + 5) + "\" " +
+      "text-anchor=\"end\" font-size=\"16\" font-family=\"Arial, Helvetica, sans-serif\">" +
+      dataLabel + "</text>\n";
+
+   // X axis
+   axes += "<!-- X axis -->\n";
    axes += "<line x1=" + axisSize + " y1=" + zero + " x2=" + negAxisSize +
       " y2=" + zero + " stroke-width=\"2\" stroke=\"black\"/>\n";
+
+   // Positive X tick
+   axes += "<line x1=\"" + LRL_DataToSVG(pixelTickValue) + "\" y1=\"-5\" " +
+      "x2=\"" + LRL_DataToSVG(pixelTickValue) + "\" y2=\"5\" " +
+      "stroke-width=\"2\" stroke=\"black\"/>\n";
+   axes += "<text x=\"" + LRL_DataToSVG(pixelTickValue) + "\" y=\"20\" " +
+      "text-anchor=\"middle\" font-size=\"16\" font-family=\"Arial, Helvetica, sans-serif\">" +
+      dataLabel + "</text>\n";
+
+   // Negative X tick
+   axes += "<line x1=\"" + LRL_DataToSVG(-pixelTickValue) + "\" y1=\"-5\" " +
+      "x2=\"" + LRL_DataToSVG(-pixelTickValue) + "\" y2=\"5\" " +
+      "stroke-width=\"2\" stroke=\"black\"/>\n";
+   axes += "<text x=\"" + LRL_DataToSVG(-pixelTickValue) + "\" y=\"20\" " +
+      "text-anchor=\"middle\" font-size=\"16\" font-family=\"Arial, Helvetica, sans-serif\">-" +
+      dataLabel + "</text>\n";
 
    return axes;
 }

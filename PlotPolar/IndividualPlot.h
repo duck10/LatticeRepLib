@@ -18,7 +18,7 @@ class IndividualPlot {
 public:
    // Constructor
    IndividualPlot(const size_t whichCoordinate, const int plotX, const int plotY, const int plotSize,
-      const PlotPolarControls& controls);
+      const PlotPolarControls& controls, const double scaleFactor);  // Add scaleFactor parameter
 
    // Core functionality - takes already-plotted coordinates
    void setPlottedData(const std::vector<PlottedPolar>& plottedData, const ColorRange& colRange);
@@ -52,7 +52,7 @@ private:
 
    std::vector<PlottedPolar> m_plottedData;  // Already in plot coordinates
    const ColorRange* m_pColRange;            // Pointer to color mapping
-
+   const double m_scaleFactor;
    ZoomInset m_zoomInset;           // New clean inset data structure
 
    // Internal methods

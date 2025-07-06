@@ -152,8 +152,10 @@ std::vector<PlottedPolar> convertToPlottedPolar(const std::vector<Polar>& polarD
 IndividualPlot createPlot(size_t coordinate, int x, int y, int size,
    const PlotPolarControls& controls,
    const std::vector<PlottedPolar>& plottedData,
-   const ColorRange& colRange) {
-   IndividualPlot plot(coordinate, x, y, size, controls);
+   const ColorRange& colRange,
+   const double scaleFactor) {  // Add this parameter
+
+   IndividualPlot plot(coordinate, x, y, size, controls, scaleFactor);  // Pass scaleFactor
    plot.setPlottedData(plottedData, colRange);
 
    if (controls.getEnableZoom()) {
@@ -172,8 +174,6 @@ IndividualPlot createPlot(size_t coordinate, int x, int y, int size,
 
    return plot;
 }
-
-
 
 
 int main(int argc, char* argv[]) {
@@ -239,7 +239,7 @@ int main(int argc, char* argv[]) {
       bool hasAnyZoomInsets = false;
       for (const auto& config : plotConfigs) {
          auto [coordinate, x, y, size] = config;
-         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colorRange);
+         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colorRange, scaleFactor);  // Add scaleFactor
          if (plot.hasInset()) {
             hasAnyZoomInsets = true;
          }
@@ -261,7 +261,7 @@ int main(int argc, char* argv[]) {
       svgOutput += "<!-- ===== COORDINATE PLOTS ===== -->\n";
       for (const auto& config : plotConfigs) {
          auto [coordinate, x, y, size] = config;
-         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colorRange);
+         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colorRange, scaleFactor);
          if (plot.hasInset()) {
             hasAnyZoomInsets = true;
          }
