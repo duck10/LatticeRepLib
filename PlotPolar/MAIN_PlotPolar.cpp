@@ -228,9 +228,6 @@ int main(int argc, char* argv[]) {
       const std::string dataRange =
          LRL_ToString("; The " + dataName + " data value range is ", minmax.first, " to ", minmax.second);
 
-      // Create individual plots using the new architecture
-      const ColorRange colRange(0xFFFF00, 0x1589FF);
-
       // Plot configurations: {coordinate, x, y, size}
       const std::vector<std::tuple<size_t, int, int, int>> plotConfigs = {
          {1, 500, 500, 500},    // Plot 1
@@ -242,22 +239,35 @@ int main(int argc, char* argv[]) {
       bool hasAnyZoomInsets = false;
       for (const auto& config : plotConfigs) {
          auto [coordinate, x, y, size] = config;
-         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colRange);
+         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colorRange);
          if (plot.hasInset()) {
             hasAnyZoomInsets = true;
          }
          svgOutput += plot.writeSVG();
       }
 
-      std::cout << dataRange << std::endl << std::endl;
       ListInput(dc_setup.getInputList());
 
       // Create legend with zoom information
+
+// Add data range and legend section
+      svgOutput += "<!-- ===== LEGEND AND DATA INFO ===== -->\n";
       const std::string legend = AddTextAtBottom(1150, 800, dataRange, programName, controls.getTitle(),
          controls.getClusterPercent(), vData.size(), hasAnyZoomInsets) +
          PrepareColorGuide(colorRange, 1150, 750);
-
       svgOutput += legend;
+      svgOutput += "<!-- End legend section -->\n\n";
+
+      svgOutput += "<!-- ===== COORDINATE PLOTS ===== -->\n";
+      for (const auto& config : plotConfigs) {
+         auto [coordinate, x, y, size] = config;
+         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colorRange);
+         if (plot.hasInset()) {
+            hasAnyZoomInsets = true;
+         }
+         svgOutput += plot.writeSVG();
+      }
+      svgOutput += "<!-- End coordinate plots -->\n\n";
 
       thePlot.SendFrameToFile(graphicsFileName, svgOutput + thePlot.GetFoot());
       std::cout << PrepareLegend(600, 600, vData.size(), programName);

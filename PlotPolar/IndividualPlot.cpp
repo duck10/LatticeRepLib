@@ -23,17 +23,28 @@ void IndividualPlot::setPlottedData(const std::vector<PlottedPolar>& plottedData
 
 std::string IndividualPlot::writeSVG() const {
    // Create the plot group with translation to position
-   std::string svg = "<g transform=\"translate(" + LRL_DataToSVG(m_plotX) + "," + LRL_DataToSVG(m_plotY) + ")\">\n";
+   std::string svg = "<!-- ===== PLOT " + std::to_string(m_whichCoordinate) + " ===== -->\n";
+   svg += "<g transform=\"translate(" + LRL_DataToSVG(m_plotX) + "," + LRL_DataToSVG(m_plotY) + ")\">\n";
 
-   // Add components in order
+   // Add components in order with labels
+   svg += "<!-- Plot " + std::to_string(m_whichCoordinate) + " axes -->\n";
    svg += writeAxes();
+
+   svg += "<!-- Plot " + std::to_string(m_whichCoordinate) + " data points -->\n";
    svg += writePoints();
+
+   svg += "<!-- Plot " + std::to_string(m_whichCoordinate) + " zoom inset and zoom box -->\n";
    svg += writeInsetAndZoomBox();
+
+   svg += "<!-- Plot " + std::to_string(m_whichCoordinate) + " labels -->\n";
    svg += writeLabels();
 
    svg += "</g>\n";
+   svg += "<!-- End plot " + std::to_string(m_whichCoordinate) + " -->\n\n";
    return svg;
 }
+
+
 
 std::string IndividualPlot::writeAxes() const {
    const std::string axisSize = LRL_DataToSVG_ToQuotedString(m_plotSize);
@@ -66,12 +77,14 @@ void IndividualPlot::autoDetectInset(const double insetX, const double insetY, c
 
    // Create zoom inset - it handles everything internally
    m_zoomInset = ZoomInset(m_plottedData, m_whichCoordinate, insetX, insetY, insetSize, m_controls.getClusterPercent());
-
-   if (m_zoomInset.isEnabled()) {
-      std::cout << "; Plot " << m_whichCoordinate << ": Zoom inset enabled" << std::endl;
-   }
-   else {
-      std::cout << "; Plot " << m_whichCoordinate << ": Zoom inset disabled" << std::endl;
+   if (m_controls.shouldShowDetails())
+   {
+      if (m_zoomInset.isEnabled()) {
+         std::cout << "; Plot " << m_whichCoordinate << ": Zoom inset enabled" << std::endl;
+      }
+      else {
+         std::cout << "; Plot " << m_whichCoordinate << ": Zoom inset disabled" << std::endl;
+      }
    }
 }
 
@@ -99,12 +112,15 @@ std::string IndividualPlot::writePoints() const {
 
    // ZoomInset now handles its own zoom box rendering
    if (m_zoomInset.isEnabled()) {
+      points += "<!-- Zoom selection box for plot " + std::to_string(m_whichCoordinate) + " -->\n";
       points += m_zoomInset.writeZoomBox();  // Just the zoom box part
    }
 
    points += "</g>\n";
    return points;
 }
+
+
 
 std::string IndividualPlot::writeLabels() const {
    const std::string coordStr = std::to_string(m_whichCoordinate);

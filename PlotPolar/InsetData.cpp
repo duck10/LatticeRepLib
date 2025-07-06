@@ -2,7 +2,9 @@
 #include <iomanip>
 
 // Clean cluster detection - returns InsetData directly
-InsetData autoDetectCluster(const size_t whichCoordinate, 
+// Replace the autoDetectCluster function in InsetData.cpp with this:
+
+InsetData autoDetectCluster(const size_t whichCoordinate,
    const std::vector<PlottedPolar>& plottedData, double clusterPercent) {
 
    if (plottedData.size() < 5) {
@@ -16,58 +18,60 @@ InsetData autoDetectCluster(const size_t whichCoordinate,
       points.push_back(coords);
    }
 
-   // Find geometric center of all points
-   Vector_2 overallCenter(0.0, 0.0);
+   // Find data bounds
+   double minX = points[0][0], maxX = points[0][0];
+   double minY = points[0][1], maxY = points[0][1];
+
    for (const Vector_2& point : points) {
-      overallCenter[0] += point[0];
-      overallCenter[1] += point[1];
-   }
-   overallCenter[0] /= points.size();
-   overallCenter[1] /= points.size();
-
-   // Find closest 60% of points to center
-   std::vector<std::pair<double, size_t>> distances;
-   for (size_t i = 0; i < points.size(); ++i) {
-      const double dx = points[i][0] - overallCenter[0];
-      const double dy = points[i][1] - overallCenter[1];
-      const double distance = std::sqrt(dx * dx + dy * dy);
-      distances.push_back(std::make_pair(distance, i));
+      minX = std::min(minX, point[0]);
+      maxX = std::max(maxX, point[0]);
+      minY = std::min(minY, point[1]);
+      maxY = std::max(maxY, point[1]);
    }
 
-   std::sort(distances.begin(), distances.end());
-   const size_t targetPoints = static_cast<size_t>(points.size() * clusterPercent);
+   // Find the center of data
+   double centerX = (minX + maxX) / 2.0;
+   double centerY = (minY + maxY) / 2.0;
 
-   // Calculate actual center and extents of selected points
-   Vector_2 clusterCenter(0.0, 0.0);
-   std::vector<size_t> selectedIndices;
+   // Start with a small region and expand until we get roughly the target percentage
+   double regionWidth = (maxX - minX) * 0.2;   // Start with 20% of data range
+   double regionHeight = (maxY - minY) * 0.2;
 
-   for (size_t i = 0; i < targetPoints; ++i) {
-      const size_t pointIndex = distances[i].second;
-      selectedIndices.push_back(pointIndex);
-      clusterCenter[0] += points[pointIndex][0];
-      clusterCenter[1] += points[pointIndex][1];
+   const size_t targetPoints = static_cast<size_t>(plottedData.size() * clusterPercent);
+
+   // Expand region until we capture enough points
+   for (int iterations = 0; iterations < 20; ++iterations) {
+      // Count points in current region
+      std::vector<size_t> pointsInRegion;
+
+      double regMinX = centerX - regionWidth / 2.0;
+      double regMaxX = centerX + regionWidth / 2.0;
+      double regMinY = centerY - regionHeight / 2.0;
+      double regMaxY = centerY + regionHeight / 2.0;
+
+      for (size_t i = 0; i < points.size(); ++i) {
+         if (points[i][0] >= regMinX && points[i][0] <= regMaxX &&
+            points[i][1] >= regMinY && points[i][1] <= regMaxY) {
+            pointsInRegion.push_back(i);
+         }
+      }
+
+      // If we have enough points, we're done
+      if (pointsInRegion.size() >= targetPoints) {
+         Vector_2 center(centerX, centerY);
+         Vector_2 extents(regionWidth / 2.0, regionHeight / 2.0);
+         return InsetData(center, extents, pointsInRegion);
+      }
+
+      // Expand region for next iteration
+      regionWidth *= 1.2;
+      regionHeight *= 1.2;
    }
 
-   clusterCenter[0] /= targetPoints;
-   clusterCenter[1] /= targetPoints;
-
-   // Calculate extents needed to contain all selected points
-   double maxExtentX = 0.0, maxExtentY = 0.0;
-   for (size_t idx : selectedIndices) {
-      const double dx = std::abs(points[idx][0] - clusterCenter[0]);
-      const double dy = std::abs(points[idx][1] - clusterCenter[1]);
-      maxExtentX = std::max(maxExtentX, dx);
-      maxExtentY = std::max(maxExtentY, dy);
-   }
-
-   // Add minimum size constraint - but much smaller since we're in plot coordinates
-   const double minExtent = 2.0;  // Reduced from 10.0
-   maxExtentX = std::max(maxExtentX, minExtent);
-   maxExtentY = std::max(maxExtentY, minExtent);
-
-   Vector_2 extents(maxExtentX, maxExtentY);
-   return InsetData(clusterCenter, extents, selectedIndices);
+   // Fallback - return empty if we couldn't find a good region
+   return InsetData();
 }
+
 
 // Clean inset rendering - everything is simple and contained
 std::string writeInsetContent(const InsetData& insetData, const size_t whichCoordinate,

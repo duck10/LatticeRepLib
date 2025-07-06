@@ -114,6 +114,7 @@ public:
          double maxExtent = std::max(m_data.extents[0], m_data.extents[1]);
          m_magnification = (insetSize * 0.4) / maxExtent;
          m_enabled = (m_magnification >= 1.001);
+         m_enabled = true;
       }
       else {
          m_enabled = false;
@@ -132,9 +133,17 @@ public:
       if (!m_enabled) return "";
 
       std::string result;
-      // Create inset with background, content, etc.
+
+      // ===== ZOOM INSET SECTION =====
+      result += "<!-- ===== ZOOM INSET " + std::to_string(coordinate) + " ===== -->\n";
       result += "<g transform=\"translate(" + LRL_DataToSVG(m_insetX) + "," + LRL_DataToSVG(m_insetY) + ")\">\n";
+
+      // Inset background and border
+      result += "<!-- Inset background and border -->\n";
       result += "<rect x=\"0\" y=\"0\" width=\"" + LRL_DataToSVG(m_insetSize) + "\" height=\"" + LRL_DataToSVG(m_insetSize) + "\" fill=\"white\" stroke=\"orange\" stroke-width=\"2\"/>\n";
+
+      // Labels
+      result += "<!-- Inset labels -->\n";
       result += "<text x=\"135\" y=\"15\" text-anchor=\"middle\" font-size=\"15\" fill=\"orange\">Zoom View</text>\n";
 
       // Add magnification text
@@ -143,11 +152,15 @@ public:
       result += "<text x=\"265\" y=\"265\" text-anchor=\"end\" font-size=\"30\" fill=\"blue\">" + magStream.str() + "</text>\n";
 
       // Add the inset content
+      result += "<!-- Inset data points -->\n";
       result += writeInsetContent(plottedData, coordinate, colRange);
       result += "</g>\n";
+      result += "<!-- End zoom inset " + std::to_string(coordinate) + " -->\n\n";
 
       // Add connector lines
+      result += "<!-- ===== CONNECTOR LINES " + std::to_string(coordinate) + " ===== -->\n";
       result += writeConnectorLines();
+      result += "<!-- End connector lines " + std::to_string(coordinate) + " -->\n\n";
 
       return result;
    }
