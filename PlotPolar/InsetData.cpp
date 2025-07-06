@@ -82,7 +82,6 @@ std::string writeInsetContent(const InsetData& insetData, const size_t whichCoor
       return "";
    }
 
-   const double contentSize = insetSize * 0.95;
    const double centerX = insetSize / 2.0;
    const double centerY = insetSize / 2.0;
 
@@ -91,7 +90,7 @@ std::string writeInsetContent(const InsetData& insetData, const size_t whichCoor
 
    // Calculate scale to fit the actual data extents properly - simple and consistent
    const double maxExtent = std::max(insetData.extents[0], insetData.extents[1]);
-   const double scale = (contentSize * 0.4) / maxExtent;  // Always use 80% of content radius
+   const double scale = (insetSize * .45) / maxExtent;  // scale for "radius" 1.0 would fill inset box
 
    // Y-flip transform to match main plot
    content += "<g transform=\"scale(1,-1)\">\n";
