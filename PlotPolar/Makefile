@@ -6,7 +6,7 @@ COMMAND = PlotPolar
 all:	$(COMMAND)
 
 $(COMMAND):	MAIN_PlotPolar.cpp \
-	PlotPolar.cpp PlotPolar.h \
+	PlotPolar.cpp PlotPolar.h IndividualPlot.h IndividualPlot.cpp InsetData.h InsetData.cpp \
 	../InputHandler/BaseControlVariables.h ../InputHandler/BaseControlVariables.cpp ../InputHandler/BlockLimits.h \
 	../InputHandler/ControlFeature.h \
 	../InputHandler/DistanceTypes.h ../InputHandler/DistanceTypes.cpp ../InputHandler/DistanceTypesUtils.h \
@@ -27,6 +27,7 @@ $(COMMAND):	MAIN_PlotPolar.cpp \
 	../LRL_Tools/LRL_CreateFileName.h ../LRL_Tools/LRL_CreateFileName.cpp \
 	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
 	../LRL_Tools/HSV.cpp ../LRL_Tools/HSV.h ../LRL_Tools/RGB.cpp ../LRL_Tools/RGB.h \
+	../LRL_Tools/LinearAxis.h ../LRL_Tools/LinearAxis.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
 	../LatticeRepresentationLib/LabeledSellaMatrices.cpp \
 	../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
@@ -47,7 +48,7 @@ $(COMMAND):	MAIN_PlotPolar.cpp \
 	../LatticeRepresentationLib/Vector_2.h ../LatticeRepresentationLib/Vector_2.cpp \
 	../LatticeRepresentationLib/WebIO.h ../LatticeRepresentationLib/WebIO.cpp
 	$(CXX) -I . -I ../LatticeRepresentationLib -I ../LRL_Tools -I ../InputHandler -o $(COMMAND) MAIN_PlotPolar.cpp \
-        PlotPolar.cpp \
+        PlotPolar.cpp  IndividualPlot.cpp InsetData.cpp \
 	../InputHandler/BaseControlVariables.cpp  \
 	../InputHandler/DistanceTypes.cpp \
 	../InputHandler/InputHandler.cpp \
@@ -65,6 +66,7 @@ $(COMMAND):	MAIN_PlotPolar.cpp \
 	../LRL_Tools/LRL_CreateFileName.cpp \
 	../LRL_Tools/FileOperations.cpp ../LatticeRepresentationLib/G6.cpp \
 	../LRL_Tools/HSV.cpp ../LRL_Tools/RGB.cpp \
+	../LRL_Tools/LinearAxis.cpp \
 	../LatticeRepresentationLib/GenerateLatticeTypeExamples.cpp \
 	../LatticeRepresentationLib/LabeledSellaMatrices.cpp \
 	../LatticeRepresentationLib/LatticeConverter.cpp ../LatticeRepresentationLib/LRL_Cell.cpp  \
