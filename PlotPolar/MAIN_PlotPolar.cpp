@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <cmath>
 
 #include "PlotPolarControls.h"
 #include "ColorTables.h"
@@ -23,6 +24,10 @@
 #include "WebIO.h"
 #include "IndividualPlot.h"
 #include "PlottedPolar.h"
+
+#include "Stereo3DData.h"
+#include "Stereo3DPlot.h"
+
 
 // Keep existing helper functions
 static void ListInput(const std::vector<LatticeCell>& inputList) {
@@ -272,7 +277,38 @@ int main(int argc, char* argv[]) {
       thePlot.SendFrameToFile(graphicsFileName, svgOutput + thePlot.GetFoot());
       std::cout << PrepareLegend(600, 600, vData.size(), programName);
 
-      return 0;
+      if (controls.getEnable3D()) {
+         std::cout << "; Generating 3D stereo plots..." << std::endl;
+
+         Stereo3DData stereoData(vData);
+
+         // Create 3D filename from regular filename: change PPL prefix to P3D
+         std::string stereo3DFilename = graphicsFileName;
+         if (stereo3DFilename.substr(0, 3) == "PPL") {
+            stereo3DFilename = "P3D" + stereo3DFilename.substr(3);
+         }
+         else {
+            // Fallback: just add P3D prefix
+            stereo3DFilename = "P3D_" + stereo3DFilename;
+         }
+
+         // Use controls for canvas size, with fallback to reasonable defaults
+         int width = controls.getCanvas3DWidth();
+         int height = controls.getCanvas3DHeight();
+         Stereo3DPlot stereoPlot(width, height, stereo3DFilename);
+
+         std::string stereoSVG = stereoPlot.renderStereoSVG(stereoData, controls, colorRange);
+
+         // Write to file
+         std::ofstream stereoFile(stereo3DFilename);
+         if (stereoFile.is_open()) {
+            stereoFile << stereoSVG;
+            std::cout << "; 3D stereo SVG written to " << stereo3DFilename << std::endl;
+         }
+         else {
+            std::cerr << "; Error: Could not write 3D stereo file " << stereo3DFilename << std::endl;
+         }
+      }
    }
    catch (const std::exception& e) {
       std::cerr << "; An error occurred: " << e.what() << std::endl;

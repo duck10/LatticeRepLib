@@ -143,6 +143,8 @@
     <ClCompile Include="InsetData.cpp" />
     <ClCompile Include="MAIN_PlotPolar.cpp" />
     <ClCompile Include="PlotPolar.cpp" />
+    <ClCompile Include="Stereo3DPlot.cpp" />
+    <ClCompile Include="Stereo3DData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InputHandler\InputHandler.vcxproj">
@@ -161,6 +163,8 @@
     <ClInclude Include="PlotPolar.h" />
     <ClInclude Include="PlotPolarControls.h" />
     <ClInclude Include="PlottedPolar.h" />
+    <ClInclude Include="Stereo3DData.h" />
+    <ClInclude Include="Stereo3DPlot.h" />
     <ClInclude Include="ZoomInset.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
