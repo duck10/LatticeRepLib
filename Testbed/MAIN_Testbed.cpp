@@ -1,167 +1,80 @@
-﻿#include <algorithm>
-#include <vector>
-#include <iomanip>
-#include <iostream>
+﻿#include <iostream>
 #include <cmath>
-#include <set>
 
-#include "MultiTransformFinderControls.h"
-#include "Niggli.h"
-#include "G6.h"
-#include "P3.h"
+#include "Polar.h"
 #include "LRL_Vector3.h"
-#include "B4.h"
-#include "MatG6.h"
+#include "LRL_Cell.h"
+#include "LRL_Cell_Degrees.h"
 
-#include "InputHandler.h"
-#include "ProgramSetup.h"
+//#include "InputHandler.h"
+//#include "ProgramSetup.h"
 
-
-
-static std::vector<Matrix_3x3> XgenerateUnimodularMatrices() {
-   /*
-   this function generates a subset of the unimodular matrices with determinant +1
-   and elements 0/+1/-1. It is a restricted subset of group GL(n,Z).
-   */
-   std::vector<Matrix_3x3> result;
-
-   // Allowed values: -1, 0, 1
-   static const std::vector<double>values  = { -1, 0, 1 };
-   const size_t n = values.size();
-
-   // Generate all possible 3x3 matrices with elements from {-1, 0, 1}
-   for (int a00 = 0; a00 < n; a00++) {
-      for (int a01 = 0; a01 < n; a01++) {
-         for (int a02 = 0; a02 < n; a02++) {
-            for (int a10 = 0; a10 < n; a10++) {
-               for (int a11 = 0; a11 < n; a11++) {
-                  for (int a12 = 0; a12 < n; a12++) {
-                     for (int a20 = 0; a20 < n; a20++) {
-                        for (int a21 = 0; a21 < n; a21++) {
-                           for (int a22 = 0; a22 < n; a22++) {
-                              Matrix_3x3 mat = {
-                                  values[a00], values[a01], values[a02],
-                                  values[a10], values[a11], values[a12],
-                                  values[a20], values[a21], values[a22]
-                              };
-
-                              if (mat.Det() == 1) {
-                                 result.emplace_back(mat);
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
+Vector_3 FixZeros(const Vector_3 sarah_vector) {
+   Vector_3 out;
+   for (int i = 0; i < 3; ++i) {
+      if (abs(sarah_vector[i]) < 1.0E-10) {
+         out[i] = 0.0;
+      }
+      else {
+         out[i] = sarah_vector[i];
       }
    }
-
-   return result;
+   return out;
 }
 
-
-
-
-static std::vector<Matrix_3x3> unimodular_matrices = XgenerateUnimodularMatrices();
-
-// Operator to transform a cell using a matrix
-inline LRL_Cell operator*(const Matrix_3x3& matrix, const LRL_Cell& cell) {
-   // Convert cell to B4 representation
-   B4 b4Cell(cell);
-
-   // Apply transformation in B4 space
-   B4 transformedB4 = matrix * b4Cell;
-
-   // Convert back to LRL_Cell
-   return LRL_Cell(transformedB4);
-}
-
-std::pair<LRL_Cell, LRL_Cell> ReducePair(const LRL_Cell& reference, const LRL_Cell& mobile) {
-   G6 red1;
-   G6 red2;
-   MatG6 mg6;
-   Matrix_3x3 m3d;
-   double minP3 = DBL_MAX;
-   Niggli::ReduceWithTransforms(G6(reference), mg6, m3d, red1);
-   Niggli::ReduceWithTransforms(G6(mobile), mg6, m3d, red2);
-   return { red1,red2 };
-}
-
-//unimodular_matrices
-void FindBestFit(const LRL_Cell& reference, const LRL_Cell& mobile) {
-   double minP3 = DBL_MAX;
-   for (const auto& m : unimodular_matrices) {
-      const P3 p1(reference);
-      const P3 p2(m*mobile);
-      minP3 = std::min(minP3, (p1 - p2).norm());
-   }
-   std::cout << "smallest P3 distance " << minP3 << std::endl;
-}
-
-void VariousFits(const LRL_Cell& reference, const LRL_Cell& mobile) {
-   std::pair<LRL_Cell,LRL_Cell> result = ReducePair(reference, mobile);
-   auto [red1, red2] = result;
-
-   FindBestFit(reference, mobile);
-   FindBestFit(red1, mobile);
-   FindBestFit(reference, red2);
-   FindBestFit(red1, red2);
-   std::cout << "---------------------------" << std::endl;
-}
-
-inline  double angleS6(const S6& s1, const S6& s2) {
-   return acos(s1.Dot(s2) / s1.norm() / s2.norm()) * 180 / 4.0 / atan(1.0);
-}
 
 // Example usage
 int main() {
 
-   for (size_t i = 0; i < 2000; ++i) {
-      const LRL_Cell cell1 = Polar::rand();
-      const LRL_Cell cell2 = Polar::rand();
-      const double p3diff = (P3(cell1) - P3(cell2)).norm();
-      const double s6angle = angleS6(cell1, cell2);
-      const double g6diff = (G6(cell1) - G6(cell2)).norm();
-      std::cout << p3diff << "  " << g6diff << std::endl;
+   Vector_3 a(1, 0, 0);
+   const Vector_3 b(0, 1, 0);
+   const Vector_3 sum = a + b;
 
-   }
+   a = a + a;
+   a = 2 * a;
+   a += a;
+   a = 2 * a;
 
-   exit(0);
-   bool found = false;
-   for (size_t i = 0; i < unimodular_matrices.size(); ++i) {
-      const Matrix_3x3& current = unimodular_matrices[i];
-
-      // Debug: check a few specific indices
-      if (i < 5 || i > unimodular_matrices.size() - 5) {
-         std::cout << "Matrix " << i << ":" << std::endl << current << std::endl;
-      }
-
-      MultiTransformFinderControls controls;
-      const BasicProgramInput<MultiTransformFinderControls> program_setup("UnifiedLatticeMatcher", controls);
+   LRL_Cell random = LRL_Cell::rand();
+   std::cout << "random unit cell " << LRL_Cell_Degrees(Polar::rand()) << std::endl;
+   std::cout << "random unit cell " << LRL_Cell_Degrees(Polar::rand()) << std::endl;
+   std::cout << "random unit cell " << LRL_Cell_Degrees(Polar::rand()) << std::endl;
+   std::cout << "random unit cell " << LRL_Cell_Degrees(Polar::rand()) << std::endl;
 
 
-      if (controls.shouldShowControls()) {
-         std::cout << controls << std::endl;
-      }
+   //Vector_3 operator* (const double&, const Vector_3&);
+   a = 2 * b;
 
-      const std::vector<LatticeCell>& inputList = program_setup.getInputList();
-      if (inputList.size() < 2) {
-         std::cout << "at least 2 input cells are required" << std::endl;
-         return (-1);
-      }
 
-      G6 red1;
-      MatG6 mg6;
-      Matrix_3x3 m3d;
-      Niggli::ReduceWithTransforms(G6(inputList[0]), mg6, m3d, red1);
+   std::cout << " a " << a << std::endl;
+   std::cout << " b " << b << std::endl;
+   std::cout << " sum " << sum << std::endl;
 
-      for (size_t kk = 1; kk < inputList.size(); ++kk)
-      {
-         VariousFits((inputList[0].getCell()), inputList[kk].getCell());
-         //FindBestFit(red1, inputList[kk].getCell());
-      }
-      return 0;
-   }
+   const Matrix_3x3 m1("1 0 0  0 1 0  0 0 1");
+   const Matrix_3x3 m2(0, 1, 0,   1, 0, 0,   0, 0, 1);
+
+   std::cout << " m1 " << std::endl << m1 << std::endl;
+   std::cout << " m2 " << std::endl << m2 << std::endl;
+
+   std::cout << std::endl;
+
+   std::cout << " m1*a " << m1 * a << std::endl;
+   std::cout << " m2*a " << m2 * a << std::endl;
+   std::cout << std::endl;
+   std::cout << " m1*b " << m1 * b << std::endl;
+   std::cout << " m2*b " << m2 * b << std::endl;
+
+   // to convert from degrees to radians. 2pi/180
+   const double converter = 4.0 * atan(1.0) / 180.0;
+   std::cout << " converter " << converter << std::endl;
+   std::cout << " 1/converter " << 1.0/converter << std::endl;
+   std::cout << " converter*180 " << converter*180 << std::endl;
+
+
+   //Matrix_3x3 Rotmat(const double angle) const;
+   const Vector_3 axis(1, 0, 0);
+   const Matrix_3x3 rotation1 = axis.Rotmat(converter*180.0); // this should have been radians
+   std::cout << "rotation1 * b " << FixZeros(rotation1 * b) << std::endl;
+
+
 }

@@ -153,6 +153,8 @@ void IndividualPlot::autoDetectInset(const double insetX, const double insetY, c
       std::cout << "; DEBUG: autoDetectInset called with size=" << insetSize << " for coordinate " << m_whichCoordinate << std::endl;
    }
 
+   if (insetSize <= 0.0) return;
+
    if (m_plottedData.size() < 5 || m_pColRange == nullptr) {
       m_zoomInset = ZoomInset(); // Empty zoom inset
       return;
