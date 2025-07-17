@@ -21,6 +21,9 @@ namespace DistanceFactory {
       if (types.isTypeEnabled("U") || types.isTypeEnabled("DC7U")) {
          distances.push_back(std::make_unique<DC7uDistance>());
       }
+      if (types.isTypeEnabled("P3") || types.isTypeEnabled("P3")) {
+         distances.push_back(std::make_unique<P3Distance>());
+      }
 
       return distances;
    }

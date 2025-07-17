@@ -7,6 +7,7 @@
 #include "DC7uDist.h"
 #include "G6.h"
 #include "NCDist.h"
+#include "P3.h"
 #include "RI.h"
 #include "S6.h"
 #include "V7Dist.h"
@@ -48,7 +49,7 @@ public:
    }
 
    std::string getName() const override { return "CS6Dist"; }
-   std::string getColor() const override { return "#0000FF"; }  // Blue
+   std::string getColor() const override { return "#0066FF"; }  // Bright Blue
 };
 
 class NCDistance : public Distance {
@@ -66,7 +67,23 @@ public:
    }
 
    std::string getName() const override { return "NCDist"; }
-   std::string getColor() const override { return "#FF0000"; }  // Red
+   std::string getColor() const override { return "#FF6600"; }  // Bright Orange
+};
+
+class P3Distance : public Distance {
+   template<typename T>
+   double dist(const T& t1, const T& t2) {
+      return (P3(t1) - P3(t2)).norm();
+   }
+   double dist(const S6& s1, const S6& s2) const {
+      return (P3(s1) - P3(s2)).norm();
+   }
+   double dist(const G6& g1, const G6& g2) const {
+      return (P3(g1) - P3(g2)).norm();
+   }
+
+   std::string getName() const override { return "P3"; }
+   std::string getColor() const override { return "#9900FF"; }  // Bright Purple
 };
 
 class RIDistance : public Distance {
@@ -76,15 +93,15 @@ public:
       return ((RI(t1) - RI(t2)).norm());
    }
 
-   double dist(const S6& s1, const S6& s2) const override {return distRI(s1,s2);}
-   double dist(const G6& g1, const G6& g2) const override {return distRI(g1,g2);}
+   double dist(const S6& s1, const S6& s2) const override { return distRI(s1, s2); }
+   double dist(const G6& g1, const G6& g2) const override { return distRI(g1, g2); }
 
    std::string getName() const override {
       return "RI";
    }
 
    std::string getColor() const override {
-      return "#FF00FF";  // Magenta
+      return "#00CCFF";  // Bright Cyan
    }
 };
 
@@ -188,7 +205,7 @@ public:
    }
 
    std::string getColor() const override {
-      return "#0000FF";  // Blue
+      return "#FFCC00";  // Bright Yellow
    }
 };
 
@@ -196,7 +213,7 @@ public:
 class DC7uDistance : public Distance {
 public:
    double dist(const S6& s1, const S6& s2) const override {
-      return DC7uPermDistanceBetween(s1,s2);
+      return DC7uPermDistanceBetween(s1, s2);
    }
 
    double dist(const G6& g1, const G6& g2) const override {
@@ -208,7 +225,7 @@ public:
    }
 
    std::string getColor() const override {
-      return "#AA09FF";  // Magenta
+      return "#FF0099";  // Bright Magenta/Pink
    }
 };
 

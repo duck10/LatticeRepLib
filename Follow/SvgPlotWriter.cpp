@@ -15,6 +15,46 @@
 #include <iostream>
 #include <sstream>
 
+std::vector<LineStyle> LineStyle::getStyles(size_t count,
+   const std::vector<std::unique_ptr<Distance>>& distfuncs) {
+   std::vector<LineStyle> styles;
+   static const std::vector<std::string> dashPatterns = {
+       "", "5,5", "2,2", "8,3,2,3",
+       "8,3,2,3,2,3", "10,3", "3,5", "8,8"
+   };
+   static const std::vector<std::string> markers = {
+       "M-6,0 L6,0 M0,-6 L0,6",         // plus
+       "M-4.5,-4.5 L4.5,4.5 M-4.5,4.5 L4.5,-4.5", // X
+       "M0,-6 L6,6 L-6,6 Z",            // triangle
+       "M-4.5,0 A4.5,4.5 0 1,0 4.5,0 A4.5,4.5 0 1,0 -4.5,0", // circle
+       "M-4.5,-4.5 L4.5,-4.5 L4.5,4.5 L-4.5,4.5 Z", // square
+       "M-6,0 L6,0 M-3,-3 L3,3\" stroke-width=\"3.5", // cross with thicker stroke
+       "M-4.5,-4.5 L4.5,-4.5 L4.5,4.5 L-4.5,4.5 L-4.5,-4.5", // diamond
+       "M-6,-3 L0,6 L6,-3 Z",           // inverted triangle
+       "M0,0 L4.5,-6 L-4.5,-6 L4.5,6 L-4.5,6 Z"  // bowtie
+   };
+
+   for (size_t i = 0; i < count; ++i) {
+      std::string color;
+      if (i < distfuncs.size()) {
+         // Use the color from the Distance object
+         color = distfuncs[i]->getColor();
+      }
+      else {
+         // Fallback to default color if we somehow have more styles than distance functions
+         color = "#000000";
+      }
+
+      styles.push_back({
+          color,
+          dashPatterns[i % dashPatterns.size()],
+          markers[i % markers.size()]
+         });
+   }
+   return styles;
+}
+
+// KEEP the original getStyles method for backward compatibility (unchanged)
 std::vector<LineStyle> LineStyle::getStyles(size_t count) {
    std::vector<LineStyle> styles;
    static const std::vector<std::string> colors = {
@@ -50,7 +90,8 @@ std::vector<LineStyle> LineStyle::getStyles(size_t count) {
 SvgPlotWriter::SvgPlotWriter(std::ofstream& outSvg, const FollowControls& controls)
    : svg(outSvg)
    , controls(controls)
-   , glitches() {}
+   , glitches() {
+}
 
 std::string SvgPlotWriter::reportGlitches(const int n) {
    std::vector<std::pair<double, size_t>> sorted;
@@ -298,7 +339,7 @@ void SvgPlotWriter::writePlotData(int width, int height, int margin, double maxD
    const std::vector<std::unique_ptr<Distance>>& distfuncs) {
 
    PlotDimensions dims = calculatePlotDimensions(width, height, margin, allDistances);
-   auto styles = LineStyle::getStyles(allDistances.size());
+   auto styles = LineStyle::getStyles(allDistances.size(), distfuncs);  // CHANGED: Pass distfuncs
 
    for (size_t i = 0; i < allDistances.size(); ++i) {
       if (allDistances[i].empty()) continue;
@@ -311,7 +352,7 @@ void SvgPlotWriter::writeLegend(int width, int margin,
    const std::vector<std::vector<double>>& allDistances,
    const std::vector<std::unique_ptr<Distance>>& distfuncs) {
 
-   auto styles = LineStyle::getStyles(distfuncs.size());
+   auto styles = LineStyle::getStyles(distfuncs.size(), distfuncs);  // CHANGED: Pass distfuncs
    const int plotWidth = width - 2 * margin;
    const int xOffset = margin + plotWidth + 20;
    const int yOffset = margin + 20;
