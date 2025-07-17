@@ -15,10 +15,7 @@ struct LineStyle {
    std::string markerType;
    // Updated method signature to accept distance functions
    static std::vector<LineStyle> getStyles(size_t count,
-      const std::vector<std::unique_ptr<Distance>>& distfuncs);
-
-   // Keep the old method for backward compatibility if needed elsewhere
-   static std::vector<LineStyle> getStyles(size_t count);
+      const std::vector<std::unique_ptr<Distance>>* distfuncs = nullptr);
 };
 
 class ColorTables {
