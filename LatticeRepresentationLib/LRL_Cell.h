@@ -12,6 +12,7 @@
 
 #include "BasisBase.h"
 #include "C3.h"
+#include "P3.h"
 #include "LRL_Vector3.h"
 #include "VecN.h"
 
@@ -23,6 +24,7 @@ class S6;
 class D7;
 class B4;
 class G6;
+class P3;
 class MatG6;
 
 class LRL_Cell : private BasisBase<LRL_Cell>
@@ -46,12 +48,18 @@ public:
    LRL_Cell(const S6& dt); // specialized for S6
    LRL_Cell(const C3& c3); // specialized for C3
    LRL_Cell(const B4& ds); // specialized for Delone tetrahedron
+   LRL_Cell(const P3& dp3); //
    ~LRL_Cell(void);
 
    bool CheckValid();
    static bool CheckValid(const LRL_Cell& cell);
    static bool CheckValid(const double a, const double b, const double c, 
       const double alpha, const double beta, const double gamma);
+
+   inline bool IsPhysicallyValid() const {
+      return CheckValid(m_cell[0], m_cell[1], m_cell[2],
+         m_cell[3], m_cell[4], m_cell[5]);
+   }
 
    double Volume(void) const;
 

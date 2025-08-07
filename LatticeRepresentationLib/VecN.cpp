@@ -163,6 +163,10 @@ double VecN::dot( const VecN& v2 ) const {
    return sum;
 }
 
+double VecN::dot(const VecN& vn1, const VecN& vn2) const {
+   return vn1.dot(vn2);
+}
+
 //   const int transposeIndex = count/size + size*(count%size);
 
 inline size_t TransposeIndex( const size_t position, const size_t sizeOfRow ) {

@@ -196,6 +196,7 @@
     <ClCompile Include="MatricesForOneDeloneType.cpp" />
     <ClCompile Include="Niggli_Types.cpp" />
     <ClCompile Include="P3.cpp" />
+    <ClCompile Include="P3_Reduce.cpp" />
     <ClCompile Include="Plots.cpp" />
     <ClCompile Include="Polar.cpp" />
     <ClCompile Include="PrintTable.cpp" />
@@ -228,6 +229,7 @@
     <ClCompile Include="SellaBuild.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="TransformationMatrices.cpp" />
     <ClCompile Include="Transformations.cpp" />
     <ClCompile Include="V7.cpp" />
     <ClCompile Include="VecN.cpp" />
@@ -282,6 +284,9 @@
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="P3.h" />
+    <ClInclude Include="P3Dist.h" />
+    <ClInclude Include="P3Utilities.h" />
+    <ClInclude Include="P3_Reduce.h" />
     <ClInclude Include="ParseData.h" />
     <ClInclude Include="Plots.h" />
     <ClInclude Include="Polar.h" />
@@ -319,6 +324,7 @@
     <ClInclude Include="SellaBuild.h" />
     <ClInclude Include="Selling.h" />
     <ClInclude Include="svd.h" />
+    <ClInclude Include="TransformationMatrices.h" />
     <ClInclude Include="Transformations.h" />
     <ClInclude Include="V7.h" />
     <ClInclude Include="V7Dist.h" />

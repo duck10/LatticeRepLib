@@ -21,6 +21,7 @@ private:
    static bool isLattice(const std::string& s);
    static G6 parseG6(const std::vector<std::string>& tokens);
    static S6 parseS6(const std::vector<std::string>& tokens);
+   static P3 parseP3(const std::vector<std::string>& tokens);
    static G6 parseLattice(const std::vector<std::string>& tokens);
    static G6 parseRandom();
    static std::vector<LatticeCell> parseRandom(size_t count);

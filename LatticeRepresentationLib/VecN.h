@@ -60,7 +60,8 @@ public:
    virtual double Norm( void ) const;
    static double DistanceBetween( const VecN& v1, const VecN& v2 );
    virtual double dot( const VecN& v2 ) const;
-   virtual MatN VV_Transpose( void ) const;
+   double dot(const VecN& vn1, const VecN& vn2) const ;
+   virtual MatN VV_Transpose(void) const;
    virtual VecN abs( const VecN& v );
    virtual size_t GetDim( void ) const { return m_dim; }
    virtual void zero( void ) { for ( size_t i=0; i<m_dim; ++i ) m_vec[i] = 0.0; }

@@ -20,7 +20,7 @@ bool InputHandler::isLattice(const std::string& s) {
       upperKey == "G6" || upperKey == "G" || upperKey == "S6" || upperKey == "S" ||
       upperKey == "P" || upperKey == "A" || upperKey == "B" || upperKey == "C" ||
       upperKey == "F" || upperKey == "I" || upperKey == "H" || upperKey == "U" ||
-      upperKey == "DC7U");
+      upperKey == "DC7U" || upperKey == "P3");
 }
 
 G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
@@ -53,6 +53,21 @@ S6 InputHandler::parseS6(const std::vector<std::string>& tokens) {
       }
    }
    return result;
+}
+
+P3 InputHandler::parseP3(const std::vector<std::string>& tokens) {
+   if (tokens.size() < 7) {
+      throw std::runtime_error("Invalid P3 input: expected 7 values (label + 3 pairs), got " + std::to_string(tokens.size()));
+   }
+
+   std::vector<Vector_2> vecs;
+   for (int i = 0; i < 3; ++i) {
+      double x = std::stod(tokens[1 + i * 2]);
+      double y = std::stod(tokens[2 + i * 2]);
+      vecs.emplace_back(x, y);
+   }
+
+   return P3(vecs);
 }
 
 G6 InputHandler::parseLattice(const std::vector<std::string>& tokens) {
@@ -109,6 +124,7 @@ void InputHandler::handleSingleLattice(
 
    if (key == "G6" || key == "G") result = parseG6(tokens);
    else if (key == "S6" || key == "S") result = parseS6(tokens);
+   else if (key == "P3" ) result = parseP3(tokens);
    else if (key == "RANDOM") result = parseRandom();
    //else if (key == "U") result = parseDC7u(tokens);
    else {

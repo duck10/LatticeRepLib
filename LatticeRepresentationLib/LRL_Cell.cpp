@@ -1,4 +1,4 @@
-#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
+﻿#pragma warning (disable: 4189) // Visual Studio -- local variable is initialized but not referenced
 
 
 #include <algorithm>
@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdio>
 #include <iomanip>
+#include <numeric>
 #include <sstream>
 #include <string>
 
@@ -16,6 +17,7 @@
 #include "D7.h"
 #include "Delone.h"
 #include "G6.h"
+#include "P3.h"
 #include "LRL_MinMaxTools.h"
 #include "LRL_RandTools.h"
 #include "MatG6.h"
@@ -33,6 +35,9 @@ static const double M_PI = 4.0 * atan(1.0);
 
 const double oneeightyDegrees = 180.0;
 const double threesixtyDegrees = 360.0;
+
+static const double pi = 4.0 * atan(1.0);
+static const double twopi = 2.0 * pi;
 
 double LRL_Cell::randomLatticeNormalizationConstant = 10.0;
 double LRL_Cell::randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
@@ -131,11 +136,25 @@ LRL_Cell::LRL_Cell(const S6& ds)
 
 LRL_Cell::LRL_Cell(const C3& c3)
 {
-   static const double pi = 4.0*atan(1.0);
-   static const double twopi = 2.0*pi;
    *this = S6(c3);
    m_valid = m_valid && c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
       && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3], m_cell[4], m_cell[5]) >= 0.0);
+}
+
+LRL_Cell::LRL_Cell(const P3& p) {
+   m_cell.resize(6);
+
+   for (size_t i = 0; i < 3; ++i) {
+      const double x = p[i].first;
+      const double y = p[i].second;
+      const double length = std::sqrt(x * x + y * y);
+      const double angle  = std::atan2(y, x);  // radians
+
+      m_cell[i]     = length;
+      m_cell[i + 3] = angle;
+   }
+
+   m_valid = (*this).CheckValid();
 }
 
 LRL_Cell::LRL_Cell(const B4& b4)
@@ -345,15 +364,17 @@ void Prepare2CellElements( const double minEdge, const double maxEdge, const siz
 // Description: Return the E3 volume of a LRL_Cell
 // follows the formula of Stout and Jensen page 33
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-double LRL_Cell::Volume( void ) const
-{
-   const G6& c( m_cell );
-   const double c3(cos(c[3]));
-   const double c4(cos(c[4]));
-   const double c5(cos(c[5]));
-   const double volume( c[0]*c[1]*c[2] * sqrt( 1.0-pow(c3,2)-pow(c4,2)-pow(c5,2)
-       + 2.0*c3*c4*c5 ) );
-   return volume;
+double LRL_Cell::Volume() const {
+   if (!IsPhysicallyValid()) {
+      std::cout << "⚠️ Volume computation on invalid cell\n";
+      return std::numeric_limits<double>::quiet_NaN();
+   }
+   const double c3 = cos(m_cell[3]);
+   const double c4 = cos(m_cell[4]);
+   const double c5 = cos(m_cell[5]);
+   const double arg = 1.0 - pow(c3, 2) - pow(c4, 2) - pow(c5, 2) + 2.0 * c3 * c4 * c5;
+   if (arg <= 0.0) return std::numeric_limits<double>::quiet_NaN();
+   return m_cell[0] * m_cell[1] * m_cell[2] * sqrt(arg);
 }
 
 
@@ -686,3 +707,4 @@ bool LRL_Cell::CheckValid(const double a, const double b, const double c,
 
    return b1 && b2 && b3 && b4 && b5;
 }
+

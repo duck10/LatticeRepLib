@@ -113,6 +113,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -131,6 +132,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -141,17 +143,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="..\LatticeRepresentationLib\P3Utilities.h" />
+    <ClInclude Include="BoundaryExplorer.h" />
+    <ClInclude Include="CmdPathControls.h" />
+    <ClInclude Include="FractureSummary.h" />
+    <ClInclude Include="FractureTagger.h" />
+    <ClInclude Include="Matrix_3x3.h" />
+    <ClInclude Include="P3SpecialGenerator.h" />
+    <ClInclude Include="ScalarTraits.h" />
+    <ClInclude Include="StableTransitionCase.h" />
+    <ClInclude Include="TransformationMatrices.h" />
+    <ClInclude Include="TransistionCase.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="BoundaryExplorer.cpp" />
+    <ClCompile Include="testP3.cpp" />
     <ClCompile Include="TEST4.cpp" />
+    <ClCompile Include="TestP3Sym.cpp" />
+    <ClCompile Include="TransformationMatrices.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InputHandler\InputHandler.vcxproj">
+      <Project>{7094f80c-8aae-475a-a2e3-0df75c29bf16}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
+      <Project>{bf25d7aa-648c-48d2-b857-d383faf1e215}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
+      <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

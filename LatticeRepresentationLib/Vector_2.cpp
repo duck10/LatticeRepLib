@@ -141,6 +141,9 @@ double Vector_2::norm() const
    return sqrt(v[0] * v[0] + v[1] * v[1]);
 }
 
+double Vector_2::Norm() const {
+   return (*this).norm();
+}
 
 Centroid::Centroid()
    : m_centroid(0,0)

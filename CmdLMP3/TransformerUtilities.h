@@ -137,7 +137,7 @@ inline void compareLatticesSimple(const LRL_Cell& cell1, const LRL_Cell& cell2) 
    std::cout << "Cell 1: " << LRL_Cell_Degrees(cell1) << std::endl;
    std::cout << "Cell 2: " << LRL_Cell_Degrees(cell2) << std::endl;
 
-   double p3Dist = P3::DistanceBetween(cell1, cell2);
+   double p3Dist = P3::DistanceBetween(P3(cell1), P3(cell2));
    double ncDist = CalculateNCDistWithReduction(cell1, cell2);
 
    std::cout << "P3 Distance: " << p3Dist << std::endl;

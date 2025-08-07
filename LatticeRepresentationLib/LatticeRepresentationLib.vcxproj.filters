@@ -74,6 +74,8 @@
     <ClCompile Include="GrimmerTree.cpp" />
     <ClCompile Include="EnhancedS6.cpp" />
     <ClCompile Include="Transformations.cpp" />
+    <ClCompile Include="P3_Reduce.cpp" />
+    <ClCompile Include="TransformationMatrices.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -163,6 +165,10 @@
     <ClInclude Include="EnhancedS6.h" />
     <ClInclude Include="RegistryTest.h" />
     <ClInclude Include="DC7uDist.h" />
+    <ClInclude Include="P3_Reduce.h" />
+    <ClInclude Include="P3Dist.h" />
+    <ClInclude Include="P3Utilities.h" />
+    <ClInclude Include="TransformationMatrices.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

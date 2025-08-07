@@ -1,4 +1,4 @@
-#ifndef VECTOR_3D_H_INCLUDED
+﻿#ifndef VECTOR_3D_H_INCLUDED
 #define VECTOR_3D_H_INCLUDED
 
 #include <algorithm>
@@ -439,6 +439,11 @@ bool operator==(const Matrix_3x3& other) const {
    return true;
 }
 
+bool operator!=(const Matrix_3x3& other) const {
+   return !(*this == other);
+}
+
+
 double norm() const {
    const Matrix_3x3& mat(*this);
    double sum = 0;
@@ -762,6 +767,42 @@ void Zero( void )
 
     bool Eigen1 ( double& eigenvalue, Vector_3& eigenvector1 ) const;
     bool Eigen3 ( std::vector<double>& eigenvalues, std::vector<Vector_3>& eigenvectors ) const;
+
+    static double Trace(const Matrix_3x3& m) {
+       return m[0] + m[4] + m[8];
+    }
+
+    static Vector_3 Column(const Matrix_3x3& m, const int n) {
+       return Vector_3(m[n], m[n + 3], m[n + 6]);
+    }
+
+    bool Eigen1(Vector_3& eigenvector, double& eigenvalue, int maxSquarings = 10, double tol = 1e-6) const {
+       Matrix_3x3 M = *this;
+       Matrix_3x3 prev;
+
+       for (int iter = 0; iter < maxSquarings; ++iter) {
+          prev = M;
+          M = M * M;
+
+          const double trace = Trace(M); // Prevent overflow by scaling
+          if (trace != 0.0) M = M / trace;
+
+          Vector_3 v1 = Column(M, 0);
+          Vector_3 v2 = Column(M, 1);
+          Vector_3 v3 = Column(M, 2);
+          if ((v1.Cross(v2)).Norm() < tol && (v2.Cross(v3)).Norm() < tol) {
+             eigenvector = v1/v1.norm();
+
+             // Apply Rayleigh quotient: λ ≈ (A * v) · v / (v · v)
+             Vector_3 Av = (*this) * eigenvector;
+             eigenvalue = Av.Dot(eigenvector); // v is already normalized
+
+             return true;
+          }
+       }
+
+       return false; // No convergence
+    }
 
 //-----------------------------------------------------------------------------
 // Name: operator[]()

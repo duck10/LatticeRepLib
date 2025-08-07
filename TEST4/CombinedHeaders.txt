@@ -1,0 +1,373 @@
+===== START OF BoundaryResult.h ===== 
+#ifndef BOUNDARY_RESULT_H
+#define BOUNDARY_RESULT_H
+
+#include <string>
+#include <ostream>
+#include <algorithm>
+#include "FractureSummary.h"  // assumes it has its own operator<<
+#include "P3.h"
+#include "LRL_Cell.h"
+#include "Polar.h"
+
+struct BoundaryResult {
+   std::string tag;             // e.g. "Fracture", "NoBoundary"
+   P3 base;
+   P3 perturbed;
+   FractureSummary summary;     // your structured result data
+   P3 reducedInput;    // Result of full reduction on input
+   P3 reducedPerturbed; // Result of full reduction on perturbed input
+
+   // Stream insertion for logging/debugging
+   friend std::ostream& operator<<(std::ostream& os, const BoundaryResult& result) {
+      os << "BoundaryResult:              " << result.tag << "\n";
+      os << "Base Cell     :              " << result.base << "\n";
+      os << "Perturbed Cell:              " << result.perturbed << "\n";
+      os << "Reduced Base Cell:           " << result.reducedInput << "\n";
+      os << "Reduced Perturbed Base Cell: " << result.reducedPerturbed << "\n";
+      os << result.summary;  // assumes FractureSummary has operator<< defined
+      return os;
+   }
+
+   // aternate more compact output
+   //os << "BoundaryResult [" << result.tag << "]\n"
+   //   << "Base: " << result.base << "\n"
+   //   << "Pert: " << result.perturbed << "\n"
+   //   << result.summary;
+
+};
+
+#endif // BOUNDARY_RESULT_H
+ 
+===== END OF BoundaryResult.h ===== 
+ 
+===== START OF DualBoundaryResult.h ===== 
+#ifndef DUAL_BOUNDARY_RESULT_H
+#define DUAL_BOUNDARY_RESULT_H
+
+#include "BoundaryResult.h"
+#include "ReductionOutcome.h"
+#include <string>
+#include <ostream>
+
+struct DualBoundaryResult {
+   int binIndexA = -1;
+   int binIndexB = -1;
+   bool crossedBoundary = false;
+   std::string transitionType;
+
+   friend std::ostream& operator<<(std::ostream& os, const DualBoundaryResult& result) {
+      os << result.binIndexA << '\t'
+         << result.binIndexB << '\t'
+         << (result.crossedBoundary ? "1" : "0") << '\t'
+         << result.transitionType;
+      return os;
+   }
+};
+
+#endif  // DUAL_BOUNDARY_RESULT_H
+ 
+===== END OF DualBoundaryResult.h ===== 
+ 
+===== START OF DualReductionResult.h ===== 
+#ifndef DUAL_REDUCTION_RESULT_H
+#define DUAL_REDUCTION_RESULT_H
+
+
+
+// DualReductionResult.h
+#pragma once
+#include "P3.h"
+#include "ReductionOutcome.h"
+#include "ScalarFracture.h"
+#include "DualBoundaryResult.h"
+
+struct DualReductionResult {
+   P3 original;
+   ReductionOutcome resultA;
+   ReductionOutcome resultB;
+   ScalarFracture fractureInfo;
+   DualBoundaryResult boundaryInfo;
+   std::string label;
+
+   std::string getBinSummary() const {
+      return boundaryInfo.crossedBoundary
+         ? "BinMismatch_" + boundaryInfo.transitionType
+         : "SameBin_" + std::to_string(boundaryInfo.binIndexA);
+   }
+
+   bool isSevereFracture() const {
+      return fractureInfo.deltaCost > 1.2 && boundaryInfo.crossedBoundary;
+   }
+};
+
+#endif // !DUAL_REDUCTION_RESULT_H
+ 
+===== END OF DualReductionResult.h ===== 
+ 
+===== START OF FractureSummary.h ===== 
+#ifndef FRACTURE_SUMMARY_H
+#define FRACTURE_SUMMARY_H
+
+#include <string>
+#include <ostream>
+
+struct FractureSummary {
+   double initialDistance = 0.0;     // Distance before repair
+   double finalDistance = 0.0;       // Distance after repair
+   double threshold = 0.1;
+   bool fractureDetected = false;    // Was a scalar fracture found?
+   bool repairSucceeded = false;     // Did the repair reduce the fracture?
+   std::string note;                 // Optional diagnostic message
+
+   // Stream insertion for logging/debugging
+   friend std::ostream& operator<<(std::ostream& os, const FractureSummary& summary) {
+      os << "FractureSummary:\n";
+      os << "  Initial Distance: " << summary.initialDistance << "\n";
+      os << "  Final Distance:   " << summary.finalDistance << "\n";
+      os << "  Fracture Detected: " << (summary.fractureDetected ? "Yes" : "No") << "\n";
+      os << "  Repair Succeeded: " << (summary.repairSucceeded ? "Yes" : "No") << "\n";
+      if (!summary.note.empty())
+         os << "  Note: " << summary.note << "\n";
+      return os;
+   }
+
+   FractureSummary() = default;
+   FractureSummary(double initDist, double finalDist, double thresh,
+      bool fractured, bool repaired)
+      : initialDistance(initDist),
+      finalDistance(finalDist),
+      threshold(thresh),
+      fractureDetected(fractured),
+      repairSucceeded(repaired) {
+   }
+};
+
+#endif // FRACTURE_SUMMARY_H
+ 
+===== END OF FractureSummary.h ===== 
+ 
+===== START OF FractureTransition.h ===== 
+#ifndef FRACTURE_TRANSITION_H
+#define FRACTURE_TRANSITION_H
+
+#include <string>
+#include "P3.h"
+#include "ReductionOutcome.h"
+
+struct FractureTransition {
+   std::string cellID;
+   P3 originalCell;
+   ReductionOutcome outcome1;
+   ReductionOutcome outcome2;
+   double deltaCost;            // Difference in reduction cost
+   double finalDistance;        // Euclidean distance between outcomes
+   bool fractureDetected;
+   std::string fractureType;    // e.g. "Chaotic", "Severe"
+};
+
+
+#endif // !FRACTURE_TRANSITION_H 
+===== END OF FractureTransition.h ===== 
+ 
+===== START OF ReductionOutcome.h ===== 
+#ifndef REDUCTION_OUTCOM_H
+#define REDUCTION_OUTCOM_H
+
+#include <string>
+#include <vector>
+
+#include "P3.h"
+
+
+
+struct ReductionOutcome {
+   std::string costFunctionName;  // e.g. "AbsMetric", "RawMetric"
+   std::string binID;             // Resulting canonical bin label
+   P3 reducedCell;
+   double reductionCost;
+   std::vector<std::string> foldSteps;  // Optional: reduction steps
+};
+#endif // !REDUCTION_OUTCOM_H
+ 
+===== END OF ReductionOutcome.h ===== 
+ 
+===== START OF RepairStrategies.h ===== 
+#ifndef  REPAIRSTRATAGIES_H
+#define REPAIRSTRATAGIES_H
+
+
+
+
+enum class RepairStrategy {
+   None,
+   PermuteTripletEarly,
+   DeeperMatrixDescent,
+   ApplySymmetryCorrection,
+   IncreaseDescentCap
+};
+
+inline std::string RepairStrategyToString(RepairStrategy strategy) {
+   switch (strategy) {
+   case RepairStrategy::PermuteTripletEarly:    return "Apply permutations during descent";
+   case RepairStrategy::DeeperMatrixDescent:    return "Try deeper matrix chains";
+   case RepairStrategy::ApplySymmetryCorrection:return "Adjust for near-symmetric triplets";
+   case RepairStrategy::IncreaseDescentCap:     return "Raise maximum descent steps";
+   default:                                     return "None";
+   }
+}
+
+
+#endif // ! REPAIRSTRATAGIES_H
+ 
+===== END OF RepairStrategies.h ===== 
+ 
+===== START OF ScalarFracture.h ===== 
+#ifndef SCALAR_FRACTURE_H  
+#define SCALAR_FRACTURE_H
+
+#include <string>
+#include <ostream>
+
+// Forward declaration if needed
+struct FractureSummary;
+
+struct ScalarFracture {
+   // Member variables
+   double initialDistance;
+   double finalDistance;
+   double deltaCost;
+   bool fractureDetected;
+   bool repairSucceeded;
+   std::string costFunctionUsed;
+   std::string fractureType;
+
+   // Constructor using FractureSummary
+   ScalarFracture(const FractureSummary& summary)
+      : initialDistance(summary.initialDistance),
+      finalDistance(summary.finalDistance),
+      deltaCost(summary.finalDistance - summary.initialDistance),
+      fractureDetected(summary.fractureDetected),
+      repairSucceeded(summary.repairSucceeded),
+      costFunctionUsed(""),        // Default-initialized; can be assigned post-construction
+      fractureType("") {
+   }          // Same here
+
+// Full-detail constructor
+   ScalarFracture(double initialDistance,
+      double finalDistance,
+      double deltaCost,
+      bool fractureDetected,
+      bool repairSucceeded,
+      const std::string& costFunctionUsed,
+      const std::string& fractureType)
+      : initialDistance(initialDistance),
+      finalDistance(finalDistance),
+      deltaCost(deltaCost),
+      fractureDetected(fractureDetected),
+      repairSucceeded(repairSucceeded),
+      costFunctionUsed(costFunctionUsed),
+      fractureType(fractureType) {
+   }
+
+   // Stream output
+   friend std::ostream& operator<<(std::ostream& os, const ScalarFracture& compact) {
+      os << compact.initialDistance << '\t'
+         << compact.finalDistance << '\t'
+         << compact.deltaCost << '\t'
+         << (compact.fractureDetected ? "1" : "0") << '\t'
+         << (compact.repairSucceeded ? "1" : "0") << '\t'
+         << compact.costFunctionUsed << '\t'
+         << compact.fractureType;
+      return os;
+   }
+};
+
+#endif  // SCALAR_FRACTURE_H
+ 
+===== END OF ScalarFracture.h ===== 
+ 
+===== START OF StableTransitionCase.h ===== 
+#ifndef STABLE_TRANSITION_CASE_H
+#define STABLE_TRANSITION_CASE_H
+
+#include <string>
+#include <iomanip>
+#include "LRL_Vector3.h"
+
+struct StableTransitionCase {
+   int binA;
+   int binB;
+   double finalDistance;
+   Matrix_3x3 transformMatrix;  // Replace with your actual matrix type
+   std::string tag;          // e.g., "SelfMatch", "Stable", "Redundant"
+
+   friend std::ostream& operator<<(std::ostream& os, const StableTransitionCase& stc) {
+      std::stringstream mtemp;
+      mtemp << stc.transformMatrix;
+      os << "Bin Transition: " << stc.binA << " -> " << stc.binB
+         << (stc.binA != stc.binB ? " [X]" : " [-]") << '\n'
+         << "Final Scalar Distance: " << std::fixed << std::setprecision(6) << stc.finalDistance << '\n'
+         << "Transformation Tag: " << stc.tag << '\n'
+         << "Matrix used = " << ((stc.transformMatrix[0] == 19191.0) ? "not initialized" : mtemp.str()) << std::endl;
+         return os;
+      }
+
+};
+
+#endif // !STABLE_TRANSITION_CASE_H
+ 
+===== END OF StableTransitionCase.h ===== 
+ 
+===== START OF TransistionCase.h ===== 
+﻿#ifndef TRANSITION_CASE_H
+#define TRANSITION_CASE_H
+
+#include <string>
+#include "P3.h"
+#include "FractureSummary.h"
+
+struct TransitionCase {
+   std::string key;
+   P3 baseCell;
+   P3 perturbedCell;
+   P3 reducedBase;
+   P3 reducedPerturbed;
+   P3 originalVector;  // ← new
+   P3 finalVector;     // ← new
+   int binBase;
+   int binPerturbed;
+   bool crossedBoundary;
+   FractureSummary summary;
+   std::string typeLabel = "UNCLASSIFIED";
+   std::string matrixUsed = "19191";
+   bool wasRepaired = false;
+   std::string tag = "SIMPLE_SHIFT";
+
+   friend std::ostream& operator<<(std::ostream& os, const TransitionCase& tc) {
+      os << "Key: " << tc.key << '\n'
+         << "Bin Transition: " << tc.binBase << " -> " << tc.binPerturbed
+         << (tc.crossedBoundary ? " [X]" : " [-]") << '\n'
+         << "Final Scalar Distance: " << tc.summary.finalDistance << '\n'
+         << "Reduced Base: " << tc.reducedBase << '\n'
+         << "Reduced Perturbed: " << tc.reducedPerturbed << '\n'
+         << "Original Vector: " << tc.originalVector << '\n'
+         << "Final Vector: " << tc.finalVector << '\n'
+         << "Matrix Used: " << ((tc.matrixUsed == "19191") ? "not initialized" : tc.matrixUsed) << '\n'
+         << "Was Repaired: " << (tc.wasRepaired ? "true" : "false") << '\n'
+         << "Tag: " << tc.tag << '\n'
+         << "Type Label: " << tc.typeLabel << '\n';
+         return os;
+   }
+};
+
+static std::string GenerateTransitionKey(const TransitionCase& tc) {
+   return tc.summary.note + "_" +
+      std::to_string(tc.binBase) + "->" +
+      std::to_string(tc.binPerturbed);
+}
+
+#endif // TRANSITION_CASE_H
+ 
+===== END OF TransistionCase.h ===== 
+ 
