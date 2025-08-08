@@ -417,8 +417,30 @@ inline void process_lattice_cell_input(const LatticeCell& latticeCell) {
    std::cout << "Input: " << inputLine << "\n";
    std::cout << "Lattice Type: " << latticeType << "\n";
 
+   const LRL_Cell_Degrees d(lrlCell);
+   std::cout << std::fixed << std::setprecision(4);
+   std::cout << "Cell parameters: "
+      << LRL_Cell_Degrees(lrlCell) << "\n";
+
+   const double eps = 1e-3;
+
+   // Check for primitive rhombohedral: a=b=c, α=β=γ
+
+   const bool isPrimitiveRhombo =
+      (std::abs(d[0]-d[1]  )< eps) &&
+      (std::abs(d[1]-d[2]  )< eps) &&
+      (std::abs(d[3] - d[4])< eps) &&
+      (std::abs(d[4] - d[5])< eps);
+
+   // Check for hexagonal rhombohedral: a=b≠c, α=β=90°, γ=120°
+   const bool isHexRhombo =
+      (std::abs(d[0] - d[1]) < eps) &&
+      (std::abs(d[3] - 90.0) < eps) &&
+      (std::abs(d[4] - 90.0) < eps) &&
+      (std::abs(d[5] -120.0) < eps);
+
    // Extract cell parameters directly from LRL_Cell array indexing
-   // LRL_Cell stores: [a, b, c, alpha, beta, gamma] with angles in radians
+// LRL_Cell stores: [a, b, c, alpha, beta, gamma] with angles in radians
    Cell c;
    c.a = lrlCell[0];      // a
    c.b = lrlCell[1];      // b
@@ -426,23 +448,6 @@ inline void process_lattice_cell_input(const LatticeCell& latticeCell) {
    c.alpha = lrlCell[3] * 180.0 / PI;  // alpha in degrees
    c.beta = lrlCell[4] * 180.0 / PI;   // beta in degrees
    c.gamma = lrlCell[5] * 180.0 / PI;  // gamma in degrees
-
-   std::cout << std::fixed << std::setprecision(4);
-   std::cout << "Cell parameters: "
-      << c.a << " " << c.b << " " << c.c << " "
-      << c.alpha << " " << c.beta << " " << c.gamma << "\n";
-
-   const double eps = 1e-3;
-
-   // Check for primitive rhombohedral: a=b=c, α=β=γ
-   const bool isPrimitiveRhombo = (std::abs(c.a - c.b) < eps && std::abs(c.b - c.c) < eps &&
-      std::abs(c.alpha - c.beta) < eps && std::abs(c.beta - c.gamma) < eps);
-
-   // Check for hexagonal rhombohedral: a=b≠c, α=β=90°, γ=120°
-   const bool isHexRhombo = (std::abs(c.a - c.b) < eps &&
-      std::abs(c.alpha - 90.0) < eps &&
-      std::abs(c.beta - 90.0) < eps &&
-      std::abs(c.gamma - 120.0) < eps);
 
    if (isPrimitiveRhombo) {
       std::cout << "\n=== Rhombohedral Information ===\n";

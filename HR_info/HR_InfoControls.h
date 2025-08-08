@@ -14,13 +14,8 @@
 #include <sstream>
 
 class HR_InforControls : public BaseControlVariables {
-private:
-   int m_testNumber = 0;  // Add this member variable
 
 public:
-   // Add this method
-   void setTestNumber(int testNum) { m_testNumber = testNum; }
-   int getTestNumber() const { return m_testNumber; }
 
    friend std::ostream& operator<< (std::ostream& os, const HR_InforControls& csc) {
       std::cout << "Commands:\n"
@@ -58,10 +53,10 @@ public:
             showHelp();
          });
 
-      InputHandler::registerHandler("SHOW", 0.0,
-         [this](const BaseControlVariables&, const std::string& value) {
-            std::cout << (*this) << std::endl;
-         });
+      //InputHandler::registerHandler("SHOW", 0.0,
+      //   [this](const BaseControlVariables&, const std::string& value) {
+      //      std::cout << (*this) << std::endl;
+      //   });
 
       InputHandler::registerHandler("SG", 0.30,
          [this](const BaseControlVariables&, const std::string& value) {

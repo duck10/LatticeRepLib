@@ -157,9 +157,9 @@ void printHexCell(const HexagonalCell& cell) {
    std::cout << "Hexagonal setting:\n";
    std::cout << "  a = " << cell.a << " Å\n";
    std::cout << "  c = " << cell.c << " Å\n";
-   std::cout << "  α = " << cell.alpha << "°\n";
-   std::cout << "  β = " << cell.beta << "°\n";
-   std::cout << "  γ = " << cell.gamma << "°\n";
+   std::cout << "  α = " << cell.alpha << "\n";
+   std::cout << "  β = " << cell.beta << "\n";
+   std::cout << "  γ = " << cell.gamma << "\n";
 }
 
 void printRhomboCell(const RhombohedralCell& cell) {
@@ -167,7 +167,7 @@ void printRhomboCell(const RhombohedralCell& cell) {
    std::cout << "Rhombohedral setting ("
       << (cell.setting == RhomboSetting::OBVERSE ? "Obverse" : "Reverse") << "):\n";
    std::cout << "  a = " << cell.a << " Å\n";
-   std::cout << "  α = " << cell.alpha << "°\n";
+   std::cout << "  alpha = " << cell.alpha << "degrees\n";
 }
 
 void printIndices(const MillerIndices& indices, const std::string& label) {

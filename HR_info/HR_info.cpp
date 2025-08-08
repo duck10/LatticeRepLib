@@ -29,10 +29,10 @@ int main()
    std::cout << "This program was partly written by the AI Kimi.\n"
       "Kimi used the Wikipedia page for Hexagonal crystal family\n"
       "for the source data.\n"
-      "Some of the logic, especially for conrols was written\n"
+      "Some of the logic, especially for controls was written\n"
       "with the aid of Claude.ai";
    std::cout << "One should note that both of these AI's contributed\n"
-      "a substantial number of coding errors\n\ns";
+      "a substantial number of coding errors\n\n";
 
 
    std::cout << controls << std::endl;  // Show available commands
