@@ -300,3 +300,44 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
    }
 }
 
+// Add this method to InputHandler.cpp
+
+LatticeCell InputHandler::processSingleLatticeInput(const std::string& line) {
+   // Clean and parse the input line
+   std::string cleanedLine = cleanLatticeInput(line);
+
+   // Additional cleanup for any remaining non-printable characters
+   for (char& c : cleanedLine) {
+      if (!std::isprint(static_cast<unsigned char>(c))) {
+         c = ' ';
+      }
+   }
+
+   std::vector<std::string> tokens = parseInputLine(cleanedLine);
+   tokens = reorderLatticeTokens(tokens);
+
+   if (tokens.empty()) {
+      throw std::runtime_error("Empty input line");
+   }
+
+   std::string upperKey = LRL_StringTools::strToupper(tokens[0]);
+   if (!isLattice(upperKey)) {
+      throw std::runtime_error("Not a lattice input: " + tokens[0]);
+   }
+
+   // Create a temporary vector to hold the result
+   std::vector<LatticeCell> tempVector;
+
+   try {
+      handleSingleLattice(tempVector, upperKey, tokens, cleanedLine);
+
+      if (tempVector.empty()) {
+         throw std::runtime_error("Failed to parse lattice input");
+      }
+
+      return tempVector[0];  // Return the first (and should be only) cell
+   }
+   catch (const std::exception& e) {
+      throw std::runtime_error("Error parsing lattice: " + std::string(e.what()));
+   }
+}

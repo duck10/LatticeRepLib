@@ -1,10 +1,6 @@
 ﻿#ifndef R_SETTINGS_H
 #define R_SETTINGS_H
 
-
-// code from Claude.ai
-
-
 #include <iostream>
 #include <cmath>
 #include <iomanip>
@@ -49,15 +45,32 @@ RhombohedralCell hexToRhombo(const HexagonalCell& hex, RhomboSetting setting = R
    rhombo.setting = setting;
 
    // Calculate rhombohedral lattice parameter (same for both settings)
-   rhombo.a = sqrt(hex.a * hex.a / 3.0 + hex.c * hex.c / 9.0);
+   // CORRECT formula: aR = √(aH²/3 + cH²/9)
+   rhombo.a = sqrt((hex.a * hex.a) / 3.0 + (hex.c * hex.c) / 9.0);
 
    // Calculate rhombohedral angle (same for both settings)
+   // CORRECT formula: α = cos⁻¹((2*cH² - 3*aH²)/(2*(cH² + 3*aH²)))
    const double cos_alpha_r = (2.0 * hex.c * hex.c - 3.0 * hex.a * hex.a) /
-      (2.0 * hex.c * hex.c + 6.0 * hex.a * hex.a);
+      (2.0 * (hex.c * hex.c + 3.0 * hex.a * hex.a));
 
    rhombo.alpha = acos(cos_alpha_r) * 180.0 / M_PI;
 
    return rhombo;
+}
+
+// Convert from rhombohedral to hexagonal setting (inverse transformation)
+HexagonalCell rhomboToHex(const RhombohedralCell& rhombo) {
+   const double alpha_rad = rhombo.alpha * M_PI / 180.0;
+   const double cos_alpha = cos(alpha_rad);
+   const double sin_half_alpha = sin(alpha_rad / 2.0);
+
+   // CORRECT formulas from QuantumATK documentation:
+   // aH = 2*aR*sin(αR/2)
+   // cH = aR*√3*√(1+2*cos(αR))
+   const double aH = 2.0 * rhombo.a * sin_half_alpha;
+   const double cH = rhombo.a * sqrt(3.0) * sqrt(1.0 + 2.0 * cos_alpha);
+
+   return HexagonalCell(aH, cH);
 }
 
 // Miller indices transformations
@@ -123,31 +136,19 @@ RhomboSetting analyzeCoordinates(const std::vector<std::array<double, 3>>& coord
       double x = coord[0], y = coord[1], z = coord[2];
 
       // Obverse positions: (2/3,1/3,1/3), (1/3,2/3,2/3)
-      if ((abs(x - 2.0 / 3.0) < tolerance && abs(y - 1.0 / 3.0) < tolerance && abs(z - 1.0 / 3.0) < tolerance) ||
-         (abs(x - 1.0 / 3.0) < tolerance && abs(y - 2.0 / 3.0) < tolerance && abs(z - 2.0 / 3.0) < tolerance)) {
+      if ((std::abs(x - 2.0 / 3.0) < tolerance && std::abs(y - 1.0 / 3.0) < tolerance && std::abs(z - 1.0 / 3.0) < tolerance) ||
+         (std::abs(x - 1.0 / 3.0) < tolerance && std::abs(y - 2.0 / 3.0) < tolerance && std::abs(z - 2.0 / 3.0) < tolerance)) {
          obverse_matches++;
       }
 
       // Reverse positions: (1/3,2/3,1/3), (2/3,1/3,2/3)  
-      if ((abs(x - 1.0 / 3.0) < tolerance && abs(y - 2.0 / 3.0) < tolerance && abs(z - 1.0 / 3.0) < tolerance) ||
-         (abs(x - 2.0 / 3.0) < tolerance && abs(y - 1.0 / 3.0) < tolerance && abs(z - 2.0 / 3.0) < tolerance)) {
+      if ((std::abs(x - 1.0 / 3.0) < tolerance && std::abs(y - 2.0 / 3.0) < tolerance && std::abs(z - 1.0 / 3.0) < tolerance) ||
+         (std::abs(x - 2.0 / 3.0) < tolerance && std::abs(y - 1.0 / 3.0) < tolerance && std::abs(z - 2.0 / 3.0) < tolerance)) {
          reverse_matches++;
       }
    }
 
    return (obverse_matches > reverse_matches) ? RhomboSetting::OBVERSE : RhomboSetting::REVERSE;
-}
-
-// Convert from rhombohedral to hexagonal setting (inverse transformation)
-HexagonalCell rhomboToHex(const RhombohedralCell& rhombo) {
-   const double alpha_rad = rhombo.alpha * M_PI / 180.0;
-   const double cos_alpha = cos(alpha_rad);
-
-   // Calculate hexagonal parameters (same for both obverse and reverse)
-   const double c = rhombo.a * sqrt(3.0 * (1.0 - cos_alpha));
-   const double a = rhombo.a * sqrt(2.0 * (1.0 + cos_alpha));
-
-   return HexagonalCell(a, c);
 }
 
 // Print cell parameters
@@ -183,7 +184,7 @@ void R_Setting_Info() {
 
    // Convert to both settings
    const RhombohedralCell rhombo_obverse = hexToRhombo(hex_cell, RhomboSetting::OBVERSE);
-   const  RhombohedralCell rhombo_reverse = hexToRhombo(hex_cell, RhomboSetting::REVERSE);
+   const RhombohedralCell rhombo_reverse = hexToRhombo(hex_cell, RhomboSetting::REVERSE);
 
    printRhomboCell(rhombo_obverse);
    std::cout << "\n";
@@ -195,12 +196,33 @@ void R_Setting_Info() {
    std::cout << "  Reverse: -h+k+l ≠ 3n are absent\n\n";
 
    std::cout << "Method 2: Coordinate Analysis\n";
-   std::cout << "  Obverse characteristic positions: (2/3,1/3,1/3), (1/3,2/3,2/3)\n";
-   std::cout << "  Reverse characteristic positions: (1/3,2/3,1/3), (2/3,1/3,2/3)\n\n";
+   std::cout << "  When a rhombohedral lattice is described in hexagonal setting,\n";
+   std::cout << "  it becomes an R-centered hexagonal cell with 3 lattice points:\n";
+   std::cout << "  - One at origin: (0, 0, 0)\n";
+   std::cout << "  - Two additional centering points that differ by setting:\n\n";
+
+   std::cout << "  OBVERSE setting - rhombohedral axes point in +c direction:\n";
+   std::cout << "    Additional lattice points: (2/3,1/3,1/3), (1/3,2/3,2/3)\n";
+   std::cout << "    Atoms often cluster around these positions\n\n";
+
+   std::cout << "  REVERSE setting - rhombohedral axes point in -c direction:\n";
+   std::cout << "    Additional lattice points: (1/3,2/3,1/3), (2/3,1/3,2/3)\n";
+   std::cout << "    Atoms often cluster around these positions\n\n";
+
+   std::cout << "  HOW TO USE:\n";
+   std::cout << "  - Examine atomic coordinates in your structure file (CIF, etc.)\n";
+   std::cout << "  - Look for atoms near the characteristic positions above\n";
+   std::cout << "  - The pattern tells you which setting is being used\n\n";
+
+   std::cout << "  EXAMPLE:\n";
+   std::cout << "  If atoms are found near (0.667, 0.333, 0.333) and (0.333, 0.667, 0.667)\n";
+   std::cout << "  → Likely OBVERSE setting\n";
+   std::cout << "  If atoms are found near (0.333, 0.667, 0.333) and (0.667, 0.333, 0.667)\n";
+   std::cout << "  → Likely REVERSE setting\n\n";
 
    std::cout << "Method 3: Miller Indices Check\n";
-   std::cout << "  Transform a known hex reflection and see which setting gives\n";
-   std::cout << "  the expected rhombohedral indices\n\n";
+   std::cout << "  The same physical reflection has different indices in each setting.\n";
+   std::cout << "  Compare known reflections with expected transformations:\n";
 
    std::cout << "=== Miller Indices Transformations ===\n\n";
 
@@ -229,7 +251,7 @@ void R_Setting_Info() {
 
    std::cout << "=== Key Points for IUCr Publications ===\n";
    std::cout << "• Always specify which setting (obverse/reverse) you're using\n";
-   std::cout << "• Cell parameters (a, α) are identical for both settings\n";
+   std::cout << "• Cell parameters (a, alpha) are identical for both settings\n";
    std::cout << "• Miller indices and atomic coordinates differ between settings\n";
    std::cout << "• Check your software's default convention\n";
    std::cout << "• Use systematic absences to determine setting from diffraction data\n";

@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClInclude Include="HR_InfoControls.h" />
     <ClInclude Include="Processing.h" />
+    <ClInclude Include="RhombohedralTestSuite.h" />
     <ClInclude Include="R_Settings.h" />
     <ClInclude Include="Theta.h" />
     <ClInclude Include="ThetaInsensitive.h" />

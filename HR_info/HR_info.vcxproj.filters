@@ -35,5 +35,8 @@
     <ClInclude Include="Processing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RhombohedralTestSuite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
