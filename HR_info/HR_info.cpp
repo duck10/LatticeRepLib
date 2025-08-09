@@ -40,5 +40,10 @@ int main()
    // Use command-based input processing (true = use command system)
    InputHandler::handleInput(controls, true);
 
+
+   if (controls.shouldShowControls()) {
+      std::cout << controls << std::endl;
+   }
+
    return 0;
 }

@@ -209,8 +209,9 @@ void showHelp()
       "  r_settings       some information about rhombohedral lattices including\n"
       "                   obverse/reverse and indexing.\n\n"
       "  P/R/I/F/etc.     unit cell information\n\n"
-      "  q                Quit the program.\n"
-      "                   Any close spelling of \"quit\" also exits.\n\n";
+      //"  q                Quit the program.\n"
+      //"                   Any close spelling of \"quit\" also exits."
+      "\n\n";
 }
 
 // ------------------------------------------------------------------

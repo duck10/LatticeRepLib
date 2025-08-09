@@ -29,7 +29,7 @@ public:
          "  r_settings\n"
          "  test [number]    (run test suite)\n"
          "  help\n"
-         "  q (quit)\n\n"
+         //"  q (quit)\n\n"
          "Lattice inputs (lattice type must be first):\n"
          "  P <a> <b> <c> <alpha> <beta> <gamma>     (primitive)\n"
          "  A <a> <b> <c> <alpha> <beta> <gamma>     (A-centered)\n"
@@ -227,12 +227,12 @@ public:
 
       InputHandler::registerHandler("QUIT", 0.50,
          [this](const BaseControlVariables&, const std::string& value) {
-            exit(0);
+            return 0;
          });
 
       InputHandler::registerHandler("Q", 0.0,
          [this](const BaseControlVariables&, const std::string& value) {
-            exit(0);
+            return 0;
          });
    }
 
