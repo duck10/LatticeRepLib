@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CmdPathControls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix_3x3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -27,33 +24,33 @@
     <ClInclude Include="..\LatticeRepresentationLib\P3Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FractureSummary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BoundaryExplorer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransistionCase.h">
+    <ClInclude Include="EnhancedBoundaryDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StableTransitionCase.h">
+    <ClInclude Include="P3TransformationAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FractureTagger.h">
+    <ClInclude Include="PureBoundaryGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScalarTraits.h">
+    <ClInclude Include="P3BoundaryProjectors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="P3SpecialGenerator.h">
+    <ClInclude Include="P3SVDProjectorBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PureP3SVDProjector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="P3ProjectorCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TEST4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="testP3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestP3Sym.cpp">
@@ -65,5 +62,8 @@
     <ClCompile Include="BoundaryExplorer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="P3_Projectors.txt" />
   </ItemGroup>
 </Project>

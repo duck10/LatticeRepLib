@@ -36,10 +36,14 @@ private:
       std::vector<Point> points;
 
       // Add zoom corners using InsetData bounds - EXACT original coordinates
-      points.emplace_back(m_data.minX(), -m_data.minY(), true);  // NW zoom
-      points.emplace_back(m_data.maxX(), -m_data.minY(), true);  // NE zoom  
-      points.emplace_back(m_data.maxX(), -m_data.maxY(), true);  // SE zoom
-      points.emplace_back(m_data.minX(), -m_data.maxY(), true);  // SW zoom
+      const double margin = 0.05;
+      const double marginX = m_data.extents[0] * margin;
+      const double marginY = m_data.extents[1] * margin;
+
+      points.emplace_back(m_data.minX() - marginX, -m_data.minY() + marginY, true);   // NW
+      points.emplace_back(m_data.maxX() + marginX, -m_data.minY() + marginY, true);   // NE  
+      points.emplace_back(m_data.maxX() + marginX, -m_data.maxY() - marginY, true);   // SE
+      points.emplace_back(m_data.minX() - marginX, -m_data.maxY() - marginY, true);   // SW
 
       // Add inset corners - EXACT original coordinates
       points.emplace_back(m_insetX, m_insetY, false);                          // NW inset
@@ -93,7 +97,7 @@ private:
             // draw connector lines
             result += "<line x1=\"" + LRL_DataToSVG(hull[i].x) + "\" y1=\"" + LRL_DataToSVG(hull[i].y) +
                "\" x2=\"" + LRL_DataToSVG(hull[next].x) + "\" y2=\"" + LRL_DataToSVG(hull[next].y) +
-               "\" stroke=\"orange\" stroke-width=\"3\" stroke-dasharray=\"9, 4, 3\"/>\n";
+               "\" stroke=\"orange\" stroke-width=\"1\" stroke-dasharray=\"15, 3, 5\"/>\n";
          }
       }
 

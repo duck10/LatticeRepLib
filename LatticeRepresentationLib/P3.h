@@ -54,7 +54,7 @@ public:
          m_p3[i] = std::make_pair(vecs[i][0], vecs[i][1]);
    }
 
-   static double EucledianDistance(const P3& p1, const P3& p2);
+   static double EuclideanDistance(const P3& p1, const P3& p2);
 
    std::array<Vector_2, 3> GetVectorTriplet() const {
       std::array<Vector_2, 3> out;

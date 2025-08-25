@@ -1,6 +1,8 @@
-﻿//#include "SystematicMatrixGenerator.h"
+//#include "SystematicMatrixGenerator.h"
 //#include "TransformationMatrices.h"
 //#include <iostream>
+//#include "LRL_Vector3.h"
+//#include <vector>
 //
 //int main() {
 //   std::cout << "=== MATRIX GENERATION COUNT VERIFICATION ===" << std::endl;

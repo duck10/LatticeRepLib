@@ -38,6 +38,7 @@ const double threesixtyDegrees = 360.0;
 
 static const double pi = 4.0 * atan(1.0);
 static const double twopi = 2.0 * pi;
+static const double rad = 180.0 / pi;
 
 double LRL_Cell::randomLatticeNormalizationConstant = 10.0;
 double LRL_Cell::randomLatticeNormalizationConstantSquared = randomLatticeNormalizationConstant * randomLatticeNormalizationConstant;
@@ -126,9 +127,6 @@ LRL_Cell::LRL_Cell(const S6& ds)
          be = acos( cosbe );
          ga = acos( cosga );
       }
-
-      static const double pi = 4.0 * atan( 1.0 );
-      static const double twopi = 2.0 * pi;
 
       m_valid = (al + be + ga) < twopi;
    }
@@ -235,9 +233,6 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
            const double alpha, const double beta, const double gamma)
    : m_valid(true)
 {
-   static const double pi = 4.0 * atan(1.0);
-   static const double twopi = 2.0 * pi;
-   static const double rad = 180.0 / pi;
 
     bool radianInput = false;
 
@@ -294,8 +289,6 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
 LRL_Cell::LRL_Cell(const G6& g6)
    : m_valid(true)
 {
-   static const double pi = 4.0*atan(1.0);
-   static const double twopi = 2.0*pi;
    m_cell.resize(6);
    const double lowerlimit = 0.0001;
    if ( (!g6.GetValid()) || g6.norm() < 1.0E-10 || g6[0] <= lowerlimit || g6[1] <= lowerlimit || g6[2] <= lowerlimit) {
@@ -686,9 +679,6 @@ bool LRL_Cell::CheckValid(const LRL_Cell& cell) {
 
 bool LRL_Cell::CheckValid(const double a, const double b, const double c,
    const double alpha, const double beta, const double gamma) {
-   static const double pi = 4.0 * atan(1.0);
-   static const double twopi = 2.0 * pi;
-   static const double rad = 180.0 / pi;
 
    const bool radianInput = alpha < pi && beta < pi && gamma < pi;
 

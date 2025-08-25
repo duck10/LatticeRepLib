@@ -1,22 +1,19 @@
 ﻿#include "BoundaryExplorer.h"
-#include "FractureTagger.h"
 #include "P3.h"
-#include "P3SpecialGenerator.h"
+#include "P3_Reduce.h"
 #include "P3Utilities.h"
-#include "ScalarTraits.h"
 #include "StoreResults.h"
-#include "StableTransitionCase.h"
-#include "TransistionCase.h"
+
+#include "PairReporter.h"
 
 #include <iomanip>
 #include <algorithm>
 #include <numeric>
 #include <string>
 
-extern StoreResults<std::string, TransitionCase> edgeTransitionStore;
-extern StoreResults<std::string, StableTransitionCase> stableResultStore;
-
 static const Matrix_3x3 identity{ 1,0,0, 0,1,0, 0,0,1 };
+
+
 
 
 std::string GetTransformationSignature(const P3& reduced) {
@@ -83,92 +80,3 @@ static int GetDistanceBin(const P3& a, const P3& b) {
    return static_cast<int>(std::log10((a - b).norm() * 1000));  // Tunable scale
 }
 
-void BoundaryExplorer::RunTrial(const P3& baseCell, const P3& perturbedCell) const {
-   const LRL_Cell cellBase(baseCell);
-   const LRL_Cell cellPerturbed(perturbedCell);
-
-   const P3 reducedBase(ReduceCellScalar(baseCell));
-   const P3 reducedPert(ReduceCellScalar(LRL_Cell(perturbedCell)));
-
-
-  const ReducedResult testBase = P3_Reduce::MatrixAwareReduce(baseCell);
-  const ReducedResult testPerturbed = P3_Reduce::MatrixAwareReduce(perturbedCell);
-
-  if (baseCell != reducedBase) {
-     const bool test = perturbedCell == testPerturbed.reduced;
-     const int i19191 = 19191;
-  }
-  if (reducedPert!= testPerturbed.reduced)
-  {
-     std::cout << " reduce by ReduceCellScalar  " << reducedBase << std::endl;
-     std::cout << " reduce by MatrixAwareReduce " << testBase.reduced << std::endl << std::endl;
-     std::cout << " reduce by ReduceCellScalar  " << LRL_Cell_Degrees(reducedBase) << std::endl;
-     std::cout << " reduce by MatrixAwareReduce " << LRL_Cell_Degrees(testBase.reduced) << std::endl << std::endl;
-     const int i19191 = 19191;
-  }
-
-  if (testBase.transformation != identity || testPerturbed.transformation != identity) {
-     const int i19191 = 19191;
-  }
-  if (testBase.reduced !=  testPerturbed.reduced) {
-     const int i19191 = 19191;
-  }
-
-
-   const LRL_Cell cellReducedBase(reducedBase);
-   const LRL_Cell cellReducedPerturbed(reducedPert);
-
-   const int binSeverity = GetDistanceBin(reducedBase, reducedPert);
-   const int binA = GetDistanceBin(reducedBase.norm());
-   const int binB = GetDistanceBin(reducedPert.norm());
-
-   FractureSummary summary;
-   summary.initialDistance = P3::EucledianDistance(baseCell, perturbedCell);
-   summary.finalDistance = P3::EucledianDistance(reducedBase, reducedPert);
-
-   const double fractureThreshold = 0.1;
-   summary.fractureDetected = (summary.finalDistance > fractureThreshold);
-   summary.repairSucceeded = !summary.fractureDetected;
-   summary.note = "Fracture check: threshold = 0.1";
-
-   std::string diagnosticTag = FractureTagger::Tag(summary);
-
-
-
-   if (!perturbedCell.GetValid()) {
-      diagnosticTag += "_InvalidInput";
-   }
-
-   int binKey = GetDistanceBin(summary.finalDistance);
-
-   {
-      TransitionCase tc;
-      tc.baseCell = baseCell;
-      tc.perturbedCell = perturbedCell;
-      tc.reducedBase = reducedBase;
-      tc.reducedPerturbed = reducedPert;
-      tc.binBase = binA;
-      tc.binPerturbed = binB;
-      tc.crossedBoundary = (binA != binB);
-      tc.summary = summary;
-
-      const ScalarTraits traits = AnalyzeScalarTraits(reducedBase);
-      tc.typeLabel = traits.Tag();  // or tc.tag = traits.Tag();
-
-      const std::string key = traits.Tag() + "_" + std::to_string(tc.binBase) + "->" + std::to_string(tc.binPerturbed);
-
-      const P3 p3temp(ReduceCellScalar(LRL_Cell(perturbedCell)));
-      tc.originalVector= p3temp;  // Before reduction
-      tc.finalVector = reducedPert;                                   // After reduction
-      edgeTransitionStore.Store(tc.key, tc);
-
-   }
-
-   {
-      static const Matrix_3x3 mdummy(19191, 19191, 19191, 19191, 19191, 19191, 19191, 19191, 19191);
-      StableTransitionCase entry = { binA, binB, summary.finalDistance, mdummy, "Stable" };
-      std::string key = MakeStableKey(binA, binB, summary.finalDistance);
-      stableResultStore.Store(key, entry);
-   }
-
-}

@@ -145,19 +145,18 @@
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\P3Utilities.h" />
     <ClInclude Include="BoundaryExplorer.h" />
-    <ClInclude Include="CmdPathControls.h" />
-    <ClInclude Include="FractureSummary.h" />
-    <ClInclude Include="FractureTagger.h" />
+    <ClInclude Include="EnhancedBoundaryDetector.h" />
     <ClInclude Include="Matrix_3x3.h" />
-    <ClInclude Include="P3SpecialGenerator.h" />
-    <ClInclude Include="ScalarTraits.h" />
-    <ClInclude Include="StableTransitionCase.h" />
+    <ClInclude Include="P3BoundaryProjectors.h" />
+    <ClInclude Include="P3ProjectorCollection.h" />
+    <ClInclude Include="P3SVDProjectorBuilder.h" />
+    <ClInclude Include="P3TransformationAnalyzer.h" />
+    <ClInclude Include="PureBoundaryGenerator.h" />
+    <ClInclude Include="PureP3SVDProjector.h" />
     <ClInclude Include="TransformationMatrices.h" />
-    <ClInclude Include="TransistionCase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoundaryExplorer.cpp" />
-    <ClCompile Include="testP3.cpp" />
     <ClCompile Include="TEST4.cpp" />
     <ClCompile Include="TestP3Sym.cpp" />
     <ClCompile Include="TransformationMatrices.cpp" />
@@ -172,6 +171,9 @@
     <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
       <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="P3_Projectors.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

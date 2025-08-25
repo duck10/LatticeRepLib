@@ -177,6 +177,7 @@
     <ClInclude Include="SVG_Tools.h" />
     <ClInclude Include="TensionSpline.h" />
     <ClInclude Include="Theta.h" />
+    <ClInclude Include="ThetaInsensitive.h" />
     <ClInclude Include="TNear.h" />
     <ClInclude Include="TriangleAreaFromSides.h" />
     <ClInclude Include="triple.h" />

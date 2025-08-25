@@ -71,6 +71,6 @@ P3 P3::operator-() const {
    return result;
 }
 
-double P3::EucledianDistance(const P3& p1, const P3& p2) {
+double P3::EuclideanDistance(const P3& p1, const P3& p2) {
    return (p1 - p2).norm();
 }

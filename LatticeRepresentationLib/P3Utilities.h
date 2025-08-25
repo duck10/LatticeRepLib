@@ -10,39 +10,52 @@
 #include "LRL_Cell.h"
 #include "TransformationMatrices.h"
 #include "Polar.h"
+#include "P3_Reduce.h"
 
 
 static std::map<size_t, int> transformUsageCount;
 
 
-
-static double ComputeMetricCost(const LRL_Cell& cell) {
-   const B4 b4(cell);
-   const double ab = std::abs(b4[0].Dot(b4[1]));
-   const double ac = std::abs(b4[0].Dot(b4[2]));
-   const double bc = std::abs(b4[1].Dot(b4[2]));
-   return ab + ac + bc;
-}
+//
+//static double ComputeMetricCost(const LRL_Cell& cell) {
+//   const B4 b4(cell);
+//   const double ab = std::abs(b4[0].Dot(b4[1]));
+//   const double ac = std::abs(b4[0].Dot(b4[2]));
+//   const double bc = std::abs(b4[1].Dot(b4[2]));
+//   return ab + ac + bc;
+//}
 
 
 static std::vector<Matrix_3x3> GetReductionBasisWithNiggli() {
-   const std::vector<Matrix_3x3> all = TransformationMatrices::generateUnimodularMatrices();
+   // Make 3480 matrices static to avoid regenerating on every call
+   static const std::vector<Matrix_3x3> all = TransformationMatrices::generateUnimodularMatrices();
+
    const std::vector<size_t> highUseIndices = {
        1, 7, 28, 103, 106, 112, 118, 146, 147, 373, 379, 384, 526
    };
    const std::vector<size_t> niggliIndices = {
        2945, 1275, 549, 534, 573, 2906, 2944, 2946
    };
+   const std::vector<size_t> newWinningIndices = {
+       354, 494, 505, 506, 507, 813, 1050
+   };
+   // Add the top effectiveness matrices we identified
+   const std::vector<size_t> topEffectivenessIndices = {
+       1492, 1434, 1423, 895, 886, 2478, 2965, 55, 3135, 2573
+   };
 
    std::vector<Matrix_3x3> basis;
    Matrix_3x3 m;
    m.UnitMatrix();
    basis.emplace_back(m);
+
    for (const size_t i : highUseIndices) basis.push_back(all[i]);
    for (const size_t i : niggliIndices) basis.push_back(all[i]);
+   for (const size_t i : newWinningIndices) basis.push_back(all[i]);
+   for (const size_t i : topEffectivenessIndices) basis.push_back(all[i]);
+
    return basis;
 }
-
 
 static std::vector<Matrix_3x3> theBasicMatrices = GetReductionBasisWithNiggli();
 
@@ -96,7 +109,7 @@ static std::vector<P3> GeneratePermutedP3s(const P3& input) {
 
 static LRL_Cell ReduceCellScalar(const LRL_Cell& input) {
    LRL_Cell current = input;
-   double currentCost = ComputeMetricCost(current);
+   double currentCost = P3_Reduce::P3Cost(P3(current));
    const double epsilon = 1e-6;
    bool improved = true;
    const std::vector<Matrix_3x3> matrices = theBasicMatrices;
@@ -113,7 +126,7 @@ static LRL_Cell ReduceCellScalar(const LRL_Cell& input) {
          const std::vector<P3> permutations = GeneratePermutedP3s(projected);
          for (const P3& permuted : permutations) {
             const LRL_Cell candidate(permuted);
-            const double candidateCost = ComputeMetricCost(candidate);
+            const double candidateCost = P3_Reduce::P3Cost(P3(candidate));
 
             if (candidateCost + epsilon < bestCost) {
                bestCost = candidateCost;
@@ -158,13 +171,32 @@ inline LRL_Cell operator*(const Matrix_3x3& matrix, const LRL_Cell& cell) {
 }
 
 static P3 PerturbP3(const P3& p3, const double magnitude) {
-   // Step 1: Generate a random unit vector that's orthogonal to p3
-   const P3 ortho = P3().CreateUnitOrthogonalComponent(p3);
+   static const bool debug = false;
+   // Step 1: Generate a random P3 vector
+   P3 randomVector = P3(Polar::rand());
+   if (debug)
+   {
+      std::cout << "DEBUG PerturbP3:" << std::endl;
+      std::cout << "  Input P3: " << p3 << std::endl;
+      std::cout << "  Random vector: " << randomVector << std::endl;
+   }
 
-   // Step 2: Apply a small perturbation along that orthogonal direction
-   const P3 perturbed = p3 + magnitude * ortho;
-   const LRL_Cell cellInput(p3);
-   const LRL_Cell cellPerturbed(perturbed);
+   // Step 2: Find the component of randomVector orthogonal to p3
+   const P3 ortho = randomVector.CreateUnitOrthogonalComponent(p3);
+   if (debug)
+   {
+      std::cout << "  Orthogonal component: " << ortho << std::endl;
+      std::cout << "  Magnitude: " << magnitude << std::endl;
+   }
+
+   // Step 3: Apply perturbation
+   const P3 scaled = magnitude * ortho;
+   const P3 perturbed = p3 + scaled;
+   if (debug)
+   {
+      std::cout << "  Scaled ortho: " << scaled << std::endl;
+      std::cout << "  Perturbed result: " << perturbed << std::endl;
+   }
 
    return perturbed;
 }

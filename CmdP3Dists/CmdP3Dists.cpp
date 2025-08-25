@@ -71,6 +71,7 @@ int main() {
       }
 
       const P3 p3First(vcells[0]);
+      const P3 p3FirstReduced(P3_Reduce::Reduce(p3First));
       G6 g6FirstReduce;
       Niggli::ReduceWithoutMatrices(vcells[0], g6FirstReduce, 1.0E-4);
 
@@ -85,24 +86,27 @@ int main() {
       table.insert_left(0, 7, "NCDist");
 
       for (size_t i = 0; i < dc_setup.getInputList().size() - 1; ++i) {
-         const double dEuRolling = (G6(vcells[i]) - G6(vcells[i + 1])).norm();
-         const double dP3Rolling = P3::EucledianDistance(vp3Red[i], vp3Red[i + 1]);
+         const double dP3Rolling = (P3(vcells[i]) - P3(vcells[i + 1])).norm();
+         const double dP3RollingRed = P3::EuclideanDistance(vp3Red[i], vp3Red[i + 1]);
          const double dG6Rolling = NCDist(vg6Red[i].data(), vg6Red[i + 1].data());
 
          const double dP3EuToFirst = (p3First - P3(vcells[i + 1])).norm();
-         const double dP3ToFirst = P3::EucledianDistance(p3First, vp3Red[i + 1]);
+         const double dP3ToFirst = P3::EuclideanDistance(p3FirstReduced, vp3Red[i + 1]);
          const double dG6ToFirst = NCDist(g6FirstReduce.data(), vg6Red[i + 1].data());
+
+         std::cout << LRL_Cell_Degrees(p3FirstReduced) << std::endl;
+         std::cout << LRL_Cell_Degrees(vp3Red[i + 1] )<< std::endl << std::endl;
 
          const std::string ordinal1 = LRL_DataToSVG("; ", i + 1) + "-" + LRL_DataToSVG(i + 2);
          const std::string ordinal2 = LRL_DataToSVG("1-", i + 2);
 
          table.insert_center(i + 1, 0, ordinal1);
-         table.insert_center(i + 1, 1, DoubleToSting(dEuRolling) + "\0");
-         table.insert_center(i + 1, 2, DoubleToSting(dP3Rolling) + " \0");
+         table.insert_center(i + 1, 1, DoubleToSting(dP3Rolling) + "\0");
+         table.insert_center(i + 1, 2, DoubleToSting(19191) + " \0");
          table.insert_center(i + 1, 3, DoubleToSting(dG6Rolling) + " \0");
          table.insert_center(i + 1, 4, ordinal2);
          table.insert_center(i + 1, 5, DoubleToSting(dP3EuToFirst));
-         table.insert_center(i + 1, 6, DoubleToSting(dP3ToFirst) + " ");
+         table.insert_center(i + 1, 6, DoubleToSting(19191) + " ");
          table.insert_center(i + 1, 7, DoubleToSting(dG6ToFirst) + " ");
       }
 

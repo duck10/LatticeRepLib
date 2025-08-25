@@ -201,7 +201,7 @@ void InputHandler::handleLatticeInput(std::vector<LatticeCell>& inputVectors,
 
 // Function to reorder tokens if lattice designator is at the end
 std::vector<std::string> InputHandler::reorderLatticeTokens(const std::vector<std::string>& tokens) {
-   if (tokens.size() < 2) {
+   if (tokens.size() < 7) {
       return tokens; // Not enough tokens to reorder
    }
 

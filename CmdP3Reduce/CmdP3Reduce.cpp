@@ -36,8 +36,12 @@ int main() {
 
    for (const LatticeCell& cell : dc_setup.getInputList()) {
       const P3 projected(cell.getCell());
-      const P3 reduced = P3(ReduceCellScalar(projected));
-      std::cout << "P3 " << reduced << " ; reduced P3\n";
+      const auto [reduced, transform] = P3_Reduce::ReduceCellWith3480(projected);
+      if (!reduced.IsValid()) {
+         const int i19191 = 19191;
+      }
+      //std::cout << "P3 " << P3(reduced) << " ; reduced P3\n";
+      std::cout << "P " << LRL_Cell_Degrees(reduced) << " ; reduced P3\n";
    }
 
    return 0;
