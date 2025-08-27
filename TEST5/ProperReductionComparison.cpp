@@ -78,7 +78,7 @@ private:
       result.description = testCase.description;
 
       // Test with current 3480 algorithm
-      auto [reduced3480, transform3480] = P3_Reduce::ReduceCellWith3480AndMatrix(result.originalCell);
+      auto [reduced3480, transform3480] = P3_Reduce::ReduceCellWith3480(result.originalCell);
       result.reduced3480 = reduced3480;
       result.transform3480 = transform3480;
 
@@ -196,7 +196,7 @@ public:
          std::cout << "Test " << (i + 1) << ":" << std::endl;
 
          LRL_Cell original(testCases[i].p3);
-         auto [reduced, transform] = P3_Reduce::ReduceCellWith3480AndMatrix(original);
+         auto [reduced, transform] = P3_Reduce::ReduceCellWith3480(original);
 
          P3 beforeStandard(reduced);
          P3 afterStandard = P3_Reduce::StandardPresentation(beforeStandard);

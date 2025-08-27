@@ -200,18 +200,27 @@ namespace TransformationMatrices {
 
    std::vector<Matrix_3x3>& getAllTransformationMatrices(const int maxCoeff = 3);
 
-   static std::vector<Matrix_3x3> generateUnimodularMatrices() {
+   static std::vector<Matrix_3x3> generateUnimodularMatrices(const int range= 1) {
       /*
-      this function generates a subset of the unimodular matrices with determinant +1
-      and elements 0/+1/-1. It is a restricted subset of group GL(n,Z).
+      This function generates a subset of the unimodular matrices with determinant +1
+      and elements in the range [-range, +range]. It is a restricted subset of group GL(3,Z).
+
+      range = 1: elements {-1, 0, 1}
+      range = 2: elements {-2, -1, 0, 1, 2}
+      range = 3: elements {-3, -2, -1, 0, 1, 2, 3}
+      etc.
       */
       std::vector<Matrix_3x3> result;
 
-      // Allowed values: -1, 0, 1
-      static const std::vector<double>values = { -1, 0, 1 };
+      // Build the values vector from -range to +range
+      std::vector<double> values;
+      for (int i = -range; i <= range; i++) {
+         values.push_back(static_cast<double>(i));
+      }
+
       const size_t n = values.size();
 
-      // Generate all possible 3x3 matrices with elements from {-1, 0, 1}
+      // Generate all possible 3x3 matrices with elements from the range
       for (int a00 = 0; a00 < n; a00++) {
          for (int a01 = 0; a01 < n; a01++) {
             for (int a02 = 0; a02 < n; a02++) {
@@ -226,7 +235,6 @@ namespace TransformationMatrices {
                                      values[a10], values[a11], values[a12],
                                      values[a20], values[a21], values[a22]
                                  };
-
                                  if (mat.Det() == 1) {
                                     result.emplace_back(mat);
                                  }
@@ -240,7 +248,11 @@ namespace TransformationMatrices {
          }
       }
 
-      //std::cout << "Generated " << result.size() << " unimodular matrices (should be 3480)" << std::endl;
+      if (range > 1)
+      {
+         std::cout << "Generated " << result.size() << " unimodular matrices with range +/-"
+            << range << " combinations)" << std::endl;
+      }
       return result;
    }
 

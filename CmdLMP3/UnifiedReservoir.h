@@ -22,16 +22,44 @@ public:
       : m_maxReservoirSize(maxSize) {
       m_reservoir.reserve(maxSize);
    }
+   ResultType& operator[] (const size_t n) { return m_reservoir[n]; }
+   ResultType operator[]  (const size_t n) const { return m_reservoir[n]; }
+
+
+   //void add_simple(const ResultType& result) {
+   //   std::cout << "Adding result: " << result.getP3Distance() << std::endl;
+
+   //   // Always add the result
+   //   m_reservoir.push_back(result);
+
+   //   // Sort the entire reservoir
+   //   std::sort(m_reservoir.begin(), m_reservoir.end());
+
+   //   // Keep only top 3
+   //   if (m_reservoir.size() > 3) {
+   //      std::cout << "Removing worst: " << m_reservoir.back().getP3Distance() << std::endl;
+   //      m_reservoir.pop_back();
+   //   }
+
+   //   // Print current state
+   //   std::cout << "Top 3: ";
+   //   for (const auto& r : m_reservoir) {
+   //      std::cout << r.getP3Distance() << " ";
+   //   }
+   //   std::cout << std::endl;
+   //}
 
    // Add a result to the reservoir - ALWAYS accepts, no filtering
    void add(const ResultType& result) {
       // Check for true duplicates (identical matrices only)
-      for (const auto& existing : m_reservoir) {
-         if (result == existing) {
-            return;  // Already have this exact result
-         }
-      }
-
+      //for (const auto& existing : m_reservoir) {
+      //   if (result == existing) {
+      //      return;  // Already have this exact result
+      //   }
+      //}
+      //if (result.getP3Distance() < 50.0) {  // Only log potentially good results
+      //   std::cout << "DEBUG: Adding good result: " << result.getP3Distance() << std::endl;
+      //}
       if (m_reservoir.size() < m_maxReservoirSize) {
          // Reservoir not full - insert in sorted order
          auto insert_pos = std::lower_bound(m_reservoir.begin(), m_reservoir.end(), result);
@@ -40,12 +68,12 @@ public:
       else {
          // Reservoir is full - check if better than worst (last element)
          if (result < m_reservoir.back()) {
-            // Remove worst element
-            m_reservoir.pop_back();
-
             // Insert new result in correct sorted position
             auto insert_pos = std::lower_bound(m_reservoir.begin(), m_reservoir.end(), result);
             m_reservoir.insert(insert_pos, result);
+
+            // Remove worst element
+            m_reservoir.pop_back();
          }
       }
    }

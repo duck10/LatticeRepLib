@@ -41,12 +41,12 @@ public:
 
    // Output operator
    friend std::ostream& operator<<(std::ostream& os, const LatticeMatchResult& result) {
-      os << "; LatticeMatchResult\n";
+      os << "; LatticeMatchResult =====================\n";
       os << "; P3 distance: " << result.m_p3Distance << "\n";
       os << "; NC distance: " << result.m_ncDistance << "\n";
       os << "; Description: " << result.m_description << "\n";
-      os << "; Transformation matrix:\n" << result.m_transformationMatrix;
-      os << "; Transformed mobile: " << LRL_Cell_Degrees(result.m_transformedMobile);
+      os << "; Transformation matrix:\n" << result.m_transformationMatrix << "\n";
+      os << "; Transformed mobile: " << LRL_Cell_Degrees(result.m_transformedMobile) << "\n";
       return os;
    }
 

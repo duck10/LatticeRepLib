@@ -1034,7 +1034,7 @@ void runInputListMode(const std::vector<LatticeCell>& inputList, const MultiTran
          std::vector<MobileComparisonResult> comparisonResults;
 
          if (controls.shouldShowDetails()) {
-            std::cout << "; === PRODUCTION LATTICE MATCHING SYSTEM ===" << std::endl;
+            std::cout << "; === COMPARISON MODE ===" << std::endl;
             std::cout << "; Reference: " << LRL_Cell_Degrees(reference.getCell())
                << " (" << reference.getLatticeType() << ")" << std::endl;
             std::cout << "; Processing " << (inputList.size() - 1) << " mobile lattices in comparison mode" << std::endl;
@@ -1165,6 +1165,78 @@ void verifyMatrixCellConsistency(const std::vector<LatticeMatchResult>& results,
 //   runner.setupStandardTests();
 //   runner.runAllTests(controls);
 //}
+
+
+// Simple test class that mimics your LatticeMatchResult
+class TestResult {
+private:
+   double distance;
+public:
+   TestResult(double d) : distance(d) {}
+
+   double getP3Distance() const { return distance; }
+
+   bool operator<(const TestResult& other) const {
+      return distance < other.distance;
+   }
+
+   bool operator==(const TestResult& other) const {
+      return distance == other.distance;
+   }
+};
+
+// Simplified reservoir class for testing
+class TestReservoir {
+private:
+   std::vector<TestResult> m_reservoir;
+   size_t m_maxReservoirSize;
+
+public:
+   TestReservoir(size_t maxSize) : m_maxReservoirSize(maxSize) {}
+
+   void add(const TestResult& result) {
+      std::cout << "Adding: " << result.getP3Distance() << std::endl;
+
+      if (m_reservoir.size() < m_maxReservoirSize) {
+         // Reservoir not full - insert in sorted order
+         auto insert_pos = std::lower_bound(m_reservoir.begin(), m_reservoir.end(), result);
+         m_reservoir.insert(insert_pos, result);
+         std::cout << "  Inserted (reservoir not full)" << std::endl;
+      } else {
+         // Reservoir is full - check if better than worst
+         std::cout << "  Reservoir full. Worst distance: " << m_reservoir.back().getP3Distance() << std::endl;
+
+         if (result < m_reservoir.back()) {
+            std::cout << "  New result is better, inserting..." << std::endl;
+
+            // Insert new result in correct sorted position
+            auto insert_pos = std::lower_bound(m_reservoir.begin(), m_reservoir.end(), result);
+            m_reservoir.insert(insert_pos, result);
+
+            // Remove worst element
+            m_reservoir.pop_back();
+            std::cout << "  Removed worst element" << std::endl;
+         } else {
+            std::cout << "  New result is worse, rejecting" << std::endl;
+         }
+      }
+
+      // Print current reservoir state
+      std::cout << "  Current reservoir: ";
+      for (const auto& r : m_reservoir) {
+         std::cout << r.getP3Distance() << " ";
+      }
+      std::cout << std::endl << std::endl;
+   }
+
+   void printFinal() {
+      std::cout << "FINAL RESERVOIR:" << std::endl;
+      for (size_t i = 0; i < m_reservoir.size(); ++i) {
+         std::cout << "  [" << i << "]: " << m_reservoir[i].getP3Distance() << std::endl;
+      }
+   }
+};
+
 
 int main() {
 

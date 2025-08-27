@@ -59,15 +59,13 @@ public:
                if (value.empty() || LRL_StringTools::strToupper(value) == "TEST") {
                   // Just "test" with no number - set to 0 (run all tests)
                   setTestNumber(0);
-               }
-               else {
+               } else {
                   // "test" followed by a number - parse and set
                   int testNum = std::stoi(value);
                   if (testNum < 0) {
                      // Negative numbers should show test list
                      setTestNumber(999);
-                  }
-                  else {
+                  } else {
                      setTestNumber(testNum);
                   }
                }
@@ -78,6 +76,27 @@ public:
             }
          });
 
+      InputHandler::registerHandler("MATRIXORDER", 0.43,
+         [this](const BaseControlVariables&, const std::string& value) {
+            try {
+               if (value.empty() || LRL_StringTools::strToupper(value) == "MATRIXORDER") {
+                  // Just "order" with no number - set to 1
+                  setMatrixOrder(1);
+               } else {
+                  // "test" followed by a number - parse and set
+                  int order = std::stoi(value);
+                  if (order < 1 || order > 4) {
+                     setMatrixOrder(1);
+                  } else {
+                     setMatrixOrder(order);
+                  }
+               }
+            }
+            catch (const std::exception& e) {
+               std::cout << "Warning: Invalid matrix order: " << value << ". Using default (1)." << std::endl;
+               setMatrixOrder(1);  // Default to all tests
+            }
+         });
 
       InputHandler::registerHandler("COMPARISONMODE", 0.45,
          [this](const BaseControlVariables&, const std::string& value) {
@@ -105,6 +124,9 @@ public:
    bool shouldOutputCsv() const { return m_csvOutput; }
    void setCsvOutput(bool csv) { m_csvOutput = csv; }
 
+   int getMatrixOrder() const { return m_unimodularOrder; }
+   void setMatrixOrder(const int n) { m_unimodularOrder = n; }
+
 private:
    // NEW CLEAR PARAMETER NAMES
    bool m_showDetails = false;
@@ -114,6 +136,7 @@ private:
    int m_testNumber = -1;
    bool m_comparisonMode = true;
    bool m_csvOutput = false;
+   int m_unimodularOrder = 1;
 
 
    bool m_showProgress = true;

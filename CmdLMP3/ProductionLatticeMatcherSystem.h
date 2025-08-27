@@ -21,7 +21,7 @@ class CoreUnimodularMatcher {
 public:
    explicit CoreUnimodularMatcher(const MultiTransformFinderControls& controls)
       : m_controls(controls)
-      , m_reservoir(3000)
+      , m_reservoir(300)
    {
    }
 
@@ -60,7 +60,7 @@ public:
    explicit NiggliReductionCoordinator(const MultiTransformFinderControls& controls)
       : m_controls(controls)
       , m_matcher(controls)
-      , m_integrationReservoir(500)  // Reduce from 50 to 10 to force better deduplication
+      , m_integrationReservoir(100)  // Reduce from 50 to 10 to force better deduplication
    {
    }
 
@@ -89,13 +89,13 @@ private:
       auto lowerBound = std::lower_bound(results.begin(), results.end(), newResult);
       auto upperBound = std::upper_bound(results.begin(), results.end(), newResult);
 
-      // Check for matrix duplicates within this P3 distance range
-      for (auto it = lowerBound; it != upperBound; ++it) {
-         if (it->getTransformationMatrix() == newResult.getTransformationMatrix()) {
-            // Duplicate matrix found - don't insert
-            return;
-         }
-      }
+      //// Check for matrix duplicates within this P3 distance range
+      //for (auto it = lowerBound; it != upperBound; ++it) {
+      //   if (it->getTransformationMatrix() == newResult.getTransformationMatrix()) {
+      //      // Duplicate matrix found - don't insert
+      //      return;
+      //   }
+      //}
 
       // No duplicate found - insert at the correct sorted position
       results.insert(lowerBound, newResult);
@@ -183,7 +183,8 @@ CoreUnimodularMatcher::findBestMatches(const LRL_Cell& reference,
       std::cout << "DEBUG: Difference: " << (G6(reference) - G6(mobile)) << std::endl;
    }
 
-   static const std::vector<Matrix_3x3> matrices = TransformationMatrices::generateUnimodularMatrices();
+   const int unimodularOrder = m_controls.getMatrixOrder();
+   static const std::vector<Matrix_3x3> matrices = TransformationMatrices::generateUnimodularMatrices(unimodularOrder);
 
    if (m_controls.shouldShowDetails()) {
       std::cout << "; Layer 4 - Testing " << matrices.size()
@@ -201,6 +202,9 @@ CoreUnimodularMatcher::findBestMatches(const LRL_Cell& reference,
       LatticeMatchResult result(matrix, p3Distance, 19191.,
          transformedMobile, description);
       m_reservoir.add(result);
+      //if (matrix == Matrix_3x3(-1, 0, 0, 0, 0, -1, 0, -1, 0)) {
+      //   std::cout << "Testing known good matrix, calculated distance: " << p3Distance << std::endl;
+      //}
    }
 
    std::vector<LatticeMatchResult> results = m_reservoir.getAllResults();
@@ -212,6 +216,9 @@ CoreUnimodularMatcher::findBestMatches(const LRL_Cell& reference,
          std::cout << "; Layer 4 - Best P3 distance: " << results[0].getP3Distance() << std::endl;
       }
    }
+   //for (size_t i = 0; i < std::min(m_reservoir.size(), size_t(20)); ++i) {
+   //   std::cout << m_reservoir[i] << std::endl;
+   //}
 
    return results;
 }
@@ -281,6 +288,37 @@ NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobi
    if (m_controls.shouldShowDetails()) {
       std::cout << "; Layer 3 - Step 1: Started with " << provisionalResults.size()
          << " Case A results" << std::endl;
+   }
+
+   for (const auto& result : resultsB) {
+      Matrix_3x3 finalMatrix = applyStoredReductionMatrices(result.getTransformationMatrix());
+      provisionalResults.emplace_back(finalMatrix, result.getP3Distance(), 19191.,
+         result.getTransformedMobile(), "Case B: " + result.getDescription());
+   }
+
+   if (m_controls.shouldShowDetails()) {
+      std::cout << "; Layer 3 - Step 2: Started with " << provisionalResults.size()
+         << " Case A,B results" << std::endl;
+   }
+   for (const auto& result : resultsC) {
+      Matrix_3x3 finalMatrix = applyStoredReductionMatrices(result.getTransformationMatrix());
+      provisionalResults.emplace_back(finalMatrix, result.getP3Distance(), 19191.,
+         result.getTransformedMobile(), "Case C: " + result.getDescription());
+   }
+
+   if (m_controls.shouldShowDetails()) {
+      std::cout << "; Layer 3 - Step 3: Started with " << provisionalResults.size()
+         << " Case A,B,C results" << std::endl;
+   }
+   for (const auto& result : resultsD) {
+      Matrix_3x3 finalMatrix = applyStoredReductionMatrices(result.getTransformationMatrix());
+      provisionalResults.emplace_back(finalMatrix, result.getP3Distance(), 19191.,
+         result.getTransformedMobile(), "Case D: " + result.getDescription());
+   }
+
+   if (m_controls.shouldShowDetails()) {
+      std::cout << "; Layer 3 - Step 4: Started with " << provisionalResults.size()
+         << " Case A,B,C,D results" << std::endl;
    }
 
    LatticeMatchResult correctedResult;
