@@ -105,11 +105,12 @@ void HandleOneInputCell(const LatticeCell& inputlattice, const CmdPerturbControl
    const std::string lattice = inputlattice.getLatticeType();
    const std::string strcel = inputlattice.GetInput();
 
-   if (LRL_StringTools::strToupper(strcel) == "RANDOM") {
+   const std::string inputText = LRL_StringTools::strToupper(strcel);
+   if (LRL_StringTools::strToupper(strcel).find("RANDOM") != std::string::npos) {
       std::cout << "\n;" << strcel << "    original input cell" << std::endl;
    }
    else {
-      std::cout << "\n" << strcel << ";    original input cell" << std::endl;
+      std::cout << "\n" << strcel << " ;    original input cell" << std::endl;
    }
 
    const size_t pos = strcel.find("IT#");

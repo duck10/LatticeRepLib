@@ -458,9 +458,9 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
 
       // ADD S6 ANGLE CALCULATION HERE
       const S6 referenceS6(reference.getCell());
-      const S6 transformedS6(result.getTransformedMobile());
+      const S6 transformedS6(result.getTransformedMobile()); 
       double s6Angle = TransformerUtilities::angleS6(referenceS6, transformedS6);
-      std::cout << "S6 Angle: " << std::fixed << std::setprecision(2) << s6Angle << "°" << std::endl;
+      std::cout << "S6 Angle: " << std::fixed << std::setprecision(2) << s6Angle << "degrees" << std::endl;
 
       // Display transformation matrix (keep your existing format)
       std::cout << "Transformation Matrix:" << std::endl;
