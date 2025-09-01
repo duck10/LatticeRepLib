@@ -240,7 +240,7 @@ namespace TransformationMatrices {
          }
       }
 
-      //std::cout << "Generated " << result.size() << " unimodular matrices (should be 3480)" << std::endl;
+      //std::cout << ";Generated " << result.size() << " unimodular matrices (should be 3480)" << std::endl;
       return result;
    }
 

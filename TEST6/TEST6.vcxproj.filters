@@ -14,8 +14,10 @@
     <ClCompile Include="TEST6.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="earlierTestCode.cpp">
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Test6Controls.h">
       <Filter>Source Files</Filter>
-    </ClCompile>
+    </ClInclude>
   </ItemGroup>
 </Project>

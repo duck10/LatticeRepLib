@@ -147,55 +147,55 @@ double maxCoef(const Matrix_3x3& m) {
 // DEBUG: Add this to buildAllTransformationMatrices to see what's happening
 
 std::vector<Matrix_3x3> TransformationMatrices::buildAllTransformationMatrices(bool includeInverses, int maxCoeff) {
-   std::cout << "=== DEBUG: buildAllTransformationMatrices called ===" << std::endl;
-   std::cout << "  includeInverses: " << (includeInverses ? "true" : "false") << std::endl;
-   std::cout << "  maxCoeff: " << maxCoeff << std::endl;
+   std::cout << ";=== DEBUG: buildAllTransformationMatrices called ===" << std::endl;
+   std::cout << ";  includeInverses: " << (includeInverses ? "true" : "false") << std::endl;
+   std::cout << ";  maxCoeff: " << maxCoeff << std::endl;
 
-   std::cout << "Building comprehensive transformation matrix set..." << std::endl;
+   std::cout << ";Building comprehensive transformation matrix set..." << std::endl;
 
    std::set<Matrix_3x3> uniqueMatrices;
 
    // Add base specialized matrices
    auto niggliMatrices = getAllNiggliMatrices();
-   std::cout << "  Niggli: " << niggliMatrices.size() << std::endl;
+   std::cout << ";  Niggli: " << niggliMatrices.size() << std::endl;
    uniqueMatrices.insert(niggliMatrices.begin(), niggliMatrices.end());
 
    auto permMatrices = getAllPermutationMatrices();
-   std::cout << "  Crystallographic: " << permMatrices.size() << " (should be 24)" << std::endl;
+   std::cout << ";  Crystallographic: " << permMatrices.size() << " (should be 24)" << std::endl;
    uniqueMatrices.insert(permMatrices.begin(), permMatrices.end());
 
    auto shearMatrices = getAllShearMatrices();
-   std::cout << "  Shear: " << shearMatrices.size() << " (should be 12) - RESTORED" << std::endl;
+   std::cout << ";  Shear: " << shearMatrices.size() << " (should be 12) - RESTORED" << std::endl;
    uniqueMatrices.insert(shearMatrices.begin(), shearMatrices.end());
 
    auto complexMatrices = getAllComplexMatrices();
-   std::cout << "  Complex: " << complexMatrices.size() << " (should be 2) - RESTORED" << std::endl;
+   std::cout << ";  Complex: " << complexMatrices.size() << " (should be 2) - RESTORED" << std::endl;
    uniqueMatrices.insert(complexMatrices.begin(), complexMatrices.end());
 
    // FIX: Generate systematic matrices for maxCoeff >= 1
    if (maxCoeff >= 1) {
-      std::cout << "  Generating SYSTEMATIC matrices for maxCoeff=" << maxCoeff << "..." << std::endl;
+      std::cout << ";  Generating SYSTEMATIC matrices for maxCoeff=" << maxCoeff << "..." << std::endl;
 
       auto systematicMatrices = generateUnimodularMatrices();
-      std::cout << "  Generated " << systematicMatrices.size() << " systematic matrices" << std::endl;
+      std::cout << ";  Generated " << systematicMatrices.size() << " systematic matrices" << std::endl;
       uniqueMatrices.insert(systematicMatrices.begin(), systematicMatrices.end());
 
       // Verification of expected counts
       if (maxCoeff == 1 && systematicMatrices.size() < 30) {
-         std::cout << "  ❌ WARNING: Expected 40+ matrices for maxCoeff=1, got " << systematicMatrices.size() << std::endl;
+         std::cout << ";  ❌ WARNING: Expected 40+ matrices for maxCoeff=1, got " << systematicMatrices.size() << std::endl;
       }
       else if (maxCoeff == 2 && systematicMatrices.size() < 200) {
-         std::cout << "  ❌ WARNING: Expected 300+ matrices for maxCoeff=2, got " << systematicMatrices.size() << std::endl;
+         std::cout << ";  ❌ WARNING: Expected 300+ matrices for maxCoeff=2, got " << systematicMatrices.size() << std::endl;
       }
       else {
-         std::cout << "  ✅ Good systematic generation: " << systematicMatrices.size() << " matrices" << std::endl;
+         std::cout << ";  ✅ Good systematic generation: " << systematicMatrices.size() << " matrices" << std::endl;
       }
    }
    else {
-      std::cout << "  Skipping systematic generation (maxCoeff=" << maxCoeff << " < 1)" << std::endl;
+      std::cout << ";  Skipping systematic generation (maxCoeff=" << maxCoeff << " < 1)" << std::endl;
    }
 
-   std::cout << "  Total before inverses: " << uniqueMatrices.size() << std::endl;
+   std::cout << ";  Total before inverses: " << uniqueMatrices.size() << std::endl;
 
    // Add inverses
    if (includeInverses) {
@@ -217,15 +217,15 @@ std::vector<Matrix_3x3> TransformationMatrices::buildAllTransformationMatrices(b
 
    // Final verification
    if (maxCoeff == 1 && uniqueMatrices.size() < 80) {
-      std::cout << "❌ CRITICAL: Only " << uniqueMatrices.size() << " matrices for maxCoeff=1" << std::endl;
-      std::cout << "   Expected 80-120 for complete ±1 coverage" << std::endl;
+      std::cout << ";❌ CRITICAL: Only " << uniqueMatrices.size() << " matrices for maxCoeff=1" << std::endl;
+      std::cout << ";   Expected 80-120 for complete ±1 coverage" << std::endl;
    }
    else if (maxCoeff == 2 && uniqueMatrices.size() < 300) {
-      std::cout << "❌ CRITICAL: Only " << uniqueMatrices.size() << " matrices for maxCoeff=2" << std::endl;
-      std::cout << "   Expected 400-800 for complete ±2 coverage" << std::endl;
+      std::cout << ";❌ CRITICAL: Only " << uniqueMatrices.size() << " matrices for maxCoeff=2" << std::endl;
+      std::cout << ";   Expected 400-800 for complete ±2 coverage" << std::endl;
    }
    else {
-      std::cout << "✅ Good matrix coverage: " << uniqueMatrices.size() << " matrices" << std::endl;
+      std::cout << ";✅ Good matrix coverage: " << uniqueMatrices.size() << " matrices" << std::endl;
    }
 
    return { uniqueMatrices.begin(), uniqueMatrices.end() };
@@ -236,19 +236,19 @@ std::vector<Matrix_3x3> TransformationMatrices::generateComprehensiveIntegerMatr
    std::vector<Matrix_3x3> matrices;
    std::set<std::vector<int>> uniqueSignatures;
 
-   std::cout << "    SYSTEMATIC enumeration for maxCoeff=" << maxCoeff << std::endl;
+   std::cout << ";    SYSTEMATIC enumeration for maxCoeff=" << maxCoeff << std::endl;
 
    int totalCombinations;
    if (maxCoeff == 1) {
       totalCombinations = 3 * 3 * 3 * 3 * 3 * 3 * 3 * 3 * 3; // 3^9 = 19,683
-      std::cout << "    Complete enumeration: " << totalCombinations << " combinations" << std::endl;
+      std::cout << ";    Complete enumeration: " << totalCombinations << " combinations" << std::endl;
    }
    else if (maxCoeff == 2) {
       totalCombinations = 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5; // 5^9 = 1,953,125
-      std::cout << "    Complete enumeration: " << totalCombinations << " combinations (may take 30+ seconds)" << std::endl;
+      std::cout << ";    Complete enumeration: " << totalCombinations << " combinations (may take 30+ seconds)" << std::endl;
    }
    else {
-      std::cout << "    WARNING: maxCoeff=" << maxCoeff << " is computationally expensive!" << std::endl;
+      std::cout << ";    WARNING: maxCoeff=" << maxCoeff << " is computationally expensive!" << std::endl;
       totalCombinations = int(std::pow(2 * maxCoeff + 1, 9));
    }
 
@@ -298,7 +298,7 @@ std::vector<Matrix_3x3> TransformationMatrices::generateComprehensiveIntegerMatr
       }
    }
 
-   std::cout << "    Systematic enumeration complete: " << validFound << " valid matrices found" << std::endl;
+   std::cout << ";    Systematic enumeration complete: " << validFound << " valid matrices found" << std::endl;
 
    return matrices;
 }

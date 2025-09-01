@@ -1,35 +1,58 @@
 
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
+#include "B4.h"
 #include "G6.h"
 #include "LRL_Cell_Degrees.h"
+#include "TransformationMatrices.h"
+#include "InputHandler.h"
+#include "ProgramSetup.h"
+#include "Test6Controls.h"
 
-#include <sstream>
-
-std::string  doGruber() {
-   std::ostringstream o;
-   for (size_t i = 0; i < 10; ++i)
-   {
-      ++i;
-      std::cout << i << std::endl;
-   }
-      o << "G6 " << LRL_Cell_Degrees{G6(std::vector<double>{ 4., 16., 16., 16., 3., 4.   })} << std::endl;// Niggli reduced
-      o << "G6 " << LRL_Cell_Degrees{G6(std::vector<double>{ 4., 16., 16., 16., 1., 4.   })} << std::endl;
-      o << "G6 " << LRL_Cell_Degrees{G6(std::vector<double>{ 4., 16., 16., -16., -1., -3.})} << std::endl;
-      o << "G6 " << LRL_Cell_Degrees{G6(std::vector<double>{ 4., 16., 16., -15., -1., -4.})} << std::endl;
-      o << "G6 " << LRL_Cell_Degrees{G6(std::vector<double>{ 4., 16., 16., -13., -3., -4.})} << std::endl;
-   return o.str();
+// Simple matrix application helper
+inline LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
+   const B4 b4Cell(cell);
+   const B4 transformedB4 = matrix * b4Cell;
+   return LRL_Cell(transformedB4);
 }
 
 int main() {
 
-   std::string line1("Hello World");
-   std::string line2("This is the end!");
+   try {
+      // Setup input handling using your actual system
+         // Setup controls and input handling
+      MultiTransformFinderControls controls;
+      const BasicProgramInput<MultiTransformFinderControls> program_setup("ProductionLatticeMatcher", controls);
 
-   std::cout << line1 << std::endl;
+      if (program_setup.getInputList().empty()) {
+         throw std::runtime_error("; No input vectors provided");
+      }
+      if (controls.shouldShowControls()) {
+         std::cout << controls << std::endl;
+      }
 
-   std::cout << line2 << std::endl;
+      const std::vector<Matrix_3x3> matrices = TransformationMatrices::generateComprehensiveIntegerMatrices(1);
 
-   std::cout << doGruber() << std::endl;
+      // Process the input list using configured controls (from input handling)
+      for (const auto& input : program_setup.getInputList()) {
+         const std::string lattice = input.getLatticeType();
+         const LRL_Cell cell = input.getCell();
+         for (const auto& m : matrices) {
+            std::cout << "P " << LRL_Cell_Degrees(applyMatrixToCell(input.getCell(), m)) << std::endl;
+         }
+      }
+
+
+      return 0;
+   }
+   catch (const std::exception& e) {
+      std::cerr << ";Error: " << e.what() << std::endl;
+      return -1;
+   }
 }

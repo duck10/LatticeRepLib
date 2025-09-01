@@ -246,20 +246,20 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
          matrixGroups[key.str()].push_back(result);
       }
 
-      // Display matrix groups (limit to 10 cells per group)
-      std::cout << "Matrix Groups: " << matrixGroups.size() << " unique transformations" << std::endl;
-      for (const auto& [matrixKey, results] : matrixGroups) {
+      //// Display matrix groups (limit to 10 cells per group)
+      //std::cout << "Matrix Groups: " << matrixGroups.size() << " unique transformations" << std::endl;
+      //for (const auto& [matrixKey, results] : matrixGroups) {
 
-         // Show up to 10 transformed cells from this group
-         int cellsToShow = std::min(10, (int)results.size());
-         for (int i = 0; i < cellsToShow; ++i) {
-            std::cout << "    " << LRL_Cell_Degrees(results[i].getTransformedMobile()) << std::endl;
-         }
-         if (results.size() > 10) {
-            std::cout << "    ... (" << (results.size() - 10) << " more)" << std::endl;
-         }
-      }
-      std::cout << std::endl;
+      //   // Show up to 10 transformed cells from this group
+      //   int cellsToShow = std::max(10, (int)results.size());
+      //   for (int i = 0; i < cellsToShow; ++i) {
+      //      std::cout << "    " << LRL_Cell_Degrees(results[i].getTransformedMobile()) << std::endl;
+      //   }
+      //   if (results.size() > 10) {
+      //      std::cout << "    ... (" << (results.size() - 10) << " more)" << std::endl;
+      //   }
+      //}
+      //std::cout << std::endl;
    }
 
    // Determine what constitutes a "good" match using adaptive P3-relative thresholds
@@ -445,8 +445,8 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
          qualityString = "TERRIBLE";
       }
 
-      std::cout << "Quality: " << qualityString << " ("
-         << std::fixed << std::setprecision(3) << distance << " Å)" << std::endl;
+      std::cout << "Quality: " << qualityString << " (P3 distance: "
+         << std::fixed << std::setprecision(3) << distance << std::endl;
 
 
 
@@ -460,7 +460,7 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
       const S6 referenceS6(reference.getCell());
       const S6 transformedS6(result.getTransformedMobile()); 
       double s6Angle = TransformerUtilities::angleS6(referenceS6, transformedS6);
-      std::cout << "S6 Angle: " << std::fixed << std::setprecision(2) << s6Angle << "degrees" << std::endl;
+      std::cout << "S6 Angle: " << std::fixed << std::setprecision(2) << s6Angle << " degrees" << std::endl;
 
       // Display transformation matrix (keep your existing format)
       std::cout << "Transformation Matrix:" << std::endl;
@@ -1018,7 +1018,8 @@ void runInputListMode(const std::vector<LatticeCell>& inputList, const MultiTran
    ProductionLatticeMatcherSystem matcher(controls);
 
    if (inputList.size() == 2) {
-      // Single mobile - use existing detailed output
+      // Single mobile - use detailed output
+      std::cout << inputList[0].GetInputLine() << " REFERENCE " << std::endl;
       std::vector<LatticeMatchResult> results = matcher.processInputList(inputList);
       if (controls.shouldShowDetails()) {
          std::cout << "DEBUG: Total results returned from matcher: " << results.size() << std::endl;
