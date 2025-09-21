@@ -94,10 +94,6 @@ public:
 
    static int FindLoneS6Zero(const size_t n1, const size_t n2, const S6& s6, const double upper);
 
-   static void PrintWork(const std::vector<MatS6>& vm, const S6& s6);
-
-   static void PrintWork(const MatS6& vm, const S6& s6);
-
    std::vector< BravaisChainFail> getFailList() const;
 
    size_t size() const { return m_failList.size(); }

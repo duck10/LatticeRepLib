@@ -132,6 +132,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DistanceFactory.cpp" />
+    <ClCompile Include="DistanceTypes.cpp" />
+    <ClCompile Include="DistanceTypesUtils.cpp" />
     <ClCompile Include="Follow.cpp" />
     <ClCompile Include="FollowControls.cpp" />
     <ClCompile Include="FollowerMode.cpp" />
@@ -155,6 +157,8 @@
   <ItemGroup>
     <ClInclude Include="Distance.h" />
     <ClInclude Include="DistanceFactory.h" />
+    <ClInclude Include="DistanceTypes.h" />
+    <ClInclude Include="DistanceTypesUtils.h" />
     <ClInclude Include="Follow.h" />
     <ClInclude Include="FollowControls.h" />
     <ClInclude Include="FollowerMode.h" />

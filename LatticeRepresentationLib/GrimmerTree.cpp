@@ -523,22 +523,28 @@ std::string createReferenceLines(double s6Norm,
    double relativeY_1pct = CompressYAxisValue(onePctValue, 0.0, maxFit);
    int yPos_1pct = plotHeight - relativeY_1pct * plotHeight;
 
-   ss << SVGUtil::createLine(0, yPos_1pct, plotWidth, yPos_1pct,
-      "#FF6600", 1, "5,3");
-   ss << SVGUtil::createText("1% (" + std::to_string(onePctValue) + ")",
-      plotWidth - 5, yPos_1pct - 5, "end", "Arial", 12,
-      "normal", "#FF6600");
+   if (yPos_1pct > 0.0)
+   {
+      ss << SVGUtil::createLine(0, yPos_1pct, plotWidth, yPos_1pct,
+         "#FF6600", 1, "5,3");
+      ss << SVGUtil::createText("1% (" + std::to_string(onePctValue) + ")",
+         plotWidth - 5, yPos_1pct - 5, "end", "Arial", 12,
+         "normal", "#FF6600");
+   }
 
    // 5% reference line
    const double fivePctValue = 0.05 * s6Norm;
    double relativeY_5pct = CompressYAxisValue(fivePctValue, 0.0, maxFit);
    int yPos_5pct = plotHeight - relativeY_5pct * plotHeight;
 
-   ss << SVGUtil::createLine(0, yPos_5pct, plotWidth, yPos_5pct,
-      "#CC0000", 1, "5,3");
-   ss << SVGUtil::createText("5% (" + std::to_string(fivePctValue) + ")",
-      plotWidth - 5, yPos_5pct - 5, "end", "Arial", 12,
-      "normal", "#CC0000");
+   if (yPos_5pct > 0.0)
+   {
+      ss << SVGUtil::createLine(0, yPos_5pct, plotWidth, yPos_5pct,
+         "#CC0000", 1, "5,3");
+      ss << SVGUtil::createText("5% (" + std::to_string(fivePctValue) + ")",
+         plotWidth - 5, yPos_5pct - 5, "end", "Arial", 12,
+         "normal", "#CC0000");
+   }
 
    return ss.str();
 }

@@ -5,7 +5,6 @@
 #include "BlockUtils.h"
 #include "InputHandler.h"
 #include "LRL_StringTools.h"
-#include "DistanceTypes.h"
 #include "StringMatcher.h"
 
 #include <atomic>

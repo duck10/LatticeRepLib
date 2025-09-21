@@ -3,6 +3,9 @@
 #include "BravaisHeirarchy.h"
 #include "DeloneFitResults.h"
 //#include "GenerateLatticeTypeExamples.h"
+#pragma warning (disable: 4996) // Visual Studio -- localtime may not be safe
+
+
 #include "GrimmerTree.h"
 #include "LRL_ToString.h"
 #include "S6.h"
@@ -13,8 +16,28 @@
 #include <map>
 #include <sstream>
 
+std::string GetCurrentDate() {
+   std::time_t t = std::time(nullptr);
+   std::tm* now = std::localtime(&t);
+   char buffer[128];
+   std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", now);
+   return std::string(buffer);
+}
+
+
+std::string createBHFooter(int width) {
+   std::stringstream ss;
+   ss << "  <text x=\"" << width / 3 << "\" y=\"980\" text-anchor=\"middle\" "
+      << "font-family=\"Arial\" font-size=\"12\" fill=\"#666666\">"
+      << "Created by SELLA - " <<GetCurrentDate() << "</text>\n";
+   return ss.str();
+}
+
+
 std::string BravaisHeirarchy::BoilerPlate_2() {
+
    return
+      createBHFooter(980)+
       "\n"
       "   </g>\n"
       "\n"
@@ -33,115 +56,70 @@ std::string SetWP(const double d) {
 
 std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::string, double> >& scores)
 {
+   // Structure to hold SVG positioning and transformation data
+   struct SVGElement {
+      std::string id;
+      int x, y, width, height;
+      std::string transform;
+      int text_x, text_y;
+
+      SVGElement(const std::string& _id, int _x, int _y, int _w, int _h,
+         const std::string& _transform, int _tx, int _ty)
+         : id(_id), x(_x), y(_y), width(_w), height(_h),
+         transform(_transform), text_x(_tx), text_y(_ty) {
+      }
+   };
+
+   // Map Bravais lattice types to their SVG element properties
+   static const std::map<std::string, SVGElement> elementMap = {
+       {"cP", SVGElement("cP", 215, 230, 80, 30, "", 220, 250)},
+       {"cF", SVGElement("cF", 365, 230, 80, 30, "", 370, 250)},
+       {"cI", SVGElement("cI", 515, 230, 80, 30, "", 520, 250)},
+       {"tP", SVGElement("tP", 125, 380, 80, 30, " translate(20 30)  ", 135, 400)},
+       {"hP", SVGElement("hP", 285, 380, 80, 30, " translate(-10 10)  ", 300, 400)},
+       {"hR", SVGElement("hR", 385, 380, 80, 30, " translate(10 10)  ", 400, 400)},
+       {"tI", SVGElement("tI", 535, 380, 80, 30, " translate(20 10)  ", 550, 400)},
+       {"oP", SVGElement("oP", 125, 530, 80, 30, " translate(20 30)  ", 135, 550)},
+       {"oC", SVGElement("oS", 285, 530, 80, 30, "", 300, 550)},  // Note: uses "oS" as id
+       {"os", SVGElement("oS", 285, 530, 80, 30, "", 300, 550)},  // Alternative key for oC
+       {"oF", SVGElement("oF", 460, 530, 80, 30, "", 470, 550)},
+       {"oI", SVGElement("oI", 535, 530, 80, 30, " translate(40 30)  ", 550, 550)},
+       {"mP", SVGElement("mP", 285, 650, 80, 30, " translate(-70 30)  ", 300, 670)},
+       {"mC", SVGElement("mS", 435, 650, 80, 30, " translate(90 20)  ", 450, 670)},  // Note: uses "mS" as id
+       {"mS", SVGElement("mS", 435, 650, 80, 30, " translate(90 20)  ", 450, 670)}   // Alternative key for mC
+   };
+
    std::string out;
 
    for (size_t i = 0; i < scores.size(); ++i) {
       const std::pair<std::string, double>& scr = scores[i];
       const std::string strAngstroms = SetWP(sqrt(scr.second));
-      if (scr.first == "cP")
-         out +=
-         "   <rect id=\"cP\" x=\"215\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"cP\" x=\"220\" y=\"250\" font-size=\"18\">" +
-         strAngstroms +
-         "</text>\n"
-         "\n";
 
+      auto it = elementMap.find(scr.first);
+      if (it != elementMap.end()) {
+         const SVGElement& elem = it->second;
 
-      if (scores[i].first == "cF") out +=
-         "   <rect id=\"cF\" x=\"365\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"cF\" x=\"370\" y=\"250\" font-size=\"18\">" +
-         strAngstroms +
-         "</text>\n"
-         "\n";
+         if (!elem.transform.empty()) {
+            out += "   <g transform=\"" + elem.transform + "\"> ";
+         }
 
-      if (scores[i].first == "cI") out +=
-         "   <rect id=\"cI\" x=\"515\" y=\"230\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"cI\" x=\"520\" y=\"250\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "\n";
+         out += "   <rect id=\"" + elem.id + "\" x=\"" + std::to_string(elem.x) +
+            "\" y=\"" + std::to_string(elem.y) + "\" width=\"" + std::to_string(elem.width) +
+            "\" height=\"" + std::to_string(elem.height) +
+            "\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n";
 
-      if (scores[i].first == "tP") out +=
-         "   <g transform=\" translate(20 30)  \"> "
-         "   <rect id=\"tP\" x=\"125\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"tP\" x=\"135\" y=\"400\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "</g>\n";
+         out += "   <text id=\"" + elem.id + "\" x=\"" + std::to_string(elem.text_x) +
+            "\" y=\"" + std::to_string(elem.text_y) + "\" font-size=\"18\">" +
+            strAngstroms + " </text>\n";
 
-      if (scores[i].first == "hP") out +=
-         "   <g transform=\" translate(-10 10)  \"> "
-         "   <rect id=\"hP\" x=\"285\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"hP\" x=\"300\" y=\"400\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "</g>\n";
+         if (!elem.transform.empty()) {
+            out += "</g>\n";
+         }
 
-      if (scores[i].first == "hR") out +=
-         "   <g transform=\" translate(10 10)  \"> "
-         "   <rect id=\"hR\" x=\"385\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"hR\" x=\"400\" y=\"400\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "</g>\n";
-
-      if (scores[i].first == "tI") out +=
-         "   <g transform=\" translate(20 10)  \"> "
-         "   <rect id=\"tI\" x=\"535\" y=\"380\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"tI\" x=\"550\" y=\"400\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "</g>\n";
-
-      if (scores[i].first == "oP") out +=
-         "   <g transform=\" translate(20 30)  \"> "
-         "   <rect id=\"oP\" x=\"125\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"oP\" x=\"135\" y=\"550\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "</g>\n";
-
-      if (scores[i].first == "oC" || scores[i].first == "os") out +=
-         "   <rect id=\"oS\" x=\"285\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"oS\" x=\"300\" y=\"550\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "\n";
-
-      if (scores[i].first == "oF") out +=
-         "   <rect id=\"oF\" x=\"460\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"oF\" x=\"470\" y=\"550\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "\n";
-
-      if (scores[i].first == "oI") out +=
-         "   <g transform=\" translate(40 30)  \"> "
-         "   <rect id=\"oI\" x=\"535\" y=\"530\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"oI\" x=\"550\" y=\"550\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "</g>\n"
-         "\n"
-         "\n";
-
-      if (scores[i].first == "mP") out +=
-         "   <g transform=\" translate(-70 30)  \"> "
-         "   <rect id=\"mP\" x=\"285\" y=\"650\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"mP\" x=\"300\" y=\"670\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "</g>\n";
-
-      if (scores[i].first == "mC" || scores[i].first == "mS") out +=
-         "   <g transform=\" translate(90 20)  \"> "
-         "   <rect id=\"mS\" x=\"435\" y=\"650\" width=\"80\" height=\"30\" stroke-width=\"2\" stroke=\"orange\" fill=\"white\" />\n"
-         "   <text id=\"mS\" x=\"450\" y=\"670\" font-size=\"18\">" +
-         strAngstroms +
-         " </text>\n"
-         "</g>\n";
-
+         out += "\n";
+      }
    }
+
    return out;
 }
 
@@ -150,10 +128,10 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
       "<?xml version=\"1.0\" standalone=\"no\" ?>\n"
       "<!--the width and height set the total pixel output of the image in the browser-->\n"
       "<!--whatever is within the viewbox will be remapped to show in this size-->\n"
-      "<svg width=\"1000\" height=\"800\" viewBox=\"1 1000 800\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
+      "<svg width=\"1000\" height=\"800\" viewBox=\"0,0, 1000 800\"  version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
       "\n"
       "<g\n"
-      "   transform=\" translate(-50 -100)   scale( .8 .8)\">\n"
+      "   transform=\" translate(-50, -100)   scale( .8 )\">\n"
       "\n"
       "   <line id=\"cP-tP line\" x1=\"250\" y1=\"300\" x2=\"250\" y2=\"450\" stroke-dasharray=\"10, 9\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
       "   <line id=\"tP-oP line\" x1=\"250\" y1=\"450\" x2=\"250\" y2=\"600\" style=\"stroke:rgb(0,0,0);stroke-width:3\" />\n"
@@ -250,29 +228,29 @@ std::string BravaisHeirarchy::BoilerPlate_1() {
       ;
 }
 
-std::string FormatCellData(
-   const LRL_ReadLatticeData& input,
-   const S6& reducedCell)
-{
-   std::string inputText;
-   inputText +=
-      "\n;INPUT:\n" +
-      input.GetStrCell() + "\n" +
-      LRL_ToString(";Cell ", LRL_Cell_Degrees(input.GetCell())) + "\n" +
-      LRL_ToString("G6 ", G6((input.GetCell())), "\n") +
-      LRL_ToString("S6 ", S6((input.GetCell())), "\n") +
-      LRL_ToString("C3 ", C3((input.GetCell())), "\n");
-
-   inputText +=
-      "\n;SELLING REDUCED:\n" +
-      LRL_ToString(";Cell ", LRL_Cell_Degrees(reducedCell)) + "\n" +
-      LRL_ToString("G6 ", G6(reducedCell), "\n") +
-      LRL_ToString("S6 ", S6(reducedCell), "\n") +
-      LRL_ToString("C3 ", C3(reducedCell), "\n");
-
-   std::cout << inputText << std::endl;
-   return std::string();
-}
+//std::string FormatCellData(
+//   const LRL_ReadLatticeData& input,
+//   const S6& reducedCell)
+//{
+//   std::string inputText;
+//   inputText +=
+//      "\n;INPUT:\n" +
+//      input.GetStrCell() + "\n" +
+//      LRL_ToString(";Cell ", LRL_Cell_Degrees(input.GetCell())) + "\n" +
+//      LRL_ToString("G6 ", G6((input.GetCell())), "\n") +
+//      LRL_ToString("S6 ", S6((input.GetCell())), "\n") +
+//      LRL_ToString("C3 ", C3((input.GetCell())), "\n");
+//
+//   inputText +=
+//      "\n;SELLING REDUCED:\n" +
+//      LRL_ToString(";Cell ", LRL_Cell_Degrees(reducedCell)) + "\n" +
+//      LRL_ToString("G6 ", G6(reducedCell), "\n") +
+//      LRL_ToString("S6 ", S6(reducedCell), "\n") +
+//      LRL_ToString("C3 ", C3(reducedCell), "\n");
+//
+//   std::cout << inputText << std::endl;
+//   return std::string();
+//}
 
 BravaisChainFailures BravaisHeirarchy::CheckOneBravaisChain(
    const std::vector<std::string>& bravaisChain,
@@ -441,26 +419,11 @@ std::map<std::string, DeloneFitResults>  BravaisHeirarchy::CreateMapForBestExamp
    return bravaisMap;
 }
 
-inline int BravaisChainFailures::countC3Zeros(const C3& c) {
+inline int BravaisChainFailures::countC3Zeros(const C3& c, const double upperLimit=1.0E-3) {
    int count = 0;
-   const double c3norm = c.norm();
-   const double c1 = abs(c[0]);
-   const double c2 = abs(c[1]);
-   const double c3 = abs(c[2]);
-   if (c1 / c3norm < 1.0e-3) ++count;
-   if (c2 / c3norm < 1.0e-3) ++count;
-   if (c3 / c3norm < 1.0e-3) ++count;
-   return count;
-}
-
-inline int BravaisChainFailures::countC3Zeros(const C3& c, const double upperLimit) {
-   int count = 0;
-   const double c1 = abs(c[0]);
-   const double c2 = abs(c[1]);
-   const double c3 = abs(c[2]);
-   if (c1 < 1.01 * upperLimit) ++count;
-   if (c2 < 1.01 * upperLimit) ++count;
-   if (c3 < 1.01 * upperLimit) ++count;
+   if (abs(c[0]) < 1.01 * upperLimit) ++count;
+   if (abs(c[1]) < 1.01 * upperLimit) ++count;
+   if (abs(c[2]) < 1.01 * upperLimit) ++count;
    return count;
 }
 
@@ -486,25 +449,6 @@ inline int BravaisChainFailures::FindLoneS6Zero(const size_t n1, const size_t n2
       if (abs(s6[i]) < upper)  return int(i);
    }
    return 19191;
-}
-
-inline void BravaisChainFailures::PrintWork(const std::vector<MatS6>& vm, const S6& s6) {
-   for (const auto& m : vm) {
-      std::cout << m << std::endl << std::endl;
-   }
-   for (const auto& m : vm) {
-      std::cout << m * s6 << std::endl;
-   }
-   for (const auto& m : vm) {
-      std::cout << C3(m * s6) << std::endl;
-   }
-   std::cout << std::endl;
-}
-
-inline void BravaisChainFailures::PrintWork(const MatS6& vm, const S6& s6) {
-   std::cout << vm * s6 << std::endl << std::endl;
-   std::cout << C3(vm * s6) << std::endl << std::endl;
-   std::cout << std::endl;
 }
 
 inline std::vector<BravaisChainFail> BravaisChainFailures::getFailList() const { return m_failList; }

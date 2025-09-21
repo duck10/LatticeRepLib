@@ -147,16 +147,12 @@
     <ClInclude Include="BlockLimits.h" />
     <ClInclude Include="BlockUtils.h" />
     <ClInclude Include="ControlFeature.h" />
-    <ClInclude Include="DistanceTypes.h" />
-    <ClInclude Include="DistanceTypesUtils.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LatticeCell.h" />
     <ClInclude Include="ProgramSetup.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseControlVariables.cpp" />
     <ClCompile Include="ControlFeature.cpp" />
-    <ClCompile Include="DistanceTypes.cpp" />
     <ClCompile Include="InputHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
