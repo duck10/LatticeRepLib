@@ -84,6 +84,7 @@ G6::G6(const LRL_Cell& c) {
 G6::G6(const S6& ds)
    : G6()
 {
+   m_vec.resize(6);
    const double& p = ds[0];
    const double& q = ds[1];
    const double& r = ds[2];

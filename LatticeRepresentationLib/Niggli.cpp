@@ -852,6 +852,10 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
          return(false);
       }
 
+      if (reduceCycleCount >= maxCycle && DEBUG_REDUCER) {
+         std::cout << "reached cycle count without complete convergence\n";
+      }
+
       if (reduceCycleCount == 0) voutPrev = vin;
 
       if (DEBUG_REDUCER)
@@ -866,8 +870,8 @@ bool Niggli::ReduceWithoutMatrices(const G6& vi, G6& vout, const double delta)
    if (reduceCycleCount >= maxCycle) {
       //g_store.Store("Max cycles reached", vout);
       if (isNearReduced) {
-         //std::cout << ";THERE IS A REDUCE PROBLEM (B), m_ReductionCycleCount " << reduceCycleCount << std::endl;
-         //std::cout << ";but the input cell in ReduceWithoutMatrices is already very nearly reduced\n";
+         std::cout << ";THERE IS A REDUCE PROBLEM (B), m_ReductionCycleCount " << reduceCycleCount << std::endl;
+         std::cout << ";but the final cell in ReduceWithoutMatrices is already very nearly reduced\n";
       }
    }
    m_ReductionCycleCount = reduceCycleCount;
@@ -1231,7 +1235,7 @@ bool Niggli::IsNiggli(const G6& v, const double delta) {
    if (g6 == g1 && g5 != 0) return false;
 
    if (g3 == (g1 + g2 + g3 + g4 + g5 + g6) && 2.0 * (g1 + g5) > 0.0) return false;
-
+   if (nneg == 0 && (g4 + g5 + g6 + g1 + g2) > 0.0) return false;
    return true;
 }
 
