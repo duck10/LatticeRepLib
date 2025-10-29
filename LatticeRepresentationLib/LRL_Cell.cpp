@@ -317,11 +317,11 @@ LRL_Cell::LRL_Cell(const G6& g6)
       m_cell[3] = atan2(sinalpha, cosalpha);
       m_cell[4] = atan2(sinbeta, cosbeta);
       m_cell[5] = atan2(singamma, cosgamma);
-      m_valid = m_valid && m_cell[0] > lowerlimit && m_cell[1] > lowerlimit && m_cell[2] > lowerlimit &&
+   }      m_valid = m_valid && m_cell[0] > lowerlimit && m_cell[1] > lowerlimit && m_cell[2] > lowerlimit &&
          m_cell[3] > lowerlimit && m_cell[4] > lowerlimit && m_cell[5] > lowerlimit &&
          m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
          && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3], m_cell[4], m_cell[5]) >= 0.0);
-   }
+
 }
 
 LRL_Cell::LRL_Cell(const D7& v7)

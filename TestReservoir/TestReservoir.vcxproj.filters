@@ -15,18 +15,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MAIN_Eisenstein.cpp">
+    <ClCompile Include="TestReservoir.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Eisenstein.h">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="TransformationMatrices.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EisensteinControls.h">
+    <ClInclude Include="TestControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EdgeTransformationMatrices_3x3.h">
+    <ClInclude Include="TransformationMatrices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixCellOperator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EisensteinReduction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestToConvergence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetTrace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EdgeTransformationMatrices.h">

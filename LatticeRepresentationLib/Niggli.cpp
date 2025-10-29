@@ -635,7 +635,7 @@ bool Niggli::Reduce(const G6& vi, G6& vout, const bool sellingFirst) {
    bool b = true;
    if (sellingFirst) {
       b = Selling::Reduce(S6(vi), s6out);
-      vout = D7(s6out);
+      vout = (s6out);
    }
    else {
       vout = vi;
