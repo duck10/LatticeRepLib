@@ -2259,13 +2259,17 @@ int main() {
    testLandscape();
 
 
-   // Example 1: Analyze a specific cell
-   LRL_Cell cell(10.0, 10.0, 10.0, 90.0, 90.0, 90.0);  // Cubic
-   auto analysis = NiggliLandscape::AnalyzeLandscape(cell);
+   NiggliLandscape::Analysis analysis;  // this is repair a compiler error
+   NiggliLandscape::Analysis analysis2;
+   {
+      // Example 1: Analyze a specific cell
+      static const LRL_Cell cell(10.0, 10.0, 10.0, 90.0, 90.0, 90.0);  // Cubic
+      analysis = NiggliLandscape::AnalyzeLandscape(cell);
 
-   // Example 2: Analyze a triclinic cell
-   G6 triclinic(25.0, 30.0, 35.0, 10.0, 15.0, 20.0);
-   auto analysis2 = NiggliLandscape::AnalyzeLandscape(triclinic);
+      // Example 2: Analyze a triclinic cell
+      static const G6 triclinic(25.0, 30.0, 35.0, 10.0, 15.0, 20.0);
+      analysis2 = NiggliLandscape::AnalyzeLandscape(triclinic);
+   }
 
    // Example 3: Visualize cross-section
 
