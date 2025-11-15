@@ -281,6 +281,8 @@
     <ClInclude Include="MatDC7u.h" />
     <ClInclude Include="MatricesForOneDeloneType.h" />
     <ClInclude Include="NCDist.h" />
+    <ClInclude Include="NCDist_HJB.h" />
+    <ClInclude Include="NCDist_McColl.h" />
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="P3.h" />

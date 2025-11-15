@@ -25,6 +25,8 @@
 
 // Test cell that fails K-G but succeeds with A-B
 void demonstrateFailure() {
+   std::cout << "this test is eliminaed becaus the test unit cell is invalid" << std::endl;
+   return;
    std::cout << "=== Krivy-Gruber Failure Case ===" << std::endl;
    std::cout << "\nTest cell (after standard presentation):" << std::endl;
    std::cout << "G6: 4.401  7.579  34.382  18.085  9.491  14.527" << std::endl;

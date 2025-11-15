@@ -167,4 +167,6 @@ EisensteinReduction::Reduce(const B4& inputB4, double tolerance) {
    return bestResult;
 }
 
+int main() {}
+
 #endif // EISENSTEIN_REDUCTION_H

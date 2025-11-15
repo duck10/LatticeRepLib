@@ -29,6 +29,7 @@ public:
    static bool Reduce(const S6& in, S6& out);
    static bool Reduce(const S6& in, S6& out, const bool sellingFirst);
    static bool Reduce(const S6& in, MatS6& mReduce, S6& out, const double delta = 0.0);
+   static bool ReduceWithtransforms(const S6& in, MatS6& mReduce, S6& out, Matrix_3x3& m33,  const double delta = 0.0);
 
    static double MaxScalar(const S6& s6);
 
@@ -46,6 +47,8 @@ public:
    static std::string GetName() { return "Selling"; }
 
    bool Reduce(const EnhancedS6& in, EnhancedS6& out);
+
+   static void Write_S6_E3_MatrixPairs();
 
 
 private:

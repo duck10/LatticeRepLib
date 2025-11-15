@@ -233,6 +233,7 @@ int main(int argc, char* argv[])
       const std::vector<Vector_3> v = ReadVector_3File(std::cin);
 
       if (v.empty()) std::cout << "missing vector input" << std::endl;
+      LRL_Cell xxxx(LRL_Cell("10 20 15 90 110 90"));
 
       if ( cmd2=="" || cmd2=="M4" ) Nullspace::Test_CenteredNullspace2And3("M4" , "P", S6(LRL_Cell("10 20 15 90 110 90")),v);
       if ( cmd2=="" || cmd2=="M1A") Nullspace::Test_CenteredNullspace2And3("M1A", "C", S6(LRL_Cell("10 20 15 90 110 90")),v);

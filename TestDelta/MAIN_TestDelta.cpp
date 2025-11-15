@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <iomanip>
 
 #include "TEST_DELTAControls.h"
@@ -9,6 +9,102 @@
 #include "LRL_Cell_Degrees.h"
 #include "Polar.h"
 #include "Trigger_vectors.h"
+
+
+static const double delta = 1.0E-2;
+static const double delta2 = delta / 2.0;
+static const double x = 1.0 / 3.0;
+static const double y = x;
+static const double ym = y - delta / 2.0;
+static const double xm = x - delta / 2.0;
+static const double yp = y + delta / 2.0;
+static const double xp = x + delta / 2.0;
+
+std::pair<bool, bool> test_x_LT_y(double x, double ym, double yp) {
+   const bool b1 = x < ym - delta;
+   const bool b2 = x < yp - delta;
+   return { b1,b2 };
+}
+
+std::pair<bool, bool> test_x_LE_y(double x, double xm, double xp) {
+   const bool b1 = !(x > xm + delta);  // equivalent to !(y < x - delta)
+   const bool b2 = !(x > xp + delta);
+   return { b1,b2 };
+}
+
+//Grosse-Kunstleve,Sauter,Adams-2003
+//exact
+//   x < y   x < y - delta "
+//   x > y   y < x - delta "
+//   x <= y   not y < x - delta "
+//   x >= y   not x < y - delta "
+//   x = y    not  x < y - delta " or y < x - delta ":
+// 
+
+std::pair<bool,bool> test_x_LT_y() {    
+   // test x<y
+   const bool b1 = x < ym - delta;
+   const bool b2 = x < yp - delta;
+   return { b1,b2 };
+}
+
+static std::pair<bool,bool> test_x_LE_y () {    
+   //   x <= y   not y < x - delta "
+   const bool b5 = !(y <= xm - delta);
+   const bool b6 = !(y <= xp - delta);
+   return { b5,b6 };
+}
+
+std::pair<bool,bool> test_x_GT_y() {    
+   // test x>y
+   const bool b3 = y < xm - delta;
+   const bool b4 = y < xp - delta;
+   return { b3,b4 };
+}
+
+static std::pair<bool,bool> test_x_GE_y () {
+   //   x >= y   not x < y - delta "
+   const bool b7 = !(x <= ym - delta);
+   const bool b8 = !(x <= yp - delta);
+   return { b7,b8 };
+}
+
+static std::pair<bool,bool> test_x_EQ_y() {
+   //   x = y    not  x < y - delta  or y < x - delta :
+   const bool b9 = !(x < ym - delta || y < xm - delta);
+   const bool bA = !(x < yp - delta || y < xp - delta);
+   return { b9,bA };
+}
+
+#include <iostream>
+#include <utility>
+#include <string>
+
+void summarize_tests() {
+   auto lt = test_x_LT_y();
+   //auto gt = test_x_GT_y();
+   auto le = test_x_LE_y();
+   //auto ge = test_x_GE_y();
+   //auto eq = test_x_EQ_y();
+
+   std::cout << "Test         | xm result | x2 result | Sensitivity to x==y\n";
+   std::cout << "-------------|-----------|-----------|----------------------\n";
+
+   std::cout << "x < y        | " << lt.first << "         | " << lt.second
+      << "         | delta makes test stricter\n";
+
+   //std::cout << "x > y        | " << gt.first << "         | " << gt.second
+   //   << "         | delta makes test stricter\n";
+
+   std::cout << "x <= y       | " << le.first << "         | " << le.second
+      << "         | delta makes test looser\n";
+
+   //std::cout << "x >= y       | " << ge.first << "         | " << ge.second
+   //   << "         | delta makes test looser\n";
+
+   //std::cout << "x == y       | " << eq.first << "         | " << eq.second
+   //   << "         | delta makes test more tolerant\n";
+}
 
 void TestDelta::RunTriggerDiagnostics() {
    const std::vector<double> deltas = { -1e-3, 0.0, 1e-3 };
@@ -51,11 +147,39 @@ void TestDelta::RunTriggerDiagnostics() {
    }
 }
 
-
-
 int main() {
-   std::cout << "; TEST_DELTA" << std::endl;
 
+   // Case 1: x < y
+   double x1 = 1.00;
+   double ym1 = 1.02;
+   double yp1 = 1.03;
+   double xm1 = 1.02;
+   double xp1 = 1.03;
+
+   auto lt1 = test_x_LT_y(x1, ym1, yp1);
+   auto le1 = test_x_LE_y(x1, xm1, xp1);
+
+   std::cout << "Case x < y:\n";
+   std::cout << "x < y test:     " << lt1.first << " (ym)  " << lt1.second << " (yp)\n";
+   std::cout << "x <= y test:    " << le1.first << " (xm)  " << le1.second << " (xp)\n";
+
+   // Case 2: x > y
+   double x2 = 1.05;
+   double ym2 = 1.02;
+   double yp2 = 1.03;
+   double xm2 = 1.02;
+   double xp2 = 1.03;
+
+   auto lt2 = test_x_LT_y(x2, ym2, yp2);
+   auto le2 = test_x_LE_y(x2, xm2, xp2);
+
+   std::cout << "\nCase x > y:\n";
+   std::cout << "x < y test:     " << lt2.first << " (ym)  " << lt2.second << " (yp)\n";
+   std::cout << "x <= y test:    " << le2.first << " (xm)  " << le2.second << " (xp)\n";
+
+   test_x_LT_y();
+   summarize_tests();
+   std::cout << "; TEST_DELTA" << std::endl;
 
    RunAllSweeps();
 

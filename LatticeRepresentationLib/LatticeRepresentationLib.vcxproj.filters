@@ -169,6 +169,8 @@
     <ClInclude Include="P3Dist.h" />
     <ClInclude Include="P3Utilities.h" />
     <ClInclude Include="TransformationMatrices.h" />
+    <ClInclude Include="NCDist_McColl.h" />
+    <ClInclude Include="NCDist_HJB.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

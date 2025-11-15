@@ -209,7 +209,7 @@ void SvgPlotWriter::writeXAxis(int width, int height, int leftMargin, int margin
          svg << "  <text x=\"" << xPos
             << "\" y=\"" << (height - margin + 20)
             << "\" text-anchor=\"middle\" font-size=\"12\">"
-            << tick.label
+            << std::stoi(tick.label)
             << "</text>\n";
       }
    }

@@ -4,6 +4,7 @@
 
 
 #include "Selling.h"
+#include "EnhancedS6.h"
 
 #include <algorithm>
 #include <array>
@@ -12,6 +13,7 @@
 #include "C3.h"
 #include "MatS6.h"
 #include "S6Dist.h"
+#include "LRL_Vector3.h"
 
 const int limitReductionCycles = 10000;
 
@@ -69,8 +71,9 @@ bool Selling::Reduce(const S6& in, S6& out) {
             maxScalar = out[i];
          }
       }
-      
+      //std::cout << "maxIndex in Selling::Reduce " << maxIndex << " at count " << m_ReductionCycleCount << std::endl;
       out = reductionFunctions[maxIndex](out);
+      //std::cout << "S6 after step: " << out << std::endl;
 
       //ListSteps(out);
 
@@ -80,7 +83,7 @@ bool Selling::Reduce(const S6& in, S6& out) {
    return true;
 }
 
-   bool Selling::Reduce(const S6& in, MatS6& mReduce, S6& out, const double delta/*=0.0*/) {
+bool Selling::Reduce(const S6& in, MatS6& mReduce, S6& out, const double delta/*=0.0*/) {
       static std::vector<MatS6> vm;
       mReduce = MatS6::Eye();
       if (vm.empty()) {
@@ -115,62 +118,137 @@ bool Selling::Reduce(const S6& in, S6& out) {
       }
    }
 
-   double Selling::MaxScalar(const S6& s6) {
-      const std::vector<double>& v(s6.GetVector());
-      return *std::max_element(v.begin(), v.end());
-   }
+const std::vector<std::pair<MatS6, Matrix_3x3>> vmSellingPairs{
+ { MatS6("-1 0 0 0 0 0   1 1 0 0 0 0   1 0 0 0 1 0   -1 0 0 1 0 0   1 0 1 0 0 0   1 0 0 0 0 1"),
+   Matrix_3x3(-1, -1, 0,  0, 1, 0,  0, 0, -1) },
+ { MatS6("1 1 0 0 0 0   0 -1 0 0 0 0   0 1 0 1 0 0   0 1 1 0 0 0   0 -1 0 0 1 0   0 1 0 0 0 1"),
+   Matrix_3x3(1, 0, 0,  -1, -1, 0,  0, 0, -1) },
+ { MatS6("1 0 1 0 0 0   0 0 1 1 0 0   0 0 -1 0 0 0   0 1 1 0 0 0   0 0 1 0 1 0   0 0 -1 0 0 1"),
+   Matrix_3x3(1, 0, 0,  0, -1, 0,  -1, 0, -1) },
+ { MatS6("1 0 0 -1 0 0   0 0 1 1 0 0   0 1 0 1 0 0   0 0 0 -1 0 0   0 0 0 1 1 0   0 0 0 1 0 1"),
+   Matrix_3x3(1, 0, 0,  -1, -1, 0,  -1, 0, -1) },
+ { MatS6("0 0 1 0 1 0   0 1 0 0 -1 0   1 0 0 0 1 0   0 0 0 1 1 0   0 0 0 0 -1 0   0 0 0 0 1 1"),
+   Matrix_3x3(-1, -1, 0,  0, 1, 0,  0, -1, -1) },
+ { MatS6("0 1 0 0 0 1   1 0 0 0 0 1   0 0 1 0 0 -1   0 0 0 1 0 1   0 0 0 0 1 1   0 0 0 0 0 -1"),
+   Matrix_3x3(-1, 0, -1,  0, -1, -1,  0, 0, 1) }
+};
 
-   bool Selling::IsReduced(const S6& s6) {
-      return (MaxScalar(s6) <= 0.0);
-   }
+void Selling::Write_S6_E3_MatrixPairs() {
+   std::cout << R"(const std::vector<std::pair<MatS6, Matrix_3x3>> vmSellingPairs{
+    { MatS6("-1 0 0 0 0 0   1 1 0 0 0 0   1 0 0 0 1 0   -1 0 0 1 0 0   1 0 1 0 0 0   1 0 0 0 0 1"),
+      Matrix_3x3(-1, -1, 0,  0, 1, 0,  0, 0, -1) },
+    { MatS6("1 1 0 0 0 0   0 -1 0 0 0 0   0 1 0 1 0 0   0 1 1 0 0 0   0 -1 0 0 1 0   0 1 0 0 0 1"),
+      Matrix_3x3(1, 0, 0,  -1, -1, 0,  0, 0, -1) },
+    { MatS6("1 0 1 0 0 0   0 0 1 1 0 0   0 0 -1 0 0 0   0 1 1 0 0 0   0 0 1 0 1 0   0 0 -1 0 0 1"),
+      Matrix_3x3(1, 0, 0,  0, -1, 0,  -1, 0, -1) },
+    { MatS6("1 0 0 -1 0 0   0 0 1 1 0 0   0 1 0 1 0 0   0 0 0 -1 0 0   0 0 0 1 1 0   0 0 0 1 0 1"),
+      Matrix_3x3(1, 0, 0,  -1, -1, 0,  -1, 0, -1) },
+    { MatS6("0 0 1 0 1 0   0 1 0 0 -1 0   1 0 0 0 1 0   0 0 0 1 1 0   0 0 0 0 -1 0   0 0 0 0 1 1"),
+      Matrix_3x3(-1, -1, 0,  0, 1, 0,  0, -1, -1) },
+    { MatS6("0 1 0 0 0 1   1 0 0 0 0 1   0 0 1 0 0 -1   0 0 0 1 0 1   0 0 0 0 1 1   0 0 0 0 0 -1"),
+      Matrix_3x3(-1, 0, -1,  0, -1, -1,  0, 0, 1) }
+};)" << std::endl;
+}
 
-   bool Selling::IsReduced(const S6& s6, const double delta) {
-      return (MaxScalar(s6) <= delta);
-   }
+bool Selling::ReduceWithtransforms(const S6& in, MatS6& mReduce, S6& out, Matrix_3x3& m33, const double delta) {
 
-   bool Selling::Reduce(const EnhancedS6& in, EnhancedS6& out) {
-      out = in;
-      MatS6 cumulativeTransform = MatS6::Eye();  // Start with identity matrix
+   out = in;
+   MatS6 cumulativeTransform = MatS6::Eye();  // Start with identity matrix
+   Matrix_3x3 cumulative3d = UnitMatrix();
 
-      const int limitReductionCycles = 10000;
-      int cycleCount = 0;
+   const int limitReductionCycles = 10000;
+   int cycleCount = 0;
 
-      // Define the reduction matrices
-      static const std::array<MatS6, 6> reductionMatrices = { {
-          MatS6("-1 0 0 0 0 0   1 1 0 0 0 0   1 0 0 0 1 0   -1 0 0 1 0 0   1 0 1 0 0 0   1 0 0 0 0 1"),
-          MatS6("1 1 0 0 0 0   0 -1 0 0 0 0   0 1 0 1 0 0   0 1 1 0 0 0   0 -1 0 0 1 0   0 1 0 0 0 1"),
-          MatS6("1 0 1 0 0 0   0 0 1 1 0 0   0 0 -1 0 0 0   0 1 1 0 0 0   0 0 1 0 1 0   0 0 -1 0 0 1"),
-          MatS6("1 0 0 -1 0 0   0 0 1 1 0 0   0 1 0 1 0 0   0 0 0 -1 0 0   0 0 0 1 1 0   0 0 0 1 0 1"),
-          MatS6("0 0 1 0 1 0   0 1 0 0 -1 0   1 0 0 0 1 0   0 0 0 1 1 0   0 0 0 0 -1 0   0 0 0 0 1 1"),
-          MatS6("0 1 0 0 0 1   1 0 0 0 0 1   0 0 1 0 0 -1   0 0 0 1 0 1   0 0 0 0 1 1   0 0 0 0 0 -1")
-      } };
-
-      while (true) {
-         // Find the maximum positive scalar
-         double maxScalar = out[0];
-         size_t maxIndex = 0;
-         for (size_t i = 1; i < 6; ++i) {
-            if (out[i] > maxScalar) {
-               maxScalar = out[i];
-               maxIndex = i;
-            }
-         }
-
-         if (maxScalar <= 0) break;  // All scalars are non-positive, reduction complete
-
-         // Apply reduction step
-         const MatS6& reductionMatrix = reductionMatrices[maxIndex];
-         out = reductionMatrix * out;
-         cumulativeTransform = reductionMatrix * cumulativeTransform;
-
-         ++cycleCount;
-         if (cycleCount > limitReductionCycles || S6::NegativeSumOfScalars(out) < 0.0) {
-            return false;  // Reduction failed
+   while (true) {
+      // Find the maximum positive scalar
+      double maxScalar = out[0];  // Initialize with out[0]
+      size_t maxIndex = 0;
+      for (size_t i = 1; i < 6; ++i) {
+         if (out[i] > maxScalar) {
+            maxScalar = out[i];
+            maxIndex = i;
          }
       }
 
-      // Update the final transformation matrix
-      out.setTransformMatrix(cumulativeTransform * in.getTransformMatrix());
+      //std::cout << "maxIndex in ReduceWithTransforms " << maxIndex << " for cycle " << cycleCount << std::endl;
+      //std::cout << "S6 after step: " << out << std::endl;
+      if (maxScalar <= 0) break;  // All scalars are non-positive, reduction complete
 
-      return true;
+      // Apply reduction step
+      const MatS6 reductionMatrix = vmSellingPairs[maxIndex].first;
+      out = reductionMatrix * out;
+      cumulativeTransform = reductionMatrix * cumulativeTransform;
+      cumulative3d = vmSellingPairs[maxIndex].second * cumulative3d;
+      ++cycleCount;
+      if (cycleCount > limitReductionCycles || S6::NegativeSumOfScalars(out) < 0.0) {
+         return false;  // Reduction failed
+      }
    }
+
+   // Update the final transformation matrix
+   mReduce = cumulativeTransform;
+   m33 = cumulative3d;
+   return true;
+
+}
+
+
+double Selling::MaxScalar(const S6& s6) {
+   const std::vector<double>& v(s6.GetVector());
+   return *std::max_element(v.begin(), v.end());
+}
+
+bool Selling::IsReduced(const S6& s6) {
+   return (MaxScalar(s6) <= 0.0);
+}
+
+bool Selling::IsReduced(const S6& s6, const double delta) {
+   return (MaxScalar(s6) <= delta);
+}
+
+bool Selling::Reduce(const EnhancedS6& in, EnhancedS6& out) {
+   out = in;
+   MatS6 cumulativeTransform = MatS6::Eye();  // Start with identity matrix
+
+   const int limitReductionCycles = 10000;
+   int cycleCount = 0;
+
+   // Define the reduction matrices
+   static const std::array<MatS6, 6> reductionMatrices = { {
+       MatS6("-1 0 0 0 0 0   1 1 0 0 0 0   1 0 0 0 1 0   -1 0 0 1 0 0   1 0 1 0 0 0   1 0 0 0 0 1"),
+       MatS6("1 1 0 0 0 0   0 -1 0 0 0 0   0 1 0 1 0 0   0 1 1 0 0 0   0 -1 0 0 1 0   0 1 0 0 0 1"),
+       MatS6("1 0 1 0 0 0   0 0 1 1 0 0   0 0 -1 0 0 0   0 1 1 0 0 0   0 0 1 0 1 0   0 0 -1 0 0 1"),
+       MatS6("1 0 0 -1 0 0   0 0 1 1 0 0   0 1 0 1 0 0   0 0 0 -1 0 0   0 0 0 1 1 0   0 0 0 1 0 1"),
+       MatS6("0 0 1 0 1 0   0 1 0 0 -1 0   1 0 0 0 1 0   0 0 0 1 1 0   0 0 0 0 -1 0   0 0 0 0 1 1"),
+       MatS6("0 1 0 0 0 1   1 0 0 0 0 1   0 0 1 0 0 -1   0 0 0 1 0 1   0 0 0 0 1 1   0 0 0 0 0 -1")
+   } };
+
+   while (true) {
+      // Find the maximum positive scalar
+      double maxScalar = out[0];
+      size_t maxIndex = 0;
+      for (size_t i = 1; i < 6; ++i) {
+         if (out[i] > maxScalar) {
+            maxScalar = out[i];
+            maxIndex = i;
+         }
+      }
+
+      if (maxScalar <= 0) break;  // All scalars are non-positive, reduction complete
+
+      // Apply reduction step
+      const MatS6& reductionMatrix = reductionMatrices[maxIndex];
+      out = reductionMatrix * out;
+      cumulativeTransform = reductionMatrix * cumulativeTransform;
+
+      ++cycleCount;
+      if (cycleCount > limitReductionCycles || S6::NegativeSumOfScalars(out) < 0.0) {
+         return false;  // Reduction failed
+      }
+   }
+
+   // Update the final transformation matrix
+   out.setTransformMatrix(cumulativeTransform * in.getTransformMatrix());
+
+   return true;
+}

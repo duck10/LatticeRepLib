@@ -6,6 +6,7 @@
 #include "DC7u.h"
 #include "DC7uDist.h"
 #include "G6.h"
+#include "NCDist_McColl.h"
 #include "NCDist.h"
 #include "P3.h"
 #include "RI.h"
@@ -19,8 +20,7 @@
 /*
 HOW TO ADD A NEW DISTANCE TYPE
 1. add the idenifier to the list of VALID_TYPES in DistanceTypesUtils
-        (currently this is in folder InputHandler so it can be used generally, which it is not.)
-2. add a new branch in the DistanceFactory constructor
+2. add a new branch in the DistanceFactory::createEnabledDistances
 3. add a new class in Distance.h
   That should do the job, once it is compilable.
 */
@@ -227,6 +227,26 @@ public:
    std::string getColor() const override {
       return "#FF0099";  // Bright Magenta/Pink
    }
+};
+
+class PHDistance : public Distance {
+public:
+   double dist(const S6& s1, const S6& s2) const override {
+      G6 reduced1, reduced2;
+      Niggli::Reduce(s1, reduced1);
+      Niggli::Reduce(s2, reduced2);
+      return phasertng::NCDist(reduced1.data(), reduced2.data());
+   }
+
+   double dist(const G6& g1, const G6& g2) const override {
+      G6 reduced1, reduced2;
+      Niggli::Reduce(g1, reduced1);
+      Niggli::Reduce(g2, reduced2);
+      return phasertng::NCDist(reduced1.data(), reduced2.data());
+   }
+
+   std::string getName() const override { return "PHDist"; }
+   std::string getColor() const override { return "#0066FF"; }  // Bright Blue
 };
 
 

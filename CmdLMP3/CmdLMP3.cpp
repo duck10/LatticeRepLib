@@ -1262,6 +1262,11 @@ int main() {
       // Get input list
       const std::vector<LatticeCell>& inputList = program_setup.getInputList();
 
+      if (inputList.size() < 2) {
+         std::cout << ";CmdLMP3 requires at least 2 input cells" << std::endl;
+         return 0;
+      }
+
 
       // Process the input list using configured controls (from input handling)
       runInputListMode(inputList, controls);

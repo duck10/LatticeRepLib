@@ -42,10 +42,10 @@ static void ScaleByS6(const std::vector<LatticeCell>& inputList) {
 
 static void ScaleByVolume(const std::vector<LatticeCell>& inputList) {
    if (inputList.empty()) return;
-   const double scaleFactor = LRL_Cell(inputList[0]).Volume();
+   const double scaleFactor = LRL_Cell(inputList[0].getCell()).Volume();
    std::string label = "REFERENCE";
    for (const auto& i : inputList) {
-      const LRL_Cell cell(i);
+      const LRL_Cell cell(i.getCell());
       const double cellV = cell.Volume();
       const double linearRatio = pow(scaleFactor / cellV, 1.0 / 3.0);
       std::cout << i.getLatticeType() + " " 
