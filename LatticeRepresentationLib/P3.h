@@ -54,6 +54,22 @@ public:
          m_p3[i] = std::make_pair(vecs[i][0], vecs[i][1]);
    }
 
+   template<typename T>
+   P3(const T& t) {
+      P3& p(*this);
+      const LRL_Cell cell(t);
+      const double& a = cell[0];
+      const double& b = cell[1];
+      const double& c = cell[2];
+      const double& alpha = cell[3];
+      const double& beta = cell[4];
+      const double& gamma = cell[5];
+      p[0] = { a * cos(alpha),a * sin(alpha) };
+      p[1] = { b * cos(beta), b * sin(beta) };
+      p[2] = { c * cos(gamma), c * sin(gamma) };
+      m_valid = cell.CheckValid(p);
+   }
+
    static double EuclideanDistance(const P3& p1, const P3& p2);
 
    std::array<Vector_2, 3> GetVectorTriplet() const {

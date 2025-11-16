@@ -21,7 +21,9 @@
 HOW TO ADD A NEW DISTANCE TYPE
 1. add the idenifier to the list of VALID_TYPES in DistanceTypesUtils
 2. add a new branch in the DistanceFactory::createEnabledDistances
-3. add a new class in Distance.h
+3. add a new class in Distance.h; NOTE: base class Distance is abstract
+   You need to create explict constructors for both G6 and G6.
+
   That should do the job, once it is compilable.
 */
 
