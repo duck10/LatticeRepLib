@@ -171,6 +171,7 @@
     <ClInclude Include="TransformationMatrices.h" />
     <ClInclude Include="NCDist_McColl.h" />
     <ClInclude Include="NCDist_HJB.h" />
+    <ClInclude Include="NCDist_Mccoy_2.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

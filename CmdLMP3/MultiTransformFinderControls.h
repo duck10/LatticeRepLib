@@ -53,6 +53,16 @@ public:
             }
          });
 
+      InputHandler::registerHandler("USESELLING", 0.43,
+         [this](const BaseControlVariables&, const std::string& value) {
+            try {
+               setUseSellingReduction(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+            }
+            catch (const std::exception& e) {
+               std::cout << "Warning: Invalid Niggli tolerance value: " << value << ". Using default." << std::endl;
+            }
+         });
+
       InputHandler::registerHandler("TEST", 0.43,
          [this](const BaseControlVariables&, const std::string& value) {
             try {
@@ -126,6 +136,8 @@ public:
 
    int getMatrixOrder() const { return m_unimodularOrder; }
    void setMatrixOrder(const int n) { m_unimodularOrder = n; }
+   void setUseSellingReduction(const bool b) { m_useSellingReduction = b; }
+   bool getUseSellingReduction() const { return m_useSellingReduction; }
 
 private:
    // NEW CLEAR PARAMETER NAMES
@@ -137,6 +149,7 @@ private:
    bool m_comparisonMode = true;
    bool m_csvOutput = false;
    int m_unimodularOrder = 1;
+   bool m_useSellingReduction = false;
 
 
    bool m_showProgress = true;

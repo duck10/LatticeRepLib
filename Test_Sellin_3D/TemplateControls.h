@@ -4,14 +4,14 @@
 #include "BaseControlVariables.h"
 #include "InputHandler.h"
 
-class TemplateControls : public BaseControlVariables {
+class TestSelling3DControls : public BaseControlVariables {
 public:
-   friend std::ostream& operator<< (std::ostream& os, const TemplateControls& ctrl) {
+   friend std::ostream& operator<< (std::ostream& os, const TestSelling3DControls& ctrl) {
       os << "; CmdToB4Controls\n";
       return os;
    }
 
-   TemplateControls() {
+   TestSelling3DControls() {
    }
 
    bool shouldShowControls() const { return showControls; }

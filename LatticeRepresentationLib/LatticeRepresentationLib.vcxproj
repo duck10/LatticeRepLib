@@ -283,6 +283,7 @@
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="NCDist_HJB.h" />
     <ClInclude Include="NCDist_McColl.h" />
+    <ClInclude Include="NCDist_Mccoy_2.h" />
     <ClInclude Include="Niggli_Types.h" />
     <ClInclude Include="NullOps.h" />
     <ClInclude Include="P3.h" />

@@ -206,10 +206,17 @@ void SvgPlotWriter::writeXAxis(int width, int height, int leftMargin, int margin
    for (const auto& tick : ticks) {
       const double xPos = leftMargin + (tick.position - limits.GetMin()) * xScale;
       if (xPos >= leftMargin && xPos <= width - margin) {
+
+         const int i1 = std::stoi(tick.label);
+         const int d1 = std::stod(tick.label);
+         const int i2 = int(std::round(std::stod(tick.label)));
+         const int i3 = (std::stod(tick.label));
+
+
          svg << "  <text x=\"" << xPos
             << "\" y=\"" << (height - margin + 20)
             << "\" text-anchor=\"middle\" font-size=\"12\">"
-            << std::stoi(tick.label)
+            << i2
             << "</text>\n";
       }
    }

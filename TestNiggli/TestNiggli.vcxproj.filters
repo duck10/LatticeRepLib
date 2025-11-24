@@ -23,5 +23,8 @@
     <ClInclude Include="TestNiggliControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\LatticeRepresentationLib\NCDist_McCoy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

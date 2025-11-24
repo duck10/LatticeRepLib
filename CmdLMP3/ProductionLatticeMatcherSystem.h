@@ -8,6 +8,10 @@
 #include "MultiTransformFinderControls.h"
 #include "TransformationMatrices.h"
 #include "TransformerUtilities.h"
+
+#include "Selling.h"
+#include "LRL_Cell.h"
+
 #include <vector>
 #include <iostream>
 #include <iomanip>
@@ -78,6 +82,7 @@ private:
    ReductionData m_mobileReduction;
 
    ReductionData performNiggliReduction(const LRL_Cell& cell);
+   ReductionData performSellingReduction(const LRL_Cell& cell);
    Matrix_3x3 applyStoredReductionMatrices(const Matrix_3x3& matchMatrix);
    void integrateResultsIntoReservoir(const std::vector<LatticeMatchResult>& results,
       const std::string& caseDescription);
@@ -257,8 +262,15 @@ NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobi
    }
 
    // Perform Niggli reductions and store matrices
-   m_referenceReduction = performNiggliReduction(primitiveReference);
-   m_mobileReduction = performNiggliReduction(primitiveMobile);
+   if (m_controls.getUseSellingReduction()) {
+      m_referenceReduction = performSellingReduction(primitiveReference);
+      m_mobileReduction = performSellingReduction(primitiveMobile);
+   }
+   else
+   {
+      m_referenceReduction = performNiggliReduction(primitiveReference);
+      m_mobileReduction = performNiggliReduction(primitiveMobile);
+   }
 
    // Calculate NC distance (already existing in original code)
    G6 redRef;
@@ -339,6 +351,32 @@ NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobi
 
    // Add NC distance and return
    return addNCDistanceToResults(finalResults, ncdistance);
+}
+
+inline NiggliReductionCoordinator::ReductionData
+NiggliReductionCoordinator::performSellingReduction(const LRL_Cell& cell) {
+   ReductionData data;
+
+   MatS6 m66;
+   Matrix_3x3 m33;
+   S6 out;
+   const bool success = Selling::ReduceWithtransforms(cell, m66, out,  m33, 1.0E-6);
+
+
+   if (success) {
+      data.reducedCell = LRL_Cell(out);
+      data.reductionMatrix = m33;
+      data.inverseReductionMatrix = m33.Inverse();
+      data.wasAlreadyReduced = false;
+   } else {
+      // Fallback to original if reduction failed
+      data.reducedCell = cell;
+      data.reductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+      data.inverseReductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+      data.wasAlreadyReduced = true;
+   }
+
+   return data;
 }
 
 inline NiggliReductionCoordinator::ReductionData

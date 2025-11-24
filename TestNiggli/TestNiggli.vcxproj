@@ -140,6 +140,7 @@
     <ClCompile Include="TestNiggli.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\LatticeRepresentationLib\NCDist_McCoy.h" />
     <ClInclude Include="TestNiggliControls.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

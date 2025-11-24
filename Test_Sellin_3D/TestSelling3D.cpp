@@ -16,8 +16,8 @@ int main() {
    int countErrors = 0;
 
    try {
-      TemplateControls controls;
-      const BasicProgramInput<TemplateControls> dc_setup("TEMPLATE", controls);
+      TestSelling3DControls controls;
+      const BasicProgramInput<TestSelling3DControls> dc_setup("Test Selling 3D", controls);
 
       if (dc_setup.getInputList().empty()) {
          throw std::runtime_error("; No input vectors provided");
@@ -26,6 +26,8 @@ int main() {
       if (controls.shouldShowControls()) {
          std::cout << controls << std::endl;
       }
+
+      int count = 0;
 
       for (const auto& input : dc_setup.getInputList()) {
 
@@ -45,18 +47,25 @@ int main() {
          const double fit = (P3(niggliS6) - P3(niggliS63D)).norm();
          //std::cout << (niggliS6) << std::endl;
          //std::cout << (niggliS63D) << std::endl << std::endl;
-         if (fit > 0.001 ) {
+         if (fit > 0.001  || count == 0) {
 
-            ++countErrors;
+            if ( fit > 0.001)
+            {
+               ++countErrors;
+            }
             std::cout << ";Test Selling 3D input " << input;
-            std::cout << " fit " << fit << std::endl;
+            std::cout << " P3 fit " << fit << std::endl;
             std::cout << out << std::endl;
             std::cout << out3D << std::endl << std::endl;
          }
+         ++count;
       }
       if (countErrors == 0) {
          std::cout << "no disagreements were found" << std::endl;
       }
+
+      Selling::Write_S6_E3_MatrixPairs();
+
 
       return 0;
    }
