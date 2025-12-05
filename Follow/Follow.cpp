@@ -98,7 +98,10 @@ bool Follow::processPerturbation(int trialNum,
          if (Path::PathPointIsValid(S6(point1.getCell())) && Path::PathPointIsValid(S6(point2.getCell()))) {
             pathDists.emplace_back(dist->dist(static_cast<S6>(point1.getCell()),
                static_cast<S6>(point2.getCell())));
-//            std::cout << " " << LRL_Cell_Degrees(point1.getCell()) << "   " << LRL_Cell_Degrees(point2.getCell()) << " dist " << pathDists.back() << std::endl;
+            if (controls.getShouldPrintDetails())
+            {
+               std::cout << " " << LRL_Cell_Degrees(point1.getCell()) << "   " << LRL_Cell_Degrees(point2.getCell()) << " dist " << pathDists.back() << std::endl;
+            }
          }
          else {
             pathDists.emplace_back(-19191.0);  // This is happening at index 28

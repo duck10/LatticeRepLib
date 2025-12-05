@@ -915,7 +915,7 @@ bool Niggli::Reduce(const G6& vi, MatG6& m, G6& vout, const double delta)
    bool again = true;
    const bool debug = true;
 
-   const int maxCycle = 260;
+   const int maxCycle = 400;
 
    m1 = MatG6::Eye();
    vin = vi;

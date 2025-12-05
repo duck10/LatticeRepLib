@@ -1,0 +1,85 @@
+﻿This is from Roof, 1969
+
+Appendix C: An alternative method leading to the derivation of Niggli matrices ​
+Niggli derived his 41 standard general reduced cells by applying Eisenstein's (1851) 
+theory of reduced ternary quadratic forms to the equation for determining the absolute 
+length of any vector, L, in any lattice. ​ This equation is:
+L² = U²a² + V²b² + W²c² + 2UVab cosγ + 2UWac cosβ + 2VWbc cosα
+where a, b, c, α, β, and γ are the cell constants, and U, V, W are integers. The above 
+equation may be identified with the following equation of Eisenstein:
+f² = x²a + y²b + z²c + 2xyt + 2xzv + 2yzr
+Subject to a series of remarkable conditions, Eisenstein's equations may be reduced, i.e., 
+a unique solution may be found. ​ If two or more Eisenstein equations are to be classed 
+as equivalent, one merely needs to compare their reduced forms. ​ If the reduced forms 
+are equivalent, the original equations are equivalent. ​
+The Eisenstein conditions applicable to the crystallographic equation given above are:
+
+The cosines of the interaxial angles must all be positive or all negative. ​
+The squared lengths of the cell edges must satisfy the inequality: a² ≤ b² ≤ c².
+The scalar products of the cell edges must satisfy the inequality: |ab cosγ| ≤ a², |ac cosβ| ≤ a², |bc cosα| ≤ b².
+The scalar products of the cell edges must satisfy the inequality: |ab cosγ| + |ac cosβ| + |bc cosα| ≤ a² + b² + c².
+The scalar products of the cell edges must satisfy the inequality: |ab cosγ| + |ac cosβ| + |bc cosα| ≤ a² + b² + c²,
+and the sum of the scalar products must be zero.
+The cell must be primitive, meaning it cannot be reduced further. ​
+
+According to the definition of a lattice, any lattice point may be reached from any other 
+lattice point by appropriate translation of the vectors (or fractions of the vectors) 
+chosen to describe the edges of the unit cell. ​ It follows then, that the vector distance 
+from an origin to any given lattice point may be found from any of the infinite number 
+of unit cells that may be defined. ​
+The Eisenstein conditions given above imply that any lattice and any vector distance 
+may be examined by the following procedure:
+
+In a given lattice, let a unit cell be chosen. ​
+Let the cell be subjected to the Eisenstein conditions. ​
+If the cell passes all the criteria implied by the conditions, it is said to be 
+Eisenstein reduced and may represent a unique solution. ​
+If the cell chosen does not pass the conditions, it is not Eisenstein reduced, 
+and the implication is that another cell must be chosen if a unique solution is desired. ​
+
+The application of Eisenstein conditions to several types of cells is illustrated below:
+Example 1: For a simple cubic cell (Fig. ​ 44A, Appendix A), let the cell chosen be:
+a = b = c, for which cosα = cosβ = cosγ = 0.
+The cell passes all Eisenstein conditions and is Eisenstein reduced. ​
+Example 2a: For a body-centered cubic cell (Fig. 44B, Appendix A), let the cell chosen be:
+a = 1/2√3, b = a, c = √3, with cosα = cosβ = cosγ = 1/3.
+The cell does not pass all Eisenstein conditions and is not Eisenstein reduced. ​
+Example 2b: For a body-centered cubic cell (Fig. ​ 44B, Appendix A), let the cell chosen be:
+a = 1/2√3, b = a, c = √3, with cosα = cosβ = cosγ = -1/3.
+The cell passes all Eisenstein conditions and is Eisenstein reduced. ​
+Example 3a: For a face-centered cubic cell (Fig. ​ 44C, Appendix A), let the cell chosen be:
+a = 1/2√2, b = a, c = √2, with cosα = cosβ = cosγ = 1/2.
+The cell passes all Eisenstein conditions and is Eisenstein reduced. ​
+Example 3b: For a face-centered cubic cell (Fig. ​ 44C, Appendix A), let the cell chosen be:
+a = 1/2√2, b = a, c = √2, with cosα = cosβ = cosγ = -1/2.
+The cell does not pass all Eisenstein conditions and is not Eisenstein reduced. ​
+Jones (1935) writes that for any given point lattice, an Eisenstein reduction 
+"amounts to picking a coordinate system (i.e., a unit cell) as follows: choose 
+any point O of the lattice as the origin, call A one of the points of the lattice 
+closest to O, draw the X axis along OA, choose as B one of the points as close 
+to O (X, i.e., the X axis) as any point of the lattice not on the X axis and draw 
+he Y axis along OB, choose as C one of the points as close to O as any point of 
+the lattice not in the XY plane and draw the Z axis along OC." ​
+A systematic application of this recipe to the point lattices having various 
+generalized dimensional configurations will yield the 41 Niggli reduced cells. ​ 
+The addition of the expression "(X, i.e., the X axis)" to the above definition 
+is important, as it was shown in Example 3b that a lattice point may be chosen 
+"as close to O as any point of the lattice not on the X axis," which does not 
+yield an Eisenstein reduction. ​ On the other hand, in Example 3a, an Eisenstein 
+reduction is obtained if the lattice point chosen is the one closest to 
+the OX line, i.e., the X axis. ​
+The cell chosen in Example 3b, while it is composed of a set of three shortest 
+noncoplanar vectors having the cosines of the interaxial angles all negative 
+and may therefore be classed as reduced, is not Eisenstein reduced. ​ It is a
+ctually a very special case that would occur in the body-centered tetragonal 
+lattice (Fig. ​ 5C, Appendix A) when the ratio c/a = √2. ​ In this case, the 
+Eisenstein reduced form is the reduced cell given in Example 3a for the 
+face-centered cubic lattice. ​
+The 41 Niggli matrices are all Eisenstein reduced. ​ It does not necessarily 
+follow that special or degenerate representations of these matrices will 
+yield cells that are themselves Eisenstein reduced. ​ A hexagonal lattice 
+having c/a = 1.0 generates a special Niggli representation, and the 
+reduced cell (in standard orientation) is also Eisenstein reduced. ​ However, 
+a body-centered tetragonal lattice with c/a = √2 also generates a special 
+Niggli representation, but the reduced cell (in standard orientation) 
+is not Eisenstein reduced. ​

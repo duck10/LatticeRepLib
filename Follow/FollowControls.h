@@ -95,6 +95,11 @@ public:
             printDistanceData = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
 
+      InputHandler::registerHandler("PRINTDetails", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            printDetails = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         });
+
       InputHandler::registerHandler("GLITCHTHRESHOLD", 0.35,
          [this](BaseControlVariables&, const std::string& value) {
             glitchThresholdPercent = GlitchUtils::validateGlitchThresholdPercent(value);
@@ -225,6 +230,7 @@ public:
    double getGlitchThreshold() const { return glitchThresholdPercent; }
    bool shouldShowMarkers() const { return showDataMarkers; }
    int getNumPoints() const { return numFollowerPoints; }
+   bool getShouldPrintDetails() const{ return printDetails; }
 
    size_t getBlockStart() const { return blockstart; }
    size_t getBlockSize() const { return blocksize; }
@@ -282,6 +288,7 @@ private:
    double perturbBy = 0.1;
    int numFollowerPoints = 100;
    bool printDistanceData = false;
+   bool printDetails= false;
    bool glitchesOnly = false;
    bool shouldDetectGlitches = true;
    double glitchThresholdPercent = 4.0;

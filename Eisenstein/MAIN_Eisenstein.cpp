@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cfloat>
 #include <limits>
+#include <iomanip>
 #include <chrono>
 
 #include "LRL_Cell.h"
@@ -288,9 +289,28 @@ int main() {
       for (const auto& input : dc_setup.getInputList()) {
          ++count;
          const LRL_Cell cell = input.getCell();
+
+         std::cout << "P ";
+         for (size_t i = 0; i < 6; ++i) {
+            std::cout << std::setprecision(16) << std::setw(15) << LRL_Cell_Degrees(cell)[i] << " ";
+         }
+         std::cout << std::endl;
+
+         const G6 g6cell = cell;
+         std::cout << "G6 ";
+         for (size_t i = 0; i < 6; ++i) {
+            std::cout << std::setprecision(16) << std::setw(15) << g6cell[i] << " ";
+         }
+         std::cout << std::endl;;
+
+         const double trace = g6cell[0] + g6cell[1] + g6cell[2];
+         std::cout << "trace = "  << std::setprecision(16) << std::setw(15) << trace << std::endl << std::endl;
+
+         std::cout << std::endl;;
          auto results = CompareReductionMethods(cell, nmax, tolerance);
          UpdateSummary(summary, cell, results, tolerance);
       }
+
 
       PrintSummary(summary);
       return 0;
