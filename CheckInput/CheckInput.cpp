@@ -22,8 +22,16 @@ int main() {
       }
 
       for (const auto& input : dc_setup.getInputList()) {
-         std::cout << input.getLatticeType() << " "
-            << LRL_Cell_Degrees(input.getCell()) << std::endl;
+         const G6 testG6 = input.getCell();
+         if (testG6.IsValid()) {
+            std::cout << input.getLatticeType() << " "
+               << LRL_Cell_Degrees(input.getCell()) << std::endl;
+         }
+         else
+         {
+            std::cout << "; invalid input cell " << input.getInputLine() << std::endl;
+         }
+
       }
 
       return 0;

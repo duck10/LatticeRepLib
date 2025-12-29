@@ -172,6 +172,8 @@
     <ClInclude Include="NCDist_McColl.h" />
     <ClInclude Include="NCDist_HJB.h" />
     <ClInclude Include="NCDist_Mccoy_2.h" />
+    <ClInclude Include="KrivyGruberG6.h" />
+    <ClInclude Include="TestKrivyGruber.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

@@ -29,16 +29,28 @@
     <ClInclude Include="IsNiggli_KG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KrivyGruber_LCA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ReductionAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Copilot_from_Roof.h">
+    <ClInclude Include="EisenstenConditions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Claude_Roof_Eisenstein.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KrivyGruber_LCA_forinfiniteloops.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KrivyGruber_lca_showcycles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KrivyGruber_LCA_oldforcycling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="result.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cycledetection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

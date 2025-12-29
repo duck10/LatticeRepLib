@@ -143,10 +143,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Claude_Roof_Eisenstein.h" />
-    <ClInclude Include="Copilot_from_Roof.h" />
+    <ClInclude Include="EisenstenConditions.h" />
+    <ClInclude Include="Cycledetection.h" />
     <ClInclude Include="IsNiggli_KG.h" />
-    <ClInclude Include="KrivyGruber_LCA.h" />
+    <ClInclude Include="KrivyGruber_LCA_forinfiniteloops.h" />
+    <ClInclude Include="KrivyGruber_LCA_oldforcycling.h" />
+    <ClInclude Include="KrivyGruber_lca_showcycles.h" />
     <ClInclude Include="ReductionAnalyzer.h" />
+    <ClInclude Include="result.h" />
     <ClInclude Include="TestNiggliControls.h" />
   </ItemGroup>
   <ItemGroup>

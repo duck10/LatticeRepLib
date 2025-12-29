@@ -32,5 +32,8 @@
     <ClInclude Include="EdgeTransformationMatrices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MatrixCellOperator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

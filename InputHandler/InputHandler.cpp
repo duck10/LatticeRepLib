@@ -92,7 +92,7 @@ G6 InputHandler::parseRandom() {
       resultP = Polar::rand();
       resultG = resultP;
    }
-   return G6(Polar::rand());
+   return resultG;  // ? Return the validated result!
 }
 
 std::vector<LatticeCell> InputHandler::parseRandom(size_t count) {

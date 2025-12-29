@@ -1,12 +1,44 @@
 ﻿#include <cmath>
+#include <iostream>
+
 #include <string>
 #include <vector>
 #include <tuple>
 
+#include "G6.h"
+/*
+Microsoft Copilot translation from the conditons in Roof, 1969
+*/
+
 struct EisensteinResult {
    std::vector<std::string> satisfiedConditions;
    std::vector<std::string> violatedConditions;
+
+   friend std::ostream& operator<<(std::ostream& os, const EisensteinResult& result) {
+      os << "=== Eisenstein Conditions Check ===\n";
+
+      if (!result.satisfiedConditions.empty()) {
+         os << "\nSatisfied Conditions (" << result.satisfiedConditions.size() << "):\n";
+         for (const auto& condition : result.satisfiedConditions) {
+            os << "  [OK] " << condition << "\n";
+         }
+      }
+
+      if (!result.violatedConditions.empty()) {
+         os << "\nViolated Conditions (" << result.violatedConditions.size() << "):\n";
+         for (const auto& condition : result.violatedConditions) {
+            os << "  [FAIL] " << condition << "\n";
+         }
+      }
+
+      if (result.satisfiedConditions.empty() && result.violatedConditions.empty()) {
+         os << "\nNo conditions checked (input may not satisfy prerequisites)\n";
+      }
+
+      return os;
+   }
 };
+
 
 EisensteinResult CheckEisensteinConditions(double a, double b, double c,
    double cosAlpha, double cosBeta, double cosGamma) {
@@ -82,4 +114,8 @@ EisensteinResult CheckEisensteinConditions(double a, double b, double c,
    }
 
    return result;
+}
+
+EisensteinResult CheckEisensteinConditions(const G6 g) {
+   return CheckEisensteinConditions(g[0], g[1], g[2], g[3], g[4], g[5]);
 }

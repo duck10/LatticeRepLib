@@ -413,34 +413,35 @@ KrivyGruber_LCA::ReduceWithTransformation_LCA(const G6& inputG6, double toleranc
 
          const double convergenceTolerance = (tolerance == 0.0) ? 1e-12 : tolerance;
 
-         if (fractionalChange < convergenceTolerance) {
-            stableIterations++;
-
-            // Primary convergence: trace stable AND we attempted reduction last iteration
-            if (previousWorkDone) {
-               if (verbose) {
-                  std::cout << "\nConverged after " << mainIter << " iterations (sum stabilized)" << std::endl;
-                  std::cout << "  Sum change: " << sumChange << std::endl;
-                  std::cout << "  Fractional change: " << fractionalChange << std::endl;
-               }
-               workDone = false;
-               break;
-            }
-
-            // Safety valve: if trace stable for 10+ iterations, force convergence
-            if (stableIterations >= 3) {
-               if (verbose) {
-                  std::cout << "\nConverged after " << mainIter << " iterations (trace stable for "
-                     << stableIterations << " iterations)" << std::endl;
-                  std::cout << "  Sum change: " << sumChange << std::endl;
-                  std::cout << "  Fractional change: " << fractionalChange << std::endl;
-               }
-               workDone = false;
-               break;
-            }
-         } else {
-            stableIterations = 0;  // Reset if trace changes
-         }
+         //          if (fractionalChange < convergenceTolerance) {
+         //             stableIterations++;
+         // 
+         //             // Primary convergence: trace stable AND we attempted reduction last iteration
+         //             if (previousWorkDone) {
+         //                if (verbose) {
+         //                   std::cout << "\nConverged after " << mainIter << " iterations (sum stabilized)" << std::endl;
+         //                   std::cout << "  Sum change: " << sumChange << std::endl;
+         //                   std::cout << "  Fractional change: " << fractionalChange << std::endl;
+         //                }
+         //                workDone = false;
+         //                break;
+         //             }
+         // 
+         //             // Safety valve: if trace stable for 100+ iterations, force convergence
+         //             // (Set high to allow detection of true cycling cases)
+         //             if (stableIterations >= 100) {
+         //                if (verbose) {
+         //                   std::cout << "\nConverged after " << mainIter << " iterations (trace stable for "
+         //                      << stableIterations << " iterations)" << std::endl;
+         //                   std::cout << "  Sum change: " << sumChange << std::endl;
+         //                   std::cout << "  Fractional change: " << fractionalChange << std::endl;
+         //                }
+         //                workDone = false;
+         //                break;
+         //             }
+         //          } else {
+         //             stableIterations = 0;  // Reset if trace changes
+         //          }
       }
 
       // CRITICAL: Update previousSum for next iteration (must be here, not at end of loop!)
@@ -716,7 +717,6 @@ KrivyGruber_LCA::ReduceWithTransformation_LCA(const G6& inputG6, double toleranc
       std::cout << "Sum change:  " << (initialSum - finalSum) << std::endl;
       std::cout << "Total steps: " << totalSteps << std::endl;
       std::cout << "workDone: " << (workDone ? "true (still working)" : "false") << std::endl;
-      //std::cout << "step1_label: " << (step1_label ? "true" : "false") << std::endl;
 
       // Print last 20 sum values from circular buffer
       const int itemsInBuffer = std::min(historyCount, HISTORY_SIZE);
@@ -745,6 +745,12 @@ KrivyGruber_LCA::ReduceWithTransformation_LCA(const G6& inputG6, double toleranc
       std::cout << "Total steps: " << totalSteps << std::endl;
       std::cout << "Final: g1=" << g1 << " g2=" << g2 << " g3=" << g3
          << " g4=" << g4 << " g5=" << g5 << " g6=" << g6 << std::endl;
+      if (totalSteps > 500) {
+         std::cout << "\n*** CYCLING CASE FOUND ***" << std::endl;
+         std::cout << "Total steps: " << totalSteps << std::endl;
+         std::cout << "Input G6: " << inputG6 << std::endl;
+         std::cout << "Final G6: " << result.reducedG6 << std::endl;
+      }
    }
    return result;
 }

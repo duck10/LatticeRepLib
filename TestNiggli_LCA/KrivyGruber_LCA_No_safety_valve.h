@@ -427,17 +427,17 @@ KrivyGruber_LCA::ReduceWithTransformation_LCA(const G6& inputG6, double toleranc
                break;
             }
 
-            // Safety valve: if trace stable for 10+ iterations, force convergence
-            if (stableIterations >= 3) {
-               if (verbose) {
-                  std::cout << "\nConverged after " << mainIter << " iterations (trace stable for "
-                     << stableIterations << " iterations)" << std::endl;
-                  std::cout << "  Sum change: " << sumChange << std::endl;
-                  std::cout << "  Fractional change: " << fractionalChange << std::endl;
-               }
-               workDone = false;
-               break;
-            }
+            // Safety valve: DISABLED FOR TESTING INFINITE LOOPS
+            // if (stableIterations >= 10) {
+            //    if (verbose) {
+            //       std::cout << "\nConverged after " << mainIter << " iterations (trace stable for " 
+            //                << stableIterations << " iterations)" << std::endl;
+            //       std::cout << "  Sum change: " << sumChange << std::endl;
+            //       std::cout << "  Fractional change: " << fractionalChange << std::endl;
+            //    }
+            //    workDone = false;
+            //    break;
+            // }
          } else {
             stableIterations = 0;  // Reset if trace changes
          }
@@ -716,7 +716,7 @@ KrivyGruber_LCA::ReduceWithTransformation_LCA(const G6& inputG6, double toleranc
       std::cout << "Sum change:  " << (initialSum - finalSum) << std::endl;
       std::cout << "Total steps: " << totalSteps << std::endl;
       std::cout << "workDone: " << (workDone ? "true (still working)" : "false") << std::endl;
-      //std::cout << "step1_label: " << (step1_label ? "true" : "false") << std::endl;
+      std::cout << "step1_label: " << (step1_label ? "true" : "false") << std::endl;
 
       // Print last 20 sum values from circular buffer
       const int itemsInBuffer = std::min(historyCount, HISTORY_SIZE);

@@ -145,6 +145,7 @@
     <ClInclude Include="EdgeTransformationMatrices.h" />
     <ClInclude Include="EisensteinControls.h" />
     <ClInclude Include="EdgeTransformationMatrices_3x3.h" />
+    <ClInclude Include="MatrixCellOperator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
