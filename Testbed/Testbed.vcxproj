@@ -166,6 +166,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="generateUnimodularMatrices.h" />
     <ClInclude Include="Matrix_3x3.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />
     <ClInclude Include="ReduceTransformsTest.h" />

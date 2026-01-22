@@ -635,7 +635,7 @@ int main(int argc, char* argv[]) {
    std::cout << "; Eisenstein Reduction with Trace Distribution Analysis" << std::endl;
 
    const int nmax = 500;
-   const double tolerance = 1.0E-8;
+   const double tolerance = 1.0E-14;
 
    try {
       EisenControls controls;

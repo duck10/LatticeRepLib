@@ -3,7 +3,9 @@
 
 #include <array>
 #include <cmath>
+#include <concepts>
 #include <iostream>
+#include <type_traits>
 #include <utility>
 
 #include "BasisBase.h"
@@ -19,7 +21,7 @@ public:
    using const_iterator = Container::const_iterator;
 
    P3();  // Default constructor
-   explicit P3(const LRL_Cell& cell);  // Construct from cell geometry
+   P3(const LRL_Cell& cell);  // Construct from cell geometry
 
    explicit P3(const std::vector<Vector_2>& vecs) {
       if (vecs.size() != 3) {
@@ -55,6 +57,7 @@ public:
    }
 
    template<typename T>
+      requires (!std::convertible_to<T, std::string>)
    P3(const T& t) {
       P3& p(*this);
       const LRL_Cell cell(t);
@@ -64,11 +67,12 @@ public:
       const double& alpha = cell[3];
       const double& beta = cell[4];
       const double& gamma = cell[5];
-      p[0] = { a * cos(alpha),a * sin(alpha) };
+      p[0] = { a * cos(alpha), a * sin(alpha) };
       p[1] = { b * cos(beta), b * sin(beta) };
       p[2] = { c * cos(gamma), c * sin(gamma) };
-      m_valid = cell.CheckValid(p);
+      m_valid = cell.CheckValid(LRL_Cell(p));
    }
+
 
    static double EuclideanDistance(const P3& p1, const P3& p2);
 

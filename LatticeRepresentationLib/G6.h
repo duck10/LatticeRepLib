@@ -94,10 +94,10 @@ public:
       const double g6 = (*this)[5];
 
       const double det = g1 * g2 * g3
-         + 2.0 * g4 * g5 * g6
-         - g1 * g4 * g4
-         - g2 * g5 * g5
-         - g3 * g6 * g6;
+         + 0.25 * g4 * g5 * g6     // Divide by 4, not multiply by 2!
+         - 0.25 * g1 * g4 * g4
+         - 0.25 * g2 * g5 * g5
+         - 0.25 * g3 * g6 * g6;
 
       return det > tolerance;
    }

@@ -1,10 +1,14 @@
 ﻿#pragma warning(disable: 4566)
 #ifndef TRANSFORMATION_MATRICES_H
 #define TRANSFORMATION_MATRICES_H
-#include <vector>
-#include "LRL_Vector3.h"  // For Matrix_3x3
-#include <set>
+
 #include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <set>
+#include <vector>
+
+#include "LRL_Vector3.h"  // For Matrix_3x3
 
 // ========================================
 // TRANSFORMATION MATRICES CENTRAL REPOSITORY
@@ -186,7 +190,7 @@ namespace TransformationMatrices {
    // ========================================
 
    std::vector<Matrix_3x3> buildAllTransformationMatrices(const bool includeInverses = true, const int maxCoeff = 3);
-   std::vector<Matrix_3x3> generateComprehensiveIntegerMatrices(int maxCoeff);
+   std::vector<Matrix_3x3> generateComprehensiveIntegerMatrices(const int maxCoeff);
 
    std::vector<Matrix_3x3> getAllNiggliMatrices();
    std::vector<Matrix_3x3> getAllPermutationMatrices();
@@ -200,50 +204,45 @@ namespace TransformationMatrices {
 
    std::vector<Matrix_3x3>& getAllTransformationMatrices(const int maxCoeff = 3);
 
-   static std::vector<Matrix_3x3> generateUnimodularMatrices() {
+   inline std::vector<Matrix_3x3> generateUnimodularMatrices(const int maxCoeff = 1) {
       /*
-      this function generates a subset of the unimodular matrices with determinant +1
-      and elements 0/+1/-1. It is a restricted subset of group GL(n,Z).
+         Generate all 3×3 unimodular integer matrices with determinant +1
+         and entries in the range [-maxCoeff, +maxCoeff].
       */
-      std::vector<Matrix_3x3> result;
 
-      // Allowed values: -1, 0, 1
-      static const std::vector<double>values = { -1, 0, 1 };
-      const size_t n = values.size();
+      std::vector<Matrix_3x3> matrices;
+      matrices.reserve(4000);
 
-      // Generate all possible 3x3 matrices with elements from {-1, 0, 1}
-      for (int a00 = 0; a00 < n; a00++) {
-         for (int a01 = 0; a01 < n; a01++) {
-            for (int a02 = 0; a02 < n; a02++) {
-               for (int a10 = 0; a10 < n; a10++) {
-                  for (int a11 = 0; a11 < n; a11++) {
-                     for (int a12 = 0; a12 < n; a12++) {
-                        for (int a20 = 0; a20 < n; a20++) {
-                           for (int a21 = 0; a21 < n; a21++) {
-                              for (int a22 = 0; a22 < n; a22++) {
-                                 Matrix_3x3 mat = {
-                                     values[a00], values[a01], values[a02],
-                                     values[a10], values[a11], values[a12],
-                                     values[a20], values[a21], values[a22]
-                                 };
+      const int lo = -maxCoeff;
+      const int hi = maxCoeff;
 
-                                 if (mat.Det() == 1) {
-                                    result.emplace_back(mat);
+      for (int a00 = lo; a00 <= hi; ++a00)
+         for (int a01 = lo; a01 <= hi; ++a01)
+            for (int a02 = lo; a02 <= hi; ++a02)
+               for (int a10 = lo; a10 <= hi; ++a10)
+                  for (int a11 = lo; a11 <= hi; ++a11)
+                     for (int a12 = lo; a12 <= hi; ++a12)
+                        for (int a20 = lo; a20 <= hi; ++a20)
+                           for (int a21 = lo; a21 <= hi; ++a21)
+                              for (int a22 = lo; a22 <= hi; ++a22) {
+
+                                 Matrix_3x3 M(
+                                    a00, a01, a02,
+                                    a10, a11, a12,
+                                    a20, a21, a22
+                                 );
+
+                                 const double det = M.Det();
+
+                                 // Accept ONLY determinant +1
+                                 if (std::abs(det - 1.0) < 1e-12) {
+                                    matrices.emplace_back(M);
                                  }
                               }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
 
-      //std::cout << "Generated " << result.size() << " unimodular matrices (should be 3480)" << std::endl;
-      return result;
+      matrices.shrink_to_fit();
+      return matrices;
    }
-
 
 } // namespace TransformationMatrices
 

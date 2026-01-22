@@ -39,7 +39,7 @@ public:
    LRL_Cell(void);
    LRL_Cell( const LRL_Cell& c );
    LRL_Cell( const std::vector<double>& v );
-   LRL_Cell(const std::string& s); // cell with angles in degrees from text
+   explicit LRL_Cell(const std::string& s); // cell with angles in degrees from text
    LRL_Cell(const double a, const double b, const double c,
       const double alpha, const double beta, const double gamma);
    LRL_Cell(const G6& v6); // specialized for G6
@@ -48,7 +48,7 @@ public:
    LRL_Cell(const S6& dt); // specialized for S6
    LRL_Cell(const C3& c3); // specialized for C3
    LRL_Cell(const B4& ds); // specialized for Delone tetrahedron
-   LRL_Cell(const P3& dp3); //
+   explicit LRL_Cell(const P3& dp3); //
    ~LRL_Cell(void);
 
    bool CheckValid();

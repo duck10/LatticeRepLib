@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <utility>
 
 #include "LRL_Cell_Degrees.h"
 #include "B4.h"
@@ -245,7 +246,7 @@ double P3_Reduce::P3Cost(const P3& p) {
       return P3TraceCost(p);
    }
    else if (choice == 3) {
-      return ComputeMetricCost(p);
+      return ComputeMetricCost(LRL_Cell(p));
    }
    else {
       throw;
@@ -477,7 +478,7 @@ std::pair<LRL_Cell, Matrix_3x3> P3_Reduce::ReduceCellWith3480(const LRL_Cell& in
       std::cout << "DEBUG: Final cost after StandardPresentation: " << finalCost << std::endl;
    }
 
-   return { final, Matrix_3x3() };
+   return std::make_pair(LRL_Cell(final), Matrix_3x3());
 }
 
 bool P3_Reduce::VerifyTransformation(const LRL_Cell& input, const LRL_Cell& output, const Matrix_3x3& transform, bool verbose) {

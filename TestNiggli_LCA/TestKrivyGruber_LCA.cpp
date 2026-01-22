@@ -5,11 +5,11 @@
 #include <chrono>
 
 #include "TestNiggliControls.h"
-#include "ProgramSetup.h"
-#include "NCDist_McCoy.h"
-#include "NCDist.h"
-#include "NCDist_HJB.h"
-#include "S6M_SellingReduce.h"
+//#include "ProgramSetup.h"
+//#include "NCDist_McCoy.h"
+//#include "NCDist.h"
+//#include "NCDist_HJB.h"
+//#include "S6M_SellingReduce.h"
 #include "Polar.h"
 #include "LRL_Cell_Degrees.h"
 //#include "KrivyGruber.h"
@@ -24,9 +24,82 @@
 #include "B4.h"
 #include "Cycledetection.h"
 #include "EisenstenConditions.h"
-
+#include "ProgramSetup.h"
 
 #include "ReductionAnalyzer.h"
+#include "TraceReduction.h"
+
+#include <chrono>
+#include <iomanip>
+
+struct ReductionStats {
+   int totalTests = 0;
+   int identicalResults = 0;
+   int smallDifferences = 0;
+   int largeDifferences = 0;
+   int kgFailures = 0;
+   int traceFailures = 0;
+
+   double kgTotalTime = 0.0;
+   double traceTotalTime = 0.0;
+
+   double maxDiff = 0.0;
+   G6 worstCaseInput;
+   G6 worstCaseKG;
+   G6 worstCaseTrace;
+
+   int totalKgIterations = 0;
+   int totalTraceIterations = 0;
+
+   int totalKgSteps = 0;
+   int totalTraceSteps = 0;
+
+   void print() const {
+      std::cout << "\n=== REDUCTION COMPARISON STATISTICS ===" << std::endl;
+      std::cout << std::fixed << std::setprecision(6);
+
+      // Results comparison
+      std::cout << "\nResults Comparison:" << std::endl;
+      std::cout << "  Total tests:           " << totalTests << std::endl;
+      std::cout << "  Identical results:     " << identicalResults
+         << " (" << (100.0 * identicalResults / totalTests) << "%)" << std::endl;
+      std::cout << "  Small differences:     " << smallDifferences
+         << " (" << (100.0 * smallDifferences / totalTests) << "%)" << std::endl;
+      std::cout << "  Large differences:     " << largeDifferences
+         << " (" << (100.0 * largeDifferences / totalTests) << "%)" << std::endl;
+      std::cout << "  KG failures:           " << kgFailures << std::endl;
+      std::cout << "  Trace failures:        " << traceFailures << std::endl;
+
+      // Timing comparison
+      std::cout << "\nTiming Comparison:" << std::endl;
+      std::cout << "  KG total time:         " << kgTotalTime << " seconds" << std::endl;
+      std::cout << "  Trace total time:      " << traceTotalTime << " seconds" << std::endl;
+      std::cout << "  KG avg per cell:       " << (kgTotalTime / totalTests * 1000.0) << " ms" << std::endl;
+      std::cout << "  Trace avg per cell:    " << (traceTotalTime / totalTests * 1000.0) << " ms" << std::endl;
+      std::cout << "  Speedup:               " << (kgTotalTime / traceTotalTime) << "x" << std::endl;
+
+      // Worst case
+      if (maxDiff > 1e-10) {
+         std::cout << "\nWorst Case (max difference = " << maxDiff << "):" << std::endl;
+         std::cout << "  Input:  " << worstCaseInput << std::endl;
+         std::cout << "  KG:     " << worstCaseKG << std::endl;
+         std::cout << "  Trace:  " << worstCaseTrace << std::endl;
+      }
+
+      std::cout << "\nIteration Comparison:" << std::endl;
+      std::cout << "  KG total iterations:     " << totalKgIterations << std::endl;
+      std::cout << "  Trace total iterations:  " << totalTraceIterations << std::endl;
+      std::cout << "  KG avg iterations:       " << (double)totalKgIterations / totalTests << std::endl;
+      std::cout << "  Trace avg iterations:    " << (double)totalTraceIterations / totalTests << std::endl;
+
+      std::cout << "\nStep Comparison:" << std::endl;
+      std::cout << "  KG total steps:       " << totalKgSteps << std::endl;
+      std::cout << "  Trace total steps:    " << totalTraceSteps << std::endl;
+      std::cout << "  KG avg steps/cell:    " << (double)totalKgSteps / totalTests << std::endl;
+      std::cout << "  Trace avg steps/cell: " << (double)totalTraceSteps / totalTests << std::endl;
+
+   }
+};
 
 
 inline LRL_Cell operator*(const Matrix_3x3& matrix, const LRL_Cell& cell) {
@@ -46,13 +119,14 @@ std::string FormatG6WithPrecision(const G6& g6) {
    oss << std::fixed;
 
    for (size_t i = 0; i < 6; ++i) {
-      if (i > 0) oss << "  ";
+      oss << " ";  // ? Always start with space
 
-      // Use higher precision for small values
-      if (std::abs(g6[i]) < 0.1) {
-         oss << std::setprecision(12) << std::setw(16) << g6[i];
+      if (g6[i] == 0.0) {
+         oss << std::setw(15) << "0.0";
+      } else if (std::abs(g6[i]) < 0.1) {
+         oss << std::setprecision(15) << std::setw(15) << g6[i];
       } else {
-         oss << std::setprecision(6) << std::setw(10) << g6[i];
+         oss << std::setprecision(8) << std::setw(11) << g6[i];
       }
    }
 
@@ -336,45 +410,130 @@ void PrintToleranceComparisonSummary(const ToleranceComparisonStats& stats) {
 // ===================================================================
 
 int main(int argc, char* argv[]) {
-   //for (size_t i = 0; i < 100000; ++i) {
-   //   const G6 g6(Polar::rand());
-   //   if (!g6.IsValid() || !LRL_Cell(g6).IsValid()) continue;
-   //   const double initialVolume = LRL_Cell(g6).Volume();
-   //   const ReductionResult result = KrivyGruberG6::ReduceF(g6);
-
-   //   // Skip if reduction failed
-   //   if (result.status != ReductionStatus::Success) continue;
-
-   //   const double finalVolume = LRL_Cell(result.reducedCell).Volume();
-   //   const double volumeDifference = initialVolume - finalVolume;
-   //   if (volumeDifference / initialVolume > 1.0E-10)
-   //   {
-   //      G6 red;
-   //      Niggli::Reduce(g6, red);
-   //      std::cout << "cycle " << i << std::endl;
-   //      std::cout << "initial G6   " << g6 << std::endl;
-   //      std::cout << "reduced G6   " << result.reducedCell << std::endl;
-   //      std::cout << "initial cell " << LRL_Cell_Degrees(g6) << std::endl;
-   //      std::cout << "reduced cell " << LRL_Cell_Degrees(result.reducedCell) << std::endl;
-   //      std::cout << "reduced differences ";
-   //      std::cout << FormatG6WithPrecision(result.reducedCell - red) << std::endl;
-   //      std::cout << "NiggliReduced " << red << std::endl;
-   //      std::cout << "initial and final volumes " << initialVolume << "  " << finalVolume << std::endl;
-   //      std::cout << "Fractional volume difference " << volumeDifference << std::endl;
-   //      std::cout << std::endl;
-   //   }
-   //}
-
+   const int i19191 = 19191;
    //return KrivyGruberTest::run();
-   const G6 testg6(G6::rand());
-   const ReductionResult answer = KG::Reduce(testg6, 0, true);
-   std::cout << answer.reducedCell << std::endl;
+   //const G6 testg6("100 110 120 90 89 88");
+   //const ReductionResult answer = KG::Reduce(testg6, 0, true);
+   //std::cout << answer.reducedCell << std::endl;
+
+   //const TraceReductionResult traceanswer = TraceReduction<double>::Reduce(testg6, 0, true);
+   //std::cout << traceanswer.reducedCell << std::endl;
 
    TemplateControls controls;
    const BasicProgramInput<TemplateControls> dc_setup("TEMPLATE", controls);
    if (dc_setup.getInputList().empty()) {
       throw std::runtime_error("; No input vectors provided");
    }
+
+   // Main comparison loop
+   ReductionStats stats;
+   static constexpr double TESTTOLERANCE = 0;
+
+   std::cout << "Tolerance limit for these tests " << TESTTOLERANCE << std::endl;
+
+   for (const auto& input : dc_setup.getInputList()) {
+      stats.totalTests++;
+      const G6 inputG6(input);
+
+      // Time KG reduction
+      auto kgStart = std::chrono::high_resolution_clock::now();
+      const ReductionResult kgResult = KG::Reduce(inputG6, TESTTOLERANCE, false);
+      auto kgEnd = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double> kgDuration = kgEnd - kgStart;
+      stats.kgTotalTime += kgDuration.count();
+
+      // Time Trace reduction
+      auto traceStart = std::chrono::high_resolution_clock::now();
+      const TraceReductionResult traceResult = TraceReduction<float>::Reduce(inputG6, TESTTOLERANCE, false);
+      auto traceEnd = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double> traceDuration = traceEnd - traceStart;
+      stats.traceTotalTime += traceDuration.count();
+
+      // Check for failures
+      bool kgFailed = !kgResult.succeeded();
+      bool traceFailed = !traceResult.succeeded();
+
+      if (kgFailed || traceFailed) {
+         if (kgFailed) stats.kgFailures++;
+         if (traceFailed) stats.traceFailures++;
+
+         const double diff = (kgResult.reducedCell - traceResult.reducedCell).norm();
+
+         if (diff < 0.01) {
+            stats.identicalResults++;
+            if (kgFailed && traceFailed) {
+               std::cout << "BOTH hit iteration limit but results match" << std::endl;
+            } else if (kgFailed) {
+               std::cout << "KG hit iteration limit but results match" << std::endl;
+            } else {
+               std::cout << "Trace hit iteration limit but results match" << std::endl;
+            }
+            std::cout << "KG iterations: " << kgResult.iterations << std::endl;
+            std::cout << "Trace iterations: " << traceResult.iterations << std::endl;
+         } else {
+            stats.largeDifferences++;
+            std::cout << "FAILURE with different results: " << inputG6 << std::endl;
+         }
+
+         std::cout << "KG:    " << kgResult.reducedCell << std::endl;
+         std::cout << "Trace: " << traceResult.reducedCell << std::endl;
+         continue;
+      }
+
+      // Compute difference
+      const double diff = (kgResult.reducedCell - traceResult.reducedCell).norm();
+
+      // Categorize
+      if (diff < 1e-10) {
+         stats.identicalResults++;
+      } else if (diff < 1e-4) {
+         stats.smallDifferences++;
+         if (stats.totalTests % 1000 == 0) {  // Report occasionally
+            std::cout << "Small diff (" << diff << ") at test " << stats.totalTests << std::endl;
+         }
+      } else {
+         stats.largeDifferences++;
+         std::cout << "\nLARGE DIFFERENCE at test " << stats.totalTests << ":" << std::endl;
+         std::cout << "  Input:  " << FormatG6WithPrecision(inputG6) << std::endl;
+         std::cout << "  KG:     " << FormatG6WithPrecision(kgResult.reducedCell) << std::endl;
+         std::cout << "  Trace:  " << FormatG6WithPrecision(traceResult.reducedCell) << std::endl;
+         std::cout << "  Diff:   " << diff << std::endl;
+         // Also show absolute values to check if it's just signs
+         G6 kgAbs(std::abs(kgResult.reducedCell[0]), std::abs(kgResult.reducedCell[1]),
+            std::abs(kgResult.reducedCell[2]), std::abs(kgResult.reducedCell[3]),
+            std::abs(kgResult.reducedCell[4]), std::abs(kgResult.reducedCell[5]));
+         G6 traceAbs(std::abs(traceResult.reducedCell[0]), std::abs(traceResult.reducedCell[1]),
+            std::abs(traceResult.reducedCell[2]), std::abs(traceResult.reducedCell[3]),
+            std::abs(traceResult.reducedCell[4]), std::abs(traceResult.reducedCell[5]));
+         double absDiff = (kgAbs - traceAbs).norm();
+         std::cout << "  Abs diff: " << absDiff << " (difference ignoring signs)" << std::endl;
+      }
+
+      stats.totalKgIterations += kgResult.iterations;
+      stats.totalTraceIterations += traceResult.iterations;
+
+      // Track worst case
+      if (diff > stats.maxDiff) {
+         stats.maxDiff = diff;
+         stats.worstCaseInput = inputG6;
+         stats.worstCaseKG = kgResult.reducedCell;
+         stats.worstCaseTrace = traceResult.reducedCell;
+      }
+
+      // Progress indicator for large runs
+      if (stats.totalTests % 10000 == 0) {
+         std::cout << "Completed " << stats.totalTests << " tests..." << std::endl;
+      }
+   }
+
+   // Print final statistics
+   stats.print();
+
+
+
+
+
+
 
    //ToleranceComparisonStats tolStats;
    //// *** ADD THESE THREE LINES ***
@@ -393,10 +552,10 @@ int main(int argc, char* argv[]) {
    //   CompareKrivyGruberLCA_Tolerances(g6in, tolStats, true);  // verbose=false
    //}
 
-   for (const auto& input : dc_setup.getInputList()) {
-      const auto out =KG::Reduce(input.getCell(),0,false);
-      std::cout << out.reducedCell << std::endl;
-   }
+   //for (const auto& input : dc_setup.getInputList()) {
+   //   const auto out =KG::Reduce(input.getCell(),0,false);
+   //   std::cout << out.reducedCell << std::endl;
+   //}
 
    //PrintToleranceComparisonSummary(tolStats);
    return 0;

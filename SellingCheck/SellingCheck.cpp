@@ -4,7 +4,7 @@
 // 1. Does the algorithm satisfy Selling-Delaunay conditions (which guarantee minimal trace)?
 // 2. Can we find any equivalent cell with smaller trace?
 
-#include "KrivyGruber_LCA.h"
+#include "KrivyGruberG6.h"
 #include "G6.h"
 #include <iostream>
 #include <iomanip>
@@ -118,8 +118,8 @@ public:
             << inputTrace << std::endl;
 
          // Run reduction
-         KrivyGruber_LCA::ReductionResult result =
-            KrivyGruber_LCA::ReduceWithTransformation_LCA(input, tolerance, false);
+         ReductionResult result =
+            KrivyGruberG6<>::ReduceWithTransformation_LCA(input, tolerance, false);
 
          const double outputTrace = result.reducedG6[0] + result.reducedG6[1] + result.reducedG6[2];
 

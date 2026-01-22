@@ -53,6 +53,9 @@
     <ClInclude Include="Cycledetection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TraceReduction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Roof_Appendix_C_on_Eisenstein.txt" />

@@ -119,6 +119,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestReservoir.cpp" />
-    <ClCompile Include="TransformationMatrices.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EdgeTransformationMatrices.h" />
@@ -147,7 +147,6 @@
     <ClInclude Include="MatrixCellOperator.h" />
     <ClInclude Include="TestControls.h" />
     <ClInclude Include="TestToConvergence.h" />
-    <ClInclude Include="TransformationMatrices.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

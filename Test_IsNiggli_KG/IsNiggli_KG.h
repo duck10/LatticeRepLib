@@ -179,4 +179,3 @@ public:
 };
 
 #endif // ISNIGGLI_KG_H
-*/

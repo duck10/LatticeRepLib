@@ -30,7 +30,7 @@ P3::P3(const LRL_Cell& cell) {
    p[0] = { a * cos(alpha),a * sin(alpha) };
    p[1] = { b * cos(beta), b * sin(beta) };
    p[2] = { c * cos(gamma), c * sin(gamma) };
-   m_valid = cell.CheckValid(p);
+   m_valid = cell.CheckValid(LRL_Cell(p));
 }
 
 

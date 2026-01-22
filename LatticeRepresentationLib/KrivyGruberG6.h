@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <chrono>
 
 #include "G6.h"
 #include "LRL_Cell.h"
@@ -11,76 +12,117 @@
 enum class ReductionStatus {
    Success,
    InvalidInput,
-   FailedToConverge
+   FailedToConverge,
+   Timeout
 };
 
 struct ReductionResult {
    G6 reducedCell;
    ReductionStatus status;
+   int iterations;
+   double elapsedSeconds;
 
    // Convenience methods
    bool isValid() const { return status == ReductionStatus::Success; }
    bool succeeded() const { return status == ReductionStatus::Success; }
 };
 
-template <typename T=double>
+template <typename T = double>
 class KrivyGruberG6 {
    using DOUBLETYPE = T;
-   const DOUBLETYPE EPS = std::numeric_limits<DOUBLETYPE>::epsilon();
-   const DOUBLETYPE DEFAULT_TOLERANCE = 0.0;
+   static constexpr DOUBLETYPE DEFAULT_TOLERANCE = 1.0e-5;  // Changed from 0.0!
+   static constexpr int DEFAULT_MAX_ITERATIONS = 10000;
+   static constexpr double DEFAULT_MAX_SECONDS = 10.0;  // 10 second timeout
 
 public:
-   static inline ReductionResult Reduce(const G6& inputG6, const DOUBLETYPE tolerance = DEFAULT_TOLERANCE, const bool verbose = false) {
+   static inline ReductionResult Reduce(
+      const G6& inputG6,
+      const DOUBLETYPE tolerance = DEFAULT_TOLERANCE,
+      const bool verbose = false,
+      const int maxIterations = DEFAULT_MAX_ITERATIONS,
+      const double maxSeconds = DEFAULT_MAX_SECONDS)
+   {
+      auto startTime = std::chrono::high_resolution_clock::now();
+
       // Validate input
       if (!inputG6.IsValid()) {
          if (verbose) std::cout << "ERROR: Invalid input - negative determinant" << std::endl;
-         return { inputG6, ReductionStatus::InvalidInput };
+         return { inputG6, ReductionStatus::InvalidInput, 0, 0.0 };
       }
 
       // Working copy of G6
       G6 resultG6 = inputG6;
-      static constexpr int MAX_REDUCTION_ITERATIONS = 1000;
       int mainIter = 0;
       int totalSteps = 0;
 
       // Execute initial normalization sequence
       DoSteps12134(resultG6, tolerance, totalSteps, verbose);
 
+
+      // Track recent states for cycle detection
+      std::vector<G6> recentStates;
+      const int CYCLE_CHECK_DEPTH = 10;
+
       // Main algorithm loop
-      while (mainIter < MAX_REDUCTION_ITERATIONS) {
+      while (mainIter < maxIterations) {
          mainIter++;
+
+         // Check timeout
+         auto currentTime = std::chrono::high_resolution_clock::now();
+         std::chrono::duration<double> elapsed = currentTime - startTime;
+         if (elapsed.count() > maxSeconds) {
+            if (verbose) {
+               std::cout << "TIMEOUT after " << elapsed.count() << " seconds, "
+                  << mainIter << " iterations" << std::endl;
+            }
+            return { resultG6, ReductionStatus::Timeout, mainIter, elapsed.count() };
+         }
+
+         // Check for cycles
+         for (const auto& prevState : recentStates) {
+            if ((resultG6 - prevState).norm() < tolerance) {
+               auto endTime = std::chrono::high_resolution_clock::now();
+               std::chrono::duration<double> finalElapsed = endTime - startTime;
+               if (verbose) {
+                  std::cout << "Cycle detected at iteration " << mainIter
+                     << ", stopping" << std::endl;
+               }
+               return { resultG6, ReductionStatus::Success, mainIter, finalElapsed.count() };
+            }
+         }
+
+         // Store current state
+         recentStates.push_back(resultG6);
+         if (recentStates.size() > CYCLE_CHECK_DEPTH) {
+            recentStates.erase(recentStates.begin());
+         }
+
          if (DoStep5(resultG6, tolerance, totalSteps, verbose)) continue;
          if (DoStep6(resultG6, tolerance, totalSteps, verbose)) continue;
          if (DoStep7(resultG6, tolerance, totalSteps, verbose)) continue;
          if (DoStep8(resultG6, tolerance, totalSteps, verbose)) continue;
-         // If we reach here, algorithm has converged
 
-         // Check if we're truly converged
-         if (verbose && mainIter > MAX_REDUCTION_ITERATIONS - 10) {
-            std::cout << "Checking convergence: "
-               << " Step5=" << IfStep5(resultG6, tolerance)
-               << " Step6=" << IfStep6(resultG6, tolerance)
-               << " Step7=" << IfStep7(resultG6, tolerance)
-               << " Step8=" << IfStep8(resultG6, tolerance)
-               << std::endl;
-         }
+         // If we reach here, algorithm has converged
          break;
       }
 
-      // Report results
-      ReportResults(mainIter, MAX_REDUCTION_ITERATIONS, totalSteps, resultG6, verbose);
+      auto endTime = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double> finalElapsed = endTime - startTime;
 
-      if (mainIter < MAX_REDUCTION_ITERATIONS) {
-         return { resultG6, ReductionStatus::Success };
+      // Report results
+      ReportResults(mainIter, maxIterations, totalSteps, resultG6, finalElapsed.count(), verbose);
+
+      if (mainIter < maxIterations) {
+         return { resultG6, ReductionStatus::Success, mainIter, finalElapsed.count() };
       } else {
-         return { resultG6, ReductionStatus::FailedToConverge };
+         return { resultG6, ReductionStatus::FailedToConverge, mainIter, finalElapsed.count() };
       }
    }
 
    // true = cell is in reduced form within tolerance
    static bool IsReduced(const G6& g, DOUBLETYPE tolerance = 1e-10)
    {
-      return 
+      return
          !IfStep1(g, tolerance) &&
          !IfStep2(g, tolerance) &&
          !IfStep5(g, tolerance) &&
@@ -89,15 +131,16 @@ public:
          !IfStep8(g, tolerance);
    }
 
-private:
+   static int GetMaxIterations() { return DEFAULT_MAX_ITERATIONS; }
 
+private:
 
    // Helper: sign function (returns 1 for positive, -1 for negative)
    static int Sign(const DOUBLETYPE x) {
       return (x >= 0) ? 1 : -1;
    }
 
-// Step test functions
+   // Step test functions
    static inline bool IfStep1(const G6& g6, const DOUBLETYPE tolerance) {
       return g6[0] > g6[1] + tolerance ||
          (std::abs(g6[0] - g6[1]) <= tolerance && std::abs(g6[3]) > std::abs(g6[4]) + tolerance);
@@ -136,10 +179,9 @@ private:
       return false;
    }
 
-   // Step action functions that include their tests and return whether they executed
+   // Step action functions
    static inline bool DoStep1(G6& g6, const DOUBLETYPE tolerance, int& totalSteps, const bool verbose) {
-      const bool ifStep1 = IfStep1(g6, tolerance);
-      if (!ifStep1) return false;
+      if (!IfStep1(g6, tolerance)) return false;
 
       std::swap(g6[0], g6[1]);
       std::swap(g6[3], g6[4]);
@@ -149,13 +191,12 @@ private:
    }
 
    static inline bool DoStep2(G6& g6, const DOUBLETYPE tolerance, int& totalSteps, const bool verbose) {
-      const bool ifStep2 = IfStep2(g6, tolerance);
-      if (!ifStep2) return false;
+      if (!IfStep2(g6, tolerance)) return false;
 
       std::swap(g6[1], g6[2]);
       std::swap(g6[4], g6[5]);
       totalSteps++;
-      if (verbose) std::cout << "Step 2: Swap (g2,g5)<->(g3,g6), go to 1" << std::endl;
+      if (verbose) std::cout << "Step 2: Swap (g2,g5)<->(g3,g6)" << std::endl;
       return true;
    }
 
@@ -174,82 +215,33 @@ private:
       bool signChanged = false;
 
       switch (minusPattern) {
-      case 0:  // +++ : keep as is
-         break;
-
-      case 1:  // ++- ? ---
-         g6[3] = -g6[3];
-         g6[4] = -g6[4];
+      case 0:  break;
+      case 1:  g6[3] = -g6[3]; g6[4] = -g6[4]; signChanged = true; break;
+      case 2:  g6[3] = -g6[3]; g6[5] = -g6[5]; signChanged = true; break;
+      case 3:
+         if ((zeroPattern & 2) == 2) { g6[3] = -g6[3]; g6[4] = -g6[4]; } else if ((zeroPattern & 1) == 1) { g6[3] = -g6[3]; g6[5] = -g6[5]; } else { g6[4] = -g6[4]; g6[5] = -g6[5]; }
          signChanged = true;
          break;
-
-      case 2:  // +-+ ? ---
-         g6[3] = -g6[3];
-         g6[5] = -g6[5];
+      case 4:  g6[4] = -g6[4]; g6[5] = -g6[5]; signChanged = true; break;
+      case 5:
+         if ((zeroPattern & 4) == 4) { g6[3] = -g6[3]; g6[4] = -g6[4]; } else if ((zeroPattern & 1) == 1) { g6[4] = -g6[4]; g6[5] = -g6[5]; } else { g6[3] = -g6[3]; g6[5] = -g6[5]; }
          signChanged = true;
          break;
-
-      case 3:  // +-- ? depends on zeros
-         if ((zeroPattern & 2) == 2) {  // +0-
-            g6[3] = -g6[3];
-            g6[4] = -g6[4];
-         } else if ((zeroPattern & 1) == 1) {  // +-0
-            g6[3] = -g6[3];
-            g6[5] = -g6[5];
-         } else {  // +-- ? +++
-            g6[4] = -g6[4];
-            g6[5] = -g6[5];
-         }
+      case 6:
+         if ((zeroPattern & 4) == 4) { g6[3] = -g6[3]; g6[5] = -g6[5]; } else if ((zeroPattern & 2) == 2) { g6[4] = -g6[4]; g6[5] = -g6[5]; } else { g6[3] = -g6[3]; g6[4] = -g6[4]; }
          signChanged = true;
          break;
-
-      case 4:  // -++ ? ---
-         g6[4] = -g6[4];
-         g6[5] = -g6[5];
-         signChanged = true;
-         break;
-
-      case 5:  // -+- ? depends on zeros
-         if ((zeroPattern & 4) == 4) {  // 0+-
-            g6[3] = -g6[3];
-            g6[4] = -g6[4];
-         } else if ((zeroPattern & 1) == 1) {  // -+0
-            g6[4] = -g6[4];
-            g6[5] = -g6[5];
-         } else {  // -+- ? +++
-            g6[3] = -g6[3];
-            g6[5] = -g6[5];
-         }
-         signChanged = true;
-         break;
-
-      case 6:  // --+ ? depends on zeros
-         if ((zeroPattern & 4) == 4) {  // 0-+
-            g6[3] = -g6[3];
-            g6[5] = -g6[5];
-         } else if ((zeroPattern & 2) == 2) {  // -0+
-            g6[4] = -g6[4];
-            g6[5] = -g6[5];
-         } else {  // --+ ? +++
-            g6[3] = -g6[3];
-            g6[4] = -g6[4];
-         }
-         signChanged = true;
-         break;
-
-      case 7:  // --- : keep as is
-         break;
+      case 7:  break;
       }
 
       if (signChanged) {
          totalSteps++;
-         if (verbose) std::cout << "Steps 3/4: Sign normalization (MKnorm)" << std::endl;
+         if (verbose) std::cout << "Steps 3/4: Sign normalization" << std::endl;
       }
 
       return signChanged;
    }
 
-   // Combined normalization sequence: Step1, Step2, Step1, Steps3-4
    static inline void DoSteps12134(G6& g6, const DOUBLETYPE tolerance, int& totalSteps, const bool verbose) {
       DoStep1(g6, tolerance, totalSteps, verbose);
       DoStep2(g6, tolerance, totalSteps, verbose);
@@ -258,77 +250,76 @@ private:
    }
 
    static inline bool DoStep5(G6& g6, const DOUBLETYPE tolerance, int& totalSteps, const bool verbose) {
-      const bool ifStep5 = IfStep5(g6, tolerance);
-      if (!ifStep5) return false;
+      if (!IfStep5(g6, tolerance)) return false;
 
       const int s = Sign(g6[3]);
       g6[2] = g6[1] + g6[2] - s * g6[3];
       g6[4] = g6[4] - s * g6[5];
       g6[3] = -2 * g6[1] * s + g6[3];
       totalSteps++;
-      if (verbose) std::cout << "Step 5: Adjust g3,g5,g4, go to 1" << std::endl;
+      if (verbose) std::cout << "Step 5: Adjust g3,g5,g4" << std::endl;
 
       DoSteps12134(g6, tolerance, totalSteps, verbose);
       return true;
    }
 
    static inline bool DoStep6(G6& g6, const DOUBLETYPE tolerance, int& totalSteps, const bool verbose) {
-      const bool ifStep6 = IfStep6(g6, tolerance);
-      if (!ifStep6) return false;
+      if (!IfStep6(g6, tolerance)) return false;
 
       const int s = Sign(g6[4]);
       g6[2] = g6[0] + g6[2] - s * g6[4];
       g6[3] = g6[3] - s * g6[5];
       g6[4] = -2 * g6[0] * s + g6[4];
       totalSteps++;
-      if (verbose) std::cout << "Step 6: Adjust g3,g4,g5, go to 1" << std::endl;
+      if (verbose) std::cout << "Step 6: Adjust g3,g4,g5" << std::endl;
 
       DoSteps12134(g6, tolerance, totalSteps, verbose);
       return true;
    }
 
    static inline bool DoStep7(G6& g6, const DOUBLETYPE tolerance, int& totalSteps, const bool verbose) {
-      const bool ifStep7 = IfStep7(g6, tolerance);
-      if (!ifStep7) return false;
+      if (!IfStep7(g6, tolerance)) return false;
 
       const int s = Sign(g6[5]);
       g6[1] = g6[0] + g6[1] - s * g6[5];
       g6[3] = g6[3] - s * g6[4];
       g6[5] = -2 * g6[0] * s + g6[5];
       totalSteps++;
-      if (verbose) std::cout << "Step 7: Adjust g2,g4,g6, go to 1" << std::endl;
+      if (verbose) std::cout << "Step 7: Adjust g2,g4,g6" << std::endl;
 
       DoSteps12134(g6, tolerance, totalSteps, verbose);
       return true;
    }
 
    static inline bool DoStep8(G6& g6, const DOUBLETYPE tolerance, int& totalSteps, const bool verbose) {
-      const bool ifStep8 = IfStep8(g6, tolerance);
-      if (!ifStep8) return false;
+      if (!IfStep8(g6, tolerance)) return false;
 
       g6[2] = g6[0] + g6[1] + g6[2] + g6[3] + g6[4] + g6[5];
       g6[3] = 2 * g6[1] + g6[3] + g6[5];
       g6[4] = 2 * g6[0] + g6[4] + g6[5];
       totalSteps++;
-      if (verbose) std::cout << "Step 8: Final adjustment, go to 1" << std::endl;
+      if (verbose) std::cout << "Step 8: Final adjustment" << std::endl;
 
       DoSteps12134(g6, tolerance, totalSteps, verbose);
       return true;
    }
 
    static inline void ReportResults(const int mainIter, const int maxIterations,
-      const int totalSteps, const G6& resultG6,
+      const int totalSteps, const G6& resultG6, const double elapsedSeconds,
       const bool verbose) {
       if (!verbose) return;
 
+      std::cout << "\n=== KG Results ===" << std::endl;
       if (mainIter < maxIterations) {
-         std::cout << "\nConverged after " << mainIter << " main iterations, "
-            << totalSteps << " total steps" << std::endl;
+         std::cout << "Converged after " << mainIter << " iterations, "
+            << totalSteps << " total steps, "
+            << elapsedSeconds << " seconds" << std::endl;
       } else {
-         std::cout << "\nWARNING: Failed to converge after " << maxIterations
-            << " iterations, " << totalSteps << " steps completed" << std::endl;
+         std::cout << "WARNING: Failed to converge (max iterations = " << maxIterations << ")" << std::endl;
+         std::cout << "Completed " << mainIter << " iterations, "
+            << totalSteps << " steps, "
+            << elapsedSeconds << " seconds" << std::endl;
       }
-      std::cout << "Was changed: " << (totalSteps > 0 ? "true" : "false") << std::endl;
       std::cout << "Result G6: " << resultG6 << std::endl;
    }
 };
@@ -338,3 +329,4 @@ using KGfloat = KrivyGruberG6<float>;
 using KGdouble = KrivyGruberG6<double>;
 using KGlong = KrivyGruberG6<long double>;
 #endif // KRIVYGRUBERG6_H
+

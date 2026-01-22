@@ -232,75 +232,8 @@ std::vector<Matrix_3x3> TransformationMatrices::buildAllTransformationMatrices(b
 }
 
 // CRITICAL: Make sure generateComprehensiveIntegerMatrices exists and works
-std::vector<Matrix_3x3> TransformationMatrices::generateComprehensiveIntegerMatrices(int maxCoeff) {
-   std::vector<Matrix_3x3> matrices;
-   std::set<std::vector<int>> uniqueSignatures;
-
-   std::cout << "    SYSTEMATIC enumeration for maxCoeff=" << maxCoeff << std::endl;
-
-   int totalCombinations;
-   if (maxCoeff == 1) {
-      totalCombinations = 3 * 3 * 3 * 3 * 3 * 3 * 3 * 3 * 3; // 3^9 = 19,683
-      std::cout << "    Complete enumeration: " << totalCombinations << " combinations" << std::endl;
-   }
-   else if (maxCoeff == 2) {
-      totalCombinations = 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5 * 5; // 5^9 = 1,953,125
-      std::cout << "    Complete enumeration: " << totalCombinations << " combinations (may take 30+ seconds)" << std::endl;
-   }
-   else {
-      std::cout << "    WARNING: maxCoeff=" << maxCoeff << " is computationally expensive!" << std::endl;
-      totalCombinations = int(std::pow(2 * maxCoeff + 1, 9));
-   }
-
-   int validFound = 0;
-   int checked = 0;
-
-   // Complete enumeration
-   for (int a00 = -maxCoeff; a00 <= maxCoeff; ++a00) {
-      for (int a01 = -maxCoeff; a01 <= maxCoeff; ++a01) {
-         for (int a02 = -maxCoeff; a02 <= maxCoeff; ++a02) {
-            for (int a10 = -maxCoeff; a10 <= maxCoeff; ++a10) {
-               for (int a11 = -maxCoeff; a11 <= maxCoeff; ++a11) {
-                  for (int a12 = -maxCoeff; a12 <= maxCoeff; ++a12) {
-                     for (int a20 = -maxCoeff; a20 <= maxCoeff; ++a20) {
-                        for (int a21 = -maxCoeff; a21 <= maxCoeff; ++a21) {
-                           for (int a22 = -maxCoeff; a22 <= maxCoeff; ++a22) {
-
-                              checked++;
-
-                              // Progress for large enumerations
-                              if (maxCoeff >= 2 && checked % 200000 == 0) {
-                                 double progress = 100.0 * checked / totalCombinations;
-                                 std::cout << "      " << progress << "% complete (" << validFound << " found)" << std::endl;
-                              }
-
-                              Matrix_3x3 matrix(a00, a01, a02, a10, a11, a12, a20, a21, a22);
-
-                              // Check determinant = ±1
-                              double det = matrix.Det();
-                              if (std::abs(std::abs(det) - 1.0) < 1e-10) {
-
-                                 std::vector<int> signature = { a00, a01, a02, a10, a11, a12, a20, a21, a22 };
-
-                                 if (uniqueSignatures.find(signature) == uniqueSignatures.end()) {
-                                    uniqueSignatures.insert(signature);
-                                    matrices.push_back(matrix);
-                                    validFound++;
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   std::cout << "    Systematic enumeration complete: " << validFound << " valid matrices found" << std::endl;
-
-   return matrices;
+std::vector<Matrix_3x3> TransformationMatrices::generateComprehensiveIntegerMatrices(const int maxCoeff) {
+   return generateUnimodularMatrices(maxCoeff);
 }
 
 // ========================================

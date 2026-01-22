@@ -132,7 +132,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CmdLMP3.cpp" />
-    <ClCompile Include="TransformationMatrices.cpp" />
     <ClCompile Include="TransformerUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -149,7 +148,6 @@
     <ClInclude Include="ProductionCommon.h" />
     <ClInclude Include="ProductionLatticeMatcherSystem.h" />
     <ClInclude Include="QualityAssessment.h" />
-    <ClInclude Include="TransformationMatrices.h" />
     <ClInclude Include="TransformerUtilities.h" />
     <ClInclude Include="UnifiedReservoir.h" />
   </ItemGroup>

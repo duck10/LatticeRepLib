@@ -4,7 +4,7 @@
 #include "TestNiggliControls.h"
 #include "ProgramSetup.h"
 //#include "NCDist_McCoy.h"
-//#include "NCDist.h"
+#include "NCDist.h"
 //#include "NCDist_HJB.h"
 //#include "S6M_SellingReduce.h"
 #include "Polar.h"

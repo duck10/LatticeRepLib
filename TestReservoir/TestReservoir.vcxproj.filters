@@ -18,15 +18,9 @@
     <ClCompile Include="TestReservoir.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransformationMatrices.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestControls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformationMatrices.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MatrixCellOperator.h">

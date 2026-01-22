@@ -8,6 +8,7 @@
 #include <limits>
 #include "G6.h"
 #include "LRL_Cell.h"
+#include "LRL_Cell_Degrees.h"
 #include "ProgramSetup.h"
 #include "TestbedControls.h"
 #include "TransformationMatrices.h"
@@ -26,8 +27,11 @@ inline LRL_Cell operator*(const Matrix_3x3& matrix, const LRL_Cell& cell) {
 
 
 int main() {
+   LRL_Cell cell(" 1 1 1   90 90 90");
+   static const std::vector<Matrix_3x3> matrices = TransformationMatrices::generateComprehensiveIntegerMatrices(1);
+   static const std::vector<Matrix_3x3> matrices2 = TransformationMatrices::generateUnimodularMatrices();
+
    std::cout << "; TESTBED" << std::endl;
-   std::vector<Matrix_3x3> matrices = TransformationMatrices::getAllTransformationMatrices();
    try {
       TestbedControls controls;
       const BasicProgramInput<TestbedControls> dc_setup("CmdToB4", controls);
@@ -38,16 +42,11 @@ int main() {
          std::cout << controls << std::endl;
       }
       for (const auto& input : dc_setup.getInputList()) {
-         const LRL_Cell cell(input.getCell());
-         double dmax = -1.0E30;
-         double dmin = 1.0E30;
-         for (const auto& m : matrices) {
-            const double volume = (m * cell).Volume();
-            dmax = std::max(dmax, volume);
-            dmin = std::min(dmin, volume);
+         for (const auto& matrix : matrices) {
+            const auto out = matrix * input.getCell();
+            std::cout << "P " << LRL_Cell_Degrees(out) << std::endl;
          }
-         std::cout << "max = " << dmax << std::endl;
-         std::cout << "min = " << dmin << std::endl;
+         std::cout << "P " << LRL_Cell_Degrees(input.getCell()) << std::endl;
       }
       return 0;
    }

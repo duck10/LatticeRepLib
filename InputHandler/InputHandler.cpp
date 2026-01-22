@@ -124,7 +124,7 @@ void InputHandler::handleSingleLattice(
 
    if (key == "G6" || key == "G") result = parseG6(tokens);
    else if (key == "S6" || key == "S") result = parseS6(tokens);
-   else if (key == "P3" ) result = parseP3(tokens);
+   else if (key == "P3") result = LRL_Cell(parseP3(tokens));
    else if (key == "RANDOM") result = parseRandom();
    //else if (key == "U") result = parseDC7u(tokens);
    else {
