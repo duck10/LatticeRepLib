@@ -1,6 +1,5 @@
 #include "Sella.h"
 
-
 #include "GenerateRandomLattice.h"
 #include "DeloneTypeList.h"
 #include "DeloneType.h"
@@ -14,16 +13,23 @@
 #include <cfloat>
 #include <iostream>
 
-Sella::Sella()
+Sella::Sella(const bool /*useDynamicMatrices*/ /*=false*/)
+   : m_projectors(LabeledSellaMatrices::projectors)
+   , m_perps(LabeledSellaMatrices::perps)
 {
+   // Dynamic matrices injected externally via SetPerps()/SetProjectors()
+   // from CmdSella, which has access to SellaBuild
 }
 
+
+
+
 static int seed = 19191;
-double Sella::TestOneType(const std::string& label, const S6 &s6, const std::vector<MatS6>& vm) {
+double Sella::TestOneType(const std::string& label, const S6& s6, const std::vector<MatS6>& vm) {
    double best = DBL_MAX;
    size_t bestIndex;
    S6 bestS6;
-   const double s6norm = s6.norm(); 
+   const double s6norm = s6.norm();
    for (size_t i = 0; i < vm.size(); ++i) {
       S6 prp = vm[i] * s6;
       if (best > prp.norm()) {
@@ -45,9 +51,10 @@ std::vector<std::pair<std::string, double> > Sella::GetVectorOfFits(const S6& s6
    if (b) {
       const double n1 = s6.norm();
       const double n2 = out.norm();
-      for (size_t i = 0; i < LabeledSellaMatrices::perps.size(); ++i) {
-         const std::string label = LabeledSellaMatrices::perps[i].GetLabel();
-         const double best = TestOneType(label, out, LabeledSellaMatrices::perps[i].GetMatrices());
+      // CHANGED: use m_perps instead of LabeledSellaMatrices::perps
+      for (size_t i = 0; i < m_perps.size(); ++i) {
+         const std::string label = m_perps[i].GetLabel();
+         const double best = TestOneType(label, out, m_perps[i].GetMatrices());
          v.emplace_back(std::make_pair(label, best));
       }
    }
@@ -59,10 +66,11 @@ std::pair<std::string, double>  Sella::GetBestFitForCrystalSystem(const std::str
    double bestFit = DBL_MAX;
    const char crystSystem = (LRL_StringTools::strToupper(type))[0];
 
-   for (size_t i = 0; i < LabeledSellaMatrices::perps.size(); ++i) {
-      const std::string currentLabel = LabeledSellaMatrices::perps[i].GetLabel();
+   // CHANGED: use m_perps instead of LabeledSellaMatrices::perps
+   for (size_t i = 0; i < m_perps.size(); ++i) {
+      const std::string currentLabel = m_perps[i].GetLabel();
       if (crystSystem == currentLabel[0]) {
-         const std::vector<MatS6> mats = LabeledSellaMatrices::perps[i].GetMatrices();
+         const std::vector<MatS6> mats = m_perps[i].GetMatrices();
          for (size_t mv = 0; mv < mats.size(); ++mv) {
             const S6 projected = mats[mv] * s6;
             //std::cout << s6 << std::endl;
@@ -84,10 +92,11 @@ std::pair<std::string, double>  Sella::GetBestFitForCrystalSystem(const std::str
 double Sella::GetFitForDeloneType(const std::string& type, const S6& s6) {
    double bestFit = DBL_MAX;
 
-   for (size_t i = 0; i < LabeledSellaMatrices::perps.size(); ++i) {
-      const std::string currentLabel = LabeledSellaMatrices::perps[i].GetLabel();
+   // CHANGED: use m_perps instead of LabeledSellaMatrices::perps
+   for (size_t i = 0; i < m_perps.size(); ++i) {
+      const std::string currentLabel = m_perps[i].GetLabel();
       if (type == currentLabel) {
-         const std::vector<MatS6> mats = LabeledSellaMatrices::perps[i].GetMatrices();
+         const std::vector<MatS6> mats = m_perps[i].GetMatrices();
          for (size_t mv = 0; mv < mats.size(); ++mv) {
             const double fit = (mats[mv] * s6).norm();
             bestFit = std::min(fit, bestFit);
@@ -166,20 +175,21 @@ std::vector<DeloneFitResults> Sella::SellaFit(
       GenerateDeloneBase().Select(selectBravaisCase);
 
    for (size_t i = 0; i < sptypes.size(); ++i) {
-         DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6);
-         //std::cout << "; best fit in SellaFit S6 " << fit.GetBestFit() << "   " << fit.GetRawFit() << " " << sptypes[i]->GetName() << std::endl;
-         const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
-         fit.SetZscore(zscore);
-         fit.SetLatticeType(sptypes[i]->GetBravaisType());
-         fit.SetDeloneType(sptypes[i]->GetBravaisType());
-         fit.SetReductionMatrix(reductionMatrix);
-         fit.SetBavaisType(sptypes[i]->GetBravaisType());
-         fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());
-         fit.SetGeneralType(sptypes[i]->GetName());
+      DeloneFitResults fit = SellaFitXXXXXX(sptypes[i], s6);
+      //std::cout << "; best fit in SellaFit S6 " << fit.GetBestFit() << "   " << fit.GetRawFit() << " " << sptypes[i]->GetName() << std::endl;
+      const double zscore = Zscore(s6 - fit.GetBestFit(), errors, reductionMatrix) * sqrt(sptypes[i]->GetFreeParams());
+      fit.SetZscore(zscore);
+      fit.SetLatticeType(sptypes[i]->GetBravaisType());
+      fit.SetDeloneType(sptypes[i]->GetBravaisType());
+      fit.SetReductionMatrix(reductionMatrix);
+      fit.SetBavaisType(sptypes[i]->GetBravaisType());
+      fit.SetGeneralType(sptypes[i]->GetBravaisLatticeGeneral());
+      fit.SetGeneralType(sptypes[i]->GetName());
 
-         fit.SetDifference(s6 - fit.GetBestFit());
-         fit.SetOriginalInput(s6);
-         vDeloneFitResults.push_back(fit);
+      fit.SetDifference(s6 - fit.GetBestFit());
+      fit.SetOriginalInput(s6);
+      vDeloneFitResults.push_back(fit);
    }
    return vDeloneFitResults;
 }
+

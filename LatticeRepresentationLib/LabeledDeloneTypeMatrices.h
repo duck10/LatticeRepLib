@@ -34,9 +34,9 @@ public:
       const std::vector<MatS6>& vm) const;
 
    std::string GetLabel(void) const { return m_label; }
-   std::vector<MatS6> GetPrj(const std::string& s);
-   std::vector<MatS6> GetPerp(const std::string& s);
-   std::vector<MatS6> GetTocanon(const std::string& s);
+   std::vector<MatS6> GetPrj(const std::string& s) const;
+   std::vector<MatS6> GetPerp(const std::string& s) const;
+   std::vector<MatS6> GetTocanon(const std::string& s) const;
 
 private:
 

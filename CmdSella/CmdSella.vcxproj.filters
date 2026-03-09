@@ -23,6 +23,12 @@
     <ClCompile Include="CmdSellaControls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SellaBuild.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VCPVector..cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h">
@@ -32,6 +38,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CmdSellaControls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SellaBuild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VCPVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

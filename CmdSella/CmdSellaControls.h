@@ -39,12 +39,35 @@ public:
       }
    );
 
+
+   InputHandler::registerHandler("BUILD", .35,
+      [this](BaseControlVariables&, const std::string& value) {
+         buildMatrices = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      }
+   );
+
+   InputHandler::registerHandler("DEBUG", .35,
+      [this](BaseControlVariables&, const std::string& value) {
+         debug = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      }
+   );
+
+   InputHandler::registerHandler("PRINTMATRICES", .35,
+      [this](BaseControlVariables&, const std::string& value) {
+         printMatrices = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      }
+   );
+
    }
 
    int getBlockSize() const { return  static_cast<int>(blocksize); }
    int getBlockStart() const { return static_cast<int>(blockstart); }
    std::string getPrefix() const { return prefix; }
    bool DoGraphics() const { return doGraphics; }
+   bool shouldBuildMatrices() const { return buildMatrices; }
+   bool shouldDebug() const { return debug; }
+   bool shouldPrintMatrices() const { return printMatrices; }
+
 private:
 
    void setBlockSize(int size) {
@@ -75,6 +98,7 @@ private:
       }
    }
 
+
    static constexpr size_t MIN_BLOCKSIZE = BlockUtils::MIN_BLOCKSIZE;
    static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE/2; // divided by 2 because there are 
    // two output files !!!!!!!!!!!!!!!!!!
@@ -87,7 +111,9 @@ private:
    const std::string prefix = "SEL";
    bool doGraphics = true;
 
-
+   bool buildMatrices = false;
+   bool printMatrices = false;
+   bool debug = false;
 };
 
 #endif // INPUTHANDLER_CMD_SELLA_FEATURES_H

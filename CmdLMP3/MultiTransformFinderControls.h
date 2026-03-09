@@ -16,6 +16,8 @@ public:
       os << "; show details " << (mtfc.m_showDetails ? "true" : "false") << std::endl;
       os << "; niggli delta " << mtfc.m_niggliDelta << std::endl;
       os << "; comparison mode for multi input " << mtfc.m_comparisonMode << std::endl;
+      os << "; largest matrix elements " << mtfc.getMatrixOrder() << std::endl;
+      os << "; csv output " << (mtfc.m_csvOutput ? "true" : "false") << std::endl;
 
       return os;
    }

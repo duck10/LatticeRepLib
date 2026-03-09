@@ -7,8 +7,8 @@ int main() {
    std::cout << "; LRL_TEMPLATE" << std::endl;
 
    try {
-      eISENSTEINControls controls;
-      const BasicProgramInput<eISENSTEINControls> dc_setup("TEMPLATE", controls);
+      TemplateControls controls;
+      const BasicProgramInput<TemplateControls> dc_setup("TEMPLATE", controls);
 
       if (dc_setup.getInputList().empty()) {
          throw std::runtime_error("; No input vectors provided");

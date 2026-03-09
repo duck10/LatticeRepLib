@@ -45,7 +45,7 @@ std::vector<LabeledDeloneTypeMatrices> SellaBuild::Build() {
       Expand(vDeloneTypes[i].first, vDeloneTypes[i].second/*, transformations*/);
    }
 
-   store.ShowTableOfKeysVersusCount();
+   //store.ShowTableOfKeysVersusCount();
    ProcessItemStoreToVectorMap();
 
    std::cout << std::endl << std::endl << "after ProcessItemStoreToVectorMap, the map " << xfmap.size() << std::endl;

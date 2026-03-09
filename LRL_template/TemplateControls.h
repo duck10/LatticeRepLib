@@ -4,14 +4,14 @@
 #include "BaseControlVariables.h"
 #include "InputHandler.h"
 
-class eISENSTEINControls : public BaseControlVariables {
+class TemplateControls : public BaseControlVariables {
 public:
-   friend std::ostream& operator<< (std::ostream& os, const eISENSTEINControls& ctrl) {
+   friend std::ostream& operator<< (std::ostream& os, const TemplateControls& ctrl) {
       os << "; TEMPLATE_Controls\n";
       return os;
    }
 
-   eISENSTEINControls() {
+   TemplateControls() {
    }
 
    bool shouldShowControls() const { return showControls; }

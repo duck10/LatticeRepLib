@@ -30,6 +30,8 @@
 #include "utility"
 #include "WebIO.h"
 
+#include "SellaBuild.h"
+#include "LabeledDeloneTypeMatrices.h"
 
 // 2023/12/23
 // bad case: P 21.775 21.785 27.232 90.028 89.974 90.023 still bad after remediation
@@ -151,8 +153,7 @@ std::vector<std::pair<std::string, double> > DeloneFitToScores(const std::vector
       if (test == best.end()) {
          fits[i].GetZscore();
          best.insert(std::make_pair(fits[i].GetBravaisType(), std::make_pair(fits[i].GetBravaisType(), fits[i].GetRawFit())));
-      }
-      else
+      } else
       {
          const double previous = (*test).second.second;
          if (fits[i].GetRawFit() < previous) {
@@ -257,56 +258,79 @@ void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
    }
 }
 
-std::pair< std::string, std::string> ProcessSella(const bool doProduceSellaGraphics, const LatticeCell& input,
-   const std::string& filename) {
-
-   std::vector< BravaisChainFailures> outBCF;
+std::pair<std::string, std::string> ProcessSella(
+   const bool doProduceSellaGraphics,
+   const LatticeCell& input,
+   const std::string& filename,
+   const CmdSellaControls& controls,
+   Sella& sella)  // NEW parameter - sella passed by reference
+{
+   std::vector<BravaisChainFailures> outBCF;
    MatS6 oneReductionMatrix;
    const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
    const S6 oneErrors = 0.1 * input.getCell();
-   int sumBravaisTypesFound = 0;
 
-   std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice = Sella::SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
+   // Matrix building removed - now done once in main()
+
+   if (controls.shouldDebug()) {
+      const auto perps = sella.GetPerps();
+      const auto prjs = sella.GetProjectors();
+      if (perps.size() != prjs.size()) {
+         std::cout << "ERROR: the sizes of perps and projectors do not match" << std::endl;
+         std::cout << "size of pjrs  " << prjs.size() << std::endl;
+         std::cout << "size of perps " << perps.size() << std::endl;
+      } else {
+         std::cout << "size(prjs)   size(perps)" << std::endl;
+         for (size_t i = 0; i < prjs.size(); ++i) {
+            std::cout << prjs[i].size() << "    " << perps[i].size() << std::endl;
+         }
+      }
+   }
+
+   std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice =
+      sella.SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
+
    MapOFDeloneFits theDelonefits;
    theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
    MapOfBravaisFits theBravaisfits;
    theBravaisfits.CreateMapOFBravaisFits(vDeloneFitResultsForOneInputLattice);
-
    SearchForToCanon(vDeloneFitResultsForOneInputLattice);
-
-   //std::cout << theDelonefits << std::endl;
-   //std::cout << theBravaisfits << std::endl;
 
    GrimmerChains gcs(S6(input.getCell()));
    gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
-   gcs.updateChains(theDelonefits, theBravaisfits);  // Instead of CreateGrimmerChains
+   gcs.updateChains(theDelonefits, theBravaisfits);
    gcs.CheckAllGrimmerChains();
-   //std::cout << gcs << std::endl;
 
-   {
-      if (gcs.HasFailure()) {  // Use the member variable directly
-         GrimmerChainFailure gcf = gcs.GetFirstFailure();
-         const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
-         const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
-         vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
-         gcs = gcs.ReplaceRemediation(revisedFit);
-      }
+   if (gcs.HasFailure()) {
+      GrimmerChainFailure gcf = gcs.GetFirstFailure();
+      const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
+      const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
+      vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
+      gcs = gcs.ReplaceRemediation(revisedFit);
    }
 
    std::cout << "; " << input.GetInput() << " input data" << std::endl << std::endl;
 
-   const std::vector<DeloneFitResults> vFilteredDeloneFitResults = FilterForBestExample(vDeloneFitResultsForOneInputLattice);
-   std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
-
-   const std::vector<std::pair<std::string, double> > scores = DeloneFitToScores(vFilteredDeloneFitResults);
-
-   if (matches.empty() && doProduceSellaGraphics) {
-      std::cout << "; apparently the input is triclinic--no other Bravais types matched" << std::endl;;
+   std::cout << "Fits for Types" << std::endl;
+   for (const auto xxxx : vDeloneFitResultsForOneInputLattice) {
+      std::cout << xxxx.GetBravaisType() << " ";
+      std::cout << xxxx.GetDeloneType() << " ";
+      std::cout << xxxx.GetGeneralType() << " ";
+      std::cout << xxxx.GetRawFit() << " ";
+      std::cout << std::endl;
    }
 
-   // the next loop might be not the best. If there was a 2nd copy of a lattice added
-   // above, then both might be listed here. Probably there should be a filter so
-   // only one for each type gets output.
+   const std::vector<DeloneFitResults> vFilteredDeloneFitResults =
+      FilterForBestExample(vDeloneFitResultsForOneInputLattice);
+   std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
+   const std::vector<std::pair<std::string, double>> scores =
+      DeloneFitToScores(vFilteredDeloneFitResults);
+
+   if (matches.empty() && doProduceSellaGraphics) {
+      std::cout << "; apparently the input is triclinic--no other Bravais types matched"
+         << std::endl;
+   }
+
    for (const auto& out : outBCF)
       std::cout << out << std::endl;
 
@@ -315,14 +339,18 @@ std::pair< std::string, std::string> ProcessSella(const bool doProduceSellaGraph
       std::cout << "; projected best fits ( reported distances (in A^2))" << std::endl;
       int y = 300;
       const int x = 700;
-      os << "<text x = \"" << x - 20 << "\" y = \"" << y << "\" font-size = \"15\" >" << "Projected best fits ( reported distances (in A^2))" << " </text>\n";
+      os << "<text x = \"" << x - 20 << "\" y = \"" << y
+         << "\" font-size = \"15\" >"
+         << "Projected best fits ( reported distances (in A^2))"
+         << " </text>\n";
       for (const auto& cell : matches) {
          std::cout << cell << std::endl;
          y += 20;
-         os << "<text x = \"" << x << "\" y = \"" << y << "\" font-size = \"15\" >" << cell << " </text>\n";
-         //std::cout << os.str() << std::endl;
+         os << "<text x = \"" << x << "\" y = \"" << y
+            << "\" font-size = \"15\" >" << cell << " </text>\n";
       }
    }
+
    std::string temp = os.str();
    matches.clear();
    matches.push_back(temp);
@@ -330,17 +358,15 @@ std::pair< std::string, std::string> ProcessSella(const bool doProduceSellaGraph
    std::string mainSvg = BravaisHeirarchy::ProduceSVG(
       input, oneLattice, scores, matches);
 
-   // Generate the fit plots SVG
    std::string fitPlotsSvg;
    if (doProduceSellaGraphics) {
-      // Add this line to update the fit data structures
       gcs.UpdateFits(vDeloneFitResultsForOneInputLattice);
-
       fitPlotsSvg = gcs.GenerateSortedFitPlots(900, 700, input.getInput());
    }
-   return std::make_pair(mainSvg, fitPlotsSvg);
 
+   return std::make_pair(mainSvg, fitPlotsSvg);
 }
+
 
 std::string SendSellaToFile(const std::string& svg, const std::string& filename) {
    std::ofstream fileout;
@@ -351,8 +377,7 @@ std::string SendSellaToFile(const std::string& svg, const std::string& filename)
    {
       fileout.seekp(0);
       fileout << svg << std::endl;
-   }
-   else
+   } else
       std::cout << "Could not open file " << filename << " for write in SendSellaToFile.h" << std::endl;
 
    fileout.close();
@@ -409,67 +434,84 @@ int main(int argc, char* argv[])
 {
    std::cout << "; SELLA method symmetry searching\n";
    WebIO webio(argc, argv, "CmdSella", 0);
-
 #ifdef LRL_DEBUG
    for (size_t ii = 0; ii < argc; ii++) {
       std::cout << ii << ": " << argv[ii] << std::endl;
    }
    std::cout << "webio: " << webio << std::endl;
 #endif
-
    CmdSellaControls controls;
    controls.setHasWebInput(webio.m_hasWebInstructions);
    const int initblockstart = controls.getBlockStart();
    const int initblocksize = controls.getBlockSize();
    const WebFileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella", 0, controls);
-
    const size_t blockstart = dc_setup.getBlockStart();
    const size_t blocksize = dc_setup.getBlockSize();
    const size_t blockend = dc_setup.getBlockEnd();
-
    if (controls.getShowControls()) {
       std::cout << controls << std::endl;
    }
-
 #ifdef LRL_DEBUG
    if (!controls.getShowControls()) {
       std::cout << controls << std::endl;
    }
 #endif
 
+   // NEW: Build matrices ONCE before processing any inputs
+   Sella sella;
+   if (controls.shouldBuildMatrices()) {
+      SellaBuild builder;
+      const bool shouldPrintMatrices = controls.shouldPrintMatrices();
+      std::vector<LabeledDeloneTypeMatrices> deloneTypes = builder.Build(shouldPrintMatrices);
+
+      std::vector<LabeledSellaMatrices> dynamicPerps;
+      std::vector<LabeledSellaMatrices> dynamicProjectors;
+
+      for (const auto& dt : deloneTypes) {
+         const std::string label = dt.GetLabel();
+         const std::vector<MatS6> perps = dt.GetPerp(label);
+         const std::vector<MatS6> prjs = dt.GetPrj(label);
+         if (!perps.empty())
+            dynamicPerps.push_back(LabeledSellaMatrices(label, perps));
+         if (!prjs.empty())
+            dynamicProjectors.push_back(LabeledSellaMatrices(label, prjs));
+      }
+
+      sella.SetPerps(dynamicPerps);
+      sella.SetProjectors(dynamicProjectors);
+      std::cout << "; Matrices built once and stored for all inputs" << std::endl;
+   }
 
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
-
    const bool doProduceSellaGraphics = controls.DoGraphics();
    for (size_t whichCell = blockstart;
       whichCell < inputList.size() && whichCell < blockstart + blocksize; ++whichCell) {
-
-      // Get both SVGs as a pair
-      const auto [sellaSvg, fitPlotsSvg] = ProcessSella(doProduceSellaGraphics, inputList[whichCell],
-         dc_setup.getRawFileNames()[whichCell - blockstart]);
+      // Get both SVGs as a pair - pass sella by reference
+      const auto [sellaSvg, fitPlotsSvg] = ProcessSella(
+         doProduceSellaGraphics,
+         inputList[whichCell],
+         dc_setup.getRawFileNames()[whichCell - blockstart],
+         controls,
+         sella);  // NEW: pass sella
       if (doProduceSellaGraphics) {
          // Write Sella plot
          std::cout << "; Send Sella Plot to graphics file "
             << dc_setup.getFullFileNameAt(whichCell) << std::endl;
          std::cout << "; Send Sella Plot to graphics file "
             << AddSuffixToAllSvgOccurrences(dc_setup.getFullFileNameAt(whichCell), "_fit_plots") << std::endl;
-
          if (webio.m_hasWebInstructions) {
             SendSellaToFile(sellaSvg, dc_setup.getRawFileNames()[whichCell - blockstart]);
-
             // Write fit plots immediately after
             const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getRawFileNames()[whichCell - blockstart], "_fit_plots");
             SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
-         }
-         else {
+         } else {
             SendSellaToFile(sellaSvg, dc_setup.getBasicFileNames()[whichCell - blockstart]);
-
             // Write fit plots immediately after
             const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getBasicFileNames()[whichCell - blockstart], "_fit_plots");
             SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
          }
       }
    }
-
    exit(0);
 }
+

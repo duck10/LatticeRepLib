@@ -147,6 +147,8 @@
     <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
     <ClCompile Include="CmdSella.cpp" />
     <ClCompile Include="CmdSellaControls.cpp" />
+    <ClCompile Include="SellaBuild.cpp" />
+    <ClCompile Include="VCPVector..cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InputHandler\InputHandler.vcxproj">
@@ -163,6 +165,8 @@
     <ClInclude Include="..\LatticeRepresentationLib\BravaisHeirarchy.h" />
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
     <ClInclude Include="CmdSellaControls.h" />
+    <ClInclude Include="SellaBuild.h" />
+    <ClInclude Include="VCPVector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
