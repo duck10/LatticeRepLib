@@ -191,6 +191,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test_IsNiggli_KG", "Test_Is
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNiggli_LCA", "TestNiggli_LCA\TestNiggli_LCA.vcxproj", "{502A6454-1FF4-4311-B2C2-7CA1CB6B0889}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CmdSuper", "CmdSuper\CmdSuper.vcxproj", "{D1470C1F-A21D-4252-A527-E4DD4B17076B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -863,6 +865,14 @@ Global
 		{502A6454-1FF4-4311-B2C2-7CA1CB6B0889}.Release|x64.Build.0 = Release|x64
 		{502A6454-1FF4-4311-B2C2-7CA1CB6B0889}.Release|x86.ActiveCfg = Release|Win32
 		{502A6454-1FF4-4311-B2C2-7CA1CB6B0889}.Release|x86.Build.0 = Release|Win32
+		{D1470C1F-A21D-4252-A527-E4DD4B17076B}.Debug|x64.ActiveCfg = Debug|x64
+		{D1470C1F-A21D-4252-A527-E4DD4B17076B}.Debug|x64.Build.0 = Debug|x64
+		{D1470C1F-A21D-4252-A527-E4DD4B17076B}.Debug|x86.ActiveCfg = Debug|Win32
+		{D1470C1F-A21D-4252-A527-E4DD4B17076B}.Debug|x86.Build.0 = Debug|Win32
+		{D1470C1F-A21D-4252-A527-E4DD4B17076B}.Release|x64.ActiveCfg = Release|x64
+		{D1470C1F-A21D-4252-A527-E4DD4B17076B}.Release|x64.Build.0 = Release|x64
+		{D1470C1F-A21D-4252-A527-E4DD4B17076B}.Release|x86.ActiveCfg = Release|Win32
+		{D1470C1F-A21D-4252-A527-E4DD4B17076B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
