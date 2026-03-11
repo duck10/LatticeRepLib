@@ -146,7 +146,10 @@ int main() {
       for (const auto& input : dc_setup.getInputList()) {
          const LRL_Cell cell = input.getCell();
 
-         std::cout << "; Input cell: " << LRL_Cell_Degrees(cell) << "\n";
+         if (!controls.shouldShowOriginal()) {
+            std::cout << "; Input cell: ";
+         }
+         std::cout << input.getLatticeType() << " " << LRL_Cell_Degrees(cell) << "\n";
 
          for (const auto& [order, matrices] : orderMatrices) {
             std::cout << "; --- Supercells of order " << order

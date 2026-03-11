@@ -37,6 +37,11 @@ public:
          [this](BaseControlVariables&, const std::string&) {
             std::cout << getState();
          });
+
+      InputHandler::registerHandler("ORIGINAL", 0.35,
+         [this](BaseControlVariables&, const std::string& value) {
+            showOriginal = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         });
    }
 
    // Returns the active set of orders to compute.
@@ -61,6 +66,10 @@ public:
       }
       return oss.str();
    }
+
+   bool shouldShowOriginal() const { return showOriginal; }
+
+   bool showOriginal = false;
 
 private:
    void setOrder(const int n) {
