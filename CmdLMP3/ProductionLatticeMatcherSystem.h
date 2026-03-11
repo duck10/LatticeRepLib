@@ -257,6 +257,13 @@ std::vector<LatticeMatchResult>
 NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobile,
    const LRL_Cell& primitiveReference) {
 
+//   std::cout << "; DIAG primitiveReference: " << LRL_Cell_Degrees(primitiveReference) << std::endl;
+//std::cout << "; DIAG primitiveMobile:    " << LRL_Cell_Degrees(primitiveMobile) << std::endl;
+//std::cout << "; DIAG reducedReference:  " << LRL_Cell_Degrees(m_referenceReduction.reducedCell) << std::endl;
+//std::cout << "; DIAG reducedMobile:     " << LRL_Cell_Degrees(m_mobileReduction.reducedCell) << std::endl;
+//std::cout << "; DIAG reductionMatrix reference det: " << m_referenceReduction.reductionMatrix.Det() << std::endl;
+//std::cout << "; DIAG reductionMatrix mobile det:    " << m_mobileReduction.reductionMatrix.Det() << std::endl;
+
    if (m_controls.shouldShowDetails()) {
       std::cout << "; Layer 3 - Starting 4-way matching process" << std::endl;
    }
@@ -345,6 +352,11 @@ NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobi
    }
 
    // Limit to reservoir capacity
+   std::sort(provisionalResults.begin(), provisionalResults.end(),
+      [](const LatticeMatchResult& a, const LatticeMatchResult& b) {
+         return a.getP3Distance() < b.getP3Distance();
+      });
+
    size_t maxResults = std::min(provisionalResults.size(), size_t(500));
    std::vector<LatticeMatchResult> finalResults(provisionalResults.begin(),
       provisionalResults.begin() + maxResults);
@@ -383,12 +395,18 @@ inline NiggliReductionCoordinator::ReductionData
 NiggliReductionCoordinator::performNiggliReduction(const LRL_Cell& cell) {
    ReductionData data;
 
+   //std::cout << "; DIAG performNiggliReduction input: " << LRL_Cell_Degrees(cell) << std::endl;
+   //std::cout << "; DIAG G6 input: " << G6(cell) << std::endl;
+   //std::cout << "; DIAG getNiggliDelta: " << m_controls.getNiggliDelta() << std::endl;
+   //std::cout << "; DIAG IsNiggli check: " << Niggli::IsNiggli(G6(cell), m_controls.getNiggliDelta()) << std::endl;
+
    // Check if already reduced
    if (Niggli::IsNiggli(G6(cell), m_controls.getNiggliDelta())) {
       data.reducedCell = cell;
-      data.reductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1); // Identity
+      data.reductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       data.inverseReductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       data.wasAlreadyReduced = true;
+      std::cout << "; DIAG already reduced, returning identity" << std::endl;
       return data;
    }
 
@@ -399,18 +417,25 @@ NiggliReductionCoordinator::performNiggliReduction(const LRL_Cell& cell) {
 
    bool success = Niggli::ReduceWithTransforms(G6(cell), matG6, matrix3d, reducedG6, m_controls.getNiggliDelta());
 
+   //std::cout << "; DIAG ReduceWithTransforms success: " << success << std::endl;
+   //std::cout << "; DIAG reducedG6: " << reducedG6 << std::endl;
+   //std::cout << "; DIAG matrix3d: " << matrix3d << std::endl;
+   //std::cout << "; DIAG matrix3d det: " << matrix3d.Det() << std::endl;
+
    if (success) {
       data.reducedCell = LRL_Cell(reducedG6);
       data.reductionMatrix = matrix3d;
       data.inverseReductionMatrix = matrix3d.Inverse();
       data.wasAlreadyReduced = false;
-   }
-   else {
+      //std::cout << "; DIAG reducedCell: " << LRL_Cell_Degrees(data.reducedCell) << std::endl;
+      //std::cout << "; DIAG inverseReductionMatrix det: " << data.inverseReductionMatrix.Det() << std::endl;
+   } else {
       // Fallback to original if reduction failed
       data.reducedCell = cell;
       data.reductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       data.inverseReductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       data.wasAlreadyReduced = true;
+      //std::cout << "; DIAG reduction failed, using identity fallback" << std::endl;
    }
 
    return data;
@@ -466,10 +491,11 @@ PrimitiveConversionManager::processLatticePair(const LatticeCell& reference,
          << " -> Primitive: " << LRL_Cell_Degrees(m_mobileConversion.primitiveCell) << std::endl;
    }
 
-   // Call Layer 3 with primitive cells
    std::vector<LatticeMatchResult> niggliResults =
-      m_niggliCoordinator.performFourWayMatching(m_mobileConversion.primitiveCell,
-         m_referenceConversion.primitiveCell);
+      m_niggliCoordinator.performFourWayMatching(
+         m_mobileConversion.primitiveCell,      // mobile first
+         m_referenceConversion.primitiveCell    // reference second
+      );
 
    // Apply stored conversion matrices to all results
    std::vector<LatticeMatchResult> finalResults;

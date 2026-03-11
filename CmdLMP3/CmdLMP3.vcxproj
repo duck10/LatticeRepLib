@@ -132,9 +132,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CmdLMP3.cpp" />
+    <ClCompile Include="DisplayLMP3.cpp" />
     <ClCompile Include="TransformerUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DisplayLMP3.h" />
     <ClInclude Include="FlexibleTestMode.h" />
     <ClInclude Include="LatticeMatchResult.h" />
     <ClInclude Include="MatrixCellOperator.h" />
