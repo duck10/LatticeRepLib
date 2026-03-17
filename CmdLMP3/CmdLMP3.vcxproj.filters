@@ -38,22 +38,13 @@
     <ClInclude Include="MatrixCellOperator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MatrixSimplicityRanker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MobileComparisonResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MultiTransformFinderControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NiggliReducer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="P3RelativeThresholds .h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PrimitiveConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProductionCommon.h">
@@ -74,5 +65,11 @@
     <ClInclude Include="DisplayLMP3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MatchPair.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TestSuite.txt" />
   </ItemGroup>
 </Project>

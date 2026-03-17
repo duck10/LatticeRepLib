@@ -104,7 +104,6 @@
     <ClInclude Include="LatticeConverter.h" />
     <ClInclude Include="LRL_Cell.h" />
     <ClInclude Include="CellInputData.h" />
-    <ClInclude Include="CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_Cell_Degrees.h" />
     <ClInclude Include="LRL_CoordinateConversionMatrices.h" />
     <ClInclude Include="LRL_indices.h" />
@@ -174,6 +173,7 @@
     <ClInclude Include="NCDist_Mccoy_2.h" />
     <ClInclude Include="KrivyGruberG6.h" />
     <ClInclude Include="TestKrivyGruber.h" />
+    <ClInclude Include="MatrixCellOperator.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

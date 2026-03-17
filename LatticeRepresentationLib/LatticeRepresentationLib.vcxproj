@@ -280,6 +280,7 @@
     <ClInclude Include="MatD13.h" />
     <ClInclude Include="MatDC7u.h" />
     <ClInclude Include="MatricesForOneDeloneType.h" />
+    <ClInclude Include="MatrixCellOperator.h" />
     <ClInclude Include="NCDist.h" />
     <ClInclude Include="NCDist_HJB.h" />
     <ClInclude Include="NCDist_McColl.h" />

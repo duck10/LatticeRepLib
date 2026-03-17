@@ -21,8 +21,11 @@ int main() {
          std::cout << controls << std::endl;
       }
 
+      const auto vcell = dc_setup.getInputList();
+
       for (const auto& input : dc_setup.getInputList()) {
-         std::cout << "P3 " << P3(input.getCell()) << std::endl;
+         const double dist = P3::DistanceBetween(P3(vcell[0].getCell()), P3(input.getCell()));
+         std::cout << "P3 " << P3(input.getCell()) << "  dist from first cell " << dist << std::endl;
       }
 
       return 0;

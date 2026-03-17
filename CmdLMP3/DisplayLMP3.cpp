@@ -1,10 +1,9 @@
 #include "DisplayLMP3.h"
+#include "G6.h"
 
 #include "LRL_Cell_Degrees.h"
 #include "Matrix_3x3.h"
 #include "P3.h"
-#include "S6.h"
-#include "TransformerUtilities.h"
 
 #include <algorithm>
 #include <cmath>
@@ -62,10 +61,10 @@ void displayP3DistanceHistogram(const std::vector<LatticeMatchResult>& allResult
       reference.getCell(), reference.getLatticeType(), distances);
 
    std::cout << "Range: " << std::scientific << std::setprecision(2)
-      << minDist << " to " << maxDist << " Å" << std::endl;
+      << minDist << " to " << maxDist << " A" << std::endl;
 
    std::cout << "Reference P3 norm: " << std::fixed << std::setprecision(3)
-      << thresholds.referenceP3Norm << " Å" << std::endl;
+      << thresholds.referenceP3Norm << " A" << std::endl;
 
    std::cout << "Method: " << thresholds.method << std::endl;
    std::cout << "Thresholds:" << std::endl;
@@ -91,7 +90,7 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
    const MultiTransformFinderControls& controls,
    const LatticeCell& reference) {
    if (controls.shouldShowDetails()) {
-      std::cout << "DEBUG: First 5 results entering displayResults:" << std::endl;
+      std::cout << "; DEBUG: First 5 results entering displayResults:" << std::endl;
       for (size_t i = 0; i < std::min(size_t(5), allResults.size()); ++i) {
          std::cout << "  " << (i + 1) << ": P3=" << allResults[i].getP3Distance() << std::endl;
       }
@@ -101,10 +100,10 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
       return;
    }
 
-   std::cout << "Total results before processing: " << allResults.size() << std::endl;
-   std::cout << "NC Distance: " << allResults[0].getNcDistance() << std::endl;
-
-   displayP3DistanceHistogram(allResults, controls, reference);
+   if (controls.shouldShowDetails()) {
+      std::cout << "; NC Distance: " << allResults[0].getNcDistance() << std::endl;
+      displayP3DistanceHistogram(allResults, controls, reference);
+   }
 
    std::vector<double> distances;
    for (const auto& result : allResults) {
@@ -133,54 +132,9 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
    double poorThreshold = thresholds.poorThreshold;
 
    if (controls.shouldShowDetails()) {
-      std::cout << "DEBUG: Distance analysis:" << std::endl;
+      std::cout << "; DEBUG: Distance analysis:" << std::endl;
       for (size_t i = 0; i < std::min(size_t(5), distances.size()); ++i) {
          std::cout << "  " << (i + 1) << ": " << std::scientific << distances[i] << std::endl;
-      }
-   }
-
-   double largestRatio = 0.0;
-   double firstSignificantGap = 0.0;
-   int    gapAfterIndex = -1;
-
-   if (distances.size() > 1) {
-      for (size_t i = 0; i < distances.size() - 1; ++i) {
-         double gap = distances[i + 1] - distances[i];
-         double ratio = (distances[i] > 1e-12) ? gap / distances[i] : 0.0;
-
-         if (controls.shouldShowDetails()) {
-            std::cout << "DEBUG: Gap " << (i + 1) << "->" << (i + 2) << ": " << gap
-               << " (ratio: " << ratio << ")" << std::endl;
-         }
-
-         if (gapAfterIndex == -1 && ratio > 100.0 && gap > 0.001) {
-            firstSignificantGap = gap;
-            gapAfterIndex = static_cast<int>(i);
-            if (controls.shouldShowDetails()) {
-               std::cout << "DEBUG: First significant gap found!" << std::endl;
-            }
-         }
-      }
-   }
-
-   if (controls.shouldShowDetails()) {
-      std::cout << "DEBUG: Final gap analysis - first significant gap: " << firstSignificantGap
-         << " after index: " << gapAfterIndex << std::endl;
-   }
-
-   double adaptiveThreshold = goodThreshold;
-   int    adaptiveGoodCount = 0;
-
-   if (gapAfterIndex >= 0 && firstSignificantGap > 0.001) {
-      adaptiveThreshold = distances[gapAfterIndex] + firstSignificantGap / 2.0;
-      adaptiveGoodCount = gapAfterIndex + 1;
-      if (controls.shouldShowDetails()) {
-         std::cout << "DEBUG: Found large gap (" << firstSignificantGap << ") after result "
-            << (gapAfterIndex + 1) << ", adaptive threshold: " << adaptiveThreshold << std::endl;
-      }
-   } else {
-      if (controls.shouldShowDetails()) {
-         std::cout << "DEBUG: No significant gap found, using P3-relative thresholds" << std::endl;
       }
    }
 
@@ -189,56 +143,95 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
    std::vector<LatticeMatchResult> poorResults;
    std::vector<LatticeMatchResult> terribleResults;
 
-   for (size_t i = 0; i < uniqueResults.size(); ++i) {
-      const auto& result = uniqueResults[i];
-      double      distance = result.getP3Distance();
-
-      if (distance <= excellentThreshold) {
-         excellentResults.push_back(result);
-      } else if (adaptiveGoodCount > 0 && (int)i < adaptiveGoodCount) {
-         goodResults.push_back(result);
-      } else if (distance <= goodThreshold) {
-         goodResults.push_back(result);
-      } else if (distance <= poorThreshold) {
-         poorResults.push_back(result);
-      } else {
-         terribleResults.push_back(result);
-      }
+   for (const auto& result : uniqueResults) {
+      const double distance = result.getP3Distance();
+      if (distance <= excellentThreshold) excellentResults.push_back(result);
+      else if (distance <= goodThreshold)      goodResults.push_back(result);
+      else if (distance <= poorThreshold)      poorResults.push_back(result);
+      else                                     terribleResults.push_back(result);
    }
+
+   // Deduplicate by transformed cell -- multiple matrices may produce the
+   // same lattice; keep only the first of each distinct result.
+   auto deduplicateByCell = [](std::vector<LatticeMatchResult>& v) {
+      std::vector<LatticeMatchResult> out;
+      for (const auto& r : v) {
+         bool dup = false;
+         for (const auto& kept : out) {
+            double diff = 0.0;
+            const G6 ga(r.getTransformedMobile());
+            const G6 gb(kept.getTransformedMobile());
+            for (int k = 0; k < 6; ++k) diff += std::abs(ga[k] - gb[k]);
+            if (diff < 1e-3) { dup = true; break; }
+         }
+         if (!dup) out.push_back(r);
+      }
+      v = out;
+      };
+   deduplicateByCell(excellentResults);
+   deduplicateByCell(goodResults);
+   deduplicateByCell(poorResults);
+   deduplicateByCell(terribleResults);
+
+   // Helper: supercell order label for a result
+   auto orderLabel = [](const LatticeMatchResult& r) -> std::string {
+      const int det = static_cast<int>(std::round(std::abs(r.getTransformationMatrix().Det())));
+      if (det <= 1) return "";
+      return " (order-" + std::to_string(det) + " supercell)";
+      };
 
    std::vector<LatticeMatchResult> resultsToShow;
    std::string qualityMessage;
 
    if (!excellentResults.empty()) {
-      for (const auto& result : excellentResults) { resultsToShow.push_back(result); }
-      qualityMessage = "Found " + std::to_string(excellentResults.size()) + " excellent matches";
+      for (const auto& r : excellentResults) resultsToShow.push_back(r);
+      const std::string ol = orderLabel(excellentResults[0]);
+      if (ol.empty()) {
+         // det=1: same lattice
+         qualityMessage = excellentResults.size() == 1
+            ? "; Cells are equivalent"
+            : "; Cells are equivalent (" + std::to_string(excellentResults.size()) + " representations)";
+      } else {
+         qualityMessage = "; Found " + std::to_string(excellentResults.size())
+            + " excellent match" + (excellentResults.size() == 1 ? "" : "es") + ol;
+      }
       if (excellentResults.size() <= 2) {
          int goodToAdd = std::min(2, (int)goodResults.size());
-         for (int i = 0; i < goodToAdd; ++i) { resultsToShow.push_back(goodResults[i]); }
+         for (int i = 0; i < goodToAdd; ++i) resultsToShow.push_back(goodResults[i]);
       }
    } else if (!goodResults.empty()) {
-      for (const auto& result : goodResults) { resultsToShow.push_back(result); }
-      qualityMessage = adaptiveGoodCount > 0
-         ? "Found " + std::to_string(goodResults.size()) + " good matches (adaptive gap analysis)"
-         : "Found " + std::to_string(goodResults.size()) + " good matches";
+      for (const auto& r : goodResults) resultsToShow.push_back(r);
+      const std::string ol = orderLabel(goodResults[0]);
+      qualityMessage = "; Found " + std::to_string(goodResults.size())
+         + " good match" + (goodResults.size() == 1 ? "" : "es") + ol;
       if (goodResults.size() <= 2) {
          int poorToAdd = std::min(2, (int)poorResults.size());
-         for (int i = 0; i < poorToAdd; ++i) { resultsToShow.push_back(poorResults[i]); }
+         for (int i = 0; i < poorToAdd; ++i) resultsToShow.push_back(poorResults[i]);
       }
    } else if (!poorResults.empty()) {
-      int poorToShow = std::min(2, (int)poorResults.size());
-      for (int i = 0; i < poorToShow; ++i) { resultsToShow.push_back(poorResults[i]); }
-      qualityMessage = "No good matches found. Showing " + std::to_string(poorToShow) +
-         " best poor matches";
+      resultsToShow.push_back(poorResults[0]);
+      const std::string ol = orderLabel(poorResults[0]);
+      std::ostringstream ss;
+      ss << std::fixed << std::setprecision(3) << poorResults[0].getP3Distance();
+      const std::string distStr = ss.str();
+      if (ol.empty())
+         qualityMessage = "; Best match (same lattice, distorted)  P3 distance: " + distStr;
+      else
+         qualityMessage = "; Best match" + ol + "  P3 distance: " + distStr;
    } else {
       resultsToShow.push_back(terribleResults[0]);
-      qualityMessage = "No reasonable matches found. Showing best terrible match";
+      const std::string ol = orderLabel(terribleResults[0]);
+      std::ostringstream ss;
+      ss << std::fixed << std::setprecision(3) << terribleResults[0].getP3Distance();
+      const std::string distStr = ss.str();
+      if (ol.empty())
+         qualityMessage = "; Best match (large distortion)  P3 distance: " + distStr;
+      else
+         qualityMessage = "; Best match (large distortion)" + ol + "  P3 distance: " + distStr;
    }
 
-   std::cout << "=== LATTICE MATCHING RESULTS === ===================================================" << std::endl;
+   std::cout << "\n; === LATTICE MATCHING RESULTS ===" << std::endl;
    std::cout << qualityMessage << std::endl;
-   std::cout << "Success threshold: " << std::scientific << std::setprecision(2)
-      << excellentThreshold << " Å (" << thresholds.method << ")" << std::endl;
 
    for (size_t i = 0; i < resultsToShow.size(); ++i) {
       const auto& result = resultsToShow[i];
@@ -246,47 +239,47 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
 
       std::cout << "\n--- Match " << (i + 1) << " ---" << std::endl;
 
+      const int det = static_cast<int>(std::round(
+         std::abs(result.getTransformationMatrix().Det())));
       std::string qualityString;
-      if (distance <= excellentThreshold) qualityString = "EXCELLENT";
-      else if (distance <= goodThreshold)      qualityString = "GOOD";
-      else if (distance <= poorThreshold)      qualityString = "POOR";
-      else                                     qualityString = "TERRIBLE";
-
-      std::cout << "Quality: " << qualityString << " (P3 distance: "
+      if (det > 1) {
+         qualityString = "order-" + std::to_string(det) + " supercell";
+      } else {
+         if (distance <= excellentThreshold)      qualityString = "EQUIVALENT";
+         else if (distance <= goodThreshold)      qualityString = "GOOD";
+         else if (distance <= poorThreshold)      qualityString = "POOR";
+         else                                     qualityString = "DISTORTED";
+      }
+      std::cout << "; " << qualityString << "  P3 distance: "
          << std::fixed << std::setprecision(3) << distance << std::endl;
 
       if (controls.shouldShowDetails()) {
          std::cout << "Description: " << result.getDescription() << std::endl;
       }
-      std::cout << "P3 Distance: " << std::fixed << std::setprecision(3) << distance << std::endl;
 
-      const S6 referenceS6(reference.getCell());
-      const S6 transformedS6(result.getTransformedMobile());
-      double s6Angle = TransformerUtilities::angleS6(referenceS6, transformedS6);
-      std::cout << "S6 Angle: " << std::fixed << std::setprecision(2) << s6Angle << " degrees" << std::endl;
 
-      std::cout << "Transformation Matrix:" << std::endl;
       const Matrix_3x3& matrix = result.getTransformationMatrix();
+      std::cout << "Transformation Matrix:";
+      std::cout << "  (determinant: " << std::fixed << std::setprecision(4)
+         << matrix.Det() << ")" << std::endl;
       for (int row = 0; row < 3; ++row) {
          std::cout << "  [" << std::setw(8) << std::fixed << std::setprecision(4)
             << matrix[row * 3 + 0] << ", "
             << std::setw(8) << matrix[row * 3 + 1] << ", "
             << std::setw(8) << matrix[row * 3 + 2] << "]" << std::endl;
       }
-      std::cout << "Matrix determinant: " << std::fixed << std::setprecision(4)
-         << matrix.Det() << std::endl;
 
       std::cout << "Transformed cell: ";
       outputCellWithCentering(result.getTransformedMobile(), reference.getLatticeType());
       std::cout << std::endl;
 
-      if (distance <= excellentThreshold) std::cout << "*** SUCCESS: Excellent match within P3-relative threshold ***" << std::endl;
-      else if (distance <= goodThreshold)      std::cout << "*** SUCCESS: Good match within P3-relative threshold ***" << std::endl;
    }
 
-   if (allResults.size() > resultsToShow.size()) {
-      std::cout << "\n(" << (allResults.size() - resultsToShow.size())
-         << " additional matches not shown)" << std::endl;
+   // Report count of matches below threshold only when in DETAILS mode
+   if (controls.shouldShowDetails() && allResults.size() > resultsToShow.size()) {
+      const size_t nHidden = allResults.size() - resultsToShow.size();
+      std::cout << "; " << nHidden << " additional match"
+         << (nHidden == 1 ? "" : "es") << " below threshold not shown.\n";
    }
 }
 
@@ -405,52 +398,6 @@ void displayComparisonHistogram(const std::vector<MobileComparisonResult>& allRe
    std::cout << std::endl;
 }
 
-
-void displayP3RelativeQuality(const LRL_Cell& referenceCell,
-   const std::string& latticeType,
-   const std::vector<MobileComparisonResult>& allResults) {
-   std::vector<double> distances;
-   for (const auto& result : allResults) { distances.push_back(result.distance); }
-
-   auto thresholds = P3RelativeThresholds::calculateAdaptiveP3Thresholds(
-      referenceCell, latticeType, distances);
-
-   std::cout << "=== P3-RELATIVE QUALITY ANALYSIS ===" << std::endl;
-   std::cout << "Reference P3 norm: " << std::fixed << std::setprecision(3)
-      << thresholds.referenceP3Norm << " Å" << std::endl;
-   std::cout << "Method: " << thresholds.method << std::endl;
-
-   std::cout << "Thresholds:" << std::endl;
-   std::cout << "  EXCELLENT <= " << std::scientific << std::setprecision(2)
-      << thresholds.excellentThreshold << " ("
-      << std::fixed << std::setprecision(1)
-      << (thresholds.excellentThreshold / thresholds.referenceP3Norm * 100) << "% of P3)" << std::endl;
-   std::cout << "  GOOD      <= " << std::scientific << std::setprecision(2)
-      << thresholds.goodThreshold << " ("
-      << std::fixed << std::setprecision(1)
-      << (thresholds.goodThreshold / thresholds.referenceP3Norm * 100) << "% of P3)" << std::endl;
-   std::cout << "  POOR      <= " << std::scientific << std::setprecision(2)
-      << thresholds.poorThreshold << " ("
-      << std::fixed << std::setprecision(1)
-      << (thresholds.poorThreshold / thresholds.referenceP3Norm * 100) << "% of P3)" << std::endl;
-
-   int excellent = 0, good = 0, poor = 0, terrible = 0;
-   for (double dist : distances) {
-      if (dist <= thresholds.excellentThreshold) ++excellent;
-      else if (dist <= thresholds.goodThreshold)      ++good;
-      else if (dist <= thresholds.poorThreshold)      ++poor;
-      else                                            ++terrible;
-   }
-
-   std::cout << "P3-relative quality: " << excellent << " excellent, "
-      << good << " good, " << poor << " poor, " << terrible << " terrible" << std::endl;
-
-   double bestDistance = *std::min_element(distances.begin(), distances.end());
-   std::cout << "Best match: " << std::fixed << std::setprecision(4)
-      << (bestDistance / thresholds.referenceP3Norm * 100) << "% of P3 norm" << std::endl;
-}
-
-
 void displayCompactResult(const MobileComparisonResult& result,
    const LatticeCell& reference,
    const QualityAssessment& quality) {
@@ -541,10 +488,8 @@ void displayComparisonResults(const LatticeCell& reference,
       }
       std::sort(sortedMatrices.rbegin(), sortedMatrices.rend());
 
-      std::vector<double> allDistances;
-      for (const auto& result : allResults) { allDistances.push_back(result.distance); }
       auto thresholds = P3RelativeThresholds::calculateAdaptiveP3Thresholds(
-         reference.getCell(), reference.getLatticeType(), allDistances);
+         reference.getCell(), reference.getLatticeType(), distances);
 
       displayFormattedMatrices(sortedMatrices, matrixDistances, thresholds, 10);
 
@@ -603,7 +548,6 @@ std::vector<std::string> resizeStringsToUniformWidth(
    return resized;
 }
 
-
 std::vector<std::string> formatMatrixDisplay(
    const std::vector<std::pair<int, std::string>>& sortedMatrices,
    const std::map<std::string, double>& matrixDistances,
@@ -656,7 +600,6 @@ std::vector<std::string> formatMatrixDisplay(
    return formattedLines;
 }
 
-
 void displayFormattedMatrices(
    const std::vector<std::pair<int, std::string>>& sortedMatrices,
    const std::map<std::string, double>& matrixDistances,
@@ -666,40 +609,4 @@ void displayFormattedMatrices(
       sortedMatrices, matrixDistances, thresholds, maxEntriesToShow);
    std::cout << "Most common transformation matrices:" << std::endl;
    for (const auto& line : formattedLines) std::cout << line << std::endl;
-}
-
-// ---------------------------------------------------------------------------
-// Diagnostic / verification output
-// ---------------------------------------------------------------------------
-
-void verifyMatrixCellConsistency(const std::vector<LatticeMatchResult>& results,
-   const LRL_Cell& originalMobile) {
-   std::cout << "\n=== MATRIX-CELL CONSISTENCY CHECK ===" << std::endl;
-   std::cout << "Original mobile: " << LRL_Cell_Degrees(originalMobile) << std::endl;
-
-   for (size_t i = 0; i < results.size(); ++i) {
-      const auto& result = results[i];
-      const Matrix_3x3& matrix = result.getTransformationMatrix();
-
-      std::cout << "\nResult " << (i + 1) << ":" << std::endl;
-      std::cout << "Matrix: [";
-      for (int j = 0; j < 9; ++j) {
-         std::cout << std::fixed << std::setprecision(4) << matrix[j];
-         if (j < 8) std::cout << " ";
-      }
-      std::cout << "]" << std::endl;
-
-      LRL_Cell calculatedTransformed = matrix * originalMobile;
-      std::cout << "Calculated (matrix x mobile): " << LRL_Cell_Degrees(calculatedTransformed) << std::endl;
-      std::cout << "Stored transformed cell:      " << LRL_Cell_Degrees(result.getTransformedMobile()) << std::endl;
-
-      double cellDifference = LRL_Cell::DistanceBetween(result.getTransformedMobile(), calculatedTransformed);
-      std::cout << "Difference: " << cellDifference << std::endl;
-
-      if (cellDifference > 1e-6)
-         std::cout << "*** ERROR: Matrix and stored cell are inconsistent! ***" << std::endl;
-      else
-         std::cout << "*** OK: Matrix and cell are consistent ***" << std::endl;
-   }
-   std::cout << "=== END CONSISTENCY CHECK ===" << std::endl;
 }

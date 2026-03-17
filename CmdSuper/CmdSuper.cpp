@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <cmath>
@@ -110,6 +111,23 @@ namespace {
       return LRL_Cell(ap, bp, cp, alpha, beta, gamma);  // angles in radians
    }
 
+   // Format the nine integer elements of a HNF matrix as  [a b c  d e f  g h i]
+   // The elements are exact integers stored as doubles; cast to int for clean output.
+   std::string MatrixToString(const Matrix_3x3& M) {
+      std::ostringstream oss;
+      oss << "["
+         << static_cast<int>(M[0]) << " "
+         << static_cast<int>(M[1]) << " "
+         << static_cast<int>(M[2]) << "  "
+         << static_cast<int>(M[3]) << " "
+         << static_cast<int>(M[4]) << " "
+         << static_cast<int>(M[5]) << "  "
+         << static_cast<int>(M[6]) << " "
+         << static_cast<int>(M[7]) << " "
+         << static_cast<int>(M[8]) << "]";
+      return oss.str();
+   }
+
 } // anonymous namespace
 
 // =============================================================================
@@ -149,7 +167,7 @@ int main() {
          if (!controls.shouldShowOriginal()) {
             std::cout << "; Input cell: ";
          }
-         std::cout << input.getLatticeType() << " " << LRL_Cell_Degrees(cell) << "\n";
+         std::cout << input.getLatticeType() << " " << LRL_Cell_Degrees(cell) << " Input Cell \n";
 
          for (const auto& [order, matrices] : orderMatrices) {
             std::cout << "; --- Supercells of order " << order
@@ -162,6 +180,7 @@ int main() {
                   << " " << LRL_Cell_Degrees(supercell)
                   << " order=" << order
                   << " matrix=" << idx++
+                  << " " << MatrixToString(M)
                   << "\n";
             }
          }

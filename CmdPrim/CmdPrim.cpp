@@ -2,12 +2,14 @@
 #include <string>
 #include <vector>
 
+#include "CenteringMatrices.h"
 #include "CmdPrimControls.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_StringTools.h"
 #include "LRL_WriteLatticeData.h"
+#include "Matrix_3x3.h"
 #include "ProgramSetup.h"
 
 int main() {
@@ -30,8 +32,13 @@ int main() {
 
       for (const auto& input : dc_setup.getInputList()) {
          const std::string lattice(input.getLatticeType());
-         LRL_Cell primitive = LatticeConverter::MakePrimitiveCell(lattice, input.getCell());
-         std::cout << writercout.WriteLatticeAndCell("P", primitive);
+         const LRL_Cell primitive = LatticeConverter::MakePrimitiveCell(lattice, input.getCell());
+         const Matrix_3x3 M = CenteringMatrices::ForLattice(lattice);
+
+         std::string line = writercout.WriteLatticeAndCell("P", primitive);
+         while (!line.empty() && (line.back() == '\n' || line.back() == '\r'))
+            line.pop_back();
+         std::cout << line << " " << CenteringMatrices::ToString(M) << "\n";
       }
 
       return 0;

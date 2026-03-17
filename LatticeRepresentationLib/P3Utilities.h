@@ -157,19 +157,6 @@ static LRL_Cell ReduceCellScalar(const LRL_Cell& input) {
 //}
 
 
-
-
-inline LRL_Cell operator*(const Matrix_3x3& matrix, const LRL_Cell& cell) {
-   // Convert cell to B4 representation
-   B4 b4Cell(cell);
-
-   // Apply transformation in B4 space
-   B4 transformedB4 = matrix * b4Cell;
-
-   // Convert back to LRL_Cell
-   return LRL_Cell(transformedB4);
-}
-
 static P3 PerturbP3(const P3& p3, const double magnitude) {
    static const bool debug = false;
    // Step 1: Generate a random P3 vector

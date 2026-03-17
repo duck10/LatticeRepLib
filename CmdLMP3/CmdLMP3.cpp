@@ -7,38 +7,44 @@
 #include "DisplayLMP3.h"
 #include "FlexibleTestMode.h"
 #include "LatticeCell.h"
+#include "LatticeConverter.h"
 #include "LatticeMatchResult.h"
-#include "MobileComparisonResult.h"
-#include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
+#include "MobileComparisonResult.h"
 #include "MultiTransformFinderControls.h"
+#include "MatchPair.h"
 #include "ProductionLatticeMatcherSystem.h"
 #include "ProgramSetup.h"
 
 
 // ---------------------------------------------------------------------------
-// Input-list processing
+// Input-list processing  (unchanged)
 // ---------------------------------------------------------------------------
 
-void runInputListMode(const std::vector<LatticeCell>& inputList,
+void runInputListMode(const std::vector<LatticeCell>& inputListIn,
    const MultiTransformFinderControls& controls) {
    std::cout << "\n=== PROCESSING INPUT LIST ===" << std::endl;
    ProductionLatticeMatcherSystem matcher(controls);
 
+   // In ALL or SUPER mode, ensure the larger-volume cell is the reference
+   // so that supercell matrices (det>1) can expand it to match the mobile.
+   // In EQUIVALENT mode the user's reference choice is respected -- swapping
+   // would break multi-input comparison mode.
+   std::vector<LatticeCell> inputList = inputListIn;
+
    if (inputList.size() == 2) {
-      // Single mobile – use detailed output
-      std::cout << inputList[0].GetInputLine() << " REFERENCE " << std::endl;
-      std::vector<LatticeMatchResult> results = matcher.processInputList(inputList);
+      const auto mr = matchPair(inputList[0], inputList[1], controls);
+      if (mr.swapped)
+         std::cout << "; Note: cells swapped -- larger volume cell is reference\n";
+      std::cout << mr.reference.GetInputLine() << " REFERENCE " << std::endl;
       if (controls.shouldShowDetails()) {
-         std::cout << "DEBUG: Total results returned from matcher: "
-            << results.size() << std::endl;
+         std::cout << "; Total results from matcher: " << mr.results.size() << "\n";
       }
-      displayResults(results, controls, inputList[0]);
+      displayResults(mr.results, controls, mr.reference);
    } else {
       const LatticeCell& reference = inputList[0];
 
       if (controls.shouldRunComparisonMode()) {
-         // Comparison mode – collect best result per mobile, then summarise
          std::vector<MobileComparisonResult> comparisonResults;
 
          if (controls.shouldShowDetails()) {
@@ -57,7 +63,7 @@ void runInputListMode(const std::vector<LatticeCell>& inputList,
                   << " (" << mobile.getLatticeType() << ")" << std::endl;
             }
 
-            std::vector<LatticeCell>       singlePair = { reference, mobile };
+            std::vector<LatticeCell>        singlePair = { reference, mobile };
             std::vector<LatticeMatchResult> results = matcher.processInputList(singlePair);
 
             if (!results.empty()) {
@@ -82,7 +88,6 @@ void runInputListMode(const std::vector<LatticeCell>& inputList,
 
          displayComparisonResults(reference, comparisonResults, controls);
       } else {
-         // Individual mode – full results for each mobile
          if (controls.shouldShowDetails()) {
             std::cout << "=== INDIVIDUAL MOBILE MATCHING ===" << std::endl;
             std::cout << "Reference: " << LRL_Cell_Degrees(reference.getCell())
@@ -98,7 +103,7 @@ void runInputListMode(const std::vector<LatticeCell>& inputList,
             std::cout << "Mobile: " << LRL_Cell_Degrees(mobile.getCell())
                << " (" << mobile.getLatticeType() << ")" << std::endl;
 
-            std::vector<LatticeCell>       singlePair = { reference, mobile };
+            std::vector<LatticeCell>        singlePair = { reference, mobile };
             std::vector<LatticeMatchResult> results = matcher.processInputList(singlePair);
 
             if (results.empty()) {
@@ -114,63 +119,6 @@ void runInputListMode(const std::vector<LatticeCell>& inputList,
       }
    }
 }
-
-
-// ---------------------------------------------------------------------------
-// Self-contained reservoir test classes (kept here for unit-test purposes)
-// ---------------------------------------------------------------------------
-
-class TestResult {
-public:
-   explicit TestResult(double d) : distance(d) {}
-   double getP3Distance() const { return distance; }
-   bool operator<(const TestResult& other) const { return distance < other.distance; }
-   bool operator==(const TestResult& other) const { return distance == other.distance; }
-private:
-   double distance;
-};
-
-class TestReservoir {
-public:
-   explicit TestReservoir(size_t maxSize) : m_maxReservoirSize(maxSize) {}
-
-   void add(const TestResult& result) {
-      std::cout << "Adding: " << result.getP3Distance() << std::endl;
-
-      if (m_reservoir.size() < m_maxReservoirSize) {
-         auto pos = std::lower_bound(m_reservoir.begin(), m_reservoir.end(), result);
-         m_reservoir.insert(pos, result);
-         std::cout << "  Inserted (reservoir not full)" << std::endl;
-      } else {
-         std::cout << "  Reservoir full. Worst distance: "
-            << m_reservoir.back().getP3Distance() << std::endl;
-         if (result < m_reservoir.back()) {
-            auto pos = std::lower_bound(m_reservoir.begin(), m_reservoir.end(), result);
-            m_reservoir.insert(pos, result);
-            m_reservoir.pop_back();
-            std::cout << "  Removed worst element" << std::endl;
-         } else {
-            std::cout << "  New result is worse, rejecting" << std::endl;
-         }
-      }
-
-      std::cout << "  Current reservoir: ";
-      for (const auto& r : m_reservoir) std::cout << r.getP3Distance() << " ";
-      std::cout << std::endl << std::endl;
-   }
-
-   void printFinal() {
-      std::cout << "FINAL RESERVOIR:" << std::endl;
-      for (size_t i = 0; i < m_reservoir.size(); ++i) {
-         std::cout << "  [" << i << "]: " << m_reservoir[i].getP3Distance() << std::endl;
-      }
-   }
-
-private:
-   std::vector<TestResult> m_reservoir;
-   size_t m_maxReservoirSize;
-};
-
 
 // ---------------------------------------------------------------------------
 // main
@@ -196,16 +144,16 @@ int main() {
       const std::vector<LatticeCell>& inputList = program_setup.getInputList();
 
       if (inputList.size() < 2) {
-         std::cout << ";CmdLMP3 requires at least 2 input cells" << std::endl;
+         std::cout << "; CmdLMP3 requires at least 2 input cells\n";
          return 0;
       }
 
       runInputListMode(inputList, controls);
+
       return 0;
    }
    catch (const std::exception& e) {
-      std::cerr << "Error: " << e.what() << std::endl;
+      std::cerr << "; Error: " << e.what() << std::endl;
       return -1;
    }
 }
-

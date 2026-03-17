@@ -139,14 +139,12 @@
     <ClInclude Include="DisplayLMP3.h" />
     <ClInclude Include="FlexibleTestMode.h" />
     <ClInclude Include="LatticeMatchResult.h" />
+    <ClInclude Include="MatchPair.h" />
     <ClInclude Include="MatrixCellOperator.h" />
-    <ClInclude Include="MatrixSimplicityRanker.h" />
     <ClInclude Include="Matrix_3x3.h" />
     <ClInclude Include="MobileComparisonResult.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />
-    <ClInclude Include="NiggliReducer.h" />
     <ClInclude Include="P3RelativeThresholds .h" />
-    <ClInclude Include="PrimitiveConverter.h" />
     <ClInclude Include="ProductionCommon.h" />
     <ClInclude Include="ProductionLatticeMatcherSystem.h" />
     <ClInclude Include="QualityAssessment.h" />
@@ -163,6 +161,9 @@
     <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
       <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TestSuite.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

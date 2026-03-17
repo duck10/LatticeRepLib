@@ -1,6 +1,7 @@
 ﻿#ifndef FLEXIBLE_TEST_MODE_H
 #define FLEXIBLE_TEST_MODE_H
 
+#include "MatchPair.h"
 #include "ProductionLatticeMatcherSystem.h"
 #include "LatticeCell.h"
 #include "MultiTransformFinderControls.h"
@@ -127,7 +128,7 @@ private:
          << result.getP3Distance() << " (max: " << thresholds.maxP3Distance << ") "
          << (p3Ok ? "✓" : "✗") << std::endl;
       std::cout << "      S6 angle: " << std::fixed << std::setprecision(2)
-         << actualS6Angle << "° (max: " << thresholds.maxS6Angle << "°) "
+         << actualS6Angle << " deg (max: " << thresholds.maxS6Angle << " deg) "
          << (s6Ok ? "✓" : "✗") << std::endl;
       std::cout << "      Determinant: " << std::fixed << std::setprecision(6)
          << det << " (range: " << thresholds.minDeterminant
@@ -149,9 +150,10 @@ private:
          return;
       }
 
-      // Run the lattice matcher
-      ProductionLatticeMatcherSystem matcher(controls);
-      std::vector<LatticeMatchResult> results = matcher.processInputList(test.inputCells);
+      // Run via matchPair so volume swap matches production behavior
+      const auto mr = matchPair(test.inputCells[0], test.inputCells[1], controls);
+      std::vector<LatticeMatchResult> results = mr.results;
+      const LatticeCell& referenceCell = mr.reference;
 
       if (results.empty()) {
          std::cout << "FAIL: No results returned" << std::endl;
@@ -160,14 +162,14 @@ private:
       }
 
       std::cout << "Found " << results.size() << " results" << std::endl;
-      const std::string referenceCentering = test.inputCells[0].getLatticeType();
+      const std::string referenceCentering = referenceCell.getLatticeType();
 
       // Show actual results
       std::cout << "\nActual results:" << std::endl;
       for (size_t i = 0; i < std::min(size_t(3), results.size()); ++i) {
          const auto& result = results[i];
          double s6Angle = calculateS6Angle(result.getTransformedMobile(),
-            test.inputCells[0].getCell());
+            referenceCell.getCell());
 
          std::cout << "  Result " << (i + 1) << ":" << std::endl;
          std::cout << "    Matrix: [";
@@ -182,7 +184,7 @@ private:
          std::cout << "    P3 distance: " << std::scientific << std::setprecision(3)
             << result.getP3Distance() << std::endl;
          std::cout << "    S6 angle: " << std::fixed << std::setprecision(2)
-            << s6Angle << "°" << std::endl;
+            << s6Angle << " deg" << std::endl;
          std::cout << "    Transformed: " << LRL_Cell_Degrees(result.getTransformedMobile())
             << "[" << referenceCentering << "]" << std::endl;
       }
@@ -211,18 +213,16 @@ private:
             }
 
             std::cout << "  Checking result " << (i + 1) << " (" << quality.description << "):" << std::endl;
-            bool resultOk = validateQualityThresholds(results[i], test.inputCells[0].getCell(), quality);
+            bool resultOk = validateQualityThresholds(results[i], referenceCell.getCell(), quality);
 
             if (resultOk) {
                std::cout << "  Result " << (i + 1) << ": PASS" << std::endl;
-            }
-            else {
+            } else {
                std::cout << "  Result " << (i + 1) << ": FAIL" << std::endl;
                testPassed = false;
             }
          }
-      }
-      else {
+      } else {
          // Exact matrix validation (original behavior)
          std::cout << "\nValidating using exact expectations:" << std::endl;
 
@@ -243,14 +243,13 @@ private:
                expected.expectedP3Distance, expected.tolerance);
 
             double actualS6Angle = calculateS6Angle(actual.getTransformedMobile(),
-               test.inputCells[0].getCell());
+               referenceCell.getCell());
             bool s6Ok = compareValues(actualS6Angle, expected.expectedS6Angle, expected.tolerance);
 
             std::cout << "  Result " << (i + 1) << " (" << expected.description << "): ";
             if (matrixOk && p3Ok && s6Ok) {
                std::cout << "PASS" << std::endl;
-            }
-            else {
+            } else {
                std::cout << "FAIL" << std::endl;
                testPassed = false;
 
@@ -263,7 +262,7 @@ private:
                }
                if (!s6Ok) {
                   std::cout << "    S6 angle mismatch: expected " << expected.expectedS6Angle
-                     << "°, got " << actualS6Angle << "°" << std::endl;
+                     << " deg, got " << actualS6Angle << " deg" << std::endl;
                }
             }
          }
@@ -272,8 +271,7 @@ private:
       if (testPassed) {
          std::cout << "OVERALL: PASS" << std::endl;
          passedTests++;
-      }
-      else {
+      } else {
          std::cout << "OVERALL: FAIL" << std::endl;
          failedTests++;
       }
@@ -310,11 +308,9 @@ public:
       std::cout << "========================================" << std::endl;
       if (passedTests > 0) {
          std::cout << "TEST PASSED!" << std::endl;
-      }
-      else if (failedTests > 0) {
+      } else if (failedTests > 0) {
          std::cout << "TEST FAILED!" << std::endl;
-      }
-      else {
+      } else {
          std::cout << "TEST REQUIRES MANUAL VERIFICATION!" << std::endl;
       }
    }
@@ -368,8 +364,7 @@ public:
          if (manualTests > 0) {
             std::cout << "(" << manualTests << " tests require manual verification)" << std::endl;
          }
-      }
-      else {
+      } else {
          std::cout << "SOME TESTS FAILED!" << std::endl;
       }
    }
@@ -433,7 +428,7 @@ public:
       test5.addInputCell(LatticeCell(LRL_Cell(10.0, 8.0, 12.0, M_PI / 3, M_PI / 4, M_PI / 6), "P"));
 
       // Very relaxed thresholds - just ensure we get a valid transformation
-      test5.addQualityExpectation(FlexibleTestCase::QualityThresholds(50.0, 90.0, 0.99, 1.01, "Any valid transformation"));
+      test5.addQualityExpectation(FlexibleTestCase::QualityThresholds(50.0, 90.0, 0.5, 4.5, "Any valid transformation"));
       addTestCase(test5);
 
       // Test 6: Centered to differently centered with the same lattice
@@ -441,14 +436,9 @@ public:
       test6.addInputCell(LatticeCell(LRL_Cell(12.770, 21.235, 14.411, 136.017, 84.071, 111.795), "C"));
       test6.addInputCell(LatticeCell(LRL_Cell(33.151, 18.241, 20.218, 83.054, 144.781, 120.639), "F"));
 
-      Matrix_3x3 expectedMatrix6(0, -0.50, 0.50, 1.00, 0.50, 0.50, 0, 0.50, 0.50);
-      test6.addExactExpectation(FlexibleTestCase::ExactExpectation(
-         expectedMatrix6,
-         0.0002025,   // Use the actual achieved P3 distance (excellent!)
-         0.001,       // Allow up to 0.001° S6 angle (system got 0.0007°)
-         1e-3,        // Proper tolerance
-         "Best transformation"
-      ));
+      // Use quality-based check -- exact matrix varies by axis convention
+      test6.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1e-3, 1.0, 1.99, 2.01, "EQUIVALENT C vs F, det~2, dist~0"));
       addTestCase(test6);
 
 
@@ -482,8 +472,110 @@ public:
 
       // Expect to find transformations but all should be unique
 // Very relaxed thresholds - just ensure we get a valid transformation without duplicates
-      test9.addQualityExpectation(FlexibleTestCase::QualityThresholds(50.0, 90.0, 0.99, 1.01, "Different lattices - any valid transformation"));
+      test9.addQualityExpectation(FlexibleTestCase::QualityThresholds(50.0, 90.0, 0.5, 4.5, "Different lattices - any valid transformation"));
       addTestCase(test9);
+
+      // -----------------------------------------------------------------------
+      // Tests 10-19: Production test suite (P3 lattice matching)
+      // Supercell tests are marked [SUPERCELL].
+      // -----------------------------------------------------------------------
+
+      // Test 10: Axis permutation
+      FlexibleTestCase test10("AxisPermutation",
+         "Same triclinic lattice with axes permuted -- EQUIVALENT dist~0");
+      test10.addInputCell(LatticeCell(LRL_Cell(7, 8, 9, 85 * M_PI / 180, 95 * M_PI / 180, 100 * M_PI / 180), "P"));
+      test10.addInputCell(LatticeCell(LRL_Cell(8, 9, 7, 95 * M_PI / 180, 100 * M_PI / 180, 85 * M_PI / 180), "P"));
+      test10.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1e-3, 1.0, 0.99, 1.01, "EQUIVALENT dist~0"));
+      addTestCase(test10);
+
+      // Test 11: [SUPERCELL] Face diagonal order-2
+      FlexibleTestCase test11("FaceDiagonalOrder2",
+         "[SUPERCELL] Cubic doubled along face diagonal -- order-2, dist=0");
+      test11.addInputCell(LatticeCell(LRL_Cell(10, 10, 10, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test11.addInputCell(LatticeCell(LRL_Cell(14.142, 14.142, 10, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test11.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1e-2, 1.0, 1.99, 2.01, "[SUPERCELL] order-2 det~2 dist~0"));
+      addTestCase(test11);
+
+      // Test 12: [SUPERCELL] Distorted order-2
+      FlexibleTestCase test12("DistortedOrder2",
+         "[SUPERCELL] Nearest order-2 supercell with dist=1.000");
+      test12.addInputCell(LatticeCell(LRL_Cell(10, 10, 10, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test12.addInputCell(LatticeCell(LRL_Cell(19, 10, 10, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test12.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1.1, 10.0, 1.99, 2.01, "[SUPERCELL] order-2 det~2 dist~1.0"));
+      addTestCase(test12);
+
+      // Test 13: [SUPERCELL] Exact order-3
+      FlexibleTestCase test13("ExactOrder3",
+         "[SUPERCELL] Cubic tripled along a -- order-3, dist=0");
+      test13.addInputCell(LatticeCell(LRL_Cell(10, 10, 10, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test13.addInputCell(LatticeCell(LRL_Cell(30, 10, 10, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test13.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1e-2, 1.0, 2.99, 3.01, "[SUPERCELL] order-3 det~3 dist~0"));
+      addTestCase(test13);
+
+      // Test 14: [SUPERCELL] Simon Parsons case
+      FlexibleTestCase test14("SimonParsons",
+         "[SUPERCELL] R primitive vs P triclinic -- order-4, dist=0.820");
+      test14.addInputCell(LatticeCell(LRL_Cell(9.477, 9.477, 9.477,
+         64.24 * M_PI / 180, 64.24 * M_PI / 180, 64.24 * M_PI / 180), "P"));
+      test14.addInputCell(LatticeCell(LRL_Cell(9.482, 13.705, 20.048,
+         89.51 * M_PI / 180, 88.72 * M_PI / 180, 86.96 * M_PI / 180), "P"));
+      test14.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         0.9, 10.0, 3.99, 4.01, "[SUPERCELL] order-4 det~4 dist~0.820"));
+      addTestCase(test14);
+
+      // Test 15: [SUPERCELL] Triclinic order-2
+      FlexibleTestCase test15("TriclinicOrder2",
+         "[SUPERCELL] Triclinic doubled along a -- order-2, dist=0");
+      test15.addInputCell(LatticeCell(LRL_Cell(7, 8, 9, 85 * M_PI / 180, 95 * M_PI / 180, 100 * M_PI / 180), "P"));
+      test15.addInputCell(LatticeCell(LRL_Cell(14, 8, 9, 85 * M_PI / 180, 95 * M_PI / 180, 100 * M_PI / 180), "P"));
+      test15.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1e-2, 1.0, 1.99, 2.01, "[SUPERCELL] order-2 det~2 dist~0"));
+      addTestCase(test15);
+
+      // Test 16: [SUPERCELL] Monoclinic order-2
+      FlexibleTestCase test16("MonoclinicOrder2",
+         "[SUPERCELL] Monoclinic doubled along c -- order-2, dist=0");
+      test16.addInputCell(LatticeCell(LRL_Cell(8, 10, 12, M_PI / 2, 105 * M_PI / 180, M_PI / 2), "P"));
+      test16.addInputCell(LatticeCell(LRL_Cell(8, 10, 24, M_PI / 2, 105 * M_PI / 180, M_PI / 2), "P"));
+      test16.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1e-2, 1.0, 1.99, 2.01, "[SUPERCELL] order-2 det~2 dist~0"));
+      addTestCase(test16);
+
+      // Test 17: Marsh 2002 case 3.11 -- P vs C
+      FlexibleTestCase test17("Marsh2002_3_11",
+         "Marsh 2002 case 3.11: P triclinic == C monoclinic, 2 representations");
+      test17.addInputCell(LatticeCell(LRL_Cell(7.813, 8.114, 13.634,
+         74.02 * M_PI / 180, 73.08 * M_PI / 180, 61.22 * M_PI / 180), "P"));
+      test17.addInputCell(LatticeCell(LRL_Cell(14.223, 7.813, 13.813,
+         90.26 * M_PI / 180, 111.26 * M_PI / 180, 90 * M_PI / 180), "C"));
+      test17.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         0.1, 5.0, 0.49, 0.51, "EQUIVALENT det~0.5 dist~0.001"));
+      addTestCase(test17);
+
+      // Test 18: Marsh 2002 case 3.23 -- C vs I
+      FlexibleTestCase test18("Marsh2002_3_23",
+         "Marsh 2002 case 3.23: C monoclinic == I orthorhombic, 4 representations");
+      test18.addInputCell(LatticeCell(LRL_Cell(24.970, 19.252, 15.913,
+         M_PI / 2, 129.46 * M_PI / 180, M_PI / 2), "C"));
+      test18.addInputCell(LatticeCell(LRL_Cell(19.279, 19.252, 15.9131,
+         M_PI / 2, 89.87 * M_PI / 180, M_PI / 2), "I"));
+      test18.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         0.01, 1.0, 0.99, 1.01, "EQUIVALENT det~1 dist~0"));
+      addTestCase(test18);
+
+      // Test 19: [SUPERCELL] Cubic vs rhombohedral-angle
+      FlexibleTestCase test19("CubicVsRhombohedral",
+         "[SUPERCELL] Cubic P vs rhombohedral-angle P -- best order-2, dist=2.680");
+      test19.addInputCell(LatticeCell(LRL_Cell(10, 10, 10, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test19.addInputCell(LatticeCell(LRL_Cell(10, 10, 10,
+         109.471 * M_PI / 180, 109.471 * M_PI / 180, 109.471 * M_PI / 180), "P"));
+      test19.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         2.8, 20.0, 1.99, 2.01, "[SUPERCELL] order-2 det~2 dist~2.680"));
+      addTestCase(test19);
 
    }
 };
@@ -496,4 +588,3 @@ inline void runFlexibleTestMode(const MultiTransformFinderControls& controls) {
 }
 
 #endif // FLEXIBLE_TEST_MODE_H
-

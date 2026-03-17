@@ -16,7 +16,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include "MatrixSimplicityRanker.h"
+#include <chrono>
 
 // ====================================================================
 // LAYER 4: Core Unimodular Matrix Matcher
@@ -84,8 +84,6 @@ private:
    ReductionData performNiggliReduction(const LRL_Cell& cell);
    ReductionData performSellingReduction(const LRL_Cell& cell);
    Matrix_3x3 applyStoredReductionMatrices(const Matrix_3x3& matchMatrix);
-   void integrateResultsIntoReservoir(const std::vector<LatticeMatchResult>& results,
-      const std::string& caseDescription);
 
    void insertUniqueResult(std::vector<LatticeMatchResult>& results,
       const LatticeMatchResult& newResult) {
@@ -163,7 +161,7 @@ public:
       const LatticeCell& mobile);
 
    // Get the single best match
-   LatticeMatchResult getBestMatch(const LatticeCell& reference, const LatticeCell& mobile);
+   //LatticeMatchResult getBestMatch(const LatticeCell& reference, const LatticeCell& mobile);
 
 private:
    const MultiTransformFinderControls& m_controls;
@@ -189,27 +187,79 @@ CoreUnimodularMatcher::findBestMatches(const LRL_Cell& reference,
    }
 
    const int unimodularOrder = m_controls.getMatrixOrder();
-   static const std::vector<Matrix_3x3> matrices = TransformationMatrices::generateUnimodularMatrices(unimodularOrder);
+
+   // Build three matrix sets once; select by MODE at runtime.
+   // Static so generation (one-time ~72ms) only happens on first call.
+   const auto t_init0 = std::chrono::high_resolution_clock::now();
+   static std::vector<Matrix_3x3> matricesEQUIVALENT;
+   static std::vector<Matrix_3x3> matricesSUPER;
+   static std::vector<Matrix_3x3> matricesALL;
+   if (matricesALL.empty()) {
+      matricesEQUIVALENT = TransformationMatrices::generateUnimodularMatrices(unimodularOrder);
+      matricesSUPER = TransformationMatrices::generateSupercellMatrices({ 2, 3, 4 }, 2);
+      // Add HNF order-3 matrices -- order-3 needs element value 3 which is
+      // outside maxCoeff=2, so the brute-force set misses all order-3 cases.
+      // HNF order-4 matrices with element>2 are also added for completeness.
+      const auto hnf34 = TransformationMatrices::generateHNFMatrices({ 3, 4 });
+      matricesSUPER.insert(matricesSUPER.end(), hnf34.begin(), hnf34.end());
+      matricesALL = matricesEQUIVALENT;
+      matricesALL.insert(matricesALL.end(), matricesSUPER.begin(), matricesSUPER.end());
+   }
+   const auto t_init1 = std::chrono::high_resolution_clock::now();
+   static bool s_initTimed = false;
+   if (!s_initTimed && m_controls.shouldShowDetails()) {
+      s_initTimed = true;
+      std::cout << "; Matrix init: "
+         << std::chrono::duration_cast<std::chrono::milliseconds>(t_init1 - t_init0).count()
+         << " ms  (ALL: " << matricesALL.size()
+         << ", SUPER: " << matricesSUPER.size()
+         << ", EQUIVALENT: " << matricesEQUIVALENT.size() << ")\n";
+   }
+
+   // Build HNF set once (used when USEHNF control is set)
+   static std::vector<Matrix_3x3> matricesHNF;
+   static std::vector<Matrix_3x3> matricesHNF_SUPER;  // HNF supercell only
+   if (matricesHNF.empty()) {
+      matricesHNF_SUPER = TransformationMatrices::generateHNFMatrices({ 2, 3, 4 });
+      matricesHNF = TransformationMatrices::generateUnimodularMatrices(1);
+      matricesHNF.insert(matricesHNF.end(),
+         matricesHNF_SUPER.begin(), matricesHNF_SUPER.end());
+   }
+
+   // Select matrix set based on MODE and USEHNF controls
+   const auto runMode = m_controls.getRunMode();
+   const bool useHNF = m_controls.useHNF();
+   const std::vector<Matrix_3x3>& matrices =
+      useHNF ?
+      ((runMode == MultiTransformFinderControls::RunMode::SUPER) ? matricesHNF_SUPER :
+         (runMode == MultiTransformFinderControls::RunMode::EQUIVALENT) ? matricesEQUIVALENT :
+         matricesHNF)
+      :
+      ((runMode == MultiTransformFinderControls::RunMode::SUPER) ? matricesSUPER :
+         (runMode == MultiTransformFinderControls::RunMode::EQUIVALENT) ? matricesEQUIVALENT :
+         matricesALL);
 
    if (m_controls.shouldShowDetails()) {
       std::cout << "; Layer 4 - Testing " << matrices.size()
-         << " unimodular matrices for " << description << std::endl;
+         << " matrices (mode: " << m_controls.getModeString()
+         << ") for " << description << std::endl;
    }
 
+   // Time the per-call search (DETAILS mode only)
+   const auto t_search0 = std::chrono::high_resolution_clock::now();
    for (const auto& matrix : matrices) {
-      // Apply transformation to mobile
       const LRL_Cell transformedMobile = matrix * mobile;
-
-      // Calculate P3 distance
       const double p3Distance = calculateP3Distance(reference, transformedMobile);
-
-      // Create result and try to add to reservoir
       LatticeMatchResult result(matrix, p3Distance, 19191.,
          transformedMobile, description);
       m_reservoir.add(result);
-      //if (matrix == Matrix_3x3(-1, 0, 0, 0, 0, -1, 0, -1, 0)) {
-      //   std::cout << "Testing known good matrix, calculated distance: " << p3Distance << std::endl;
-      //}
+   }
+   const auto t_search1 = std::chrono::high_resolution_clock::now();
+   if (m_controls.shouldShowDetails()) {
+      std::cout << "; Search (" << matrices.size() << " matrices, "
+         << description << "): "
+         << std::chrono::duration_cast<std::chrono::milliseconds>(t_search1 - t_search0).count()
+         << " ms\n";
    }
 
    std::vector<LatticeMatchResult> results = m_reservoir.getAllResults();
@@ -257,12 +307,12 @@ std::vector<LatticeMatchResult>
 NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobile,
    const LRL_Cell& primitiveReference) {
 
-//   std::cout << "; DIAG primitiveReference: " << LRL_Cell_Degrees(primitiveReference) << std::endl;
-//std::cout << "; DIAG primitiveMobile:    " << LRL_Cell_Degrees(primitiveMobile) << std::endl;
-//std::cout << "; DIAG reducedReference:  " << LRL_Cell_Degrees(m_referenceReduction.reducedCell) << std::endl;
-//std::cout << "; DIAG reducedMobile:     " << LRL_Cell_Degrees(m_mobileReduction.reducedCell) << std::endl;
-//std::cout << "; DIAG reductionMatrix reference det: " << m_referenceReduction.reductionMatrix.Det() << std::endl;
-//std::cout << "; DIAG reductionMatrix mobile det:    " << m_mobileReduction.reductionMatrix.Det() << std::endl;
+   //   std::cout << "; DIAG primitiveReference: " << LRL_Cell_Degrees(primitiveReference) << std::endl;
+   //std::cout << "; DIAG primitiveMobile:    " << LRL_Cell_Degrees(primitiveMobile) << std::endl;
+   //std::cout << "; DIAG reducedReference:  " << LRL_Cell_Degrees(m_referenceReduction.reducedCell) << std::endl;
+   //std::cout << "; DIAG reducedMobile:     " << LRL_Cell_Degrees(m_mobileReduction.reducedCell) << std::endl;
+   //std::cout << "; DIAG reductionMatrix reference det: " << m_referenceReduction.reductionMatrix.Det() << std::endl;
+   //std::cout << "; DIAG reductionMatrix mobile det:    " << m_mobileReduction.reductionMatrix.Det() << std::endl;
 
    if (m_controls.shouldShowDetails()) {
       std::cout << "; Layer 3 - Starting 4-way matching process" << std::endl;
@@ -272,8 +322,7 @@ NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobi
    if (m_controls.getUseSellingReduction()) {
       m_referenceReduction = performSellingReduction(primitiveReference);
       m_mobileReduction = performSellingReduction(primitiveMobile);
-   }
-   else
+   } else
    {
       m_referenceReduction = performNiggliReduction(primitiveReference);
       m_mobileReduction = performNiggliReduction(primitiveMobile);
@@ -372,7 +421,7 @@ NiggliReductionCoordinator::performSellingReduction(const LRL_Cell& cell) {
    MatS6 m66;
    Matrix_3x3 m33;
    S6 out;
-   const bool success = Selling::ReduceWithtransforms(cell, m66, out,  m33, 1.0E-6);
+   const bool success = Selling::ReduceWithtransforms(cell, m66, out, m33, 1.0E-6);
 
 
    if (success) {
@@ -406,7 +455,7 @@ NiggliReductionCoordinator::performNiggliReduction(const LRL_Cell& cell) {
       data.reductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       data.inverseReductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       data.wasAlreadyReduced = true;
-      std::cout << "; DIAG already reduced, returning identity" << std::endl;
+      //std::cout << "; DIAG already reduced, returning identity" << std::endl;
       return data;
    }
 
@@ -445,31 +494,6 @@ inline Matrix_3x3 NiggliReductionCoordinator::applyStoredReductionMatrices(const
    // Transform from primitive mobile to primitive reference:
    // primitiveRef = invReductionRef * matchMatrix * reductionMobile * primitiveMobile
    return m_referenceReduction.inverseReductionMatrix * matchMatrix * m_mobileReduction.reductionMatrix;
-}
-
-inline void NiggliReductionCoordinator::integrateResultsIntoReservoir(
-   const std::vector<LatticeMatchResult>& results,
-   const std::string& caseDescription) {
-
-   for (const auto& result : results) {
-      // Apply the stored reduction matrices to get the final transformation
-      Matrix_3x3 finalMatrix = applyStoredReductionMatrices(result.getTransformationMatrix());
-
-      // Don't transform the cell here - preserve Layer 4's work for now
-      // The final cell transformation will happen in Layer 2
-      LRL_Cell placeholderTransformedCell = result.getTransformedMobile();
-
-      // Create new result with final matrix and properly transformed cell
-      // IMPORTANT: Use the original P3 distance, not recalculated, to preserve Layer 4's work
-      LatticeMatchResult finalResult(finalMatrix,
-         result.getP3Distance(),
-         19191.,
-         placeholderTransformedCell,  // Will be corrected in Layer 2
-         caseDescription + ": " + result.getDescription());
-
-      // The reservoir will automatically deduplicate and keep only the best results
-      m_integrationReservoir.add(finalResult);
-   }
 }
 
 // Layer 2 Implementation
@@ -605,7 +629,7 @@ ProductionLatticeMatcherSystem::processInputList(const std::vector<LatticeCell>&
       allResults.insert(allResults.end(), results.begin(), results.end());
    }
 
-   if ( m_controls.shouldShowDetails())
+   if (m_controls.shouldShowDetails())
    {
       std::cout << "DEBUG: After simplicity ranking, first matrix: [";
       for (int i = 0; i < 9; ++i) {
@@ -634,17 +658,16 @@ ProductionLatticeMatcherSystem::matchSinglePair(const LatticeCell& reference,
    return m_primitiveManager.processLatticePair(reference, mobile);
 }
 
-inline LatticeMatchResult ProductionLatticeMatcherSystem::getBestMatch(const LatticeCell& reference,
-   const LatticeCell& mobile) {
-   std::vector<LatticeMatchResult> results = matchSinglePair(reference, mobile);
-
-   if (results.empty()) {
-      return LatticeMatchResult(Matrix_3x3(), 19191.0, 19191.0, mobile.getCell(),
-         "No match found");
-   }
-
-   return results[0]; // Best match (results are sorted)
-}
+//inline LatticeMatchResult ProductionLatticeMatcherSystem::getBestMatch(const LatticeCell& reference,
+//   const LatticeCell& mobile) {
+//   std::vector<LatticeMatchResult> results = matchSinglePair(reference, mobile);
+//
+//   if (results.empty()) {
+//      return LatticeMatchResult(Matrix_3x3(), 19191.0, 19191.0, mobile.getCell(),
+//         "No match found");
+//   }
+//
+//   return results[0]; // Best match (results are sorted)
+//}
 
 #endif // PRODUCTION_LATTICE_MATCHER_SYSTEM_H
-

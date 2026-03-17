@@ -65,10 +65,6 @@ void displayComparisonHistogram(const std::vector<MobileComparisonResult>& allRe
    const QualityAssessment& quality,
    const MultiTransformFinderControls& controls);
 
-void displayP3RelativeQuality(const LRL_Cell& referenceCell,
-   const std::string& latticeType,
-   const std::vector<MobileComparisonResult>& allResults);
-
 void displayCompactResult(const MobileComparisonResult& result,
    const LatticeCell& reference,
    const QualityAssessment& quality);
@@ -97,11 +93,5 @@ void displayFormattedMatrices(
    const P3RelativeThresholds::P3ThresholdResult& thresholds,
    int maxEntriesToShow = 10);
 
-// ---------------------------------------------------------------------------
-// Diagnostic / verification output
-// ---------------------------------------------------------------------------
-
-void verifyMatrixCellConsistency(const std::vector<LatticeMatchResult>& results,
-   const LRL_Cell& originalMobile);
 
 #endif // DISPLAYLMP3_H

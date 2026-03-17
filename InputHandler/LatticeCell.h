@@ -51,7 +51,11 @@ public:
    }
 
    const LRL_Cell getCell() const {
-      return LRL_Cell(cell); 
+      return LRL_Cell(cell);
+   }
+
+   const LRL_Cell GetCell() const {
+      return LRL_Cell(cell);
    }
 
    std::string getLatticeType() const { return latticeType; }
