@@ -10,7 +10,6 @@
 #include "LatticeConverter.h"
 #include "LatticeMatchResult.h"
 #include "LRL_Cell_Degrees.h"
-#include "MobileComparisonResult.h"
 #include "MultiTransformFinderControls.h"
 #include "MatchPair.h"
 #include "ProductionLatticeMatcherSystem.h"
@@ -18,105 +17,52 @@
 
 
 // ---------------------------------------------------------------------------
-// Input-list processing  (unchanged)
+// Input-list processing
 // ---------------------------------------------------------------------------
 
-void runInputListMode(const std::vector<LatticeCell>& inputListIn,
+void runInputListMode(const std::vector<LatticeCell>& inputList,
    const MultiTransformFinderControls& controls) {
-   std::cout << "\n=== PROCESSING INPUT LIST ===" << std::endl;
-   ProductionLatticeMatcherSystem matcher(controls);
-
-   // In ALL or SUPER mode, ensure the larger-volume cell is the reference
-   // so that supercell matrices (det>1) can expand it to match the mobile.
-   // In EQUIVALENT mode the user's reference choice is respected -- swapping
-   // would break multi-input comparison mode.
-   std::vector<LatticeCell> inputList = inputListIn;
+   std::cout << "; === PROCESSING INPUT LIST ===" << std::endl;
 
    if (inputList.size() == 2) {
       const auto mr = matchPair(inputList[0], inputList[1], controls);
       if (mr.swapped)
-         std::cout << "; Note: cells swapped -- larger volume cell is reference\n";
-      std::cout << mr.reference.GetInputLine() << " REFERENCE " << std::endl;
+         std::cout << "; Note: cells swapped -- larger volume cell is reference" << std::endl;
       if (controls.shouldShowDetails()) {
-         std::cout << "; Total results from matcher: " << mr.results.size() << "\n";
+         std::cout << "; Total results from matcher: " << mr.results.size() << std::endl;
       }
-      displayResults(mr.results, controls, mr.reference);
+      displayResults(mr.results, controls, mr.reference, mr.mobile);
    } else {
-      const LatticeCell& reference = inputList[0];
-
-      if (controls.shouldRunComparisonMode()) {
-         std::vector<MobileComparisonResult> comparisonResults;
-
-         if (controls.shouldShowDetails()) {
-            std::cout << "; === COMPARISON MODE ===" << std::endl;
-            std::cout << "; Reference: " << LRL_Cell_Degrees(reference.getCell())
-               << " (" << reference.getLatticeType() << ")" << std::endl;
-            std::cout << "; Processing " << (inputList.size() - 1)
-               << " mobile lattices in comparison mode" << std::endl;
-         }
-
-         for (size_t i = 1; i < inputList.size(); ++i) {
-            const LatticeCell& mobile = inputList[i];
-            if (controls.shouldShowDetails()) {
-               std::cout << "\n; --- Processing Mobile " << i << " ---" << std::endl;
-               std::cout << "; Mobile: " << LRL_Cell_Degrees(mobile.getCell())
-                  << " (" << mobile.getLatticeType() << ")" << std::endl;
-            }
-
-            std::vector<LatticeCell>        singlePair = { reference, mobile };
-            std::vector<LatticeMatchResult> results = matcher.processInputList(singlePair);
-
-            if (!results.empty()) {
-               LatticeMatchResult bestResult = results[0];
-               double             bestDistance = results[0].getP3Distance();
-               for (const auto& result : results) {
-                  if (result.getP3Distance() < bestDistance) {
-                     bestDistance = result.getP3Distance();
-                     bestResult = result;
-                  }
-               }
-               comparisonResults.push_back({
-                  static_cast<int>(i), mobile, bestResult, bestDistance });
-
-               if (controls.shouldShowDetails()) {
-                  std::cout << "; Found " << results.size()
-                     << " transformations, best distance: "
-                     << std::scientific << std::setprecision(3) << bestDistance << std::endl;
-               }
-            }
-         }
-
-         displayComparisonResults(reference, comparisonResults, controls);
-      } else {
-         if (controls.shouldShowDetails()) {
-            std::cout << "=== INDIVIDUAL MOBILE MATCHING ===" << std::endl;
-            std::cout << "Reference: " << LRL_Cell_Degrees(reference.getCell())
-               << " (" << reference.getLatticeType() << ")" << std::endl;
-            std::cout << "Processing " << (inputList.size() - 1)
-               << " mobile lattices individually" << std::endl;
-         }
-
-         for (size_t i = 1; i < inputList.size(); ++i) {
-            const LatticeCell& mobile = inputList[i];
-
-            std::cout << "\n=== MOBILE " << i << " RESULTS ===" << std::endl;
-            std::cout << "Mobile: " << LRL_Cell_Degrees(mobile.getCell())
-               << " (" << mobile.getLatticeType() << ")" << std::endl;
-
-            std::vector<LatticeCell>        singlePair = { reference, mobile };
-            std::vector<LatticeMatchResult> results = matcher.processInputList(singlePair);
-
-            if (results.empty()) {
-               std::cout << "No matching transformations found for this mobile." << std::endl;
-            } else {
-               displayResults(results, controls, reference);
-            }
-         }
-
-         std::cout << "\n=== OVERALL SUMMARY ===" << std::endl;
-         std::cout << "Processed " << (inputList.size() - 1)
-            << " mobile lattices individually." << std::endl;
+      // Multi-cell: first cell is user's reference, remaining are mobiles.
+      // Each pair is routed through matchPair() so the volume-based swap
+      // is applied consistently with the 2-cell path.
+      if (controls.shouldShowDetails()) {
+         std::cout << "; === INDIVIDUAL MOBILE MATCHING ===" << std::endl;
+         std::cout << "; Reference: " << LRL_Cell_Degrees(inputList[0].getCell())
+            << " (" << inputList[0].getLatticeType() << ")" << std::endl;
+         std::cout << "; Processing " << (inputList.size() - 1)
+            << " mobile lattices individually" << std::endl;
       }
+
+      for (size_t i = 1; i < inputList.size(); ++i) {
+         std::cout << "\n; === MOBILE " << i << " ===" << std::endl;
+
+         const auto mr = matchPair(inputList[0], inputList[i], controls);
+         if (mr.swapped && controls.shouldShowDetails()) {
+            std::cout << "; Note: cells swapped for mobile " << i
+               << " -- larger volume cell is reference" << std::endl;
+         }
+
+         if (mr.results.empty()) {
+            std::cout << "; No matching transformations found for this mobile." << std::endl;
+         } else {
+            displayResults(mr.results, controls, mr.reference, mr.mobile);
+         }
+      }
+
+      std::cout << "\n; === OVERALL SUMMARY ===" << std::endl;
+      std::cout << "; Processed " << (inputList.size() - 1)
+         << " mobile lattices individually." << std::endl;
    }
 }
 
@@ -126,7 +72,7 @@ void runInputListMode(const std::vector<LatticeCell>& inputListIn,
 
 int main() {
    try {
-      std::cout << "=== P3 LATTICE MATCHING ===" << std::endl;
+      std::cout << "; === P3 LATTICE MATCHING ===" << std::endl;
 
       MultiTransformFinderControls controls;
       const BasicProgramInput<MultiTransformFinderControls> program_setup(
@@ -141,10 +87,12 @@ int main() {
          return 0;
       }
 
+
+      Matrix_3x3 mmmmmm; mmmmmm.norm();
       const std::vector<LatticeCell>& inputList = program_setup.getInputList();
 
       if (inputList.size() < 2) {
-         std::cout << "; CmdLMP3 requires at least 2 input cells\n";
+         std::cout << "; CmdLMP3 requires at least 2 input cells" << std::endl;
          return 0;
       }
 

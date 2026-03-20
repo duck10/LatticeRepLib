@@ -144,7 +144,7 @@
     <ClInclude Include="Matrix_3x3.h" />
     <ClInclude Include="MobileComparisonResult.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />
-    <ClInclude Include="P3RelativeThresholds .h" />
+    <ClInclude Include="P3RelativeThresholds.h" />
     <ClInclude Include="ProductionCommon.h" />
     <ClInclude Include="ProductionLatticeMatcherSystem.h" />
     <ClInclude Include="QualityAssessment.h" />

@@ -1,6 +1,7 @@
 ﻿#ifndef FLEXIBLE_TEST_MODE_H
 #define FLEXIBLE_TEST_MODE_H
 
+#include "DisplayLMP3.h"
 #include "MatchPair.h"
 #include "ProductionLatticeMatcherSystem.h"
 #include "LatticeCell.h"
@@ -94,12 +95,6 @@ private:
       return std::abs(actual - expected) <= tolerance;
    }
 
-   double calculateS6Angle(const LRL_Cell& cell1, const LRL_Cell& cell2) {
-      const S6 s1(cell1);
-      const S6 s2(cell2);
-      return TransformerUtilities::angleS6(s1, s2);
-   }
-
    void displayTestInputs(const FlexibleTestCase& test) {
       std::cout << "Input cells:" << std::endl;
       for (size_t i = 0; i < test.inputCells.size(); ++i) {
@@ -111,31 +106,38 @@ private:
 
    bool validateQualityThresholds(const LatticeMatchResult& result,
       const LRL_Cell& referenceCell,
-      const FlexibleTestCase::QualityThresholds& thresholds) {
+      const FlexibleTestCase::QualityThresholds& thresholds,
+      const MultiTransformFinderControls& controls) {
       // Check P3 distance
       bool p3Ok = result.getP3Distance() <= thresholds.maxP3Distance;
 
       // Check S6 angle
-      double actualS6Angle = calculateS6Angle(result.getTransformedMobile(), referenceCell);
+      const double actualS6Angle = TransformerUtilities::angleS6(
+         S6(result.getTransformedMobile()), S6(referenceCell));
       bool s6Ok = actualS6Angle <= thresholds.maxS6Angle;
 
       // Check matrix determinant
       double det = result.getTransformationMatrix().Det();
       bool detOk = (det >= thresholds.minDeterminant && det <= thresholds.maxDeterminant);
 
-      std::cout << "    Quality validation:" << std::endl;
-      std::cout << "      P3 distance: " << std::scientific << std::setprecision(3)
-         << result.getP3Distance() << " (max: " << thresholds.maxP3Distance << ") "
-         << (p3Ok ? "✓" : "✗") << std::endl;
-      std::cout << "      S6 angle: " << std::fixed << std::setprecision(2)
-         << actualS6Angle << " deg (max: " << thresholds.maxS6Angle << " deg) "
-         << (s6Ok ? "✓" : "✗") << std::endl;
-      std::cout << "      Determinant: " << std::fixed << std::setprecision(6)
-         << det << " (range: " << thresholds.minDeterminant
-         << " to " << thresholds.maxDeterminant << ") "
-         << (detOk ? "✓" : "✗") << std::endl;
+      const bool passed = p3Ok && s6Ok && detOk;
 
-      return p3Ok && s6Ok && detOk;
+      // Print validation details only on failure or when details requested
+      if (!passed || controls.shouldShowDetails()) {
+         std::cout << "    Quality validation:" << std::endl;
+         std::cout << "      P3 distance: " << std::scientific << std::setprecision(3)
+            << result.getP3Distance() << " (max: " << thresholds.maxP3Distance << ") "
+            << (p3Ok ? "+" : "X") << std::endl;
+         std::cout << "      S6 angle: " << std::fixed << std::setprecision(2)
+            << actualS6Angle << " deg (max: " << thresholds.maxS6Angle << " deg) "
+            << (s6Ok ? "+" : "X") << std::endl;
+         std::cout << "      Determinant: " << std::fixed << std::setprecision(6)
+            << det << " (expected: " << thresholds.minDeterminant
+            << " to " << thresholds.maxDeterminant << ") "
+            << (detOk ? "+" : "X") << std::endl;
+      }
+
+      return passed;
    }
 
    void runTest(const FlexibleTestCase& test, const MultiTransformFinderControls& controls) {
@@ -161,33 +163,10 @@ private:
          return;
       }
 
-      std::cout << "Found " << results.size() << " results" << std::endl;
-      const std::string referenceCentering = referenceCell.getLatticeType();
+      std::cout << "; Found " << results.size() << " results" << std::endl;
 
-      // Show actual results
-      std::cout << "\nActual results:" << std::endl;
-      for (size_t i = 0; i < std::min(size_t(3), results.size()); ++i) {
-         const auto& result = results[i];
-         double s6Angle = calculateS6Angle(result.getTransformedMobile(),
-            referenceCell.getCell());
-
-         std::cout << "  Result " << (i + 1) << ":" << std::endl;
-         std::cout << "    Matrix: [";
-         const auto& matrix = result.getTransformationMatrix();
-         for (int j = 0; j < 9; ++j) {
-            std::cout << std::fixed << std::setprecision(1) << matrix[j];
-            if (j < 8) std::cout << " ";
-         }
-         std::cout << "]" << std::endl;
-         std::cout << "    Determinant: " << std::fixed << std::setprecision(6)
-            << matrix.Det() << std::endl;
-         std::cout << "    P3 distance: " << std::scientific << std::setprecision(3)
-            << result.getP3Distance() << std::endl;
-         std::cout << "    S6 angle: " << std::fixed << std::setprecision(2)
-            << s6Angle << " deg" << std::endl;
-         std::cout << "    Transformed: " << LRL_Cell_Degrees(result.getTransformedMobile())
-            << "[" << referenceCentering << "]" << std::endl;
-      }
+      // Use production display so test output matches production output exactly
+      displayResults(results, controls, mr.reference, mr.mobile);
 
       // Validate results
       if (test.qualityExpectations.empty() && test.exactExpectations.empty()) {
@@ -213,7 +192,7 @@ private:
             }
 
             std::cout << "  Checking result " << (i + 1) << " (" << quality.description << "):" << std::endl;
-            bool resultOk = validateQualityThresholds(results[i], referenceCell.getCell(), quality);
+            bool resultOk = validateQualityThresholds(results[i], referenceCell.getCell(), quality, controls);
 
             if (resultOk) {
                std::cout << "  Result " << (i + 1) << ": PASS" << std::endl;
@@ -242,8 +221,8 @@ private:
             bool p3Ok = compareValues(actual.getP3Distance(),
                expected.expectedP3Distance, expected.tolerance);
 
-            double actualS6Angle = calculateS6Angle(actual.getTransformedMobile(),
-               referenceCell.getCell());
+            const double actualS6Angle = TransformerUtilities::angleS6(
+               S6(actual.getTransformedMobile()), S6(referenceCell.getCell()));
             bool s6Ok = compareValues(actualS6Angle, expected.expectedS6Angle, expected.tolerance);
 
             std::cout << "  Result " << (i + 1) << " (" << expected.description << "): ";
@@ -517,7 +496,7 @@ public:
       addTestCase(test13);
 
       // Test 14: [SUPERCELL] Simon Parsons case
-      FlexibleTestCase test14("SimonParsons",
+      FlexibleTestCase test14("Simon Parsons",
          "[SUPERCELL] R primitive vs P triclinic -- order-4, dist=0.820");
       test14.addInputCell(LatticeCell(LRL_Cell(9.477, 9.477, 9.477,
          64.24 * M_PI / 180, 64.24 * M_PI / 180, 64.24 * M_PI / 180), "P"));

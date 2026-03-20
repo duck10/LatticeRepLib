@@ -64,7 +64,7 @@ public:
    explicit NiggliReductionCoordinator(const MultiTransformFinderControls& controls)
       : m_controls(controls)
       , m_matcher(controls)
-      , m_integrationReservoir(100)  // Reduce from 50 to 10 to force better deduplication
+      , m_integrationReservoir(500)
    {
    }
 
@@ -345,73 +345,39 @@ NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobi
    auto resultsD = m_matcher.findBestMatches(m_referenceReduction.reducedCell, m_mobileReduction.reducedCell,
       "Case D: Reduced vs Reduced");
 
-   // STEP 1: Start with Case A (P-to-P) as provisional reservoir
-   std::vector<LatticeMatchResult> provisionalResults;
-   for (const auto& result : resultsA) {
-      Matrix_3x3 finalMatrix = applyStoredReductionMatrices(result.getTransformationMatrix());
-      provisionalResults.emplace_back(finalMatrix, result.getP3Distance(), 19191.,
-         result.getTransformedMobile(), "Case A: " + result.getDescription());
-   }
+   // Merge all four cases through the integration reservoir.
+   // UnifiedReservoir::add() enforces matrix-norm deduplication and
+   // keeps only the best entries by P3 distance, so no manual sort,
+   // truncation, or duplicate removal is needed afterward.
+   m_integrationReservoir.clear();
+
+   auto mergeCase = [&](const std::vector<LatticeMatchResult>& caseResults,
+      const std::string& caseLabel) {
+         for (const auto& result : caseResults) {
+            const Matrix_3x3 finalMatrix =
+               applyStoredReductionMatrices(result.getTransformationMatrix());
+            const LatticeMatchResult corrected(finalMatrix, result.getP3Distance(), 19191.,
+               result.getTransformedMobile(), caseLabel + result.getDescription());
+            m_integrationReservoir.add(corrected);
+         }
+      };
+
+   mergeCase(resultsA, "Case A: ");
+   mergeCase(resultsB, "Case B: ");
+   mergeCase(resultsC, "Case C: ");
+   mergeCase(resultsD, "Case D: ");
 
    if (m_controls.shouldShowDetails()) {
-      std::cout << "; Layer 3 - Step 1: Started with " << provisionalResults.size()
-         << " Case A results" << std::endl;
-   }
-
-   for (const auto& result : resultsB) {
-      Matrix_3x3 finalMatrix = applyStoredReductionMatrices(result.getTransformationMatrix());
-      provisionalResults.emplace_back(finalMatrix, result.getP3Distance(), 19191.,
-         result.getTransformedMobile(), "Case B: " + result.getDescription());
-   }
-
-   if (m_controls.shouldShowDetails()) {
-      std::cout << "; Layer 3 - Step 2: Started with " << provisionalResults.size()
-         << " Case A,B results" << std::endl;
-   }
-   for (const auto& result : resultsC) {
-      Matrix_3x3 finalMatrix = applyStoredReductionMatrices(result.getTransformationMatrix());
-      provisionalResults.emplace_back(finalMatrix, result.getP3Distance(), 19191.,
-         result.getTransformedMobile(), "Case C: " + result.getDescription());
-   }
-
-   if (m_controls.shouldShowDetails()) {
-      std::cout << "; Layer 3 - Step 3: Started with " << provisionalResults.size()
-         << " Case A,B,C results" << std::endl;
-   }
-   for (const auto& result : resultsD) {
-      Matrix_3x3 finalMatrix = applyStoredReductionMatrices(result.getTransformationMatrix());
-      provisionalResults.emplace_back(finalMatrix, result.getP3Distance(), 19191.,
-         result.getTransformedMobile(), "Case D: " + result.getDescription());
-   }
-
-   if (m_controls.shouldShowDetails()) {
-      std::cout << "; Layer 3 - Step 4: Started with " << provisionalResults.size()
-         << " Case A,B,C,D results" << std::endl;
-   }
-
-   LatticeMatchResult correctedResult;
-   insertUniqueResult(provisionalResults, correctedResult);
-
-   if (m_controls.shouldShowDetails()) {
-      std::cout << "; Layer 3 - Step 4: Final merge complete, total " << provisionalResults.size()
-         << " results" << std::endl;
-      if (!provisionalResults.empty()) {
-         std::cout << "; Layer 3 - Best P3 distance: " << provisionalResults[0].getP3Distance() << std::endl;
+      std::cout << "; Layer 3 - Merge complete: "
+         << m_integrationReservoir.size() << " unique results" << std::endl;
+      if (!m_integrationReservoir.empty()) {
+         std::cout << "; Layer 3 - Best P3 distance: "
+            << m_integrationReservoir.getBestDistance() << std::endl;
       }
    }
 
-   // Limit to reservoir capacity
-   std::sort(provisionalResults.begin(), provisionalResults.end(),
-      [](const LatticeMatchResult& a, const LatticeMatchResult& b) {
-         return a.getP3Distance() < b.getP3Distance();
-      });
-
-   size_t maxResults = std::min(provisionalResults.size(), size_t(500));
-   std::vector<LatticeMatchResult> finalResults(provisionalResults.begin(),
-      provisionalResults.begin() + maxResults);
-
    // Add NC distance and return
-   return addNCDistanceToResults(finalResults, ncdistance);
+   return addNCDistanceToResults(m_integrationReservoir.getAllResults(), ncdistance);
 }
 
 inline NiggliReductionCoordinator::ReductionData

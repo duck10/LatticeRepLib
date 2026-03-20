@@ -1,4 +1,4 @@
-﻿#pragma warning(disable: 4101) // Visual Studio 
+﻿#pragma warning(disable: 4101) // Visual Studio
 
 #ifndef MULTITRANSFORMFINDERCONTROLS_H
 #define MULTITRANSFORMFINDERCONTROLS_H
@@ -17,7 +17,6 @@ public:
    friend std::ostream& operator<< (std::ostream& os, const MultiTransformFinderControls& mtfc) {
       os << "; CmdLMP3 controls:\n";
       os << ";   details        " << (mtfc.m_showDetails ? "true" : "false") << "\n";
-      os << ";   comparison     " << (mtfc.m_comparisonMode ? "true" : "false") << "\n";
       os << ";   csv output     " << (mtfc.m_csvOutput ? "true" : "false") << "\n";
       os << ";   mode           " << mtfc.getModeString()
          << "  (ALL=equivalent+supercell, SUPER=supercell only, EQUIVALENT=same lattice only)\n";
@@ -28,7 +27,6 @@ public:
    }
 
    MultiTransformFinderControls() {
-      // Register handlers for control parameters
       InputHandler::registerHandler("SHOWDETAILS", 0.30,
          [this](const BaseControlVariables&, const std::string& value) {
             setShowDetails(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
@@ -57,19 +55,30 @@ public:
             catch (...) { std::cout << "; Warning: Invalid UseSelling value: " << value << "\n"; }
          });
 
+      // TEST with no argument or TEST 0 runs all tests.
+      // Any negative number is treated as 0 (run all) with a warning.
+      // TEST n (n > 0) runs only test n.
       InputHandler::registerHandler("TEST", 0.43,
          [this](const BaseControlVariables&, const std::string& value) {
-            try {
-               if (value.empty() || LRL_StringTools::strToupper(value) == "TEST")
-                  setTestNumber(0);
-               else {
-                  const int testNum = std::stoi(value);
-                  setTestNumber(testNum < 0 ? 999 : testNum);
+            m_runTests = true;
+            if (value.empty() || LRL_StringTools::strToupper(value) == "TEST") {
+               m_testNumber = 0;
+            } else {
+               try {
+                  const int n = std::stoi(value);
+                  if (n < 0) {
+                     std::cout << "; Warning: Negative test number " << n
+                        << " treated as 0 (run all tests)\n";
+                     m_testNumber = 0;
+                  } else {
+                     m_testNumber = n;
+                  }
                }
-            }
-            catch (...) {
-               std::cout << "; Warning: Invalid test number: " << value << "\n";
-               setTestNumber(0);
+               catch (...) {
+                  std::cout << "; Warning: Invalid test number: " << value
+                     << " -- running all tests\n";
+                  m_testNumber = 0;
+               }
             }
          });
 
@@ -89,16 +98,10 @@ public:
             }
          });
 
-      InputHandler::registerHandler("COMPARISONMODE", 0.45,
-         [this](const BaseControlVariables&, const std::string& value) {
-            setComparisonMode(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         });
-
       InputHandler::registerHandler("CSVOUTPUT", 0.46,
          [this](const BaseControlVariables&, const std::string& value) {
             setCsvOutput(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
-
 
       // ------------------------------------------------------------------
       // MODE: restrict matrix search to a subset.
@@ -138,20 +141,18 @@ public:
    enum class RunMode { ALL, SUPER, EQUIVALENT };
 
    // -----------------------------------------------------------------------
-   // Accessors -- existing
+   // Accessors
    // -----------------------------------------------------------------------
    bool shouldShowDetails()        const { return m_showDetails; }
    void setShowDetails(bool b) { m_showDetails = b; }
 
-   void setTestNumber(int n) { m_testNumber = n; }
+   // m_runTests is set by the TEST handler; m_testNumber = 0 means run all.
+   bool shouldRunTests()           const { return m_runTests; }
    int  getTestNumber()            const { return m_testNumber; }
-   bool shouldRunTests()           const { return m_testNumber >= 0; }
+   void setTestNumber(int n) { m_runTests = true; m_testNumber = (n < 0) ? 0 : n; }
 
    double getNiggliDelta()         const { return m_niggliDelta; }
    void   setNiggliDelta(double d) { m_niggliDelta = d; }
-
-   bool shouldRunComparisonMode()  const { return m_comparisonMode; }
-   void setComparisonMode(bool b) { m_comparisonMode = b; }
 
    bool shouldOutputCsv()          const { return m_csvOutput; }
    void setCsvOutput(bool b) { m_csvOutput = b; }
@@ -162,28 +163,26 @@ public:
    void setUseSellingReduction(bool b) { m_useSellingReduction = b; }
    bool getUseSellingReduction()   const { return m_useSellingReduction; }
 
-
-   bool    useHNF()                   const { return m_useHNF; }
-   RunMode getRunMode()               const { return m_runMode; }
-   bool    runModeSuper()             const { return m_runMode == RunMode::SUPER; }
-   bool    runModeEquivalent()        const { return m_runMode == RunMode::EQUIVALENT; }
-   std::string getModeString()        const {
+   bool    useHNF()                const { return m_useHNF; }
+   RunMode getRunMode()            const { return m_runMode; }
+   bool    runModeSuper()          const { return m_runMode == RunMode::SUPER; }
+   bool    runModeEquivalent()     const { return m_runMode == RunMode::EQUIVALENT; }
+   std::string getModeString()     const {
       if (m_runMode == RunMode::SUPER)      return "SUPER";
       if (m_runMode == RunMode::EQUIVALENT) return "EQUIVALENT";
       return "ALL";
    }
 
 private:
-   bool   m_showDetails = false;
-   double m_niggliDelta = 1.0e-5;
-   int    m_testNumber = -1;
-   bool   m_comparisonMode = true;
-   bool   m_csvOutput = false;
-   int    m_unimodularOrder = 1;
-   bool   m_useSellingReduction = false;
+   bool    m_showDetails = false;
+   double  m_niggliDelta = 1.0e-5;
+   bool    m_runTests = false;   // set true only when TEST keyword is seen
+   int     m_testNumber = 0;       // 0 = run all tests; >0 = specific test
+   bool    m_csvOutput = false;
+   int     m_unimodularOrder = 1;
+   bool    m_useSellingReduction = false;
    RunMode m_runMode = RunMode::ALL;
    bool    m_useHNF = false;
-
 };
 
 #endif // MULTITRANSFORMFINDERCONTROLS_H

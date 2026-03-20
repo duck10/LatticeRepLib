@@ -4,6 +4,8 @@
 #include "LRL_Cell_Degrees.h"
 #include "Matrix_3x3.h"
 #include "P3.h"
+#include "S6.h"
+#include "TransformerUtilities.h"
 
 #include <algorithm>
 #include <cmath>
@@ -16,8 +18,12 @@
 // Low-level cell output
 // ---------------------------------------------------------------------------
 
-void outputCellWithCentering(const LRL_Cell& cell, const std::string& centeringSymbol) {
+void outputCellWithCentering(const LRL_Cell& cell,
+   const std::string& centeringSymbol,
+   const std::string& label) {
    std::cout << centeringSymbol << " " << LRL_Cell_Degrees(cell);
+   if (!label.empty())
+      std::cout << " [" << label << "]";
 }
 
 // ---------------------------------------------------------------------------
@@ -28,15 +34,15 @@ void displayP3DistanceHistogram(const std::vector<LatticeMatchResult>& allResult
    const MultiTransformFinderControls& controls,
    const LatticeCell& reference) {
    if (allResults.empty()) {
-      std::cout << "No results to display in histogram." << std::endl;
+      std::cout << "; No results to display in histogram." << std::endl;
       return;
    }
 
    if (controls.shouldShowDetails()) {
-      std::cout << "Sample result descriptions:" << std::endl;
+      std::cout << "; Sample result descriptions:" << std::endl;
       int samplesToShow = std::min(5, (int)allResults.size());
       for (int i = 0; i < samplesToShow; ++i) {
-         std::cout << "  " << (i + 1) << ": " << allResults[i].getDescription()
+         std::cout << ";   " << (i + 1) << ": " << allResults[i].getDescription()
             << " (P3: " << std::scientific << std::setprecision(6)
             << allResults[i].getP3Distance() << ")" << std::endl;
       }
@@ -60,45 +66,54 @@ void displayP3DistanceHistogram(const std::vector<LatticeMatchResult>& allResult
    auto thresholds = P3RelativeThresholds::calculateAdaptiveP3Thresholds(
       reference.getCell(), reference.getLatticeType(), distances);
 
-   std::cout << "Range: " << std::scientific << std::setprecision(2)
+   std::cout << "; Range: " << std::scientific << std::setprecision(2)
       << minDist << " to " << maxDist << " A" << std::endl;
 
-   std::cout << "Reference P3 norm: " << std::fixed << std::setprecision(3)
+   std::cout << "; Reference P3 norm: " << std::fixed << std::setprecision(3)
       << thresholds.referenceP3Norm << " A" << std::endl;
 
-   std::cout << "Method: " << thresholds.method << std::endl;
-   std::cout << "Thresholds:" << std::endl;
-   std::cout << "  EXCELLENT <= " << std::scientific << std::setprecision(2)
+   std::cout << "; Method: " << thresholds.method << std::endl;
+   std::cout << "; Thresholds:" << std::endl;
+   std::cout << ";   EXCELLENT <= " << std::scientific << std::setprecision(2)
       << thresholds.excellentThreshold << " ("
       << std::fixed << std::setprecision(1)
       << (thresholds.excellentThreshold / thresholds.referenceP3Norm * 100) << "% of P3)" << std::endl;
-   std::cout << "  GOOD      <= " << std::scientific << std::setprecision(2)
+   std::cout << ";   GOOD      <= " << std::scientific << std::setprecision(2)
       << thresholds.goodThreshold << " ("
       << std::fixed << std::setprecision(1)
       << (thresholds.goodThreshold / thresholds.referenceP3Norm * 100) << "% of P3)" << std::endl;
-   std::cout << "  POOR      <= " << std::scientific << std::setprecision(2)
+   std::cout << ";   POOR      <= " << std::scientific << std::setprecision(2)
       << thresholds.poorThreshold << " ("
       << std::fixed << std::setprecision(1)
       << (thresholds.poorThreshold / thresholds.referenceP3Norm * 100) << "% of P3)" << std::endl;
 
-   std::cout << "Scale: Each '#' represents relative P3 distance" << std::endl;
+   std::cout << "; Scale: Each '#' represents relative P3 distance" << std::endl;
    std::cout << std::endl;
 }
 
 
 void displayResults(const std::vector<LatticeMatchResult>& allResults,
    const MultiTransformFinderControls& controls,
-   const LatticeCell& reference) {
+   const LatticeCell& reference,
+   const LatticeCell& mobile) {
    if (controls.shouldShowDetails()) {
       std::cout << "; DEBUG: First 5 results entering displayResults:" << std::endl;
       for (size_t i = 0; i < std::min(size_t(5), allResults.size()); ++i) {
-         std::cout << "  " << (i + 1) << ": P3=" << allResults[i].getP3Distance() << std::endl;
+         std::cout << ";   " << (i + 1) << ": P3=" << allResults[i].getP3Distance() << std::endl;
       }
    }
    if (allResults.empty()) {
-      std::cout << "No results generated - this should never happen!" << std::endl;
+      std::cout << "; No results generated - this should never happen!" << std::endl;
       return;
    }
+
+   // Always show reference and mobile so the reader knows what was matched
+   std::cout << "; ";
+   outputCellWithCentering(reference.getCell(), reference.getLatticeType(), "REFERENCE");
+   std::cout << std::endl;
+   std::cout << "; ";
+   outputCellWithCentering(mobile.getCell(), mobile.getLatticeType(), "MOBILE");
+   std::cout << std::endl;
 
    if (controls.shouldShowDetails()) {
       std::cout << "; NC Distance: " << allResults[0].getNcDistance() << std::endl;
@@ -117,12 +132,12 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
 
    if (controls.shouldShowDetails()) {
       if (uniqueResults.size() < allResults.size()) {
-         std::cout << "\nDeduplication Summary:" << std::endl;
-         std::cout << "  Original results: " << allResults.size() << std::endl;
-         std::cout << "  Unique matrices: " << uniqueResults.size() << std::endl;
-         std::cout << "  Duplicates removed: " << (allResults.size() - uniqueResults.size()) << std::endl;
+         std::cout << "\n; Deduplication Summary:" << std::endl;
+         std::cout << ";   Original results:   " << allResults.size() << std::endl;
+         std::cout << ";   Unique matrices:    " << uniqueResults.size() << std::endl;
+         std::cout << ";   Duplicates removed: " << (allResults.size() - uniqueResults.size()) << std::endl;
       } else {
-         std::cout << "\nNo duplicate matrices found - all " << allResults.size()
+         std::cout << "\n; No duplicate matrices found - all " << allResults.size()
             << " results have unique matrices." << std::endl;
       }
    }
@@ -134,7 +149,7 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
    if (controls.shouldShowDetails()) {
       std::cout << "; DEBUG: Distance analysis:" << std::endl;
       for (size_t i = 0; i < std::min(size_t(5), distances.size()); ++i) {
-         std::cout << "  " << (i + 1) << ": " << std::scientific << distances[i] << std::endl;
+         std::cout << ";   " << (i + 1) << ": " << std::scientific << distances[i] << std::endl;
       }
    }
 
@@ -173,355 +188,107 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
    deduplicateByCell(poorResults);
    deduplicateByCell(terribleResults);
 
-   // Helper: supercell order label for a result
-   auto orderLabel = [](const LatticeMatchResult& r) -> std::string {
-      const int det = static_cast<int>(std::round(std::abs(r.getTransformationMatrix().Det())));
-      if (det <= 1) return "";
-      return " (order-" + std::to_string(det) + " supercell)";
-      };
-
    std::vector<LatticeMatchResult> resultsToShow;
-   std::string qualityMessage;
 
    if (!excellentResults.empty()) {
       for (const auto& r : excellentResults) resultsToShow.push_back(r);
-      const std::string ol = orderLabel(excellentResults[0]);
-      if (ol.empty()) {
-         // det=1: same lattice
-         qualityMessage = excellentResults.size() == 1
-            ? "; Cells are equivalent"
-            : "; Cells are equivalent (" + std::to_string(excellentResults.size()) + " representations)";
-      } else {
-         qualityMessage = "; Found " + std::to_string(excellentResults.size())
-            + " excellent match" + (excellentResults.size() == 1 ? "" : "es") + ol;
-      }
       if (excellentResults.size() <= 2) {
          int goodToAdd = std::min(2, (int)goodResults.size());
          for (int i = 0; i < goodToAdd; ++i) resultsToShow.push_back(goodResults[i]);
       }
    } else if (!goodResults.empty()) {
       for (const auto& r : goodResults) resultsToShow.push_back(r);
-      const std::string ol = orderLabel(goodResults[0]);
-      qualityMessage = "; Found " + std::to_string(goodResults.size())
-         + " good match" + (goodResults.size() == 1 ? "" : "es") + ol;
       if (goodResults.size() <= 2) {
          int poorToAdd = std::min(2, (int)poorResults.size());
          for (int i = 0; i < poorToAdd; ++i) resultsToShow.push_back(poorResults[i]);
       }
    } else if (!poorResults.empty()) {
       resultsToShow.push_back(poorResults[0]);
-      const std::string ol = orderLabel(poorResults[0]);
-      std::ostringstream ss;
-      ss << std::fixed << std::setprecision(3) << poorResults[0].getP3Distance();
-      const std::string distStr = ss.str();
-      if (ol.empty())
-         qualityMessage = "; Best match (same lattice, distorted)  P3 distance: " + distStr;
-      else
-         qualityMessage = "; Best match" + ol + "  P3 distance: " + distStr;
    } else {
       resultsToShow.push_back(terribleResults[0]);
-      const std::string ol = orderLabel(terribleResults[0]);
-      std::ostringstream ss;
-      ss << std::fixed << std::setprecision(3) << terribleResults[0].getP3Distance();
-      const std::string distStr = ss.str();
-      if (ol.empty())
-         qualityMessage = "; Best match (large distortion)  P3 distance: " + distStr;
-      else
-         qualityMessage = "; Best match (large distortion)" + ol + "  P3 distance: " + distStr;
    }
 
    std::cout << "\n; === LATTICE MATCHING RESULTS ===" << std::endl;
-   std::cout << qualityMessage << std::endl;
 
    for (size_t i = 0; i < resultsToShow.size(); ++i) {
       const auto& result = resultsToShow[i];
       double      distance = result.getP3Distance();
 
-      std::cout << "\n--- Match " << (i + 1) << " ---" << std::endl;
+      std::cout << "\n; --- Match " << (i + 1) << " ---" << std::endl;
 
-      const int det = static_cast<int>(std::round(
-         std::abs(result.getTransformationMatrix().Det())));
+      const double rawDet = result.getTransformationMatrix().Det();
+      const int det = static_cast<int>(std::round(std::abs(rawDet)));
       std::string qualityString;
       if (det > 1) {
-         qualityString = "order-" + std::to_string(det) + " supercell";
+         // Supercell: combine order label with quality tier
+         std::string tier;
+         if (distance <= excellentThreshold) tier = "EXCELLENT";
+         else if (distance <= goodThreshold)      tier = "GOOD";
+         else if (distance <= poorThreshold)      tier = "POOR";
+         else                                     tier = "DISTORTED";
+         qualityString = "order-" + std::to_string(det) + " supercell  " + tier;
+      } else if (std::abs(rawDet) < 0.99) {
+         // Subcell (e.g. det=0.5 from centred-to-primitive conversion)
+         std::string tier;
+         if (distance <= excellentThreshold) tier = "EXCELLENT";
+         else if (distance <= goodThreshold)      tier = "GOOD";
+         else if (distance <= poorThreshold)      tier = "POOR";
+         else                                     tier = "DISTORTED";
+         qualityString = "subcell  " + tier;
       } else {
-         if (distance <= excellentThreshold)      qualityString = "EQUIVALENT";
+         if (distance <= excellentThreshold) qualityString = "EQUIVALENT";
          else if (distance <= goodThreshold)      qualityString = "GOOD";
          else if (distance <= poorThreshold)      qualityString = "POOR";
          else                                     qualityString = "DISTORTED";
       }
+      const double s6Angle = TransformerUtilities::angleS6(
+         S6(result.getTransformedMobile()), S6(reference.getCell()));
+      const double p3Percent = (thresholds.referenceP3Norm > 0.0)
+         ? (distance / thresholds.referenceP3Norm * 100.0) : 0.0;
       std::cout << "; " << qualityString << "  P3 distance: "
-         << std::fixed << std::setprecision(3) << distance << std::endl;
+         << std::fixed << std::setprecision(3) << distance
+         << " (" << std::setprecision(1) << p3Percent << "% of P3 norm)"
+         << "  S6 angle: " << std::setprecision(2) << s6Angle << " deg" << std::endl;
+      if (s6Angle > 15.0)
+         std::cout << "; ** WARNING: S6 angle > 15 deg -- this is likely not a crystallographic match **" << std::endl;
 
       if (controls.shouldShowDetails()) {
-         std::cout << "Description: " << result.getDescription() << std::endl;
+         std::cout << "; Description: " << result.getDescription() << std::endl;
       }
-
 
       const Matrix_3x3& matrix = result.getTransformationMatrix();
-      std::cout << "Transformation Matrix:";
-      std::cout << "  (determinant: " << std::fixed << std::setprecision(4)
-         << matrix.Det() << ")" << std::endl;
-      for (int row = 0; row < 3; ++row) {
-         std::cout << "  [" << std::setw(8) << std::fixed << std::setprecision(4)
-            << matrix[row * 3 + 0] << ", "
-            << std::setw(8) << matrix[row * 3 + 1] << ", "
-            << std::setw(8) << matrix[row * 3 + 2] << "]" << std::endl;
+      std::cout << "; Matrix: [";
+      // Print as integers if all elements are integer-valued, else use 1 decimal place
+      bool isInteger = true;
+      for (int j = 0; j < 9; ++j) {
+         if (std::abs(matrix[j] - std::round(matrix[j])) > 1e-6) { isInteger = false; break; }
       }
+      for (int j = 0; j < 9; ++j) {
+         if (isInteger)
+            std::cout << static_cast<int>(std::round(matrix[j]));
+         else
+            std::cout << std::fixed << std::setprecision(1) << matrix[j];
+         if (j < 8) std::cout << " ";
+      }
+      std::cout << "] (Determinant: "
+         << std::fixed << std::setprecision(3) << rawDet;
+      if (det > 1)             std::cout << "  [SUPERCELL]";
+      else if (std::abs(rawDet) < 0.99) std::cout << "  [SUBCELL]";
+      std::cout << ")" << std::endl;
 
-      std::cout << "Transformed cell: ";
-      outputCellWithCentering(result.getTransformedMobile(), reference.getLatticeType());
+      std::cout << "; ";
+      outputCellWithCentering(reference.getCell(), reference.getLatticeType(), "REFERENCE");
       std::cout << std::endl;
-
+      std::cout << "; ";
+      outputCellWithCentering(result.getTransformedMobile(),
+         reference.getLatticeType(), "TRANSFORMED");
+      std::cout << std::endl;
    }
 
-   // Report count of matches below threshold only when in DETAILS mode
    if (controls.shouldShowDetails() && allResults.size() > resultsToShow.size()) {
       const size_t nHidden = allResults.size() - resultsToShow.size();
       std::cout << "; " << nHidden << " additional match"
-         << (nHidden == 1 ? "" : "es") << " below threshold not shown.\n";
-   }
-}
-
-// ---------------------------------------------------------------------------
-// Multi-mobile / comparison display helpers
-// ---------------------------------------------------------------------------
-
-void displayComparisonHistogram(const std::vector<MobileComparisonResult>& allResults,
-   const QualityAssessment& quality,
-   const MultiTransformFinderControls& controls) {
-   if (allResults.empty()) {
-      std::cout << "No results to display in histogram." << std::endl;
-      return;
-   }
-
-   std::cout << "\n=== P3 DISTANCE DISTRIBUTION (" << allResults.size() << " Mobiles) ===" << std::endl;
-
-   std::vector<double> distances;
-   for (const auto& result : allResults) { distances.push_back(result.distance); }
-   std::sort(distances.begin(), distances.end());
-
-   double minDist = distances[0];
-   double maxDist = distances.back();
-
-   std::cout << "Range: " << std::scientific << std::setprecision(2)
-      << minDist << " to " << maxDist << " A" << std::endl;
-   quality.displayThresholdInfo();
-
-   const auto& stats = quality.getStats();
-
-   const int numBins = 8;
-   std::vector<int>                        binCounts(numBins, 0);
-   std::vector<std::pair<double, double>>  binRanges(numBins);
-
-   if (minDist == 0.0) {
-      binRanges[0] = { 0.0, 0.0 };
-      if (maxDist > 0.0) {
-         double nonZeroMin = 1e12;
-         for (double dist : distances) {
-            if (dist > 0.0 && dist < nonZeroMin) nonZeroMin = dist;
-         }
-         if (maxDist / nonZeroMin > 10.0) {
-            double logMin = std::log10(nonZeroMin);
-            double logMax = std::log10(maxDist);
-            double logStep = (logMax - logMin) / (numBins - 1);
-            for (int i = 1; i < numBins; ++i) {
-               double binStart = std::pow(10, logMin + (i - 1) * logStep);
-               double binEnd = (i == numBins - 1) ? maxDist : std::pow(10, logMin + i * logStep);
-               binRanges[i] = { binStart, binEnd };
-            }
-         } else {
-            double step = (maxDist - nonZeroMin) / (numBins - 1);
-            for (int i = 1; i < numBins; ++i) {
-               double binStart = nonZeroMin + (i - 1) * step;
-               double binEnd = (i == numBins - 1) ? maxDist : nonZeroMin + i * step;
-               binRanges[i] = { binStart, binEnd };
-            }
-         }
-      }
-   } else {
-      if (maxDist / minDist > 10.0 && maxDist > minDist) {
-         double logMin = std::log10(std::max(minDist, 1e-12));
-         double logMax = std::log10(maxDist);
-         double logStep = (logMax - logMin) / numBins;
-         for (int i = 0; i < numBins; ++i) {
-            double binStart = std::pow(10, logMin + i * logStep);
-            double binEnd = (i == numBins - 1) ? maxDist : std::pow(10, logMin + (i + 1) * logStep);
-            binRanges[i] = { binStart, binEnd };
-         }
-      } else {
-         double step = (maxDist - minDist) / numBins;
-         for (int i = 0; i < numBins; ++i) {
-            double binStart = minDist + i * step;
-            double binEnd = (i == numBins - 1) ? maxDist : minDist + (i + 1) * step;
-            binRanges[i] = { binStart, binEnd };
-         }
-      }
-   }
-
-   for (double dist : distances) {
-      bool assigned = false;
-      for (int i = 0; i < numBins; ++i) {
-         if ((i == 0 && minDist == 0.0 && dist == 0.0) ||
-            (dist >= binRanges[i].first && dist <= binRanges[i].second)) {
-            binCounts[i]++;
-            assigned = true;
-            break;
-         }
-      }
-      if (!assigned && binCounts[numBins - 1] >= 0) binCounts[numBins - 1]++;
-   }
-
-   quality.displayQualitySummary();
-
-   std::cout << "\nDistance Distribution:" << std::endl;
-   int maxBinCount = *std::max_element(binCounts.begin(), binCounts.end());
-
-   for (int i = 0; i < numBins; ++i) {
-      if (binCounts[i] > 0) {
-         if (i == 0 && minDist == 0.0) {
-            std::cout << "  0.00e+00 (perfect): " << std::setw(4) << binCounts[i] << " ";
-         } else if (i < numBins - 1) {
-            std::cout << "  " << std::scientific << std::setprecision(2) << binRanges[i].first
-               << " - " << std::setprecision(2) << binRanges[i].second
-               << ": " << std::setw(4) << binCounts[i] << " ";
-         } else {
-            std::cout << "  " << std::scientific << std::setprecision(2) << binRanges[i].first
-               << " +        : " << std::setw(4) << binCounts[i] << " ";
-         }
-         int barLength = (maxBinCount > 0) ? (binCounts[i] * 30) / maxBinCount : 0;
-         for (int j = 0; j < std::max(1, barLength); ++j) std::cout << "#";
-         std::cout << std::endl;
-      }
-   }
-
-   std::cout << std::endl;
-}
-
-void displayCompactResult(const MobileComparisonResult& result,
-   const LatticeCell& reference,
-   const QualityAssessment& quality) {
-   const auto& matrix = result.bestResult.getTransformationMatrix();
-
-   std::cout << "Mobile " << result.mobileIndex << ": "
-      << LRL_Cell_Degrees(result.mobile.getCell())
-      << " (" << result.mobile.getLatticeType() << ")" << std::endl;
-
-   bool isInteger = true;
-   for (int i = 0; i < 9; ++i) {
-      if (std::abs(matrix[i] - std::round(matrix[i])) > 1e-10) { isInteger = false; break; }
-   }
-
-   std::cout << "  P3: " << std::fixed << std::setprecision(3) << result.distance
-      << "  Matrix: [";
-   if (isInteger) {
-      for (int i = 0; i < 9; ++i) {
-         std::cout << static_cast<int>(std::round(matrix[i]));
-         if (i < 8) std::cout << " ";
-      }
-   } else {
-      std::cout << std::setprecision(4);
-      for (int i = 0; i < 9; ++i) {
-         std::cout << matrix[i];
-         if (i < 8) std::cout << " ";
-      }
-   }
-   std::cout << "]" << std::endl;
-   std::cout << "  Transformed: ";
-   outputCellWithCentering(result.bestResult.getTransformedMobile(), reference.getLatticeType());
-   std::cout << std::endl;
-}
-
-
-void displayComparisonResults(const LatticeCell& reference,
-   const std::vector<MobileComparisonResult>& allResults,
-   const MultiTransformFinderControls& controls) {
-   if (allResults.empty()) {
-      std::cout << "No matches found for any mobile." << std::endl;
-      return;
-   }
-
-   std::vector<double> distances;
-   for (const auto& result : allResults) { distances.push_back(result.distance); }
-   QualityAssessment quality(reference, distances);
-
-   displayComparisonHistogram(allResults, quality, controls);
-
-   std::cout << "=== COMPARISON SUMMARY ===" << std::endl;
-   std::cout << "Reference: " << LRL_Cell_Degrees(reference.getCell())
-      << " (" << reference.getLatticeType() << ")" << std::endl;
-
-   bool showDetailedList = (allResults.size() <= 5) ||
-      (controls.shouldShowDetails() && allResults.size() <= 20);
-
-   if (showDetailedList) {
-      std::cout << "\n=== ALL MOBILES (Input Order) ===" << std::endl;
-      for (const auto& result : allResults) {
-         displayCompactResult(result, reference, quality);
-      }
-   } else {
-      std::cout << "Total mobiles: " << allResults.size() << std::endl;
-
-      std::map<std::string, int>    matrixCounts;
-      std::map<std::string, double> matrixDistances;
-
-      for (const auto& result : allResults) {
-         const Matrix_3x3& matrix = result.bestResult.getTransformationMatrix();
-         std::ostringstream key;
-         key << std::fixed << std::setprecision(0);
-         for (int i = 0; i < 9; ++i) {
-            key << static_cast<int>(std::round(matrix[i]));
-            if (i < 8) key << ",";
-         }
-         std::string matrixKey = key.str();
-         matrixCounts[matrixKey]++;
-         if (matrixDistances.find(matrixKey) == matrixDistances.end()) {
-            matrixDistances[matrixKey] = result.distance;
-         }
-      }
-
-      std::cout << "Unique transformation matrices: " << matrixCounts.size() << std::endl;
-
-      std::vector<std::pair<int, std::string>> sortedMatrices;
-      for (const auto& [matrix, count] : matrixCounts) {
-         sortedMatrices.push_back({ count, matrix });
-      }
-      std::sort(sortedMatrices.rbegin(), sortedMatrices.rend());
-
-      auto thresholds = P3RelativeThresholds::calculateAdaptiveP3Thresholds(
-         reference.getCell(), reference.getLatticeType(), distances);
-
-      displayFormattedMatrices(sortedMatrices, matrixDistances, thresholds, 10);
-
-      // Best match details
-      std::vector<MobileComparisonResult> sortedResults = allResults;
-      std::sort(sortedResults.begin(), sortedResults.end(),
-         [](const MobileComparisonResult& a, const MobileComparisonResult& b) {
-            return a.distance < b.distance;
-         });
-
-      std::cout << "\n=== BEST MATCH DETAILS ===" << std::endl;
-      int detailsToShow = std::min(3, (int)sortedResults.size());
-      for (int i = 0; i < detailsToShow; ++i) {
-         const auto& result = sortedResults[i];
-         const Matrix_3x3& matrix = result.bestResult.getTransformationMatrix();
-
-         std::cout << "Mobile " << result.mobileIndex << ": "
-            << std::scientific << std::setprecision(2) << result.distance
-            << " (" << quality.assessQualityString(result.distance) << ")" << std::endl;
-
-         std::cout << "  Matrix: [";
-         for (int j = 0; j < 9; ++j) {
-            std::cout << std::fixed << std::setprecision(0)
-               << static_cast<int>(std::round(matrix[j]));
-            if (j < 8) std::cout << " ";
-         }
-         std::cout << "]" << std::endl;
-
-         std::cout << "  Transformed: "
-            << LRL_Cell_Degrees(result.bestResult.getTransformedMobile()) << std::endl;
-         std::cout << std::endl;
-      }
+         << (nHidden == 1 ? "" : "es") << " below threshold not shown." << std::endl;
    }
 }
 
@@ -540,7 +307,7 @@ std::vector<std::string> resizeStringsToUniformWidth(
    resized.reserve(strings.size());
    for (const auto& str : strings) {
       std::string s = str;
-      size_t padding = maxWidth - str.length();
+      size_t      padding = maxWidth - str.length();
       if (leftAlign) s.append(padding, ' ');
       else           s.insert(0, padding, ' ');
       resized.push_back(s);
@@ -556,7 +323,7 @@ std::vector<std::string> formatMatrixDisplay(
    std::vector<std::string> formattedLines;
 
    if (sortedMatrices.empty()) {
-      formattedLines.push_back("No transformation matrices to display.");
+      formattedLines.push_back("; No transformation matrices to display.");
       return formattedLines;
    }
 
@@ -565,7 +332,7 @@ std::vector<std::string> formatMatrixDisplay(
    std::vector<std::string> matrixColumns, countColumns, qualityColumns, distanceColumns;
 
    for (int i = 0; i < entriesToShow; ++i) {
-      const int         count = sortedMatrices[i].first;
+      const int          count = sortedMatrices[i].first;
       const std::string& matrixKey = sortedMatrices[i].second;
 
       matrixColumns.push_back("[" + matrixKey + "]");
@@ -594,7 +361,7 @@ std::vector<std::string> formatMatrixDisplay(
 
    for (size_t i = 0; i < matrixColumns.size(); ++i) {
       formattedLines.push_back(
-         "  " + matrixColumns[i] + ": " + countColumns[i] +
+         ";   " + matrixColumns[i] + ": " + countColumns[i] +
          " mobiles (" + qualityColumns[i] + ", " + distanceColumns[i] + ")");
    }
    return formattedLines;
@@ -605,8 +372,8 @@ void displayFormattedMatrices(
    const std::map<std::string, double>& matrixDistances,
    const P3RelativeThresholds::P3ThresholdResult& thresholds,
    int maxEntriesToShow) {
-   auto formattedLines = formatMatrixDisplay(
+   const auto formattedLines = formatMatrixDisplay(
       sortedMatrices, matrixDistances, thresholds, maxEntriesToShow);
-   std::cout << "Most common transformation matrices:" << std::endl;
+   std::cout << "; Most common transformation matrices:" << std::endl;
    for (const auto& line : formattedLines) std::cout << line << std::endl;
 }

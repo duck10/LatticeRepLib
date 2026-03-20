@@ -9,10 +9,8 @@
 
 #include "LatticeCell.h"
 #include "LatticeMatchResult.h"
-#include "MobileComparisonResult.h"
 #include "MultiTransformFinderControls.h"
-#include "P3RelativeThresholds .h"
-#include "QualityAssessment.h"
+#include "P3RelativeThresholds.h"
 
 // ---------------------------------------------------------------------------
 // Deduplication utility (template must live in the header)
@@ -41,9 +39,12 @@ std::vector<ResultType> deduplicateByMatrix(const std::vector<ResultType>& resul
 
 // ---------------------------------------------------------------------------
 // Low-level cell output
+// Optional label is appended as " [LABEL]" when non-empty.
 // ---------------------------------------------------------------------------
 
-void outputCellWithCentering(const LRL_Cell& cell, const std::string& centeringSymbol);
+void outputCellWithCentering(const LRL_Cell& cell,
+   const std::string& centeringSymbol,
+   const std::string& label = "");
 
 // ---------------------------------------------------------------------------
 // Single-mobile display helpers
@@ -55,23 +56,8 @@ void displayP3DistanceHistogram(const std::vector<LatticeMatchResult>& allResult
 
 void displayResults(const std::vector<LatticeMatchResult>& allResults,
    const MultiTransformFinderControls& controls,
-   const LatticeCell& reference);
-
-// ---------------------------------------------------------------------------
-// Multi-mobile / comparison display helpers
-// ---------------------------------------------------------------------------
-
-void displayComparisonHistogram(const std::vector<MobileComparisonResult>& allResults,
-   const QualityAssessment& quality,
-   const MultiTransformFinderControls& controls);
-
-void displayCompactResult(const MobileComparisonResult& result,
    const LatticeCell& reference,
-   const QualityAssessment& quality);
-
-void displayComparisonResults(const LatticeCell& reference,
-   const std::vector<MobileComparisonResult>& allResults,
-   const MultiTransformFinderControls& controls);
+   const LatticeCell& mobile);
 
 // ---------------------------------------------------------------------------
 // Matrix-display formatting utilities
@@ -92,6 +78,5 @@ void displayFormattedMatrices(
    const std::map<std::string, double>& matrixDistances,
    const P3RelativeThresholds::P3ThresholdResult& thresholds,
    int maxEntriesToShow = 10);
-
 
 #endif // DISPLAYLMP3_H

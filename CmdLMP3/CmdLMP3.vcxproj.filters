@@ -44,7 +44,7 @@
     <ClInclude Include="MultiTransformFinderControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="P3RelativeThresholds .h">
+    <ClInclude Include="P3RelativeThresholds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProductionCommon.h">
