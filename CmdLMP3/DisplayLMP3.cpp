@@ -281,7 +281,7 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
       std::cout << std::endl;
       std::cout << "; ";
       outputCellWithCentering(result.getTransformedMobile(),
-         reference.getLatticeType(), "TRANSFORMED");
+         reference.getLatticeType(), "TRANSFORMED MOBILE");
       std::cout << std::endl;
    }
 
