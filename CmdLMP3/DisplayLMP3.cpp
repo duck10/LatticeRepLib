@@ -210,6 +210,19 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
 
    std::cout << "\n; === LATTICE MATCHING RESULTS ===" << std::endl;
 
+   // If the best result is a supercell or subcell, announce it once before the match loop
+   if (!resultsToShow.empty()) {
+      const double bestRawDet = resultsToShow[0].getTransformationMatrix().Det();
+      const int    bestDet = static_cast<int>(std::round(std::abs(bestRawDet)));
+      if (bestDet > 1) {
+         std::cout << "; === SUPERCELL ===  prim. cell volume ratio = "
+            << std::fixed << std::setprecision(3) << std::abs(bestRawDet) << std::endl;
+      } else if (std::abs(bestRawDet) < 0.99) {
+         std::cout << "; === SUBCELL ===  prim. cell volume ratio = "
+            << std::fixed << std::setprecision(3) << std::abs(bestRawDet) << std::endl;
+      }
+   }
+
    for (size_t i = 0; i < resultsToShow.size(); ++i) {
       const auto& result = resultsToShow[i];
       double      distance = result.getP3Distance();
@@ -258,22 +271,44 @@ void displayResults(const std::vector<LatticeMatchResult>& allResults,
 
       const Matrix_3x3& matrix = result.getTransformationMatrix();
       std::cout << "; Matrix: [";
-      // Print as integers if all elements are integer-valued, else use 1 decimal place
-      bool isInteger = true;
+
+      // Format each element as an integer or rational fraction with denominator <= 6.
+      // Try denominators 1..6 in order; use the first that fits within 1e-6.
+      // Falls back to 1 decimal place if no small rational is found.
+      auto formatElement = [](double v) -> std::string {
+         for (int denom = 1; denom <= 6; ++denom) {
+            const double scaled = v * denom;
+            const double nearest = std::round(scaled);
+            if (std::abs(scaled - nearest) < 1e-4) {
+               const int numer = static_cast<int>(nearest);
+               if (denom == 1) return std::to_string(numer);
+               // Reduce by GCD
+               const int g = [](int a, int b) {
+                  a = std::abs(a); b = std::abs(b);
+                  while (b) { int t = b; b = a % b; a = t; }
+                  return a;
+                  }(std::abs(numer), denom);
+               const int rn = numer / g;
+               const int rd = denom / g;
+               if (rd == 1) return std::to_string(rn);
+               return std::to_string(rn) + "/" + std::to_string(rd);
+            }
+         }
+         // No small rational found -- fall back to 1 decimal place
+         std::ostringstream oss;
+         oss << std::fixed << std::setprecision(1) << v;
+         return oss.str();
+         };
+
       for (int j = 0; j < 9; ++j) {
-         if (std::abs(matrix[j] - std::round(matrix[j])) > 1e-6) { isInteger = false; break; }
-      }
-      for (int j = 0; j < 9; ++j) {
-         if (isInteger)
-            std::cout << static_cast<int>(std::round(matrix[j]));
-         else
-            std::cout << std::fixed << std::setprecision(1) << matrix[j];
+         std::cout << formatElement(matrix[j]);
          if (j < 8) std::cout << " ";
+         if (j == 2 || j == 5) std::cout << " ";  // extra space between rows
       }
       std::cout << "] (Determinant: "
          << std::fixed << std::setprecision(3) << rawDet;
-      if (det > 1)             std::cout << "  [SUPERCELL]";
-      else if (std::abs(rawDet) < 0.99) std::cout << "  [SUBCELL]";
+      if (det > 1)                  std::cout << "  [SUPERCELL]";
+      else if (std::abs(rawDet) < 0.99)  std::cout << "  [SUBCELL]";
       std::cout << ")" << std::endl;
 
       std::cout << "; ";
