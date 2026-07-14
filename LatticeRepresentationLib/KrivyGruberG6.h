@@ -328,5 +328,63 @@ using KG = KrivyGruberG6<>;
 using KGfloat = KrivyGruberG6<float>;
 using KGdouble = KrivyGruberG6<double>;
 using KGlong = KrivyGruberG6<long double>;
+
+// written by Microsoft CoPilot
+static inline bool IsNiggliReduced(const G6& g,
+   const double tol = 1e-10)
+{
+   const double& g1 = g[0];
+   const double& g2 = g[1];
+   const double& g3 = g[2];
+   const double& g4 = g[3];
+   const double& g5 = g[4];
+   const double& g6 = g[5];
+
+   // 1. Diagonal ordering
+   if (g1 > g2 + tol) return false;
+   if (g2 > g3 + tol) return false;
+
+   // 2. Tie-breaks on diagonals
+   if (std::abs(g1 - g2) <= tol &&
+      std::abs(g4) > std::abs(g5) + tol)
+      return false;
+
+   if (std::abs(g2 - g3) <= tol &&
+      std::abs(g5) > std::abs(g6) + tol)
+      return false;
+
+   // 3. Magnitude constraints
+   if (std::abs(g4) > g2 + tol) return false;
+   if (std::abs(g5) > g1 + tol) return false;
+   if (std::abs(g6) > g1 + tol) return false;
+
+   // 4. Sign consistency: all ?0 or all ?0 (within tol)
+   const bool neg4 = g4 < -tol;
+   const bool neg5 = g5 < -tol;
+   const bool neg6 = g6 < -tol;
+
+   const bool pos4 = g4 > tol;
+   const bool pos5 = g5 > tol;
+   const bool pos6 = g6 > tol;
+
+   const bool anyNeg = neg4 || neg5 || neg6;
+   const bool anyPos = pos4 || pos5 || pos6;
+
+   if (anyNeg && anyPos) return false;
+
+   // 5. Compound boundary (Step 8)
+   const double sum = g4 + g5 + g6 + g1 + g2;
+
+   if (sum < -tol) return false;
+
+   if (std::abs(sum) <= tol &&
+      2 * (g1 + g5) + g6 > tol)
+      return false;
+
+   return true;
+}
+
+
+
 #endif // KRIVYGRUBERG6_H
 

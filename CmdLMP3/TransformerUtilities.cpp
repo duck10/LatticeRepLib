@@ -3,8 +3,8 @@
 #include "ProductionCommon.h"
 #include "LatticeCell.h"
 #include "LRL_Cell_Degrees.h"
-#include "CS6Dist.h"
-#include "CS6Dist.cpp"
+//#include "CS6Dist.h"
+//#include "CS6Dist.cpp"
 #include "S6.h"
 //#include "Selling.h"
 
@@ -117,79 +117,3 @@ double CalculateNCDistWithReduction(const LRL_Cell& c1, const LRL_Cell& c2) {
    return NCDist(out1.data(), out2.data());
 }
 
-
-//LRL_Cell TransformerUtilities::convertToPrimitive(
-//   const LatticeCell& lattice,
-//   Matrix_3x3& centeringTransform,
-//   const MultiTransformFinderControls& controls) {
-//
-//   // Extract the current implementation from LatticeMatchingPipeline.h
-//   // and move it here
-//
-//   const std::string& latticeType = lattice.getLatticeType();
-//   const LRL_Cell& originalCell = lattice.getCell();
-//
-//   if (controls.shouldShowDetails()) {
-//      std::cout << "; Converting " << latticeType << " to primitive" << std::endl;
-//   }
-//
-//   // Use existing ToPrimitive for the matrix
-//   centeringTransform = TransformerUtilities::ToPrimitive(latticeType, originalCell);
-//
-//   // Apply transformation to get primitive cell
-//   LRL_Cell primitiveCell = centeringTransform * originalCell;
-//
-//   if (controls.shouldShowDetails()) {
-//      std::cout << "; Primitive cell: " << LRL_Cell_Degrees(primitiveCell) << std::endl;
-//   }
-//
-//   return primitiveCell;
-//}
-//
-//LRL_Cell TransformerUtilities::convertToPrimitive(
-//   const LatticeCell& lattice,
-//   Matrix_3x3& centeringTransform) {
-//
-//   // Extract the current implementation from LatticeMatchingPipeline.h
-//   // and move it here
-//
-//   const std::string& latticeType = lattice.getLatticeType();
-//   const LRL_Cell& originalCell = lattice.getCell();
-//
-//   // Use existing ToPrimitive for the matrix
-//   centeringTransform = TransformerUtilities::ToPrimitive(latticeType, originalCell);
-//
-//   // Apply transformation to get primitive cell
-//   LRL_Cell primitiveCell = centeringTransform * originalCell;
-//   return primitiveCell;
-//}
-//
-//// Alternative struct-based version
-//TransformerUtilities::PrimitiveConversionResult
-//TransformerUtilities::convertToPrimitiveComplete(
-//   const LatticeCell& lattice) {
-//
-//   PrimitiveConversionResult result;
-//   result.primitiveCell = convertToPrimitive(lattice, result.centeringTransform);
-//   result.success = true; // Add validation logic if needed
-//   return result;
-//}
-//
-//
-//// Alternative struct-based version
-//TransformerUtilities::PrimitiveConversionResult
-//TransformerUtilities::convertToPrimitiveComplete(
-//   const LatticeCell& lattice,
-//   const MultiTransformFinderControls& controls) {
-//
-//   PrimitiveConversionResult result;
-//   result.primitiveCell = convertToPrimitive(lattice, result.centeringTransform, controls);
-//   result.success = true; // Add validation logic if needed
-//   return result;
-//}
-//
-//static Matrix_3x3 ToPrimitive(const std::string& s, const LRL_Cell& cell) {
-//   LatticeCell lc(cell, s);
-//   TransformerUtilities::PrimitiveConversionResult pcr = TransformerUtilities::convertToPrimitive(lc);
-//   return pcr.centeringTransform();
-//}

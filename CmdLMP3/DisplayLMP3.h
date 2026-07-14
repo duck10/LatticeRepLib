@@ -1,41 +1,18 @@
 #ifndef DISPLAYLMP3_H
 #define DISPLAYLMP3_H
 
+#include <iomanip>
 #include <map>
 #include <set>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include "DisplayUtilities.h"
 #include "LatticeCell.h"
 #include "LatticeMatchResult.h"
 #include "MultiTransformFinderControls.h"
 #include "P3RelativeThresholds.h"
-
-// ---------------------------------------------------------------------------
-// Deduplication utility (template must live in the header)
-// ---------------------------------------------------------------------------
-
-template<typename ResultType>
-std::vector<ResultType> deduplicateByMatrix(const std::vector<ResultType>& results) {
-   std::vector<ResultType> uniqueResults;
-   std::set<std::string>   seenMatrices;
-
-   for (const auto& result : results) {
-      const Matrix_3x3& matrix = result.getTransformationMatrix();
-      std::ostringstream key;
-      key << std::fixed << std::setprecision(2);
-      for (int i = 0; i < 9; ++i) {
-         key << matrix[i];
-         if (i < 8) key << ",";
-      }
-      if (seenMatrices.find(key.str()) == seenMatrices.end()) {
-         seenMatrices.insert(key.str());
-         uniqueResults.push_back(result);
-      }
-   }
-   return uniqueResults;
-}
 
 // ---------------------------------------------------------------------------
 // Low-level cell output
@@ -57,7 +34,8 @@ void displayP3DistanceHistogram(const std::vector<LatticeMatchResult>& allResult
 void displayResults(const std::vector<LatticeMatchResult>& allResults,
    const MultiTransformFinderControls& controls,
    const LatticeCell& reference,
-   const LatticeCell& mobile);
+   const LatticeCell& mobile,
+   const LRL_Cell& primitiveReference);
 
 // ---------------------------------------------------------------------------
 // Matrix-display formatting utilities

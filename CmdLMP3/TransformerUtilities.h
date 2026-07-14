@@ -7,17 +7,17 @@
 #include "B4.h"
 #include "P3.h"
 #include "S6.h"
-#include "CS6Dist.h"
-#include "CS6Dist.cpp"
+//#include "CS6Dist.h"
+//#include "CS6Dist.cpp"
 #include "LatticeCell.h"
 #include "LatticeConverter.h"
+#include "MatrixCellOperator.h"
 #include "G6.h"
 #include "NCDist.h"
 
 //#include "Selling.h"
 #include "MultiTransformFinderControls.h"
 #include "LRL_StringTools.h"
-#include "TransformerUtilities.h"
 
 #include <vector>
 #include <cmath>
@@ -68,10 +68,10 @@ namespace TransformerUtilities {
       return (p1 - p2).norm();
    }
 
-   inline  double angleS6(const S6& s1, const S6& s2) {
-      return acos(s1.Dot(s2) / s1.norm() / s2.norm()) * 180/4.0/atan(1.0);
+   inline double angleS6(const S6& s1, const S6& s2) {
+      return acos(std::max(-1.0, std::min(1.0, s1.Dot(s2) / s1.norm() / s2.norm())))
+         * 180.0 / 4.0 / atan(1.0);
    }
-
 
    // Simple matrix application helper
    inline LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
@@ -255,22 +255,31 @@ inline LRL_Cell NiggliReduce(const LatticeCell& cell) {
 }
 
 
-// Simple matrix application helper
-inline LRL_Cell applyMatrixToCell(const LRL_Cell& cell, const Matrix_3x3& matrix) {
-   const B4 b4Cell(cell);
-   const B4 transformedB4 = matrix * b4Cell;
-   return LRL_Cell(transformedB4);
-}
+// Return the reindexing of 'cell' whose axis ordering best matches 'target'
+// by minimizing P3 distance. Searches all 6 axis permutations.
+inline LRL_Cell bestAxisMatch(const LRL_Cell& cell, const LRL_Cell& target) {
+   static const Matrix_3x3 perms[6] = {
+      Matrix_3x3(1, 0, 0,  0, 1, 0,  0, 0, 1),  // abc
+      Matrix_3x3(0, 1, 0,  1, 0, 0,  0, 0, 1),  // bac
+      Matrix_3x3(1, 0, 0,  0, 0, 1,  0, 1, 0),  // acb
+      Matrix_3x3(0, 0, 1,  0, 1, 0,  1, 0, 0),  // cba
+      Matrix_3x3(0, 1, 0,  0, 0, 1,  1, 0, 0),  // bca
+      Matrix_3x3(0, 0, 1,  1, 0, 0,  0, 1, 0),  // cab
+   };
 
-inline double calculateP3Distance(const LRL_Cell& cell1, const LRL_Cell& cell2) {
-   const P3 p3_1(cell1);
-   const P3 p3_2(cell2);
-   //std::cout << "DEBUG P3_1: " << p3_1 << std::endl;
-   //std::cout << "DEBUG P3_2: " << p3_2 << std::endl;
-   //std::cout << "DEBUG Difference: " << (p3_1 - p3_2) << std::endl;
-   //std::cout << "DEBUG Distance: " << (p3_1 - p3_2).norm() << std::endl;
-   return (p3_1 - p3_2).norm();
-}
+   LRL_Cell best = cell;
+   double bestDist = (P3(cell) - P3(target)).norm();
 
+   for (const auto& p : perms) {
+      const LRL_Cell candidate = p * cell;
+      if (!candidate.GetValid()) continue;
+      const double dist = (P3(candidate) - P3(target)).norm();
+      if (dist < bestDist) {
+         bestDist = dist;
+         best = candidate;
+      }
+   }
+   return best;
+}
 
 #endif // TRANSFORMER_UTILITIES_H

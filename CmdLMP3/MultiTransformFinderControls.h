@@ -4,10 +4,12 @@
 #define MULTITRANSFORMFINDERCONTROLS_H
 
 #include "BaseControlVariables.h"
+#include "HelpLMP3.h"
 #include "InputHandler.h"
 #include "LRL_StringTools.h"
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -17,12 +19,23 @@ public:
    friend std::ostream& operator<< (std::ostream& os, const MultiTransformFinderControls& mtfc) {
       os << "; CmdLMP3 controls:\n";
       os << ";   details        " << (mtfc.m_showDetails ? "true" : "false") << "\n";
-      os << ";   csv output     " << (mtfc.m_csvOutput ? "true" : "false") << "\n";
+      //os << ";   csv output     " << (mtfc.m_csvOutput ? "true" : "false") << "\n";
       os << ";   mode           " << mtfc.getModeString()
          << "  (ALL=equivalent+supercell, SUPER=supercell only, EQUIVALENT=same lattice only)\n";
       os << ";   useHNF         " << (mtfc.m_useHNF ? "true" : "false")
          << "  (55 HNF matrices vs ~360K brute-force)\n";
       os << ";   niggli delta   " << mtfc.m_niggliDelta << "\n";
+      os << ";   run tests      " << (mtfc.m_runTests ? "true" : "false");
+      if (!mtfc.m_testNumbers.empty()) {
+         os << "  tests:";
+         for (int n : mtfc.m_testNumbers) os << " " << n;
+      }
+      os << "\n";
+      os << ";   matrix element max " << mtfc.m_unimodularOrder << "\n";
+      os << ";   displaymode    " << mtfc.getDisplayModeString()
+         << "  (OLD=primitive, NEW=conventional frame, BOTH=show both)\n";
+      os << ";   threshold      " << mtfc.m_conventionalThreshold
+         << "  (max decentered P3 distance for NEW display, % of reference P3 norm)\n";
       return os;
    }
 
@@ -55,53 +68,43 @@ public:
             catch (...) { std::cout << "; Warning: Invalid UseSelling value: " << value << "\n"; }
          });
 
-      // TEST with no argument or TEST 0 runs all tests.
-      // Any negative number is treated as 0 (run all) with a warning.
-      // TEST n (n > 0) runs only test n.
+      // TEST with no argument runs all tests.
+      // TEST n (n > 0) adds test n to the list of tests to run.
+      // TEST n1 n2 n3 ... adds multiple tests in one line.
+      // TEST can also be repeated on separate lines; each occurrence adds to
+      // the accumulated list rather than replacing it.
+      // Any negative number is ignored with a warning.
+      // If no valid test number is ever given, all tests run (m_testNumbers stays empty).
       InputHandler::registerHandler("TEST", 0.43,
          [this](const BaseControlVariables&, const std::string& value) {
             m_runTests = true;
             if (value.empty() || LRL_StringTools::strToupper(value) == "TEST") {
-               m_testNumber = 0;
-            } else {
+               return;  // no numbers given on this line -- run all (unless other TEST lines added numbers)
+            }
+            std::istringstream iss(value);
+            std::string token;
+            while (iss >> token) {
                try {
-                  const int n = std::stoi(value);
+                  const int n = std::stoi(token);
                   if (n < 0) {
-                     std::cout << "; Warning: Negative test number " << n
-                        << " treated as 0 (run all tests)\n";
-                     m_testNumber = 0;
+                     std::cout << "; Warning: Negative test number " << n << " ignored\n";
+                  } else if (n == 0) {
+                     // TEST 0 means run all; clear any accumulated list
+                     m_testNumbers.clear();
                   } else {
-                     m_testNumber = n;
+                     m_testNumbers.push_back(n);
                   }
                }
                catch (...) {
-                  std::cout << "; Warning: Invalid test number: " << value
-                     << " -- running all tests\n";
-                  m_testNumber = 0;
+                  std::cout << "; Warning: Invalid test number: " << token << " -- ignored\n";
                }
             }
          });
 
-      InputHandler::registerHandler("MATRIXORDER", 0.43,
-         [this](const BaseControlVariables&, const std::string& value) {
-            try {
-               if (value.empty() || LRL_StringTools::strToupper(value) == "MATRIXORDER")
-                  setMatrixOrder(1);
-               else {
-                  const int order = std::stoi(value);
-                  setMatrixOrder((order < 1 || order > 4) ? 1 : order);
-               }
-            }
-            catch (...) {
-               std::cout << "; Warning: Invalid matrix order: " << value << "\n";
-               setMatrixOrder(1);
-            }
-         });
-
-      InputHandler::registerHandler("CSVOUTPUT", 0.46,
-         [this](const BaseControlVariables&, const std::string& value) {
-            setCsvOutput(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         });
+      //InputHandler::registerHandler("CSVOUTPUT", 0.46,
+      //   [this](const BaseControlVariables&, const std::string& value) {
+      //      setCsvOutput(value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+      //   });
 
       // ------------------------------------------------------------------
       // MODE: restrict matrix search to a subset.
@@ -133,6 +136,62 @@ public:
          [this](const BaseControlVariables&, const std::string& value) {
             m_useHNF = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          });
+
+      // ------------------------------------------------------------------
+      // DISPLAYMODE: choose which display(s) to show for each match.
+      //   DISPLAYMODE OLD    primitive-space display only (default)
+      //   DISPLAYMODE NEW    conventional-frame display only
+      //   DISPLAYMODE BOTH   show both displays
+      // ------------------------------------------------------------------
+      InputHandler::registerHandler("DISPLAYMODE", 0.45,
+         [this](const BaseControlVariables&, const std::string& value) {
+            const std::string v = LRL_StringTools::strToupper(value);
+            if (v == "NEW")
+               m_displayMode = DisplayMode::NEW;
+            else if (v == "BOTH")
+               m_displayMode = DisplayMode::BOTH;
+            else if (v == "OLD" || v.empty())
+               m_displayMode = DisplayMode::OLD;
+            else
+               std::cout << "; Warning: DISPLAYMODE must be OLD, NEW, or BOTH -- ignoring \""
+               << value << "\"\n";
+         });
+
+      // ------------------------------------------------------------------
+      // THRESHOLD: max decentered P3 distance, as a percentage of the
+      // reference cell's P3 norm, for which the conventional-frame (NEW)
+      // display is shown. Above this, NEW display falls back to the
+      // primitive-frame match with a short note explaining why.
+      //
+      // A percentage (not an absolute Angstrom distance) is used because
+      // the same absolute P3 mismatch means something different for a
+      // small cell than a large one; comparing against the reference's
+      // own P3 norm keeps the cutoff scale invariant. Default 2.0 matches
+      // the existing GOOD quality tier.
+      // ------------------------------------------------------------------
+      InputHandler::registerHandler("THRESHOLD", 0.45,
+         [this](const BaseControlVariables&, const std::string& value) {
+            try { setConventionalThreshold(std::stod(value)); }
+            catch (...) { std::cout << "; Warning: Invalid THRESHOLD value: " << value << "\n"; }
+         });
+
+      InputHandler::registerHandler("HELP", 0.30,
+         [this](const BaseControlVariables&, const std::string&) {
+            ShowHelp();
+         });
+
+      InputHandler::registerHandler("?", 0.30,
+         [this](const BaseControlVariables&, const std::string&) {
+            ShowHelp();
+         });
+
+      InputHandler::registerHandler("USECOMPOSED", 0.45,
+         [this](const BaseControlVariables&, const std::string& value) {
+            m_useComposed = (value == "1" ||
+               LRL_StringTools::strToupper(value) == "TRUE" ||
+               value.empty());
+         });
+
    }
 
    // -----------------------------------------------------------------------
@@ -141,21 +200,26 @@ public:
    enum class RunMode { ALL, SUPER, EQUIVALENT };
 
    // -----------------------------------------------------------------------
+   // Display mode enum
+   // -----------------------------------------------------------------------
+   enum class DisplayMode { OLD, NEW, BOTH };
+
+   // -----------------------------------------------------------------------
    // Accessors
    // -----------------------------------------------------------------------
    bool shouldShowDetails()        const { return m_showDetails; }
    void setShowDetails(bool b) { m_showDetails = b; }
 
-   // m_runTests is set by the TEST handler; m_testNumber = 0 means run all.
+   // m_runTests is set by the TEST handler; an empty m_testNumbers list means run all.
    bool shouldRunTests()           const { return m_runTests; }
-   int  getTestNumber()            const { return m_testNumber; }
-   void setTestNumber(int n) { m_runTests = true; m_testNumber = (n < 0) ? 0 : n; }
+   const std::vector<int>& getTestNumbers() const { return m_testNumbers; }
+   void addTestNumber(int n) { m_runTests = true; if (n > 0) m_testNumbers.push_back(n); }
 
    double getNiggliDelta()         const { return m_niggliDelta; }
    void   setNiggliDelta(double d) { m_niggliDelta = d; }
 
-   bool shouldOutputCsv()          const { return m_csvOutput; }
-   void setCsvOutput(bool b) { m_csvOutput = b; }
+   //bool shouldOutputCsv()          const { return m_csvOutput; }
+   //void setCsvOutput(bool b) { m_csvOutput = b; }
 
    int  getMatrixOrder()           const { return m_unimodularOrder; }
    void setMatrixOrder(int n) { m_unimodularOrder = n; }
@@ -173,16 +237,72 @@ public:
       return "ALL";
    }
 
+   DisplayMode getDisplayMode()    const { return m_displayMode; }
+   bool    showOldDisplay()        const { return m_displayMode == DisplayMode::OLD || m_displayMode == DisplayMode::BOTH; }
+   bool    showNewDisplay()        const { return m_displayMode == DisplayMode::NEW || m_displayMode == DisplayMode::BOTH; }
+   std::string getDisplayModeString() const {
+      if (m_displayMode == DisplayMode::NEW)  return "NEW";
+      if (m_displayMode == DisplayMode::BOTH) return "BOTH";
+      return "OLD";
+   }
+
+   double getConventionalThreshold()       const { return m_conventionalThreshold; }
+   void   setConventionalThreshold(double d) { m_conventionalThreshold = d; }
+
+   //std::vector<Matrix_3x3> generateSearchMatrices() const {
+   //   std::vector<Matrix_3x3> mats;
+
+   //   if (runModeEquivalent()) {
+   //      mats = generateUnimodularMatrices(m_unimodularOrder);
+   //   } else if (runModeSuper()) {
+   //      if (m_useHNF) {
+   //         mats = TransformationMatrices::generateHNFMatrices({ 2,3,4,5,6 });
+   //      } else {
+   //         mats = TransformationMatrices::generateSupercellMatrices({ 2,3,4,5,6 }, m_unimodularOrder);
+   //      }
+   //   } else if (m_runMode==RunMode::ALL()) {
+   //      // det=1
+   //      auto U = TransformationMatrices::generateUnimodularMatrices(m_unimodularOrder);
+
+   //      // det>1
+   //      std::vector<Matrix_3x3> S;
+   //      if (m_useHNF)
+   //         S = TransformationMatrices::generateHNFMatrices({ 2,3,4,5,6 });
+   //      else
+   //         S = TransformationMatrices::generateSupercellMatrices({ 2,3,4,5,6 }, m_unimodularOrder);
+
+   //      // NEW METHOD: composed matrices
+   //      if (m_useComposed) {
+   //         std::vector<Matrix_3x3> composed;
+   //         for (const auto& u : U)
+   //            for (const auto& s : S)
+   //               composed.push_back(u * s);
+   //         return composed;
+   //      }
+
+   //      // OLD METHOD: just concatenate
+   //      mats = U;
+   //      mats.insert(mats.end(), S.begin(), S.end());
+   //   }
+
+   //   return mats;
+   //}
+
+
 private:
    bool    m_showDetails = false;
    double  m_niggliDelta = 1.0e-5;
    bool    m_runTests = false;   // set true only when TEST keyword is seen
-   int     m_testNumber = 0;       // 0 = run all tests; >0 = specific test
-   bool    m_csvOutput = false;
+   std::vector<int> m_testNumbers;  // empty = run all tests; otherwise run these specific tests
+   //bool    m_csvOutput = false;
    int     m_unimodularOrder = 1;
    bool    m_useSellingReduction = false;
    RunMode m_runMode = RunMode::ALL;
    bool    m_useHNF = false;
+   DisplayMode m_displayMode = DisplayMode::NEW;
+   double  m_conventionalThreshold = 2.0;  // percent of referenceP3Norm, matches GOOD tier
+   bool m_useComposed = false;
+
 };
 
 #endif // MULTITRANSFORMFINDERCONTROLS_H

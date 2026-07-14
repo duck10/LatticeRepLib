@@ -132,21 +132,34 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CmdLMP3.cpp" />
+    <ClCompile Include="Displaydispatch.cpp" />
+    <ClCompile Include="DisplayLayer2.cpp" />
     <ClCompile Include="DisplayLMP3.cpp" />
+    <ClCompile Include="DisplayUtilities.cpp" />
+    <ClCompile Include="MatchPresentation.cpp" />
     <ClCompile Include="TransformerUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CompareMatchResults.h" />
+    <ClInclude Include="Displaydispatch.h" />
+    <ClInclude Include="DisplayLayer2.h" />
     <ClInclude Include="DisplayLMP3.h" />
+    <ClInclude Include="DisplayUtilities.h" />
     <ClInclude Include="FlexibleTestMode.h" />
+    <ClInclude Include="HelpLMP3.h" />
     <ClInclude Include="LatticeMatchResult.h" />
+    <ClInclude Include="Layer2Result.h" />
     <ClInclude Include="MatchPair.h" />
+    <ClInclude Include="MatchPresentation.h" />
     <ClInclude Include="MatrixCellOperator.h" />
+    <ClInclude Include="MatrixScore.h" />
     <ClInclude Include="Matrix_3x3.h" />
     <ClInclude Include="MobileComparisonResult.h" />
     <ClInclude Include="MultiTransformFinderControls.h" />
     <ClInclude Include="P3RelativeThresholds.h" />
     <ClInclude Include="ProductionCommon.h" />
     <ClInclude Include="ProductionLatticeMatcherSystem.h" />
+    <ClInclude Include="Programheader.h" />
     <ClInclude Include="QualityAssessment.h" />
     <ClInclude Include="TransformerUtilities.h" />
     <ClInclude Include="UnifiedReservoir.h" />
@@ -163,6 +176,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Text Include="O3_test.txt" />
     <Text Include="TestSuite.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

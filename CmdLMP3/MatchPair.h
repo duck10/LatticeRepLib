@@ -14,18 +14,19 @@
 
 #include "LatticeCell.h"
 #include "LatticeConverter.h"
-#include "LatticeMatchResult.h"
+#include "Layer2Result.h"
 #include "MultiTransformFinderControls.h"
 #include "ProductionLatticeMatcherSystem.h"
 
+#include <iomanip>
 #include <iostream>
 #include <vector>
 
 struct MatchPairResult {
-   std::vector<LatticeMatchResult> results;
-   LatticeCell                     reference;   // cell[0] after any swap
-   LatticeCell                     mobile;      // cell[1] after any swap
-   bool                            swapped;
+   Layer2Result layer2;
+   LatticeCell  reference;   // cell[0] after any swap
+   LatticeCell  mobile;      // cell[1] after any swap
+   bool         swapped;
 };
 
 inline MatchPairResult matchPair(
@@ -37,20 +38,25 @@ inline MatchPairResult matchPair(
    LatticeCell mob = cell1;
    bool swapped = false;
 
+   double volRef = LatticeConverter::MakePrimitiveCell(
+      ref.getLatticeType(), ref.getCell()).Volume();
+   double volMob = LatticeConverter::MakePrimitiveCell(
+      mob.getLatticeType(), mob.getCell()).Volume();
    if (controls.getRunMode() != MultiTransformFinderControls::RunMode::EQUIVALENT) {
-      const double vol0 = LatticeConverter::MakePrimitiveCell(
-         ref.getLatticeType(), ref.getCell()).Volume();
-      const double vol1 = LatticeConverter::MakePrimitiveCell(
-         mob.getLatticeType(), mob.getCell()).Volume();
-      if (vol1 > vol0) {
+      if (volMob > volRef) {
          std::swap(ref, mob);
+         std::swap(volMob, volRef);
          swapped = true;
       }
    }
+   std::cout << "   ; primitive cell volume ratio, mobile/reference" << std::endl;
+   std::cout << std::fixed << std::setprecision(3) <<
+      "   ;  ratio = " << volRef / volMob << (swapped ? "   swapped" : "") <<
+      std::endl;
 
    ProductionLatticeMatcherSystem matcher(controls);
-   const std::vector<LatticeCell> pair = { ref, mob };
-   return { matcher.processInputList(pair), ref, mob, swapped };
+   Layer2Result layer2 = matcher.matchSinglePair(ref, mob);
+   return { layer2, ref, mob, swapped };
 }
 
 #endif // MATCHPAIR_H

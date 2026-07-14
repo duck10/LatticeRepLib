@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "DisplayLMP3.h"
+#include "DisplayDispatch.h"
 #include "FlexibleTestMode.h"
 #include "LatticeCell.h"
 #include "LatticeConverter.h"
@@ -27,11 +27,12 @@ void runInputListMode(const std::vector<LatticeCell>& inputList,
    if (inputList.size() == 2) {
       const auto mr = matchPair(inputList[0], inputList[1], controls);
       if (mr.swapped)
-         std::cout << "; Note: cells swapped -- larger volume cell is reference" << std::endl;
+         std::cout << "; Note: input order swapped -- the larger-volume cell is used as reference.\n"
+         << ";       The matrix shown transforms the MOBILE (smaller) cell to match the REFERENCE (larger)." << std::endl;
       if (controls.shouldShowDetails()) {
-         std::cout << "; Total results from matcher: " << mr.results.size() << std::endl;
+         std::cout << "; Total results from matcher: " << mr.layer2.results.size() << std::endl;
       }
-      displayResults(mr.results, controls, mr.reference, mr.mobile);
+      displayMatchResult(mr.layer2, controls, mr.reference, mr.mobile);
    } else {
       // Multi-cell: first cell is user's reference, remaining are mobiles.
       // Each pair is routed through matchPair() so the volume-based swap
@@ -46,17 +47,15 @@ void runInputListMode(const std::vector<LatticeCell>& inputList,
 
       for (size_t i = 1; i < inputList.size(); ++i) {
          std::cout << "\n; === MOBILE " << i << " ===" << std::endl;
-
          const auto mr = matchPair(inputList[0], inputList[i], controls);
          if (mr.swapped && controls.shouldShowDetails()) {
             std::cout << "; Note: cells swapped for mobile " << i
                << " -- larger volume cell is reference" << std::endl;
          }
-
-         if (mr.results.empty()) {
+         if (mr.layer2.results.empty()) {
             std::cout << "; No matching transformations found for this mobile." << std::endl;
          } else {
-            displayResults(mr.results, controls, mr.reference, mr.mobile);
+            displayMatchResult(mr.layer2, controls, mr.reference, mr.mobile);
          }
       }
 

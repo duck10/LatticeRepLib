@@ -126,6 +126,24 @@ static double TraceToY(double trace, double minTrace, double maxTrace, double he
    return height * (1.0 - compressed);
 }
 
+static std::vector<Matrix_3x3> GetMatricesForChoice(MatrixSetChoice choice) {
+   switch (choice) {
+
+   case MatrixSetChoice::Shears12:
+      return GetSimpleEdgeTransforms();   // 12 classical shears
+
+   case MatrixSetChoice::Eisenstein145:
+      return GetAllTransforms();          // your curated 145 neighborhood
+
+   case MatrixSetChoice::Full3480:
+      return TransformationMatrices::generateUnimodularMatrices(1);
+
+   default:
+      return GetAllTransforms();          // safe fallback
+   }
+}
+
+
 // Get unique trace matrices - filter to remove permutation duplicates
 // Uses a random triclinic cell to identify matrices with identical traces
 // Returns vector of unique trace matrices and their original indices
@@ -184,6 +202,8 @@ static double GenerateTracePlot(const G6& reducedCell, const std::string& filena
    std::cout << std::string(80, '=') << "\n";
 
    auto allMatrices = TransformationMatrices::generateUnimodularMatrices();
+   std::cout << "; SVG plot using fixed 145?matrix Eisenstein set\n";
+
    std::cout << "Starting with " << allMatrices.size() << " unimodular matrices..." << std::endl;
 
    // Get unique trace matrices (removes permutation duplicates)
@@ -565,40 +585,62 @@ struct ReductionResult {
    double time_ms;
 };
 
-std::vector<ReductionResult> CompareReductionMethods(const LRL_Cell& cell, const int nmax, const double tolerance) {
+std::vector<ReductionResult> CompareReductionMethods(
+   const LRL_Cell& cell,
+   const int nmax,
+   const double tolerance,
+   const EisenControls& controls)
+{
    std::vector<ReductionResult> results;
 
-   {
-      auto start = std::chrono::high_resolution_clock::now();
-      const auto [edgeTrace, edgeG6, edgeCycles] =
-         TestToConvergence(cell, nmax, GetSimpleEdgeTransforms(), tolerance);
-      auto end = std::chrono::high_resolution_clock::now();
-      double time_ms = std::chrono::duration<double, std::milli>(end - start).count();
-
-      results.push_back({ "Eisenstein12", edgeTrace, edgeG6, edgeCycles, time_ms });
-   }
+   // ---------------------------------------------------------
+   // 1. Eisenstein reduction using the user-selected matrix set
+   // ---------------------------------------------------------
+   const auto matrices = GetMatricesForChoice(controls.getMatrixSet());
 
    {
       auto start = std::chrono::high_resolution_clock::now();
-      const auto [allTrace, allG6, allCycles] =
-         TestToConvergence(cell, nmax, GetAllTransforms(), tolerance);
-      auto end = std::chrono::high_resolution_clock::now();
-      double time_ms = std::chrono::duration<double, std::milli>(end - start).count();
 
-      results.push_back({ "Eisenstein24", allTrace, allG6, allCycles, time_ms });
+      const auto [trace, reducedG6, cycles] =
+         TestToConvergence(cell, nmax, matrices, tolerance);
+
+      auto end = std::chrono::high_resolution_clock::now();
+      double time_ms =
+         std::chrono::duration<double, std::milli>(end - start).count();
+
+      results.push_back({
+          matrixSetToString(controls.getMatrixSet()),  // label
+          trace,
+          reducedG6,
+          cycles,
+          time_ms
+         });
    }
 
+   // ---------------------------------------------------------
+   // 2. Niggli reduction (baseline comparison)
+   // ---------------------------------------------------------
    {
       G6 niggliInput = cell;
       G6 niggliOut;
 
       auto start = std::chrono::high_resolution_clock::now();
-      bool success = Niggli::ReduceWithoutMatrices(niggliInput, niggliOut, tolerance);
+      bool success =
+         Niggli::ReduceWithoutMatrices(niggliInput, niggliOut, tolerance);
       auto end = std::chrono::high_resolution_clock::now();
-      double time_ms = std::chrono::duration<double, std::milli>(end - start).count();
+
+      double time_ms =
+         std::chrono::duration<double, std::milli>(end - start).count();
 
       double trace = GetTrace(niggliOut);
-      results.push_back({ "Niggli", trace, niggliOut, success ? 1 : 0, time_ms });
+
+      results.push_back({
+          "Niggli",
+          trace,
+          niggliOut,
+          success ? 1 : 0,
+          time_ms
+         });
    }
 
    return results;
@@ -678,7 +720,7 @@ int main(int argc, char* argv[]) {
          std::cout << "Input cell (G6): " << g6cell << std::endl;
          std::cout << "Input trace: " << std::setprecision(8) << GetTrace(g6cell) << std::endl;
 
-         auto results = CompareReductionMethods(cell, nmax, tolerance);
+         auto results = CompareReductionMethods(cell, nmax, tolerance, controls);
          PrintSummary(results);
 
          // Generate plot with the WebIO-generated filename for this input

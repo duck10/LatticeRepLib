@@ -10,7 +10,7 @@ std::vector<std::string> InputHandler::globalInputLines;
 
 // Input cleaning utility function
 std::string cleanLatticeInput(std::string str) {
-   const std::regex reg("[^a-zA-Z0-9.; +-]");
+   const std::regex reg("[^a-zA-Z0-9.; +\\-?]");
    return std::regex_replace(str, reg, " ");
 }
 
@@ -261,6 +261,9 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
       tokens = reorderLatticeTokens(tokens); // NEW: Reorder tokens if needed
 
       if (tokens.empty()) continue;
+      if (!tokens[0].empty() && tokens[0][0] == '?') {
+         tokens[0] = "HELP";
+      }
 
       if (controls.getEcho() || LRL_StringTools::strToupper(tokens[0]) == "ECHO") {
          std::cout << line << std::endl;

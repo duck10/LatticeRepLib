@@ -253,6 +253,8 @@ public:
       return ortho;
    }
 
+   static std::string GetName() { return "P3"; }
+
 
    friend std::ostream& operator<< (std::ostream& o, const P3& p3);
 
