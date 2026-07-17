@@ -144,11 +144,11 @@ V7 V7::operator/ (const double d) const {
    v7.m_vec /= d;
    return v7;
 }
-
 V7 V7::operator- (void) const {
    V7 v7;
-   v7.m_vec = -v7.m_vec;
-   return *this; // unary
+   for (size_t i = 0; i < size(); ++i)
+      v7.m_vec[i] = -m_vec[i];
+   return v7;
 }
 
 V7& V7::operator+= (const V7& v7) {

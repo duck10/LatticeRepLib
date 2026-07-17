@@ -358,8 +358,9 @@ G6 G6::operator/ (const double d) const {
 
 G6 G6::operator- (void) const {
    G6 g6;
-   g6.m_vec = -g6.m_vec;
-   return *this; // unary
+   for (size_t i = 0; i < 6; ++i)
+      g6.m_vec[i] = -m_vec[i];
+   return g6;
 }
 
 G6& G6::operator+= (const G6& g6) {

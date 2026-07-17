@@ -42,14 +42,6 @@ public:
    virtual double at( const size_t i ) const { return ( *this )[i]; }
    virtual bool operator== ( const VecN& v2 ) const;
    virtual bool operator!= ( const VecN& v2 ) const;
-   virtual VecN operator- ( void );
-
-   VecN operator- (void) const {
-      std::vector<double> v;
-      for (size_t i = 0; i < v.size(); ++i)
-         v.push_back(-m_vec[i]);
-      return *this; // unary
-   }
 
    void SetValid( const bool b ) { m_valid = b; }
    bool GetValid( void ) const { return m_valid; }

@@ -239,8 +239,9 @@ D7 D7::operator/ (const double d) const {
 
 D7 D7::operator- (void) const {
    D7 d7;
-   d7.m_vec = -d7.m_vec;
-   return *this; // unary
+   for (size_t i = 0; i < size(); ++i)
+      d7.m_vec[i] = -m_vec[i];
+   return d7;
 }
 
 bool D7::operator== (const D7& d7) const {

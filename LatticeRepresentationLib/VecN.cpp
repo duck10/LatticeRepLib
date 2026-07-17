@@ -219,9 +219,3 @@ bool VecN::operator!= ( const VecN& v2 ) const {
    if ( v2.size( ) != ( *this ).size( ) ) throw "VecN operator!= dimensions not equal";
    return !( ( *this ) == v2 );
 }
-
-VecN VecN::operator- ( void ) {
-   for ( size_t i=0; i<size(); ++i )
-      (*this)[i] = -(*this)[i];
-   return *this;
-}
