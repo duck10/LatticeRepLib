@@ -9,10 +9,10 @@
 std::string Slashes::GetSlashes(const std::string& character) {
    std::string slashes{ "from GetSlashes" };
    std::string bare = character.substr(1, 3) + character.substr(5, 3);
-   int r_count = std::count(bare.begin(), bare.end(), 'r');
-   int s_count = std::count(bare.begin(), bare.end(), 's');
-   int t_count = std::count(bare.begin(), bare.end(), 't');
-   int zero_count = std::count(bare.begin(), bare.end(), '0');
+   int r_count = static_cast<int>(std::count(bare.begin(), bare.end(), 'r'));
+   int s_count = static_cast<int>(std::count(bare.begin(), bare.end(), 's'));
+   int t_count = static_cast<int>(std::count(bare.begin(), bare.end(), 't'));
+   int zero_count = static_cast<int>(std::count(bare.begin(), bare.end(), '0'));
 
 
 
@@ -49,11 +49,11 @@ std::string Slashes::GetSlashes(const std::string& character) {
          out[index] = eSlashCount::none;
          outchar[index] = ' ';
       }
-      else if (bare[index] == 'r' && r_count >1) {
+      else if (bare[index] == 'r' && r_count > 1) {
          const eSlashCount forType = slashCountTypes.front();
-         for ( size_t i=0; i<6; ++i ) 
+         for (size_t i = 0; i < 6; ++i)
          {
-            if ( bare[i] == 'r')
+            if (bare[i] == 'r')
             {
                out[i] = forType;
                outchar[index] = '1';
@@ -137,10 +137,10 @@ std::string  Slashes::CharacterToSlashes(const std::string& crtr) {
    // 
    // there are 5 states: zero, nothing, and 1, 2, or 3 eSlashCount
 
-   int r_count = std::count(bare.begin(), bare.end(), 'r');
-   int s_count = std::count(bare.begin(), bare.end(), 's');
-   int t_count = std::count(bare.begin(), bare.end(), 't');
-   int zero_count = std::count(bare.begin(), bare.end(), '0');
+   int r_count = static_cast<int>(std::count(bare.begin(), bare.end(), 'r'));
+   int s_count = static_cast<int>(std::count(bare.begin(), bare.end(), 's'));
+   int t_count = static_cast<int>(std::count(bare.begin(), bare.end(), 't'));
+   int zero_count = static_cast<int>(std::count(bare.begin(), bare.end(), '0'));
 
    std::vector<eSlashCount> slash(6);
 
@@ -149,13 +149,13 @@ std::string  Slashes::CharacterToSlashes(const std::string& crtr) {
    //enum class eSlashCount { none, one, two, three, zero };
 
 
-   for ( auto& side : {
+   for (auto& side : {
       eTetrahedronSide::P, eTetrahedronSide::Q, eTetrahedronSide::R,
       eTetrahedronSide::S, eTetrahedronSide::T, eTetrahedronSide::U })
    {
       const int index = static_cast<int>(side);
-      if (std::string("uvw").find(bare[index]) !=std::string::npos) continue;
-      const int charCount = std::count(bare.begin(), bare.end(), bare[index]);
+      if (std::string("uvw").find(bare[index]) != std::string::npos) continue;
+      const int charCount = static_cast<int>(std::count(bare.begin(), bare.end(), bare[index]));
 
       if (slashMap.empty()) {
          BuildSlashMap();
@@ -169,8 +169,8 @@ std::string  Slashes::CharacterToSlashes(const std::string& crtr) {
 std::string Slashes::ConvertSlashToSVG(const eTetrahedronSide& side, const std::pair<Vector_3, Vector_3>& one) {
    const Vector_3 shift = SideLabelToShiftToMidpoint(side);
 
-   const Vector_3 p1 = MatForSide(side)*one.first + shift;
-   const Vector_3 p2 = MatForSide(side)*one.second + shift;
+   const Vector_3 p1 = MatForSide(side) * one.first + shift;
+   const Vector_3 p2 = MatForSide(side) * one.second + shift;
 
    std::ostringstream o;
    o
@@ -236,13 +236,13 @@ std::string Slashes::ConvertZeroToSVG(const eTetrahedronSide& side, const std::p
 
 
 
-      //<< "<circle id=\"zero\" cx=\""
-      //<< p1[0] -0.1*radius
-      //<< "\" cy=\""
-      //<< p1[1] + 2.0*radius
-      //<< "\" r=\""
-      //<< radius
-      //<< "\" fill=\"none\" stroke=\"black\" stroke-width=\"0.75\"/>\n";
+   //<< "<circle id=\"zero\" cx=\""
+   //<< p1[0] -0.1*radius
+   //<< "\" cy=\""
+   //<< p1[1] + 2.0*radius
+   //<< "\" r=\""
+   //<< radius
+   //<< "\" fill=\"none\" stroke=\"black\" stroke-width=\"0.75\"/>\n";
    return o.str();
 }
 
@@ -253,17 +253,17 @@ std::string Slashes::ConvertSlashToSVG(const eTetrahedronSide& side,
    const Vector_3 shift = SideLabelToShiftToMidpoint(side);
 
    const size_t n = mult.size();
-   const Vector_3 pa1 = MatForSide(side)*mult[0].first + shift;
-   const Vector_3 pa2 = MatForSide(side)*mult[0].second + shift;
-   const Vector_3 pb1 = MatForSide(side)*mult[1].first + shift;
-   const Vector_3 pb2 = MatForSide(side)*mult[1].second + shift;
+   const Vector_3 pa1 = MatForSide(side) * mult[0].first + shift;
+   const Vector_3 pa2 = MatForSide(side) * mult[0].second + shift;
+   const Vector_3 pb1 = MatForSide(side) * mult[1].first + shift;
+   const Vector_3 pb2 = MatForSide(side) * mult[1].second + shift;
    Vector_3 pc1;
    Vector_3 pc2;
 
-   if ( n == 3) 
+   if (n == 3)
    {
-      pc1 = MatForSide(side)*mult[2].first + shift;
-      pc2 = MatForSide(side)*mult[2].second + shift;
+      pc1 = MatForSide(side) * mult[2].first + shift;
+      pc2 = MatForSide(side) * mult[2].second + shift;
    }
 
    std::ostringstream o;
@@ -293,7 +293,7 @@ std::string Slashes::ConvertSlashToSVG(const eTetrahedronSide& side,
       << pb2[1]
       << "\" style=\"stroke:rgb(0,0,0);stroke-width:3\"/>\n";
 
-   if ( n == 3)
+   if (n == 3)
    {
       o
          << "<line id=\"mult"
@@ -339,12 +339,12 @@ std::string Slashes::ConvertSlashToSVG(const eTetrahedronSide& side,
 
 Matrix_3x3 Slashes::MatForSide(const eTetrahedronSide& side) const {
    static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
-   static const Matrix_3x3 sideP = Vector_3(0, 0, 1).Rotmat(60.0/degreesPerRad);
-   static const Matrix_3x3 sideQ = Vector_3(0, 0, 1).Rotmat(-60.0/degreesPerRad); //ok
-   static const Matrix_3x3 sideR = Vector_3(0, 0, 1).Rotmat(0.0/degreesPerRad); //ok
-   static const Matrix_3x3 sideS = Vector_3(0, 0, 1).Rotmat(-30.0/degreesPerRad); //ok
-   static const Matrix_3x3 sideT = Vector_3(0, 0, 1).Rotmat(30.0/degreesPerRad); //ok
-   static const Matrix_3x3 sideU = Vector_3(0, 0, 1).Rotmat(90.0/degreesPerRad); //ok
+   static const Matrix_3x3 sideP = Vector_3(0, 0, 1).Rotmat(60.0 / degreesPerRad);
+   static const Matrix_3x3 sideQ = Vector_3(0, 0, 1).Rotmat(-60.0 / degreesPerRad); //ok
+   static const Matrix_3x3 sideR = Vector_3(0, 0, 1).Rotmat(0.0 / degreesPerRad); //ok
+   static const Matrix_3x3 sideS = Vector_3(0, 0, 1).Rotmat(-30.0 / degreesPerRad); //ok
+   static const Matrix_3x3 sideT = Vector_3(0, 0, 1).Rotmat(30.0 / degreesPerRad); //ok
+   static const Matrix_3x3 sideU = Vector_3(0, 0, 1).Rotmat(90.0 / degreesPerRad); //ok
    static std::map<eTetrahedronSide, Matrix_3x3> matmap;
    matmap[eTetrahedronSide::P] = sideP;
    matmap[eTetrahedronSide::Q] = sideQ;
@@ -360,8 +360,8 @@ void Slashes::BuildSlashMap() {
 
    // these are the coordinates of the slashes, before translations
    const Vector_3 zero;
-   const std::pair<Vector_3, Vector_3>               one   = OneSlashAC(); // correctly in place at origin and scaled for 100
-   const std::vector<std::pair<Vector_3, Vector_3> > two   = TwoSlashs();  // corrected
+   const std::pair<Vector_3, Vector_3>               one = OneSlashAC(); // correctly in place at origin and scaled for 100
+   const std::vector<std::pair<Vector_3, Vector_3> > two = TwoSlashs();  // corrected
    const std::vector<std::pair<Vector_3, Vector_3> > three = ThreeSlashs();
 
    //for (const auto& side : {
@@ -409,8 +409,8 @@ void Slashes::BuildSlashMap() {
 }
 
 std::pair<Vector_3, Vector_3>  Slashes::OneSlashAC() const {
-   const Vector_3 slashstartR = Triangles::Rescale( Vector_3(0, slashHalfHeight, 0));
-   const Vector_3 slashendR   = Triangles::Rescale(-Vector_3(0, slashHalfHeight, 0));
+   const Vector_3 slashstartR = Triangles::Rescale(Vector_3(0, slashHalfHeight, 0));
+   const Vector_3 slashendR = Triangles::Rescale(-Vector_3(0, slashHalfHeight, 0));
    return std::make_pair(slashstartR, slashendR);
 }
 
@@ -419,13 +419,13 @@ std::vector<std::pair<Vector_3, Vector_3>> Slashes::TwoSlashs() {
 
    const Vector_3 shift = Vector_3(slashShift, 0, 0);
    const Vector_3 slashstart1R = Triangles::Rescale(Vector_3(0, slashHalfHeight, 0)) - shift;
-   const Vector_3 slashend1R = Triangles::Rescale(-Vector_3(0, slashHalfHeight, 0))  - shift;
+   const Vector_3 slashend1R = Triangles::Rescale(-Vector_3(0, slashHalfHeight, 0)) - shift;
 
    const Vector_3 slashstart2R = Triangles::Rescale(Vector_3(0, slashHalfHeight, 0)) + shift;
-   const Vector_3 slashend2R   = Triangles::Rescale(-Vector_3(0, slashHalfHeight, 0)) + shift;
+   const Vector_3 slashend2R = Triangles::Rescale(-Vector_3(0, slashHalfHeight, 0)) + shift;
 
    return{
-      std::make_pair(slashstart1R, slashend1R) , 
+      std::make_pair(slashstart1R, slashend1R) ,
       std::make_pair(slashstart2R, slashend2R) };
 
 
@@ -452,7 +452,7 @@ std::vector<std::pair<Vector_3, Vector_3>> Slashes::TwoSlashs() {
 
 std::vector<std::pair<Vector_3, Vector_3>> Slashes::ThreeSlashs() {
 
-   const Vector_3 shift = Vector_3( slashShift + slashWidth, 0, 0);
+   const Vector_3 shift = Vector_3(slashShift + slashWidth, 0, 0);
    const Vector_3 height = Vector_3(0, Triangles::Rescale(slashHalfHeight), 0);
 
    const Vector_3 slashstart1R = height - shift;
@@ -464,10 +464,10 @@ std::vector<std::pair<Vector_3, Vector_3>> Slashes::ThreeSlashs() {
    const Vector_3 slashstart3R = height + shift;
    const Vector_3 slashend3R = -height + shift;
 
-  return{
-      std::make_pair(slashstart1R, slashend1R) ,
-      std::make_pair(slashstart2R, slashend2R) ,
-      std::make_pair(slashstart3R, slashend3R) };
+   return{
+       std::make_pair(slashstart1R, slashend1R) ,
+       std::make_pair(slashstart2R, slashend2R) ,
+       std::make_pair(slashstart3R, slashend3R) };
 }
 
 
@@ -511,8 +511,8 @@ std::string Triangles::MakeTrianglePolyline(const std::vector<Vector_3>& vvec) {
 }
 
 std::vector<Vector_3> Triangles::OneSlashAC() {
-   const Vector_3 slashstartR =  Vector_3(0, slashHalfHeight, 0);
-   const Vector_3 slashendR =  -Vector_3(0, slashHalfHeight, 0);
+   const Vector_3 slashstartR = Vector_3(0, slashHalfHeight, 0);
+   const Vector_3 slashendR = -Vector_3(0, slashHalfHeight, 0);
 
    std::vector<Vector_3> vvec;
 
@@ -695,8 +695,8 @@ std::string Triangles::MakeBasicTriangle() {
    vvec.emplace_back(A);
    vvec.emplace_back(C);
    vvec.emplace_back(B);
-   vvec.emplace_back(A-0.005*B); //-delta
-   vvec.emplace_back(A+0.005*D);
+   vvec.emplace_back(A - 0.005 * B); //-delta
+   vvec.emplace_back(A + 0.005 * D);
    vvec.emplace_back(D);
    vvec.emplace_back(B);
    vvec.emplace_back(D);
@@ -711,10 +711,10 @@ std::vector<Vector_3> Triangles::MakeBasicElements()
 {
    std::vector<Vector_3> vvec;
 
-   const Vector_3 single_slash1(.5, 1./14, 0);
-   const Vector_3 single_slash2(.5, -1./14, 0);
+   const Vector_3 single_slash1(.5, 1. / 14, 0);
+   const Vector_3 single_slash2(.5, -1. / 14, 0);
 
-   const Vector_3 double_slash1(0.5-.01, 1./14,0);
+   const Vector_3 double_slash1(0.5 - .01, 1. / 14, 0);
    const Vector_3 double_slash2(0.5 - .01, -1. / 14, 0);
    const Vector_3 double_slash3(0.5 + .01, 1. / 14, 0);
    const Vector_3 double_slash4(0.5 + .01, -1. / 14, 0);
@@ -724,7 +724,7 @@ std::vector<Vector_3> Triangles::MakeBasicElements()
    const Vector_3 triple_slash3(0.5, 1. / 14, 0);
    const Vector_3 triple_slash4(0.5, -1. / 14, 0);
    const Vector_3 triple_slash5(0.5 + 0.4, 1. / 14, 0);
-   const Vector_3 triple_slash6(0.5 -0.4, -1. / 14, 0);
+   const Vector_3 triple_slash6(0.5 - 0.4, -1. / 14, 0);
 
 
    return vvec;

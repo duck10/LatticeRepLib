@@ -94,7 +94,6 @@ ColorRange::ColorRange(const unsigned long mincol, const unsigned long maxcol)
    m_minh = hsvmin.m_nHue;
    m_mins = hsvmin.m_nSaturation;
    m_minv = hsvmin.m_nValue;
-   const int i19191 = 19191;
 }
 
 double ColorRange::ColorFraction(const double color) {
@@ -103,8 +102,7 @@ double ColorRange::ColorFraction(const double color) {
 }
 
 int ColorRange::GetColorFromRangeFraction(const double frac) const {
-   int interp = m_minhex + fmod(frac, 1.0000000001) * (m_maxhex - m_minhex);
-   return m_minhex + fmod(frac, 1.0000000001) * (m_maxhex - m_minhex);
+   return static_cast<int>(m_minhex + fmod(frac, 1.0000000001) * (m_maxhex - m_minhex));
 }
 
 void ColorRange::GetHSVFromRangeFraction(const double frac, unsigned long& h,
