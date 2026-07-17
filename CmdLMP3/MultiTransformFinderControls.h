@@ -21,7 +21,8 @@ public:
       os << ";   details        " << (mtfc.m_showDetails ? "true" : "false") << "\n";
       //os << ";   csv output     " << (mtfc.m_csvOutput ? "true" : "false") << "\n";
       os << ";   mode           " << mtfc.getModeString()
-         << "  (ALL=equivalent+supercell, SUPER=supercell only, EQUIVALENT=same lattice only)\n";
+         << "  (ALL=equivalent+supercell concatenated, SUPER=supercell only,\n"
+         << ";                  EQUIVALENT=same lattice only, COMPOSED=equivalent*supercell composed)\n";
       os << ";   useHNF         " << (mtfc.m_useHNF ? "true" : "false")
          << "  (55 HNF matrices vs ~360K brute-force)\n";
       os << ";   niggli delta   " << mtfc.m_niggliDelta << "\n";
@@ -36,6 +37,8 @@ public:
          << "  (OLD=primitive, NEW=conventional frame, BOTH=show both)\n";
       os << ";   threshold      " << mtfc.m_conventionalThreshold
          << "  (max decentered P3 distance for NEW display, % of reference P3 norm)\n";
+      os << ";   ratio tolerance " << mtfc.m_ratioTolerance
+         << "  (widens volume-ratio matrix selection; total half-width = 0.5 + this)\n";
       return os;
    }
 
@@ -88,10 +91,12 @@ public:
                   const int n = std::stoi(token);
                   if (n < 0) {
                      std::cout << "; Warning: Negative test number " << n << " ignored\n";
-                  } else if (n == 0) {
+                  }
+                  else if (n == 0) {
                      // TEST 0 means run all; clear any accumulated list
                      m_testNumbers.clear();
-                  } else {
+                  }
+                  else {
                      m_testNumbers.push_back(n);
                   }
                }
@@ -108,9 +113,11 @@ public:
 
       // ------------------------------------------------------------------
       // MODE: restrict matrix search to a subset.
-      //   MODE ALL         search det=1 and det=2,3,4 (default)
-      //   MODE SUPER       search det=2,3,4 only
+      //   MODE ALL         search det=1 and det=2..6, concatenated (default)
+      //   MODE SUPER       search det=2..6 only
       //   MODE EQUIVALENT  search det=1 only
+      //   MODE COMPOSED    search det=1 and det=2..6, COMPOSED (u * s for
+      //                    every pair) rather than concatenated
       // ------------------------------------------------------------------
       InputHandler::registerHandler("MODE", 0.45,
          [this](const BaseControlVariables&, const std::string& value) {
@@ -119,10 +126,12 @@ public:
                m_runMode = RunMode::SUPER;
             else if (v == "EQUIVALENT")
                m_runMode = RunMode::EQUIVALENT;
+            else if (v == "COMPOSED")
+               m_runMode = RunMode::COMPOSED;
             else if (v == "ALL" || v.empty())
                m_runMode = RunMode::ALL;
             else
-               std::cout << "; Warning: MODE must be ALL, SUPER, or EQUIVALENT -- ignoring \""
+               std::cout << "; Warning: MODE must be ALL, SUPER, EQUIVALENT, or COMPOSED -- ignoring \""
                << value << "\"\n";
          });
 
@@ -175,6 +184,21 @@ public:
             catch (...) { std::cout << "; Warning: Invalid THRESHOLD value: " << value << "\n"; }
          });
 
+      // ------------------------------------------------------------------
+      // RATIOTOLERANCE: widens the determinant range selected by
+      // volume-ratio-based matrix filtering. A determinant d is included
+      // whenever |d - ratio| <= 0.5 + RATIOTOLERANCE, where ratio is the
+      // reference/mobile primitive-cell volume ratio. Default 0.5 gives a
+      // total half-width of 1.0, which always includes both floor(ratio)
+      // and ceil(ratio) for a non-integer ratio. Larger values widen the
+      // search (safer, slower); 0 narrows to nearest-integer rounding only.
+      // ------------------------------------------------------------------
+      InputHandler::registerHandler("RATIOTOLERANCE", 0.45,
+         [this](const BaseControlVariables&, const std::string& value) {
+            try { setRatioTolerance(std::stod(value)); }
+            catch (...) { std::cout << "; Warning: Invalid RATIOTOLERANCE value: " << value << "\n"; }
+         });
+
       InputHandler::registerHandler("HELP", 0.30,
          [this](const BaseControlVariables&, const std::string&) {
             ShowHelp();
@@ -185,19 +209,17 @@ public:
             ShowHelp();
          });
 
-      InputHandler::registerHandler("USECOMPOSED", 0.45,
-         [this](const BaseControlVariables&, const std::string& value) {
-            m_useComposed = (value == "1" ||
-               LRL_StringTools::strToupper(value) == "TRUE" ||
-               value.empty());
-         });
-
    }
 
    // -----------------------------------------------------------------------
    // Run mode enum
    // -----------------------------------------------------------------------
-   enum class RunMode { ALL, SUPER, EQUIVALENT };
+   // COMPOSED searches the same two matrix sets as ALL (det=1 unimodular,
+   // det=2..6 supercell) but combines them by composition (u * s, for every
+   // u in the unimodular set and s in the supercell set) rather than
+   // concatenation. This is a different search space, not a modifier on
+   // ALL -- hence its own RunMode value rather than an independent flag.
+   enum class RunMode { ALL, SUPER, EQUIVALENT, COMPOSED };
 
    // -----------------------------------------------------------------------
    // Display mode enum
@@ -231,9 +253,11 @@ public:
    RunMode getRunMode()            const { return m_runMode; }
    bool    runModeSuper()          const { return m_runMode == RunMode::SUPER; }
    bool    runModeEquivalent()     const { return m_runMode == RunMode::EQUIVALENT; }
+   bool    runModeComposed()       const { return m_runMode == RunMode::COMPOSED; }
    std::string getModeString()     const {
       if (m_runMode == RunMode::SUPER)      return "SUPER";
       if (m_runMode == RunMode::EQUIVALENT) return "EQUIVALENT";
+      if (m_runMode == RunMode::COMPOSED)   return "COMPOSED";
       return "ALL";
    }
 
@@ -249,45 +273,8 @@ public:
    double getConventionalThreshold()       const { return m_conventionalThreshold; }
    void   setConventionalThreshold(double d) { m_conventionalThreshold = d; }
 
-   //std::vector<Matrix_3x3> generateSearchMatrices() const {
-   //   std::vector<Matrix_3x3> mats;
-
-   //   if (runModeEquivalent()) {
-   //      mats = generateUnimodularMatrices(m_unimodularOrder);
-   //   } else if (runModeSuper()) {
-   //      if (m_useHNF) {
-   //         mats = TransformationMatrices::generateHNFMatrices({ 2,3,4,5,6 });
-   //      } else {
-   //         mats = TransformationMatrices::generateSupercellMatrices({ 2,3,4,5,6 }, m_unimodularOrder);
-   //      }
-   //   } else if (m_runMode==RunMode::ALL()) {
-   //      // det=1
-   //      auto U = TransformationMatrices::generateUnimodularMatrices(m_unimodularOrder);
-
-   //      // det>1
-   //      std::vector<Matrix_3x3> S;
-   //      if (m_useHNF)
-   //         S = TransformationMatrices::generateHNFMatrices({ 2,3,4,5,6 });
-   //      else
-   //         S = TransformationMatrices::generateSupercellMatrices({ 2,3,4,5,6 }, m_unimodularOrder);
-
-   //      // NEW METHOD: composed matrices
-   //      if (m_useComposed) {
-   //         std::vector<Matrix_3x3> composed;
-   //         for (const auto& u : U)
-   //            for (const auto& s : S)
-   //               composed.push_back(u * s);
-   //         return composed;
-   //      }
-
-   //      // OLD METHOD: just concatenate
-   //      mats = U;
-   //      mats.insert(mats.end(), S.begin(), S.end());
-   //   }
-
-   //   return mats;
-   //}
-
+   double getRatioTolerance()               const { return m_ratioTolerance; }
+   void   setRatioTolerance(double d) { m_ratioTolerance = d; }
 
 private:
    bool    m_showDetails = false;
@@ -301,7 +288,7 @@ private:
    bool    m_useHNF = false;
    DisplayMode m_displayMode = DisplayMode::NEW;
    double  m_conventionalThreshold = 2.0;  // percent of referenceP3Norm, matches GOOD tier
-   bool m_useComposed = false;
+   double  m_ratioTolerance = 0.5;  // widens volume-ratio determinant selection; total half-width = 0.5 + this
 
 };
 

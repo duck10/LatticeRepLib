@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include "BasisBase.h"
-
 #include "LRL_Cell.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"

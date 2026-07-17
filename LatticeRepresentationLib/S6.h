@@ -1,7 +1,6 @@
 #ifndef S6_H
 #define S6_H
 
-#include "BasisBase.h"
 #include "MatS6.h"
 #include "VecN.h"
 

@@ -1,7 +1,6 @@
 #ifndef B4_H
 #define B4_H
 
-#include "BasisBase.h"
 #include "LRL_Vector3.h"
 
 #include <vector>
@@ -15,7 +14,7 @@
 #include <ostream>
 #include <string>
 
-class B4 : private BasisBase<B4, Vector_3> {
+class B4 {
 public:
 
    friend std::ostream& operator<< (std::ostream&, const B4&);

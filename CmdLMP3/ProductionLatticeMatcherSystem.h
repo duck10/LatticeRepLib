@@ -9,7 +9,7 @@
 #include "MatrixScore.h"
 #include "UnifiedReservoir.h"
 #include "MultiTransformFinderControls.h"
-#include "TransformationMatrices.h"
+#include "SearchMatrixBuilder.h"
 #include "TransformerUtilities.h"
 
 #include "Selling.h"
@@ -172,77 +172,98 @@ CoreUnimodularMatcher::findBestMatches(const LRL_Cell& reference,
       std::cout << "DEBUG: Difference: " << (G6(reference) - G6(mobile)) << std::endl;
    }
 
-   const int unimodularOrder = m_controls.getMatrixOrder();
+   // Volume-ratio-based matrix selection: try only the determinants
+   // plausible for this specific lattice pair first (see
+   // SearchMatrixBuilder::selectMatrixGroupsForRatio), rather than always
+   // searching the full combined set for the mode. Only attempted for
+   // EQUIVALENT (already minimal) is skipped, and USEHNF (already the
+   // fast/canonical-only path) is skipped -- this targets the expensive
+   // composed/brute-force path specifically.
+   //
+   // Fallback trigger: simply "did the narrowed search return anything at
+   // all" -- NOT an absolute quality bar (an earlier version used the POOR
+   // threshold, but that incorrectly forced a full-search fallback on
+   // every call for tests where the true best match is legitimately poor
+   // by design, e.g. PvsICentering's "DIFFERENT lattices, poor match
+   // expected"). Since det=1 is always included in the narrowed set, this
+   // should essentially never fire in practice.
+   //
+   // NOTE: matrix groups are references to existing cached vectors, never
+   // concatenated copies -- see SearchMatrixBuilder.h for why that matters.
+   const bool tryRatioFilter = !m_controls.runModeEquivalent() && !m_controls.useHNF();
+
+   MatrixGroups narrowedGroups;
+   double ratio = 1.0;
+   if (tryRatioFilter) {
+      const double refVol = std::abs(reference.Volume());
+      const double mobVol = std::abs(mobile.Volume());
+      ratio = (mobVol > 1e-12) ? (refVol / mobVol) : 1.0;
+      narrowedGroups = selectMatrixGroupsForRatio(m_controls, ratio);
+   }
 
    const auto t_init0 = std::chrono::high_resolution_clock::now();
-   static std::vector<Matrix_3x3> matricesEQUIVALENT;
-   static std::vector<Matrix_3x3> matricesSUPER;
-   static std::vector<Matrix_3x3> matricesALL;
-   if (matricesALL.empty()) {
-      matricesEQUIVALENT = TransformationMatrices::generateUnimodularMatrices(unimodularOrder);
-      matricesSUPER = TransformationMatrices::generateSupercellMatrices({ 2, 3, 4 }, 2);
-      const auto hnf34 = TransformationMatrices::generateHNFMatrices({ 3, 4, 5, 6 });
-      matricesSUPER.insert(matricesSUPER.end(), hnf34.begin(), hnf34.end());
-      matricesALL = matricesEQUIVALENT;
-      matricesALL.insert(matricesALL.end(), matricesSUPER.begin(), matricesSUPER.end());
-   }
+   const MatrixGroups fullGroups = generateSearchMatrixGroups(m_controls);
    const auto t_init1 = std::chrono::high_resolution_clock::now();
    static bool s_initTimed = false;
    if (!s_initTimed && m_controls.shouldShowDetails()) {
       s_initTimed = true;
       std::cout << "; Matrix init: "
          << std::chrono::duration_cast<std::chrono::milliseconds>(t_init1 - t_init0).count()
-         << " ms  (ALL: " << matricesALL.size()
-         << ", SUPER: " << matricesSUPER.size()
-         << ", EQUIVALENT: " << matricesEQUIVALENT.size() << ")\n";
+         << " ms  (" << totalMatrixCount(fullGroups) << " matrices for mode "
+         << m_controls.getModeString() << ")\n";
    }
 
-   static std::vector<Matrix_3x3> matricesHNF;
-   static std::vector<Matrix_3x3> matricesHNF_SUPER;
-   if (matricesHNF.empty()) {
-      // det=5,6 must be included here: they are HNF-only regardless of
-      // USEHNF (the brute-force search is infeasible at those orders), so
-      // this set has to carry them even when det=2,3,4 also fall back to
-      // brute-force in the non-HNF path. Previously this list stopped at
-      // 4, silently dropping det=5,6 from the USEHNF search entirely.
-      matricesHNF_SUPER = TransformationMatrices::generateHNFMatrices({ 2, 3, 4, 5, 6 });
-      matricesHNF = TransformationMatrices::generateUnimodularMatrices(1);
-      matricesHNF.insert(matricesHNF.end(),
-         matricesHNF_SUPER.begin(), matricesHNF_SUPER.end());
+   // searchOnce -- run the search loop across all matrices in the given
+   // groups, filling m_reservoir. Iterates each referenced group directly;
+   // nothing is concatenated into a combined vector. Factored out so the
+   // (possible) fallback full search below can reuse it without
+   // duplicating the loop.
+   auto searchOnce = [&](const MatrixGroups& groups, const char* label) {
+      m_reservoir.clear();
+      const size_t total = totalMatrixCount(groups);
+      if (m_controls.shouldShowDetails()) {
+         std::cout << "; Layer 4 - Testing " << total
+            << " matrices (" << label << ") for " << description << std::endl;
+      }
+      const auto t_search0 = std::chrono::high_resolution_clock::now();
+      for (const auto& group : groups) {
+         for (const auto& matrix : group.get()) {
+            const LRL_Cell transformedMobile = matrix * mobile;
+            const double p3Distance = calculateP3Distance(reference, transformedMobile);
+            LatticeMatchResult result(matrix, p3Distance, 19191.,
+               transformedMobile, description);
+            m_reservoir.add(result);
+         }
+      }
+      const auto t_search1 = std::chrono::high_resolution_clock::now();
+      if (m_controls.shouldShowDetails()) {
+         std::cout << "; Search (" << total << " matrices, "
+            << description << "): "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(t_search1 - t_search0).count()
+            << " ms\n";
+      }
+      };
+
+   bool usedNarrowed = false;
+   if (tryRatioFilter) {
+      usedNarrowed = true;
+      searchOnce(narrowedGroups, "ratio-narrowed");
+
+      const auto narrowedResults = m_reservoir.getAllResults();
+      const bool needFallback = narrowedResults.empty();
+
+      if (needFallback) {
+         if (m_controls.shouldShowDetails()) {
+            std::cout << "; Ratio-narrowed search (ratio=" << ratio
+               << ") returned no results at all -- falling back to full search for "
+               << description << std::endl;
+         }
+         usedNarrowed = false;
+      }
    }
 
-   const auto runMode = m_controls.getRunMode();
-   const bool useHNF = m_controls.useHNF();
-   const std::vector<Matrix_3x3>& matrices =
-      useHNF ?
-      ((runMode == MultiTransformFinderControls::RunMode::SUPER) ? matricesHNF_SUPER :
-         (runMode == MultiTransformFinderControls::RunMode::EQUIVALENT) ? matricesEQUIVALENT :
-         matricesHNF)
-      :
-      ((runMode == MultiTransformFinderControls::RunMode::SUPER) ? matricesSUPER :
-         (runMode == MultiTransformFinderControls::RunMode::EQUIVALENT) ? matricesEQUIVALENT :
-         matricesALL);
-
-   if (m_controls.shouldShowDetails()) {
-      std::cout << "; Layer 4 - Testing " << matrices.size()
-         << " matrices (mode: " << m_controls.getModeString()
-         << ") for " << description << std::endl;
-   }
-
-   const auto t_search0 = std::chrono::high_resolution_clock::now();
-   for (const auto& matrix : matrices) {
-      const LRL_Cell transformedMobile = matrix * mobile;
-      const double p3Distance = calculateP3Distance(reference, transformedMobile);
-      LatticeMatchResult result(matrix, p3Distance, 19191.,
-         transformedMobile, description);
-      m_reservoir.add(result);
-   }
-   const auto t_search1 = std::chrono::high_resolution_clock::now();
-   if (m_controls.shouldShowDetails()) {
-      std::cout << "; Search (" << matrices.size() << " matrices, "
-         << description << "): "
-         << std::chrono::duration_cast<std::chrono::milliseconds>(t_search1 - t_search0).count()
-         << " ms\n";
+   if (!usedNarrowed) {
+      searchOnce(fullGroups, m_controls.getModeString().c_str());
    }
 
    if (m_controls.shouldShowDetails()) {
@@ -318,7 +339,8 @@ NiggliReductionCoordinator::performFourWayMatching(const LRL_Cell& primitiveMobi
    if (m_controls.getUseSellingReduction()) {
       m_referenceReduction = performSellingReduction(primitiveReference);
       m_mobileReduction = performSellingReduction(primitiveMobile);
-   } else {
+   }
+   else {
       m_referenceReduction = performNiggliReduction(primitiveReference);
       m_mobileReduction = performNiggliReduction(primitiveMobile);
    }
@@ -405,7 +427,8 @@ NiggliReductionCoordinator::performSellingReduction(const LRL_Cell& cell) {
       data.reductionMatrix = m33;
       data.inverseReductionMatrix = m33.Inverse();
       data.wasAlreadyReduced = false;
-   } else {
+   }
+   else {
       data.reducedCell = cell;
       data.reductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       data.inverseReductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
@@ -438,7 +461,8 @@ NiggliReductionCoordinator::performNiggliReduction(const LRL_Cell& cell) {
       data.reductionMatrix = matrix3d;
       data.inverseReductionMatrix = matrix3d.Inverse();
       data.wasAlreadyReduced = false;
-   } else {
+   }
+   else {
       data.reducedCell = cell;
       data.reductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
       data.inverseReductionMatrix = Matrix_3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);

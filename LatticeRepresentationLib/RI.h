@@ -18,9 +18,6 @@
 
 #endif
 
-
-#include "BasisBase.h"
-
 #include "VecN.h"
 #include "LRL_indices.h"
 
@@ -35,7 +32,7 @@ class DC7u;
 #include <ostream>
 #include <string>
 
-class RI /*: private BasisBase<RI> */{
+class RI {
 public:
    friend std::ostream& operator<< (std::ostream&, const RI&);
    friend RI operator* (const double d, const RI& v);

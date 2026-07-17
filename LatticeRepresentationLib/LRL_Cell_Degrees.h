@@ -11,12 +11,12 @@ public:
    LRL_Cell_Degrees(void) {}
 
    LRL_Cell_Degrees& operator= (const LRL_Cell& c) {
-      m_cell = c.GetVector();
+      SetVector(c.GetVector());
       m_valid = c.GetValid();
       return *this;
    }
 
-   std::vector<double> GetVector(void) const { return m_cell; }
+   std::vector<double> GetVector(void) const { return std::vector<double>(m_cell.begin(), m_cell.end()); }
    static std::string GetName(void) { return "LRL_Cell_Degrees, unit cell"; }
 
 };

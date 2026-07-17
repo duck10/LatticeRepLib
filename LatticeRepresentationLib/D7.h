@@ -1,7 +1,6 @@
 #ifndef D7_H
 #define D7_H
 
-#include "BasisBase.h"
 #include "VecN.h"
 
 #include <string>
@@ -15,7 +14,7 @@ class G6;
 #include <ostream>
 #include <string>
 
-class D7 : private BasisBase<D7> {
+class D7{
 public:
    friend std::ostream& operator<< ( std::ostream&, const D7& );
    friend D7 operator* (const double d, const D7& v);

@@ -8,6 +8,7 @@
 #include "MatchPair.h"
 #include "P3RelativeThresholds.h"
 #include "ProductionLatticeMatcherSystem.h"
+#include "SearchMatrixBuilder.h"
 #include "LatticeCell.h"
 #include "MultiTransformFinderControls.h"
 #include <vector>
@@ -16,6 +17,7 @@
 #include <iomanip>
 #include <map>
 #include <cmath>
+#include <chrono>
 
 class FlexibleTestCase {
 public:
@@ -53,6 +55,29 @@ public:
          expectedS6Angle(s6Angle), tolerance(tol), description(desc) {
       }
    };
+
+   // Position-independent expectation: passes if the given matrix appears
+   // ANYWHERE among the results (within tolerance), regardless of index.
+   // Use this for regression-guarding a specific alternate orientation that
+   // is tied in quality with others -- tie order is not guaranteed stable,
+   // so ExactExpectation (which checks a fixed results[i]) is the wrong
+   // tool for that; this checks presence, not position.
+   struct ContainsExpectation {
+      Matrix_3x3 expectedMatrix;
+      double tolerance;
+      std::string description;
+
+      ContainsExpectation(const Matrix_3x3& matrix, double tol = 1e-3,
+         const std::string& desc = "")
+         : expectedMatrix(matrix), tolerance(tol), description(desc) {
+      }
+   };
+
+   std::vector<ContainsExpectation> containsExpectations;
+
+   void addContainsExpectation(const ContainsExpectation& contains) {
+      containsExpectations.push_back(contains);
+   }
 
    // Test can use either quality thresholds OR exact expectations
    std::vector<QualityThresholds> qualityExpectations;
@@ -203,12 +228,14 @@ private:
             bool resultOk = validateQualityThresholds(results[i], mr.layer2.primitiveReference, quality, controls);
             if (resultOk) {
                std::cout << "  Result " << (i + 1) << ": PASS" << std::endl;
-            } else {
+            }
+            else {
                std::cout << "  Result " << (i + 1) << ": FAIL" << std::endl;
                testPassed = false;
             }
          }
-      } else {
+      }
+      else {
          // Exact matrix validation (original behavior)
          std::cout << "\nValidating using exact expectations:" << std::endl;
 
@@ -239,7 +266,8 @@ private:
             std::cout << "  Result " << (i + 1) << " (" << expected.description << "): ";
             if (matrixOk && p3Ok && s6Ok) {
                std::cout << "PASS" << std::endl;
-            } else {
+            }
+            else {
                std::cout << "FAIL" << std::endl;
                testPassed = false;
 
@@ -258,10 +286,33 @@ private:
          }
       }
 
+      // Position-independent checks: does each expected matrix appear
+      // ANYWHERE among the results? Runs in addition to whichever primary
+      // mode (quality or exact) was used above.
+      for (size_t i = 0; i < test.containsExpectations.size(); ++i) {
+         const auto& contains = test.containsExpectations[i];
+         bool found = false;
+         for (const auto& r : results) {
+            if (compareMatrices(r.getTransformationMatrix(), contains.expectedMatrix, contains.tolerance)) {
+               found = true;
+               break;
+            }
+         }
+         std::cout << "  Checking for presence of (" << contains.description << "): ";
+         if (found) {
+            std::cout << "FOUND" << std::endl;
+         }
+         else {
+            std::cout << "NOT FOUND" << std::endl;
+            testPassed = false;
+         }
+      }
+
       if (testPassed) {
          std::cout << "OVERALL: PASS" << std::endl;
          passedTests++;
-      } else {
+      }
+      else {
          std::cout << "OVERALL: FAIL" << std::endl;
          failedTests++;
       }
@@ -290,7 +341,12 @@ public:
       failedTests = 0;
       manualTests = 0;
 
+      const auto t_test0 = std::chrono::high_resolution_clock::now();
       runTest(test, controls);
+      const auto t_test1 = std::chrono::high_resolution_clock::now();
+      std::cout << "; Test " << testNumber << " elapsed: "
+         << std::chrono::duration_cast<std::chrono::milliseconds>(t_test1 - t_test0).count()
+         << " ms" << std::endl;
 
       // Show summary for single test
       std::cout << "\n========================================" << std::endl;
@@ -298,9 +354,11 @@ public:
       std::cout << "========================================" << std::endl;
       if (passedTests > 0) {
          std::cout << "TEST PASSED!" << std::endl;
-      } else if (failedTests > 0) {
+      }
+      else if (failedTests > 0) {
          std::cout << "TEST FAILED!" << std::endl;
-      } else {
+      }
+      else {
          std::cout << "TEST REQUIRES MANUAL VERIFICATION!" << std::endl;
       }
    }
@@ -322,7 +380,8 @@ public:
       for (int n : requested) {
          if (n > 0 && n <= static_cast<int>(testCases.size())) {
             validTests.push_back(n);
-         } else {
+         }
+         else {
             std::cout << "; Warning: Requested test " << n << " > " << testCases.size()
                << " available tests -- ignored" << std::endl;
          }
@@ -348,14 +407,24 @@ public:
       failedTests = 0;
       manualTests = 0;
 
+      const auto t_suite0 = std::chrono::high_resolution_clock::now();
       for (size_t i = 0; i < testCases.size(); ++i) {
          std::cout << "\n--- Test " << (i + 1) << " of " << testCases.size() << " ---";
+         const auto t_test0 = std::chrono::high_resolution_clock::now();
          runTest(testCases[i], controls);
+         const auto t_test1 = std::chrono::high_resolution_clock::now();
+         std::cout << "; Test " << (i + 1) << " elapsed: "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(t_test1 - t_test0).count()
+            << " ms" << std::endl;
       }
+      const auto t_suite1 = std::chrono::high_resolution_clock::now();
 
       std::cout << "\n========================================" << std::endl;
       std::cout << "TEST SUMMARY" << std::endl;
       std::cout << "========================================" << std::endl;
+      std::cout << "Total time: "
+         << std::chrono::duration_cast<std::chrono::milliseconds>(t_suite1 - t_suite0).count()
+         << " ms" << std::endl;
       std::cout << "Passed: " << passedTests << std::endl;
       std::cout << "Failed: " << failedTests << std::endl;
       std::cout << "Manual: " << manualTests << std::endl;
@@ -366,7 +435,8 @@ public:
          if (manualTests > 0) {
             std::cout << "(" << manualTests << " tests require manual verification)" << std::endl;
          }
-      } else {
+      }
+      else {
          std::cout << "SOME TESTS FAILED!" << std::endl;
       }
    }
@@ -596,6 +666,25 @@ public:
       test21.addInputCell(LatticeCell(LRL_Cell(60, 20, 30, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
       test21.addQualityExpectation(FlexibleTestCase::QualityThresholds(
          1e-2, 1.0, 5.99, 6.01, "[SUPERCELL] order-6 det~6 dist~0"));
+      // Regression guard: this specific alternate det=6 orientation is only
+      // reachable via composition (U*HNF), not raw HNF alone -- confirmed
+      // missing when an earlier version of the generation used only one
+      // composition direction. Checked by presence, not position, since it
+      // is tied in quality with several other det=6 orientations and tie
+      // order is not guaranteed stable.
+      test21.addContainsExpectation(FlexibleTestCase::ContainsExpectation(
+         Matrix_3x3(0, 3, 0, -2, 0, 0, 0, 0, 1), 1e-3,
+         "alternate det=6 orientation reachable only via U*HNF composition"));
+      // NOTE (not a gap): the mirror-handedness partner of the matrix
+      // above, [0,3,0; 2,0,0; 0,0,1] (same rows except the second axis
+      // flips from -2a to +2a -- same lengths/angles, opposite chirality,
+      // det=-6 instead of +6), is confirmed absent from the generated set
+      // and confirmed reachable only by composing with a det=-1
+      // (reflection/improper) unimodular matrix. This is CORRECT: the
+      // unimodular multiplier is restricted to det=+1 deliberately --
+      // allowing det=-1 would let a chirality-flipping reflection count as
+      // a valid crystallographic basis change, which it is not. The
+      // matrix's absence is expected behavior, not a limitation to fix.
       addTestCase(test21);
 
       // Test 22: [SUPERCELL] Swap direction -- large cell input first
@@ -910,6 +999,43 @@ public:
          0.02, 1.0, 2.99, 3.01, "[SUPERCELL] R hex vs R primitive det~3 dist~0.013"));
       addTestCase(test50);
 
+      // Test 51: [SUPERCELL] det=5 requiring a non-diagonal orientation.
+      // Mobile cell is the cubic reference transformed by
+      // [1 -2 0; 1 3 0; 0 0 1] (det=5) -- a non-diagonal matrix, unlike
+      // ExactOrder5's simple diag(5,1,1). Verified computationally (not
+      // hand-derived) that this specific matrix is reachable as U*HNF(5)
+      // in the current generation, and NOT as HNF(5)*U -- this exercises
+      // det=5's composed-only coverage the same way FaceDiagonalOrder2
+      // (det=2) and PvsICentering (det=4) already exercise their own
+      // determinants' non-trivial orientation coverage.
+      FlexibleTestCase test51("NonDiagonalOrder5",
+         "[SUPERCELL] Cubic transformed by non-diagonal det=5 matrix -- order-5, dist=0");
+      test51.addInputCell(LatticeCell(LRL_Cell(10, 10, 10, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test51.addInputCell(LatticeCell(LRL_Cell(22.3607, 31.6228, 10,
+         90.0 * M_PI / 180, 90.0 * M_PI / 180, 135.0 * M_PI / 180), "P"));
+      test51.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1e-2, 1.0, 4.99, 5.01, "[SUPERCELL] non-diagonal order-5 det~5 dist~0"));
+      addTestCase(test51);
+
+      // Test 52: [SUPERCELL] Independent per-axis multipliers (a doubled,
+      // c tripled) -- a common real superstructure pattern, distinct from
+      // both single-axis multiplication (ExactOrder6) and the coincidental
+      // axis-ratio degeneracy in that test. Generic dimensions (7,11,13,
+      // no integer ratio among them) are used deliberately so this tests
+      // the general case, not another special-ratio coincidence. Verified
+      // computationally that diag(2,1,3) sits directly in the raw HNF(6)
+      // canonical set (it is already upper-triangular), so it is reachable
+      // regardless of composition direction -- this case is confirmed safe,
+      // not a gap; it is included for coverage of a physically common
+      // pattern that was otherwise untested.
+      FlexibleTestCase test52("IndependentAxisMultipliers",
+         "[SUPERCELL] a doubled, c tripled independently -- order-6, dist=0");
+      test52.addInputCell(LatticeCell(LRL_Cell(7, 11, 13, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test52.addInputCell(LatticeCell(LRL_Cell(14, 11, 39, M_PI / 2, M_PI / 2, M_PI / 2), "P"));
+      test52.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         1e-2, 1.0, 5.99, 6.01, "[SUPERCELL] independent 2x/3x axis multipliers det~6 dist~0"));
+      addTestCase(test52);
+
 
    }  // end setupStandardTests
 
@@ -984,7 +1110,8 @@ inline void runMatchPresentationTests(const MultiTransformFinderControls& contro
    if (!trivialResult) {
       std::cout << "FAIL: trivial matrix not found among matcher results" << std::endl;
       ++failed;
-   } else {
+   }
+   else {
       std::vector<double> distances;
       for (const auto& r : layer2.results) distances.push_back(r.getP3Distance());
       const auto thresholds = P3RelativeThresholds::calculateAdaptiveP3Thresholds(
@@ -997,7 +1124,8 @@ inline void runMatchPresentationTests(const MultiTransformFinderControls& contro
       if (presentation.referenceFrame.p3Percent <= controls.getConventionalThreshold()) {
          std::cout << "PASS  (reference frame " << presentation.referenceFrame.p3Percent << "% of P3 norm)" << std::endl;
          ++passed;
-      } else {
+      }
+      else {
          std::cout << "FAIL  (reference frame " << presentation.referenceFrame.p3Percent << "% of P3 norm, expected <= "
             << controls.getConventionalThreshold() << "%)" << std::endl;
          ++failed;
@@ -1007,7 +1135,8 @@ inline void runMatchPresentationTests(const MultiTransformFinderControls& contro
    if (!alternateResult) {
       std::cout << "FAIL: alternate matrix not found among matcher results" << std::endl;
       ++failed;
-   } else {
+   }
+   else {
       std::vector<double> distances;
       for (const auto& r : layer2.results) distances.push_back(r.getP3Distance());
       const auto thresholds = P3RelativeThresholds::calculateAdaptiveP3Thresholds(
@@ -1020,7 +1149,8 @@ inline void runMatchPresentationTests(const MultiTransformFinderControls& contro
       if (presentation.referenceFrame.p3Percent > controls.getConventionalThreshold()) {
          std::cout << "PASS  (reference frame " << presentation.referenceFrame.p3Percent << "% of P3 norm)" << std::endl;
          ++passed;
-      } else {
+      }
+      else {
          std::cout << "FAIL  (reference frame " << presentation.referenceFrame.p3Percent << "% of P3 norm, expected > "
             << controls.getConventionalThreshold() << "%)" << std::endl;
          ++failed;
@@ -1053,7 +1183,8 @@ inline void runMatchPresentationTests(const MultiTransformFinderControls& contro
    if (!worstResult) {
       std::cout << "FAIL: worst-case (25% perturbation) matrix not found among matcher results" << std::endl;
       ++failed;
-   } else {
+   }
+   else {
       std::vector<double> distances25;
       for (const auto& r : layer2_25.results) distances25.push_back(r.getP3Distance());
       const auto thresholds25 = P3RelativeThresholds::calculateAdaptiveP3Thresholds(
@@ -1066,7 +1197,8 @@ inline void runMatchPresentationTests(const MultiTransformFinderControls& contro
       if (presentation.referenceFrame.p3Percent > controls.getConventionalThreshold()) {
          std::cout << "PASS  (reference frame " << presentation.referenceFrame.p3Percent << "% of P3 norm)" << std::endl;
          ++passed;
-      } else {
+      }
+      else {
          std::cout << "FAIL  (reference frame " << presentation.referenceFrame.p3Percent << "% of P3 norm, expected > "
             << controls.getConventionalThreshold() << "%)" << std::endl;
          ++failed;
@@ -1079,6 +1211,22 @@ inline void runMatchPresentationTests(const MultiTransformFinderControls& contro
 // Function to run flexible test mode
 inline void runFlexibleTestMode(const MultiTransformFinderControls& controls) {
    ShowProgramHeader("CmdLMP3 -- P3 Lattice Matching (Test Mode)");
+
+   // generateSearchMatrixGroups builds every RunMode/USEHNF variant eagerly on
+   // its first call, regardless of which mode that call needs (see
+   // SearchMatrixBuilder.h/.cpp). Without forcing that here, the cost is
+   // silently absorbed into whichever test happens to run first -- making
+   // that test's elapsed time meaningless (it's mostly one-time setup, not
+   // its own search) and making every other test's time look artificially
+   // cheap by comparison. Forcing and reporting it here keeps per-test
+   // timings honest.
+   const auto t_warm0 = std::chrono::high_resolution_clock::now();
+   generateSearchMatrixGroups(controls);
+   const auto t_warm1 = std::chrono::high_resolution_clock::now();
+   std::cout << "; Matrix set construction (one-time): "
+      << std::chrono::duration_cast<std::chrono::milliseconds>(t_warm1 - t_warm0).count()
+      << " ms" << std::endl;
+
    FlexibleTestRunner runner;
    runner.setupStandardTests();
    runner.runAllTests(controls);

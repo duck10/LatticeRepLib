@@ -136,7 +136,10 @@
     <ClCompile Include="DisplayLayer2.cpp" />
     <ClCompile Include="DisplayLMP3.cpp" />
     <ClCompile Include="DisplayUtilities.cpp" />
+    <ClCompile Include="xLrl_cell.cpp" />
+    <ClCompile Include="xLrl_cell_Degrees.cpp" />
     <ClCompile Include="MatchPresentation.cpp" />
+    <ClCompile Include="SearchMatrixbuilder.cpp" />
     <ClCompile Include="TransformerUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +152,8 @@
     <ClInclude Include="HelpLMP3.h" />
     <ClInclude Include="LatticeMatchResult.h" />
     <ClInclude Include="Layer2Result.h" />
+    <ClInclude Include="xLrl_cell.h" />
+    <ClInclude Include="xLRL_Cell_Degrees.h" />
     <ClInclude Include="MatchPair.h" />
     <ClInclude Include="MatchPresentation.h" />
     <ClInclude Include="MatrixCellOperator.h" />
@@ -161,6 +166,7 @@
     <ClInclude Include="ProductionLatticeMatcherSystem.h" />
     <ClInclude Include="Programheader.h" />
     <ClInclude Include="QualityAssessment.h" />
+    <ClInclude Include="Searchmatrixbuilder.h" />
     <ClInclude Include="TransformerUtilities.h" />
     <ClInclude Include="UnifiedReservoir.h" />
   </ItemGroup>
@@ -177,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="O3_test.txt" />
+    <Text Include="RatioTest.txt" />
     <Text Include="TestSuite.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

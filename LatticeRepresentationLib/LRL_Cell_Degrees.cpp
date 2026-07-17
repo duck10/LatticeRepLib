@@ -1,5 +1,3 @@
-
-
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
 
@@ -7,15 +5,15 @@
 #include <sstream>
 #include <string>
 
-const double pi = 4.0*atan(1.0);
-const double twopi = 2.0*pi;
+const double pi = 4.0 * atan(1.0);
+const double twopi = 2.0 * pi;
 
 LRL_Cell_Degrees::LRL_Cell_Degrees(const LRL_Cell& cell) {
-   m_cell = cell.GetVector();
-   m_valid = cell.GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi;
+   SetVector(cell.GetVector());
+   m_valid = cell.GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5]) < twopi;
    if (m_valid)
       for (size_t i = 3; i < 6; ++i)
-         m_cell[i] *= 180.0 / (4.0*atan(1.0));
+         m_cell[i] *= 180.0 / (4.0 * atan(1.0));
    else
       *this = LRL_Cell(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 }

@@ -3,14 +3,18 @@
 
 #include <vector>
 
-#include "BasisBase.h"
-
 #include "LRL_Cell.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
 #include "LRL_Vector3.h"
 
-class D13 : private BasisBase<D13, double> {
+class G6;
+class S6;
+class C3;
+class D7;
+class B4;
+
+class D13 {
 public:
    const static std::vector<Vector_3> vertices;
 public:
@@ -43,7 +47,7 @@ public:
 
    double operator[](const size_t n) const { return m_vec[n]; }
    double& operator[](const size_t n) { return m_vec[n]; }
-   friend double DistanceBetween( const D13& v1, const D13& v2 );
+   friend double DistanceBetween(const D13& v1, const D13& v2);
    double norm() const { return m_vec.norm(); }
    double norm(const D13& d13) const { return norm(d13); }
    double Norm() const { return m_vec.norm(); }
@@ -58,12 +62,12 @@ public:
    bool IsValid(const D13& d13) const { return d13.m_cellIsValid; }
 
    std::vector<Vector_3 > GetIndices() const {
-      return vertices; 
+      return vertices;
    }
 
    std::vector<double> GetAreas() const;
    std::vector<std::string> GetStringIndices();
-   static  std::string GetName()  { return "D13"; }
+   static  std::string GetName() { return "D13"; }
    size_t size() const { return m_vec.size(); }
 
    LRL_Cell GetCell() const { return m_cell; }

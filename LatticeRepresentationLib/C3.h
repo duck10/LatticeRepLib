@@ -3,7 +3,6 @@
 #ifndef C3_H
 #define C3_H
 
-#include "BasisBase.h"
 #include "S6.h"
 #include "Selling.h"
 
@@ -44,7 +43,7 @@ S6 S6Dist::Reduce11(const S6& din) {
 }
 */
 
-class C3 : private BasisBase<C3, std::complex<double> > {
+class C3 {
 public:
    friend std::ostream& operator<< (std::ostream&, const C3&);
    friend C3 operator* (const double d, const C3& dt);

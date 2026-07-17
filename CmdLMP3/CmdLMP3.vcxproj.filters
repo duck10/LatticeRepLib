@@ -36,6 +36,15 @@
     <ClCompile Include="MatchPresentation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SearchMatrixbuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xLrl_cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xLrl_cell_Degrees.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FlexibleTestMode.h">
@@ -107,11 +116,21 @@
     <ClInclude Include="Programheader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Searchmatrixbuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xLrl_cell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="xLRL_Cell_Degrees.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="O3_test.txt" />
     <Text Include="TestSuite.txt">
       <Filter>Header Files</Filter>
     </Text>
+    <Text Include="RatioTest.txt" />
   </ItemGroup>
 </Project>

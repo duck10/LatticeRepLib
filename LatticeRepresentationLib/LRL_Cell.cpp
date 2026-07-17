@@ -45,8 +45,8 @@ double LRL_Cell::randomLatticeNormalizationConstantSquared = randomLatticeNormal
 
 /*  class LRL_Cell
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-A class to implement some common operations for unit cells as usually 
-   used with xray crystallography. Conversions from G6 to unit cell and 
+A class to implement some common operations for unit cells as usually
+   used with xray crystallography. Conversions from G6 to unit cell and
    from unit to G6 are included. The angles are ALWAYS in RADIANS.
 
    LRL_Cell(void)                                  == default constructor
@@ -65,7 +65,6 @@ A class to implement some common operations for unit cells as usually
 LRL_Cell::LRL_Cell(void)
    : m_valid(false)
 {
-   m_cell.resize(6);
 }
 
 LRL_Cell::LRL_Cell(const LRL_Cell& c)
@@ -74,23 +73,29 @@ LRL_Cell::LRL_Cell(const LRL_Cell& c)
 {
 }
 
-LRL_Cell::LRL_Cell( const std::vector<double>& v )
-   : m_cell( v )
-   , m_valid( (*this).m_valid )
+LRL_Cell::LRL_Cell(const std::vector<double>& v)
+   : m_valid((*this).m_valid)
 {
+   for (size_t i = 0; i < 6 && i < v.size(); ++i)
+      m_cell[i] = v[i];
    for (size_t i = 3; i < 6; ++i)
-      m_cell[i] *= 4.0 * atan( 1.0 ) / 180.0;
+      m_cell[i] *= 4.0 * atan(1.0) / 180.0;
 }
 
 LRL_Cell::LRL_Cell(const std::string& s)
    : m_valid(true)
 {
-   m_cell = LRL_StringTools::FromString(s);
-   m_valid = m_cell.size() == 6 && m_valid && 
-      m_cell[3] < oneeightyDegrees && 
-      m_cell[4] < oneeightyDegrees && 
-      m_cell[5] < oneeightyDegrees && 
-      (m_cell[3] + m_cell[4] + m_cell[5]) < threesixtyDegrees;
+   const std::vector<double> parsed = LRL_StringTools::FromString(s);
+   m_valid = parsed.size() == 6 && m_valid;
+   if (m_valid) {
+      for (size_t i = 0; i < 6; ++i)
+         m_cell[i] = parsed[i];
+      m_valid = m_valid &&
+         m_cell[3] < oneeightyDegrees &&
+         m_cell[4] < oneeightyDegrees &&
+         m_cell[5] < oneeightyDegrees &&
+         (m_cell[3] + m_cell[4] + m_cell[5]) < threesixtyDegrees;
+   }
    if (m_valid) {
       for (size_t i = 3; i < 6; ++i)
          m_cell[i] *= 4.0 * atan(1.0) / 180.0;
@@ -99,9 +104,8 @@ LRL_Cell::LRL_Cell(const std::string& s)
 
 LRL_Cell::LRL_Cell(const S6& ds)
 {
-   m_cell.resize( 6 );
 
-   const S6& s( ds );
+   const S6& s(ds);
    double& a = (*this)[0];
    double& b = (*this)[1];
    double& c = (*this)[2];
@@ -113,19 +117,19 @@ LRL_Cell::LRL_Cell(const S6& ds)
    const double bsq = -(s[4] + s[2] + s[0]);
    const double csq = -(s[5] + s[1] + s[0]);
    m_valid = ds.GetValid() && asq > 0.0 && bsq > 0.0 && csq > 0.0;
-   if ( m_valid){
-      a = sqrt( asq );
-      b = sqrt( bsq );
-      c = sqrt( csq );
+   if (m_valid) {
+      a = sqrt(asq);
+      b = sqrt(bsq);
+      c = sqrt(csq);
 
       const double cosal = s[0] / (b * c);
       const double cosbe = s[1] / (a * c);
       const double cosga = s[2] / (a * b);
-      m_valid = abs( cosal ) < 1.0 && abs( cosbe ) < 1.0 && abs( cosga ) < 1.0;
+      m_valid = abs(cosal) < 1.0 && abs(cosbe) < 1.0 && abs(cosga) < 1.0;
       if (m_valid) {
-         al = acos( cosal );
-         be = acos( cosbe );
-         ga = acos( cosga );
+         al = acos(cosal);
+         be = acos(cosbe);
+         ga = acos(cosga);
       }
 
       m_valid = (al + be + ga) < twopi;
@@ -135,20 +139,19 @@ LRL_Cell::LRL_Cell(const S6& ds)
 LRL_Cell::LRL_Cell(const C3& c3)
 {
    *this = S6(c3);
-   m_valid = m_valid && c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
+   m_valid = m_valid && c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5]) < twopi
       && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3], m_cell[4], m_cell[5]) >= 0.0);
 }
 
 LRL_Cell::LRL_Cell(const P3& p) {
-   m_cell.resize(6);
 
    for (size_t i = 0; i < 3; ++i) {
       const double x = p[i].first;
       const double y = p[i].second;
       const double length = std::sqrt(x * x + y * y);
-      const double angle  = std::atan2(y, x);  // radians
+      const double angle = std::atan2(y, x);  // radians
 
-      m_cell[i]     = length;
+      m_cell[i] = length;
       m_cell[i + 3] = angle;
    }
 
@@ -229,14 +232,13 @@ std::ostream& operator<< (std::ostream& o, const LRL_Cell& c) {
 // Name: LRL_Cell()
 // Description: constructor to convert load a LRL_Cell from doubles
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-LRL_Cell::LRL_Cell( const double a, const double b, const double c,
-           const double alpha, const double beta, const double gamma)
+LRL_Cell::LRL_Cell(const double a, const double b, const double c,
+   const double alpha, const double beta, const double gamma)
    : m_valid(true)
 {
 
-    bool radianInput = false;
+   bool radianInput = false;
 
-   m_cell.resize( 6 );
    m_cell[0] = a;
    m_cell[1] = b;
    m_cell[2] = c;
@@ -289,20 +291,19 @@ LRL_Cell::LRL_Cell( const double a, const double b, const double c,
 LRL_Cell::LRL_Cell(const G6& g6)
    : m_valid(true)
 {
-   m_cell.resize(6);
    const double limitAxisMinimumLengths = 0.0001;
-   if ( (!g6.GetValid()) || g6.norm() < 1.0E-10 || g6[0] <= limitAxisMinimumLengths || g6[1] <= limitAxisMinimumLengths || g6[2] <= limitAxisMinimumLengths) {
+   if ((!g6.GetValid()) || g6.norm() < 1.0E-10 || g6[0] <= limitAxisMinimumLengths || g6[1] <= limitAxisMinimumLengths || g6[2] <= limitAxisMinimumLengths) {
       *this = LRL_Cell(0, 0, 0, 0, 0, 0);
       return;
    }
    else {
       m_cell[0] = sqrt(g6[0]);
-      m_cell[1] = sqrt(g6[1]) ;
+      m_cell[1] = sqrt(g6[1]);
       m_cell[2] = sqrt(g6[2]);
 
-      const double cosalpha(0.5*g6[3] / (m_cell[1] * m_cell[2]));
-      const double cosbeta(0.5*g6[4] /  (m_cell[0] * m_cell[2]));
-      const double cosgamma(0.5*g6[5] / (m_cell[0] * m_cell[1]));
+      const double cosalpha(0.5 * g6[3] / (m_cell[1] * m_cell[2]));
+      const double cosbeta(0.5 * g6[4] / (m_cell[0] * m_cell[2]));
+      const double cosgamma(0.5 * g6[5] / (m_cell[0] * m_cell[1]));
 
       if (std::abs(cosalpha) >= 0.9999 || std::abs(cosbeta) >= 0.9999 || std::abs(cosgamma) >= 0.9999) {
          *this = LRL_Cell(0, 0, 0, 0, 0, 0);
@@ -318,9 +319,9 @@ LRL_Cell::LRL_Cell(const G6& g6)
       m_cell[4] = atan2(sinbeta, cosbeta);
       m_cell[5] = atan2(singamma, cosgamma);
    }      m_valid = m_valid && m_cell[0] > limitAxisMinimumLengths && m_cell[1] > limitAxisMinimumLengths && m_cell[2] > limitAxisMinimumLengths &&
-         m_cell[3] > limitAxisMinimumLengths && m_cell[4] > limitAxisMinimumLengths && m_cell[5] > limitAxisMinimumLengths &&
-         m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5])< twopi
-         && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3], m_cell[4], m_cell[5]) >= 0.0);
+      m_cell[3] > limitAxisMinimumLengths && m_cell[4] > limitAxisMinimumLengths && m_cell[5] > limitAxisMinimumLengths &&
+      m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5]) < twopi
+      && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3], m_cell[4], m_cell[5]) >= 0.0);
 
 }
 
@@ -343,12 +344,12 @@ LRL_Cell::~LRL_Cell(void)
 {
 }
 
-void Prepare2CellElements( const double minEdge, const double maxEdge, const size_t i, LRL_Cell& c ) {
+void Prepare2CellElements(const double minEdge, const double maxEdge, const size_t i, LRL_Cell& c) {
    static RHrand r;
-   const double range = std::fabs( minEdge - maxEdge );
-   const double d1 = r.urand( );
-   c[i] = range * d1 + std::sqrt( minEdge * maxEdge );
-   const double d2 = r.urand( );
+   const double range = std::fabs(minEdge - maxEdge);
+   const double d1 = r.urand();
+   c[i] = range * d1 + std::sqrt(minEdge * maxEdge);
+   const double d2 = r.urand();
    c[i + 3] = d2 * oneeightyDegrees;
 }
 
@@ -359,7 +360,7 @@ void Prepare2CellElements( const double minEdge, const double maxEdge, const siz
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 double LRL_Cell::Volume() const {
    if (!IsPhysicallyValid()) {
-      std::cout << "⚠️ Volume computation on invalid cell\n";
+      std::cout << "?? Volume computation on invalid cell\n";
       return std::numeric_limits<double>::quiet_NaN();
    }
    const double c3 = cos(m_cell[3]);
@@ -384,7 +385,7 @@ bool LRL_Cell::operator!= (const LRL_Cell& cl) const {
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 double LRL_Cell::operator[](const size_t n) const
 {
-   const size_t nn( std::max(size_t(0),std::min(size_t(5),n)) );
+   const size_t nn(std::max(size_t(0), std::min(size_t(5), n)));
    return m_cell[nn];
 }
 
@@ -394,7 +395,7 @@ double LRL_Cell::operator[](const size_t n) const
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 double& LRL_Cell::operator[](const size_t n)
 {
-   const size_t nn( std::max(size_t(0),std::min(size_t(5),n)) );
+   const size_t nn(std::max(size_t(0), std::min(size_t(5), n)));
    return m_cell[nn];
 }
 
@@ -406,37 +407,37 @@ double LRL_Cell::DistanceBetween(const LRL_Cell& v1, const LRL_Cell& v2) {
 // Name: Inverse()
 // Description: Compute the reciprocal cell (inverse) of a cell
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-LRL_Cell LRL_Cell::Inverse( void ) const
+LRL_Cell LRL_Cell::Inverse(void) const
 {
    const double& a((*this)[0]);
    const double& b((*this)[1]);
    const double& c((*this)[2]);
    const double& alpha((*this)[3]);
-   const double& beta ((*this)[4]);
+   const double& beta((*this)[4]);
    const double& gamma((*this)[5]);
    const double cosAlpha(cos(alpha));
-   const double cosBeta (cos(beta));
+   const double cosBeta(cos(beta));
    const double cosGamma(cos(gamma));
    const double sinAlpha(sin(alpha));
-   const double sinBeta (sin(beta));
+   const double sinBeta(sin(beta));
    const double sinGamma(sin(gamma));
 
-   const double v     = (*this).Volume( );
-   const double astar = b*c*sin(alpha)/v;
-   const double bstar = a*c*sin(beta )/v;
-   const double cstar = a*b*sin(gamma)/v;
+   const double v = (*this).Volume();
+   const double astar = b * c * sin(alpha) / v;
+   const double bstar = a * c * sin(beta) / v;
+   const double cstar = a * b * sin(gamma) / v;
 
-   const double cosAlphaStar = (cosBeta *cosGamma-cosAlpha)/fabs(sinBeta*sinGamma);
-   const double cosBetaStar  = (cosAlpha*cosGamma-cosBeta )/fabs(sinAlpha*sinGamma);
-   const double cosGammaStar = (cosAlpha*cosBeta -cosGamma)/fabs(sinAlpha*sinBeta);
+   const double cosAlphaStar = (cosBeta * cosGamma - cosAlpha) / fabs(sinBeta * sinGamma);
+   const double cosBetaStar = (cosAlpha * cosGamma - cosBeta) / fabs(sinAlpha * sinGamma);
+   const double cosGammaStar = (cosAlpha * cosBeta - cosGamma) / fabs(sinAlpha * sinBeta);
 
    LRL_Cell cell;
    cell.m_cell[0] = astar;
    cell.m_cell[1] = bstar;
    cell.m_cell[2] = cstar;
-   cell.m_cell[3] = atan2( sqrt(1.0-pow(cosAlphaStar,2)), cosAlphaStar);
-   cell.m_cell[4] = atan2( sqrt(1.0-pow(cosBetaStar ,2)), cosBetaStar );
-   cell.m_cell[5] = atan2( sqrt(1.0-pow(cosGammaStar,2)), cosGammaStar);
+   cell.m_cell[3] = atan2(sqrt(1.0 - pow(cosAlphaStar, 2)), cosAlphaStar);
+   cell.m_cell[4] = atan2(sqrt(1.0 - pow(cosBetaStar, 2)), cosBetaStar);
+   cell.m_cell[5] = atan2(sqrt(1.0 - pow(cosGammaStar, 2)), cosGammaStar);
    cell.m_valid = m_valid;
 
    return cell;
@@ -456,9 +457,9 @@ MatG6 LRL_Cell::LatSymMatG6(const std::string& latsym) const
    else if (toupper(latsym[0]) == 'F') return MatG6(".25 .25 0 0 0 .25     .25 0 .25 0 .25 0     0 .25 .25 .25  0 0    0 0 .5 .25 .25 .25     0 .5 0 .25 .25 .25     .5 0 0 .25 .25 .25");
    else if ((toupper(latsym[0]) == 'R' || toupper(latsym[0]) == 'H')
       && LRL_Cell::IsRhomobhedralAsHex(*this))
-      return (1.0 / 9.0)* MatG6("1 1 1 1 -1 -1    4 1 1  1  2  2     1  4  1  -2  -1  2     -4  -4  2  -1  1  -5     2  -4  2  -1  -2  1     -4  2  2  2  1  1");
+      return (1.0 / 9.0) * MatG6("1 1 1 1 -1 -1    4 1 1  1  2  2     1  4  1  -2  -1  2     -4  -4  2  -1  1  -5     2  -4  2  -1  -2  1     -4  2  2  2  1  1");
    else if (toupper(latsym[0]) == 'R' || toupper(latsym[0]) == 'H') return  MatG6::Eye();
-   else if (latsym == "CCDC") return (1.0 / 9.0)* MatG6("4  1  1  1  2  2    1  1  1  1 -1 -1     1  4  1 -2 -1  2    2 -4  2 -1 -2  1    -4 -4  2 -1  1 -5    -4  2  2  2  1  1"); // CCDC matrix for R
+   else if (latsym == "CCDC") return (1.0 / 9.0) * MatG6("4  1  1  1  2  2    1  1  1  1 -1 -1     1  4  1 -2 -1  2    2 -4  2 -1 -2  1    -4 -4  2 -1  1 -5    -4  2  2  2  1  1"); // CCDC matrix for R
    else return MatG6::Eye();
 }
 
@@ -470,24 +471,24 @@ MatG6 LRL_Cell::G6MakePrimitiveMatrix(const std::string& latsym)
    else if (toupper(latsym[0]) == 'B') return MatG6("1 0 0 0 0 0   0 1 0 0 0 0   .25 0 .25 0 .25 0   0 0 0 .5 0 .5   1 0 0 0 .5 0   0 0 0 0 0 1"); // for monoclinic, assumes c unique
    else if (toupper(latsym[0]) == 'C') return MatG6("1 0 0 0 0 0   .25 .25 0 0 0 .25   0 0 1 0 0 0    0 0 0 .5 .5 0   0 0 0 0 1 0   1 0 0 0 0 .5"); // for monoclinic, assumes b unique
    else if (toupper(latsym[0]) == 'F') return MatG6(".25 .25 0 0 0 .25     .25 0 .25 0 .25 0     0 .25 .25 .25  0 0    0 0 .5 .25 .25 .25     0 .5 0 .25 .25 .25     .5 0 0 .25 .25 .25");
-   else if (toupper(latsym[0]) == 'R') return (1.0 / 9.0)* MatG6("1 1 1 1 -1 -1    4 1 1  1  2  2     1  4  1  -2  -1  2     -4  -4  2  -1  1  -5     2  -4  2  -1  -2  1     -4  2  2  2  1  1");
+   else if (toupper(latsym[0]) == 'R') return (1.0 / 9.0) * MatG6("1 1 1 1 -1 -1    4 1 1  1  2  2     1  4  1  -2  -1  2     -4  -4  2  -1  1  -5     2  -4  2  -1  -2  1     -4  2  2  2  1  1");
    else if (toupper(latsym[0]) == 'H') return  MatG6::Eye();
    else return MatG6::Eye();
 }
 
-MatG6 LRL_Cell::LatSymMatG6( const std::string& latsym, const LRL_Cell& c ) {
-   return c.LatSymMatG6( latsym );
+MatG6 LRL_Cell::LatSymMatG6(const std::string& latsym, const LRL_Cell& c) {
+   return c.LatSymMatG6(latsym);
 }
 
-const MatG6 HexPerp(MatG6::Eye() - (1./3.)*MatG6( " 1 1 0 0 0 -1   1 1 0 0 0 -1   0 0 3 0 0 0   0 0 0 0 0 0   0 0 0 0 0 0   -1 -1 0 0 0 1" ) );
-const MatG6 RhmPerp(MatG6::Eye() - (1./3.)*MatG6( " 1 1 1 0 0  0   1 1 1 0 0  0   1 1 1 0 0 0   0 0 0 1 1 1   0 0 0 1 1 1    0  0 0 1 1 1" ) );
+const MatG6 HexPerp(MatG6::Eye() - (1. / 3.) * MatG6(" 1 1 0 0 0 -1   1 1 0 0 0 -1   0 0 3 0 0 0   0 0 0 0 0 0   0 0 0 0 0 0   -1 -1 0 0 0 1"));
+const MatG6 RhmPerp(MatG6::Eye() - (1. / 3.) * MatG6(" 1 1 1 0 0  0   1 1 1 0 0  0   1 1 1 0 0 0   0 0 0 1 1 1   0 0 0 1 1 1    0  0 0 1 1 1"));
 
-bool LRL_Cell::IsRhomobhedralAsHex( void ) const {
-   return IsRhomobhedralAsHex( G6(*this));
+bool LRL_Cell::IsRhomobhedralAsHex(void) const {
+   return IsRhomobhedralAsHex(G6(*this));
 }
 
-/*static*/ bool LRL_Cell::IsRhomobhedralAsHex( const LRL_Cell& c ) {
-   static const double degrees90 = 2.0*atan(1.0);
+/*static*/ bool LRL_Cell::IsRhomobhedralAsHex(const LRL_Cell& c) {
+   static const double degrees90 = 2.0 * atan(1.0);
    static const double degrees120 = 4.0 / 3.0 * degrees90;;
    return (std::abs(c[3] - degrees90) < 1.0E-4 && std::abs(c[4] - degrees90) < 1.0E-4) &&
       (std::abs(c[5] - degrees120) < 1.0E-4);
@@ -495,7 +496,7 @@ bool LRL_Cell::IsRhomobhedralAsHex( void ) const {
 
 // Assumes the cell EITHER has alpha=beta=gamma or a=b & alpha=beta=90 and gamma=120 (approximately)
 /*static*/ bool LRL_Cell::IsRhomobhedralAsHex(const G6& v) {
-   return (HexPerp*v).norm() < (RhmPerp*v).norm();
+   return (HexPerp * v).norm() < (RhmPerp * v).norm();
 }
 
 static int iseed;
@@ -532,21 +533,21 @@ LRL_Cell LRL_Cell::randDeloneUnreduced() {//LRL_Cell::randomLatticeNormalization
 }
 
 LRL_Cell LRL_Cell::rand(const double d) {//LRL_Cell::randomLatticeNormalizationConstant
-   return d*rand()/ randomLatticeNormalizationConstant;
+   return d * rand() / randomLatticeNormalizationConstant;
 }
 
 LRL_Cell LRL_Cell::randDeloneReduced(const double d) {//LRL_Cell::randomLatticeNormalizationConstant
-   return d*randDeloneReduced()/ randomLatticeNormalizationConstant;
+   return d * randDeloneReduced() / randomLatticeNormalizationConstant;
 }
 
 LRL_Cell LRL_Cell::randDeloneUnreduced(const double d) {//LRL_Cell::randomLatticeNormalizationConstant
-   return d*randDeloneUnreduced()/ randomLatticeNormalizationConstant;
+   return d * randDeloneUnreduced() / randomLatticeNormalizationConstant;
 }
 
 Matrix_3x3 LRL_Cell::Cart() const {
    static const double degreesPerRad = 180.0 / 4.0 / atan(1.0);
-   return Matrix_3x3::Cart(m_cell[0], m_cell[1], m_cell[2], 
-      degreesPerRad*m_cell[3], degreesPerRad*m_cell[4], degreesPerRad*m_cell[5]);
+   return Matrix_3x3::Cart(m_cell[0], m_cell[1], m_cell[2],
+      degreesPerRad * m_cell[3], degreesPerRad * m_cell[4], degreesPerRad * m_cell[5]);
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -587,7 +588,7 @@ LRL_Cell LRL_Cell::operator- (const LRL_Cell& c) const {
    const G6 v2(c);
    const G6 diff = v1 - v2;
    if (diff.norm() < 1.0E-10)
-      return LRL_Cell(0,0,0,0,0,0);
+      return LRL_Cell(0, 0, 0, 0, 0, 0);
    else
       return LRL_Cell(G6(v1 - v2));
 }
@@ -603,7 +604,7 @@ LRL_Cell& LRL_Cell::operator-= (const LRL_Cell& cl) {
 }
 
 LRL_Cell operator* (const double d, const LRL_Cell& c) {
-   return c*d;
+   return c * d;
 }
 
 LRL_Cell& LRL_Cell::operator= (const D7& v) {
@@ -697,4 +698,3 @@ bool LRL_Cell::CheckValid(const double a, const double b, const double c,
 
    return b1 && b2 && b3 && b4 && b5;
 }
-

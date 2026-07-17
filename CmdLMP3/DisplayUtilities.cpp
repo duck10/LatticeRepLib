@@ -108,10 +108,6 @@ ResultSelection selectResultsToShow(
       }
       v = out;
       };
-   deduplicateByMatrix(excellentResults);
-   deduplicateByMatrix(goodResults);
-   deduplicateByMatrix(poorResults);
-   deduplicateByMatrix(terribleResults);
 
    if (!excellentResults.empty()) {
       for (const auto& r : excellentResults) selection.resultsToShow.push_back(r);

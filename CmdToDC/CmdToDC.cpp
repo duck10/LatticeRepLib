@@ -5,7 +5,6 @@
 #include <utility>
 #include <vector>
 
-#include "BasisBase.h"
 #include "CS6Dist.h"
 #include "CS6Dist.cpp"
 #include "D7Dist.h"

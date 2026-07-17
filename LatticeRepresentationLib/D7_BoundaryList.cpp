@@ -480,7 +480,6 @@ std::vector<MatD7> D7_BoundaryList::Calculate24InterchangeMatrices(void) {
             MatD7 mx = *itb;
             itb = ite;
             const MatD7 m = vm[i] * vm[j];
-            std::find(vm.begin(), vm.end(), m);
             if (std::find(vm.begin(), vm.end(), m) == vm.end()) {
                vm.push_back(m);
                if (vm.size() >= 24) break;

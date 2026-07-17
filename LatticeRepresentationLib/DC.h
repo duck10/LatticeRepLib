@@ -5,14 +5,12 @@
 
 #include <vector>
 
-#include "BasisBase.h"
-
 #include "LRL_Cell.h"
 #include "LRL_ReadLatticeData.h"
 #include "LRL_ToString.h"
 #include "LRL_Vector3.h"
 
-class DC : private BasisBase<DC, double> {
+class DC {
 public:
    const static std::vector<Vector_3> vertices;
 public:

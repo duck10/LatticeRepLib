@@ -10,7 +10,6 @@
 #include "rhrand.h"
 #endif
 
-#include "BasisBase.h"
 #include "VecN.h"
 #include "LRL_indices.h"
 
@@ -24,11 +23,12 @@ class DC7u;
 #include <ostream>
 #include <string>
 
-class G6 : private BasisBase<G6> {
+class G6 {
 public:
    friend std::ostream& operator<< (std::ostream&, const G6&);
    friend G6 operator* (const double d, const G6& v);
    friend class S6;
+   class D13;
 
    G6(void);
    G6(const G6& v);
