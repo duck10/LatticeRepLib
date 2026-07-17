@@ -224,8 +224,9 @@ void MakeVerticalGrid() {
 
    std::ostringstream bottomText;
 
-   const int bottomStart = delta * ny + 1.5 * delta;
-   nx = 1.5 * delta; ny = 11;
+   const int bottomStart = static_cast<int>(delta * ny + 1.5 * delta);
+   nx = static_cast<int>(1.5 * delta);
+   ny = 11;
 
    const std::string newBottomText = BottomText(nx, ny, delta, bottomStart);
 
@@ -350,8 +351,8 @@ void MakeHorizontalGrid() {
 
    std::ostringstream bottomText;
 
-   const int bottomStart = delta * ny++ + 1.5 * delta;
-   nx = 1.5 * delta; 
+   const int bottomStart = static_cast<int>(delta * ny + 1.5 * delta);
+   nx = static_cast<int>(1.5 * delta);
    ny = 11;
 
    const std::string newBottomText = BottomText(nx, ny, delta, bottomStart);
