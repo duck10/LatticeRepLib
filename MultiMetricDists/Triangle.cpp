@@ -8,8 +8,8 @@
 
 //#include "stdafx.h"
 
-Triangle::Triangle(const std::vector<LRL_ReadLatticeData>& cells) 
-   : m_triangles( cells )
+Triangle::Triangle(const std::vector<LRL_Cell>& cells)
+   : m_triangles(cells)
 {
 }
 
@@ -23,7 +23,7 @@ size_t Triangle::Test(void)
    return violations;
 }
 
-size_t Triangle::Test(const LRL_ReadLatticeData& rcd1)
+size_t Triangle::Test(const LRL_Cell& rcd1)
 {
    size_t violations = 0;
    for (size_t i1 = 0; i1 < m_triangles.size(); ++i1)
@@ -31,7 +31,7 @@ size_t Triangle::Test(const LRL_ReadLatticeData& rcd1)
    return violations;
 }
 
-size_t Triangle::Test(const LRL_ReadLatticeData& rcd1, const LRL_ReadLatticeData& rcd2)
+size_t Triangle::Test(const LRL_Cell& rcd1, const LRL_Cell& rcd2)
 {
    size_t violations = 0;
    for (size_t i2 = 0; i2 < m_triangles.size(); ++i2) {
@@ -41,25 +41,25 @@ size_t Triangle::Test(const LRL_ReadLatticeData& rcd1, const LRL_ReadLatticeData
    return violations;
 }
 
-bool Triangle::TestTriangle(const LRL_ReadLatticeData & rcd1, const LRL_ReadLatticeData & rcd2, const LRL_ReadLatticeData & rcd3)
+bool Triangle::TestTriangle(const LRL_Cell& rcd1, const LRL_Cell& rcd2, const LRL_Cell& rcd3)
 {
-   const D7 d1 = rcd1.GetCell();
-   const D7 d2 = rcd2.GetCell();
-   const D7 d3 = rcd3.GetCell();
+   const D7 d1 = rcd1;
+   const D7 d2 = rcd2;
+   const D7 d3 = rcd3;
 
    double* a1 = d1.data();
    double* a2 = d2.data();
    double* a3 = d3.data();
-   const double dists0 = D7Dist(a1,a2);
-   const double dists1 = D7Dist(a1,a3);
-   const double dists2 = D7Dist(a2,a3);
+   const double dists0 = D7Dist(a1, a2);
+   const double dists1 = D7Dist(a1, a3);
+   const double dists2 = D7Dist(a2, a3);
 
-   const double triangleInequality = dists0 + dists1 + dists2 - 2.0*maxNC(dists0,dists1,dists2);
+   const double triangleInequality = dists0 + dists1 + dists2 - 2.0 * maxNC(dists0, dists1, dists2);
    if (triangleInequality / maxNC(dists0, dists1, dists2) < 0.0001 && triangleInequality < -1.0E-5) {
       std::cout << triangleInequality;
       ////std::cout << "              " << triangleInequality / minNC(dists0, dists1, dists2);
       std::cout << "        " << dists0 << "  " << dists1 << "  " << dists2;
-      std::cout << ((triangleInequality >=0.0) ? "  VIOLATION" : "") << std::endl;
+      std::cout << ((triangleInequality >= 0.0) ? "  VIOLATION" : "") << std::endl;
    }
 
    return triangleInequality < 0.0;

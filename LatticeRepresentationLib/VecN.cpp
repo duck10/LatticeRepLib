@@ -74,7 +74,6 @@ VecN::VecN( const std::vector<double>& v ) {
 }
 
 VecN::~VecN( ) {
-   const int i19191 = 19191;
 }
 
 VecN VecN::operator* ( const VecN& v2 ) const {
@@ -149,8 +148,6 @@ double& VecN::operator[]( const size_t i ) {
 VecN& VecN::operator= ( const VecN& v2 ) {
    m_vec = v2.m_vec;
    m_dim = v2.m_dim;
-   const size_t size1 = m_vec.size( );
-   const size_t size2 = v2.m_vec.size( );
    m_valid = v2.m_valid;
    return *this;
 }

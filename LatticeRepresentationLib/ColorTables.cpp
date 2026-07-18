@@ -108,28 +108,28 @@ int ColorRange::GetColorFromRangeFraction(const double frac) const {
 void ColorRange::GetHSVFromRangeFraction(const double frac, unsigned long& h,
    unsigned long& s, unsigned long& v) const
 {
-   h = m_minh + fmod(frac, 1.0) * (m_maxh - m_minh);
-   s = m_mins + fmod(frac, 1.0) * (m_maxs - m_mins);
-   v = m_minv + fmod(frac, 1.0) * (m_maxv - m_minv);
+   h = static_cast<unsigned long>(m_minh + fmod(frac, 1.0) * (m_maxh - m_minh));
+   s = static_cast<unsigned long>(m_mins + fmod(frac, 1.0) * (m_maxs - m_mins));
+   v = static_cast<unsigned long>(m_minv + fmod(frac, 1.0) * (m_maxv - m_minv));
 }
 
 void ColorRange::GetRGBFromRangeFraction(const double frac, unsigned long& r,
    unsigned long& g, unsigned long& b) const
 {
    CHSV minhsv;
-   minhsv.m_nHue = m_minh;
-   minhsv.m_nSaturation = m_mins;
-   minhsv.m_nValue = m_minv;
+   minhsv.m_nHue = static_cast<int>(m_minh);
+   minhsv.m_nSaturation = static_cast<int>(m_mins);
+   minhsv.m_nValue = static_cast<int>(m_minv);
    CHSV maxhsv;
-   maxhsv.m_nHue = m_maxh;
-   maxhsv.m_nSaturation = m_maxs;
-   maxhsv.m_nValue = m_maxv;
+   maxhsv.m_nHue = static_cast<int>(m_maxh);
+   maxhsv.m_nSaturation = static_cast<int>(m_maxs);
+   maxhsv.m_nValue = static_cast<int>(m_maxv);
    const CRGB rgbmin(minhsv);
    const CRGB rgbmax(maxhsv);
    const double newFrac = std::min(1.0, std::max(0.0, frac));
-   r = newFrac * (rgbmax.m_nRed - rgbmin.m_nRed) + rgbmin.m_nRed;
-   g = newFrac * (rgbmax.m_nGreen - rgbmin.m_nGreen) + rgbmin.m_nGreen;
-   b = newFrac * (rgbmax.m_nBlue - rgbmin.m_nBlue) + rgbmin.m_nBlue;
+   r = static_cast<unsigned long>(newFrac * (rgbmax.m_nRed - rgbmin.m_nRed) + rgbmin.m_nRed);
+   g = static_cast<unsigned long>(newFrac * (rgbmax.m_nGreen - rgbmin.m_nGreen) + rgbmin.m_nGreen);
+   b = static_cast<unsigned long>(newFrac * (rgbmax.m_nBlue - rgbmin.m_nBlue) + rgbmin.m_nBlue);
 }
 
 int ColorRange::ColorIndex(const double color) {
@@ -146,7 +146,7 @@ std::string ColorTables::GetCividisHEX(const size_t n) {
 
 void ColorTables::GetCividisRGB(const size_t n, int& r, int& g, int& b) {
 
-   int nn = n;
+   int nn = static_cast<int>(n);
    if (nn < 0) nn = 0;
    if (nn > 255) nn = 255;
    switch (nn) {
@@ -411,7 +411,7 @@ void ColorTables::GetCividisRGB(const size_t n, int& r, int& g, int& b) {
 
 std::string OrdinalToCividisHexString(const size_t n) {
 
-   int nn = n;
+   int nn = static_cast<int>(n);
    nn = std::max(0, nn);
    nn = std::min(255, nn);
 

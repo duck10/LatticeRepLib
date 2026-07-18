@@ -6,8 +6,8 @@
 //
 //
 // Edited for optimizations by Airlie J. McCoy 11/2025
-#ifndef NCDIST_H_MCCOLL
-#define NCDIST_H_MCCOLL
+#ifndef NCDIST_H_MCCOY_1
+#define NCDIST_H_MCCOY_1
 
 /* The projectors for the 15 base types (5-D boundaries
  in G6), plus a few extra for internal boundaries
@@ -1778,4 +1778,4 @@ inline double NCDist(const double *g1, const double *g2)
   return ws.compute(v1, v2);
 }
 } // namespace phasertng
-#endif /* NCDIST_H_MCCOLL */
+#endif /* NCDIST_H_MCCOY_1 */

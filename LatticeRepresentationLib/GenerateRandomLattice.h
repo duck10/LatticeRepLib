@@ -75,14 +75,13 @@ public:
 
          t = BinarySearchExtreme(s1, s2, 12);
          LRL_Cell celld = t;
-         const bool cellValid = LRL_Cell_Degrees(t).GetValid();
-         const bool b5 = 
-            (celld[3] + celld[4] + celld[5] - 2.0 * maxNC(celld[3], celld[4], celld[5])) 
+         const bool b5 =
+            (celld[3] + celld[4] + celld[5] - 2.0 * maxNC(celld[3], celld[4], celld[5]))
             >= 0.0 - 0.00001;
 
          //if (!LRL_Cell_Degrees(t).GetValid() || !t.GetValid() || !b5) {
          //   std::cout << "in GenerateExtreme  " << t.GetValid() << "  " << t.IsValid() << "   "
-         //      << cellValid << "  " << t << "     "
+         //      << t << "     "
          //      << LRL_Cell_Degrees(t) << std::endl;
          //}
          again = !(S6::CountPositive(S6(t)) > 0 && G6(t).GetValid() && t.GetValid() && b5);
@@ -99,7 +98,7 @@ public:
       S6 out;
       bool valid = false;
       size_t count = 0;
-      while ( !valid && count < 100) {
+      while (!valid && count < 100) {
          const S6 ran(rand());
          const bool b = Selling::Reduce(ran, out);
          const LRL_Cell_Degrees cell(out);
@@ -115,7 +114,7 @@ public:
 
    T randSellingUnreduced() {
       LRL_Cell rcell = RandCell();
-      while ( (!rcell.GetValid()) && S6(rcell).CountPositive() == 0) 
+      while ((!rcell.GetValid()) && S6(rcell).CountPositive() == 0)
          rcell = RandCell();
       return T(rcell);
    }
@@ -159,7 +158,7 @@ private:
 
    LRL_Cell RandCell()
    {
-      if (m_hasLengthLimits && m_hasAngleLimits ){
+      if (m_hasLengthLimits && m_hasAngleLimits) {
          throw("angle limits not yet implemented");
       }
       else if (m_hasLengthLimits) {
@@ -172,14 +171,14 @@ private:
          return RandCell(m_minA, m_maxA, m_minA, m_maxA, m_minA, m_maxA);
       }
    }
-   
+
    LRL_Cell RandCell(const double minEdgeA, const double maxEdgeA) {
       return RandCell(minEdgeA, maxEdgeA, minEdgeA, maxEdgeA, minEdgeA, maxEdgeA);
    }
 
-   LRL_Cell RandCell(const double minEdgeA, const double maxEdgeA, 
-                     const double minEdgeB, const double maxEdgeB, 
-                     const double minEdgeC, const double maxEdgeC) {
+   LRL_Cell RandCell(const double minEdgeA, const double maxEdgeA,
+      const double minEdgeB, const double maxEdgeB,
+      const double minEdgeC, const double maxEdgeC) {
       LRL_Cell c;
       Prepare2CellElements(minEdgeA, maxEdgeA, 0, c);
       Prepare2CellElements(minEdgeB, maxEdgeB, 1, c);
@@ -192,12 +191,12 @@ private:
    bool VerifyAngleLimits(const double minAngle, const double maxAngle) const {
       if (!m_hasAngleLimits) return true;
       else if (minAngle > maxAngle) return false;
-      else if (minAngle < 20.0 / 180.0 * 4.0*atan(1.0)) return false;
-      else if (maxAngle > 2.0 * 4.0*atan(1.0)) return false;
+      else if (minAngle < 20.0 / 180.0 * 4.0 * atan(1.0)) return false;
+      else if (maxAngle > 2.0 * 4.0 * atan(1.0)) return false;
       else return true;
    }
 
-   void GenerateThreeRandomFractionsThatSumToOne( double& r1, double& r2, double& r3 ) {
+   void GenerateThreeRandomFractionsThatSumToOne(double& r1, double& r2, double& r3) {
       const double a1 = rhrandGRL.urand();
       const double a2 = rhrandGRL.urand();
       const double a3 = rhrandGRL.urand();
@@ -207,23 +206,23 @@ private:
       r3 = a3 / sum;
    }
 
-   void PrepareAnglesInRadians( double& a3, double& a4, double& a5 ) {
+   void PrepareAnglesInRadians(double& a3, double& a4, double& a5) {
       static const double thirtyDegreesRad = 30.0 / 180.0 * 4 * atan(1.0);
-      static const double sixtyDegreesRad = 2.0*thirtyDegreesRad;
-      static const double ninetyDegreesRad = 3.0*thirtyDegreesRad;
-      static const double oneeightyDegreesRad = 6.0*thirtyDegreesRad;
-      static const double threesixtyDegreesRad = 12.0*thirtyDegreesRad;
+      static const double sixtyDegreesRad = 2.0 * thirtyDegreesRad;
+      static const double ninetyDegreesRad = 3.0 * thirtyDegreesRad;
+      static const double oneeightyDegreesRad = 6.0 * thirtyDegreesRad;
+      static const double threesixtyDegreesRad = 12.0 * thirtyDegreesRad;
       static const double tenDegreesRad = thirtyDegreesRad / 3.0;
       static const double oneDegreeRad = thirtyDegreesRad / 30.0;
 
       double totalAngles = 0.0;
-      while ( totalAngles < 2.0*tenDegreesRad)
+      while (totalAngles < 2.0 * tenDegreesRad)
          totalAngles = rhrandGRL.urand() * threesixtyDegreesRad;
       double r1, r2, r3;
 
       a3 = DBL_MAX; // force at least one pass
       while (a3 > oneeightyDegreesRad || a4 > oneeightyDegreesRad || a5 > oneeightyDegreesRad || a3 + a4 + a5 > threesixtyDegreesRad ||
-         (a3 + a4 + a5 - 2.0*maxNC(a3, a4, a5) < 0.0)  || 
+         (a3 + a4 + a5 - 2.0 * maxNC(a3, a4, a5) < 0.0) ||
          a3 < oneDegreeRad || a4 < oneDegreeRad || a5 < oneDegreeRad)
       {
          GenerateThreeRandomFractionsThatSumToOne(r1, r2, r3);
@@ -312,14 +311,10 @@ private:
       // operator- doesn't work here because s2 is invalid !!!!!!!!!!
       S6 s6delta;
       for (size_t i = 0; i < 6; ++i) s6delta[i] = s2[i] - s1[i];
-      const double diff = s6delta.norm();
       S6 midpoint = s1 + 0.5 * s6delta;
 
       const LRL_Cell_Degrees celld(midpoint);
       const bool bmid = celld.GetValid();
-      const bool b5 =
-         (celld[3] + celld[4] + celld[5] - 2.0 * maxNC(celld[3], celld[4], celld[5]))
-         >= 0.0 - 0.00001;
 
       midpoint.SetValid(bmid);
 

@@ -168,7 +168,6 @@
     <ClCompile Include="CS6Dist.c" />
     <ClCompile Include="CS6Dist.cpp" />
     <ClCompile Include="D13.cpp" />
-    <ClCompile Include="dbscan.cpp" />
     <ClCompile Include="DC.cpp" />
     <ClCompile Include="DC7u.cpp" />
     <ClCompile Include="DC7uBoundaryMatrices.cpp" />
@@ -245,7 +244,6 @@
     <ClInclude Include="ColorTables.h" />
     <ClInclude Include="CS6Dist.h" />
     <ClInclude Include="D13.h" />
-    <ClInclude Include="dbscan.h" />
     <ClInclude Include="DC.h" />
     <ClInclude Include="DC7u.h" />
     <ClInclude Include="DC7uBoundaryMatrices.h" />

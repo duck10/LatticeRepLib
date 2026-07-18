@@ -38,7 +38,7 @@ public:
       os << ";   threshold      " << mtfc.m_conventionalThreshold
          << "  (max decentered P3 distance for NEW display, % of reference P3 norm)\n";
       os << ";   ratio tolerance " << mtfc.m_ratioTolerance
-         << "  (widens volume-ratio matrix selection; total half-width = 0.5 + this)\n";
+         << "  (confidence bar in [0,0.5] for including a 2nd-nearest determinant; higher = stricter/faster)\n";
       return os;
    }
 
@@ -185,13 +185,24 @@ public:
          });
 
       // ------------------------------------------------------------------
-      // RATIOTOLERANCE: widens the determinant range selected by
-      // volume-ratio-based matrix filtering. A determinant d is included
-      // whenever |d - ratio| <= 0.5 + RATIOTOLERANCE, where ratio is the
-      // reference/mobile primitive-cell volume ratio. Default 0.5 gives a
-      // total half-width of 1.0, which always includes both floor(ratio)
-      // and ceil(ratio) for a non-integer ratio. Larger values widen the
-      // search (safer, slower); 0 narrows to nearest-integer rounding only.
+      // RATIOTOLERANCE: a confidence bar (in [0, 0.5]) for whether a
+      // second, non-nearest determinant is also searched for a given
+      // reference/mobile primitive-cell volume ratio r. Modeling a
+      // determinant d's likelihood of being correct as L(distance) =
+      // max(0, 1 - distance) -- 100% at distance 0, 50% at distance 0.5
+      // (an exact tie between neighbors, e.g. r=3.5), 0% at distance >=1 --
+      // d is included whenever L(|d - r|) >= RATIOTOLERANCE, which reduces
+      // to the fixed comparison |d - r| <= 1 - RATIOTOLERANCE. The single
+      // nearest determinant is always included automatically (its
+      // likelihood is always >= 50% >= RATIOTOLERANCE, since RATIOTOLERANCE
+      // is capped at 0.5). Default 0.20: only search a second determinant
+      // if it has at least a 20% chance of being the right one.
+      //
+      // NOTE: larger values here mean a STRICTER (narrower, faster)
+      // search -- the opposite sense from a plain widening margin. 0.5
+      // is the strictest useful value (never search a second candidate
+      // unless it's tied with the nearest); 0 is the loosest (search any
+      // determinant within distance 1.0 of r).
       // ------------------------------------------------------------------
       InputHandler::registerHandler("RATIOTOLERANCE", 0.45,
          [this](const BaseControlVariables&, const std::string& value) {
@@ -288,7 +299,7 @@ private:
    bool    m_useHNF = false;
    DisplayMode m_displayMode = DisplayMode::NEW;
    double  m_conventionalThreshold = 2.0;  // percent of referenceP3Norm, matches GOOD tier
-   double  m_ratioTolerance = 0.5;  // widens volume-ratio determinant selection; total half-width = 0.5 + this
+   double  m_ratioTolerance = 0.20;  // confidence bar in [0,0.5] for including a 2nd-nearest determinant (see RATIOTOLERANCE)
 
 };
 

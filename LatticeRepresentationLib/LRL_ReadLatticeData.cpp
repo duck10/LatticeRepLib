@@ -69,7 +69,7 @@ static const std::string symbolsC3(" C3 ");
 static const std::string symbolsP3(" P3 ");
 static const std::string symbolsDU(" U DU DC7U ");
 static const std::string allowedLatticeSymbols = symbols6 + symbols7 + symbols13 + symbolsSL + symbolsC3 +
-   symbolsP3 + symbolsDU;
+symbolsP3 + symbolsDU;
 
 
 size_t SizeForLatticeType(const std::string& lattice) {
@@ -91,8 +91,8 @@ const std::vector<std::string> vlattice_names(lattice_names, lattice_names + siz
 bool LRL_ReadLatticeData::IsLatticeName(const std::string& inputName, const std::vector<std::string>& nameList) {
    std::string upperName(LRL_StringTools::strToupper(inputName));
    if (upperName.back() != ' ') upperName += " ";
-   const bool b =  std::find(nameList.begin(), nameList.end(),
-     upperName) != nameList.end();
+   const bool b = std::find(nameList.begin(), nameList.end(),
+      upperName) != nameList.end();
    return b;
 }
 
@@ -101,64 +101,64 @@ bool LRL_ReadLatticeData::IsLatticeName(const std::vector<std::string>& nameList
 }
 
 bool HasLatticeParams6(const std::string& s) {
-   std::istringstream iss( s );
+   std::istringstream iss(s);
    std::vector<std::string> fields;
    std::string onefield;
    while (iss) {
       iss >> onefield;
-      if (iss) fields.push_back( onefield );
+      if (iss) fields.push_back(onefield);
    }
-   return fields.size( ) == 6;
+   return fields.size() == 6;
 }
 
-bool HasLatticeParams7( const std::string& s ) {
-   std::istringstream iss( s );
+bool HasLatticeParams7(const std::string& s) {
+   std::istringstream iss(s);
    std::vector<std::string> fields;
    std::string onefield;
    while (iss) {
       iss >> onefield;
-      if (iss) fields.push_back( onefield );
+      if (iss) fields.push_back(onefield);
    }
-   return fields.size( ) == 7;
+   return fields.size() == 7;
 }
 
-std::pair<std::vector<double>, std::vector<double> > LRL_ReadLatticeData::SplitFields( const int n, const std::vector<double>& fields) {
+std::pair<std::vector<double>, std::vector<double> > LRL_ReadLatticeData::SplitFields(const int n, const std::vector<double>& fields) {
    // if there are more than n fields, try to assume that the rest are standard deviations
    std::vector<double> v1;
    std::vector<double> v2;
-   if (n <= fields.size( ))
-      v1 = std::vector<double>( fields.begin( ), fields.begin( ) + n );
-   if ( 2*n <= fields.size( ))
-      v2 = std::vector<double>( fields.begin( ) + n, fields.begin( ) + 2*n );
-   return std::make_pair( v1, v2 );
+   if (n <= fields.size())
+      v1 = std::vector<double>(fields.begin(), fields.begin() + n);
+   if (2 * n <= fields.size())
+      v2 = std::vector<double>(fields.begin() + n, fields.begin() + 2 * n);
+   return std::make_pair(v1, v2);
 }
 
-bool LRL_ReadLatticeData::SetRandomCell( const std::string& inputDataType) {
+bool LRL_ReadLatticeData::SetRandomCell(const std::string& inputDataType) {
    if (inputDataType != "RANDOM ") return false;
 
    m_inputDataType = "P";
    m_lattice = "P";
-   const G6 g6Cell = generator.SetLengthLimits( 10.0, 100.0 ).GenerateExtreme( );
-   m_cell = LRL_Cell( g6Cell );
-   m_cell.SetSigmas(LRL_Cell( 0.1 * m_cell[0], 0.1 * m_cell[1], 0.1 * m_cell[2], 0.1 * m_cell[3], 0.1 * m_cell[4], 0.1 * m_cell[5] ));
-   m_strCell = std::string(";RANDOM (P ") + LRL_ToString( LRL_Cell_Degrees(m_cell )) + std::string(")");
+   const G6 g6Cell = generator.SetLengthLimits(10.0, 100.0).GenerateExtreme();
+   m_cell = LRL_Cell(g6Cell);
+   m_cell.SetSigmas(LRL_Cell(0.1 * m_cell[0], 0.1 * m_cell[1], 0.1 * m_cell[2], 0.1 * m_cell[3], 0.1 * m_cell[4], 0.1 * m_cell[5]));
+   m_strCell = std::string(";RANDOM (P ") + LRL_ToString(LRL_Cell_Degrees(m_cell)) + std::string(")");
    return true;
 }
 
-bool LRL_ReadLatticeData::SetD7Data( const std::vector<double>& fields ) {
-   const bool test = IsLatticeName( m_inputDataType, vD7_names );
+bool LRL_ReadLatticeData::SetD7Data(const std::vector<double>& fields) {
+   const bool test = IsLatticeName(m_inputDataType, vD7_names);
    if (test) {
-      m_cell = LRL_Cell( D7( fields ) );
+      m_cell = LRL_Cell(D7(fields));
       m_lattice = "P";
    }
    return test;
 }
 
-bool LRL_ReadLatticeData::SetG6Data( const std::vector<double>& fields ) {
-   const bool test = IsLatticeName( m_inputDataType, vG6_names );
+bool LRL_ReadLatticeData::SetG6Data(const std::vector<double>& fields) {
+   const bool test = IsLatticeName(m_inputDataType, vG6_names);
    //const size_t nParams = SizeForLatticeType(m_inputDataType);
    if (test && fields.size() >= 6) {
-      m_cell = LRL_Cell( G6( fields ) );
+      m_cell = LRL_Cell(G6(fields));
       m_lattice = "P";
    }
    return test;
@@ -218,7 +218,7 @@ bool LRL_ReadLatticeData::SetB4Data(const std::vector<double>& fields) {
    const double s5 = v4.Dot(v2);
    const double s6 = v4.Dot(v3);
    if (test) {
-      m_cell = LRL_Cell(S6(s1,s2,s3,s4,s5,s6));
+      m_cell = LRL_Cell(S6(s1, s2, s3, s4, s5, s6));
       m_lattice = "P";
    }
    return test;
@@ -236,7 +236,7 @@ bool LRL_ReadLatticeData::SetUData(const std::vector<double>& fields) {
 }
 
 bool LRL_ReadLatticeData::SetV7Data(const std::vector<double>& fields) {
-   std::vector<std::string> names{ "V7", " V7 ", " V7", "V7 ", "V", " V ", " V", "V "};
+   std::vector<std::string> names{ "V7", " V7 ", " V7", "V7 ", "V", " V ", " V", "V " };
    bool test = IsLatticeName(m_inputDataType, names);
    if (!test) return false;
    if (fields.size() < 7) return false;
@@ -257,17 +257,17 @@ bool LRL_ReadLatticeData::SetS6Data(const std::vector<double>& fields) {
    return test;
 }
 
-bool LRL_ReadLatticeData::SetUnitCellTypeData( const std::pair<std::vector<double>, std::vector<double> >& params ) {
-   const bool test = IsLatticeName( m_inputDataType, vlattice_names );
-   if (test && params.first.size()>=6) {
-      m_cell = LRL_Cell( params.first[0], params.first[1], params.first[2], params.first[3], params.first[4], params.first[5] );
-      m_cell.SetValid( G6( m_cell ).IsValid( ) );
-      if (params.second.size( ) >= 6)
-         m_cell.SetSigmas( params.second );
+bool LRL_ReadLatticeData::SetUnitCellTypeData(const std::pair<std::vector<double>, std::vector<double> >& params) {
+   const bool test = IsLatticeName(m_inputDataType, vlattice_names);
+   if (test && params.first.size() >= 6) {
+      m_cell = LRL_Cell(params.first[0], params.first[1], params.first[2], params.first[3], params.first[4], params.first[5]);
+      m_cell.SetValid(G6(m_cell).IsValid());
+      if (params.second.size() >= 6)
+         m_cell.SetSigmas(params.second);
       else {
-         std::vector<double> s( 6 );
+         std::vector<double> s(6);
          for (size_t i = 0; i < 6; ++i) s[i] = 0.01 * m_cell[i];
-         m_cell.SetSigmas( s );
+         m_cell.SetSigmas(s);
       }
    }
    return test;
@@ -326,9 +326,9 @@ bool LRL_ReadLatticeData::StringToCell(const std::vector<double>& fields) {
       SetUnitCellTypeData(params);
 
    if (valid && params.second.size() >= 6) {// ASSUMING ALL SIGMAS FOR ALL TYPES ARE CELL SIGMAS, NOT OTHER TYPES
-         m_cell.SetSigmas(params.second);
-         //return false;
-      }
+      m_cell.SetSigmas(params.second);
+      //return false;
+   }
    return valid;
 }
 
@@ -336,7 +336,7 @@ void LRL_ReadLatticeData::CellReader(const std::string& s) {
 
    //const std::string strupper = LRL_StringTools::strToupper(s.substr(0, 5));
    std::vector<double> fields = GetFieldsForCellFromString(s);
-   if (s[0] == ';') m_incomingSemicolons += "\n" +m_strCell;
+   if (s[0] == ';') m_incomingSemicolons += "\n" + m_strCell;
    if (fields.empty() && s.length() != 0 && s[0] != ';') {
       std::cout << "; input line rejected(F)" << std::endl;
       return;
@@ -417,10 +417,10 @@ bool is_valid_float(const std::string str) {
 }
 
 
-bool CheckParameters( const std::string& lattice,  const std::vector<std::string>& fields)
+bool CheckParameters(const std::string& lattice, const std::vector<std::string>& fields)
 {
    const size_t n = SizeForLatticeType(lattice);
-   for (size_t i = 1; i < n; ++i ) { 
+   for (size_t i = 1; i < n; ++i) {
       if (!is_valid_float(fields[i])) {
          return false;
       }
@@ -443,7 +443,7 @@ std::vector<std::string> IsLattice(const std::vector<std::string>& fields) {
 
    std::vector<std::string> out;
 
-   if (allowedLatticeSymbols.find(" "+fields[0] + " ") != std::string::npos) {
+   if (allowedLatticeSymbols.find(" " + fields[0] + " ") != std::string::npos) {
       return fields;
    }
    else if (fields.size() > 6 && symbols6.find(" " + fields[6] + " ") != std::string::npos) {
@@ -470,7 +470,7 @@ std::vector<std::string> CleanInput(std::string& strcell) {
 bool FindLatticeSymbol(const std::string& lattice, const std::vector<std::string>& fields) {
    const size_t maxIndex = SizeForLatticeType(lattice);;
 
-   for (size_t i = 0; i < std::min(fields.size(),maxIndex); ++i) {
+   for (size_t i = 0; i < std::min(fields.size(), maxIndex); ++i) {
       if (allowedLatticeSymbols.find(" " + fields[i] + " ") != std::string::npos) {
          return true;
       }
@@ -512,7 +512,7 @@ std::string LRL_ReadLatticeData::CellReaderB(std::string& strcell) const {
       std::cout << "; not enough data (A)" << std::endl;
       return "";
    }
-   else if ( newFields.size() < 7) {
+   else if (newFields.size() < 7) {
       std::cout << "; not enough data (A)" << std::endl;
       return "";
    }
@@ -563,15 +563,14 @@ LRL_ReadLatticeData LRL_ReadLatticeData::read(void) {
    m_strCell.clear();
    m_cell.SetValid(false);
    std::getline(std::cin, m_strCell);
-   
+
    const std::string ucase = LRL_StringTools::strToupper(m_strCell.substr(0, 10));
 
    if (!std::cin || ucase.find("END") != std::string::npos) {
       m_lattice = "EOF";
    }
    else if (ucase.find("RANDOM") != std::string::npos) {
-      bool b = LRL_ReadLatticeData::SetRandomCell("RANDOM ");
-      const int i19191 = 19191;
+      LRL_ReadLatticeData::SetRandomCell("RANDOM ");
    }
    else {
       m_strCell = CellReaderB(m_strCell);
@@ -591,7 +590,7 @@ std::vector<LRL_ReadLatticeData> LRL_ReadLatticeData::ReadLatticeData() {
       if (input.IsValid()) {
          input.SetOrdinal(ordinal);
          inputList.emplace_back(input);
-         ++ordinal; 
+         ++ordinal;
       }
 
    }

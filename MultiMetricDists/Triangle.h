@@ -4,23 +4,22 @@
 #include <vector>
 
 
-#include "LRL_ReadLatticeData.h"
+#include "LRL_Cell.h"
 
 class Triangle {
 
 public:
-   Triangle(const std::vector<LRL_ReadLatticeData>& cells);
+   Triangle(const std::vector<LRL_Cell>& cells);
 
    size_t Test(void);
-   size_t Test(const LRL_ReadLatticeData& rcd1);
-   size_t Test(const LRL_ReadLatticeData& rcd1,  const LRL_ReadLatticeData& rcd2);
+   size_t Test(const LRL_Cell& rcd1);
+   size_t Test(const LRL_Cell& rcd1, const LRL_Cell& rcd2);
 
-   bool TestTriangle(const LRL_ReadLatticeData& rcd1, const LRL_ReadLatticeData& rcd2, const LRL_ReadLatticeData& rcd3);
+   bool TestTriangle(const LRL_Cell& rcd1, const LRL_Cell& rcd2, const LRL_Cell& rcd3);
 
 
 private:
-   const std::vector<LRL_ReadLatticeData> m_triangles;
+   const std::vector<LRL_Cell> m_triangles;
 };
 
 #endif  // TRIANGLE_H
-

@@ -2,6 +2,7 @@
 #include "TransformationMatrices.h"
 
 #include <cmath>
+#include <iostream>
 
 namespace {
 
@@ -129,16 +130,68 @@ MatrixGroups generateSearchMatrixGroups(const MultiTransformFinderControls& cont
 
 MatrixGroups selectMatrixGroupsForRatio(
    const MultiTransformFinderControls& controls, double ratio) {
-   const double halfWidth = 0.5 + controls.getRatioTolerance();
+   return selectMatrixGroupsForRatio(controls, ratio, controls.getRatioTolerance());
+}
+
+MatrixGroups selectMatrixGroupsForRatio(
+   const MultiTransformFinderControls& controls, double ratio, double ratioTolerance) {
+
+   // Probability model: treat a determinant d's likelihood of being the
+   // correct choice as a linear function of its distance from the ratio --
+   // L(distance) = max(0, 1 - distance). L=1.0 when the ratio sits exactly
+   // on d (certain), L=0.5 at distance 0.5 (an exact tie with its neighbor,
+   // e.g. ratio=3.5 between det=3 and det=4), L=0 at distance >= 1 (e.g.
+   // det=4 when ratio=5.0 exactly -- no reason to search it).
+   //
+   // RATIOTOLERANCE is a confidence bar in [0, 0.5]: include d only if
+   // its likelihood meets or exceeds it. Solving L(|d-r|) >= RATIOTOLERANCE
+   // for the distance gives a single fixed threshold, independent of which
+   // candidate is nearest:
+   //    include d  iff  |d - r| <= 1 - RATIOTOLERANCE
+   // As long as RATIOTOLERANCE <= 0.5, the ratio's single nearest candidate
+   // is always included automatically (its distance is at most 0.5, so its
+   // likelihood is always at least 0.5 >= RATIOTOLERANCE) -- no separate
+   // "always include nearest" rule is needed.
+   //
+   // NOTE: larger RATIOTOLERANCE means a STRICTER (narrower, faster)
+   // search here -- the opposite sense from the old additive-window
+   // formula, where larger meant wider/safer. This is intentional: the
+   // parameter now means "required confidence," not "extra margin."
+   const double threshold = 1.0 - ratioTolerance;
+
+   const double dist2 = std::abs(2.0 - ratio);
+   const double dist3 = std::abs(3.0 - ratio);
+   const double dist4 = std::abs(4.0 - ratio);
+   const double dist5 = std::abs(5.0 - ratio);
+   const double dist6 = std::abs(6.0 - ratio);
+
+   const bool includeDet2 = dist2 <= threshold;
+   const bool includeDet3 = dist3 <= threshold;
+   const bool includeDet4 = dist4 <= threshold;
+   const bool includeDet5 = dist5 <= threshold;
+   const bool includeDet6 = dist6 <= threshold;
 
    MatrixGroups groups;
    groups.push_back(getDet1Matrices(controls));  // always included
 
-   if (std::abs(2.0 - ratio) <= halfWidth) groups.push_back(getDet2Matrices(controls));
-   if (std::abs(3.0 - ratio) <= halfWidth) groups.push_back(getDet3Matrices(controls));
-   if (std::abs(4.0 - ratio) <= halfWidth) groups.push_back(getDet4Matrices(controls));
-   if (std::abs(5.0 - ratio) <= halfWidth) groups.push_back(getDet5Matrices(controls));
-   if (std::abs(6.0 - ratio) <= halfWidth) groups.push_back(getDet6Matrices(controls));
+   if (includeDet2) groups.push_back(getDet2Matrices(controls));
+   if (includeDet3) groups.push_back(getDet3Matrices(controls));
+   if (includeDet4) groups.push_back(getDet4Matrices(controls));
+   if (includeDet5) groups.push_back(getDet5Matrices(controls));
+   if (includeDet6) groups.push_back(getDet6Matrices(controls));
+
+   // det=3 and det=4 both include a full brute-force integer matrix search
+   // (see ensureBuilt() above), far more expensive than det=2, 5, or 6
+   // (HNF matrices only). Both firing together now only happens when the
+   // ratio's confidence in the farther of the two meets RATIOTOLERANCE --
+   // rarer than under the old formula, but still costs 50-70+ seconds
+   // when it happens, so still worth flagging.
+   if (includeDet3 && includeDet4) {
+      std::cout << "; Warning: primitive cell volume ratio " << ratio
+         << " is ambiguous between det=3 and det=4 at the current RATIOTOLERANCE"
+         << " -- both brute-force searches will run, which may take 50-70+ seconds"
+         << " for this match." << std::endl;
+   }
 
    return groups;
 }

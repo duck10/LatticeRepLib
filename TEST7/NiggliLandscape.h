@@ -91,12 +91,13 @@ NiggliLandscape::AnalyzeLandscape(const G6& g6, double h) {
 
          LRL_Cell reducedCellObj(reduced);
          result.reducedVolume = reducedCellObj.Volume();
-         result.reductionCycles = Niggli::GetCycles();
+         result.reductionCycles = static_cast<int>(Niggli::GetCycles());
 
          result.volumePreserved =
             std::abs(result.reducedVolume - result.inputVolume) < 0.01;
       }
-   } else {
+   }
+   else {
       result.reducedCell = g6;
       result.reducedTrace = result.inputTrace;
       result.reducedVolume = result.inputVolume;
@@ -142,7 +143,8 @@ NiggliLandscape::AnalyzeLandscape(const G6& g6, double h) {
       std::cout << "  Trace: " << result.reducedTrace;
       if (std::abs(result.reducedTrace - result.inputTrace) > h) {
          std::cout << " (changed from " << result.inputTrace << ")";
-      } else {
+      }
+      else {
          std::cout << " (unchanged)";
       }
       std::cout << std::endl;
@@ -150,7 +152,8 @@ NiggliLandscape::AnalyzeLandscape(const G6& g6, double h) {
       std::cout << "  Volume: " << result.reducedVolume;
       if (result.volumePreserved) {
          std::cout << " ? preserved" << std::endl;
-      } else {
+      }
+      else {
          std::cout << " ? NOT PRESERVED (BUG!)" << std::endl;
       }
 
@@ -162,17 +165,18 @@ NiggliLandscape::AnalyzeLandscape(const G6& g6, double h) {
    std::cout << "KEY INSIGHTS" << std::endl;
    std::cout << std::string(70, '=') << std::endl;
 
-   std::cout << "\n• Niggli reduction uses DISCRETE transformations" << std::endl;
-   std::cout << "  (unimodular matrices with determinant ±1)" << std::endl;
+   std::cout << "\n? Niggli reduction uses DISCRETE transformations" << std::endl;
+   std::cout << "  (unimodular matrices with determinant ?1)" << std::endl;
 
-   std::cout << "\n• Volume MUST be preserved:" << std::endl;
+   std::cout << "\n? Volume MUST be preserved:" << std::endl;
    if (result.volumePreserved || result.isReduced) {
       std::cout << "  ? Volume preserved correctly" << std::endl;
-   } else {
+   }
+   else {
       std::cout << "  ? Volume NOT preserved - implementation bug!" << std::endl;
    }
 
-   std::cout << "\n• This is NOT continuous optimization:" << std::endl;
+   std::cout << "\n? This is NOT continuous optimization:" << std::endl;
    std::cout << "  - No gradient descent" << std::endl;
    std::cout << "  - No continuous paths between representations" << std::endl;
    std::cout << "  - Each step is a discrete matrix transformation" << std::endl;
@@ -200,10 +204,12 @@ NiggliLandscape::CheckC1(const G6& g6, double tol) {
    if (!part1) {
       oss << " ? g1 > g2 FAILS";
       check.recommendation = "Apply Step 1: Swap (A,?) ? (B,?)";
-   } else if (!part2) {
+   }
+   else if (!part2) {
       oss << " ? g2 > g3 FAILS";
       check.recommendation = "Apply Step 2: Swap (B,?) ? (C,?)";
-   } else {
+   }
+   else {
       oss << " ? PASS";
    }
 
@@ -228,7 +234,8 @@ NiggliLandscape::CheckC2(const G6& g6, double tol) {
    if (!check.passes) {
       oss << " ? FAILS";
       check.recommendation = "Apply Step 5: Reduce ?";
-   } else {
+   }
+   else {
       oss << " ? PASS";
    }
 
@@ -253,7 +260,8 @@ NiggliLandscape::CheckC3(const G6& g6, double tol) {
    if (!check.passes) {
       oss << " ? FAILS";
       check.recommendation = "Apply Step 6: Reduce ?";
-   } else {
+   }
+   else {
       oss << " ? PASS";
    }
 
@@ -278,7 +286,8 @@ NiggliLandscape::CheckC4(const G6& g6, double tol) {
    if (!check.passes) {
       oss << " ? FAILS";
       check.recommendation = "Apply Step 7: Reduce ?";
-   } else {
+   }
+   else {
       oss << " ? PASS";
    }
 
@@ -308,7 +317,8 @@ NiggliLandscape::CheckC5(const G6& g6, double tol) {
       if (!passes) {
          check.recommendation = "Apply Step 8: Special reduction";
       }
-   } else {
+   }
+   else {
       oss << "Sign pattern OK";
    }
 
@@ -318,4 +328,3 @@ NiggliLandscape::CheckC5(const G6& g6, double tol) {
 }
 
 #endif // NIGGLI_LANDSCAPE_H
-

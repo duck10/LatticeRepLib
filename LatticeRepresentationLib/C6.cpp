@@ -92,7 +92,6 @@ C6 C6::operator-(const C6& c) {
 }
 
 C6::operator S6() const {
-   const C6& c(*this);
    throw ("not implemented");
    return S6();
 }

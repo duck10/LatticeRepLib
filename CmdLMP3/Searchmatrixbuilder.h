@@ -79,4 +79,16 @@ const std::vector<Matrix_3x3>& getDet6Matrices(const MultiTransformFinderControl
 MatrixGroups selectMatrixGroupsForRatio(
    const MultiTransformFinderControls& controls, double ratio);
 
+// Same selection logic, but with the tolerance passed explicitly instead of
+// read from controls.getRatioTolerance(). controls is still needed here --
+// it supplies the underlying per-determinant matrix caches via
+// getDetNMatrices() (e.g. getMatrixOrder() for det=1) -- but its own
+// RatioTolerance setting is ignored in favor of the ratioTolerance
+// argument. Exists so callers (in particular, tests exercising several
+// different tolerance values) can vary just that one value without
+// needing to construct or mutate a MultiTransformFinderControls to do it;
+// the single-argument overload above is a thin wrapper around this one.
+MatrixGroups selectMatrixGroupsForRatio(
+   const MultiTransformFinderControls& controls, double ratio, double ratioTolerance);
+
 #endif // SEARCHMATRIXBUILDER_H

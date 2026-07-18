@@ -44,5 +44,8 @@
     <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MultiMetricDistsControls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

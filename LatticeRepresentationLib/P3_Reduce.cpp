@@ -31,7 +31,7 @@ Matrix_3x3 ProjectionSubtractionMatrix(const size_t i, const size_t j, const dou
    for (size_t col = 0; col < 3; ++col) {
       size_t idx_i = i * 3 + col;
       size_t idx_j = j * 3 + col;
-      M[idx_i] -= lambda * M[idx_j];
+      M[static_cast<int>(idx_i)] -= lambda * M[static_cast<int>(idx_j)];
    }
 
    return M;
@@ -46,8 +46,8 @@ Matrix_3x3 CanonicalMatrix(const P3& input) {
       const auto& [x, y] = transformed[i];
       if (y < 0.0) {
          transformed[i] = { -x, -y };
-         M_reflect[i * 3 + 0] *= -1.0;
-         M_reflect[i * 3 + 1] *= -1.0;
+         M_reflect[static_cast<int>(i * 3 + 0)] *= -1.0;
+         M_reflect[static_cast<int>(i * 3 + 1)] *= -1.0;
       }
    }
 
@@ -64,7 +64,7 @@ Matrix_3x3 CanonicalMatrix(const P3& input) {
    for (size_t i = 0; i < 3; ++i) {
       size_t src_row = mags[i].second;
       for (size_t j = 0; j < 3; ++j) {
-         M_sort[i * 3 + j] = M_reflect[src_row * 3 + j];
+         M_sort[static_cast<int>(i * 3 + j)] = M_reflect[static_cast<int>(src_row * 3 + j)];
       }
    }
 
@@ -236,16 +236,16 @@ P3 P3_Reduce::CanonicalPresentation(const P3& input) {
 
 double P3_Reduce::P3Cost(const P3& p) {
    static constexpr int choice = 0;
-   if (choice == 0) {
+   if constexpr (choice == 0) {
       return P3ScalarAbsCost(p);
    }
    //else if (choice == 1) { // to find the smallest negative sum, clearly nonsense results
    //   return P3ScalarCost(p);
    //}
-   else if (choice == 2) {
+   else if constexpr (choice == 2) {
       return P3TraceCost(p);
    }
-   else if (choice == 3) {
+   else if constexpr (choice == 3) {
       return ComputeMetricCost(LRL_Cell(p));
    }
    else {
@@ -412,7 +412,7 @@ std::pair<LRL_Cell, Matrix_3x3> P3_Reduce::ReduceCellWith3480(const LRL_Cell& in
                const int i19191 = 19191;
             }
 
-            if (debug && globalIteration == 0 && stage2Iterations == 0 && i < 5) {
+            if constexpr (debug && globalIteration == 0 && stage2Iterations == 0 && i < 5) {
                std::cout << "Matrix " << i << " transforms input to: " << P3(transformed) << std::endl;
             }
 

@@ -83,9 +83,11 @@ public:
             << (mc.compareTrace - mc.abTrace);
          if (mc.compareTrace < mc.abTrace - 1.0e-6) {
             os << " (Compare is BETTER)";
-         } else if (mc.abTrace < mc.compareTrace - 1.0e-6) {
+         }
+         else if (mc.abTrace < mc.compareTrace - 1.0e-6) {
             os << " (A-B is BETTER)";
-         } else {
+         }
+         else {
             os << " (Same trace, different cell)";
          }
          os << std::endl;
@@ -170,17 +172,18 @@ inline void ReductionComparison::Compare(int numCells) {
       auto endAB = std::chrono::high_resolution_clock::now();
       auto durationAB = std::chrono::duration_cast<std::chrono::microseconds>(endAB - startAB);
 
-      ab.executionTimes.push_back(durationAB.count());
+      ab.executionTimes.push_back(static_cast<double>(durationAB.count()));
       if (successAB) {
          ab.successes++;
-         ab.totalIterations += Niggli::GetCycles();
-      } else {
+         ab.totalIterations += static_cast<int>(Niggli::GetCycles());
+      }
+      else {
          ab.failures++;
          continue;  // Skip this cell if A-B fails
       }
 
       double abTrace = ComputeTrace(resultAB);
-      int abCycles = Niggli::GetCycles();
+      int abCycles = static_cast<int>(Niggli::GetCycles());
 
       // ===== Test Krivy-Gruber =====
       auto startKG = std::chrono::high_resolution_clock::now();
@@ -188,7 +191,7 @@ inline void ReductionComparison::Compare(int numCells) {
       auto endKG = std::chrono::high_resolution_clock::now();
       auto durationKG = std::chrono::duration_cast<std::chrono::microseconds>(endKG - startKG);
 
-      kg.executionTimes.push_back(durationKG.count());
+      kg.executionTimes.push_back(static_cast<double>(durationKG.count()));
       if (resultKG.success) {
          kg.successes++;
          kg.totalIterations += resultKG.iterations;
@@ -218,15 +221,18 @@ inline void ReductionComparison::Compare(int numCells) {
             // Determine winner
             if (mc.compareTrace < mc.abTrace - 1.0e-6) {
                mc.winner = "K-G";
-            } else if (mc.abTrace < mc.compareTrace - 1.0e-6) {
+            }
+            else if (mc.abTrace < mc.compareTrace - 1.0e-6) {
                mc.winner = "A-B";
-            } else {
+            }
+            else {
                mc.winner = "Tie (different cell, same trace)";
             }
 
             kgMismatches.Store(std::to_string(i), mc);
          }
-      } else {
+      }
+      else {
          kg.failures++;
       }
 
@@ -236,7 +242,7 @@ inline void ReductionComparison::Compare(int numCells) {
       auto endEA = std::chrono::high_resolution_clock::now();
       auto durationEA = std::chrono::duration_cast<std::chrono::microseconds>(endEA - startEA);
 
-      eisenAdaptive.executionTimes.push_back(durationEA.count());
+      eisenAdaptive.executionTimes.push_back(static_cast<double>(durationEA.count()));
       if (resultEA.trace > 0) {
          eisenAdaptive.successes++;
          eisenAdaptive.totalIterations += resultEA.iterations;
@@ -266,15 +272,18 @@ inline void ReductionComparison::Compare(int numCells) {
 
             if (resultEA.trace < abTrace - 1.0e-6) {
                mc.winner = "Eisenstein Adaptive";
-            } else if (abTrace < resultEA.trace - 1.0e-6) {
+            }
+            else if (abTrace < resultEA.trace - 1.0e-6) {
                mc.winner = "A-B";
-            } else {
+            }
+            else {
                mc.winner = "Tie (different cell, same trace)";
             }
 
             eisenAdaptiveMismatches.Store(std::to_string(i), mc);
          }
-      } else {
+      }
+      else {
          eisenAdaptive.failures++;
       }
 
@@ -284,7 +293,7 @@ inline void ReductionComparison::Compare(int numCells) {
       auto endEC = std::chrono::high_resolution_clock::now();
       auto durationEC = std::chrono::duration_cast<std::chrono::microseconds>(endEC - startEC);
 
-      eisenCumulative.executionTimes.push_back(durationEC.count());
+      eisenCumulative.executionTimes.push_back(static_cast<double>(durationEC.count()));
       if (resultEC.trace > 0) {
          eisenCumulative.successes++;
          eisenCumulative.totalIterations += resultEC.iterations;
@@ -314,15 +323,18 @@ inline void ReductionComparison::Compare(int numCells) {
 
             if (resultEC.trace < abTrace - 1.0e-6) {
                mc.winner = "Eisenstein BEST_CUMULATIVE";
-            } else if (abTrace < resultEC.trace - 1.0e-6) {
+            }
+            else if (abTrace < resultEC.trace - 1.0e-6) {
                mc.winner = "A-B";
-            } else {
+            }
+            else {
                mc.winner = "Tie (different cell, same trace)";
             }
 
             eisenCumulativeMismatches.Store(std::to_string(i), mc);
          }
-      } else {
+      }
+      else {
          eisenCumulative.failures++;
       }
 
@@ -406,7 +418,7 @@ inline void ReductionComparison::Compare(int numCells) {
       std::cout << std::endl;
    }
 
-// Production recommendation (data-driven)
+   // Production recommendation (data-driven)
    std::string fastestName = ab.name;
    double fastestTime = abAvg;
    if (kgAvg < fastestTime) { fastestName = kg.name; fastestTime = kgAvg; }
@@ -414,13 +426,13 @@ inline void ReductionComparison::Compare(int numCells) {
    if (ecAvg < fastestTime) { fastestName = eisenCumulative.name; fastestTime = ecAvg; }
 
    std::cout << "\n? " << fastestName << " is FASTEST:" << std::endl;
-   std::cout << "  • Execution time: " << std::setprecision(1) << fastestTime << " ?s average" << std::endl;
+   std::cout << "  ? Execution time: " << std::setprecision(1) << fastestTime << " ?s average" << std::endl;
 
    std::cout << "\n? Andrews-Bernstein (2014) is the PRODUCTION CHOICE:" << std::endl;
-   std::cout << "  • Very fast execution time (" << std::setprecision(1) << abAvg << " ?s average)" << std::endl;
-   std::cout << "  • Highly optimized implementation" << std::endl;
-   std::cout << "  • Reference standard for correctness" << std::endl;
-   std::cout << "  • Well-tested and documented" << std::endl;
+   std::cout << "  ? Very fast execution time (" << std::setprecision(1) << abAvg << " ?s average)" << std::endl;
+   std::cout << "  ? Highly optimized implementation" << std::endl;
+   std::cout << "  ? Reference standard for correctness" << std::endl;
+   std::cout << "  ? Well-tested and documented" << std::endl;
    std::cout << "\n" << std::string(70, '=') << std::endl;
 }
 
@@ -460,15 +472,18 @@ inline void ReductionComparison::PrintAlgorithmStats(const AlgorithmStats& stats
    std::cout << "\nCorrectness (vs Andrews-Bernstein):" << std::endl;
    if (stats.name.find("Andrews-Bernstein") != std::string::npos) {
       std::cout << "  Reference algorithm" << std::endl;
-   } else {
+   }
+   else {
       std::cout << "  Mismatches: " << stats.mismatches << " / " << stats.successes;
       if (stats.mismatches == 0) {
          std::cout << " ? PERFECT" << std::endl;
-      } else {
+      }
+      else {
          if (stats.successes > 0) {
             std::cout << " (" << std::setprecision(2)
                << (100.0 * stats.mismatches / stats.successes) << "%)" << std::endl;
-         } else {
+         }
+         else {
             std::cout << std::endl;
          }
       }
@@ -495,21 +510,21 @@ inline void ReductionComparison::PrintComparativeSummary(
    std::cout << "\nSpeed Comparison (relative to fastest):" << std::endl;
    std::cout << std::fixed << std::setprecision(2);
    std::cout << "  " << std::setw(30) << std::left << ab.name
-      << ":     " << (abAvg / baseline) << "× ";
+      << ":     " << (abAvg / baseline) << "? ";
    if (std::abs(abAvg - baseline) < 0.01) std::cout << "(baseline)";
    else std::cout << "(slower)";
    std::cout << std::endl;
 
    std::cout << "  " << std::setw(30) << std::left << kg.name
-      << ":     " << (kgAvg / baseline) << "× ";
+      << ":     " << (kgAvg / baseline) << "? ";
    if (std::abs(kgAvg - baseline) < 0.01) std::cout << "(baseline)";
    else std::cout << "(slower)";
    std::cout << std::endl;
 
    std::cout << "  " << std::setw(30) << std::left << eisenAdaptive.name
-      << ":   " << (eaAvg / baseline) << "× (slower)" << std::endl;
+      << ":   " << (eaAvg / baseline) << "? (slower)" << std::endl;
    std::cout << "  " << std::setw(30) << std::left << eisenCumulative.name
-      << ":  " << (ecAvg / baseline) << "× (slower)" << std::endl;
+      << ":  " << (ecAvg / baseline) << "? (slower)" << std::endl;
 
    // Rest stays the same...
    std::cout << "\nIterations Comparison:" << std::endl;
@@ -559,4 +574,3 @@ inline void ReductionComparison::PrintComparativeSummary(
 }
 
 #endif // COMPARE_REDUCTION_ALGORITHMS_H
-

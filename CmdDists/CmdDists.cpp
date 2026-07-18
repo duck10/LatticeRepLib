@@ -15,10 +15,9 @@
 #include "ProgramSetup.h"
 #include "S6.h"
 
-static void PrintModifiedTable(const PrintTable& tbl, const bool labelColumns, const bool labelRows, const char rowSeparator, const std::string& colSeparator) {
+static void PrintModifiedTable(const PrintTable& tbl, const bool labelColumns, const char rowSeparator, const std::string& colSeparator) {
    PrintTable tblX(tbl);
    tblX.SetNumberColumns(labelColumns);
-   tblX.SetNumberRows(labelRows);
    tblX.SetRowSeparator(rowSeparator);
    tblX.SetColumnSeparator(colSeparator);
    std::cout << std::endl;
@@ -102,7 +101,7 @@ int main() {
       }
 
       std::cout << "<pre style=\"font-size: 105%; line-height: 60%; display:inline;\" >;";
-      PrintModifiedTable(table, false, false, '\0', " ");
+      PrintModifiedTable(table, false, '\0', " ");
 
       std::cout << ";.......... input.cells ................"
          "........................ ordinals ....." << std::endl;

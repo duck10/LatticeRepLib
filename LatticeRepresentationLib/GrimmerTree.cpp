@@ -471,7 +471,7 @@ std::string createYAxisAndGridlines(const std::vector<double>& yAxisValues,
 
    for (double value : yAxisValues) {
       double relativeY = CompressYAxisValue(value, 0.0, maxFit);
-      int yPos = plotHeight - relativeY * plotHeight;
+      int yPos = static_cast<int>(plotHeight - relativeY * plotHeight);
 
       // Grid line
       ss << SVGUtil::createLine(0, yPos, plotWidth, yPos, "#DDDDDD");
@@ -510,7 +510,7 @@ std::string createReferenceLines(double s6Norm,
    // 0.1% reference line
    const double pointOnePctValue = 0.001 * s6Norm;
    double relativeY_pointOnePct = CompressYAxisValue(pointOnePctValue, 0.0, maxFit);
-   int yPos_pointOnePct = plotHeight - relativeY_pointOnePct * plotHeight;
+   int yPos_pointOnePct = static_cast<int>(plotHeight - relativeY_pointOnePct * plotHeight);
 
    ss << SVGUtil::createLine(0, yPos_pointOnePct, plotWidth, yPos_pointOnePct,
       "#00CC00", 1, "5,3");
@@ -521,7 +521,7 @@ std::string createReferenceLines(double s6Norm,
    // 1% reference line
    const double onePctValue = 0.01 * s6Norm;
    double relativeY_1pct = CompressYAxisValue(onePctValue, 0.0, maxFit);
-   int yPos_1pct = plotHeight - relativeY_1pct * plotHeight;
+   int yPos_1pct = static_cast<int>(plotHeight - relativeY_1pct * plotHeight);
 
    if (yPos_1pct > 0.0)
    {
@@ -535,7 +535,7 @@ std::string createReferenceLines(double s6Norm,
    // 5% reference line
    const double fivePctValue = 0.05 * s6Norm;
    double relativeY_5pct = CompressYAxisValue(fivePctValue, 0.0, maxFit);
-   int yPos_5pct = plotHeight - relativeY_5pct * plotHeight;
+   int yPos_5pct = static_cast<int>(plotHeight - relativeY_5pct * plotHeight);
 
    if (yPos_5pct > 0.0)
    {
@@ -586,7 +586,7 @@ std::string plotDataPoints(const std::vector<FitData>& data,
          double yPos = plotHeight - relativeY * plotHeight;
 
          // Draw the point
-         ss << SVGUtil::createCircle(xPos, yPos, pointRadius, lineColor);
+         ss << SVGUtil::createCircle(static_cast<int>(xPos), static_cast<int>(yPos), pointRadius, lineColor);
 
          // Draw value tooltip on hover
          ss << "  <title>" << item.typeName << ": "
@@ -601,7 +601,7 @@ std::string plotDataPoints(const std::vector<FitData>& data,
             << item.typeName << "</text>\n";
 
          // Draw vertical guide line for each point
-         ss << SVGUtil::createLine(xPos, yPos, xPos, plotHeight, "#DDDDDD", 1, "2,2");
+         ss << SVGUtil::createLine(static_cast<int>(xPos), static_cast<int>(yPos), static_cast<int>(xPos), plotHeight, "#DDDDDD", 1, "2,2");
       }
    }
    else {
@@ -878,7 +878,7 @@ std::string GrimmerChains::createFitList(const std::vector<std::pair<std::string
    // Count and divide items between columns
    int totalItems = 0;
    for (const auto& pearsonPair : sortedPearsonList) {
-      totalItems += 1 + pearsonToDeloneMap.at(pearsonPair.first).size() + 1;
+      totalItems += 1 + static_cast<int>(pearsonToDeloneMap.at(pearsonPair.first).size()) + 1;
    }
 
    int itemsPerColumn = totalItems / 2 + (totalItems % 2);
@@ -888,7 +888,7 @@ std::string GrimmerChains::createFitList(const std::vector<std::pair<std::string
    int currentCount = 0;
 
    for (const auto& item : sortedPearsonList) {
-      const int itemSize = 1 + pearsonToDeloneMap.at(item.first).size() + 1;
+      const int itemSize = 1 + static_cast<int>(pearsonToDeloneMap.at(item.first).size()) + 1;
 
       if (currentCount + itemSize <= itemsPerColumn) {
          leftColumnItems.push_back(item);
@@ -1041,7 +1041,7 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
    const std::string lineColorPearson = "#E69F00";  // Orange
 
    const int titleAreaHeight = 60;
-   const int plotWidth = (width - 400) * 0.75;
+   const int plotWidth = static_cast<int>((width - 400) * 0.75);
    const int plotHeight = (height - 300) / 2;
    const int plotX = 100;
    const int topPlotY = titleAreaHeight + 20;
@@ -1203,4 +1203,3 @@ void GrimmerChains::updateChains(MapOFDeloneFits& deloneFits, MapOfBravaisFits& 
    m_bravaisFits = bravaisFits;
    initializeChains();
 }
-

@@ -46,7 +46,7 @@ void demonstrateFailure() {
 
    std::cout << "\n--- Attempting Krivy-Gruber Step 5 ---" << std::endl;
    std::cout << "Condition: |?| > B" << std::endl;
-   std::cout << "Would apply: C ? B+C-?·sign(?)" << std::endl;
+   std::cout << "Would apply: C ? B+C-??sign(?)" << std::endl;
    std::cout << "            = 7.579 + 34.382 - 18.085" << std::endl;
    std::cout << "            = 23.876" << std::endl;
 
@@ -64,7 +64,7 @@ void demonstrateFailure() {
 
    std::cout << "\n--- Attempting Krivy-Gruber Step 6 ---" << std::endl;
    std::cout << "Condition: |?| > A" << std::endl;
-   std::cout << "Would apply: C ? A+C-?·sign(?)" << std::endl;
+   std::cout << "Would apply: C ? A+C-??sign(?)" << std::endl;
    std::cout << "            = 4.401 + 34.382 - 9.491" << std::endl;
    std::cout << "            = 29.292" << std::endl;
 
@@ -82,7 +82,7 @@ void demonstrateFailure() {
 
    std::cout << "\n--- Attempting Krivy-Gruber Step 7 ---" << std::endl;
    std::cout << "Condition: |?| > A" << std::endl;
-   std::cout << "Would apply: B ? A+B-?·sign(?)" << std::endl;
+   std::cout << "Would apply: B ? A+B-??sign(?)" << std::endl;
    std::cout << "            = 4.401 + 7.579 - 14.527" << std::endl;
    std::cout << "            = -2.547 (NEGATIVE!)" << std::endl;
 
@@ -205,7 +205,8 @@ void testEisensteinReduction() {
             }
          }
       }
-   } else {
+   }
+   else {
       std::cout << "A-B reduction FAILED" << std::endl;
    }
 }
@@ -266,7 +267,7 @@ void bulkComparisonTest(int numCells = 100) {
 
    int validCells = 0;
    int invalidCells = 0;
-   int nearDegenerateCells = 0;  // Cells with angles < 5° or > 175°
+   int nearDegenerateCells = 0;  // Cells with angles < 5? or > 175?
    int ab_failures = 0;
    int eisenstein_failures = 0;
    int ab_eisenstein_mismatch = 0;
@@ -321,13 +322,13 @@ void bulkComparisonTest(int numCells = 100) {
       double cos_beta = std::abs(inputG6[4]) / (2.0 * std::sqrt(inputG6[0] * inputG6[2]));
       double cos_gamma = std::abs(inputG6[5]) / (2.0 * std::sqrt(inputG6[0] * inputG6[1]));
 
-      const double cos_5_degrees = 0.9962;  // cos(5°) ? 0.9962
+      const double cos_5_degrees = 0.9962;  // cos(5?) ? 0.9962
 
       if (cos_alpha >= cos_5_degrees || cos_beta >= cos_5_degrees || cos_gamma >= cos_5_degrees) {
          nearDegenerateCells++;
 
          if (nearDegenerateCells <= 5) {  // Report first 5
-            std::cout << "\nCell " << i << ": Skipping near-degenerate cell (angle < 5° or > 175°)" << std::endl;
+            std::cout << "\nCell " << i << ": Skipping near-degenerate cell (angle < 5? or > 175?)" << std::endl;
             std::cout << "  cos(?) = " << cos_alpha << std::endl;
             std::cout << "  cos(?) = " << cos_beta << std::endl;
             std::cout << "  cos(?) = " << cos_gamma << std::endl;
@@ -341,7 +342,7 @@ void bulkComparisonTest(int numCells = 100) {
       // Test Andrews-Bernstein
       G6 ab_result;
       bool ab_success = Niggli::ReduceWithoutMatrices(inputG6, ab_result, 1.0e-6);
-      int ab_cycles = Niggli::GetCycles();
+      int ab_cycles = static_cast<int>(Niggli::GetCycles());
 
       if (!ab_success) {
          ab_failures++;
@@ -551,7 +552,8 @@ void bulkComparisonTest(int numCells = 100) {
          std::cout << "  (Note: " << nearDegenerateCells
             << " near-degenerate cells were excluded from testing)" << std::endl;
       }
-   } else {
+   }
+   else {
       std::cout << "\n? PROBLEMS FOUND - see detailed analysis above" << std::endl;
    }
 }
@@ -1114,10 +1116,12 @@ void bulkTestAdaptiveVsCumulativeFinal(int numCells = 1000) {
       << std::setprecision(6) << iterationRatio << std::endl;
    if (std::abs(iterationRatio - 1.0) < 0.01) {
       std::cout << "  ? Essentially identical convergence ?" << std::endl;
-   } else if (iterationRatio > 1.0) {
+   }
+   else if (iterationRatio > 1.0) {
       std::cout << "  ? Adaptive takes " << std::setprecision(2)
          << ((iterationRatio - 1.0) * 100.0) << "% more iterations" << std::endl;
-   } else {
+   }
+   else {
       std::cout << "  ? Adaptive takes " << std::setprecision(2)
          << ((1.0 - iterationRatio) * 100.0) << "% fewer iterations" << std::endl;
    }
@@ -1140,7 +1144,8 @@ void bulkTestAdaptiveVsCumulativeFinal(int numCells = 1000) {
    std::cout << "  Mismatches: " << adaptiveStats.mismatches << " / " << validCells;
    if (adaptiveStats.mismatches == 0) {
       std::cout << " ? PERFECT AGREEMENT" << std::endl;
-   } else {
+   }
+   else {
       std::cout << " ? " << std::setprecision(2)
          << (100.0 * adaptiveStats.mismatches / validCells)
          << "% error rate" << std::endl;
@@ -1159,32 +1164,36 @@ void bulkTestAdaptiveVsCumulativeFinal(int numCells = 1000) {
 
    if (adaptiveStats.mismatches == 0 && savings > 10.0) {
       std::cout << "\n? ADAPTIVE_BY_STATE is SUPERIOR:" << std::endl;
-      std::cout << "  • " << std::setprecision(1) << savings
+      std::cout << "  ? " << std::setprecision(1) << savings
          << "% reduction in computational cost" << std::endl;
-      std::cout << "  • 100% correctness maintained (0/" << validCells << " mismatches)" << std::endl;
+      std::cout << "  ? 100% correctness maintained (0/" << validCells << " mismatches)" << std::endl;
       if (std::abs(iterationRatio - 1.0) < 0.02) {
-         std::cout << "  • Essentially identical convergence behavior" << std::endl;
-      } else if (iterationRatio > 1.0) {
-         std::cout << "  • Slightly more iterations (" << std::setprecision(2)
+         std::cout << "  ? Essentially identical convergence behavior" << std::endl;
+      }
+      else if (iterationRatio > 1.0) {
+         std::cout << "  ? Slightly more iterations (" << std::setprecision(2)
             << ((iterationRatio - 1.0) * 100.0) << "% more)" << std::endl;
       }
-      std::cout << "  • RECOMMENDED AS DEFAULT STRATEGY ?" << std::endl;
-   } else if (adaptiveStats.mismatches == 0 && savings > 0.0) {
+      std::cout << "  ? RECOMMENDED AS DEFAULT STRATEGY ?" << std::endl;
+   }
+   else if (adaptiveStats.mismatches == 0 && savings > 0.0) {
       std::cout << "\n? ADAPTIVE_BY_STATE provides modest improvement:" << std::endl;
-      std::cout << "  • " << std::setprecision(1) << savings
+      std::cout << "  ? " << std::setprecision(1) << savings
          << "% reduction in computational cost" << std::endl;
-      std::cout << "  • 100% correctness maintained" << std::endl;
-   } else if (adaptiveStats.mismatches == 0 && savings < 0.0) {
+      std::cout << "  ? 100% correctness maintained" << std::endl;
+   }
+   else if (adaptiveStats.mismatches == 0 && savings < 0.0) {
       std::cout << "\n? ADAPTIVE_BY_STATE is SLOWER:" << std::endl;
-      std::cout << "  • " << std::setprecision(1) << -savings
+      std::cout << "  ? " << std::setprecision(1) << -savings
          << "% INCREASE in computational cost" << std::endl;
-      std::cout << "  • 100% correctness maintained" << std::endl;
-      std::cout << "  • BEST_CUMULATIVE is preferred" << std::endl;
-   } else {
+      std::cout << "  ? 100% correctness maintained" << std::endl;
+      std::cout << "  ? BEST_CUMULATIVE is preferred" << std::endl;
+   }
+   else {
       std::cout << "\n? ADAPTIVE_BY_STATE has ISSUES:" << std::endl;
-      std::cout << "  • Correctness errors detected (" << adaptiveStats.mismatches
+      std::cout << "  ? Correctness errors detected (" << adaptiveStats.mismatches
          << "/" << validCells << ")" << std::endl;
-      std::cout << "  • Further investigation needed" << std::endl;
+      std::cout << "  ? Further investigation needed" << std::endl;
    }
 
    std::cout << "\n" << std::string(70, '=') << std::endl;
@@ -1251,11 +1260,12 @@ void compareReductionAlgorithms(int numCells = 1000) {
       auto endAB = std::chrono::high_resolution_clock::now();
       auto durationAB = std::chrono::duration_cast<std::chrono::microseconds>(endAB - startAB);
 
-      andrewsBernstein.executionTimes.push_back(durationAB.count());
+      andrewsBernstein.executionTimes.push_back(static_cast<double>(durationAB.count()));
       if (successAB) {
          andrewsBernstein.successes++;
-         andrewsBernstein.iterations += Niggli::GetCycles();
-      } else {
+         andrewsBernstein.iterations += static_cast<int>(Niggli::GetCycles());
+      }
+      else {
          andrewsBernstein.failures++;
       }
 
@@ -1265,11 +1275,12 @@ void compareReductionAlgorithms(int numCells = 1000) {
       auto endKG = std::chrono::high_resolution_clock::now();
       auto durationKG = std::chrono::duration_cast<std::chrono::microseconds>(endKG - startKG);
 
-      krivyGruber.executionTimes.push_back(durationKG.count());
+      krivyGruber.executionTimes.push_back(static_cast<double>(durationKG.count()));
       if (resultKG.success) {
          krivyGruber.successes++;
          krivyGruber.iterations += resultKG.iterations;
-      } else {
+      }
+      else {
          krivyGruber.failures++;
       }
 
@@ -1279,12 +1290,13 @@ void compareReductionAlgorithms(int numCells = 1000) {
       auto endEA = std::chrono::high_resolution_clock::now();
       auto durationEA = std::chrono::duration_cast<std::chrono::microseconds>(endEA - startEA);
 
-      eisensteinAdaptive.executionTimes.push_back(durationEA.count());
+      eisensteinAdaptive.executionTimes.push_back(static_cast<double>(durationEA.count()));
       eisensteinAdaptive.iterations += resultEA.iterations;
       eisensteinAdaptive.transformations += resultEA.transformationsTested;
       if (resultEA.trace > 0) {
          eisensteinAdaptive.successes++;
-      } else {
+      }
+      else {
          eisensteinAdaptive.failures++;
       }
 
@@ -1405,7 +1417,8 @@ void compareReductionAlgorithms(int numCells = 1000) {
       std::cout << "  Mismatches: " << stats.mismatches << " / " << validCells;
       if (stats.mismatches == 0) {
          std::cout << " ? PERFECT" << std::endl;
-      } else {
+      }
+      else {
          std::cout << " (" << std::setprecision(2)
             << (100.0 * stats.mismatches / validCells) << "%)" << std::endl;
       }
@@ -1423,17 +1436,19 @@ void compareReductionAlgorithms(int numCells = 1000) {
 
    std::cout << "\nSpeed Comparison (relative to Andrews-Bernstein):" << std::endl;
    std::cout << std::fixed << std::setprecision(2);
-   std::cout << "  Andrews-Bernstein: 1.00× (baseline)" << std::endl;
-   std::cout << "  Krivy-Gruber:      " << (avgKG / avgAB) << "×";
+   std::cout << "  Andrews-Bernstein: 1.00? (baseline)" << std::endl;
+   std::cout << "  Krivy-Gruber:      " << (avgKG / avgAB) << "?";
    if (avgKG < avgAB) {
       std::cout << " ? FASTER" << std::endl;
-   } else {
+   }
+   else {
       std::cout << " (slower)" << std::endl;
    }
-   std::cout << "  Eisenstein:        " << (avgEA / avgAB) << "×";
+   std::cout << "  Eisenstein:        " << (avgEA / avgAB) << "?";
    if (avgEA < avgAB) {
       std::cout << " ? FASTER" << std::endl;
-   } else {
+   }
+   else {
       std::cout << " (slower)" << std::endl;
    }
 
@@ -1464,21 +1479,24 @@ void compareReductionAlgorithms(int numCells = 1000) {
 
    if (kgCorrect && avgKG < avgAB && avgKG < avgEA) {
       std::cout << "\n? KRIVY-GRUBER is BEST:" << std::endl;
-      std::cout << "  • Fastest execution time" << std::endl;
-      std::cout << "  • 100% correctness" << std::endl;
-   } else if (eaCorrect && avgEA < avgAB && avgEA < avgKG) {
+      std::cout << "  ? Fastest execution time" << std::endl;
+      std::cout << "  ? 100% correctness" << std::endl;
+   }
+   else if (eaCorrect && avgEA < avgAB && avgEA < avgKG) {
       std::cout << "\n? EISENSTEIN ADAPTIVE is BEST:" << std::endl;
-      std::cout << "  • Fastest execution time" << std::endl;
-      std::cout << "  • 100% correctness" << std::endl;
-   } else if (avgAB < avgKG && avgAB < avgEA) {
+      std::cout << "  ? Fastest execution time" << std::endl;
+      std::cout << "  ? 100% correctness" << std::endl;
+   }
+   else if (avgAB < avgKG && avgAB < avgEA) {
       std::cout << "\n? ANDREWS-BERNSTEIN is BEST:" << std::endl;
-      std::cout << "  • Fastest execution time" << std::endl;
-      std::cout << "  • Reference standard" << std::endl;
-   } else {
+      std::cout << "  ? Fastest execution time" << std::endl;
+      std::cout << "  ? Reference standard" << std::endl;
+   }
+   else {
       std::cout << "\nResults are mixed - choose based on requirements:" << std::endl;
-      std::cout << "  • Andrews-Bernstein: Proven, well-tested" << std::endl;
-      std::cout << "  • Krivy-Gruber: Alternative approach" << std::endl;
-      std::cout << "  • Eisenstein: Minimal trace, pedagogical value" << std::endl;
+      std::cout << "  ? Andrews-Bernstein: Proven, well-tested" << std::endl;
+      std::cout << "  ? Krivy-Gruber: Alternative approach" << std::endl;
+      std::cout << "  ? Eisenstein: Minimal trace, pedagogical value" << std::endl;
    }
 
    std::cout << "\n" << std::string(70, '=') << std::endl;
@@ -1539,7 +1557,7 @@ void diagnoseKrivyGruber() {
    double A = input[0], B = input[1], C = input[2];
    double xi = input[3], eta = input[4], zeta = input[5];
 
-   // Volume² = ABC - A?²/4 - B?²/4 - C?²/4 + ???/4
+   // Volume? = ABC - A??/4 - B??/4 - C??/4 + ???/4
    double volSq = A * B * C - A * xi * xi / 4.0 - B * eta * eta / 4.0 - C * zeta * zeta / 4.0 + xi * eta * zeta / 4.0;
    double volFormula = std::sqrt(std::abs(volSq));
    std::cout << "Volume from formula: " << volFormula << std::endl;
@@ -2036,9 +2054,11 @@ std::string svgplot(const std::vector<LRL_Cell_Degrees>& raw,
             std::string fillAttr;
             if (name == "niggli") {
                fillAttr = "fill=\"url(#niggliPattern)\"";
-            } else if (name == "selling") {
+            }
+            else if (name == "selling") {
                fillAttr = "fill=\"url(#sellingPattern)\"";
-            } else {
+            }
+            else {
                fillAttr = "fill=\"" + color + "\" fill-opacity=\"0.7\"";
             }
 
@@ -2084,9 +2104,11 @@ std::string svgplot(const std::vector<LRL_Cell_Degrees>& raw,
       std::string fillAttr;
       if (names[i] == "Niggli") {
          fillAttr = "fill=\"url(#niggliPattern)\"";
-      } else if (names[i] == "Selling") {
+      }
+      else if (names[i] == "Selling") {
          fillAttr = "fill=\"url(#sellingPattern)\"";
-      } else {
+      }
+      else {
          fillAttr = "fill=\"" + colors[i] + "\" fill-opacity=\"0.7\"";
       }
 
@@ -2178,9 +2200,11 @@ std::string svgplot(const std::vector<LRL_Cell_Degrees>& raw,
             std::string fillAttr;
             if (name == "niggli") {
                fillAttr = "fill=\"url(#niggliPattern)\"";
-            } else if (name == "selling") {
+            }
+            else if (name == "selling") {
                fillAttr = "fill=\"url(#sellingPattern)\"";
-            } else {
+            }
+            else {
                fillAttr = "fill=\"" + color + "\" fill-opacity=\"0.7\"";
             }
 
@@ -2307,7 +2331,7 @@ int main() {
    // std::cout << "Result: " << eisenstein_result.reducedG6 << std::endl;
 
    // Option 2: Run the demonstration
-    demonstrateFailure();
+   demonstrateFailure();
 
    // Option 3: Run detailed Eisenstein test
    // testEisensteinReduction();

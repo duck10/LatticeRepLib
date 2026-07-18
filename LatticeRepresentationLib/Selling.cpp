@@ -156,7 +156,7 @@ bool Selling::ReduceWithtransforms(const S6& in, MatS6& mReduce, S6& out, Matrix
    MatS6 cumulativeTransform = MatS6::Eye();  // Start with identity matrix
    Matrix_3x3 cumulative3d = UnitMatrix();
 
-   const int limitReductionCycles = 10000;
+   const int limitReductionCycles_Selling = 10000;
    int cycleCount = 0;
 
    while (true) {
@@ -180,7 +180,7 @@ bool Selling::ReduceWithtransforms(const S6& in, MatS6& mReduce, S6& out, Matrix
       cumulativeTransform = reductionMatrix * cumulativeTransform;
       cumulative3d = vmSellingPairs[maxIndex].second * cumulative3d;
       ++cycleCount;
-      if (cycleCount > limitReductionCycles || S6::NegativeSumOfScalars(out) < 0.0) {
+      if (cycleCount > limitReductionCycles_Selling || S6::NegativeSumOfScalars(out) < 0.0) {
          return false;  // Reduction failed
       }
    }
@@ -210,7 +210,6 @@ bool Selling::Reduce(const EnhancedS6& in, EnhancedS6& out) {
    out = in;
    MatS6 cumulativeTransform = MatS6::Eye();  // Start with identity matrix
 
-   const int limitReductionCycles = 10000;
    int cycleCount = 0;
 
    // Define the reduction matrices

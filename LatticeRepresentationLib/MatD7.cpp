@@ -378,7 +378,6 @@ void MatD7::ReplaceTwosInRows7x7( MatD7& m ) {
          maxAbs = std::max(maxAbs, std::abs(mj));
          if (j < i + 4) fourSum += mj;
       }
-      const double d = m[i + 6];
       if (sumAbs == 6 && sum == 0 && maxAbs == 1) FixSixColumnsOneAndOneZero(m, i);
    }
 }

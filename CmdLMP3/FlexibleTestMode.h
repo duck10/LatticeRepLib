@@ -1208,6 +1208,122 @@ inline void runMatchPresentationTests(const MultiTransformFinderControls& contro
    std::cout << "\nMatch presentation tests: " << passed << " passed, " << failed << " failed" << std::endl;
 }
 
+// ---------------------------------------------------------------------------
+// runRatioToleranceTests -- direct, isolated regression test for
+// selectMatrixGroupsForRatio's RATIOTOLERANCE gating (see
+// SearchMatrixBuilder.h/.cpp and the RATIOTOLERANCE keyword). Independent
+// of the FlexibleTestCase/runTest framework, like runMatchPresentationTests
+// above: this checks the determinant-selection formula
+//    include d  iff  |d - ratio| <= 1 - RATIOTOLERANCE
+// (a determinant's likelihood of being correct is modeled as
+// max(0, 1 - distance); RATIOTOLERANCE is the minimum required likelihood)
+// directly, with no lattice cells or matching involved, rather than trying
+// to infer it indirectly from end-to-end match results.
+//
+// NOTE: larger RATIOTOLERANCE means a STRICTER, narrower, faster search
+// here -- the opposite sense from a plain widening margin.
+//
+// Takes controls by const reference, matching every other function in this
+// file/project's preference for const parameters, and never touches it: it
+// exercises the explicit-tolerance selectMatrixGroupsForRatio(controls,
+// ratio, ratioTolerance) overload in SearchMatrixBuilder.h/.cpp, which
+// ignores controls.getRatioTolerance() in favor of the tolerance argument.
+// controls is still needed -- it supplies the underlying per-determinant
+// matrix caches (getMatrixOrder() for det=1) -- but nothing about it is
+// ever read or written for the value actually under test here.
+//
+// Verifies group IDENTITY (pointer equality against the same cached
+// vectors getDetNMatrices() returns), not just group COUNT, so a test
+// can't pass by an accidental size coincidence if the wrong determinant
+// were selected.
+// ---------------------------------------------------------------------------
+inline void runRatioToleranceTests(const MultiTransformFinderControls& controls) {
+   std::cout << "\n========================================" << std::endl;
+   std::cout << "RUNNING RATIOTOLERANCE TESTS" << std::endl;
+   std::cout << "========================================" << std::endl;
+
+   int passed = 0;
+   int failed = 0;
+
+   auto checkGroups = [&](const char* label, double ratio, double ratioTolerance,
+      std::initializer_list<int> expectedDets) {
+         const MatrixGroups groups = selectMatrixGroupsForRatio(controls, ratio, ratioTolerance);
+
+         std::vector<const std::vector<Matrix_3x3>*> expected;
+         for (int d : expectedDets) {
+            switch (d) {
+            case 1: expected.push_back(&getDet1Matrices(controls)); break;
+            case 2: expected.push_back(&getDet2Matrices(controls)); break;
+            case 3: expected.push_back(&getDet3Matrices(controls)); break;
+            case 4: expected.push_back(&getDet4Matrices(controls)); break;
+            case 5: expected.push_back(&getDet5Matrices(controls)); break;
+            case 6: expected.push_back(&getDet6Matrices(controls)); break;
+            default: break;
+            }
+         }
+
+         bool ok = (groups.size() == expected.size());
+         if (ok) {
+            for (size_t i = 0; i < groups.size(); ++i) {
+               if (&groups[i].get() != expected[i]) { ok = false; break; }
+            }
+         }
+
+         std::cout << "  " << label << ": ";
+         if (ok) {
+            std::cout << "PASS" << std::endl;
+            ++passed;
+         }
+         else {
+            std::cout << "FAIL (got " << groups.size() << " groups, expected "
+               << expected.size() << ")" << std::endl;
+            ++failed;
+         }
+      };
+
+   // Flagship cases: a ratio sitting exactly on an integer should search
+   // ONLY that determinant at default tolerance, even when a neighbor is
+   // an expensive brute-force determinant (det=3, det=4). These are drawn
+   // directly from real test cases (ExactOrder3, ExactOrder4, ExactOrder5)
+   // that took 57-70+ seconds under the old additive-window formula.
+   checkGroups("ratio=3.0, tol=0.20 (default, exact) -> det1,3 only", 3.0, 0.20, { 1, 3 });
+   checkGroups("ratio=4.0, tol=0.20 (default, exact) -> det1,4 only", 4.0, 0.20, { 1, 4 });
+   checkGroups("ratio=5.0, tol=0.20 (default, exact) -> det1,5 only", 5.0, 0.20, { 1, 5 });
+
+   // Non-integer ratio still near one candidate: default tolerance
+   // includes the second candidate only if it clears the 20% confidence
+   // bar. dist(2.4,2)=0.4 -> likelihood 60%; dist(2.4,3)=0.6 -> likelihood
+   // 40%, both above the 20% bar, so both det2 and det3 are searched.
+   checkGroups("ratio=2.4, tol=0.20 (default) -> det1,2,3", 2.4, 0.20, { 1, 2, 3 });
+
+   // ratio=2.9 is close enough to 3 that det=2's likelihood (dist=0.9 ->
+   // 10%) falls BELOW the default 20% bar and is excluded -- but at the
+   // loosest valid tolerance (0.0, threshold=1.0) it is still just barely
+   // included. This is the case that demonstrates the confidence bar
+   // actually excluding a candidate the old formula would always have
+   // included (since the old default always included both floor and
+   // ceil for any non-integer ratio).
+   checkGroups("ratio=2.9, tol=0.20 (default) -> det1,3 only", 2.9, 0.20, { 1, 3 });
+   checkGroups("ratio=2.9, tol=0.0 (loosest) -> det1,2,3", 2.9, 0.0, { 1, 2, 3 });
+
+   // Exact tie (n + 0.5): both neighbors are equally 50% likely, so both
+   // are included even at the strictest valid tolerance (0.5) -- this is
+   // the case that would catch an accidental strict '<' in place of '<='.
+   checkGroups("ratio=3.5, tol=0.20 (default, ambiguous) -> det1,3,4", 3.5, 0.20, { 1, 3, 4 });
+   checkGroups("ratio=3.5, tol=0.5 (strictest, still tied) -> det1,3,4", 3.5, 0.5, { 1, 3, 4 });
+
+   // ratio=1.0: det=2 is a full distance of 1.0 away (0% likelihood),
+   // so at default tolerance NO supercell determinant is searched at
+   // all -- a deliberate behavior change from every earlier version of
+   // this formula, which always searched at least det=2 here. At the
+   // loosest tolerance (0.0, threshold=1.0) det=2 is included again,
+   // right at the inclusive boundary.
+   checkGroups("ratio=1.0, tol=0.20 (default) -> det1 only", 1.0, 0.20, { 1 });
+   checkGroups("ratio=1.0, tol=0.0 (loosest, boundary) -> det1,2", 1.0, 0.0, { 1, 2 });
+
+   std::cout << "\nRatioTolerance tests: " << passed << " passed, " << failed << " failed" << std::endl;
+}
+
 // Function to run flexible test mode
 inline void runFlexibleTestMode(const MultiTransformFinderControls& controls) {
    ShowProgramHeader("CmdLMP3 -- P3 Lattice Matching (Test Mode)");
@@ -1232,6 +1348,7 @@ inline void runFlexibleTestMode(const MultiTransformFinderControls& controls) {
    runner.runAllTests(controls);
    if (controls.getTestNumbers().empty()) {
       runMatchPresentationTests(controls);
+      runRatioToleranceTests(controls);
    }
 }
 

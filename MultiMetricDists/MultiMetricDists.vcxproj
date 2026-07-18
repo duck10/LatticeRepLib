@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -153,9 +153,13 @@
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h" />
     <ClInclude Include="D7_BoundaryTests.h" />
+    <ClInclude Include="MultiMetricDistsControls.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\InputHandler\InputHandler.vcxproj">
+      <Project>{7094f80c-8aae-475a-a2e3-0df75c29bf16}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">
       <Project>{bf25d7aa-648c-48d2-b857-d383faf1e215}</Project>
     </ProjectReference>
