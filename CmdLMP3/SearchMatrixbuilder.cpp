@@ -55,6 +55,28 @@ namespace {
    std::vector<Matrix_3x3> g_hnfAll;  // raw HNF(2..6), 177 matrices -- USEHNF=true path
    bool g_built = false;
 
+   void reportMatrixCounts(const MultiTransformFinderControls& controls) {
+      const size_t total = g_det1.size() + g_det2.size() + g_det3.size()
+         + g_det4.size() + g_det5.size() + g_det6.size();
+
+      std::cout << "; search matrix counts by determinant class" << std::endl;
+      std::cout << ";   det=1  " << std::setw(9) << g_det1.size()
+         << "   unimodular, order " << controls.getMatrixOrder() << std::endl;
+      std::cout << ";   det=2  " << std::setw(9) << g_det2.size()
+         << "   brute force, coefficients +/-2" << std::endl;
+      std::cout << ";   det=3  " << std::setw(9) << g_det3.size()
+         << "   brute force, coefficients +/-3, plus HNF(3)" << std::endl;
+      std::cout << ";   det=4  " << std::setw(9) << g_det4.size()
+         << "   brute force, coefficients +/-4, plus HNF(4)" << std::endl;
+      std::cout << ";   det=5  " << std::setw(9) << g_det5.size()
+         << "   U(" << kComposeUnimodularOrder << ") composed with HNF(5), both orders" << std::endl;
+      std::cout << ";   det=6  " << std::setw(9) << g_det6.size()
+         << "   U(" << kComposeUnimodularOrder << ") composed with HNF(6), both orders" << std::endl;
+      std::cout << ";   total  " << std::setw(9) << total << std::endl;
+      std::cout << ";   HNF(2..6) table, USEHNF path  "
+         << std::setw(9) << g_hnfAll.size() << std::endl;
+   }
+
    void ensureBuilt(const MultiTransformFinderControls& controls) {
       if (g_built) return;
 
@@ -80,6 +102,8 @@ namespace {
       g_det6 = composeBothOrders(unimodular1, hnf6);
 
       g_built = true;
+
+      if (controls.shouldShowDetails()) reportMatrixCounts(controls);
    }
 
 } // namespace

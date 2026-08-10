@@ -4,6 +4,7 @@
 #include <string>
 
 #include "G6.h"
+#include "C3.h"
 #include "LatticeConverter.h"
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"

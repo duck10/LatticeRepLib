@@ -3,6 +3,7 @@
 #include "S6.h"
 #include "B4.h"
 #include "D7.h"
+#include "C3.h"
 #include "DC7u.h"
 #include "D13.h"
 #include "V7.h"

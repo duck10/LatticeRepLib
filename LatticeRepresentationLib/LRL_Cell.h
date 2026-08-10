@@ -10,8 +10,6 @@
 #include "rhrand.h"
 #endif
 
-#include "C3.h"
-#include "P3.h"
 #include "LRL_Vector3.h"
 #include "VecN.h"
 

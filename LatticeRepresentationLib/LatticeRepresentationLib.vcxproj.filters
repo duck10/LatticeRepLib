@@ -75,6 +75,20 @@
     <ClCompile Include="Transformations.cpp" />
     <ClCompile Include="P3_Reduce.cpp" />
     <ClCompile Include="TransformationMatrices.cpp" />
+    <ClCompile Include="LRL_Cell_FromB4.cpp" />
+    <ClCompile Include="LRL_Cell_FromC3.cpp" />
+    <ClCompile Include="LRL_Cell_FromD7.cpp" />
+    <ClCompile Include="LRL_Cell_FromD13.cpp" />
+    <ClCompile Include="LRL_Cell_FromP3.cpp" />
+    <ClCompile Include="G6_FromB4.cpp" />
+    <ClCompile Include="G6_FromC3.cpp" />
+    <ClCompile Include="G6_FromD7.cpp" />
+    <ClCompile Include="G6_FromD13.cpp" />
+    <ClCompile Include="G6_FromDC7u.cpp" />
+    <ClCompile Include="C3_FromB4.cpp" />
+    <ClCompile Include="C3_FromD7.cpp" />
+    <ClCompile Include="D7_FromB4.cpp" />
+    <ClCompile Include="D7_FromC3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />

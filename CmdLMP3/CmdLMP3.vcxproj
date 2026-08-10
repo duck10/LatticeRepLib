@@ -136,8 +136,6 @@
     <ClCompile Include="DisplayLayer2.cpp" />
     <ClCompile Include="DisplayLMP3.cpp" />
     <ClCompile Include="DisplayUtilities.cpp" />
-    <ClCompile Include="xLrl_cell.cpp" />
-    <ClCompile Include="xLrl_cell_Degrees.cpp" />
     <ClCompile Include="MatchPresentation.cpp" />
     <ClCompile Include="SearchMatrixbuilder.cpp" />
     <ClCompile Include="TransformerUtilities.cpp" />
@@ -152,8 +150,6 @@
     <ClInclude Include="HelpLMP3.h" />
     <ClInclude Include="LatticeMatchResult.h" />
     <ClInclude Include="Layer2Result.h" />
-    <ClInclude Include="xLrl_cell.h" />
-    <ClInclude Include="xLRL_Cell_Degrees.h" />
     <ClInclude Include="MatchPair.h" />
     <ClInclude Include="MatchPresentation.h" />
     <ClInclude Include="MatrixCellOperator.h" />

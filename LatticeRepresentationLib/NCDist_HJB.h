@@ -22,7 +22,7 @@ extern "C" {
  Fortan versions */
 
 /* #define NCDIST_DEBUG */
-/* #define NCDIST_NO_OUTER_PASS */
+/* #define NCDIST_NO_OUTER_PASS_HJB */
 
 #include <math.h>
 #include <float.h>
@@ -1600,8 +1600,8 @@ static void twoPminusI(double pg[6], double g[6], double gout[6]) {
 /*     Map a G6 vector onto the boundaries after
        applying the 24-way unfolding */
 
-       #define NCDIST_NO_OUTER_PASS */
-#ifdef NCDIST_NO_OUTER_PASS
+       #define NCDIST_NO_OUTER_PASS_HJB */
+#ifdef NCDIST_NO_OUTER_PASS_HJB
 #define NREFL_OUTER_FULL 8
 #define NREFL_OUTER_MIN 1
 #else

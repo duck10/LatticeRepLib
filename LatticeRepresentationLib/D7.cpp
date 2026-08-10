@@ -8,15 +8,11 @@
 #include <string>
 
 #include "LRL_Cell.h"
-#include "C3.h"
 #include "D7.h"
 #include "D7_BoundaryList.h"
 #include "D7_ClassifySubboundaries.h"
 #include "S6.h"
-#include "B4.h"
 #include "G6.h"
-#include "MatS6.h"
-#include "MatG6.h"
 #include "Selling.h"
 #include "LRL_StringTools.h"
 #include "LRL_Vector3.h"
@@ -60,25 +56,11 @@ D7::D7(const LRL_Cell& c)
    m_valid = c.GetValid();
 }
 
-D7::D7(const C3& c3) {
-   m_dim = 7;
-   (*this) = S6(c3);
-   m_valid = c3.GetValid();
-}
-
 D7::D7(const S6& ds) {
    m_dim = 7;
    (*this) = G6(ds);
    m_valid = ds.GetValid();
 }
-
-D7::D7(const B4& dt) {
-   m_vec.resize(7);
-   m_dim = 7;
-   (*this) = G6(dt);
-   m_valid = dt.GetValid();
-}
-
 
 D7::D7(const VecN& v) {
    m_dim = 0;
@@ -184,19 +166,6 @@ D7& D7::operator= (const S6& v)
    (*this) = G6(v);
    return *this;
 }
-
-D7& D7::operator= (const C3& c3)
-{
-   (*this) = S6(c3);
-   return *this;
-}
-
-
-D7& D7::operator= (const B4& v) {
-   (*this) = G6(v);
-   return *this;
-}
-
 
 D7& D7::operator= (const LRL_Cell& v) {
    (*this) = G6(v);

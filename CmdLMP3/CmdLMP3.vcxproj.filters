@@ -39,12 +39,6 @@
     <ClCompile Include="SearchMatrixbuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="xLrl_cell.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="xLrl_cell_Degrees.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FlexibleTestMode.h">
@@ -117,12 +111,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Searchmatrixbuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xLrl_cell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="xLRL_Cell_Degrees.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

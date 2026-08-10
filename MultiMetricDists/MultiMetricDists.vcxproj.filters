@@ -18,13 +18,7 @@
     <ClCompile Include="NCDist.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D7_BoundaryTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MAIN_MultiMetricDists.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Triangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\LatticeRepresentationLib\CS6Dist.c">
@@ -35,12 +29,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D7_BoundaryTests.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\LatticeRepresentationLib\CS6Dist.h">
       <Filter>Header Files</Filter>
     </ClInclude>

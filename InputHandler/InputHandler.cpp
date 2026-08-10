@@ -2,6 +2,8 @@
 #include "BaseControlVariables.h"
 #include "LRL_StringTools.h"
 #include "CommandSystem.h"
+
+#include "P3.h"
 #include <regex>
 
 // Initialize static member

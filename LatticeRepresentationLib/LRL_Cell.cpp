@@ -12,12 +12,8 @@
 
 #include "LRL_Cell.h"
 #include "LRL_Cell_Degrees.h"
-#include "C3.h"
-#include "B4.h"
-#include "D7.h"
 #include "Delone.h"
 #include "G6.h"
-#include "P3.h"
 #include "LRL_MinMaxTools.h"
 #include "LRL_RandTools.h"
 #include "MatG6.h"
@@ -136,88 +132,6 @@ LRL_Cell::LRL_Cell(const S6& ds)
    }
 }
 
-LRL_Cell::LRL_Cell(const C3& c3)
-{
-   *this = S6(c3);
-   m_valid = m_valid && c3.GetValid() && GetValid() && m_cell[3] < pi && m_cell[4] < pi && m_cell[5] < pi && (m_cell[3] + m_cell[4] + m_cell[5]) < twopi
-      && (m_cell[3] + m_cell[4] + m_cell[5] - 2.0 * maxNC(m_cell[3], m_cell[4], m_cell[5]) >= 0.0);
-}
-
-LRL_Cell::LRL_Cell(const P3& p) {
-
-   for (size_t i = 0; i < 3; ++i) {
-      const double x = p[i].first;
-      const double y = p[i].second;
-      const double length = std::sqrt(x * x + y * y);
-      const double angle = std::atan2(y, x);  // radians
-
-      m_cell[i] = length;
-      m_cell[i + 3] = angle;
-   }
-
-   m_valid = (*this).CheckValid();
-}
-
-LRL_Cell::LRL_Cell(const B4& b4)
-{
-   // Extract all four basis vectors from B4
-   const Vector_3& a = b4[0];
-   const Vector_3& b = b4[1];
-   const Vector_3& c = b4[2];
-   const Vector_3& d = b4[3];  // Include the fourth vector
-
-   // Verify that d = -(a+b+c) which should be true for a Delone tetrahedron
-   Vector_3 sumCheck = a + b + c + d;
-   if (sumCheck.Norm() > 1e-10) {
-      std::cerr << "Warning: B4 vectors don't satisfy a+b+c+d=0 constraint" << std::endl;
-   }
-
-   // Calculate the magnitudes (cell edges)
-   const double a_len = a.Norm();
-   const double b_len = b.Norm();
-   const double c_len = c.Norm();
-
-   // Calculate the angles (in radians)
-   const double alpha = acos(b.Dot(c) / (b_len * c_len));
-   const double beta = acos(a.Dot(c) / (a_len * c_len));
-   const double gamma = acos(a.Dot(b) / (a_len * b_len));
-
-   // For nearly cubic cells, check if we need to adjust orientation
-   if (std::abs(alpha - M_PI / 2) < 0.1 &&
-      std::abs(beta - M_PI / 2) < 0.1 &&
-      std::abs(gamma - M_PI / 2) < 0.1) {
-
-      // Check the handedness using all four vectors
-      Vector_3 crossProduct = a.Cross(b);
-      bool rightHanded = (crossProduct.Dot(c) > 0);
-
-      // We need a consistent way to decide which cell representation to use
-      // When permutations have been applied
-      double adjustedAlpha = alpha;
-      double adjustedBeta = beta;
-      double adjustedGamma = gamma;
-
-      // If handedness needs to be preserved after permutation,
-      // flip two angles (not just one) to maintain an equivalent cell
-      if (!rightHanded) {
-         // Flip both alpha and beta
-         adjustedAlpha = M_PI - alpha;
-         adjustedBeta = M_PI - beta;
-
-         // Alternative: flip beta and gamma
-         // adjustedBeta = M_PI - beta;
-         // adjustedGamma = M_PI - gamma;
-      }
-
-      // Return the LRL_Cell with adjusted parameters
-      (*this) = LRL_Cell(a_len, b_len, c_len, adjustedAlpha, adjustedBeta, adjustedGamma);
-   }
-   else {
-      // For non-cubic cells, use the standard calculation
-      (*this) = LRL_Cell(a_len, b_len, c_len, alpha, beta, gamma);
-   }
-}
-
 std::ostream& operator<< (std::ostream& o, const LRL_Cell& c) {
    std::streamsize oldPrecision = o.precision();
    o << std::fixed << std::setprecision(5);
@@ -325,17 +239,6 @@ LRL_Cell::LRL_Cell(const G6& g6)
 
 }
 
-LRL_Cell::LRL_Cell(const D7& v7)
-   : m_valid(v7.GetValid())
-{
-   (*this) = G6(v7);
-}
-
-LRL_Cell::LRL_Cell(const D13& d13) {
-   std::cout << "; not implemented" << std::endl;
-   m_valid = false;
-}
-
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 // Name: LRL_Cell()
 // Description: destructor
@@ -397,10 +300,6 @@ double& LRL_Cell::operator[](const size_t n)
 {
    const size_t nn(std::max(size_t(0), std::min(size_t(5), n)));
    return m_cell[nn];
-}
-
-double LRL_Cell::DistanceBetween(const LRL_Cell& v1, const LRL_Cell& v2) {
-   return (B4(v1) - B4(v2)).norm();
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -607,22 +506,7 @@ LRL_Cell operator* (const double d, const LRL_Cell& c) {
    return c * d;
 }
 
-LRL_Cell& LRL_Cell::operator= (const D7& v) {
-   *this = LRL_Cell(v);
-   return *this;
-}
-
-LRL_Cell& LRL_Cell::operator= (const C3& c3) {
-   *this = LRL_Cell(c3);
-   return *this;
-}
-
 LRL_Cell& LRL_Cell::operator= (const S6& v) {
-   *this = LRL_Cell(v);
-   return *this;
-}
-
-LRL_Cell& LRL_Cell::operator= (const B4& v) {
    *this = LRL_Cell(v);
    return *this;
 }

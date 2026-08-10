@@ -208,9 +208,9 @@ void SvgPlotWriter::writeXAxis(int width, int height, int leftMargin, int margin
       if (xPos >= leftMargin && xPos <= width - margin) {
 
          const int i1 = std::stoi(tick.label);
-         const int d1 = std::stod(tick.label);
+         const int d1 = int(std::stod(tick.label));
          const int i2 = int(std::round(std::stod(tick.label)));
-         const int i3 = (std::stod(tick.label));
+         const int i3 = int(std::stod(tick.label));
 
 
          svg << "  <text x=\"" << xPos

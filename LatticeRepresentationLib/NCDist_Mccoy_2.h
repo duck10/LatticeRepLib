@@ -1070,8 +1070,8 @@ inline void twoPminusI(const double pg[6], const double g[6], double gout[6])
 
 /*     Map a G6 vector onto the boundaries after
        applying the 24-way unfolding */
-#define NCDIST_NO_OUTER_PASS * /
-#ifdef NCDIST_NO_OUTER_PASS
+#define NCDIST_NO_OUTER_PASS_MCOY * /
+#ifdef NCDIST_NO_OUTER_PASS_MCOY
 constexpr int NREFL_OUTER_FULL = 8;
 constexpr int NREFL_OUTER_MIN = 1;
 #else

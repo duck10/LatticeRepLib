@@ -11,12 +11,8 @@
 
 #include "LRL_Cell.h"
 #include "Delone.h"
-#include "D7.h"
-#include "DC7u.h"
 #include "G6.h"
 #include "LRL_RandTools.h"
-#include "MatS6.h"
-#include "MatD7.h"
 #include "MatG6.h"
 #include "rhrand.h"
 #include "S6.h"
@@ -115,19 +111,6 @@ G6::G6(const S6& ds)
 
 }
 
-G6::G6(const C3& c3) {
-   m_dim = 6;
-   m_vec.resize(6);
-   *this = S6(c3);
-}
-
-G6::G6(const B4& dt) {
-   m_vec.resize(6);
-   m_dim = 6;
-   (*this) = S6(dt);
-   m_valid = dt.GetValid();
-}
-
 G6::G6(const VecN& v) {
    m_dim = 0;
    m_valid = false;
@@ -136,115 +119,6 @@ G6::G6(const VecN& v) {
       m_valid = true;
       m_vec = v;
    }
-}
-
-G6::G6(const D7& v7) {
-   m_vec.resize(6);
-   double& g1 = m_vec[0];
-   double& g2 = m_vec[1];
-   double& g3 = m_vec[2];
-   double& g4 = m_vec[3];
-   double& g5 = m_vec[4];
-   double& g6 = m_vec[5];
-   const double& d1 = v7[0];
-   const double& d2 = v7[1];
-   const double& d3 = v7[2];
-   const double& b4 = v7[3];
-   const double& d5 = v7[4];
-   const double& s6 = v7[5];
-   const double& d7 = v7[6];
-   g1 = d1;
-   g2 = d2;
-   g3 = d3;
-   g4 = d5 - d2 - d3;
-   g5 = s6 - d1 - d3;
-   g6 = d7 - d1 - d2;
-   //   g4 = (b4 -g1 -g2 -g3 -g5 -g6 + d5 - g2 -g3)/2.0; 
-   m_valid = g1 > 0.001 && g2 > 0.001 && g3 > 0.001 && v7.GetValid();
-   m_dim = 6;
-}
-
-G6::G6(const D13& d13) {
-   std::cout << "; not implemented" << std::endl;
-   m_valid = false;
-}
-
-G6::G6(const DC7u& dc7u)
-: m_dim(6)
-{
-   double delta;
-   double u, v, w, testsign;
-   int error, ii;
-   m_vec.resize(6);
-   error=0;
-   delta=std::fabs(dc7u[DC7u_AA_idx])*1.e-10;
-   for (ii=0;ii<7;ii++) {
-     if (dc7u[ii]<delta) error++;
-   }
-   if (dc7u[DC7u_AA_idx] > dc7u[DC7u_BB_idx]+delta ||
-       dc7u[DC7u_BB_idx] > dc7u[DC7u_CC_idx]+delta ) error++;
-   if (error > 0) {
-     std::cout <<  "unreduced DC7 cell" << std::endl;
-     //m_valid=false;
-   } 
-     m_vec[G6_AA_idx]=dc7u[DC7u_AA_idx];
-     m_vec[G6_BB_idx]=dc7u[DC7u_BB_idx];
-     m_vec[G6_CC_idx]=dc7u[DC7u_CC_idx];
-     u=dc7u[DC7u_MIN_BC_diagsq_idx]
-       -dc7u[DC7u_BB_idx]-dc7u[DC7u_CC_idx];
-     v=dc7u[DC7u_MIN_AC_diagsq_idx]
-       -dc7u[DC7u_AA_idx]-dc7u[DC7u_CC_idx];
-     w=dc7u[DC7u_MIN_AB_diagsq_idx]
-       -dc7u[DC7u_AA_idx]-dc7u[DC7u_BB_idx];
-     testsign=dc7u[DC7u_MIN_ABC_diagsq_idx]
-             -(m_vec[G6_AA_idx]
-              +m_vec[G6_BB_idx]
-              +m_vec[G6_CC_idx]+u+v+w);
-     if ((std::fabs(testsign)<=delta)
-        || (std::fabs(u)<=delta)
-        || (std::fabs(v)<=delta)
-        || (std::fabs(w)<=delta)) {
-        m_vec[G6_2BC_idx]=u;
-        m_vec[G6_2AC_idx]=v;
-        m_vec[G6_2AB_idx]=w;
-      } else {
-        m_vec[G6_2BC_idx]=-u;
-        m_vec[G6_2AC_idx]=-v;
-        m_vec[G6_2AB_idx]=-w;
-      }
-      if (dc7u[DC7u_AA_idx]>dc7u[DC7u_BB_idx]+delta ||
-        dc7u[DC7u_BB_idx]>dc7u[DC7u_CC_idx]+delta ) error++;
-      if (error > 0) {
-        //for (ii=0;ii<6;ii++) m_vec[ii]=0.;
-        // m_valid=false;
-      } else {
-        m_vec[G6_AA_idx]=dc7u[DC7u_AA_idx];
-        m_vec[G6_BB_idx]=dc7u[DC7u_BB_idx];
-        m_vec[G6_CC_idx]=dc7u[DC7u_CC_idx];
-        u=dc7u[DC7u_MIN_BC_diagsq_idx]
-          -dc7u[DC7u_BB_idx]-dc7u[DC7u_CC_idx];
-        v=dc7u[DC7u_MIN_AC_diagsq_idx]
-          -dc7u[DC7u_AA_idx]-dc7u[DC7u_CC_idx];
-        w=dc7u[DC7u_MIN_AB_diagsq_idx]
-          -dc7u[DC7u_AA_idx]-dc7u[DC7u_BB_idx];
-        testsign=dc7u[DC7u_MIN_ABC_diagsq_idx]
-             -(m_vec[G6_AA_idx]
-              +m_vec[G6_BB_idx]
-              +m_vec[G6_CC_idx]+u+v+w);
-        if ((std::fabs(testsign)<=delta)
-            || (std::fabs(u)<=delta)
-            || (std::fabs(v)<=delta)
-            || (std::fabs(w)<=delta)) {
-          m_vec[G6_2BC_idx]=u;
-          m_vec[G6_2AC_idx]=v;
-          m_vec[G6_2AB_idx]=w;
-        } else {
-          m_vec[G6_2BC_idx]=-u;
-          m_vec[G6_2AC_idx]=-v;
-          m_vec[G6_2AB_idx]=-w;
-        }
-        m_valid=true;
-      }
 }
 
 G6::G6(const std::string& s) {
@@ -295,31 +169,11 @@ G6& G6::operator= (const std::string& s)
    return *this;
 }
 
-G6& G6::operator= (const D7& v)
-{
-   (*this) = G6(v);
-   m_vec.SetValid(v.GetValid());
-   return *this;
-}
-
 G6& G6::operator= (const S6& v)
 {
    (*this) = G6(v);
    m_vec.SetValid(v.GetValid());
    m_valid = v.GetValid();
-   return *this;
-}
-
-G6& G6::operator= (const C3& c3)
-{
-   (*this) = S6(c3);
-   m_vec.SetValid(c3.GetValid());
-   return *this;
-}
-
-G6& G6::operator= (const B4& v)
-{
-   (*this) = G6(v);
    return *this;
 }
 
