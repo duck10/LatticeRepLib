@@ -175,7 +175,7 @@ std::vector<EnhancedS6(*)(const EnhancedS6&)> EnhancedS6::SetReflectionFunctions
    &EnhancedS6::Reflection20,
    &EnhancedS6::Reflection21,
    &EnhancedS6::Reflection22,
-   &EnhancedS6::Reflection22,
+   &EnhancedS6::Reflection23,
    &EnhancedS6::Reflection24 };
 }
 
