@@ -29,6 +29,12 @@
     <ClCompile Include="VCPVector..cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Cmdsellacomparetests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cmdsellatests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h">

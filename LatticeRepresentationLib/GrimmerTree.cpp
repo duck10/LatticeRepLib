@@ -421,19 +421,19 @@ void GrimmerChains::CreateGrimmerChains(MapOFDeloneFits& theDeloneMap, MapOfBrav
 void GrimmerChains::CheckAllGrimmerChains()
 {
    m_hasChainFailure = false;
-   std::set<std::string> uniqueFailures; //lca save these up!!!!!!!!!!!!!!
+   // NEW: must clear -- previously only m_hasChainFailure was reset, so a
+   // second call (e.g. from ReplaceRemediation, after a fit is repaired)
+   // would APPEND to whatever failures were already recorded rather than
+   // rebuilding from the current state. GetFirstFailure() returns
+   // m_GrimmerFailures[0], so without this clear it would permanently
+   // return the very first failure ever recorded for this object's
+   // lifetime, regardless of any remediation that happened afterward.
+   m_GrimmerFailures.clear();
    for (auto& chain : m_GrimmerChains) {
       const GrimmerChainFailure fail = chain.CheckOneGrimmerChain();
       if (!fail.empty()) {
-         std::stringstream ss;
-         ss << fail << std::endl;
-         uniqueFailures.insert(ss.str());
          m_GrimmerFailures.emplace_back(fail);
          m_hasChainFailure = true;
-         if (const bool debug = false == true)
-         {
-            std::cout << fail << std::endl;
-         }
       }
    }
 }
@@ -723,6 +723,13 @@ GrimmerChains GrimmerChains::ReplaceRemediation(const DeloneFitResults& newFit) 
       // Update the chain in the OneGrimmerChain
       oneChain = OneGrimmerChain(chain);
    }
+
+   // NEW: re-derive m_hasChainFailure/m_GrimmerFailures from the just-
+   // updated chain data. Without this, HasFailure()/GetFirstFailure()
+   // stay frozen at whatever the ORIGINAL (pre-remediation) check found,
+   // so a caller looping on HasFailure() could never observe that
+   // remediation actually fixed anything.
+   out.CheckAllGrimmerChains();
 
    return out;
 }

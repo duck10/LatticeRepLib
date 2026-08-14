@@ -1,8 +1,11 @@
 /* define LRL_DEBUG 1 */
 
 #include <algorithm>
+#include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <map>
+#include <set>
 #include <string>
 #include <utility>
 
@@ -153,7 +156,8 @@ std::vector<std::pair<std::string, double> > DeloneFitToScores(const std::vector
       if (test == best.end()) {
          fits[i].GetZscore();
          best.insert(std::make_pair(fits[i].GetBravaisType(), std::make_pair(fits[i].GetBravaisType(), fits[i].GetRawFit())));
-      } else
+      }
+      else
       {
          const double previous = (*test).second.second;
          if (fits[i].GetRawFit() < previous) {
@@ -258,19 +262,35 @@ void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
    }
 }
 
-std::pair<std::string, std::string> ProcessSella(
-   const bool doProduceSellaGraphics,
+// ComputeDeloneFits -- computes the Delone/Bravais type fits for one input
+// cell, including Grimmer-chain violation detection and remediation.
+//
+// Factored out of ProcessSella so the fit computation can be reused (by
+// COMPARE mode, and by tests) without paying for or emitting the per-cell
+// graphics/printing that ProcessSella also does.
+//
+// NOTE: remediation now loops (while) rather than firing once (if), so a
+// cell with more than one simultaneous Grimmer-chain violation gets every
+// fixable violation repaired, not just the first one detected. The pass
+// count is bounded by maxRemediationPasses as a safety cap, in case some
+// violation is not actually resolvable by Remediation and would otherwise
+// keep gcs.HasFailure() == true forever.
+// Bundles what ComputeDeloneFits produces: the fit results themselves, and
+// the final (post-remediation) GrimmerChains object, which callers such as
+// ProcessSella still need afterward (e.g. for GenerateSortedFitPlots).
+struct DeloneFitComputation {
+   std::vector<DeloneFitResults> fits;
+   GrimmerChains chains;
+};
+
+DeloneFitComputation ComputeDeloneFits(
    const LatticeCell& input,
-   const std::string& filename,
    const CmdSellaControls& controls,
-   Sella& sella)  // NEW parameter - sella passed by reference
+   Sella& sella)
 {
-   std::vector<BravaisChainFailures> outBCF;
    MatS6 oneReductionMatrix;
    const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
    const S6 oneErrors = 0.1 * input.getCell();
-
-   // Matrix building removed - now done once in main()
 
    if (controls.shouldDebug()) {
       const auto perps = sella.GetPerps();
@@ -279,7 +299,8 @@ std::pair<std::string, std::string> ProcessSella(
          std::cout << "ERROR: the sizes of perps and projectors do not match" << std::endl;
          std::cout << "size of pjrs  " << prjs.size() << std::endl;
          std::cout << "size of perps " << perps.size() << std::endl;
-      } else {
+      }
+      else {
          std::cout << "size(prjs)   size(perps)" << std::endl;
          for (size_t i = 0; i < prjs.size(); ++i) {
             std::cout << prjs[i].size() << "    " << perps[i].size() << std::endl;
@@ -296,18 +317,118 @@ std::pair<std::string, std::string> ProcessSella(
    theBravaisfits.CreateMapOFBravaisFits(vDeloneFitResultsForOneInputLattice);
    SearchForToCanon(vDeloneFitResultsForOneInputLattice);
 
-   GrimmerChains gcs(S6(input.getCell()));
+   GrimmerChains gcs(oneLattice);
    gcs.CreateGrimmerChains(theDelonefits, theBravaisfits);
    gcs.updateChains(theDelonefits, theBravaisfits);
    gcs.CheckAllGrimmerChains();
 
-   if (gcs.HasFailure()) {
+   // TEMPORARY: gated on shouldDebug() (DETAILS) rather than
+   // shouldShowChainFailures() (SHOWCHAINFAILURES), since only DETAILS has
+   // been merged into the live CmdSellaControls.h so far. Switch all four
+   // sites below back to shouldShowChainFailures() once SHOWCHAINFAILURES
+   // is merged, so this output doesn't require enabling all of DETAILS's
+   // other (much noisier) output just to see chain-failure detail.
+   if (controls.shouldDebug()) {
+      if (gcs.HasFailure()) {
+         const auto failures = gcs.GetFirstFailure().GetFailures();
+         std::cout << "; Grimmer chain violation (before remediation) for "
+            << input.GetInput() << ":" << std::endl;
+         for (const auto& f : failures) {
+            std::cout << ";   " << f.first << " = " << f.second << std::endl;
+         }
+      }
+      else {
+         std::cout << "; No Grimmer chain violation for "
+            << input.GetInput() << std::endl;
+      }
+   }
+
+   static const int maxRemediationPasses = 10; // generous cap; no catalogued
+   // Delone type has more than a handful of structural zeros, so a
+   // well-formed input should never need anywhere near this many passes.
+   // Also serves as a hard backstop now that CheckAllGrimmerChains can be
+   // re-run mid-loop (via ReplaceRemediation) and could in principle keep
+   // surfacing new violations pass after pass.
+   int remediationPasses = 0;
+   std::string lastRepairedType;
+   double lastRepairedFit = -1.0;
+   bool madeProgress = true;
+   while (gcs.HasFailure() && remediationPasses < maxRemediationPasses && madeProgress) {
       GrimmerChainFailure gcf = gcs.GetFirstFailure();
       const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
-      const DeloneFitResults revisedFit = gcs.Remediation(firstFail[1].first, firstFail[1].second);
-      vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
-      gcs = gcs.ReplaceRemediation(revisedFit);
+      const std::string& targetType = firstFail[1].first;
+      if (controls.shouldDebug()) {
+         std::cout << ";   remediation pass " << (remediationPasses + 1)
+            << ": repairing " << targetType
+            << " (fit " << firstFail[1].second << ")" << std::endl;
+      }
+      const DeloneFitResults revisedFit = gcs.Remediation(targetType, firstFail[1].second);
+
+      // "No progress" means Remediation was asked to fix the SAME type
+      // again and returned the SAME fit (within numerical noise) as last
+      // time -- i.e. it has genuinely exhausted its search for that
+      // target, not just that this pass's fit differs numerically from
+      // whatever unrelated type was repaired in a previous pass. A newly
+      // surfaced, different violation (different targetType) is always
+      // worth attempting, regardless of how its fit compares to the last
+      // pass's target.
+      const double newFit = revisedFit.GetRawFit();
+      madeProgress = (remediationPasses == 0) ||
+         (targetType != lastRepairedType) ||
+         (std::abs(newFit - lastRepairedFit) > 1.0E-8);
+      if (madeProgress) {
+         vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
+         gcs = gcs.ReplaceRemediation(revisedFit);
+         lastRepairedType = targetType;
+         lastRepairedFit = newFit;
+      }
+      else if (controls.shouldDebug()) {
+         std::cout << ";   remediation pass " << (remediationPasses + 1)
+            << " made no progress (fit unchanged at " << newFit
+            << ") -- stopping" << std::endl;
+      }
+      ++remediationPasses;
    }
+
+   if (controls.shouldDebug() && remediationPasses > 0) {
+      if (gcs.HasFailure()) {
+         const auto failuresAfter = gcs.GetFirstFailure().GetFailures();
+         std::cout << "; Grimmer chain violation REMAINS after "
+            << remediationPasses << " remediation pass(es) for "
+            << input.GetInput() << ":" << std::endl;
+         for (const auto& f : failuresAfter) {
+            std::cout << ";   " << f.first << " = " << f.second << std::endl;
+         }
+      }
+      else {
+         std::cout << "; Grimmer chain violation resolved after "
+            << remediationPasses << " remediation pass(es) for "
+            << input.GetInput() << std::endl;
+      }
+   }
+   if (remediationPasses >= maxRemediationPasses && controls.shouldDebug()) {
+      std::cout << "; WARNING: remediation pass cap reached for input "
+         << input.GetInput() << " -- a chain violation may remain unresolved"
+         << std::endl;
+   }
+
+   return DeloneFitComputation{ vDeloneFitResultsForOneInputLattice, gcs };
+}
+
+std::pair<std::string, std::string> ProcessSella(
+   const bool doProduceSellaGraphics,
+   const LatticeCell& input,
+   const std::string& filename,
+   const CmdSellaControls& controls,
+   Sella& sella)  // NEW parameter - sella passed by reference
+{
+   std::vector<BravaisChainFailures> outBCF;
+   MatS6 oneReductionMatrix;
+   const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
+
+   DeloneFitComputation computation = ComputeDeloneFits(input, controls, sella);
+   std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice = computation.fits;
+   GrimmerChains gcs = computation.chains;
 
    std::cout << "; " << input.GetInput() << " input data" << std::endl << std::endl;
 
@@ -377,7 +498,8 @@ std::string SendSellaToFile(const std::string& svg, const std::string& filename)
    {
       fileout.seekp(0);
       fileout << svg << std::endl;
-   } else
+   }
+   else
       std::cout << "Could not open file " << filename << " for write in SendSellaToFile.h" << std::endl;
 
    fileout.close();
@@ -429,6 +551,82 @@ std::string AddSuffixToAllSvgOccurrences(const std::string& input, const std::st
    return result;
 }
 
+// PrintCompareSummary -- prints one table summarizing raw fit values across
+// several input cells at once: candidate type names down the rows, ordinal
+// input labels ("Input 1", "Input 2", ...) across the columns. This is the
+// generalized/automated form of a hand-built O1B/O2/O3-style comparison
+// table -- built for COMPARE mode, and reusable directly from tests.
+void PrintCompareSummary(
+   const std::vector<std::pair<std::string, std::vector<DeloneFitResults>>>& compareResults)
+{
+   // Union of type names seen across all inputs, in first-seen order, so
+   // row order is stable and doesn't depend on std::map/std::set ordering
+   // of the type name strings themselves.
+   std::vector<std::string> typeOrder;
+   std::set<std::string> seenTypes;
+   for (const auto& labeledFits : compareResults) {
+      for (const auto& f : labeledFits.second) {
+         const std::string t = f.GetGeneralType();
+         if (seenTypes.insert(t).second) typeOrder.push_back(t);
+      }
+   }
+
+   // A type can appear more than once for a given input (e.g. remediation
+   // appends an extra DeloneFitResults entry) -- keep the best (smallest)
+   // raw fit per (input, type) pair.
+   std::map<std::pair<size_t, std::string>, double> bestFit;
+   for (size_t col = 0; col < compareResults.size(); ++col) {
+      for (const auto& f : compareResults[col].second) {
+         const auto key = std::make_pair(col, f.GetGeneralType());
+         const double v = f.GetRawFit();
+         const auto it = bestFit.find(key);
+         if (it == bestFit.end() || v < it->second) bestFit[key] = v;
+      }
+   }
+
+   std::cout << "; COMPARE summary -- raw fit by type and input" << std::endl;
+   std::cout << std::setw(10) << std::left << "Type";
+   for (const auto& labeledFits : compareResults) {
+      std::cout << std::setw(14) << std::right << labeledFits.first;
+   }
+   std::cout << std::endl;
+
+   std::cout << std::fixed << std::setprecision(5);
+   for (const auto& t : typeOrder) {
+      std::cout << std::setw(10) << std::left << t;
+      for (size_t col = 0; col < compareResults.size(); ++col) {
+         const auto it = bestFit.find(std::make_pair(col, t));
+         std::cout << std::setw(14) << std::right;
+         if (it != bestFit.end()) std::cout << it->second;
+         else std::cout << "--";
+      }
+      std::cout << std::endl;
+   }
+   std::cout.unsetf(std::ios::floatfield);
+}
+
+
+// BuildCompareResults -- computes labeled fit results for every cell in
+// inputList (ordinal labels "Input 1", "Input 2", ...), ignoring
+// blockstart/blocksize entirely: that window exists only to let a web
+// front end split a large run into pages, and has no bearing on which
+// cells belong together in a COMPARE comparison.
+//
+// Pulled out of main() so it's directly testable without invoking main()
+// itself (which calls exit(0) and can't be unit tested).
+std::vector<std::pair<std::string, std::vector<DeloneFitResults>>> BuildCompareResults(
+   const std::vector<LatticeCell>& inputList,
+   const CmdSellaControls& controls,
+   Sella& sella)
+{
+   std::vector<std::pair<std::string, std::vector<DeloneFitResults>>> compareResults;
+   compareResults.reserve(inputList.size());
+   for (size_t i = 0; i < inputList.size(); ++i) {
+      const std::string label = "Input " + std::to_string(i + 1);
+      compareResults.emplace_back(label, ComputeDeloneFits(inputList[i], controls, sella).fits);
+   }
+   return compareResults;
+}
 
 int main(int argc, char* argv[])
 {
@@ -484,34 +682,44 @@ int main(int argc, char* argv[])
 
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
    const bool doProduceSellaGraphics = controls.DoGraphics();
-   for (size_t whichCell = blockstart;
-      whichCell < inputList.size() && whichCell < blockstart + blocksize; ++whichCell) {
-      // Get both SVGs as a pair - pass sella by reference
-      const auto [sellaSvg, fitPlotsSvg] = ProcessSella(
-         doProduceSellaGraphics,
-         inputList[whichCell],
-         dc_setup.getRawFileNames()[whichCell - blockstart],
-         controls,
-         sella);  // NEW: pass sella
-      if (doProduceSellaGraphics) {
-         // Write Sella plot
-         std::cout << "; Send Sella Plot to graphics file "
-            << dc_setup.getFullFileNameAt(whichCell) << std::endl;
-         std::cout << "; Send Sella Plot to graphics file "
-            << AddSuffixToAllSvgOccurrences(dc_setup.getFullFileNameAt(whichCell), "_fit_plots") << std::endl;
-         if (webio.m_hasWebInstructions) {
-            SendSellaToFile(sellaSvg, dc_setup.getRawFileNames()[whichCell - blockstart]);
-            // Write fit plots immediately after
-            const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getRawFileNames()[whichCell - blockstart], "_fit_plots");
-            SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
-         } else {
-            SendSellaToFile(sellaSvg, dc_setup.getBasicFileNames()[whichCell - blockstart]);
-            // Write fit plots immediately after
-            const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getBasicFileNames()[whichCell - blockstart], "_fit_plots");
-            SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
+
+   if (controls.shouldCompare()) {
+      // COMPARE ignores blockstart/blocksize -- that window exists only for
+      // web-batching of large runs and has no bearing on which cells belong
+      // together in a comparison. Every cell in inputList is compared.
+      const auto compareResults = BuildCompareResults(inputList, controls, sella);
+      PrintCompareSummary(compareResults);
+   }
+   else {
+      for (size_t whichCell = blockstart;
+         whichCell < inputList.size() && whichCell < blockstart + blocksize; ++whichCell) {
+         // Get both SVGs as a pair - pass sella by reference
+         const auto [sellaSvg, fitPlotsSvg] = ProcessSella(
+            doProduceSellaGraphics,
+            inputList[whichCell],
+            dc_setup.getRawFileNames()[whichCell - blockstart],
+            controls,
+            sella);  // NEW: pass sella
+         if (doProduceSellaGraphics) {
+            // Write Sella plot
+            std::cout << "; Send Sella Plot to graphics file "
+               << dc_setup.getFullFileNameAt(whichCell) << std::endl;
+            std::cout << "; Send Sella Plot to graphics file "
+               << AddSuffixToAllSvgOccurrences(dc_setup.getFullFileNameAt(whichCell), "_fit_plots") << std::endl;
+            if (webio.m_hasWebInstructions) {
+               SendSellaToFile(sellaSvg, dc_setup.getRawFileNames()[whichCell - blockstart]);
+               // Write fit plots immediately after
+               const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getRawFileNames()[whichCell - blockstart], "_fit_plots");
+               SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
+            }
+            else {
+               SendSellaToFile(sellaSvg, dc_setup.getBasicFileNames()[whichCell - blockstart]);
+               // Write fit plots immediately after
+               const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getBasicFileNames()[whichCell - blockstart], "_fit_plots");
+               SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
+            }
          }
       }
    }
    exit(0);
 }
-

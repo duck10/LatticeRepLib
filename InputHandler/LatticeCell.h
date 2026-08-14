@@ -1,7 +1,10 @@
 #ifndef LATTICECELL_H
 #define LATTICECELL_H
 
+#include <set>
+#include <sstream>
 #include <string>
+#include <vector>
 
 #include "G6.h"
 #include "C3.h"
@@ -26,11 +29,44 @@ public:
    {
    }
 
-   LatticeCell( const std::string& type, const G6& c, const std::string& inputReadIn = "")
+   LatticeCell(const std::string& type, const G6& c, const std::string& inputReadIn = "")
       : cell(c)
       , latticeType(type)
       , inputtext(inputReadIn)
    {
+   }
+
+   // Single-string constructor -- accepts either
+   //   "P 10 10 10 90 90 90"   (leading lattice designator)
+   // or
+   //   "10 10 10 90 90 90"     (no designator -- P is assumed)
+   // Six cell parameters (a, b, c, alpha, beta, gamma) are expected either
+   // way; LRL_Cell's own string constructor does the actual numeric parse.
+   LatticeCell(const std::string& s)
+      : inputtext(s)
+   {
+      static const std::set<std::string> designators = {
+         "P", "A", "B", "C", "F", "I", "H"
+      };
+
+      std::istringstream iss(s);
+      std::vector<std::string> tokens;
+      std::string tok;
+      while (iss >> tok) tokens.push_back(tok);
+
+      latticeType = "P";
+      size_t startIdx = 0;
+      if (!tokens.empty() && designators.count(tokens[0])) {
+         latticeType = tokens[0];
+         startIdx = 1;
+      }
+
+      std::string cellTokens;
+      for (size_t i = startIdx; i < tokens.size(); ++i) {
+         cellTokens += tokens[i];
+         if (i + 1 < tokens.size()) cellTokens += " ";
+      }
+      cell = LRL_Cell(cellTokens);
    }
 
    LatticeCell(const B4& b4) {
