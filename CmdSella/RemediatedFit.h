@@ -187,10 +187,21 @@ inline DeloneFitResults Remediation2Hop(const S6& s6, const std::string& bravais
 }
 
 // StabilityResult / RemediateToStability -- iterates Remediation (2-hop
-// per call) to a fixed point: each round searches 2 more hops from the
-// current best candidate (via Remediation's newly-populated
-// GetOriginalInput()), stopping when a round no longer improves the fit.
-// See file header, chat 2026-08-22.
+// per call) to a fixed point per type, chaining on the actual winning
+// candidate each round (via Remediation's GetOriginalInput()).
+//
+// FIXED 2026-08-22: each round now re-reduces the candidate
+// (SellingReduceCell) before feeding it back into Remediation. Without
+// this, the raw boundary-transformed S6 was fed forward unreduced round
+// after round -- confirmed via RunStabilityTrace on M2A/P 21.775 21.785
+// 27.232... that this let the candidate cell diverge to enormous,
+// unphysical size (edges growing past 28000 across 26 rounds) while fit
+// crept toward zero purely as a numerical artifact of that divergence,
+// not real convergence -- the "delta=0" plateau after round 27 was
+// floating-point precision loss at ~9-digit S6 magnitudes, not a genuine
+// fixed point. Reduction is the mechanism that's supposed to keep a
+// lattice representation bounded and canonical; it was only ever applied
+// once, to the original input, before this fix.
 struct StabilityResult {
    DeloneFitResults fit;
    int rounds;      // number of Remediation calls beyond the first
@@ -204,11 +215,13 @@ inline StabilityResult RemediateToStability(const S6& s6, const std::string& bra
 
    int rounds = 0;
    for (; rounds < maxRounds; ++rounds) {
-      const S6 nextPoint = currentFit.GetOriginalInput();
-      const DeloneFitResults nextFit = Remediation(nextPoint, bravaisName, -1.0);
+      MatS6 reductionMatrix;
+      const S6 reducedNextPoint = LatticeConverter::SellingReduceCell(
+         "P", currentFit.GetOriginalInput(), reductionMatrix);
+      const DeloneFitResults nextFit = Remediation(reducedNextPoint, bravaisName, -1.0);
       if (nextFit.GetRawFit() < currentFit.GetRawFit() - 1.0E-8) {
          currentFit = nextFit;
-         currentPoint = nextPoint;
+         currentPoint = reducedNextPoint;
       }
       else {
          break;
@@ -217,21 +230,34 @@ inline StabilityResult RemediateToStability(const S6& s6, const std::string& bra
    return StabilityResult{ currentFit, rounds, rounds >= maxRounds };
 }
 
+
 // ClassifyViaStabilityRemediation -- standalone alternative to
 // ComputeDeloneFits's classification path. Reduces the input cell once,
 // then for each of the 24 Delone types calls RemediateToStability
 // independently. Does not touch ComputeDeloneFits, GrimmerChains, or any
 // existing mechanism. See file header, chat 2026-08-22.
-inline std::vector<DeloneFitResults> ClassifyViaStabilityRemediation(
+// ClassifyViaStabilityRemediation -- standalone alternative to
+// ComputeDeloneFits's classification path. Reduces the input cell once,
+// then for each of the 24 Delone types calls RemediateToStability
+// independently. Does not touch ComputeDeloneFits, GrimmerChains, or any
+// existing mechanism. See file header, chat 2026-08-22.
+//
+// Returns rounds/hitCap alongside each fit (previously discarded) --
+// needed to characterize how much search depth is actually required in
+// practice, ahead of the planned removal of the projector/matrix-library
+// classification path in favor of this mechanism.
+struct StabilityClassification {
+   DeloneFitResults fit;
+   int rounds;
+   bool hitCap;
+};
+
+inline std::vector<StabilityClassification> ClassifyViaStabilityRemediation(
    const LatticeCell& input) {
 
    MatS6 oneReductionMatrix;
    const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
 
-   // Full 24-type list. Cross-checked against DeloneTypeList.cpp's
-   // typelist (chat 2026-08-22) plus the five types commented out there
-   // (O3, M2B, M3, A1, A2, A3) -- worth a second look if any type name
-   // here turns out not to be accepted by GenerateDeloneBase().Select().
    static const std::vector<std::string> allTypes = {
       "C1","C3","C5",
       "R1","R3",
@@ -242,13 +268,16 @@ inline std::vector<DeloneFitResults> ClassifyViaStabilityRemediation(
       "H4"
    };
 
-   std::vector<DeloneFitResults> results;
+   std::vector<StabilityClassification> results;
    results.reserve(allTypes.size());
    for (const auto& typeName : allTypes) {
       const StabilityResult stability = RemediateToStability(oneLattice, typeName);
-      results.emplace_back(stability.fit);
+      results.emplace_back(StabilityClassification{ stability.fit, stability.rounds, stability.hitCap });
    }
    return results;
 }
+
+
+
 
 #endif  // REMEDIATED_FIT_H

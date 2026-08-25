@@ -1387,10 +1387,11 @@ void RunStabilityVsCurrentComparison(const CmdSellaControls& controls) {
    for (const auto& cellStr : cells) {
       const LatticeCell cell(cellStr);
       DeloneFitComputation currentResult = ComputeDeloneFits(cell, controls, sella);
-      std::vector<DeloneFitResults> stabilityResult = ClassifyViaStabilityRemediation(cell);
+      std::vector<StabilityClassification> stabilityResult = ClassifyViaStabilityRemediation(cell);
 
       std::cout << "; --- " << cellStr << " ---" << std::endl;
-      for (const auto& newFit : stabilityResult) {
+      for (const auto& entry : stabilityResult) {
+         const DeloneFitResults& newFit = entry.fit;
          double oldFit = -1.0;
          bool found = false;
          for (const auto& oldOne : currentResult.fits) {
@@ -1404,13 +1405,93 @@ void RunStabilityVsCurrentComparison(const CmdSellaControls& controls) {
          std::cout << newFit.GetGeneralType()
             << "  current=" << (found ? std::to_string(oldFit) : "MISSING")
             << "  stability=" << newFit.GetRawFit()
+            << "  rounds=" << entry.rounds
+            << (entry.hitCap ? "  HIT_CAP" : "")
             << (found && delta > 0.001 ? "  DIFFERS" : "")
             << std::endl;
       }
       std::cout << std::endl;
    }
 }
+// RunStabilityTrace -- prints the fit at every round of RemediateToStability
+// for one type on one cell, to check whether HIT_CAP cases (M2A, M4;
+// chat 2026-08-22) show the zigzag signature of a two-boundary corner --
+// alternating overshoot, geometrically diminishing gap -- versus simple
+// slow-but-monotonic convergence or a stuck search.
+// RunStabilityTrace -- prints fit AND the actual candidate cell (S6 raw
+// components + P-cell degrees form) at every round of RemediateToStability,
+// to check whether small-delta steps are approaching a sensible target
+// cell (chat 2026-08-22) rather than drifting or cycling meaninglessly.
+void RunStabilityTrace(const S6& s6, const std::string& bravaisName, const int maxRounds = 30) {
+   S6 currentPoint = s6;
+   DeloneFitResults currentFit = Remediation(currentPoint, bravaisName, -1.0);
+   std::cout << bravaisName << " round 0: fit=" << currentFit.GetRawFit()
+      << "  s6=" << currentPoint
+      << "  cell=" << LRL_Cell_Degrees(currentPoint) << std::endl;
 
+   for (int round = 1; round <= maxRounds; ++round) {
+      MatS6 reductionMatrix;
+      const S6 reducedNextPoint = LatticeConverter::SellingReduceCell(
+         "P", currentFit.GetOriginalInput(), reductionMatrix);
+      const DeloneFitResults nextFit = Remediation(reducedNextPoint, bravaisName, -1.0);
+      std::cout << bravaisName << " round " << round
+         << ": fit=" << nextFit.GetRawFit()
+         << "  delta=" << (currentFit.GetRawFit() - nextFit.GetRawFit())
+         << "  s6=" << reducedNextPoint
+         << "  cell=" << LRL_Cell_Degrees(reducedNextPoint) << std::endl;
+      currentFit = nextFit;
+      currentPoint = reducedNextPoint;
+   }
+}
+
+// RunRawFitCheck -- computes raw, unremediated Sella fit per type on one
+// cell and compares against ComputeDeloneFits's "current" values, to test
+// whether RemediateIfShortlistChanges fell back to raw fit for every type
+// on this cell (i.e. the shortlist didn't change) -- chat 2026-08-22,
+// checking whether the DIFFERS pattern in RunStabilityVsCurrentComparison
+// is explained by current==raw rather than current==remediated.
+void RunRawFitCheck(const CmdSellaControls& controls) {
+   Sella sella;
+   const LatticeCell cell("P  1.511  3.987  3.918 149.756 103.646  94.613");
+
+   MatS6 oneReductionMatrix;
+   const S6 oneLattice = GetInputSellingReducedVectors(cell, oneReductionMatrix);
+
+   DeloneFitComputation currentResult = ComputeDeloneFits(cell, controls, sella);
+
+   static const std::vector<std::string> allTypes = {
+      "C1","C3","C5",
+      "R1","R3",
+      "T1","T2","T5",
+      "O1A","O1B","O2","O3","O4","O5",
+      "M1A","M1B","M2A","M2B","M3","M4",
+      "A1","A2","A3",
+      "H4"
+   };
+
+   for (const auto& typeName : allTypes) {
+      const std::vector<std::shared_ptr<GenerateDeloneBase>> sptypes =
+         GenerateDeloneBase().Select(typeName);
+      const DeloneFitResults rawFit = Sella::SellaFitXXXXXX(sptypes[0], oneLattice);
+
+      double currentFit = -1.0;
+      bool found = false;
+      for (const auto& oldOne : currentResult.fits) {
+         if (oldOne.GetGeneralType() == typeName) {
+            currentFit = oldOne.GetRawFit();
+            found = true;
+            break;
+         }
+      }
+
+      const double delta = found ? std::abs(rawFit.GetRawFit() - currentFit) : -1.0;
+      std::cout << typeName
+         << "  raw=" << rawFit.GetRawFit()
+         << "  current=" << (found ? std::to_string(currentFit) : "MISSING")
+         << (found && delta < 0.001 ? "  MATCHES_RAW" : "")
+         << std::endl;
+   }
+}
 
 
 #endif //TEST_HARNESS_H

@@ -758,7 +758,7 @@ int main(int argc, char* argv[])
    //RunMpOcTpLastDigitCheck();
    //exit(0);
 
-   //RunRemediation144Comparison();
+   //RunzyComparison();
    //exit(0);
 
    //RunRemediationShortlistSanityCheck();
@@ -853,6 +853,27 @@ int main(int argc, char* argv[])
 #endif
 
    //==============================================================================
+
+   if (controls.shouldUseHarness())
+   {
+
+      if (controls.shouldUseHarness())
+      {
+         RunRawFitCheck(controls);
+         exit(0);
+      }
+
+
+      //RunHistoricalBadCaseCheck(controls);
+      RunStabilityVsCurrentComparison(controls);
+      //const LatticeCell traceCell("P 21.775 21.785 27.232  90.028  89.974  90.023");
+      //MatS6 traceReductionMatrix;
+      //const S6 traceLattice = GetInputSellingReducedVectors(traceCell, traceReductionMatrix);
+      //RunStabilityTrace(traceLattice, "M2A");
+      exit(0);
+   }
+
+
    if (controls.shouldUseHarness())
    {
       //RunHistoricalBadCaseCheck(controls);
