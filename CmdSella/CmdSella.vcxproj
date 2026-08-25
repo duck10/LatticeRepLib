@@ -145,10 +145,12 @@
   <ItemGroup>
     <ClCompile Include="..\LatticeRepresentationLib\BravaisHeirarchy.cpp" />
     <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
+    <ClCompile Include="ApplyVCPSequence.cpp" />
+    <ClCompile Include="ApplyVCPSequence2.cpp" />
     <ClCompile Include="CmdSella.cpp" />
-    <ClCompile Include="Cmdsellacomparetests.cpp" />
     <ClCompile Include="CmdSellaControls.cpp" />
     <ClCompile Include="Cmdsellatests.cpp" />
+    <ClCompile Include="GrimmerTree.cpp" />
     <ClCompile Include="SellaBuild.cpp" />
     <ClCompile Include="VCPVector..cpp" />
   </ItemGroup>
@@ -166,8 +168,24 @@
   <ItemGroup>
     <ClInclude Include="..\LatticeRepresentationLib\BravaisHeirarchy.h" />
     <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
+    <ClInclude Include="CheckABReflection.h" />
     <ClInclude Include="CmdSellaControls.h" />
+    <ClInclude Include="CompareBoundaryTransformsTest.h" />
+    <ClInclude Include="DeloneFitComputation.h" />
+    <ClInclude Include="Deloneparentagetest.h" />
+    <ClInclude Include="DiagnoseBoundaryCandidates.h" />
+    <ClInclude Include="DiagnoseO1BCoverage.h" />
+    <ClInclude Include="DiagnoseO2Gap.h" />
+    <ClInclude Include="ExpandAcrossBoundaryZeros.h" />
+    <ClInclude Include="ExploreReductionTies.h" />
+    <ClInclude Include="FlexibleSellaTestMode.h" />
+    <ClInclude Include="GrimmerTree.h" />
+    <ClInclude Include="RemediatedFit.h" />
+    <ClInclude Include="SearchAllBoundaryTies.h" />
+    <ClInclude Include="SearchBoundaryNeighborsByTransform.h" />
     <ClInclude Include="SellaBuild.h" />
+    <ClInclude Include="TestHarness.h" />
+    <ClInclude Include="TestRemediationOnBoundaryCandidates.h" />
     <ClInclude Include="VCPVector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -22,6 +22,12 @@ private:
    std::string inputtext;
 
 public:
+   template <typename T> LatticeCell(const std::string& s, const T& t) {
+      latticeType = s[0];
+      cell = G6(t);
+      inputtext = "from constructor";
+   }
+
    LatticeCell(const G6& c, const std::string& type = "P", const std::string& inputReadIn = "")
       : cell(c)
       , latticeType(type)
@@ -42,32 +48,16 @@ public:
    //   "10 10 10 90 90 90"     (no designator -- P is assumed)
    // Six cell parameters (a, b, c, alpha, beta, gamma) are expected either
    // way; LRL_Cell's own string constructor does the actual numeric parse.
-   LatticeCell(const std::string& s)
-      : inputtext(s)
-   {
-      static const std::set<std::string> designators = {
-         "P", "A", "B", "C", "F", "I", "H"
-      };
 
-      std::istringstream iss(s);
-      std::vector<std::string> tokens;
-      std::string tok;
-      while (iss >> tok) tokens.push_back(tok);
-
-      latticeType = "P";
-      size_t startIdx = 0;
-      if (!tokens.empty() && designators.count(tokens[0])) {
-         latticeType = tokens[0];
-         startIdx = 1;
-      }
-
-      std::string cellTokens;
-      for (size_t i = startIdx; i < tokens.size(); ++i) {
-         cellTokens += tokens[i];
-         if (i + 1 < tokens.size()) cellTokens += " ";
-      }
-      cell = LRL_Cell(cellTokens);
-   }
+   LatticeCell(const std::string & s);   // implementation moved to LatticeCell.cpp
+   // -- delegates to InputHandler::processSingleLatticeInput,
+   // which already handles every designator (P/A/B/C/F/I/H,
+   // S/S6, G/G6, RANDOM, P3, DC7U) correctly. Kept out-of-line
+   // here specifically to avoid LatticeCell.h needing to
+   // #include InputHandler.h (InputHandler.h already needs a
+   // complete LatticeCell for its std::vector<LatticeCell>&
+   // parameters -- an in-header delegation here would create a
+   // circular include).
 
    LatticeCell(const B4& b4) {
       cell = LRL_Cell(b4);

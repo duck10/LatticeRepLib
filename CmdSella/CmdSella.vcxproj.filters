@@ -29,10 +29,16 @@
     <ClCompile Include="VCPVector..cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cmdsellacomparetests.cpp">
+    <ClCompile Include="ApplyVCPSequence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cmdsellatests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplyVCPSequence2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GrimmerTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,6 +56,54 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VCPVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FlexibleSellaTestMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeloneFitComputation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Deloneparentagetest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExpandAcrossBoundaryZeros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExploreReductionTies.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GrimmerTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompareBoundaryTransformsTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiagnoseO2Gap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiagnoseBoundaryCandidates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckABReflection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiagnoseO1BCoverage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestRemediationOnBoundaryCandidates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchAllBoundaryTies.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchBoundaryNeighborsByTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RemediatedFit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestHarness.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

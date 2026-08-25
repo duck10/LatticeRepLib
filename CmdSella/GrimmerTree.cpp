@@ -673,26 +673,26 @@ std::string GrimmerChains::createPearsonPlot(const std::vector<FitData>& pearson
 }
 
 
-DeloneFitResults GrimmerChains::Remediation(const std::string& bravaisName, const double initialFit) {
-
-   static const std::vector<std::shared_ptr<GenerateDeloneBase> > sptypes =
-      GenerateDeloneBase().Select(bravaisName);
-
-   const DeloneFitResults dfrInit = Sella::SellaFitXXXXXX(sptypes[0], m_s6);
-   auto dfr = dfrInit;
-
-   for (size_t i = 1; i <= 6; ++i)
-   {
-      // apply a boundary transform
-      const MatS6 matrix = S6BoundaryTransforms::generateOneBoundaryTransform(i);
-      const S6 mod = matrix * m_s6;
-      const auto dfrTemp = Sella::SellaFitXXXXXX(sptypes[0], matrix * m_s6);
-      if (dfrTemp.GetRawFit() < dfr.GetRawFit()) {
-         dfr = dfrTemp;
-      }
-   }
-   return dfr;
-}
+//DeloneFitResults GrimmerChains::Remediation(const std::string& bravaisName, const double initialFit) {
+//
+//   const std::vector<std::shared_ptr<GenerateDeloneBase> > sptypes =
+//      GenerateDeloneBase().Select(bravaisName);
+//
+//   const DeloneFitResults dfrInit = Sella::SellaFitXXXXXX(sptypes[0], m_s6);
+//   auto dfr = dfrInit;
+//
+//   for (size_t i = 1; i <= 6; ++i)
+//   {
+//      // apply a boundary transform
+//      const MatS6 matrix = Selling::GetBoundaryTransforms()[i - 1];
+//      const S6 mod = matrix * m_s6;
+//      const auto dfrTemp = Sella::SellaFitXXXXXX(sptypes[0], matrix * m_s6);
+//      if (dfrTemp.GetRawFit() < dfr.GetRawFit()) {
+//         dfr = dfrTemp;
+//      }
+//   }
+//   return dfr;
+//}
 
 GrimmerChains GrimmerChains::ReplaceRemediation(const DeloneFitResults& newFit) const {
    GrimmerChains out(*this);

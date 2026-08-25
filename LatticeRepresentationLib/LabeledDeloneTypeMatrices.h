@@ -16,11 +16,11 @@ class LabeledDeloneTypeMatrices {
 public:
    LabeledDeloneTypeMatrices() {}
    std::vector<LabeledDeloneTypeMatrices>
-   ProcessVectorMapToPerpsAndProjectors
-   ( const std::map<std::string, std::vector<S6> >& themap);
+      ProcessVectorMapToPerpsAndProjectors
+      (const std::map<std::string, std::vector<S6> >& themap);
    std::vector<LabeledDeloneTypeMatrices>
       ProcessVectorMapToPerpsAndProjectors
-   ( const std::map<std::string, std::vector<EnhancedS6> >& xfmap);
+      (const std::map<std::string, std::vector<EnhancedS6> >& xfmap);
 
    size_t size() const { return m_perps.size(); }
 
@@ -72,7 +72,7 @@ private:
          lsm.m_label = label;
          for (size_t i = 0; i < p.second.size(); ++i) {
             const auto s6 = p.second[i].GetVector();
-            const MatS6 prj = ProjectorFromVector(label,s6);
+            const MatS6 prj = ProjectorFromVector(label, s6);
             if (!AlreadyHasThisProjector(prj, lsm)) {
                lsm.m_prjs.push_back(ProjectorFromVector(label, p.second[i]));
                lsm.m_perps.push_back(unitM - ProjectorFromVector(label, p.second[i]));

@@ -34,6 +34,7 @@ public:
       }
    }
 
+   static void SetSeed(const int n);  
    static Polar rand();
    static Polar RandWork();
    Vector_2 operator[] (const size_t n) const {

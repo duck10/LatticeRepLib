@@ -251,3 +251,21 @@ bool Selling::Reduce(const EnhancedS6& in, EnhancedS6& out) {
 
    return true;
 }
+
+// GetBoundaryTransforms -- the same 6 matrices already hardcoded in
+// Reduce(const S6&, MatS6&, S6&, double)'s vm[], ReduceWithtransforms's
+// vmSellingPairs, and the EnhancedS6 overload's reductionMatrices --
+// copied here rather than refactoring those three call sites to share one
+// source, to keep this an additive, zero-risk change to existing behavior.
+std::vector<MatS6> Selling::GetBoundaryTransforms() {
+   static const std::vector<MatS6> vm = {
+      MatS6("-1 0 0 0 0 0   1 1 0 0 0 0   1 0 0 0 1 0   -1 0 0 1 0 0   1 0 1 0 0 0   1 0 0 0 0 1"),
+      MatS6("1 1 0 0 0 0   0 -1 0 0 0 0   0 1 0 1 0 0   0 1 1 0 0 0   0 -1 0 0 1 0   0 1 0 0 0 1"),
+      MatS6("1 0 1 0 0 0   0 0 1 1 0 0   0 0 -1 0 0 0   0 1 1 0 0 0   0 0 1 0 1 0   0 0 -1 0 0 1"),
+      MatS6("1 0 0 -1 0 0   0 0 1 1 0 0   0 1 0 1 0 0   0 0 0 -1 0 0   0 0 0 1 1 0   0 0 0 1 0 1"),
+      MatS6("0 0 1 0 1 0   0 1 0 0 -1 0   1 0 0 0 1 0   0 0 0 1 1 0   0 0 0 0 -1 0   0 0 0 0 1 1"),
+      MatS6("0 1 0 0 0 1   1 0 0 0 0 1   0 0 1 0 0 -1   0 0 0 1 0 1   0 0 0 0 1 1   0 0 0 0 0 -1")
+   };
+   return vm;
+}
+

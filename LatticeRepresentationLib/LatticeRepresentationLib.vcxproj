@@ -188,7 +188,6 @@
     <ClCompile Include="G6_FromD7.cpp" />
     <ClCompile Include="G6_FromDC7u.cpp" />
     <ClCompile Include="GenerateLatticeTypeExamples.cpp" />
-    <ClCompile Include="GrimmerTree.cpp" />
     <ClCompile Include="IT_TypeList.cpp" />
     <ClCompile Include="LabeledDeloneTypeMatrices.cpp" />
     <ClCompile Include="LabeledSellaMatrices.cpp" />
@@ -247,6 +246,7 @@
     <ClCompile Include="TransformationMatrices.cpp" />
     <ClCompile Include="Transformations.cpp" />
     <ClCompile Include="V7.cpp" />
+    <ClCompile Include="VCPVector..cpp" />
     <ClCompile Include="VecN.cpp" />
     <ClCompile Include="Vector_2.cpp" />
     <ClCompile Include="WebIO.cpp" />
@@ -275,7 +275,6 @@
     <ClInclude Include="FollowerPathGenerator.h" />
     <ClInclude Include="GenerateLatticeTypeExamples.h" />
     <ClInclude Include="GenerateRandomLattice.h" />
-    <ClInclude Include="GrimmerTree.h" />
     <ClInclude Include="IT_TypeList.h" />
     <ClInclude Include="KrivyGruberG6.h" />
     <ClInclude Include="LabeledDeloneTypeMatrices.h" />
@@ -347,6 +346,7 @@
     <ClInclude Include="Transformations.h" />
     <ClInclude Include="V7.h" />
     <ClInclude Include="V7Dist.h" />
+    <ClInclude Include="VCPVector.h" />
     <ClInclude Include="VecN.h" />
     <ClInclude Include="Vector_2.h" />
     <ClInclude Include="WebIO.h" />

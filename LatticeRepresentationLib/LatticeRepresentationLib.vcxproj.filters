@@ -70,7 +70,6 @@
     <ClCompile Include="Plots.cpp" />
     <ClCompile Include="LRL_WriteLatticeData.cpp" />
     <ClCompile Include="P3.cpp" />
-    <ClCompile Include="GrimmerTree.cpp" />
     <ClCompile Include="EnhancedS6.cpp" />
     <ClCompile Include="Transformations.cpp" />
     <ClCompile Include="P3_Reduce.cpp" />
@@ -89,6 +88,7 @@
     <ClCompile Include="C3_FromD7.cpp" />
     <ClCompile Include="D7_FromB4.cpp" />
     <ClCompile Include="D7_FromC3.cpp" />
+    <ClCompile Include="VCPVector..cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
@@ -172,7 +172,6 @@
     <ClInclude Include="Plots.h" />
     <ClInclude Include="LRL_WriteLatticeData.h" />
     <ClInclude Include="P3.h" />
-    <ClInclude Include="GrimmerTree.h" />
     <ClInclude Include="EnhancedS6.h" />
     <ClInclude Include="RegistryTest.h" />
     <ClInclude Include="DC7uDist.h" />
@@ -186,6 +185,7 @@
     <ClInclude Include="KrivyGruberG6.h" />
     <ClInclude Include="TestKrivyGruber.h" />
     <ClInclude Include="MatrixCellOperator.h" />
+    <ClInclude Include="VCPVector.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

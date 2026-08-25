@@ -12,9 +12,12 @@
 #include "BlockUtils.h"
 #include "BravaisHeirarchy.h"
 #include "CmdSellaControls.h"
+#include "DeloneParentageTest.h"
+#include "ExpandAcrossBoundaryZeros.h"
 #include "FileOperations.h"
 #include "DeloneFitResults.h"
 #include "GetDate.h"
+#include "GenerateLatticeTypeExamples.h"
 #include "GrimmerTree.h"
 #include "InputHandler.h"
 #include "LRL_Cell_Degrees.h"
@@ -35,6 +38,22 @@
 
 #include "SellaBuild.h"
 #include "LabeledDeloneTypeMatrices.h"
+#include "DeloneFitComputation.h"
+#include "FlexibleSellaTestMode.h"
+
+#include "CompareBoundaryTransformsTest.h"
+#include "DiagnoseO2Gap.h"
+#include "DiagnoseBoundaryCandidates.h"
+#include "CheckABReflection.h"
+#include "DiagnoseO1BCoverage.h"
+#include "TestRemediationOnBoundaryCandidates.h"
+#include "SearchAllBoundaryTies.h"
+#include "SearchBoundaryNeighborsByTransform.h"
+
+#include "StoreResults.h"
+#include "RemediatedFit.h"
+
+#include "TestHarness.h"
 
 // 2023/12/23
 // bad case: P 21.775 21.785 27.232 90.028 89.974 90.023 still bad after remediation
@@ -139,13 +158,8 @@
 //S6 -11.10601 -81.30216 -222.54748 -5.31460 -54.25901 -27.69384  scaled still bad after remediation
 //S6 -9.12428 -0.87504 -63.50943 -233.55358 -4.41117 -36.27397  scaled still bad after remediation
 //S6 -3.00480 -19.63201 -241.04017 -9.76684 -34.86767 -13.93003  scaled still bad after remediation
-static double g_maxDeltaForMatch = 0.02;
 std::string selectBravaisCase = "";
 
-S6 GetInputSellingReducedVectors(const LatticeCell& input, MatS6& mat) {
-   const S6 s6 = LatticeConverter::SellingReduceCell(input.getLatticeType(), input.getCell(), mat);
-   return s6;
-}
 
 std::vector<std::pair<std::string, double> > DeloneFitToScores(const std::vector< DeloneFitResults>& fits) {
 
@@ -211,22 +225,94 @@ std::vector<DeloneFitResults> FilterForBestExample(
    return out;
 }
 
-static std::vector<std::string>  ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
-   const S6& LatI) {
-   std::vector<std::string> out;
+// GetMatchedTypeNames -- single source of truth for "is this Delone type in
+// the reported shortlist." Both ListMatchingTypes (formats the shortlist
+// for display) and RemediateIfShortlistChanges (decides whether remediation
+// actually changed the shortlist) build on this, so the two can never
+// silently disagree about what counts as a match. vFilteredDeloneFitResults
+// is expected to already be FilterForBestExample'd (one entry per general
+// type) -- this function does not do that filtering itself.
+std::set<std::string> GetMatchedTypeNames(
+   const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
+   const double latticeNorm,
+   const double maxDeltaForMatch) {
+   std::set<std::string> out;
    for (const auto& type : vFilteredDeloneFitResults) {
-      const DeloneFitResults& dfr = type;
-      if (dfr.GetBravaisType()[0] == 'a') continue;
-      if (type.GetRawFit() / LatI.norm() < g_maxDeltaForMatch) {
-         std::ostringstream os;
-         os << "P "
-            << LRL_Cell_Degrees(type.GetBestFit()) << " "
-            << type.GetDeloneType() << " "
-            << type.GetRawFit();
-         out.emplace_back(os.str());
+      if (type.GetBravaisType()[0] == 'a') continue;
+      if (type.GetRawFit() / latticeNorm < maxDeltaForMatch) {
+         out.insert(type.GetGeneralType());
       }
    }
    return out;
+}
+
+static std::vector<std::string> ListMatchingTypes(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
+   const S6& LatI, const double maxDeltaForMatch) {
+   const std::set<std::string> matchedNames =
+      GetMatchedTypeNames(vFilteredDeloneFitResults, LatI.norm(), maxDeltaForMatch);
+   std::vector<std::string> out;
+   for (const auto& type : vFilteredDeloneFitResults) {
+      if (matchedNames.find(type.GetGeneralType()) == matchedNames.end()) continue;
+      std::ostringstream os;
+      os << "P "
+         << LRL_Cell_Degrees(type.GetBestFit()) << " "
+         << type.GetDeloneType() << " "
+         << type.GetRawFit();
+      out.emplace_back(os.str());
+   }
+   return out;
+}
+
+
+// RemediateIfShortlistChanges -- computes remediated fit for every type in
+// vDeloneFitResultsForOneInputLattice, then checks whether the reported
+// shortlist (GetMatchedTypeNames, the same threshold test ListMatchingTypes
+// uses to decide what gets displayed) would differ if the remediated fits
+// were used instead of the raw ones. Remediated fit is provably <= raw fit
+// (Remediation tries the naive orientation plus 6 boundary-crossed
+// alternatives and keeps the best), so this can only add a correctly-missed
+// type to the shortlist or tighten an existing one, never wrongly demote a
+// genuine match -- adopting it is always safe.
+//
+// Only ADOPTED when it actually changes the shortlist, so unaffected inputs
+// pay the compute cost but produce identical output and no log noise.
+// Returns the fit vector to use going forward: either the original
+// (unchanged) vector, or the fully-remediated vector, never a mix -- so
+// downstream code (SearchForToCanon, the Grimmer-chain loop, printing)
+// always sees one internally consistent set of fits.
+std::vector<DeloneFitResults> RemediateIfShortlistChanges(
+   const std::vector<DeloneFitResults>& vDeloneFitResultsForOneInputLattice,
+   const S6& oneLattice,
+   const CmdSellaControls& controls,
+   const LatticeCell& input) {
+
+   std::vector<DeloneFitResults> remediatedFitResults;
+   remediatedFitResults.reserve(vDeloneFitResultsForOneInputLattice.size());
+   for (const auto& f : vDeloneFitResultsForOneInputLattice) {
+      remediatedFitResults.emplace_back(
+         Remediation(oneLattice, f.GetGeneralType(), -1.0));
+   }
+
+   const double latticeNorm = oneLattice.norm();
+   const double maxDeltaForMatch = controls.getMaxDeltaForMatch();
+   const std::set<std::string> rawMatchNames = GetMatchedTypeNames(
+      FilterForBestExample(vDeloneFitResultsForOneInputLattice), latticeNorm, maxDeltaForMatch);
+   const std::set<std::string> remediatedMatchNames = GetMatchedTypeNames(
+      FilterForBestExample(remediatedFitResults), latticeNorm, maxDeltaForMatch);
+
+   if (remediatedMatchNames == rawMatchNames) {
+      return vDeloneFitResultsForOneInputLattice;
+   }
+
+   if (controls.shouldDebug()) {
+      std::cout << "; remediation changed shortlist for " << input.GetInput()
+         << " -- raw: ";
+      for (const auto& n : rawMatchNames) std::cout << n << " ";
+      std::cout << " remediated: ";
+      for (const auto& n : remediatedMatchNames) std::cout << n << " ";
+      std::cout << std::endl;
+   }
+   return remediatedFitResults;
 }
 
 void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
@@ -262,6 +348,7 @@ void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
    }
 }
 
+
 // ComputeDeloneFits -- computes the Delone/Bravais type fits for one input
 // cell, including Grimmer-chain violation detection and remediation.
 //
@@ -275,14 +362,9 @@ void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
 // count is bounded by maxRemediationPasses as a safety cap, in case some
 // violation is not actually resolvable by Remediation and would otherwise
 // keep gcs.HasFailure() == true forever.
-// Bundles what ComputeDeloneFits produces: the fit results themselves, and
-// the final (post-remediation) GrimmerChains object, which callers such as
-// ProcessSella still need afterward (e.g. for GenerateSortedFitPlots).
-struct DeloneFitComputation {
-   std::vector<DeloneFitResults> fits;
-   GrimmerChains chains;
-};
-
+// DeloneFitComputation and the ComputeDeloneFits declaration live in
+// DeloneFitComputation.h (see the include above) -- this is the one and
+// only definition of ComputeDeloneFits itself.
 DeloneFitComputation ComputeDeloneFits(
    const LatticeCell& input,
    const CmdSellaControls& controls,
@@ -291,6 +373,11 @@ DeloneFitComputation ComputeDeloneFits(
    MatS6 oneReductionMatrix;
    const S6 oneLattice = GetInputSellingReducedVectors(input, oneReductionMatrix);
    const S6 oneErrors = 0.1 * input.getCell();
+
+   if (controls.shouldDebug()) {
+      std::cout << "; DEBUG oneLattice (post-SellingReduceCell, this is what SellaFit actually sees): "
+         << oneLattice << std::endl;
+   }
 
    if (controls.shouldDebug()) {
       const auto perps = sella.GetPerps();
@@ -310,6 +397,16 @@ DeloneFitComputation ComputeDeloneFits(
 
    std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice =
       sella.SellaFit(selectBravaisCase, oneLattice, oneErrors, oneReductionMatrix);
+
+
+   // NEW: remediate every type and adopt the correction only if it changes
+// the reported shortlist. See RemediateIfShortlistChanges for why this
+// is always safe (remediated fit <= raw fit) and why it's gated rather
+// than unconditional (no log noise / no behavior change on unaffected
+// inputs).
+   vDeloneFitResultsForOneInputLattice = RemediateIfShortlistChanges(
+      vDeloneFitResultsForOneInputLattice, oneLattice, controls, input);
+
 
    MapOFDeloneFits theDelonefits;
    theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
@@ -362,7 +459,7 @@ DeloneFitComputation ComputeDeloneFits(
             << ": repairing " << targetType
             << " (fit " << firstFail[1].second << ")" << std::endl;
       }
-      const DeloneFitResults revisedFit = gcs.Remediation(targetType, firstFail[1].second);
+      const DeloneFitResults revisedFit = Remediation(oneLattice, targetType, firstFail[1].second);
 
       // "No progress" means Remediation was asked to fix the SAME type
       // again and returned the SAME fit (within numerical noise) as last
@@ -373,9 +470,10 @@ DeloneFitComputation ComputeDeloneFits(
       // worth attempting, regardless of how its fit compares to the last
       // pass's target.
       const double newFit = revisedFit.GetRawFit();
-      madeProgress = (remediationPasses == 0) ||
-         (targetType != lastRepairedType) ||
-         (std::abs(newFit - lastRepairedFit) > 1.0E-8);
+      madeProgress = (targetType != lastRepairedType) ||
+         (remediationPasses == 0 && std::abs(newFit - firstFail[1].second) > 1.0E-8) ||
+         (remediationPasses > 0 && std::abs(newFit - lastRepairedFit) > 1.0E-8);
+
       if (madeProgress) {
          vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
          gcs = gcs.ReplaceRemediation(revisedFit);
@@ -434,6 +532,7 @@ std::pair<std::string, std::string> ProcessSella(
 
    std::cout << "Fits for Types" << std::endl;
    for (const auto xxxx : vDeloneFitResultsForOneInputLattice) {
+      if (!controls.shouldShowType(xxxx.GetGeneralType())) continue;
       std::cout << xxxx.GetBravaisType() << " ";
       std::cout << xxxx.GetDeloneType() << " ";
       std::cout << xxxx.GetGeneralType() << " ";
@@ -443,7 +542,7 @@ std::pair<std::string, std::string> ProcessSella(
 
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults =
       FilterForBestExample(vDeloneFitResultsForOneInputLattice);
-   std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice);
+   std::vector<std::string> matches = ListMatchingTypes(vFilteredDeloneFitResults, oneLattice, controls.getMaxDeltaForMatch());
    const std::vector<std::pair<std::string, double>> scores =
       DeloneFitToScores(vFilteredDeloneFitResults);
 
@@ -552,55 +651,68 @@ std::string AddSuffixToAllSvgOccurrences(const std::string& input, const std::st
 }
 
 // PrintCompareSummary -- prints one table summarizing raw fit values across
-// several input cells at once: candidate type names down the rows, ordinal
-// input labels ("Input 1", "Input 2", ...) across the columns. This is the
-// generalized/automated form of a hand-built O1B/O2/O3-style comparison
-// table -- built for COMPARE mode, and reusable directly from tests.
+// several input cells at once: rows grouped by Delone type (all A1 rows
+// together, all A2 rows together, etc., in first-seen order across
+// inputs), with a blank line between type groups and one row per input
+// within a group -- fit, type, cell, in long/tidy format rather than a
+// wide type-by-input grid. The wide grid became unreadable with all 24
+// Delone types as columns (lines too long to read); this trades width for
+// lines you can actually read, sort, or paste into a spreadsheet. "cell"
+// is the actual input vector (DeloneFitResults::GetOriginalInput()), not
+// an ordinal "Input N" label, so each row is self-identifying without
+// needing to cross-reference a separate header.
 void PrintCompareSummary(
-   const std::vector<std::pair<std::string, std::vector<DeloneFitResults>>>& compareResults)
+   const std::vector<std::pair<std::string, std::vector<DeloneFitResults>>>& compareResults,
+   const CmdSellaControls& controls)
 {
-   // Union of type names seen across all inputs, in first-seen order, so
-   // row order is stable and doesn't depend on std::map/std::set ordering
-   // of the type name strings themselves.
+   struct Row {
+      double fit;
+      std::string cell;
+   };
+
+   // Type order is first-seen across inputs, in input order -- stable and
+   // doesn't depend on std::map's alphabetical ordering of type names.
    std::vector<std::string> typeOrder;
    std::set<std::string> seenTypes;
+   std::map<std::string, std::vector<Row>> rowsByType;
+
    for (const auto& labeledFits : compareResults) {
+      if (labeledFits.second.empty()) continue;
+
+      std::ostringstream cellOs;
+      cellOs << labeledFits.second[0].GetOriginalInput();
+      const std::string cell = cellOs.str();
+
+      // A type can appear more than once for this input (e.g. remediation
+      // appends an extra DeloneFitResults entry) -- keep the best
+      // (smallest) raw fit per type.
+      std::map<std::string, double> bestFitForType;
       for (const auto& f : labeledFits.second) {
          const std::string t = f.GetGeneralType();
-         if (seenTypes.insert(t).second) typeOrder.push_back(t);
-      }
-   }
-
-   // A type can appear more than once for a given input (e.g. remediation
-   // appends an extra DeloneFitResults entry) -- keep the best (smallest)
-   // raw fit per (input, type) pair.
-   std::map<std::pair<size_t, std::string>, double> bestFit;
-   for (size_t col = 0; col < compareResults.size(); ++col) {
-      for (const auto& f : compareResults[col].second) {
-         const auto key = std::make_pair(col, f.GetGeneralType());
          const double v = f.GetRawFit();
-         const auto it = bestFit.find(key);
-         if (it == bestFit.end() || v < it->second) bestFit[key] = v;
+         const auto it = bestFitForType.find(t);
+         if (it == bestFitForType.end() || v < it->second) bestFitForType[t] = v;
+      }
+
+      for (const auto& tf : bestFitForType) {
+         const std::string& t = tf.first;
+         if (!controls.shouldShowType(t)) continue;
+         if (seenTypes.insert(t).second) typeOrder.push_back(t);
+         rowsByType[t].push_back(Row{ tf.second, cell });
       }
    }
 
-   std::cout << "; COMPARE summary -- raw fit by type and input" << std::endl;
-   std::cout << std::setw(10) << std::left << "Type";
-   for (const auto& labeledFits : compareResults) {
-      std::cout << std::setw(14) << std::right << labeledFits.first;
-   }
-   std::cout << std::endl;
-
+   std::cout << "; COMPARE summary -- fit, type, cell (grouped by type)" << std::endl;
    std::cout << std::fixed << std::setprecision(5);
+   bool firstGroup = true;
    for (const auto& t : typeOrder) {
-      std::cout << std::setw(10) << std::left << t;
-      for (size_t col = 0; col < compareResults.size(); ++col) {
-         const auto it = bestFit.find(std::make_pair(col, t));
-         std::cout << std::setw(14) << std::right;
-         if (it != bestFit.end()) std::cout << it->second;
-         else std::cout << "--";
+      if (!firstGroup) std::cout << std::endl;
+      firstGroup = false;
+      for (const auto& r : rowsByType[t]) {
+         std::cout << std::setw(12) << std::right << r.fit << "  "
+            << std::setw(6) << std::left << t << "  "
+            << r.cell << std::endl;
       }
-      std::cout << std::endl;
    }
    std::cout.unsetf(std::ios::floatfield);
 }
@@ -628,8 +740,60 @@ std::vector<std::pair<std::string, std::vector<DeloneFitResults>>> BuildCompareR
    return compareResults;
 }
 
+
+
+
+
+
+
 int main(int argc, char* argv[])
 {
+   //RunHistoricalBadCaseCheck();
+   //exit(0);
+
+
+   //RunRemediation2HopComparison();
+   //   exit(0);
+
+   //RunMpOcTpLastDigitCheck();
+   //exit(0);
+
+   //RunRemediation144Comparison();
+   //exit(0);
+
+   //RunRemediationShortlistSanityCheck();
+   //exit(0);
+
+   //RunGeneralSweepOverIncomparablePairsV2();
+   //exit(0);
+
+   //RerunFailingPairsWithBestProjector();
+   //exit(0);
+
+   //PrintOneSweepEndpoints(Delone_T5(), Delone_O5());
+   //exit(0);
+
+
+   //RunReflectionRescueCheck();
+   //exit(0);
+
+
+   //RunGeneralSweepOverIncomparablePairs();
+   //exit(0);
+
+
+   //RunThreeCalibrationSweeps();
+   //exit(0);
+
+
+   //SweepRemediatedFitTowardA3ViaM1B();
+   //exit(0);
+
+
+   //SweepRemediatedFitTowardA2();
+   //exit(0);
+
+
    std::cout << "; SELLA method symmetry searching\n";
    WebIO webio(argc, argv, "CmdSella", 0);
 #ifdef LRL_DEBUG
@@ -639,6 +803,39 @@ int main(int argc, char* argv[])
    std::cout << "webio: " << webio << std::endl;
 #endif
    CmdSellaControls controls;
+
+   // TEST -- runs the real regression suite (FlexibleSellaTestMode.h).
+   // TEST N / TEST N1 N2 N3 / TEST 999 all handled inside
+   // runFlexibleSellaTestMode via controls.getTestNumbers().
+   if (controls.shouldRunTests()) {
+      runFlexibleSellaTestMode(controls);
+      return 0;
+   }
+
+
+
+   // TESTTRANSFORMS -- standalone diagnostic, not part of the fit-based
+   // FlexibleSellaTestMode framework (S6BoundaryTransforms vs
+   // Selling::GetBoundaryTransforms operate on raw S6/MatS6, not
+   // LatticeCell -> DeloneFitComputation, so they don't fit that shape).
+   // See CompareBoundaryTransformsTest.h.
+   //if (controls.shouldTestTransforms()) {
+   //   std::cout << "; Compare boundary transform sets" << std::endl;
+   //   CompareBoundaryTransformSets();
+   //   return 0;
+   //}
+
+   // NOTE: the ad hoc TestDeloneParentage(O2,O3)/(O1B,O3) sanity block
+   // that used to live here (see chat with Claude, 2026-08-15) has been
+   // removed -- it was unreachable dead code (shadowed by an exit(0) in
+   // the block above it) and, more importantly, redundant: CHECKNESTING
+   // already runs TestDeloneParentage generally, across all Delone type
+   // pairs, via RunNestingConsistencyCheck -- not just the hand-picked
+   // O2/O3 case. Use CHECKNESTING instead. If CHECKNESTING's output
+   // turns out not to cover the O1B/O3 "already trusted" comparison the
+   // same way this block did, that's a gap in CHECKNESTING worth fixing
+   // there, not a reason to keep two parallel mechanisms.
+
    controls.setHasWebInput(webio.m_hasWebInstructions);
    const int initblockstart = controls.getBlockStart();
    const int initblocksize = controls.getBlockSize();
@@ -655,12 +852,47 @@ int main(int argc, char* argv[])
    }
 #endif
 
-   // NEW: Build matrices ONCE before processing any inputs
-   Sella sella;
+   //==============================================================================
+   if (controls.shouldUseHarness())
+   {
+      //RunHistoricalBadCaseCheck(controls);
+      RunStabilityVsCurrentComparison(controls);
+      exit(0);
+   }
+   if (controls.shouldUseHarness())
+   {
+      //RunHistoricalBadCaseCheck(controls);
+      RunHistorical144And2HopCheck(controls);
+      exit(0);
+   }
+
+   // TEST -- runs the generalized FlexibleSellaTestMode suite (see
+   // FlexibleSellaTestMode.h / SELLA_handoff.md item 5) instead of normal
+   // cell processing, mirroring CmdLMP3's runFlexibleTestMode dispatch.
+   // This supersedes the older CmdSellaTests.cpp/RunCmdSellaTests
+   // NamedTest registry (retired; do not build that file -- see the note
+   // at the top of Cmdsellatests.cpp) and the already-superseded
+   // Cmdsellacomparetests.cpp -- remove both from CmdSella.vcxproj.
+   if (controls.shouldRunTests()) {
+      runFlexibleSellaTestMode(controls);
+      exit(0);
+   }
+
+    Sella sella;
+  // NEW: Build matrices ONCE before processing any inputs
+   //SearchAllTypeBoundaryDistances();
+   //exit(0);
+
+   //SweepRemediatedFitNearR1R3Boundary(controls, sella);
+   //exit(0);
+
+
+
    if (controls.shouldBuildMatrices()) {
       SellaBuild builder;
       const bool shouldPrintMatrices = controls.shouldPrintMatrices();
-      std::vector<LabeledDeloneTypeMatrices> deloneTypes = builder.Build(shouldPrintMatrices);
+      std::vector<LabeledDeloneTypeMatrices> deloneTypes =
+         builder.Build(shouldPrintMatrices, controls.getSeedBoundariesMode());
 
       std::vector<LabeledSellaMatrices> dynamicPerps;
       std::vector<LabeledSellaMatrices> dynamicProjectors;
@@ -680,6 +912,11 @@ int main(int argc, char* argv[])
       std::cout << "; Matrices built once and stored for all inputs" << std::endl;
    }
 
+   if (controls.shouldCheckNesting()) {
+      RunNestingConsistencyCheck(controls, sella);
+      exit(0);
+   }
+
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
    const bool doProduceSellaGraphics = controls.DoGraphics();
 
@@ -688,7 +925,7 @@ int main(int argc, char* argv[])
       // web-batching of large runs and has no bearing on which cells belong
       // together in a comparison. Every cell in inputList is compared.
       const auto compareResults = BuildCompareResults(inputList, controls, sella);
-      PrintCompareSummary(compareResults);
+      PrintCompareSummary(compareResults, controls);
    }
    else {
       for (size_t whichCell = blockstart;

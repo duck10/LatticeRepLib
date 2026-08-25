@@ -1,5 +1,5 @@
-#ifndef SELLA_H
-#define SELLA_H
+#ifndef SELLABUILD_LEGACY_H
+#define SELLABUILD_LEGACY_H
 
 #include <algorithm>
 #include <cfloat>
@@ -70,7 +70,7 @@ public:
    std::set<S6> Xpand3(const std::string& label, const S6& vs, const MatS6& toCanon);
 };
 
-#endif // SELLA_H
+#endif // SELLABUILD_LEGACY_H
 
 
 

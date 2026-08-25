@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <functional>
 #include <map>
 #include <set>
 #include <string>
@@ -16,7 +17,20 @@
 class SellaBuild {
 public:
    SellaBuild();
-   std::vector<LabeledDeloneTypeMatrices> Build(const bool printMatrices=false);
+   std::vector<LabeledDeloneTypeMatrices> Build(const bool printMatrices = false,
+      const std::string& seedBoundariesMode = "");
+
+   // SeedBoundaryGaps -- for every (parent, child) pair TestDeloneParentage
+   // confirms as genuinely nested, seeds xfmap[parent] with representatives
+   // reachable by crossing child's own zero-boundaries
+   // (ExpandAcrossBoundaryZeros). mode == "USE" actually adds them; any
+   // other value (e.g. "PRINT") reports what would be added without
+   // modifying xfmap. Called from Build(), between
+   // ProcessItemStoreToVectorMap() (raw samples collected) and
+   // ProcessVectorMapToPerpsAndProjectors() (samples turned into deduped
+   // projectors) -- see that call site's comment for why there, not
+   // elsewhere.
+   void SeedBoundaryGaps(const std::string& mode);
    double TestOneType(const std::string& label, const EnhancedS6& s6, const std::vector<MatS6>& vm);
    void TestAllTypes(const EnhancedS6& s6);
    void TestPerps();
@@ -47,6 +61,19 @@ public:
    // NEW: Iterative boundary expansion - replaces OneBound, ProcessTwoZeros, ProcessThreeZeros
    std::set<EnhancedS6> ExpandBoundary(const EnhancedS6& s6, const size_t depth);
 
+   // ApplyVCPSequence -- current replacement for OneBound/ProcessTwoZeros/
+   // ProcessThreeZeros (see ApplyVCPSequence2.cpp for the full rationale).
+   // Recurses through VCP reflections at each currently-active zero
+   // position, re-finding zero positions at every level rather than using
+   // stale slot indices from the parent point. `parent` is the point one
+   // level up the recursion, passed so the single immediately-reversing
+   // VCP (each VCP is an involution) can be skipped without separate cycle
+   // tracking. Declaration was missing here, which is why
+   // ApplyVCPSequence2.cpp's out-of-line definition failed to bind to
+   // class scope and StoreAllReflections/FindS6Zeros/vcpVector inside its
+   // body were (incorrectly) looked up at global scope instead.
+   void ApplyVCPSequence(const std::string& label, const EnhancedS6& s6, const EnhancedS6& parent);
+
    // OLD methods - now commented out in .cpp but kept in header for compatibility
    void OneBound(const std::string& label, const EnhancedS6& s1, const size_t zeroBound);
    void ProcessZeros(const std::string& label, const EnhancedS6& s6);
@@ -71,7 +98,16 @@ public:
    static EnhancedS6 SetPos(const size_t n, const EnhancedS6& s6);
    static std::set<EnhancedS6> SetPos(const size_t n, const std::set<EnhancedS6>& s6set);
    static EnhancedS6 SetPos(const size_t n1, const size_t n2, const EnhancedS6& s6);
-   static std::vector<EnhancedS6(*)(const EnhancedS6&)> reflectionFunctions;
+   // Built from MatS6::GetReflections() -- the real, complete, generative
+   // 24-element reflection group (confirmed elsewhere this session:
+   // next_permutation over the 4 Selling vectors a,b,c,d). Previously a
+   // hand-typed array of lambdas, only 7 of 24 entries actually filled in
+   // (Reflections 1-6 and 24; 7-23 were left as an unfinished "continue
+   // with the remaining 18" placeholder comment) -- every type's library,
+   // built through GenerateAllReflections/StoreAllReflections, was
+   // silently using a 7-element orbit instead of the full 24. std::function
+   // rather than a raw function pointer because each entry now captures
+   // its own MatS6, which a plain function pointer can't hold.
+   static std::vector<std::function<EnhancedS6(const EnhancedS6&)>> reflectionFunctions;
 };
 #endif // SELLABUILD_H
-

@@ -90,7 +90,14 @@ G6 TryToGetAGoodProjection(const T& pt,
    G6 probe;
    probe.SetValid(false);
    int count = 0;
-   while ((!LRL_Cell(probe).IsValid()) || (count > trials) || (!pt->IsMember(probe))) {
+   // FIXED (see chat with Claude, 2026-08-15): was
+   // `while ((!IsValid()) || (count > trials) || (!IsMember(probe)))` --
+   // with || across all three terms, once count exceeds trials the whole
+   // condition stayed true regardless of validity/membership, so the loop
+   // kept going PAST the cap instead of giving up. Correct grouping: keep
+   // searching while EITHER invalid OR not-a-member, but only up to the
+   // trials cap -- the cap needs && with the search condition, not ||.
+   while ((!LRL_Cell(probe).IsValid() || !pt->IsMember(probe)) && (count < trials)) {
       const G6 start = G6::randDeloneReduced();
       Niggli::Reduce(start, probe);
       probe = projector * probe;
@@ -104,7 +111,12 @@ G6 TryToGetAGoodProjection(const MatS6& projector, const int trials = 500) {
    S6 probe;
    probe.SetValid(false);
    int count = 0;
-   while ((!LRL_Cell(probe).IsValid()) || (count > trials)) {
+   // FIXED (see chat with Claude, 2026-08-15): was
+   // `while ((!IsValid()) || (count > trials))` -- with ||, once count
+   // exceeds trials the condition stayed true regardless of validity, so
+   // the loop kept going PAST the cap instead of giving up. && makes the
+   // cap a real cap.
+   while ((!LRL_Cell(probe).IsValid()) && (count < trials)) {
       const S6 start = S6::rand();
       Selling::Reduce(start, probe);
       probe = projector * probe;

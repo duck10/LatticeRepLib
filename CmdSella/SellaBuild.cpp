@@ -1,6 +1,9 @@
 #include "Delone.h"
+#include "DeloneParentageTest.h"
 #include "EnhancedS6.h"
+#include "ExpandAcrossBoundaryZeros.h"
 #include "GenerateRandomLattice.h"
+#include "LRL_Cell.h"
 #include "LRL_ToString.h"
 #include "MatS6.h"
 #include "S6_Ordinals.h"
@@ -33,7 +36,8 @@ SellaBuild::SellaBuild() : vcpVector() {
    store.SetMaxItemStore(20000);
 }
 
-std::vector<LabeledDeloneTypeMatrices> SellaBuild::Build(const bool printMatrices/*=false*/) {
+std::vector<LabeledDeloneTypeMatrices> SellaBuild::Build(const bool printMatrices/*=false*/,
+   const std::string& seedBoundariesMode/*=""*/) {
    MatS6 transformations;
 
    if (vDeloneTypes.empty())
@@ -57,6 +61,15 @@ std::vector<LabeledDeloneTypeMatrices> SellaBuild::Build(const bool printMatrice
       // }
    }
 
+   // Integration point for SeedBoundaryGaps: raw samples (xfmap) are fully
+   // collected above, but not yet turned into deduped projectors below --
+   // this is the one place new samples can be added and still flow
+   // through the same dedup/projector-construction path as everything
+   // else, rather than being bolted on separately afterward.
+   if (!seedBoundariesMode.empty()) {
+      SeedBoundaryGaps(seedBoundariesMode);
+   }
+
    LabeledDeloneTypeMatrices lsm2;
    const std::vector<LabeledDeloneTypeMatrices> vtypes = lsm2.ProcessVectorMapToPerpsAndProjectors(xfmap);
    if (printMatrices)
@@ -65,6 +78,63 @@ std::vector<LabeledDeloneTypeMatrices> SellaBuild::Build(const bool printMatrice
    }
    return vtypes;
 }
+
+// SeedBoundaryGaps -- see SellaBuild.h for the full design rationale.
+// Enumerates every (parent, child) pair among all 24 Delone types (not a
+// hand-picked list -- see this session's discussion of why that matters:
+// O1B/O3 was found this way, but so were O1B/M2B, O1B/M3, R1/C5, M1A/O4,
+// and others no one would have thought to check by hand), confirms
+// genuine nesting via TestDeloneParentage (the VCP-based mechanism,
+// sourced from Andrews/Bernstein/Sauter's published algorithm, not
+// reverse-engineered), and for each confirmed pair, seeds parent's raw
+// sample map with representatives reachable by crossing child's own
+// zero-boundaries.
+void SellaBuild::SeedBoundaryGaps(const std::string& mode) {
+   const bool doUse = (mode == "USE");
+   const auto allTypes = GenerateDeloneBase().Select("");
+
+   size_t pairsNested = 0;
+   size_t pointsAdded = 0;
+
+   for (const auto& parent : allTypes) {
+      for (const auto& child : allTypes) {
+         if (parent->GetName() == child->GetName()) continue;
+         if (child->GetFreeParams() >= parent->GetFreeParams()) continue;
+
+         const auto parentage = TestDeloneParentage(*parent, *child);
+         if (!parentage.isNested) continue;
+         ++pairsNested;
+
+         const S6 childSeed = GetValidTypeSample(child->GetPrj());
+         if (!LRL_Cell(childSeed).IsValid()) {
+            std::cout << "; SeedBoundaryGaps: parent=" << parent->GetName()
+               << " child=" << child->GetName()
+               << " -- could not draw a valid child seed, skipped" << std::endl;
+            continue;
+         }
+
+         const auto crossing = ExpandAcrossBoundaryZeros(childSeed);
+
+         std::cout << "; SeedBoundaryGaps: parent=" << parent->GetName()
+            << " child=" << child->GetName()
+            << " representatives=" << crossing.representatives.size()
+            << " rejectedNonReduced=" << crossing.rejectedNonReduced
+            << (doUse ? " (added)" : " (print only)") << std::endl;
+
+         if (doUse) {
+            for (const auto& rep : crossing.representatives) {
+               xfmap[parent->GetName()].push_back(EnhancedS6(rep));
+               ++pointsAdded;
+            }
+         }
+      }
+   }
+
+   std::cout << "; SeedBoundaryGaps summary: " << pairsNested
+      << " confirmed pair(s), " << pointsAdded << " point(s) added ("
+      << (doUse ? "USE" : "PRINT") << " mode)" << std::endl;
+}
+
 static int seed = 19191;
 
 EnhancedS6 SellaBuild::MakeSampleType(const MatS6& m) {
@@ -127,51 +197,30 @@ void SellaBuild::TestAllTypes(const EnhancedS6& s6) {
 //   return v;
 //}
 
-std::vector<EnhancedS6(*)(const EnhancedS6&)> SellaBuild::reflectionFunctions = {
-   // Reflection 1
-   [](const EnhancedS6& s) {
-       const MatS6 reflMat("1 0 0 0 0 0  0 1 0 0 0 0  0 0 1 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1");
-       S6 reflected = reflMat * static_cast<const S6&>(s);
-       return EnhancedS6(reflected, reflMat * s.getTransformMatrix());
-   },
-   // Reflection 2
-   [](const EnhancedS6& s) {
-       const MatS6 reflMat("1 0 0 0 0 0  0 0 1 0 0 0  0 1 0 0 0 0  0 0 0 1 0 0  0 0 0 0 0 1  0 0 0 0 1 0");
-       S6 reflected = reflMat * static_cast<const S6&>(s);
-       return EnhancedS6(reflected, reflMat * s.getTransformMatrix());
-   },
-   // Reflection 3
-   [](const EnhancedS6& s) {
-       const MatS6 reflMat("1 0 0 0 0 0  0 0 0 0 0 1  0 0 0 0 1 0  0 0 0 1 0 0  0 0 1 0 0 0  0 1 0 0 0 0");
-       S6 reflected = reflMat * static_cast<const S6&>(s);
-       return EnhancedS6(reflected, reflMat * s.getTransformMatrix());
-   },
-   // Reflection 4
-   [](const EnhancedS6& s) {
-       const MatS6 reflMat("1 0 0 0 0 0  0 0 0 0 1 0  0 0 0 0 0 1  0 0 0 1 0 0  0 1 0 0 0 0  0 0 1 0 0 0");
-       S6 reflected = reflMat * static_cast<const S6&>(s);
-       return EnhancedS6(reflected, reflMat * s.getTransformMatrix());
-   },
-   // Reflection 5
-   [](const EnhancedS6& s) {
-       const MatS6 reflMat("0 1 0 0 0 0  1 0 0 0 0 0  0 0 1 0 0 0  0 0 0 0 1 0  0 0 0 1 0 0  0 0 0 0 0 1");
-       S6 reflected = reflMat * static_cast<const S6&>(s);
-       return EnhancedS6(reflected, reflMat * s.getTransformMatrix());
-   },
-   // Reflection 6
-   [](const EnhancedS6& s) {
-       const MatS6 reflMat("0 0 0 0 0 1  1 0 0 0 0 0  0 0 0 0 1 0  0 0 1 0 0 0  0 0 0 1 0 0  0 1 0 0 0 0");
-       S6 reflected = reflMat * static_cast<const S6&>(s);
-       return EnhancedS6(reflected, reflMat * s.getTransformMatrix());
-   },
-   // ... Continue with the remaining 18 reflection functions ...
-   // Reflection 24
-   [](const EnhancedS6& s) {
-       const MatS6 reflMat("0 1 0 0 0 0  0 0 0 0 0 1  0 0 0 1 0 0  0 0 0 0 1 0  0 0 1 0 0 0  1 0 0 0 0 0");
-       S6 reflected = reflMat * static_cast<const S6&>(s);
-       return EnhancedS6(reflected, reflMat * s.getTransformMatrix());
+// BuildReflectionFunctions -- reflectionFunctions used to be a hand-typed
+// array of 24 lambdas; only 7 (Reflections 1-6 and 24) were ever actually
+// written, with an unfinished "// ... Continue with the remaining 18
+// reflection functions ..." placeholder where 7-23 should have been.
+// GenerateAllReflections/StoreAllReflections -- the 24-orbit expansion
+// used by every type's library construction -- was silently using only 7
+// of 24 reflections as a result. Built here instead from
+// MatS6::GetReflections(), the confirmed-correct, generative 24-element
+// group (next_permutation over the 4 Selling vectors a,b,c,d), so there is
+// only one implementation of the 24-element group in the codebase to keep
+// correct, not two.
+static std::vector<std::function<EnhancedS6(const EnhancedS6&)>> BuildReflectionFunctions() {
+   std::vector<std::function<EnhancedS6(const EnhancedS6&)>> out;
+   for (const MatS6& mat : MatS6::GetReflections()) {
+      out.push_back([mat](const EnhancedS6& s) {
+         const S6 reflected = mat * static_cast<const S6&>(s);
+         return EnhancedS6(reflected, mat * s.getTransformMatrix());
+         });
    }
-};
+   return out;
+}
+
+std::vector<std::function<EnhancedS6(const EnhancedS6&)>> SellaBuild::reflectionFunctions =
+BuildReflectionFunctions();
 
 void SellaBuild::StoreAllReflections(const std::string& label, const EnhancedS6& s) {
    for (const auto& reflFunc : reflectionFunctions) {
@@ -397,48 +446,6 @@ std::set<EnhancedS6> SellaBuild::ExpandBoundary(
    return current;
 }
 
-// Also modify ProcessZeros to use controlled depth and call ExpandBoundary for all types:
-
-void SellaBuild::ProcessZeros(const std::string& label, const EnhancedS6& s6) {
-   const std::vector<size_t> vZeros = FindS6Zeros(s6);
-   const size_t nzeros = vZeros.size();
-
-   // Calculate depth based on number of zeros to control explosion
-   size_t depth;
-   if (nzeros == 0) {
-      depth = 6;  // O1B: just one VCP step to find variants
-   } else if (nzeros == 1) {
-      depth = 46;  // O2: two steps to find O3 sub-boundaries
-   } else {
-      depth = std::min(nzeros + 2, static_cast<size_t>(4));  // Cap at 4 for high-dimensional types
-   }
-
-   // Use ExpandBoundary for all types (no special case for nzeros==0)
-   const std::set<EnhancedS6> result = ExpandBoundary(s6, depth);
-   StoreAllReflections(label, result);
-}
-
-// OLD CODE - COMMENTED OUT BUT KEPT FOR REFERENCE
-/*
-void SellaBuild::ProcessZeros_OLD(const std::string & label, const EnhancedS6 & s6) {
-   const std::vector<size_t> vZeros = FindS6Zeros(s6);
-   const size_t nzeros = vZeros.size();
-
-   if (nzeros == 0) {
-      return;
-   }
-   else if (nzeros == 1) {
-      OneBound(label, s6, vZeros[0]);
-   }
-   else if (nzeros == 2) {
-      ProcessTwoZeros(label, s6);
-   }
-   else {
-      ProcessThreeZeros(label, s6);
-   }
-}
-*/
-
 static std::vector<Transformations> ConvertEnhancedS6ToTransformed(const std::vector<EnhancedS6>& v) {
    std::vector<Transformations> out;
    for (const auto& i : v) out.emplace_back(Transformations(i));
@@ -619,4 +626,3 @@ std::set<EnhancedS6> SellaBuild::Xpand_A(const std::string& label, const std::se
    }
    return out;
 }
-

@@ -11,9 +11,9 @@
 #include <set>
 #include <sstream>
 #include <string>
- #include <vector>
+#include <vector>
 //
-const std::vector<std::string> DeloneTypeList::typelist{ "C1","C3","C5","R1","R3","T1","T2","T5","O1A","O1B","O2",/*"O3",*//*"O4",*/"O4B","O5","M1A","M1B","M2A"/*,"M2B"*//*,"M3"*/,"M4"/*,"A1","A2","A3"*/,"H4" };
+const std::vector<std::string> DeloneTypeList::typelist{ "C1","C3","C5","R1","R3","T1","T2","T5","O1A","O1B","O2",/*"O3",*/"O4","O5","M1A","M1B","M2A"/*,"M2B"*//*,"M3"*/,"M4"/*,"A1","A2","A3"*/,"H4" };
 
 std::vector<std::pair<std::string, std::string> > DeloneTypeList::CreateBravaisTypeList() {
    std::vector<std::pair<std::string, std::string> > v;
@@ -134,25 +134,25 @@ std::vector<std::pair< std::string, std::vector<MatS6> > > DeloneTypeList::Creat
 
 std::vector<std::pair< std::string, std::vector<MatS6> > > DeloneTypeList::CreateAllToCanon() {
    LabeledSellaMatrices lsm;
-   std::vector<LabeledSellaMatrices> vToCanon = lsm.GetToCanons( );
+   std::vector<LabeledSellaMatrices> vToCanon = lsm.GetToCanons();
    std::vector<std::pair< std::string, std::vector<MatS6> > > v;
-   for (size_t i = 0; i < vToCanon.size( ); ++i) {
-      v.push_back( std::make_pair( vToCanon[i].GetLabel( ), vToCanon[i].GetMatrices( ) ) );
+   for (size_t i = 0; i < vToCanon.size(); ++i) {
+      v.push_back(std::make_pair(vToCanon[i].GetLabel(), vToCanon[i].GetMatrices()));
    }
    return v;
 }
 
 DeloneTypeList::DeloneTypeList(const bool build)
 {
-   static const std::vector<std::pair<std::string, std::string> > characters = CreateCharacterList( );
-   static const std::vector<std::pair<std::string, std::string> > e3matrices = CreateE3CenteringMatrixList( );
-   static const std::vector<std::pair<std::string, std::string> > bravaisLatticeTypes = CreateBravaisTypeList( );
-   static const std::vector<std::pair<std::string, MatS6> >       centeringMatrices = CreateListOfCenteringMatrices( );
-   static const std::vector<std::pair<std::string, int> > freeParams = CreateListOfFreeParams( );
+   static const std::vector<std::pair<std::string, std::string> > characters = CreateCharacterList();
+   static const std::vector<std::pair<std::string, std::string> > e3matrices = CreateE3CenteringMatrixList();
+   static const std::vector<std::pair<std::string, std::string> > bravaisLatticeTypes = CreateBravaisTypeList();
+   static const std::vector<std::pair<std::string, MatS6> >       centeringMatrices = CreateListOfCenteringMatrices();
+   static const std::vector<std::pair<std::string, int> > freeParams = CreateListOfFreeParams();
 
-   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   prj = CreateAllPrjs( );
-   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   perp = CreateAllPerps( );
-   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   toCanon = CreateAllToCanon( );
+   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   prj = CreateAllPrjs();
+   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   perp = CreateAllPerps();
+   static const std::vector<std::pair<std::string, std::vector<MatS6> > >   toCanon = CreateAllToCanon();
 
 
 
@@ -160,29 +160,29 @@ DeloneTypeList::DeloneTypeList(const bool build)
    static std::vector<std::pair<std::string, MatricesForOneDeloneType> > matrices;
 
    if (build) {
-      if (matrices.empty( )) {
-         for (size_t i = 0; i < typelist.size( ); ++i) {
+      if (matrices.empty()) {
+         for (size_t i = 0; i < typelist.size(); ++i) {
             matrices.push_back(
-               std::make_pair( typelist[i],
+               std::make_pair(typelist[i],
                   MatricesForOneDeloneType(
-                     Getter( typelist[i], prj ),
-                     Getter( typelist[i], perp ),
-                     Getter( typelist[i], toCanon ) ) ) );
+                     Getter(typelist[i], prj),
+                     Getter(typelist[i], perp),
+                     Getter(typelist[i], toCanon))));
          }
       }
    }
 
-   for (size_t i = 0; i < typelist.size( ); ++i) {
-      const DeloneType dt( typelist[i],
-         Getter( typelist[i], bravaisLatticeTypes ),
-         Getter( typelist[i], characters ),
-         Getter( typelist[i], e3matrices ),
-         Getter( typelist[i], centeringMatrices ),
-         Getter( typelist[i], freeParams ),
-         Getter( typelist[i], matrices ) );
+   for (size_t i = 0; i < typelist.size(); ++i) {
+      const DeloneType dt(typelist[i],
+         Getter(typelist[i], bravaisLatticeTypes),
+         Getter(typelist[i], characters),
+         Getter(typelist[i], e3matrices),
+         Getter(typelist[i], centeringMatrices),
+         Getter(typelist[i], freeParams),
+         Getter(typelist[i], matrices));
       if (typelist[i][0] == 'C' || typelist[i] == "C3")
-      m_deloneTypes.push_back( dt );
-         //std::cout << dt << std::endl;
+         m_deloneTypes.push_back(dt);
+      //std::cout << dt << std::endl;
    }
    //else {
    //   for (size_t i = 0; i < typelist.size( ); ++i) {
@@ -214,7 +214,7 @@ DeloneTypeList::DeloneTypeList(const bool build)
    //}
 }
 
-std::vector<double> DeloneTypeList::Make3dVector( const std::string& s) {
+std::vector<double> DeloneTypeList::Make3dVector(const std::string& s) {
    std::istringstream istr(s);
    double d;
    std::vector<double> v;
@@ -223,7 +223,7 @@ std::vector<double> DeloneTypeList::Make3dVector( const std::string& s) {
       if (d == 0.0) d = 0.0;
       v.push_back(d);
    }
-   if (v.size() !=  9) throw;
+   if (v.size() != 9) throw;
    return v;
 }
 
@@ -233,32 +233,32 @@ std::pair<std::string, MatS6 > DeloneTypeList::CreateCenteringMatrix(const std::
    return std::make_pair(lattice, MatS6::e3Tos6(Make3dVector(threespaceMatrix)));
 }
 
-std::vector<std::pair<std::string, int > > DeloneTypeList::CreateListOfFreeParams( ) {
+std::vector<std::pair<std::string, int > > DeloneTypeList::CreateListOfFreeParams() {
    std::vector<std::pair<std::string, int > > v;
-   v.push_back( std::make_pair( "C1", 1 ) );
-   v.push_back( std::make_pair( "C3", 1 ) );
-   v.push_back( std::make_pair( "C5", 1 ) );
-   v.push_back( std::make_pair( "R1", 2 ) );
-   v.push_back( std::make_pair( "R3", 2 ) );
-   v.push_back( std::make_pair( "T1", 2 ) );
-   v.push_back( std::make_pair( "T2", 2 ) );
-   v.push_back( std::make_pair( "T5", 2 ) );
-   v.push_back( std::make_pair( "O1A", 3 ) );
-   v.push_back( std::make_pair( "O1B", 3 ) );
-   v.push_back( std::make_pair( "O2", 3 ) );
-   v.push_back( std::make_pair( "O3", 3 ) );
-   v.push_back( std::make_pair( "O4", 3 ) );
-   v.push_back( std::make_pair( "O5", 3 ) );
-   v.push_back( std::make_pair( "M1A", 4 ) );
-   v.push_back( std::make_pair( "M1B", 4 ) );
-   v.push_back( std::make_pair( "M2A", 4 ) );
-   v.push_back( std::make_pair( "M2B", 4 ) );
-   v.push_back( std::make_pair( "M3", 4 ) );
-   v.push_back( std::make_pair( "M4", 4 ) );
-   v.push_back( std::make_pair( "A1", 5 ) );
-   v.push_back( std::make_pair( "A2", 5 ) );
-   v.push_back( std::make_pair( "A3", 5 ) );
-   v.push_back( std::make_pair( "H4", 2 ) );
+   v.push_back(std::make_pair("C1", 1));
+   v.push_back(std::make_pair("C3", 1));
+   v.push_back(std::make_pair("C5", 1));
+   v.push_back(std::make_pair("R1", 2));
+   v.push_back(std::make_pair("R3", 2));
+   v.push_back(std::make_pair("T1", 2));
+   v.push_back(std::make_pair("T2", 2));
+   v.push_back(std::make_pair("T5", 2));
+   v.push_back(std::make_pair("O1A", 3));
+   v.push_back(std::make_pair("O1B", 3));
+   v.push_back(std::make_pair("O2", 3));
+   v.push_back(std::make_pair("O3", 3));
+   v.push_back(std::make_pair("O4", 3));
+   v.push_back(std::make_pair("O5", 3));
+   v.push_back(std::make_pair("M1A", 4));
+   v.push_back(std::make_pair("M1B", 4));
+   v.push_back(std::make_pair("M2A", 4));
+   v.push_back(std::make_pair("M2B", 4));
+   v.push_back(std::make_pair("M3", 4));
+   v.push_back(std::make_pair("M4", 4));
+   v.push_back(std::make_pair("A1", 5));
+   v.push_back(std::make_pair("A2", 5));
+   v.push_back(std::make_pair("A3", 5));
+   v.push_back(std::make_pair("H4", 2));
    return v;
 }
 
@@ -276,35 +276,35 @@ std::vector<std::pair<std::string, MatS6> > DeloneTypeList::CreateListOfCenterin
    v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "1 0 0  0 1 0  0 0 1"));
    //v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "1 0 0  0 0 1  0 1 1"));
    //v.push_back(DeloneTypeList::CreateCenteringMatrix("T5", "0 1 0  0 1 1  1 0 0"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("O1A", "1 1 0 -1 1 0  1 1 2"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("O1B", "0 1 1  1 0 1  1 1 0"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("O2", "1 0 0  0 1 0  1 1 2"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("O3", "0 1 1  1 0 1  1 1 0"));
-//v.push_back(DeloneTypeList::CreateCenteringMatrix("O3", "1 0 0  0 1 0  1 1 2"));
-//v.push_back(DeloneTypeList::CreateCenteringMatrix("O4", "2 1 0  0 1 0  0 0 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("O4", "1 -1 0  1 1 0  0 0 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("O5", "1 0 0  0 1 0  0 0 1"));
-//v.push_back(DeloneTypeList::CreateCenteringMatrix("O5", "1 0 0  0 0 1  0 1 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("M1A", "-1 -1 -1  1 -1 0  0 0 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("M1B", "0 1 1  1 1 0 -1 0 -1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("M2A", "-1 -1 -2 0 1 0  1 0 0"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("M2B", "0 1 1  1 1 0 -1 0 -1"));
-//v.push_back(DeloneTypeList::CreateCenteringMatrix("M2B", "-1 -1 -1  1 -1 0  0 0 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("M3", "-1 -1 -2  0 1 0  1 0 0"));
-//v.push_back(DeloneTypeList::CreateCenteringMatrix("M3", "1 1 0  0 -1 -1 -1 0 -1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("M4", "1 0 0  0 1 0  0 0 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("A1", "1 0 0  0 1 0  0 0 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("A2", "1 0 0  0 1 0  0 0 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("A3", "1 0 0  0 1 0  0 0 1"));
-v.push_back(DeloneTypeList::CreateCenteringMatrix("H4", "1 0 0  0 1 0  0 0 1"));
-return v;
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("O1A", "1 1 0 -1 1 0  1 1 2"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("O1B", "0 1 1  1 0 1  1 1 0"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("O2", "1 0 0  0 1 0  1 1 2"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("O3", "0 1 1  1 0 1  1 1 0"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("O3", "1 0 0  0 1 0  1 1 2"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("O4", "2 1 0  0 1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("O4", "1 -1 0  1 1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("O5", "1 0 0  0 1 0  0 0 1"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("O5", "1 0 0  0 0 1  0 1 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("M1A", "-1 -1 -1  1 -1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("M1B", "0 1 1  1 1 0 -1 0 -1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("M2A", "-1 -1 -2 0 1 0  1 0 0"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("M2B", "0 1 1  1 1 0 -1 0 -1"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("M2B", "-1 -1 -1  1 -1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("M3", "-1 -1 -2  0 1 0  1 0 0"));
+   //v.push_back(DeloneTypeList::CreateCenteringMatrix("M3", "1 1 0  0 -1 -1 -1 0 -1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("M4", "1 0 0  0 1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("A1", "1 0 0  0 1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("A2", "1 0 0  0 1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("A3", "1 0 0  0 1 0  0 0 1"));
+   v.push_back(DeloneTypeList::CreateCenteringMatrix("H4", "1 0 0  0 1 0  0 0 1"));
+   return v;
 }
 
 std::vector<std::pair<std::string, std::vector<double> > > DeloneTypeList::Make3dCenteringMatrices() {
    std::vector<std::pair<std::string, std::vector<double> > > v;
    v.push_back(std::make_pair("C1", Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("C3", Make3dVector("1 1 0 -1 1 0  1 1 2")));
-   v.push_back(std::make_pair("C5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
+   v.push_back(std::make_pair("C5", Make3dVector("1 0 0  0 0 1  0 1 1")));
    v.push_back(std::make_pair("C5", Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("H4", Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("R1", Make3dVector("1 -1 0  0 1 -1  1 1 1")));
@@ -312,24 +312,24 @@ std::vector<std::pair<std::string, std::vector<double> > > DeloneTypeList::Make3
    v.push_back(std::make_pair("T1", Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("T2", Make3dVector("1 0 0  0 1 0  1 1 2")));
    v.push_back(std::make_pair("T5", Make3dVector("1 0 0  0 1 0  0 0 1")));
-   v.push_back(std::make_pair("T5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
-   v.push_back(std::make_pair("T5",  Make3dVector("0 1 0  0 1 1  1 0 0")));
+   v.push_back(std::make_pair("T5", Make3dVector("1 0 0  0 0 1  0 1 1")));
+   v.push_back(std::make_pair("T5", Make3dVector("0 1 0  0 1 1  1 0 0")));
    v.push_back(std::make_pair("O1A", Make3dVector("1 1 0 -1 1 0  1 1 2")));
    v.push_back(std::make_pair("O1B", Make3dVector("0 1 1  1 0 1  1 1 0")));
    v.push_back(std::make_pair("O2", Make3dVector("1 0 0  0 1 0  1 1 2")));
    v.push_back(std::make_pair("O3", Make3dVector("0 1 1  1 0 1  1 1 0")));
-   v.push_back(std::make_pair("O3",  Make3dVector("1 0 0  0 1 0  1 1 2")));
-   v.push_back(std::make_pair("O4",  Make3dVector("2 1 0  0 1 0  0 0 1")));
+   v.push_back(std::make_pair("O3", Make3dVector("1 0 0  0 1 0  1 1 2")));
+   v.push_back(std::make_pair("O4", Make3dVector("2 1 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("O4", Make3dVector("1 -1 0  1 1 0  0 0 1")));
    v.push_back(std::make_pair("O5", Make3dVector("1 0 0  0 1 0  0 0 1")));
-   v.push_back(std::make_pair("O5",  Make3dVector("1 0 0  0 0 1  0 1 1")));
+   v.push_back(std::make_pair("O5", Make3dVector("1 0 0  0 0 1  0 1 1")));
    v.push_back(std::make_pair("M1A", Make3dVector("-1 -1 -1  1 -1 0  0 0 1")));
    v.push_back(std::make_pair("M1B", Make3dVector("0 1 1  1 1 0 -1 0 -1")));
    v.push_back(std::make_pair("M2A", Make3dVector("-1 -1 -2 0 1 0  1 0 0")));
    v.push_back(std::make_pair("M2B", Make3dVector("0 1 1  1 1 0 -1 0 -1"))); //  ?????????????????????????
    v.push_back(std::make_pair("M2B", Make3dVector("-1 -1 -1  1 -1 0  0 0 1"))); //  ?????????????????????????
    v.push_back(std::make_pair("M3", Make3dVector("-1 -1 -2  0 1 0  1 0 0")));
-   v.push_back(std::make_pair("M3",  Make3dVector("1 1 0  0 -1 -1 -1 0 -1")));
+   v.push_back(std::make_pair("M3", Make3dVector("1 1 0  0 -1 -1 -1 0 -1")));
    v.push_back(std::make_pair("M4", Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A1", Make3dVector("1 0 0  0 1 0  0 0 1")));
    v.push_back(std::make_pair("A2", Make3dVector("1 0 0  0 1 0  0 0 1")));
@@ -373,7 +373,7 @@ double DeloneTypeList::GetFreeParams(const std::string& s) {
 }
 
 
-std::vector<DeloneFitResults> DeloneTypeList::Fit( const std::string& type, const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
+std::vector<DeloneFitResults> DeloneTypeList::Fit(const std::string& type, const S6& s6, const S6& sig, const MatS6& reductionMatrix) const {
    std::vector<DeloneFitResults> v;
    //for (size_t i = 0; i < m_deloneTypes.size( ); ++i) {
    //   const std::string name = m_deloneTypes[i].GetName( );
@@ -401,7 +401,6 @@ std::vector<DeloneFitResults> DeloneTypeList::Fit( const std::string& type, cons
    return v;
 }
 
-std::vector<DeloneFitResults>  DeloneTypeList::Fit( const S6& s6, const S6& sig, const MatS6& reductionMatrix ) const {
-   return Fit( "", s6, sig, reductionMatrix );
+std::vector<DeloneFitResults>  DeloneTypeList::Fit(const S6& s6, const S6& sig, const MatS6& reductionMatrix) const {
+   return Fit("", s6, sig, reductionMatrix);
 }
-

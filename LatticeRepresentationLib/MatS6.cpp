@@ -526,32 +526,32 @@ std::vector<MatS6> MatS6::GetReflections() {
    //return vS6_Refl;
 }
 
-std::vector<MatS6> MatS6::GetBoundaries() {
-   std::vector<MatS6> out;
-   for (size_t i = 1; i <= 6; ++i) {
-     const auto xxx = S6BoundaryTransforms::generateOneBoundaryTransform(i);
-   }
-   return out;
-}
-
-MatS6 MatS6::GetBoundaries(const size_t n) {
-   return MatS6();
-}
-
-std::set<MatS6> MatS6::Generate24S6Reflections() {
-   const MatS6 m1(0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0);
-   const MatS6 m2(0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
-
-   std::set<MatS6> sm;
-   sm.insert(m1);
-   sm.insert(m2);
-
-   for (size_t i = 0; i < 3; ++i)
-   {
-      for (const auto& s : sm) {
-         sm.insert(s * m1);
-         sm.insert(s * m2);
-      }
-   }
-   return sm;
-}
+//std::vector<MatS6> MatS6::GetBoundaries() {
+//   std::vector<MatS6> out;
+//   for (size_t i = 1; i <= 6; ++i) {
+//     const auto xxx = S6BoundaryTransforms::generateOneBoundaryTransform(i);
+//   }
+//   return out;
+//}
+//
+//MatS6 MatS6::GetBoundaries(const size_t n) {
+//   return MatS6();
+//}
+//
+//std::set<MatS6> MatS6::Generate24S6Reflections() {
+//   const MatS6 m1(0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0);
+//   const MatS6 m2(0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+//
+//   std::set<MatS6> sm;
+//   sm.insert(m1);
+//   sm.insert(m2);
+//
+//   for (size_t i = 0; i < 3; ++i)
+//   {
+//      for (const auto& s : sm) {
+//         sm.insert(s * m1);
+//         sm.insert(s * m2);
+//      }
+//   }
+//   return sm;
+//}

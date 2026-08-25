@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="ControlFeature.cpp" />
     <ClCompile Include="InputHandler.cpp" />
+    <ClCompile Include="LatticeCell.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LatticeRepresentationLib\LatticeRepresentationLib.vcxproj">

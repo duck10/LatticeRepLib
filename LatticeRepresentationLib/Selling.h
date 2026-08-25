@@ -50,7 +50,7 @@ public:
 
    static void Write_S6_E3_MatrixPairs();
 
-
+   static std::vector<MatS6> GetBoundaryTransforms();
 private:
    static void ListSteps(const S6& s6);
 
