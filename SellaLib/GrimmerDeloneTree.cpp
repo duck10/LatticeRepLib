@@ -13,7 +13,7 @@
 // agree on where every node actually is.
 
 #include "GrimmerDeloneTree.h"
-#include "ConfirmedDeloneNesting.h"
+#include "NestingCheckResults.h"
 
 #include <algorithm>
 #include <cmath>
@@ -353,7 +353,7 @@ std::string GrimmerDeloneTree::RenderConnectingLines() {
 std::string GrimmerDeloneTree::RenderNestingLabels() {
    const std::map<std::string, NodePosition> positions = CreateNodePositionMap();
    const std::vector<EdgeSpec> edges = CreateEdgeList();
-   const std::vector<ConfirmedNesting> facts = CreateConfirmedNestingFacts();
+   const std::vector<NestingCheckResult> facts = CreateNestingCheckResults();
 
    std::ostringstream ss;
 
@@ -489,8 +489,15 @@ std::string GrimmerDeloneTree::RenderNestingLabels() {
 std::string GrimmerDeloneTree::RenderHeader(const LatticeCell& input) {
    std::ostringstream ss;
    ss << "<?xml version=\"1.0\" standalone=\"no\" ?>" << std::endl;
-   ss << "<svg width=\"1563\" height=\"1205\" viewBox=\"0,0,1563,1205\" version=\"1.1\" "
+   ss << "<svg width=\"1172.25\" height=\"903.75\" viewBox=\"0,0,1172.25,903.75\" version=\"1.1\" "
       << "xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << std::endl;
+   // Whole diagram shrunk to 75% (2026-09-01, Larry) -- content below is
+   // still laid out in its original 1563x1205 coordinate space; this
+   // outer group scales it down as a unit, and the svg/viewBox above are
+   // sized to match (1563*0.75=1172.25, 1205*0.75=903.75) so nothing gets
+   // clipped or padded. RenderFooter's closing tags must match: an extra
+   // </g> for this wrapper, before the existing </g></svg>.
+   ss << "<g transform=\"scale(0.75)\">" << std::endl;
    ss << "<g transform=\"translate(20,30)\">" << std::endl;
    ss << "  <text x=\"0\" y=\"0\" font-family=\"Arial\" font-size=\"22\">SELLA RESULTS by Delone type (Angstroms)</text>" << std::endl;
    ss << "  <text x=\"0\" y=\"22\" font-family=\"Arial\" font-size=\"16\">" << EscapeForSVG(input.GetInput())
@@ -542,6 +549,7 @@ std::string GrimmerDeloneTree::RenderFooter() {
    ss << "  <text x=\"0\" y=\"1161.25\" font-family=\"Arial\" font-size=\"14\" fill=\"#666666\">"
       << "* -- every tested sibling nests here; excludes nothing."
       << "</text>" << std::endl;
+   ss << "</g>" << std::endl;
    ss << "</g>" << std::endl;
    ss << "</svg>" << std::endl;
    return ss.str();

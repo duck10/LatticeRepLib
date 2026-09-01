@@ -54,22 +54,16 @@
     <ClInclude Include="CmdSellaControls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestDeloneNesting.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GrimmerDeloneTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RunItem8NestingAudit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DeloneFitFiltering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConfirmedDeloneNesting.h">
+    <ClInclude Include="BravaisHeirarchy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BravaisHeirarchy.h">
+    <ClInclude Include="NestingCheckResults.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

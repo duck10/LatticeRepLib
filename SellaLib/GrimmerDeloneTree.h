@@ -97,7 +97,7 @@ private:
    static std::string EscapeForSVG(const std::string& s);
    // Grimmer's paper (Sec. 1): "mS" is the modern standard name, "mC" is
    // what older ITC-A figures call this same type. Internal identifiers
-   // (map keys, edge references, ConfirmedNesting facts) all stay "mC" --
+   // (map keys, edge references, NestingCheckResult facts) all stay "mC" --
    // that's what GrimmerChains itself uses throughout -- this only
    // changes what gets printed on the node.
    static std::string DisplayNameFor(const std::string& bravaisName);

@@ -144,7 +144,6 @@
     <ClInclude Include="BravaisHeirarchy.h" />
     <ClInclude Include="CmdSellaControls.h" />
     <ClInclude Include="CompareBoundaryTransformsTest.h" />
-    <ClInclude Include="ConfirmedDeloneNesting.h" />
     <ClInclude Include="DeloneFitComputation.h" />
     <ClInclude Include="DeloneFitFiltering.h" />
     <ClInclude Include="Deloneparentagetest.h" />
@@ -155,11 +154,10 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="GrimmerDeloneTree.h" />
     <ClInclude Include="GrimmerTree.h" />
+    <ClInclude Include="NestingCheckResults.h" />
     <ClInclude Include="RemediatedFit.h" />
-    <ClInclude Include="RunItem8NestingAudit.h" />
     <ClInclude Include="SearchBoundaryNeighborsByTransform.h" />
     <ClInclude Include="Sella.h" />
-    <ClInclude Include="TestDeloneNesting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BravaisHeirarchy.cpp" />
