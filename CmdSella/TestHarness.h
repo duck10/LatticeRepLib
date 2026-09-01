@@ -35,7 +35,71 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
+
+// RunR1R3RemediatedFitCheck -- one-off diagnostic, run 2026-08-27. Was
+// built to test a specific hypothesis: that Test 17's originally-recorded
+// large fits (R3~128 on cells 1/2, R1~115 on cell 3) were an artifact of
+// ComputeDeloneFits's reactive remediation gate (a type only gets widened
+// when a Grimmer chain failure happens to name it -- see
+// RemediatedFit.h's GetRemediatedFitForType comment).
+//
+// RESULT: that hypothesis is DISPROVEN. Running Test 17 through the
+// actual ComputeDeloneFits path (not this bypass) shows R1 and R3 both
+// small on every cell already -- no gating gap reproduces here. This
+// function's own output (below) also shows small values throughout,
+// consistent with -- not explaining -- that finding; the "known raw
+// fit" values below (copied from Test 17's now-corrected original
+// comments) do NOT match what either path actually produces, and their
+// original source is unresolved (see FlexibleSellaTestMode.h Test 17's
+// comment for the full note). Kept as a general-purpose direct
+// GetRemediatedFitForType spot-check, not as evidence for the
+// gating-gap theory it was originally built to test.
+void RunR1R3RemediatedFitCheck() {
+   std::cout << "; RunR1R3RemediatedFitCheck: entered" << std::endl;
+   const LatticeCell cell1("S 0.00000 0.00000 -0.17453 -99.82547 -99.82547 -100.00000");
+   const LatticeCell cell2("S -0.10976 -0.07316 -0.09934 -99.66756 -99.67093 -99.57723");
+   const LatticeCell cell3("S -0.06282 -0.01222 -99.84618 -99.85396 -0.13101 -99.84497");
+   const std::vector<std::pair<std::string, LatticeCell>> cells = {
+      {"cell 1", cell1},
+      {"cell 2", cell2},
+      {"cell 3", cell3}
+   };
+   for (const std::string& type : { std::string("R1"), std::string("R3") }) {
+      for (const auto& labeledCell : cells) {
+         const std::string& label = labeledCell.first;
+         const LatticeCell& cell = labeledCell.second;
+         const double remediated = GetRemediatedFitForType(cell, type);
+         std::cout << ";   " << label << "  " << type
+            << "  fit (GetRemediatedFitForType, bypasses reactive gate) = "
+            << remediated << std::endl;
+      }
+   }
+   std::cout << std::endl
+      << "; This is a direct spot-check of GetRemediatedFitForType only --"
+      << " compare against Test 17's own live output (run via ComputeDeloneFits,"
+      << " TEST 17) for the values that actually matter for classification."
+      << std::endl;
+}
+
+// RunRandomSeedSpotCheck -- minimal, direct proof that S6::SetSeed()
+// actually changes what S6::rand() produces, for whatever seed is
+// currently active. Prints the RAW drawn sample point itself, not a
+// derived residual -- a residual for a genuinely-nested pair can stay
+// near-zero regardless of seed (that's the point of the nesting being a
+// whole-subspace property), so it wouldn't visibly prove anything
+// changed. The sample point itself will be a completely different S6
+// vector for a different seed, unambiguous either way. Run this twice
+// with two different RANDOMSEED values (CmdSellaControls.h) and diff
+// the printed sample -- if they're identical, the seed genuinely isn't
+// taking effect; if they differ, it is.
+void RunRandomSeedSpotCheck() {
+   std::cout << "; RunRandomSeedSpotCheck: entered" << std::endl;
+   const S6 sample = GetValidTypeSample(Delone_O4().GetPrj());
+   std::cout << ";   drawn sample of O4's subspace (should differ between"
+      << " different RANDOMSEED values): " << sample << std::endl;
+}
 
 // RunParentageRepeatabilityCheck -- one-off calibration diagnostic.
 // TestDeloneParentage draws a fresh S6::rand() every call; this checks
@@ -62,6 +126,83 @@ void RunParentageRepeatabilityCheck() {
       S6::SetSeed(seed);
       for (int trial = 0; trial < 5; ++trial) {
          const auto result = TestDeloneParentage(Delone_M2B(), Delone_M3());
+         std::cout << "; seed=" << seed << " trial=" << trial
+            << " isNested=" << result.isNested
+            << " residual=" << result.residual << std::endl;
+      }
+   }
+
+   // Extended 2026-08-29: the pairs ConfirmedDeloneNesting.h's correction
+   // actually depends on. RunNestingConsistencyCheck's single run (seed
+   // fixed, per Larry's own confirmation) found M1A, M1B, AND M2A all
+   // nest O4 -- reversing the original "M1A only" finding this whole
+   // investigation started from. Before trusting that reversal, checking
+   // whether the method itself is seed-stable on exactly this pair, not
+   // just the two pairs the check already covered above.
+   std::cout << "; -- newly-corrected pair: M1A / O4 (expect isNested=true) --" << std::endl;
+   for (int seed = 1; seed <= 3; ++seed) {
+      S6::SetSeed(seed);
+      for (int trial = 0; trial < 5; ++trial) {
+         const auto result = TestDeloneParentage(Delone_M1A(), Delone_O4());
+         std::cout << "; seed=" << seed << " trial=" << trial
+            << " isNested=" << result.isNested
+            << " residual=" << result.residual << std::endl;
+      }
+   }
+
+   std::cout << "; -- newly-corrected pair: M1B / O4 (expect isNested=true) --" << std::endl;
+   for (int seed = 1; seed <= 3; ++seed) {
+      S6::SetSeed(seed);
+      for (int trial = 0; trial < 5; ++trial) {
+         const auto result = TestDeloneParentage(Delone_M1B(), Delone_O4());
+         std::cout << "; seed=" << seed << " trial=" << trial
+            << " isNested=" << result.isNested
+            << " residual=" << result.residual << std::endl;
+      }
+   }
+
+   std::cout << "; -- newly-corrected pair: M2A / O4 (expect isNested=true) --" << std::endl;
+   for (int seed = 1; seed <= 3; ++seed) {
+      S6::SetSeed(seed);
+      for (int trial = 0; trial < 5; ++trial) {
+         const auto result = TestDeloneParentage(Delone_M2A(), Delone_O4());
+         std::cout << "; seed=" << seed << " trial=" << trial
+            << " isNested=" << result.isNested
+            << " residual=" << result.residual << std::endl;
+      }
+   }
+
+   std::cout << "; -- newly-corrected pair: M1B / R1 (expect isNested=true) --" << std::endl;
+   for (int seed = 1; seed <= 3; ++seed) {
+      S6::SetSeed(seed);
+      for (int trial = 0; trial < 5; ++trial) {
+         const auto result = TestDeloneParentage(Delone_M1B(), Delone_R1());
+         std::cout << "; seed=" << seed << " trial=" << trial
+            << " isNested=" << result.isNested
+            << " residual=" << result.residual << std::endl;
+      }
+   }
+
+   std::cout << "; -- newly-corrected pair: M2A / R3 (expect isNested=true) --" << std::endl;
+   for (int seed = 1; seed <= 3; ++seed) {
+      S6::SetSeed(seed);
+      for (int trial = 0; trial < 5; ++trial) {
+         const auto result = TestDeloneParentage(Delone_M2A(), Delone_R3());
+         std::cout << "; seed=" << seed << " trial=" << trial
+            << " isNested=" << result.isNested
+            << " residual=" << result.residual << std::endl;
+      }
+   }
+
+   // Negative control alongside the positives above: M2B is confirmed
+   // EXCLUDED from R3 (only M1A/M1B/M2A/M3 nest it) -- checking this
+   // stays isNested=false across seeds too, not just that the positives
+   // stay true.
+   std::cout << "; -- negative control: M2B / R3 (expect isNested=false) --" << std::endl;
+   for (int seed = 1; seed <= 3; ++seed) {
+      S6::SetSeed(seed);
+      for (int trial = 0; trial < 5; ++trial) {
+         const auto result = TestDeloneParentage(Delone_M2B(), Delone_R3());
          std::cout << "; seed=" << seed << " trial=" << trial
             << " isNested=" << result.isNested
             << " residual=" << result.residual << std::endl;
@@ -1493,5 +1634,65 @@ void RunRawFitCheck(const CmdSellaControls& controls) {
    }
 }
 
+
+
+// RunRemediation168Check -- verifies Remediation168 (RemediatedFit.h) against
+// the full 16-cell historical chain-failure set (same cells as
+// RunStabilityVsCurrentComparison, not just the 8 still-failing-after-2-hop
+// ones), so this also serves as a regression check on cells that were
+// already fine under the current 36-candidate Remediation. Reports per-cell
+// current-vs-widened O4 fit and whether the oC<=tP chain relationship now
+// holds, plus an improved/unchanged/regressed summary count.
+inline void RunRemediation168Check(const CmdSellaControls& controls) {
+   const std::vector<std::string> cells = {
+      "P 21.775 21.785 27.232  90.028  89.974  90.023",
+      "P  1.307  3.134  3.150 144.338  90.898 113.499",
+      "P  1.447  2.154  1.448  93.001  93.077 118.555",
+      "P  1.511  3.987  3.918 149.756 103.646  94.613",
+      "P  1.909  3.372  3.412 140.217  95.846 108.922",
+      "P  1.916  4.033  1.656 105.411 101.400  96.056",
+      "P  1.918  1.118  1.899  94.267 130.788 116.312",
+      "P  2.044  2.594  3.604 121.251  93.338  95.754",
+      "P  2.092  3.512  1.736  92.747  95.706 123.113",
+      "P  2.212  3.228  3.111 124.239  96.056 120.065",
+      "P  2.418  2.421  1.105  91.232 105.455 146.970",
+      "P  2.778  1.881  3.996 114.240  97.653  94.507",
+      "P  2.891  2.299  3.839  90.545 118.914 100.136",
+      "P  2.973  2.869  1.853  93.424 114.956 138.239",
+      "P  3.286  1.671  1.295  98.790  90.427 114.783",
+      "P  3.345  3.397  1.230  91.705 101.386 151.360"
+   };
+
+   int improvedCount = 0;
+   int unchangedCount = 0;
+   int regressedCount = 0;
+
+   for (const auto& cellStr : cells) {
+      const LatticeCell cell(cellStr);
+      MatS6 oneReductionMatrix;
+      const S6 oneLattice = GetInputSellingReducedVectors(cell, oneReductionMatrix);
+
+      const DeloneFitResults current = Remediation(oneLattice, "O4", -1.0);
+      const DeloneFitResults widened = Remediation168(oneLattice, "O4", -1.0);
+      const DeloneFitResults tP = Remediation(oneLattice, "tP", -1.0);
+
+      const double delta = current.GetRawFit() - widened.GetRawFit();
+      std::string verdict;
+      if (delta > 1.0E-8) { verdict = "IMPROVED"; ++improvedCount; }
+      else if (delta < -1.0E-8) { verdict = "REGRESSION"; ++regressedCount; }
+      else { verdict = "no change"; ++unchangedCount; }
+
+      std::cout << cellStr << std::endl;
+      std::cout << ";   O4 current (36):  " << current.GetRawFit() << std::endl;
+      std::cout << ";   O4 widened (168): " << widened.GetRawFit() << "  " << verdict << std::endl;
+      std::cout << ";   tP:               " << tP.GetRawFit()
+         << "  " << (widened.GetRawFit() <= tP.GetRawFit() * (1.0 + 1.0E-8) ? "oC<=tP OK" : "oC>tP still")
+         << std::endl << std::endl;
+   }
+
+   std::cout << "; RunRemediation168Check summary: " << improvedCount << " improved, "
+      << unchangedCount << " unchanged, " << regressedCount << " regressed (out of "
+      << cells.size() << ")" << std::endl;
+}
 
 #endif //TEST_HARNESS_H

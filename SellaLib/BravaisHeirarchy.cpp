@@ -1,15 +1,12 @@
 #pragma warning (disable: 4100) // Visual Studio --  unreferenced formal parameter
+#pragma warning (disable: 4996) // Visual Studio -- localtime may not be safe
 
 #include "BravaisHeirarchy.h"
 #include "DeloneFitResults.h"
 //#include "GenerateLatticeTypeExamples.h"
-#pragma warning (disable: 4996) // Visual Studio -- localtime may not be safe
 
-
-//#include "GrimmerTree.h"
 #include "LRL_ToString.h"
 #include "S6.h"
-#include "Sella.h"
 
 #include <iomanip>
 #include <iostream>

@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="BravaisHeirarchy.cpp" />
     <ClCompile Include="C3.cpp" />
     <ClCompile Include="C3Plot.cpp" />
     <ClCompile Include="C6.cpp" />
@@ -92,7 +91,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasisBase.h" />
-    <ClInclude Include="BravaisHeirarchy.h" />
     <ClInclude Include="C3.h" />
     <ClInclude Include="C3Plot.h" />
     <ClInclude Include="C6.h" />

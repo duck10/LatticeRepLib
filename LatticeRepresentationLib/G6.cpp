@@ -49,6 +49,9 @@ G6::G6(const double v[6])
 
 G6::G6(const LRL_Cell& c) {
    if (!c.IsValid()) {
+      m_dim = 6;
+      m_vec.resize(6);
+      for (size_t i = 0; i < 6; ++i) m_vec[i] = 0.0;
       (*this).SetValid(false);
    }
    else

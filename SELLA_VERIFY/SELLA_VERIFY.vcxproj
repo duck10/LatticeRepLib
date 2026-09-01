@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SellaLib;..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SellaLib;..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -158,7 +158,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
     <ClCompile Include="MAIN_SELLA_VERIFY.cpp" />
     <ClCompile Include="Nullspace.cpp" />
   </ItemGroup>
@@ -168,6 +167,9 @@
     </ProjectReference>
     <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
       <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\SellaLib\SellaLib.vcxproj">
+      <Project>{aeb81a9f-2150-489e-a7fa-6a3943785e75}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

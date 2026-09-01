@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SellaLib;..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SellaLib;..\InputHandler;..\LRL_Tools;..\LatticeRepresentationLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -143,14 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\LatticeRepresentationLib\BravaisHeirarchy.cpp" />
-    <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp" />
     <ClCompile Include="ApplyVCPSequence.cpp" />
     <ClCompile Include="ApplyVCPSequence2.cpp" />
     <ClCompile Include="CmdSella.cpp" />
-    <ClCompile Include="CmdSellaControls.cpp" />
     <ClCompile Include="Cmdsellatests.cpp" />
-    <ClCompile Include="GrimmerTree.cpp" />
     <ClCompile Include="SellaBuild.cpp" />
     <ClCompile Include="VCPVector..cpp" />
   </ItemGroup>
@@ -164,12 +160,12 @@
     <ProjectReference Include="..\LRL_Tools\LRL_Tools.vcxproj">
       <Project>{1f49717d-473c-4a61-b03a-bc1ee3f2e9b4}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\SellaLib\SellaLib.vcxproj">
+      <Project>{aeb81a9f-2150-489e-a7fa-6a3943785e75}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\LatticeRepresentationLib\BravaisHeirarchy.h" />
-    <ClInclude Include="..\LatticeRepresentationLib\Sella.h" />
     <ClInclude Include="CheckABReflection.h" />
-    <ClInclude Include="CmdSellaControls.h" />
     <ClInclude Include="CompareBoundaryTransformsTest.h" />
     <ClInclude Include="DeloneFitComputation.h" />
     <ClInclude Include="Deloneparentagetest.h" />
@@ -179,7 +175,6 @@
     <ClInclude Include="ExpandAcrossBoundaryZeros.h" />
     <ClInclude Include="ExploreReductionTies.h" />
     <ClInclude Include="FlexibleSellaTestMode.h" />
-    <ClInclude Include="GrimmerTree.h" />
     <ClInclude Include="RemediatedFit.h" />
     <ClInclude Include="SearchAllBoundaryTies.h" />
     <ClInclude Include="SearchBoundaryNeighborsByTransform.h" />

@@ -5,8 +5,10 @@
 #include <cfloat>
 #include <string>
 #include <map>
+#include <ostream>
 #include <vector>
 
+#include "DeloneFitResults.h"
 
 // FitData struct for storing type and fit value pairs
 struct FitData {
@@ -166,13 +168,18 @@ private:
 
    // Static DeloneType and BravaisType objects
    static const DeloneTypeForGrimmer m_dtype_a1;
+   static const DeloneTypeForGrimmer m_dtype_a2;
+   static const DeloneTypeForGrimmer m_dtype_a3;
    static const DeloneTypeForGrimmer m_dtype_m1a;
    static const DeloneTypeForGrimmer m_dtype_m1b;
    static const DeloneTypeForGrimmer m_dtype_m2a;
+   static const DeloneTypeForGrimmer m_dtype_m2b;
+   static const DeloneTypeForGrimmer m_dtype_m3;
    static const DeloneTypeForGrimmer m_dtype_m4;
    static const DeloneTypeForGrimmer m_dtype_o1a;
    static const DeloneTypeForGrimmer m_dtype_o1b;
    static const DeloneTypeForGrimmer m_dtype_o2;
+   static const DeloneTypeForGrimmer m_dtype_o3;
    static const DeloneTypeForGrimmer m_dtype_o4;
    static const DeloneTypeForGrimmer m_dtype_o5;
    static const DeloneTypeForGrimmer m_dtype_r1;
@@ -270,4 +277,3 @@ private:
 
 
 #endif // GRIMMERTREE_H
-

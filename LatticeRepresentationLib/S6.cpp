@@ -296,6 +296,7 @@ S6& S6::operator= (const B4& v) {
 }
 
 S6& S6::operator= (const LRL_Cell& v) {
+   const bool b = v.GetValid();
    static const double pi = 4.0*atan(1.0);
    static const double twopi = 2.0*pi;
    (*this) = G6(v);

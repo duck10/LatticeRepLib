@@ -5,7 +5,7 @@
 #include "LabeledDeloneTypeMatrices.h"
 #include "S6Dist.h"
 #include "DeloneTypeList.h"
-#include "Sella.h"
+//#include "Sella.h"
 
 #include <cmath>
 #include <string>

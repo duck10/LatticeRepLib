@@ -93,11 +93,9 @@ LRL_Cell LatticeConverter::SellingReduceCell(const std::string& lattice, const L
    S6 redVec;
 
    const bool b = Selling::Reduce(S6(mLattice * G6(cell)), m66, redVec, 0.0);
-   if (b) {
-      mat = m66 * mLattice;
-      return LRL_Cell(redVec);;
+   if (!b) {
+      std::cout << "Selling::Reduce hit cycle limit\n";
    }
-   else {
-      return LRL_Cell();
-   }
+   mat = m66 * mLattice;
+   return LRL_Cell(redVec);;
 }

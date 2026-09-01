@@ -11,7 +11,6 @@
 #include "PairReporter.h"
 #include "S6.h"
 #include "S6BoundaryTransforms.h"
-#include "Sella.h"
 
 #include <algorithm>
 #include <cmath>

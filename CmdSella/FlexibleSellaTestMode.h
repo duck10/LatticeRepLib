@@ -67,6 +67,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -169,6 +170,11 @@ public:
    std::string name;
    std::string description;
    std::vector<LatticeCell> inputCells;
+   std::vector<std::string> relevantTypeNames;  // if non-empty, MANUAL per-cell
+   // fit printing (see runOneTest) shows only these GetGeneralType()
+   // values instead of all 24 -- for tests that are only actually about
+   // a small named subset. Empty (default) prints everything, matching
+   // prior behavior for every existing test.
 
    std::vector<FitRangeExpectation> fitRangeExpectations;
    std::vector<HasFailureExpectation> hasFailureExpectations;
@@ -182,6 +188,7 @@ public:
    }
 
    void addInputCell(const LatticeCell& cell) { inputCells.push_back(cell); }
+   void setRelevantTypes(const std::vector<std::string>& types) { relevantTypeNames = types; }
 
    void addFitRangeExpectation(const FitRangeExpectation& e) { fitRangeExpectations.push_back(e); }
    void addHasFailureExpectation(const HasFailureExpectation& e) { hasFailureExpectations.push_back(e); }
@@ -218,6 +225,32 @@ private:
       return best;
    }
 
+   // WrapText -- breaks a long description into lines no wider than
+   // width, breaking only at spaces (never mid-word), each continuation
+   // line prefixed with indent. Console-friendly rendering for the long
+   // free-text description strings tests carry -- these were previously
+   // dumped as a single unbroken line regardless of length.
+   static void PrintWrapped(const std::string& text, const size_t width = 78,
+      const std::string& indent = "") {
+      size_t pos = 0;
+      const size_t n = text.size();
+      bool firstLine = true;
+      while (pos < n) {
+         size_t remaining = n - pos;
+         size_t take = (remaining <= width) ? remaining : width;
+         if (take < remaining) {
+            size_t lastSpace = text.rfind(' ', pos + take);
+            if (lastSpace != std::string::npos && lastSpace > pos) {
+               take = lastSpace - pos;
+            }
+         }
+         std::cout << (firstLine ? "" : indent) << text.substr(pos, take) << std::endl;
+         pos += take;
+         while (pos < n && text[pos] == ' ') ++pos;
+         firstLine = false;
+      }
+   }
+
    void displayTestInputs(const FlexibleSellaTestCase& test) const {
       std::cout << "Input cells:" << std::endl;
       for (size_t i = 0; i < test.inputCells.size(); ++i) {
@@ -238,49 +271,68 @@ private:
       return out;
    }
 
+   // PrintCheckResult -- composes an expectation-check result line the
+   // same way every checkXxx function used to (via direct cout chains),
+   // then prints it through PrintWrapped instead of as one raw line --
+   // these lines combine a fixed label with a free-text description and
+   // can run long. detail may be empty (omitted entirely, no trailing
+   // " -- ").
+   static void PrintCheckResult(const std::string& kind, const std::string& description,
+      const std::string& verdict, const std::string& detail) {
+      std::ostringstream oss;
+      oss << "  " << kind << " (" << description << "): " << verdict;
+      if (!detail.empty()) oss << " -- " << detail;
+      PrintWrapped(oss.str(), 78, "      ");
+   }
+
    bool checkFitRange(const FlexibleSellaTestCase::FitRangeExpectation& e,
       const std::vector<DeloneFitComputation>& computations) const {
       if (e.cellIndex >= computations.size()) {
-         std::cout << "  FitRangeExpectation (" << e.description << "): FAIL -- cell index "
-            << e.cellIndex << " out of range" << std::endl;
+         std::ostringstream detail;
+         detail << "cell index " << e.cellIndex << " out of range";
+         PrintCheckResult("FitRangeExpectation", e.description, "FAIL", detail.str());
          return false;
       }
       bool found = false;
       const double fit = FindRawFit(computations[e.cellIndex].fits, e.typeName, found);
       if (!found) {
-         std::cout << "  FitRangeExpectation (" << e.description << "): FAIL -- type '"
-            << e.typeName << "' not found in cell " << (e.cellIndex + 1) << std::endl;
+         std::ostringstream detail;
+         detail << "type '" << e.typeName << "' not found in cell " << (e.cellIndex + 1);
+         PrintCheckResult("FitRangeExpectation", e.description, "FAIL", detail.str());
          return false;
       }
       const bool ok = (fit >= e.minFit && fit <= e.maxFit);
-      std::cout << "  FitRangeExpectation (" << e.description << "): "
-         << (ok ? "PASS" : "FAIL") << " -- " << e.typeName << " fit " << fit
-         << " (expected [" << e.minFit << ", " << e.maxFit << "] for cell "
-         << (e.cellIndex + 1) << ")" << std::endl;
+      std::ostringstream detail;
+      detail << e.typeName << " fit " << fit << " (expected [" << e.minFit << ", "
+         << e.maxFit << "] for cell " << (e.cellIndex + 1) << ")";
+      PrintCheckResult("FitRangeExpectation", e.description, ok ? "PASS" : "FAIL", detail.str());
       return ok;
    }
 
    bool checkHasFailure(const FlexibleSellaTestCase::HasFailureExpectation& e,
       const std::vector<DeloneFitComputation>& computations) const {
       if (e.cellIndex >= computations.size()) {
-         std::cout << "  HasFailureExpectation (" << e.description << "): FAIL -- cell index "
-            << e.cellIndex << " out of range" << std::endl;
+         std::ostringstream detail;
+         detail << "cell index " << e.cellIndex << " out of range";
+         PrintCheckResult("HasFailureExpectation", e.description, "FAIL", detail.str());
          return false;
       }
       const bool actual = computations[e.cellIndex].chains.HasFailure();
       const bool ok = (actual == e.expectedHasFailure);
-      std::cout << "  HasFailureExpectation (" << e.description << "): "
-         << (ok ? "PASS" : "FAIL") << " -- HasFailure()==" << (actual ? "true" : "false")
+      std::ostringstream detail;
+      detail << "HasFailure()==" << (actual ? "true" : "false")
          << " (expected " << (e.expectedHasFailure ? "true" : "false")
-         << ") for cell " << (e.cellIndex + 1) << std::endl;
+         << ") for cell " << (e.cellIndex + 1);
+      PrintCheckResult("HasFailureExpectation", e.description, ok ? "PASS" : "FAIL", detail.str());
       return ok;
    }
 
    bool checkNesting(const FlexibleSellaTestCase::NestingInequalityExpectation& e,
       const std::vector<DeloneFitComputation>& computations) const {
       if (e.cellIndex >= computations.size()) {
-         std::cout << "  NestingInequalityExpectation (" << e.description << "): FAIL -- cell index "
-            << e.cellIndex << " out of range" << std::endl;
+         std::ostringstream detail;
+         detail << "cell index " << e.cellIndex << " out of range";
+         PrintCheckResult("NestingInequalityExpectation", e.description, "FAIL", detail.str());
          return false;
       }
       const auto& fits = computations[e.cellIndex].fits;
@@ -288,29 +340,33 @@ private:
       const double parentFit = FindRawFit(fits, e.parentType, foundParent);
       const double childFit = FindRawFit(fits, e.childType, foundChild);
       if (!foundParent || !foundChild) {
-         std::cout << "  NestingInequalityExpectation (" << e.description << "): FAIL -- "
-            << (!foundParent ? e.parentType : e.childType) << " not found in cell "
-            << (e.cellIndex + 1) << std::endl;
+         std::ostringstream detail;
+         detail << (!foundParent ? e.parentType : e.childType) << " not found in cell "
+            << (e.cellIndex + 1);
+         PrintCheckResult("NestingInequalityExpectation", e.description, "FAIL", detail.str());
          return false;
       }
       const bool ok = (parentFit <= childFit + e.tolerance);
-      std::cout << "  NestingInequalityExpectation (" << e.description << "): "
-         << (ok ? "PASS" : "FAIL") << " -- fit(" << e.parentType << ")=" << parentFit
-         << " <= fit(" << e.childType << ")=" << childFit
-         << " (tolerance " << e.tolerance << ") for cell " << (e.cellIndex + 1) << std::endl;
+      std::ostringstream detail;
+      detail << "fit(" << e.parentType << ")=" << parentFit << " <= fit(" << e.childType
+         << ")=" << childFit << " (tolerance " << e.tolerance << ") for cell "
+         << (e.cellIndex + 1);
+      PrintCheckResult("NestingInequalityExpectation", e.description, ok ? "PASS" : "FAIL", detail.str());
       return ok;
    }
 
    bool checkRankStability(const FlexibleSellaTestCase::RankStabilityExpectation& e,
       const std::vector<DeloneFitComputation>& computations) const {
       if (computations.size() < 2) {
-         std::cout << "  RankStabilityExpectation (" << e.description
-            << "): FAIL -- needs >= 2 input cells, got " << computations.size() << std::endl;
+         std::ostringstream detail;
+         detail << "needs >= 2 input cells, got " << computations.size();
+         PrintCheckResult("RankStabilityExpectation", e.description, "FAIL", detail.str());
          return false;
       }
 
       // Best and second-best (by raw fit) among e.typeNames, per cell.
       std::vector<std::string> bestPerCell, secondPerCell;
+      std::vector<double> bestFitPerCell, secondFitPerCell;
       for (const auto& comp : computations) {
          std::vector<std::pair<double, std::string>> ranked;
          for (const auto& t : e.typeNames) {
@@ -320,20 +376,23 @@ private:
          }
          std::sort(ranked.begin(), ranked.end());
          bestPerCell.push_back(ranked.size() > 0 ? ranked[0].second : "");
+         bestFitPerCell.push_back(ranked.size() > 0 ? ranked[0].first : 0.0);
          secondPerCell.push_back(ranked.size() > 1 ? ranked[1].second : "");
+         secondFitPerCell.push_back(ranked.size() > 1 ? ranked[1].first : 0.0);
       }
 
       bool ok = true;
       for (size_t i = 1; i < bestPerCell.size(); ++i) {
          const bool flipped = (bestPerCell[i] != bestPerCell[i - 1]);
          std::cout << "    cell " << i << " -> " << (i + 1) << ": best "
-            << bestPerCell[i - 1] << " -> " << bestPerCell[i]
-            << ", second " << secondPerCell[i - 1] << " -> " << secondPerCell[i]
+            << bestPerCell[i - 1] << " (" << bestFitPerCell[i - 1] << ") -> "
+            << bestPerCell[i] << " (" << bestFitPerCell[i] << ")"
+            << ", second " << secondPerCell[i - 1] << " (" << secondFitPerCell[i - 1] << ") -> "
+            << secondPerCell[i] << " (" << secondFitPerCell[i] << ")"
             << (flipped ? "   ** RANK FLIP **" : "") << std::endl;
          if (flipped) ok = false;
       }
-      std::cout << "  RankStabilityExpectation (" << e.description << "): "
-         << (ok ? "PASS" : "FAIL") << std::endl;
+      PrintCheckResult("RankStabilityExpectation", e.description, ok ? "PASS" : "FAIL", "");
       return ok;
    }
 
@@ -341,16 +400,18 @@ private:
       const ReflectionRelationResult r = CheckABReflectionRelation(
          e.candidateA, e.candidateB, e.labelA, e.labelB, e.tolerance, true);
       const bool ok = (r.sameLattice == e.expectedSameLattice);
-      std::cout << "  ReflectionRelationExpectation (" << e.description << "): "
-         << (ok ? "PASS" : "FAIL") << " -- sameLattice=" << (r.sameLattice ? "true" : "false")
+      std::ostringstream detail;
+      detail << "sameLattice=" << (r.sameLattice ? "true" : "false")
          << " (expected " << (e.expectedSameLattice ? "true" : "false")
-         << "), best residual " << r.bestResidual << " at reflection " << r.bestIndex << std::endl;
+         << "), best residual " << r.bestResidual << " at reflection " << r.bestIndex;
+      PrintCheckResult("ReflectionRelationExpectation", e.description, ok ? "PASS" : "FAIL", detail.str());
       return ok;
    }
 
    void runTest(const FlexibleSellaTestCase& test, const CmdSellaControls& controls, Sella& sella) {
       std::cout << "\n=== TEST: " << test.name << " ===" << std::endl;
-      std::cout << "Description: " << test.description << std::endl;
+      std::cout << "Description: ";
+      PrintWrapped(test.description, 78, "             ");
       displayTestInputs(test);
 
       if (test.inputCells.empty()) {
@@ -366,6 +427,11 @@ private:
          for (size_t i = 0; i < computations.size(); ++i) {
             std::cout << "  Cell " << (i + 1) << " fits:" << std::endl;
             for (const auto& f : computations[i].fits) {
+               if (!test.relevantTypeNames.empty()) {
+                  const bool isRelevant = std::find(test.relevantTypeNames.begin(),
+                     test.relevantTypeNames.end(), f.GetGeneralType()) != test.relevantTypeNames.end();
+                  if (!isRelevant) continue;
+               }
                std::cout << "    " << f.GetBravaisType() << " " << f.GetGeneralType()
                   << " " << f.GetRawFit() << std::endl;
             }
@@ -554,13 +620,26 @@ public:
          addTestCase(test1);
       }
 
-      // Tests 2-7 -- the six known-unresolved oC-vs-tP characterization
-      // fixtures (SELLA_handoff.md item 3 / Cmdsellatests.cpp
-      // Test_KnownUnresolvedViolation_1..6). These intentionally assert the
-      // CURRENT broken state (HasFailure()==true) as a tripwire; invert to
-      // expect false once Remediation's search is improved -- see the open
-      // item in SELLA_handoff.md ("Remediation's search is still genuinely
-      // inadequate") before flipping these.
+      // Tests 2-7 -- originally the six known-unresolved oC-vs-tP
+      // characterization fixtures (SELLA_handoff.md item 3 /
+      // Cmdsellatests.cpp Test_KnownUnresolvedViolation_1..6), asserting
+      // the CURRENT broken state (HasFailure()==true) as a regression
+      // check.
+      //
+      // FLIPPED 2026-08-27: all 6 now come back HasFailure()==false when
+      // run live -- the violation these cells were built to characterize
+      // no longer reproduces. Checked directly against the 16-cell
+      // historical set (RunHistoricalBadCaseCheck, TestHarness.h,
+      // provided by Larry in reduced-S6 form) -- NOT the same cells (no
+      // overlap in magnitude or pattern), so this is a second, separate
+      // resolved case, not a re-confirmation of that set's already-known
+      // "4 of 8" fix. Cause not confirmed -- plausibly the same general
+      // 2-hop Remediation search widening (a global change, not
+      // cell-specific), but that's inference, not verified via
+      // Cmdsellatests.cpp (not available this session). Now asserts the
+      // fixed state as a regression guard: if any of these 6 starts
+      // reporting HasFailure()==true again, that's worth investigating
+      // as a real regression, not expected behavior.
       {
          static const char* const knownUnresolved[6] = {
             "S -240.86238 -24.92865 -8.64775 -7.17380 -34.21200 -8.19574",
@@ -572,13 +651,15 @@ public:
          };
          for (int i = 0; i < 6; ++i) {
             FlexibleSellaTestCase test(
-               "KnownUnresolvedViolation_" + std::to_string(i + 1),
-               "Known-unresolved oC-vs-tP violation (Remediation's search "
-               "cannot currently fix it) -- asserts the failing state as a "
-               "tripwire, per SELLA_handoff.md item 3.");
+               "OC_TP_ChainViolation_" + std::to_string(i + 1) + "_Resolved",
+               "This oC-vs-tP chain violation was known-unresolved as of "
+               "SELLA_handoff.md item 3, but now resolves -- confirmed "
+               "2026-08-27, not the same cells as the other 16-case "
+               "historical set, cause not confirmed. Regression guard: "
+               "should stay resolved.");
             test.addInputCell(LatticeCell(knownUnresolved[i]));
             test.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
-               true, 0, "still fails: known Remediation search gap"));
+               false, 0, "now resolves -- was known-unresolved, cause unconfirmed"));
             addTestCase(test);
          }
       }
@@ -649,8 +730,8 @@ public:
          FlexibleSellaTestCase test9("O2_WithinType_LibraryGap_MinimalFixture",
             "O1B/O2 rank flip at a confirmed failure point -- static "
             "CreatePerps_O2()/CreatePrjs_O2() library gap, not a "
-            "Remediation/transform issue. Tripwire: expected to FAIL "
-            "until the library is patched.");
+            "Remediation/transform issue. Expected to keep FAILING until "
+            "the library is patched.");
          test9.addInputCell(LatticeCell("S -38.13450 -43.40350 0.00000 -38.13450 -43.40350 -0.00000"));
          test9.addInputCell(LatticeCell("S -43.34318 -38.15350 -0.00055 -38.13490 -43.34264 -0.02616"));
          test9.addInputCell(LatticeCell("S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403 -0.04436"));
@@ -747,8 +828,8 @@ public:
          FlexibleSellaTestCase test11("M1B_M2A_OrientationSwap_M3Boundary",
             "M1B/M2A best-fit rank flips near an M3 boundary point, same "
             "signature as the O1B/O2/O3 case. M3 and M2B themselves stay "
-            "stable throughout (not part of the instability). Tripwire: "
-            "expected to FAIL until Remediation-style correction is "
+            "stable throughout (not part of the instability). Expected "
+            "to keep FAILING until Remediation-style correction is "
             "confirmed for this pair (not yet attempted).");
          test11.addInputCell(LatticeCell("S -43.40350 -47.63950 0.00000 -28.62950 -43.40350 -0.00000"));  // cell 1: exact M3 point (round-trip UNCHECKED, see caveat above)
          test11.addInputCell(LatticeCell("S -47.59416 -28.66333 -0.02968 -43.33617 -43.38776 -0.05159"));  // cell 2: normal (M2A=0.06319, M1B=3.01090)
@@ -786,7 +867,7 @@ public:
             "M1A/M1B best-fit rank flips near an M2B boundary point. M2A "
             "and M2B themselves stay stable throughout (mirror image of "
             "Test 11, where M3/M2B were stable and M1B/M2A were the "
-            "unstable pair). Tripwire: expected to FAIL until "
+            "unstable pair). Expected to keep FAILING until "
             "Remediation-style correction is confirmed for this pair.");
          test12.addInputCell(LatticeCell("S -38.13450 -43.40350 0.00000 -38.13450 -43.40350 -59.44700"));  // cell 1: exact M2B point (round-trip UNCHECKED)
          test12.addInputCell(LatticeCell("S -38.10203 -43.40929 -0.06833 -38.08135 -43.38861 -59.50431"));  // cell 2: normal (M1B=0.02068, M1A=5.30726)
@@ -932,38 +1013,45 @@ public:
          addTestCase(test16);
       }
 
-      // Test 17 -- R1/R3 orientation swap. Fourth confirmed sibling-swap
-      // case, and the first from the (freeParams=2, hR) group (see the
-      // sibling-group enumeration this session: {R1, R3} is the only
-      // real pair there). Generated via cmdperturb on "P 10 10 10 90 90
-      // 90.1" (R1/R3 touch at 90 degrees), then CmdSella COMPARE TYPES
-      // R1 R3. Same signature as every other confirmed case: R1 fits
-      // near-zero and R3 badly (~128) on most rows, flipping to R1 bad
-      // (~115) / R3 near-zero on a confirmed minority (rows 3, 5, 6, 8 of
-      // the original 10-point sweep).
+      // Test 17 -- R1/R3 near the hR boundary. RESOLVED this session
+      // (2026-08-27): NOT a real swap/instability.
       //
-      // NOT the same phenomenon as T1/T2's overlap (see discussion this
-      // session): T1/T2 meet at an analytically understood shared locus
-      // (T1's own s=0 special case), not an orientation-relabeling
-      // ambiguity -- T1/T2 deliberately has no entry here.
+      // Larry identified directly from the S6 scalars that cells 2 and 3
+      // are related by a boundary transform (their near-zero triples
+      // straddle the S2/S5 opposite-scalar pair differently), not a
+      // genuine R1/R3 classification ambiguity. Confirmed live: running
+      // this test through the normal ComputeDeloneFits path (below)
+      // shows R1 and R3 both small and comparable on every cell
+      // (roughly 0.08-0.23) -- the same small-fits-on-both-sides pattern
+      // Test 21 already established as EXPECTED behavior for cells
+      // straddling the R1/R3 boundary, not a defect.
       //
-      // Reflection-relation and HasFailure() checks for this pair have
-      // NOT been run yet (unlike Tests 13-16 for the earlier three
-      // cases) -- left as a follow-up, not assumed to match.
+      // NOTE ON THE ORIGINAL ~128/~115 NUMBERS: this test's cell
+      // comments originally recorded R3~128 (cells 1/2) and R1~115
+      // (cell 3), which read as evidence of a real instability. Running
+      // this test live (2026-08-27) through the actual ComputeDeloneFits
+      // path shows NO such large values -- R1 and R3 are both small on
+      // every cell. An earlier hypothesis this session (that
+      // ComputeDeloneFits's reactive remediation gate was leaving these
+      // uncorrected) is DISPROVEN by that live output -- the standard
+      // path already produces the small, correct fits. Where the
+      // original ~128/~115 numbers came from is unresolved -- possibly a
+      // different, unremediated measurement (e.g. plain SellaFit with no
+      // boundary search), possibly a different code path (CmdSella
+      // COMPARE), possibly stale from an earlier build. Not asserted
+      // either way; flagged here rather than guessed at further.
+      //
+      // No expectation is asserted -- MANUAL, like Test 21, since this
+      // documents observed behavior rather than a pass/fail claim.
       {
-         FlexibleSellaTestCase test17("R1_R3_OrientationSwap",
-            "R1/R3 best-fit rank flips under small perturbation near a "
-            "90-degree cell, same signature as O1B/O2, M1B/M2A, and "
-            "M1A/M1B. Tripwire: expected to FAIL until Remediation-style "
-            "correction is confirmed for this pair (not yet attempted). "
-            "Reflection-relation and HasFailure() status for this pair "
-            "not yet checked.");
-         test17.addInputCell(LatticeCell("S 0.00000 0.00000 -0.17453 -99.82547 -99.82547 -100.00000"));  // cell 1: normal (R1=0.20153, R3=128.82913)
-         test17.addInputCell(LatticeCell("S -0.10976 -0.07316 -0.09934 -99.66756 -99.67093 -99.57723"));  // cell 2: normal (R1=0.07976, R3=128.54453)
-         test17.addInputCell(LatticeCell("S -0.06282 -0.01222 -99.84618 -99.85396 -0.13101 -99.84497"));  // cell 3: swap (R1=115.19670, R3=0.13176)
-         test17.addRankStabilityExpectation(FlexibleSellaTestCase::RankStabilityExpectation(
-            { "R1", "R3" },
-            "R1/R3 best-fit rank must not flip across these three cells"));
+         FlexibleSellaTestCase test17("R1_R3_NearBoundary_NoIssueFound",
+            "Cells near the R1/R3 boundary. Resolved: not a swap bug -- "
+            "both types fit small on every cell. See source comment for "
+            "full history.");
+         test17.setRelevantTypes({ "R1", "R3", "C5" });
+         test17.addInputCell(LatticeCell("S 0.00000 0.00000 -0.17453 -99.82547 -99.82547 -100.00000"));  // cell 1
+         test17.addInputCell(LatticeCell("S -0.10976 -0.07316 -0.09934 -99.66756 -99.67093 -99.57723"));  // cell 2
+         test17.addInputCell(LatticeCell("S -0.06282 -0.01222 -99.84618 -99.85396 -0.13101 -99.84497"));  // cell 3
          addTestCase(test17);
       }
 
@@ -993,6 +1081,194 @@ public:
          test18.addInputCell(LatticeCell("S -25.10300 -25.10300 -71.96250 -56.43450 -56.43450 -59.44700"));
          test18.addInputCell(LatticeCell("S -25.05836 -25.02022 -71.96804 -56.52384 -56.43615 -59.41671"));
          addTestCase(test18);
+      }
+
+      // Test 19 -- the 16 logged mP/oC/tP Grimmer-chain-violation cases
+      // from this file's CmdSella.cpp header comment (2023-12-23/24),
+      // the same set TestHarness.h::RunHistoricalBadCaseCheck loops over
+      // as a manual diagnostic. Promoted here to an actual pass/fail
+      // regression following this session's LRL_Cell.cpp fix (the
+      // LRL_Cell::LRL_Cell(const S6&) constructor was unconditionally
+      // overwriting m_valid from uninitialized al/be/ga whenever a
+      // boundary-transformed candidate's cosine landed at or beyond +-1
+      // -- see this session's chat). Confirmed via `details` mode, cell
+      // by cell, this session: all 16 now resolve (HasFailure()==false),
+      // with the P 2.778.../P 2.973... cells specifically confirmed to
+      // no longer show the corrupted "projected best fits" angles that
+      // originally motivated the fix.
+      //
+      // NOTE: cell 16 (P 3.345 3.397 1.23...) is NOT like the other 15 --
+      // it has no Grimmer chain violation at all (HasFailure()==false
+      // even before remediation); what changes for it is
+      // RemediateIfShortlistChanges widening the reported shortlist, a
+      // different code path than the chain-failure repair loop
+      // (Remediation168) the other 15 exercise. It's included here for
+      // completeness (this group's only claim is HasFailure()==false,
+      // which holds for it too either way), and broken out again on its
+      // own as Test 20, which asserts on that different behavior
+      // specifically -- see Test 20 for why HasFailureExpectation alone
+      // doesn't test the interesting part of cell 16.
+      {
+         FlexibleSellaTestCase test19("HistoricalMPOCTP_16Cases_ResolveAfterRemediation",
+            "The 16 historical mP/oC/tP Grimmer-chain-violation cases "
+            "logged in CmdSella.cpp's 2023-12-23/24 header comment "
+            "should all have HasFailure()==false after remediation, "
+            "confirmed this session post the LRL_Cell.cpp S6-validity "
+            "fix. Cell 16 is a genuinely different case (see Test 20) "
+            "included here only because the group's claim -- "
+            "HasFailure()==false -- happens to hold for it too.");
+         static const char* const historicalCells[16] = {
+            "P 21.775 21.785 27.232  90.028  89.974  90.023",
+            "P  1.307  3.134  3.150 144.338  90.898 113.499",
+            "P  1.447  2.154  1.448  93.001  93.077 118.555",
+            "P  1.511  3.987  3.918 149.756 103.646  94.613",
+            "P  1.909  3.372  3.412 140.217  95.846 108.922",
+            "P  1.916  4.033  1.656 105.411 101.400  96.056",
+            "P  1.918  1.118  1.899  94.267 130.788 116.312",
+            "P  2.044  2.594  3.604 121.251  93.338  95.754",
+            "P  2.092  3.512  1.736  92.747  95.706 123.113",
+            "P  2.212  3.228  3.111 124.239  96.056 120.065",
+            "P  2.418  2.421  1.105  91.232 105.455 146.970",
+            "P  2.778  1.881  3.996 114.240  97.653  94.507",
+            "P  2.891  2.299  3.839  90.545 118.914 100.136",
+            "P  2.973  2.869  1.853  93.424 114.956 138.239",
+            "P  3.286  1.671  1.295  98.790  90.427 114.783",
+            "P  3.345  3.397  1.230  91.705 101.386 151.360"
+         };
+         for (int i = 0; i < 16; ++i) {
+            test19.addInputCell(LatticeCell(historicalCells[i]));
+            test19.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+               false, static_cast<size_t>(i), "resolves after remediation"));
+         }
+         addTestCase(test19);
+      }
+
+      // Test 20 -- cell 16 from Test 19, broken out on its own. Unlike
+      // the other 15 cells in that group, this one has no Grimmer chain
+      // violation to begin with -- HasFailure() is false before AND
+      // after remediation, so a HasFailureExpectation alone (as used for
+      // the other 15) would be trivially true and wouldn't actually
+      // test anything specific to this cell. What's genuinely being
+      // exercised here is RemediateIfShortlistChanges (CmdSella.cpp),
+      // which runs unconditionally (not gated on HasFailure()) and
+      // widens this cell's matched-type shortlist from empty (raw) to
+      // M1A/M1B/M2A -- confirmed via `details` mode this session
+      // ("remediation changed shortlist for P 3.345 3.397 1.23... --
+      // raw:  remediated: M1A M1B M2A"). There is no ShortlistExpectation
+      // type in this framework, and ComputeDeloneFits returns only the
+      // already-widened result (RemediateIfShortlistChanges replaces the
+      // fit vector outright rather than appending, unlike the chain-
+      // failure repair loop), so the closest available proxy is a tight
+      // FitRangeExpectation on M2A's raw fit -- if a future change
+      // regresses the widening (e.g. RemediateIfShortlistChanges stops
+      // firing, or reverts to the un-widened value), M2A's raw fit would
+      // move well outside this window.
+      {
+         FlexibleSellaTestCase test20("P3345_ShortlistWidensWithoutChainFailure",
+            "Unlike Test 19's other 15 cells, this one has no Grimmer "
+            "chain violation at all (HasFailure()==false before and "
+            "after remediation) -- what actually changes is "
+            "RemediateIfShortlistChanges widening the matched-type "
+            "shortlist from empty to M1A/M1B/M2A, a different code path "
+            "than the chain-failure repair loop (Remediation168) every "
+            "other historical cell exercises. Asserted here via M2A's "
+            "widened raw fit, since HasFailureExpectation alone would "
+            "be trivially true and wouldn't test the shortlist widening "
+            "itself.");
+         test20.addInputCell(LatticeCell("P  3.345  3.397  1.230  91.705 101.386 151.360"));
+         test20.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 0, "no chain violation, before or after remediation"));
+         test20.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M2A", 0.1240, 0.1250, 0,
+            "M2A widened into the shortlist by RemediateIfShortlistChanges (observed 0.124645)"));
+         addTestCase(test20);
+      }
+
+      // Test 21 -- R1/R3 spot-check at a DIFFERENT seed than Test 17's:
+      // exact cubic P 10 10 10 90 90 90 (1/1000 orthogonal perturbation),
+      // vs. Test 17's deliberately-off-cubic "90 90 90.1" seed. The
+      // origin cell here sits exactly ON the R1/R3 boundary (C5=0), so a
+      // small perturbation landing slightly on the R1 side or the R3
+      // side, alternating unpredictably across the sample (R3 wins
+      // perturbed cells 1-4 and 9, R1 wins 5-8 and 10), is EXPECTED,
+      // CORRECT behavior for a boundary point -- not a failure signature.
+      // (Two earlier reads of this same data got this wrong: first as
+      // "no failure" by only checking for blow-up/NaN, then as
+      // "alternation, inconclusive" by treating the alternation itself
+      // as suspicious -- both wrong for the same underlying reason.)
+      //
+      // CORRECTED 2026-08-27: originally contrasted with what looked like
+      // a "confirmed swap" in Test 17 (R1 near-zero vs R3~128). Running
+      // Test 17 live disproved that -- see Test 17's own comment. Both
+      // tests now show the same thing: small, comparable fits on both
+      // sides of the boundary, no real R1/R3 issue anywhere.
+      // MANUAL/no expectation asserted: this documents observed boundary
+      // behavior for reference, not a pass/fail claim.
+      {
+         FlexibleSellaTestCase test21("R1_R3_CubicSeed_NoIssueFound",
+            "Perturbations of an exact cubic cell, sitting on the R1/R3 "
+            "boundary. Both types fit small throughout -- no issue, "
+            "consistent with Test 17.");
+         test21.setRelevantTypes({ "R1", "R3", "C5" });
+         test21.addInputCell(LatticeCell("P 10 10 10 90 90 90"));                          // origin: C5=0.00000 R1=0.00000 R3=0.00000
+         test21.addInputCell(LatticeCell("P 9.994 9.992 9.988 89.958 89.937 89.957"));      // C5=0.12544 R1=0.17416 R3=0.10127
+         test21.addInputCell(LatticeCell("P 10.002 10.003 9.996 89.957 90.036 90.011"));    // C5=0.16125 R1=0.16022 R3=0.15366
+         test21.addInputCell(LatticeCell("P 9.996 9.992 9.993 89.994 89.950 89.946"));      // C5=0.11589 R1=0.08860 R3=0.07979
+         test21.addInputCell(LatticeCell("P 9.990 9.999 10.005 90.058 89.971 89.938"));     // C5=0.19775 R1=0.22228 R3=0.19117
+         test21.addInputCell(LatticeCell("P 9.997 9.999 9.998 90.051 89.949 89.967"));      // C5=0.14354 R1=0.04598 R3=0.18490
+         test21.addInputCell(LatticeCell("P 9.996 9.998 9.990 89.966 89.916 90.033"));      // C5=0.24331 R1=0.19001 R3=0.23734
+         test21.addInputCell(LatticeCell("P 10.002 9.993 9.996 89.980 90.028 89.940"));     // C5=0.14211 R1=0.13121 R3=0.13344
+         test21.addInputCell(LatticeCell("P 10.002 9.992 9.988 89.931 89.977 89.993"));     // C5=0.16688 R1=0.16221 R3=0.23141
+         test21.addInputCell(LatticeCell("P 9.991 9.992 9.991 89.934 89.936 89.982"));      // C5=0.14200 R1=0.17326 R3=0.11044
+         test21.addInputCell(LatticeCell("P 10.002 9.998 10.012 90.030 90.042 89.996"));    // C5=0.17102 R1=0.15666 R3=0.16392
+         addTestCase(test21);
+      }
+
+      // Test 22 -- mP (M4) search-coverage gap. CONFIRMED this session
+      // (2026-08-27) via TestHarness.h's RunStabilityTrace: on both cells
+      // below, RunStabilityTrace's very first search step lands exactly
+      // on the true minimum and holds it for 30 rounds (residual deltas
+      // at 1e-14 floating-point-noise scale). At the time, Remediation168
+      // reported a distinctly worse fit -- 13.0716 vs. true 9.243 on cell
+      // 1, 49.3992 vs. true 34.9305 on cell 2.
+      //
+      // RESOLVED 2026-08-27, same day, before this test was even first
+      // run: M4 now reaches the true minimum on both cells (9.23988,
+      // 34.926) -- confirmed live, matching the pattern already seen for
+      // Tests 2-7 (oC-vs-tP) and Tests 17/21 (R1/R3): three separate
+      // previously-confirmed problems all turned out already fixed when
+      // actually tested, none touched deliberately this session. Cause
+      // not confirmed -- plausibly the same general 2-hop Remediation
+      // search widening (RemediatedFit.h), but that's inference. Nesting
+      // itself was always fine (M4 genuinely nests O4); this was a
+      // candidate-generation gap in Remediation168's search for M4
+      // specifically, apparently since fixed.
+      //
+      // Cells originally identified in G6 form (RunStabilityTrace
+      // output); converted to P form via `checkinput` (Larry,
+      // 2026-08-27) since LatticeCell's accepted string prefixes were
+      // not confirmed for G6 this session:
+      //   G6 36.972 106.683 106.683 18.486 36.972 36.972   -> cell 1 below
+      //   G6 139.722 187.104 187.104 69.861 139.722 139.722 -> cell 2 below
+      //
+      // Bounds stay tight around the TRUE minimum -- now a regression
+      // guard: if Remediation168's search regresses and lands short of
+      // the true minimum again, this should go back to failing.
+      {
+         FlexibleSellaTestCase test22("M4_ReachesTrueMinimum_Remediation168",
+            "M4's true minimum was missed by Remediation168 as of "
+            "2026-08-27 (13.0716 vs true 9.243, 49.3992 vs true 34.9305), "
+            "but now reaches it -- confirmed same day. Regression guard: "
+            "should stay passing.");
+         test22.addInputCell(LatticeCell("P 6.080 10.329 10.329 85.030 72.882 72.882"));    // true M4 min 9.243, was Remediation168-reported 13.0716
+         test22.addInputCell(LatticeCell("P 11.820 13.679 13.679 79.240 64.401 64.401"));   // true M4 min 34.9305, was Remediation168-reported 49.3992
+         test22.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 9.0, 9.5, 0,
+            "should stay at true minimum ~9.243, not regress toward old 13.0716"));
+         test22.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 34.5, 35.5, 1,
+            "should stay at true minimum ~34.9305, not regress toward old 49.3992"));
+         addTestCase(test22);
       }
 
    }

@@ -6,6 +6,7 @@
 #include "BlockUtils.h"
 #include "InputHandler.h"
 #include "LRL_StringTools.h"
+#include "S6.h"
 
 #include <sstream>
 #include <vector>
@@ -31,6 +32,7 @@ public:
       os << std::endl;
       os << ";   seed boundaries mode " << (csc.seedBoundariesMode.empty() ? "(off)" : csc.seedBoundariesMode);
       os << ";   test transforms " << ((csc.testTransforms) ? "true" : "false") << std::endl;
+      os << ";   random seed " << csc.getRandomSeed() << std::endl;
       return os;
    }
 
@@ -244,7 +246,10 @@ public:
          }
       );
 
-
+      // SEED / RANDOMSEED moved to BaseControlVariables.h (2026-08-29) --
+      // registered there instead of here so every program built on this
+      // framework gets it, not just CmdSella. randomSeed/getRandomSeed()
+      // are now inherited from the base class too.
    }
 
    int getBlockSize() const { return  static_cast<int>(blocksize); }

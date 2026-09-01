@@ -4,6 +4,7 @@
 
 #include "ControlFeature.h"
 #include "InputHandler.h"
+#include "S6.h"
 
 #include <vector>
 #include <memory>
@@ -16,6 +17,9 @@ protected:
    bool webRun = false;
    bool showControls = false;
    bool echo = false;
+   // Mirrors S6.cpp's own hardcoded s6RandomSeedS6 default so this
+   // displays honestly when SEED/RANDOMSEED is never set.
+   int randomSeed = 19195;
 
    //BaseControlVariables(const BaseControlVariables&) = delete;
    //BaseControlVariables& operator=(const BaseControlVariables&) = delete;
@@ -47,6 +51,30 @@ public:
             webRun = (value == "1" || value == "TRUE" || value.empty());
          }
       );
+
+      // SEED / RANDOMSEED -- overrides S6::rand()'s random seed (default
+      // hardcoded in S6.cpp as s6RandomSeedS6=19195, years old and never
+      // touched since -- Larry, 2026-08-29). Registered here, not in any
+      // one program's own Controls class, so every program built on this
+      // framework gets it automatically -- Larry's point: the only way
+      // this can be genuinely universal (not just "applied once instead
+      // of at several call sites in one program") is for it to take
+      // effect eagerly, inside the base class, as the line is parsed --
+      // not deferred to some later single call site in a specific
+      // main(), which only ever reaches that one program and only
+      // whatever runs after that call.
+      //
+      // Two names for the same handler, both kept (not one renamed to
+      // the other) -- SEED was briefly renamed to RANDOMSEED out of a
+      // (subsequently disproven, via CmdSellaControls's own SHOW output)
+      // concern that it collided with SEEDBOUNDARIES; both names are
+      // now registered so nothing that already used SEED breaks.
+      const auto seedHandler = [this](BaseControlVariables&, const std::string& value) {
+         randomSeed = std::stoi(value);
+         S6::SetSeed(randomSeed);
+         };
+      InputHandler::registerHandler("SEED", .5, seedHandler);
+      InputHandler::registerHandler("RANDOMSEED", .5, seedHandler);
    }
 
    template<typename T>
@@ -86,6 +114,7 @@ public:
    bool getEcho() const { return echo; }
    void setEcho(const bool b) { echo = b; }
    bool shouldShowControls() const { return showControls; }
+   int getRandomSeed() const { return randomSeed; }
 
    friend std::ostream& operator<<(std::ostream& os, const BaseControlVariables& cv);
 };

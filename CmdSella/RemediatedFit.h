@@ -40,6 +40,7 @@
 // method."
 
 #include "DeloneFitResults.h"
+#include "DeloneParentageTest.h"
 #include "GenerateLatticeTypeExamples.h"
 #include "InputHandler.h"
 #include "LatticeConverter.h"
@@ -277,7 +278,114 @@ inline std::vector<StabilityClassification> ClassifyViaStabilityRemediation(
    return results;
 }
 
+// Remediation168ForOneSubtype -- the original Remediation168 search body,
+// fixed to a single specific Delone subtype (e.g. "M1A"). Factored out so
+// Remediation168 can run it once per sibling when a Bravais name resolves
+// to more than one Delone type (see Remediation168's own comment for why
+// this matters -- GenerateDeloneBase::Select("mC") returns five types,
+// and the previously-used sptypes[0]-only approach could keep widening
+// the wrong sibling while a much better fit sat untouched on another).
+inline DeloneFitResults Remediation168ForOneSubtype(
+   const S6& s6, const std::shared_ptr<GenerateDeloneBase>& sptype,
+   const int maxRounds, const std::vector<S6>& extraSeeds) {
+   static const std::vector<MatS6> boundaryTransforms = Selling::GetBoundaryTransforms();
 
+   S6 currentPoint = s6;
+   DeloneFitResults currentFit = Sella::SellaFitXXXXXX(sptype, s6);
+   S6 currentBestCandidate = s6;
 
+   for (int round = 0; round < maxRounds; ++round) {
+      std::vector<S6> candidates = BuildVCPCandidates(currentPoint);
+      for (const auto& first : boundaryTransforms) {
+         const S6 afterFirst = first * currentPoint;
+         for (const auto& second : boundaryTransforms) {
+            candidates.push_back(second * afterFirst);
+         }
+      }
+      for (const auto& seed : extraSeeds) {
+         candidates.push_back(seed);
+      }
+
+      DeloneFitResults roundBest = currentFit;
+      S6 roundBestCandidate = currentBestCandidate;
+      for (const auto& candidate : candidates) {
+         const DeloneFitResults dfrTemp = Sella::SellaFitXXXXXX(sptype, candidate);
+         if (dfrTemp.GetRawFit() < roundBest.GetRawFit()) {
+            roundBest = dfrTemp;
+            roundBestCandidate = candidate;
+         }
+      }
+
+      if (roundBest.GetRawFit() < currentFit.GetRawFit() - 1.0E-8) {
+         currentFit = roundBest;
+         currentBestCandidate = roundBestCandidate;
+         MatS6 reductionMatrix;
+         currentPoint = LatticeConverter::SellingReduceCell("P", currentBestCandidate, reductionMatrix);
+      }
+      else {
+         break;
+      }
+   }
+
+   currentFit.SetOriginalInput(currentBestCandidate);
+   return currentFit;
+}
+
+// Remediation168 -- tries EVERY Delone type GenerateDeloneBase::Select
+// returns for bravaisName, not just sptypes[0]. For single-valued Bravais
+// names (e.g. "oC" -> only O4) this is identical to before. For
+// multi-valued names (e.g. "mC" -> M1A/M1B/M2A/M2B/M3), the previous
+// sptypes[0]-only behavior could stall on M1A while a sibling such as
+// M2A had a far better widened fit sitting untouched.
+inline DeloneFitResults Remediation168(const S6& s6, const std::string& bravaisName,
+   const double initialFit, const int maxRounds = 10,
+   const std::vector<S6>& extraSeeds = {}) {
+   const std::vector<std::shared_ptr<GenerateDeloneBase>> sptypes =
+      GenerateDeloneBase().Select(bravaisName);
+
+   DeloneFitResults best = Remediation168ForOneSubtype(s6, sptypes[0], maxRounds, extraSeeds);
+   for (size_t i = 1; i < sptypes.size(); ++i) {
+      const DeloneFitResults candidate = Remediation168ForOneSubtype(s6, sptypes[i], maxRounds, extraSeeds);
+      if (candidate.GetRawFit() < best.GetRawFit()) {
+         best = candidate;
+      }
+   }
+   return best;
+}
+
+// PrintRemediatedFitComparison -- diagnostic-only. Bypasses
+// ComputeDeloneFits's reactive remediation gate entirely (see
+// GetRemediatedFitForType's own comment: a type near a boundary can go
+// uncorrected under the normal path if no chain failure happens to name
+// it) and prints the fully-remediated (2-hop, 36-candidate) fit for a
+// list of types directly, next to whatever raw fit the caller already
+// has on hand (e.g. from a prior ComputeDeloneFits run or test-comment
+// annotation). Not wired into any production path -- for spot-checking
+// a specific cell/type combination from a test driver or a temporary
+// main() call.
+//
+// Built to check a specific hypothesis (2026-08-27, Test 17's R1/R3
+// rank-flip cells): if the raw fits already on file for a type are much
+// larger than the remediated fits computed here, that type was sitting
+// uncorrected -- consistent with the reactive-gating gap, and consistent
+// with Test 17's flip being a comparison of inconsistently-remediated
+// (rather than genuinely unstable) fits.
+inline void PrintRemediatedFitComparison(
+   const std::string& cellLabel,
+   const LatticeCell& cell,
+   const std::vector<std::pair<std::string, double>>& typeAndKnownRawFit) {
+
+   std::cout << "Remediated-fit check for " << cellLabel << ":" << std::endl;
+   for (const auto& pair : typeAndKnownRawFit) {
+      const std::string& type = pair.first;
+      const double knownRawFit = pair.second;
+      const double remediatedFit = GetRemediatedFitForType(cell, type);
+      std::cout << "  " << type
+         << "  known raw fit = " << knownRawFit
+         << "  fully remediated fit (bypasses reactive gate) = " << remediatedFit
+         << (remediatedFit < knownRawFit - 1.0E-8 ? "   ** IMPROVED **" : "")
+         << std::endl;
+   }
+}
 
 #endif  // REMEDIATED_FIT_H

@@ -24,9 +24,9 @@
 
 // Define the static maps first
 const std::map<std::string, double> GrimmerChains::baseDeloneMap = {
-   {"A1", 0.0}, {"M1A", 0.0}, {"M1B", 0.0}, {"M2A", 0.0}, {"M4", 0.0},
-   {"O1A", 0.0}, {"O1B", 0.0}, {"O2", 0.0}, {"O4", 0.0}, {"O5", 0.0},
-   {"H1", 0.0}, {"H3", 0.0}, {"T1", 0.0}, {"T2", 0.0}, {"T5", 0.0},
+   {"A1", 0.0}, {"A2", 0.0}, {"A3", 0.0}, {"M1A", 0.0}, {"M1B", 0.0}, {"M2A", 0.0}, {"M2B", 0.0}, {"M3", 0.0}, {"M4", 0.0},
+   {"O1A", 0.0}, {"O1B", 0.0}, {"O2", 0.0}, {"O3", 0.0}, {"O4", 0.0}, {"O5", 0.0},
+   {"R1", 0.0}, {"R3", 0.0}, {"T1", 0.0}, {"T2", 0.0}, {"T5", 0.0},
    {"C1", 0.0}, {"C3", 0.0}, {"C5", 0.0}, {"H4", 0.0}
 };
 
@@ -38,17 +38,33 @@ const std::map<std::string, double> GrimmerChains::baseBravaisMap = {
 
 // Define Delone types first (they're used in Bravais types)
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_a1("A1", "aP", baseDeloneMap.at("A1"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_a2("A2", "aP", baseDeloneMap.at("A2"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_a3("A3", "aP", baseDeloneMap.at("A3"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_m1a("M1A", "mC", baseDeloneMap.at("M1A"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_m1b("M1B", "mC", baseDeloneMap.at("M1B"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_m2a("M2A", "mC", baseDeloneMap.at("M2A"));
+// M2B/M3 are lower-dimensional boundary strata within mC (m_freeParams=3,
+// vs 4 for M1A/M1B/M2A), not co-equal siblings -- same category as
+// O3/A2/A3. Included per explicit request (2026-08-29): M3 turned out to
+// be the actual answer to the mC->hR/R3 nesting question, so hiding it
+// would leave the "R3 via M3" label pointing at a name that appears
+// nowhere else in the diagram.
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_m2b("M2B", "mC", baseDeloneMap.at("M2B"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_m3("M3", "mC", baseDeloneMap.at("M3"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_m4("M4", "mP", baseDeloneMap.at("M4"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_o1a("O1A", "oF", baseDeloneMap.at("O1A"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_o1b("O1B", "oI", baseDeloneMap.at("O1B"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_o2("O2", "oI", baseDeloneMap.at("O2"));
+// O3 is a lower-dimensional boundary stratum within oI (m_freeParams=2 vs
+// 3 for O1B/O2), not a co-equal sibling -- same category as A2/A3/M2B/M3.
+// This is the original "O1B/O2/O3" boundary problem from the earlier
+// empirical (perturbation-sweep) investigation, now given the same
+// treatment as those other three: included anyway, per explicit request.
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_o3("O3", "oI", baseDeloneMap.at("O3"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_o4("O4", "oS", baseDeloneMap.at("O4"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_o5("O5", "oP", baseDeloneMap.at("O5"));
-const DeloneTypeForGrimmer GrimmerChains::m_dtype_r1("H1", "hR", baseDeloneMap.at("H1"));
-const DeloneTypeForGrimmer GrimmerChains::m_dtype_r3("H3", "hR", baseDeloneMap.at("H3"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_r1("R1", "hR", baseDeloneMap.at("R1"));
+const DeloneTypeForGrimmer GrimmerChains::m_dtype_r3("R3", "hR", baseDeloneMap.at("R3"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_t1("T1", "tI", baseDeloneMap.at("T1"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_t2("T2", "tI", baseDeloneMap.at("T2"));
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_t5("T5", "tP", baseDeloneMap.at("T5"));
@@ -58,11 +74,19 @@ const DeloneTypeForGrimmer GrimmerChains::m_dtype_c5("C5", "cP", baseDeloneMap.a
 const DeloneTypeForGrimmer GrimmerChains::m_dtype_h4("H4", "hP", baseDeloneMap.at("H4"));
 
 // Now define Bravais types
-const BravaisTypeForGrimmer GrimmerChains::m_btype_aP("aP", { m_dtype_a1 }, baseBravaisMap.at("aP"));
+// A2/A3 kept here at Larry's explicit request (2026-08-29) despite being
+// lower-dimensional boundary strata within aP's own space, not co-equal
+// 6-free-parameter siblings of A1 -- m_freeParams=6 on all three is stale
+// and doesn't reflect this; the real tell is m_strProjector/m_character in
+// GenerateLatticeTypeExamples.cpp (A2 has one structural zero, A3 has two).
+// Shown anyway because A2/A3 are still real, still fit-computed for every
+// cell, and seeing them alongside A1 is useful even though they aren't
+// peers in the same sense M1A/M1B/M2A are.
+const BravaisTypeForGrimmer GrimmerChains::m_btype_aP("aP", { m_dtype_a1, m_dtype_a2, m_dtype_a3 }, baseBravaisMap.at("aP"));
 const BravaisTypeForGrimmer GrimmerChains::m_btype_mP("mP", { m_dtype_m4 }, baseBravaisMap.at("mP"));
-const BravaisTypeForGrimmer GrimmerChains::m_btype_mC("mC", { m_dtype_m1a, m_dtype_m1b, m_dtype_m2a }, baseBravaisMap.at("mC"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_mC("mC", { m_dtype_m1a, m_dtype_m1b, m_dtype_m2a, m_dtype_m2b, m_dtype_m3 }, baseBravaisMap.at("mC"));
 const BravaisTypeForGrimmer GrimmerChains::m_btype_oF("oF", { m_dtype_o1a }, baseBravaisMap.at("oF"));
-const BravaisTypeForGrimmer GrimmerChains::m_btype_oI("oI", { m_dtype_o1b, m_dtype_o2 }, baseBravaisMap.at("oI"));
+const BravaisTypeForGrimmer GrimmerChains::m_btype_oI("oI", { m_dtype_o1b, m_dtype_o2, m_dtype_o3 }, baseBravaisMap.at("oI"));
 const BravaisTypeForGrimmer GrimmerChains::m_btype_oC("oC", { m_dtype_o4 }, baseBravaisMap.at("oC"));
 const BravaisTypeForGrimmer GrimmerChains::m_btype_oP("oP", { m_dtype_o5 }, baseBravaisMap.at("oP"));
 const BravaisTypeForGrimmer GrimmerChains::m_btype_hR("hR", { m_dtype_r1, m_dtype_r3 }, baseBravaisMap.at("hR"));

@@ -126,9 +126,8 @@ LRL_Cell::LRL_Cell(const S6& ds)
          al = acos(cosal);
          be = acos(cosbe);
          ga = acos(cosga);
+         m_valid = (al + be + ga) < twopi;
       }
-
-      m_valid = (al + be + ga) < twopi;
    }
 }
 

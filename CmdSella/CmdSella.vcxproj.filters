@@ -14,15 +14,6 @@
     <ClCompile Include="CmdSella.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\LatticeRepresentationLib\Sella.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\LatticeRepresentationLib\BravaisHeirarchy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CmdSellaControls.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SellaBuild.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -38,20 +29,8 @@
     <ClCompile Include="ApplyVCPSequence2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GrimmerTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\LatticeRepresentationLib\Sella.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\LatticeRepresentationLib\BravaisHeirarchy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CmdSellaControls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SellaBuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -71,9 +50,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExploreReductionTies.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GrimmerTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CompareBoundaryTransformsTest.h">
