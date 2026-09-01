@@ -1,7 +1,6 @@
 // ConfirmedDeloneNesting.h
 //
-// Confirmed algebraic nesting facts (P*Q=Q idempotent-projector test,
-// TestDeloneNesting.h) for specific Delone-type pairs in the Grimmer
+// Confirmed nesting facts for specific Delone-type pairs in the Grimmer
 // partial order. Each entry names which of a parent Bravais node's
 // Delone siblings are confirmed to actually nest into one specific
 // Delone type of a child Bravais node -- not just have the best raw fit
@@ -10,35 +9,71 @@
 // cause behind several of the SELLA chain-violation failure modes (see
 // /areas/cmdsella.md and sella_failure_status.md).
 //
-// Schema note (2026-08-28, second revision): the first version had only
-// (parentBravais, childBravais, nestingSiblings). Real item-8 results
-// forced a childDeloneType field (mC->oI splits cleanly by child: M1B
-// nests O1B, M2A nests O2). This revision adds testedParentSiblings --
-// the full set of parent siblings the audit actually tested against
-// that child, not just the ones that passed. Reason: a fact is only
-// *informative* for the chain-check bug when it excludes at least one
-// tested sibling (proof that "pick by raw fit" can pick wrong) or
-// excludes all of them (a real dead end). When nestingSiblings equals
-// testedParentSiblings -- every tested sibling nests -- the fact is true
-// but carries no corrective information: any choice the naive chain-
-// check makes among them is fine. tI->cF/C3 is the one case so far
-// where this happens (both T1 and T2 nest C3); GrimmerDeloneTree skips
-// rendering a label for it while still keeping the row here as a record
-// that the audit ran and found no problem.
+// Data source (2026-09-01 revision): every row below is read off a
+// RunNestingConsistencyCheck (CHECKNESTING) log. The audit runs in two
+// stages, and BOTH stages count as "tested" for this table:
+//   1. TestDeloneParentage (168-candidate VCP search, Andrews/Bernstein/
+//      Sauter) decides whether a (parent, child) Delone-type pair is
+//      even an algebraic candidate. A sibling that never appears in the
+//      log against a given child is not a coverage gap -- it means this
+//      stage already confirmed that sibling does NOT nest. This is a
+//      real, confirmed exclusion, on the same footing as a fit failure.
+//   2. For pairs that pass stage 1, RunNestingConsistencyCheck builds a
+//      genuine boundary example of the child (BuildCharacterExample),
+//      crosses it across every symmetry-equivalent boundary realization
+//      (ExpandAcrossBoundaryZeros), and checks fit(parent) <= fit(child)
+//      + epsilon against the real, currently-active fit pipeline for
+//      each one. A representative that fails this is a NESTING VIOLATION
+//      -- also a confirmed exclusion, just reached the opposite way.
+// testedParentSiblings is therefore the FULL Delone-type membership of
+// the parent Bravais node (all 5 for mC, all 3 for aP/oI, all 2 for tI,
+// etc.) -- every member was evaluated by stage 1 at minimum, whether or
+// not it proceeded to stage 2. nestingSiblings is the subset that
+// cleared both stages clean.
+//
+// (Earlier same-day revision of this file scoped testedParentSiblings to
+// only pairs with an explicit "checking parent=... child=..." log line,
+// treating everything else as untested. That was wrong: it silently
+// discarded every stage-1 exclusion, which is most of the informative
+// data in this table. Confirmed independently -- O3 never appearing
+// against T1/T2 in the log matches the original investigation's
+// separately-established finding that O3 is a genuine dead end for tI.)
+//
+// This REPLACES the original data source, TestDeloneNesting.h's P*Q=Q
+// idempotent-projector test, which checked exactly one canonical
+// embedding per type instead of the full symmetry-equivalent boundary
+// family and was shown to systematically under-detect real nestings
+// (e.g. it reported "M1A alone nests O4" when M1A, M1B, and M2A all do).
+// TestDeloneNesting.h/RunItem8NestingAudit.h/RunFullNestingSweep.h are no
+// longer the source for this file's data -- see CmdSella.cpp's 2026-08-29
+// removal comment.
+//
+// SCOPE NOTE: this table only records facts for direct edges in
+// GrimmerTree.cpp's chainTemplates (e.g. aP->mC, mC->hR, oI->tI) --
+// the pairs the chain-check can actually compare siblings across. The
+// same CHECKNESTING run also found A3 failing to nest O4, O5, and H4,
+// and M3 (an mC sibling) failing to nest H4 -- real violations, but
+// aP has no direct chain edge to oC/oP/hP, and mC has no direct chain
+// edge to hP (reached via oC), so the chain-check this table exists to
+// correct can never compare those siblings directly. Left out of this
+// table for that reason.
 //
 // This is deliberately NOT the same kind of data as GrimmerTree.cpp's
 // chainTemplates (which define chain topology and carry live per-cell fit
 // values). This table is a small, separate, growable record of confirmed
-// *algebraic* results, decoupled from rendering and from the chain-check
-// machinery it will eventually help correct.
+// nesting-test results -- both positive and negative -- decoupled from
+// rendering and from the chain-check machinery it will eventually help
+// correct. "Confirmed" describes the test outcome (we ran it, we know
+// the answer), not that the result was necessarily positive: a sibling
+// confirmed NOT to nest -- whether by stage-1 non-candidacy or a stage-2
+// fit violation -- is just as much a confirmed result as one that does,
+// and is usually the more useful one for this table's purpose, since a
+// row where every sibling passes gives the chain-check no corrective
+// information (any choice among them is safe).
 //
 // A fact is edge-and-child-scoped, not sibling-scoped: knowing M1B nests
 // O1B says nothing about whether M1B nests O2, or O1A, or R1/R3 -- those
 // are separate facts.
-//
-// SELLA "item 8" is the systematic audit filling this table in, via
-// RunItem8NestingAudit.h. Run 2026-08-28: 23 pairs tested across
-// mC->oI, mC->oF, mC->hR, oI->tI, tI->cI, tI->cF. Results below.
 
 #ifndef CONFIRMEDDELONENESTING_H
 #define CONFIRMEDDELONENESTING_H
@@ -73,69 +108,77 @@ struct ConfirmedNesting {
 inline std::vector<ConfirmedNesting> CreateConfirmedNestingFacts() {
    std::vector<ConfirmedNesting> facts;
 
-   const std::vector<std::string> mCSiblings = { "M1A", "M1B", "M2A" };
-   const std::vector<std::string> tISiblings = { "T1", "T2" };
+   const std::vector<std::string> mCFamily = { "M1A", "M1B", "M2A", "M2B", "M3" };
+   const std::vector<std::string> oIFamily = { "O1B", "O2", "O3" };
+   const std::vector<std::string> tIFamily = { "T1", "T2" };
+   const std::vector<std::string> aPFamily = { "A1", "A2", "A3" };
 
-   // mC -> oC (Aug 2026, original finding): O4 nests inside M1A only.
-   // Explains the aP/mC/oC Grimmer chain failures.
-   facts.push_back(ConfirmedNesting("mC", "oC", "O4", mCSiblings, { "M1A" }));
+   // mC -> oC/O4: M2A now included alongside M1A/M1B (old data said M1A
+   // alone). M2B/M3 confirmed non-candidates (TestDeloneParentage stage).
+   facts.push_back(ConfirmedNesting("mC", "oC", "O4",
+      mCFamily, { "M1A", "M1B", "M2A" }));
 
-   // mC -> oI (item 8, 2026-08-28/29): splits cleanly by child. O1B and
-   // O3 are BOTH reached via M1B specifically -- the only case so far
-   // where one parent sibling is the answer for two different children.
-   // M2A remains the sole answer for O2, disjoint from M1B's two.
-   facts.push_back(ConfirmedNesting("mC", "oI", "O1B", mCSiblings, { "M1B" }));
-   facts.push_back(ConfirmedNesting("mC", "oI", "O2", mCSiblings, { "M2A" }));
-   facts.push_back(ConfirmedNesting("mC", "oI", "O3", mCSiblings, { "M1B" }));
+   // mC -> oI: splits cleanly by child, same shape the original
+   // investigation found. O1B: M1A/M1B only (M2A confirmed non-candidate
+   // here, unlike O2/O4). O2: M1A/M1B/M2A. O3: all 5 -- the one case
+   // where nothing is excluded (kept, ExcludesNothing()==true).
+   facts.push_back(ConfirmedNesting("mC", "oI", "O1B",
+      mCFamily, { "M1A", "M1B" }));
+   facts.push_back(ConfirmedNesting("mC", "oI", "O2",
+      mCFamily, { "M1A", "M1B", "M2A" }));
+   facts.push_back(ConfirmedNesting("mC", "oI", "O3",
+      mCFamily, { "M1A", "M1B", "M2A", "M2B", "M3" }));
 
-   // mC -> oF (item 8): O1A nests M1A and M1B; M2A excluded -- still
-   // informative (M2A is a dead end for this child specifically).
-   facts.push_back(ConfirmedNesting("mC", "oF", "O1A", mCSiblings, { "M1A", "M1B" }));
+   // mC -> oF/O1A: M1A/M1B nest; M2A/M2B/M3 confirmed non-candidates.
+   facts.push_back(ConfirmedNesting("mC", "oF", "O1A",
+      mCFamily, { "M1A", "M1B" }));
 
-   // mC -> hR (item 8, extended 2026-08-29 to the full 5-type mC family):
-   // R1 nests M1A only. R3's mystery is SOLVED -- it nests M3, one of the
-   // two lower-stratum types not shown in the ellipse (same category as
-   // O3/A2/A3). Neither M2B nor any of M1A/M1B/M2A nest R3.
-   const std::vector<std::string> mCFullFamily = { "M1A", "M1B", "M2A", "M2B", "M3" };
-   facts.push_back(ConfirmedNesting("mC", "hR", "R1", mCFullFamily, { "M1A" }));
-   facts.push_back(ConfirmedNesting("mC", "hR", "R3", mCFullFamily, { "M3" }));
+   // mC -> hR: R1 reaches only M1A/M1B. R3 reaches M1A/M1B/M2A/M3 --
+   // M2B the sole exclusion. Both a substantial change from the old
+   // data (R3 was previously M3-only).
+   facts.push_back(ConfirmedNesting("mC", "hR", "R1",
+      mCFamily, { "M1A", "M1B" }));
+   facts.push_back(ConfirmedNesting("mC", "hR", "R3",
+      mCFamily, { "M1A", "M1B", "M2A", "M3" }));
 
-   // oI -> tI (item 8, extended 2026-08-29 to include O3): clean 1-1 split
-   // between O1B/T1 and O2/T2, unlike mC->oI's shape -- O3 is a genuine
-   // dead end here (nests neither T1 nor T2), unlike M3's positive result
-   // for mC->hR/R3. Two different lower-stratum types, two different
-   // outcomes.
-   const std::vector<std::string> oIFullFamily = { "O1B", "O2", "O3" };
-   facts.push_back(ConfirmedNesting("oI", "tI", "T1", oIFullFamily, { "O1B" }));
-   facts.push_back(ConfirmedNesting("oI", "tI", "T2", oIFullFamily, { "O2" }));
+   // oI -> tI: clean 1-1 split, same shape as always -- O1B reaches T1
+   // only, O2 reaches T2 only, O3 reaches neither (confirmed dead end,
+   // matching the original investigation's separate finding).
+   facts.push_back(ConfirmedNesting("oI", "tI", "T1",
+      oIFamily, { "O1B" }));
+   facts.push_back(ConfirmedNesting("oI", "tI", "T2",
+      oIFamily, { "O2" }));
 
-   // oF -> tI (item 8, 2026-08-29): O1A is oF's only Delone type, and it
-   // nests BOTH T1 and T2 -- excludes nothing, same shape as tI->cF/C3.
-   // No label rendered, but now a confirmed result, not an untested gap.
-   const std::vector<std::string> oFSiblings = { "O1A" };
-   facts.push_back(ConfirmedNesting("oF", "tI", "T1", oFSiblings, { "O1A" }));
-   facts.push_back(ConfirmedNesting("oF", "tI", "T2", oFSiblings, { "O1A" }));
+   // oF -> tI: O1A is oF's only Delone type; nests both T1 and T2.
+   // Unchanged -- already excludes nothing.
+   facts.push_back(ConfirmedNesting("oF", "tI", "T1",
+      { "O1A" }, { "O1A" }));
+   facts.push_back(ConfirmedNesting("oF", "tI", "T2",
+      { "O1A" }, { "O1A" }));
 
-   // tI -> cI (item 8): only T1 nests C1 -- T2 excluded, informative.
-   facts.push_back(ConfirmedNesting("tI", "cI", "C1", tISiblings, { "T1" }));
+   // tI -> cI/C1: only T1 nests; T2 confirmed non-candidate against C1.
+   facts.push_back(ConfirmedNesting("tI", "cI", "C1",
+      tIFamily, { "T1" }));
 
-   // tI -> cF (item 8): BOTH T1 and T2 nest C3 -- excludes nothing.
-   // Kept as a record that the audit ran and found no problem, but
-   // ExcludesNothing() is true here, so GrimmerDeloneTree doesn't draw
-   // a label for it: neither sibling is wrong for this child, so there
-   // is nothing for the chain-check to get wrong here.
-   facts.push_back(ConfirmedNesting("tI", "cF", "C3", tISiblings, { "T1", "T2" }));
+   // tI -> cF/C3: both T1 and T2 nest -- excludes nothing. Unchanged.
+   facts.push_back(ConfirmedNesting("tI", "cF", "C3",
+      tIFamily, { "T1", "T2" }));
 
-   // aP -> mP / aP -> mC (item 8, 2026-08-29): A2/A3 are lower-dimensional
-   // boundary strata within aP, not co-equal siblings of A1 (see the note
-   // on m_btype_aP in GrimmerTree.cpp) -- but the audit was still run
-   // against all three, and every result here excludes at least one of
-   // them, so all four facts are informative.
-   const std::vector<std::string> aPSiblings = { "A1", "A2", "A3" };
-   facts.push_back(ConfirmedNesting("aP", "mP", "M4", aPSiblings, { "A1" }));
-   facts.push_back(ConfirmedNesting("aP", "mC", "M1A", aPSiblings, { "A1" }));
-   facts.push_back(ConfirmedNesting("aP", "mC", "M1B", aPSiblings, { "A1" }));
-   facts.push_back(ConfirmedNesting("aP", "mC", "M2A", aPSiblings, { "A1", "A2" }));
+   // aP -> mP/M4: A1/A2 nest; A3 fails a real fit violation (6
+   // representatives, consistent epsilon~0.008, gaps of 13 or 29 --
+   // confirmed independently via cmdgen/cmdsella compare, 2026-08-31:
+   // M4-generated cells fit M4 at 0.000 and fit A3 at 7-50).
+   facts.push_back(ConfirmedNesting("aP", "mP", "M4",
+      aPFamily, { "A1", "A2" }));
+
+   // aP -> mC: A1 nests M1A/M1B alone (A2/A3 confirmed non-candidates
+   // for both). M2A reaches A1 and A2; A3 excluded there too.
+   facts.push_back(ConfirmedNesting("aP", "mC", "M1A",
+      aPFamily, { "A1" }));
+   facts.push_back(ConfirmedNesting("aP", "mC", "M1B",
+      aPFamily, { "A1" }));
+   facts.push_back(ConfirmedNesting("aP", "mC", "M2A",
+      aPFamily, { "A1", "A2" }));
 
    return facts;
 }

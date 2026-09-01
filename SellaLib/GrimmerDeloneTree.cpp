@@ -374,27 +374,31 @@ std::string GrimmerDeloneTree::RenderNestingLabels() {
          const bool backward = fact.parentBravais == edge.to && fact.childBravais == edge.from;
          if (!forward && !backward) continue;
 
-         // A fact where every tested sibling nests excludes nothing --
-         // any of them is a safe pick, so it gives the chain-check no
-         // corrective information. Keep it in the data (it's still a
-         // real, run result) but don't clutter the diagram with it.
-         if (fact.ExcludesNothing()) continue;
-
          if (parentPos == nullptr) {
             parentPos = forward ? &fromIt->second : &toIt->second;
             childPos = forward ? &toIt->second : &fromIt->second;
          }
 
-         std::string line = fact.childDeloneType + " via ";
-         if (fact.nestingSiblings.empty()) {
-            // A real negative result (e.g. mC->hR/R3), not a missing
-            // entry -- say so rather than rendering a blank line.
-            line += "none confirmed";
+         std::string line;
+         if (fact.ExcludesNothing()) {
+            // Every tested sibling nests -- nothing for the chain-check
+            // to get wrong here. Marked with an asterisk rather than
+            // omitted, so the diagram shows the audit ran even where it
+            // found no problem (see footnote in RenderFooter).
+            line = fact.childDeloneType + " *";
          }
          else {
-            for (size_t i = 0; i < fact.nestingSiblings.size(); ++i) {
-               if (i > 0) line += ", ";
-               line += fact.nestingSiblings[i];
+            line = fact.childDeloneType + " via ";
+            if (fact.nestingSiblings.empty()) {
+               // A real negative result (e.g. mC->hR/R3), not a missing
+               // entry -- say so rather than rendering a blank line.
+               line += "none confirmed";
+            }
+            else {
+               for (size_t i = 0; i < fact.nestingSiblings.size(); ++i) {
+                  if (i > 0) line += ", ";
+                  line += fact.nestingSiblings[i];
+               }
             }
          }
          lines.push_back(line);
@@ -414,6 +418,15 @@ std::string GrimmerDeloneTree::RenderNestingLabels() {
       // ("aP box is too low") -- checked by calculation for real margins,
       // but not yet confirmed against an actual render the way the other
       // six were.
+      //
+      // oF->tI added 2026-09-01: this edge previously never rendered (its
+      // only fact, T1/T2, was ExcludesNothing and got skipped entirely),
+      // so it never needed a manual position. Once asterisk labels for
+      // ExcludesNothing facts started always rendering, the fallback
+      // formula placed this one overlapping the tI ellipse (bottom edge
+      // at y=361; fallback put the label's top at y=351). This position
+      // is computed to clear that by ~10px -- checked by calculation, not
+      // yet confirmed against an actual render.
       static const std::map<std::pair<std::string, std::string>, std::pair<double, double>> manualPositions = {
          { {"tI", "cI"}, {750.0, 222.5} },
          { {"oI", "tI"}, {761.25, 447.5} },
@@ -423,6 +436,7 @@ std::string GrimmerDeloneTree::RenderNestingLabels() {
          { {"mC", "oF"}, {612.5, 622.5} },
          { {"aP", "mP"}, {443.75, 831.25} },
          { {"aP", "mC"}, {538.25, 872.5} },
+         { {"oF", "tI"}, {700.0, 405.0} },
       };
 
       const std::string factParent = (parentPos == &fromIt->second) ? edge.from : edge.to;
@@ -475,7 +489,7 @@ std::string GrimmerDeloneTree::RenderNestingLabels() {
 std::string GrimmerDeloneTree::RenderHeader(const LatticeCell& input) {
    std::ostringstream ss;
    ss << "<?xml version=\"1.0\" standalone=\"no\" ?>" << std::endl;
-   ss << "<svg width=\"1563\" height=\"1175\" viewBox=\"0,0,1563,1175\" version=\"1.1\" "
+   ss << "<svg width=\"1563\" height=\"1205\" viewBox=\"0,0,1563,1205\" version=\"1.1\" "
       << "xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << std::endl;
    ss << "<g transform=\"translate(20,30)\">" << std::endl;
    ss << "  <text x=\"0\" y=\"0\" font-family=\"Arial\" font-size=\"22\">SELLA RESULTS by Delone type (Angstroms)</text>" << std::endl;
@@ -524,6 +538,9 @@ std::string GrimmerDeloneTree::RenderFooter() {
       << "</text>" << std::endl;
    ss << "  <text x=\"0\" y=\"1132.5\" font-family=\"Arial\" font-size=\"14\" fill=\"#666666\">"
       << "Ellipse nodes cover more than one Delone type."
+      << "</text>" << std::endl;
+   ss << "  <text x=\"0\" y=\"1161.25\" font-family=\"Arial\" font-size=\"14\" fill=\"#666666\">"
+      << "* -- every tested sibling nests here; excludes nothing."
       << "</text>" << std::endl;
    ss << "</g>" << std::endl;
    ss << "</svg>" << std::endl;
