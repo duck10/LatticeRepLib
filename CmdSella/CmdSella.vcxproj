@@ -168,10 +168,10 @@
     <ClInclude Include="CheckABReflection.h" />
     <ClInclude Include="CompareBoundaryTransformsTest.h" />
     <ClInclude Include="DeloneFitComputation.h" />
-    <ClInclude Include="Deloneparentagetest.h" />
     <ClInclude Include="DiagnoseBoundaryCandidates.h" />
     <ClInclude Include="DiagnoseO1BCoverage.h" />
     <ClInclude Include="DiagnoseO2Gap.h" />
+    <ClInclude Include="DirectClassify.h" />
     <ClInclude Include="ExpandAcrossBoundaryZeros.h" />
     <ClInclude Include="ExploreReductionTies.h" />
     <ClInclude Include="FlexibleSellaTestMode.h" />

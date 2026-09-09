@@ -25,6 +25,16 @@
 // data is needed -- the same static Delone/Bravais mapping GrimmerTree.cpp
 // already encodes (m_btype_mC, m_btype_oI, m_btype_hR, m_btype_tI, etc.)
 // is walked here, not re-declared.
+//
+// reducedLattice parameter (added chat, Sept 2026, DirectClassify.h work):
+// when the input echoes as "RANDOM" (typed that way at the prompt),
+// RenderHeader appends the actual resolved cell degrees to the header
+// text, matching GenerateSortedFitPlots' (GrimmerTree.cpp) existing
+// convention for _fit_plots.svg -- previously this diagram showed only
+// the literal typed word "random", not the real cell. Default-constructed
+// S6() for callers that don't pass one keeps every existing call site
+// compiling unchanged; the RANDOM-detection check simply finds nothing to
+// append in that case, same as before this parameter existed.
 
 #ifndef GRIMMERDELONETREE_H
 #define GRIMMERDELONETREE_H
@@ -49,7 +59,8 @@ public:
    static std::string ProduceSVG(
       GrimmerChains& chains,
       const LatticeCell& input,
-      const std::vector<std::string>& matches);
+      const std::vector<std::string>& matches,
+      const S6& reducedLattice = S6());
 
 private:
    struct DeloneNodeEntry {
@@ -81,7 +92,7 @@ private:
    static std::map<std::string, BravaisNodeData> CollectNodeData(GrimmerChains& chains);
    static std::map<std::string, NodePosition> CreateNodePositionMap();
 
-   static std::string RenderHeader(const LatticeCell& input);
+   static std::string RenderHeader(const LatticeCell& input, const S6& reducedLattice);
    static std::string RenderFooter();
    static std::string RenderProjectedFits(const std::vector<std::string>& matches);
    static std::string RenderConnectingLines();

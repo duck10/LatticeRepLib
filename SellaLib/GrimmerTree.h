@@ -50,9 +50,9 @@ private:
 
 class MapOfBravaisFits {
 public:
-   friend std::ostream& operator<< (std::ostream& o, MapOfBravaisFits& mbf) {
+   friend std::ostream& operator<< (std::ostream& o, const MapOfBravaisFits& mbf) {
       o << "; Bravais Fit Map\n";
-      std::map<std::string, double>::iterator it;
+      std::map<std::string, double>::const_iterator it;
       for (it = mbf.m_valuemap.begin(); it != mbf.m_valuemap.end(); ++it) {
          o << "; Bravais name " << (*it).first << "  fit  " << (*it).second << std::endl;
       }

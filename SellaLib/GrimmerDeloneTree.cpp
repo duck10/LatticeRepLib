@@ -13,6 +13,8 @@
 // agree on where every node actually is.
 
 #include "GrimmerDeloneTree.h"
+#include "LRL_Cell_Degrees.h"
+#include "LRL_StringTools.h"
 #include "NestingCheckResults.h"
 
 #include <algorithm>
@@ -486,25 +488,23 @@ std::string GrimmerDeloneTree::RenderNestingLabels() {
    return ss.str();
 }
 
-std::string GrimmerDeloneTree::RenderHeader(const LatticeCell& input) {
+std::string GrimmerDeloneTree::RenderHeader(const LatticeCell& input, const S6& reducedLattice) {
    std::ostringstream ss;
    ss << "<?xml version=\"1.0\" standalone=\"no\" ?>" << std::endl;
    ss << "<svg width=\"1172.25\" height=\"903.75\" viewBox=\"0,0,1172.25,903.75\" version=\"1.1\" "
       << "xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << std::endl;
-   // Whole diagram shrunk to 75% (2026-09-01, Larry) -- content below is
-   // still laid out in its original 1563x1205 coordinate space; this
-   // outer group scales it down as a unit, and the svg/viewBox above are
-   // sized to match (1563*0.75=1172.25, 1205*0.75=903.75) so nothing gets
-   // clipped or padded. RenderFooter's closing tags must match: an extra
-   // </g> for this wrapper, before the existing </g></svg>.
    ss << "<g transform=\"scale(0.75)\">" << std::endl;
    ss << "<g transform=\"translate(20,30)\">" << std::endl;
    ss << "  <text x=\"0\" y=\"0\" font-family=\"Arial\" font-size=\"22\">SELLA RESULTS by Delone type (Angstroms)</text>" << std::endl;
-   ss << "  <text x=\"0\" y=\"22\" font-family=\"Arial\" font-size=\"16\">" << EscapeForSVG(input.GetInput())
+
+   std::ostringstream resolved;
+   resolved << LRL_Cell_Degrees(reducedLattice);
+   const std::string stCell = input.GetInput() + "   " + resolved.str();
+
+   ss << "  <text x=\"0\" y=\"22\" font-family=\"Arial\" font-size=\"16\">" << EscapeForSVG(stCell)
       << "</text>" << std::endl;
    return ss.str();
 }
-
 std::string GrimmerDeloneTree::RenderProjectedFits(const std::vector<std::string>& matches) {
    std::ostringstream ss;
 
@@ -558,13 +558,14 @@ std::string GrimmerDeloneTree::RenderFooter() {
 std::string GrimmerDeloneTree::ProduceSVG(
    GrimmerChains& chains,
    const LatticeCell& input,
-   const std::vector<std::string>& matches) {
+   const std::vector<std::string>& matches,
+   const S6& reducedLattice) {
 
    const std::map<std::string, BravaisNodeData> nodeData = CollectNodeData(chains);
    const std::map<std::string, NodePosition> positions = CreateNodePositionMap();
 
    std::string svg;
-   svg += RenderHeader(input);
+   svg += RenderHeader(input, reducedLattice);
    svg += RenderConnectingLines();
    svg += RenderAllNodes(nodeData, positions);
    svg += RenderNestingLabels();

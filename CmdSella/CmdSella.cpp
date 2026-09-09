@@ -36,6 +36,7 @@
 #include "S6.h"
 #include "Sella.h"
 #include "Selling.h"
+#include "TransformationMatrices.h"
 #include "WebIO.h"
 
 #include "SellaBuild.h"
@@ -52,10 +53,14 @@
 #include "SearchAllBoundaryTies.h"
 #include "SearchBoundaryNeighborsByTransform.h"
 
+
 #include "StoreResults.h"
 #include "RemediatedFit.h"
 
 #include "TestHarness.h"
+
+#include "DirectClassify.h"
+
 
 // 2023/12/23
 // bad case: P 21.775 21.785 27.232 90.028 89.974 90.023 still bad after remediation
@@ -306,7 +311,7 @@ std::tuple<std::string, std::string, std::string> ProcessSella(
    if (doProduceSellaGraphics) {
       gcs.UpdateFits(vDeloneFitResultsForOneInputLattice);
       fitPlotsSvg = gcs.GenerateSortedFitPlots(900, 700, input.getInput());
-      deloneTreeSvg = GrimmerDeloneTree::ProduceSVG(gcs, input, matches);
+      deloneTreeSvg = GrimmerDeloneTree::ProduceSVG(gcs, input, matches, oneLattice);
    }
 
    return std::make_tuple(mainSvg, fitPlotsSvg, deloneTreeSvg);
@@ -464,15 +469,43 @@ std::vector<std::pair<std::string, std::vector<DeloneFitResults>>> BuildCompareR
    }
    return compareResults;
 }
+inline DeloneFitResults SellaFitCanonical(
+   const std::shared_ptr<GenerateDeloneBase>& sptype,
+   const S6& s6) {
 
+   const MatS6 perp = sptype->GetPerp();
+   const MatS6 prj = sptype->GetPrj();
 
+   const S6 perpv = perp * s6;
+   const double testFit = perpv.norm();
+   const bool valid = LRL_Cell_Degrees(prj * s6).IsValid();
+   const double bestFit = (valid && testFit >= 1.0E-8) ? testFit
+      : (valid ? 0.0 : DBL_MAX);
 
-
-
+   const S6 bestv = prj * s6;
+   DeloneFitResults temp(bestFit, bestv, perpv, MatS6().unit());
+   temp.SetLatticeType(sptype->GetBravaisLatticeGeneral());
+   temp.SetDeloneType(sptype->GetBravaisType());
+   temp.SetGeneralType(sptype->GetName());
+   temp.SetBavaisType(sptype->GetBravaisType());
+   return temp;
+}
 
 
 int main(int argc, char* argv[])
 {
+   //const S6 vecA(-741.21325, -474.29631, -0.09949, 0.19042, -0.07866, -473.88154);
+   //const S6 vecB(0.07866, -0.19042, -0.09949, -473.91546, -741.37057, -473.65801);
+
+   //const std::vector<std::shared_ptr<GenerateDeloneBase>> o4type = GenerateDeloneBase().Select("O4");
+
+   //const DeloneFitResults fitA = Sella::SellaFitXXXXXX(o4type[0], vecA);
+   //const DeloneFitResults fitB = Sella::SellaFitXXXXXX(o4type[0], vecB);
+
+   //std::cout << ";   [DIAG] vecA fit " << fitA.GetRawFit() << std::endl;
+   //std::cout << ";   [DIAG] vecB fit " << fitB.GetRawFit() << std::endl;
+
+
    //RunHistoricalBadCaseCheck();
    //exit(0);
 
@@ -691,6 +724,48 @@ int main(int argc, char* argv[])
    }
 
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
+
+   if (controls.shouldClassifyDirect()) {
+      int cellIndex = 1;
+      for (const auto& inputCell : inputList) {
+         MatS6 oneReductionMatrix;
+         const S6 oneLattice = GetInputSellingReducedVectors(inputCell, oneReductionMatrix);
+         const S6 oneErrors = 0.1 * inputCell.getCell();
+
+         std::cout << "; " << inputCell.GetInput() << std::endl;
+         const std::vector<DeloneFitResults> fits =
+            PopulateDirectFitsForAllTypes(oneLattice, oneErrors, oneReductionMatrix, sella);
+         for (const auto& fit : fits) {
+            PrintCompact(fit);
+         }
+
+         // NEW: Bravais-type fit grouping -- min raw fit per Bravais type
+         // across its Delone siblings. CreateMapOFBravaisFits takes a
+         // non-const ref (doesn't appear to mutate fits) so a local copy
+         // is needed since fits is const here.
+         std::vector<DeloneFitResults> fitsForGrouping = fits;
+         MapOfBravaisFits bravaisFits;
+         bravaisFits.CreateMapOFBravaisFits(fitsForGrouping);
+         std::cout << bravaisFits;
+
+         const std::string fitPlotsSvg =
+            GenerateDirectFitPlotsSvg(fits, oneLattice, inputCell.getInput());
+         const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(
+            LRL_CreateFileName::Create("SEL", LRL_DataToSVG(cellIndex), "svg", true), "_fit_plots");
+         WriteDirectSvg(fitPlotsSvg, fitPlotsFilename);
+         std::cout << "; Send Sella Plot to graphics file " << fitPlotsFilename << std::endl;
+
+         const std::string deloneTreeSvg = GenerateDirectDeloneTreeSvg(
+            fits, oneLattice, inputCell, controls.getMaxDeltaForMatch());
+         const std::string deloneTreeFilename = AddSuffixToAllSvgOccurrences(
+            LRL_CreateFileName::Create("SEL", LRL_DataToSVG(cellIndex), "svg", true), "_delonetree");
+         WriteDirectSvg(deloneTreeSvg, deloneTreeFilename);
+         std::cout << "; Send Sella Plot to graphics file " << deloneTreeFilename << std::endl;
+         ++cellIndex;
+      }
+      exit(0);
+   }
+
    const bool doProduceSellaGraphics = controls.DoGraphics();
 
    if (controls.shouldCompare()) {
@@ -741,4 +816,3 @@ int main(int argc, char* argv[])
    }
    exit(0);
 }
-

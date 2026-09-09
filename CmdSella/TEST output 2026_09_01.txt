@@ -1,0 +1,782 @@
+
+C:\Users\lca\Source\Repos\duck10\LatticeRepLib\x64\Debug>cmdsella
+; SELLA method symmetry searching
+; Enter control variables and input vectors (type 'end' to finish):
+test
+end
+; CmdSella -- Flexible Test Mode
+
+========================================
+RUNNING FLEXIBLE SELLA TEST SUITE
+========================================
+
+--- Test 1 of 22 ---
+=== TEST: SingleViolation_ResolvesAfterRemediation ===
+Description: A cell with one genuine Grimmer-chain violation should have
+             HasFailure()==false after remediation (verified live this session).
+Input cells:
+  Cell 1: P 7.062 16.933 17.019 144.338 90.898 113.499
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 1
+OVERALL: PASS
+; Test 1 elapsed: 314 ms
+
+--- Test 2 of 22 ---
+=== TEST: OC_TP_ChainViolation_1_Resolved ===
+Description: This oC-vs-tP chain violation was known-unresolved as of SELLA_handoff.md item
+             3, but now resolves -- confirmed 2026-08-27, not the same cells as the other
+             16-case historical set, cause not confirmed. Regression guard: should stay
+             resolved.
+Input cells:
+  Cell 1: S -240.86238 -24.92865 -8.64775 -7.17380 -34.21200 -8.19574
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (now resolves -- was known-unresolved, cause
+      unconfirmed): PASS -- HasFailure()==false (expected false) for cell 1
+OVERALL: PASS
+; Test 2 elapsed: 628 ms
+
+--- Test 3 of 22 ---
+=== TEST: OC_TP_ChainViolation_2_Resolved ===
+Description: This oC-vs-tP chain violation was known-unresolved as of SELLA_handoff.md item
+             3, but now resolves -- confirmed 2026-08-27, not the same cells as the other
+             16-case historical set, cause not confirmed. Regression guard: should stay
+             resolved.
+Input cells:
+  Cell 1: S -230.17565 -17.27155 -54.34361 -23.25853 -11.49257 -55.62911
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (now resolves -- was known-unresolved, cause
+      unconfirmed): PASS -- HasFailure()==false (expected false) for cell 1
+OVERALL: PASS
+; Test 3 elapsed: 621 ms
+
+--- Test 4 of 22 ---
+=== TEST: OC_TP_ChainViolation_3_Resolved ===
+Description: This oC-vs-tP chain violation was known-unresolved as of SELLA_handoff.md item
+             3, but now resolves -- confirmed 2026-08-27, not the same cells as the other
+             16-case historical set, cause not confirmed. Regression guard: should stay
+             resolved.
+Input cells:
+  Cell 1: S -2.78162 -34.43272 -237.34522 -10.96929 -43.32243 -21.83436
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (now resolves -- was known-unresolved, cause
+      unconfirmed): PASS -- HasFailure()==false (expected false) for cell 1
+OVERALL: PASS
+; Test 4 elapsed: 805 ms
+
+--- Test 5 of 22 ---
+=== TEST: OC_TP_ChainViolation_4_Resolved ===
+Description: This oC-vs-tP chain violation was known-unresolved as of SELLA_handoff.md item
+             3, but now resolves -- confirmed 2026-08-27, not the same cells as the other
+             16-case historical set, cause not confirmed. Regression guard: should stay
+             resolved.
+Input cells:
+  Cell 1: S -11.10601 -81.30216 -222.54748 -5.31460 -54.25901 -27.69384
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (now resolves -- was known-unresolved, cause
+      unconfirmed): PASS -- HasFailure()==false (expected false) for cell 1
+OVERALL: PASS
+; Test 5 elapsed: 1544 ms
+
+--- Test 6 of 22 ---
+=== TEST: OC_TP_ChainViolation_5_Resolved ===
+Description: This oC-vs-tP chain violation was known-unresolved as of SELLA_handoff.md item
+             3, but now resolves -- confirmed 2026-08-27, not the same cells as the other
+             16-case historical set, cause not confirmed. Regression guard: should stay
+             resolved.
+Input cells:
+  Cell 1: S -9.12428 -0.87504 -63.50943 -233.55358 -4.41117 -36.27397
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (now resolves -- was known-unresolved, cause
+      unconfirmed): PASS -- HasFailure()==false (expected false) for cell 1
+OVERALL: PASS
+; Test 6 elapsed: 941 ms
+
+--- Test 7 of 22 ---
+=== TEST: OC_TP_ChainViolation_6_Resolved ===
+Description: This oC-vs-tP chain violation was known-unresolved as of SELLA_handoff.md item
+             3, but now resolves -- confirmed 2026-08-27, not the same cells as the other
+             16-case historical set, cause not confirmed. Regression guard: should stay
+             resolved.
+Input cells:
+  Cell 1: S -3.00480 -19.63201 -241.04017 -9.76684 -34.86767 -13.93003
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (now resolves -- was known-unresolved, cause
+      unconfirmed): PASS -- HasFailure()==false (expected false) for cell 1
+OVERALL: PASS
+; Test 7 elapsed: 212 ms
+
+--- Test 8 of 22 ---
+=== TEST: O1B_O2_O3_BoundaryPoint ===
+Description: Ready-made regression fixture for the original motivating issue: at this exact
+             boundary point the raw fit table gives O1B=10, O2=0, O3=0, apparently
+             violating fit(O1B) <= fit(O3) if O3 nests inside O1B -- but that parentage has
+             NOT been verified (see SELLA_handoff.md item 1). Left MANUAL on purpose: do
+             not add a NestingInequalityExpectation here until parentage is confirmed via
+             the projector-invariance test, not by reading the SVG.
+Input cells:
+  Cell 1: S -10 -20 0 -10 -20 0
+
+; No expectations defined -- manual verification needed
+  Cell 1 fits:
+    cI C1 20
+    cF C3 10
+    cP C5 12.9099
+    hR R1 18.2574
+    hR R3 8.16497
+    tI T1 10
+    tI T2 10
+    tP T5 10
+    oF O1A 10
+    oI O1B 0
+    oI O2 0
+    oI O3 0
+    oC O4 10
+    oP O5 10
+    mC M1A 0
+    mC M1B 0
+    mC M2B 0
+    mC M2A 0
+    mC M3 0
+    mP M4 10
+    aP A1 0
+    aP A2 0
+    aP A3 0
+    hP H4 10
+  Cell 1 HasFailure(): false
+;OVERALL: MANUAL CHECK REQUIRED
+; Test 8 elapsed: 227 ms
+
+--- Test 9 of 22 ---
+=== TEST: O2_WithinType_LibraryGap_MinimalFixture ===
+Description: O1B/O2 rank flip at a confirmed failure point -- static
+             CreatePerps_O2()/CreatePrjs_O2() library gap, not a Remediation/transform
+             issue. Expected to keep FAILING until the library is patched.
+Input cells:
+  Cell 1: S -38.13450 -43.40350 0.00000 -38.13450 -43.40350 -0.00000
+  Cell 2: S -43.34318 -38.15350 -0.00055 -38.13490 -43.34264 -0.02616
+  Cell 3: S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403 -0.04436
+
+Checking rank-stability expectations:
+    cell 1 -> 2: best O1B (0) -> O1B (0.0131635), second O2 (0) -> O2 (0.013169)
+    cell 2 -> 3: best O1B (0.0131635) -> O1B (0.0646143), second O2 (0.013169) -> O2 (0.06715)
+  RankStabilityExpectation (O1B/O2/O3 best-fit rank must not flip across these
+      three cells): PASS
+OVERALL: PASS
+; Test 9 elapsed: 2097 ms
+
+--- Test 10 of 22 ---
+=== TEST: O1B_O2_O3_TriplePoint_FitSensitivity ===
+Description: MANUAL: candidates A and B are physically close (cmddists NCDist=0.137) but
+             fit(O1B) swings 5.19875 (A) vs 0.06462 (B). The original
+             orientation-coverage-gap hypothesis was tested and disproven this session
+             (DiagnoseO1BCoverage.h: identical residual across all 24 reflections). Real
+             cause not yet known -- possibly a genuine triple-point stratification
+             singularity, possibly a ComputeDeloneFits/SellaFit issue near the cusp. Left
+             manual until one is confirmed.
+Input cells:
+  Cell 1: S -43.34318 -38.15350 -0.00055 -38.13490 -43.34264 -0.02616
+  Cell 2: S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403 -0.04436
+
+; No expectations defined -- manual verification needed
+  Cell 1 fits:
+    cI C1 47.3176
+    cF C3 5.19879
+    cP C5 38.3696
+    hR R1 47.1259
+    hR R3 4.23721
+    tI T1 5.19873
+    tI T2 5.19873
+    tP T5 38.1349
+    oF O1A 5.19873
+    oI O1B 0.0131635
+    oI O2 0.013169
+    oI O3 0.0287976
+    oC O4 38.1349
+    oP O5 38.1349
+    mC M1A 0.000545023
+    mC M1B 0.000545023
+    mC M2B 0.0287923
+    mC M2A 0.00066547
+    mC M3 0.0256188
+    mP M4 38.1087
+    aP A1 0
+    aP A2 0.00054
+    aP A3 0.0256159
+    hP H4 46.672
+  Cell 1 HasFailure(): false
+  Cell 2 fits:
+    cI C1 47.3327
+    cF C3 5.2461
+    cP C5 38.3535
+    hR R1 47.1902
+    hR R3 4.25808
+    tI T1 5.24602
+    tI T2 5.24603
+    tP T5 38.1165
+    oF O1A 5.246
+    oI O1B 0.0646143
+    oI O2 0.06715
+    oI O3 0.0696545
+    oC O4 38.135
+    oP O5 38.1165
+    mC M1A 0.047479
+    mC M1B 0.047479
+    mC M2B 0.0646801
+    mC M2A 0.050876
+    mC M3 0.0541386
+    mP M4 38.0721
+    aP A1 0
+    aP A2 0.01851
+    aP A3 0.0317938
+    hP H4 48.0509
+    oC O4 33.2674
+    mP M4 25.6631
+  Cell 2 HasFailure(): false
+;OVERALL: MANUAL CHECK REQUIRED
+; Test 10 elapsed: 1923 ms
+
+--- Test 11 of 22 ---
+=== TEST: M1B_M2A_OrientationSwap_M3Boundary ===
+Description: M1B/M2A best-fit rank flips near an M3 boundary point, same signature as the
+             O1B/O2/O3 case. M3 and M2B themselves stay stable throughout (not part of the
+             instability). Expected to keep FAILING until Remediation-style correction is
+             confirmed for this pair (not yet attempted).
+Input cells:
+  Cell 1: S -43.40350 -47.63950 0.00000 -28.62950 -43.40350 -0.00000
+  Cell 2: S -47.59416 -28.66333 -0.02968 -43.33617 -43.38776 -0.05159
+  Cell 3: S -47.62349 -43.35998 -0.01838 -28.66778 -43.42698 -0.04721
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (normal point (cell 2): no chain violation, confirmed
+      via Test 14): PASS -- HasFailure()==false (expected false) for cell 2
+  HasFailureExpectation (swap point (cell 3): real chain violation, confirmed
+      via Test 14): FAIL -- HasFailure()==false (expected true) for cell 3
+
+Checking rank-stability expectations:
+    cell 1 -> 2: best M1B (0) -> M1B (0.05159), second M2A (0) -> M2A (0.0631846)
+    cell 2 -> 3: best M1B (0.05159) -> M1B (0.051576), second M2A (0.0631846) -> M2A (0.0554587)
+  RankStabilityExpectation (M1B/M2A best-fit rank must not flip across these
+      three cells): PASS
+OVERALL: FAIL
+; Test 11 elapsed: 1841 ms
+
+--- Test 12 of 22 ---
+=== TEST: M1A_M1B_OrientationSwap_M2BBoundary ===
+Description: M1A/M1B best-fit rank flips near an M2B boundary point. M2A and M2B themselves
+             stay stable throughout (mirror image of Test 11, where M3/M2B were stable and
+             M1B/M2A were the unstable pair). Expected to keep FAILING until
+             Remediation-style correction is confirmed for this pair.
+Input cells:
+  Cell 1: S -38.13450 -43.40350 0.00000 -38.13450 -43.40350 -59.44700
+  Cell 2: S -38.10203 -43.40929 -0.06833 -38.08135 -43.38861 -59.50431
+  Cell 3: S -38.05796 -38.14164 -0.06258 -43.30057 -43.34813 -59.49953
+
+Checking rank-stability expectations:
+    cell 1 -> 2: best M1A (0) -> M1A (0.02068), second M1B (0) -> M1B (0.02068)
+    cell 2 -> 3: best M1A (0.02068) -> M1A (0.0680599), second M1B (0.02068) -> M1B (0.0680599)
+  RankStabilityExpectation (M1A/M1B best-fit rank must not flip across these
+      three cells): PASS
+OVERALL: PASS
+; Test 12 elapsed: 644 ms
+
+--- Test 13 of 22 ---
+=== TEST: O1B_O2_O3_ReflectionRelation_Confirmed ===
+Description: Confirmed (previous session): O1B/O2/O3 boundary candidates A and B are NOT
+             related by any of the 24 reflections (best residual 7.335734, reflection index
+             16). Migrated from CheckABReflection.h's original hardcoded main-line check
+             into the harness so it has an unambiguous test number.
+Input cells:
+  Cell 1: S -43.34318 -38.15350 -0.00055 -38.13490 -43.34264 -0.02616
+  Cell 2: S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403 -0.04436
+
+Checking reflection-relation expectations:
+Checking whether O1B/O2/O3 candidate A and O1B/O2/O3 candidate B are the same lattice under one of the 24 reflections:
+  best match: reflection index 16  residual ||reflection(O1B/O2/O3 candidate A) - O1B/O2/O3 candidate B|| = 7.335734
+  [0] residual = 7.379518
+  [1] residual = 7.392184
+  [2] residual = 84.379708
+  [3] residual = 79.150265
+  [4] residual = 84.371539
+  [5] residual = 79.140374
+  [6] residual = 7.392338
+  [7] residual = 7.379350
+  [8] residual = 84.369323
+  [9] residual = 79.146139
+  [10] residual = 84.377472
+  [11] residual = 79.156037
+  [12] residual = 79.154322
+  [13] residual = 84.375901
+  [14] residual = 79.142056
+  [15] residual = 84.373154
+  [16] residual = 7.335734
+  [17] residual = 7.435807
+  [18] residual = 79.144418
+  [19] residual = 84.367746
+  [20] residual = 79.151939
+  [21] residual = 84.381316
+  [22] residual = 7.348637
+  [23] residual = 7.423056
+CONCLUSION: no reflection brings O1B/O2/O3 candidate A close to O1B/O2/O3 candidate B (smallest residual 7.33573 is not near zero) -- O1B/O2/O3 candidate A and O1B/O2/O3 candidate B are NOT simply reoriented forms of the same lattice.
+  ReflectionRelationExpectation (A and B are not simply reoriented forms of
+      one another): PASS -- sameLattice=false (expected false), best residual
+      7.33573 at reflection 16
+OVERALL: PASS
+; Test 13 elapsed: 1658 ms
+
+--- Test 14 of 22 ---
+=== TEST: M3Boundary_ReflectionRelation ===
+Description: Confirmed this session: M3-boundary M1B/M2A swap candidates are NOT related by
+             any of the 24 reflections (best residual 5.942014, reflection index 1) -- same
+             signature as Test 13. Cell 2 (the swap point) also has HasFailure()==true, a
+             separate finding not covered by this expectation.
+Input cells:
+  Cell 1: S -47.59416 -28.66333 -0.02968 -43.33617 -43.38776 -0.05159
+  Cell 2: S -47.62349 -43.35998 -0.01838 -28.66778 -43.42698 -0.04721
+
+Checking reflection-relation expectations:
+Checking whether M3 pair, normal (M2A good) and M3 pair, swap (M1B good) are the same lattice under one of the 24 reflections:
+  best match: reflection index 1  residual ||reflection(M3 pair, normal (M2A good)) - M3 pair, swap (M1B good)|| = 5.942014
+  [0] residual = 20.764290
+  [1] residual = 5.942014
+  [2] residual = 81.688667
+  [3] residual = 76.154638
+  [4] residual = 88.960801
+  [5] residual = 86.234349
+  [6] residual = 24.374211
+  [7] residual = 24.383504
+  [8] residual = 92.046150
+  [9] residual = 86.247211
+  [10] residual = 82.675956
+  [11] residual = 76.163957
+  [12] residual = 76.163837
+  [13] residual = 82.670839
+  [14] residual = 86.240588
+  [15] residual = 88.962198
+  [16] residual = 24.343037
+  [17] residual = 5.989939
+  [18] residual = 86.250603
+  [19] residual = 92.044832
+  [20] residual = 76.165665
+  [21] residual = 81.693881
+  [22] residual = 24.362530
+  [23] residual = 20.811777
+CONCLUSION: no reflection brings M3 pair, normal (M2A good) close to M3 pair, swap (M1B good) (smallest residual 5.94201 is not near zero) -- M3 pair, normal (M2A good) and M3 pair, swap (M1B good) are NOT simply reoriented forms of the same lattice.
+  ReflectionRelationExpectation (Test 11's cell 2 vs cell 3 -- not simply
+      reoriented forms): PASS -- sameLattice=false (expected false), best residual
+      5.94201 at reflection 1
+OVERALL: PASS
+; Test 14 elapsed: 1628 ms
+
+--- Test 15 of 22 ---
+=== TEST: M2BBoundary_ReflectionRelation ===
+Description: Confirmed this session: M2B-boundary M1A/M1B swap candidates are NOT related
+             by any of the 24 reflections (best residual 7.386464, reflection index 7) --
+             same signature as Tests 13/14. All three now-confirmed boundary cases
+             (O1B/O2/O3, M3's M1B/M2A, M2B's M1A/M1B) show the identical pattern: genuine
+             orientation ambiguity, not a simple reflection relation. At THIS sampled
+             point, neither cell trips a Grimmer chain violation (confirmed via Test 16),
+             unlike Test 11's M3 swap point -- a single-sample result, not evidence that
+             M2B's boundary lacks chain violations generally.
+Input cells:
+  Cell 1: S -38.10203 -43.40929 -0.06833 -38.08135 -43.38861 -59.50431
+  Cell 2: S -38.05796 -38.14164 -0.06258 -43.30057 -43.34813 -59.49953
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (normal point (cell 1): no chain violation at this
+      sampled point, confirmed via Test 16): PASS -- HasFailure()==false (expected
+      false) for cell 1
+  HasFailureExpectation (swap point (cell 2): no chain violation at this
+      sampled point either, confirmed via Test 16): PASS -- HasFailure()==false
+      (expected false) for cell 2
+
+Checking reflection-relation expectations:
+Checking whether M2B pair, normal (M1B good) and M2B pair, swap (M1A good) are the same lattice under one of the 24 reflections:
+  best match: reflection index 7  residual ||reflection(M2B pair, normal (M1B good)) - M2B pair, swap (M1A good)|| = 7.386464
+  [0] residual = 7.415661
+  [1] residual = 7.480167
+  [2] residual = 62.260263
+  [3] residual = 67.044737
+  [4] residual = 60.351525
+  [5] residual = 65.268692
+  [6] residual = 7.509000
+  [7] residual = 7.386464
+  [8] residual = 60.373684
+  [9] residual = 65.285872
+  [10] residual = 62.238775
+  [11] residual = 67.028007
+  [12] residual = 62.225499
+  [13] residual = 67.044978
+  [14] residual = 60.326289
+  [15] residual = 65.296789
+  [16] residual = 84.381052
+  [17] residual = 84.389306
+  [18] residual = 60.304125
+  [19] residual = 65.279623
+  [20] residual = 62.204012
+  [21] residual = 67.028260
+  [22] residual = 84.389315
+  [23] residual = 84.381061
+CONCLUSION: no reflection brings M2B pair, normal (M1B good) close to M2B pair, swap (M1A good) (smallest residual 7.38646 is not near zero) -- M2B pair, normal (M1B good) and M2B pair, swap (M1A good) are NOT simply reoriented forms of the same lattice.
+  ReflectionRelationExpectation (Test 12's cell 2 vs cell 3 -- not simply
+      reoriented forms): PASS -- sameLattice=false (expected false), best residual
+      7.38646 at reflection 7
+OVERALL: PASS
+; Test 15 elapsed: 436 ms
+
+--- Test 16 of 22 ---
+=== TEST: M2BBoundary_SwapPoint_HasFailureCheck ===
+Description: MANUAL: does the M2B-boundary M1A/M1B swap point also trip a real Grimmer
+             chain violation, the way Test 11's M3 swap point did? Not yet known -- read
+             HasFailure() for cell 1 (normal) vs cell 2 (swap) below, then report back so
+             this can be promoted to a confirmed HasFailureExpectation.
+Input cells:
+  Cell 1: S -38.10203 -43.40929 -0.06833 -38.08135 -43.38861 -59.50431
+  Cell 2: S -38.05796 -38.14164 -0.06258 -43.30057 -43.34813 -59.49953
+
+; No expectations defined -- manual verification needed
+  Cell 1 fits:
+    cI C1 44.2111
+    cF C3 58.242
+    cP C5 55.4516
+    hR R1 33.8271
+    hR R3 40.2879
+    tI T1 5.30752
+    tI T2 5.30774
+    tP T5 53.8698
+    oF O1A 5.3073
+    oI O1B 5.30752
+    oI O2 5.30774
+    oI O3 48.3942
+    oC O4 38.1497
+    oP O5 53.8698
+    mC M1A 0.02068
+    mC M1B 0.02068
+    mC M2B 0.0713908
+    mC M2A 0.0253277
+    mC M3 38.0814
+    mP M4 38.0131
+    aP A1 0
+    aP A2 0.02068
+    aP A3 38.0814
+    hP H4 41.2161
+  Cell 1 HasFailure(): false
+  Cell 2 fits:
+    cI C1 44.1927
+    cF C3 58.1036
+    cP C5 55.4376
+    hR R1 33.7488
+    hR R3 40.3103
+    tI T1 5.22518
+    tI T2 5.22537
+    tP T5 53.8664
+    oF O1A 5.22499
+    oI O1B 5.22515
+    oI O2 5.22534
+    oI O3 48.2839
+    oC O4 38.0581
+    oP O5 53.8664
+    mC M1A 0.0680599
+    mC M1B 0.0680599
+    mC M2B 0.0924576
+    mC M2A 0.0759152
+    mC M3 38.1206
+    mP M4 37.9954
+    aP A1 0
+    aP A2 0.04756
+    aP A3 38.1206
+    hP H4 41.1923
+  Cell 2 HasFailure(): false
+;OVERALL: MANUAL CHECK REQUIRED
+; Test 16 elapsed: 441 ms
+
+--- Test 17 of 22 ---
+=== TEST: R1_R3_NearBoundary_NoIssueFound ===
+Description: Cells near the R1/R3 boundary. Resolved: not a swap bug -- both types fit
+             small on every cell. See source comment for full history.
+Input cells:
+  Cell 1: S 0.00000 0.00000 -0.17453 -99.82547 -99.82547 -100.00000
+  Cell 2: S -0.10976 -0.07316 -0.09934 -99.66756 -99.67093 -99.57723
+  Cell 3: S -0.06282 -0.01222 -99.84618 -99.85396 -0.13101 -99.84497
+
+; No expectations defined -- manual verification needed
+  Cell 1 fits:
+    cP C5 0.225317
+    hR R1 0.20153
+    hR R3 0.225317
+  Cell 1 HasFailure(): false
+  Cell 2 fits:
+    cP C5 0.181434
+    hR R1 0.0797581
+    hR R3 0.200796
+  Cell 2 HasFailure(): false
+  Cell 3 fits:
+    cP C5 0.141206
+    hR R1 0.205333
+    hR R3 0.119616
+  Cell 3 HasFailure(): false
+;OVERALL: MANUAL CHECK REQUIRED
+; Test 17 elapsed: 624 ms
+
+--- Test 18 of 22 ---
+=== TEST: M1A_M1B_M2A_NoSwapFound_InconclusiveSample ===
+Description: MANUAL, inconclusive: M1A dominates M1B and M2A throughout this 10-point
+             sample near a different seed than Test 12's. Does NOT establish that M1A/M2A
+             (the one still-untested pair in the freeParams=4 mC sibling group) lacks a
+             swap -- only that this particular region doesn't expose one. A denser or
+             differently-seeded sweep is needed before concluding anything about M1A/M2A
+             specifically.
+Input cells:
+  Cell 1: S -25.10300 -25.10300 -71.96250 -56.43450 -56.43450 -59.44700
+  Cell 2: S -25.05836 -25.02022 -71.96804 -56.52384 -56.43615 -59.41671
+
+; No expectations defined -- manual verification needed
+  Cell 1 fits:
+    cI C1 43.4632
+    cF C3 52.9413
+    cP C5 65.3305
+    hR R1 30.7748
+    hR R3 41.8023
+    tI T1 32.5574
+    tI T2 33.7387
+    tP T5 64.3195
+    oF O1A 31.3315
+    oI O1B 32.0218
+    oI O2 33.7387
+    oI O3 46.7009
+    oC O4 25.103
+    oP O5 64.2843
+    mC M1A 0
+    mC M1B 0
+    mC M2B 12.5155
+    mC M2A 0
+    mC M3 40.204
+    mP M4 25.103
+    aP A1 0
+    aP A2 0
+    aP A3 40.1475
+    hP H4 37.697
+  Cell 1 HasFailure(): false
+  Cell 2 fits:
+    cI C1 43.5448
+    cF C3 52.9797
+    cP C5 65.2353
+    hR R1 30.7863
+    hR R3 41.8065
+    tI T1 32.6694
+    tI T2 33.8535
+    tP T5 64.2263
+    oF O1A 31.4408
+    oI O1B 31.9768
+    oI O2 33.7902
+    oI O3 46.763
+    oC O4 25.0203
+    oP O5 64.1937
+    mC M1A 0.0676173
+    mC M1B 0.0676173
+    mC M2B 12.5515
+    mC M2A 0.0727972
+    mC M3 40.2139
+    mP M4 25.0202
+    aP A1 0
+    aP A2 0.03814
+    aP A3 40.1618
+    hP H4 37.6013
+  Cell 2 HasFailure(): false
+;OVERALL: MANUAL CHECK REQUIRED
+; Test 18 elapsed: 438 ms
+
+--- Test 19 of 22 ---
+=== TEST: HistoricalMPOCTP_16Cases_ResolveAfterRemediation ===
+Description: The 16 historical mP/oC/tP Grimmer-chain-violation cases logged in
+             CmdSella.cpp's 2023-12-23/24 header comment should all have
+             HasFailure()==false after remediation, confirmed this session post the
+             LRL_Cell.cpp S6-validity fix. Cell 16 is a genuinely different case (see Test
+             20) included here only because the group's claim -- HasFailure()==false --
+             happens to hold for it too.
+Input cells:
+  Cell 1: P 21.775 21.785 27.232  90.028  89.974  90.023
+  Cell 2: P  1.307  3.134  3.150 144.338  90.898 113.499
+  Cell 3: P  1.447  2.154  1.448  93.001  93.077 118.555
+  Cell 4: P  1.511  3.987  3.918 149.756 103.646  94.613
+  Cell 5: P  1.909  3.372  3.412 140.217  95.846 108.922
+  Cell 6: P  1.916  4.033  1.656 105.411 101.400  96.056
+  Cell 7: P  1.918  1.118  1.899  94.267 130.788 116.312
+  Cell 8: P  2.044  2.594  3.604 121.251  93.338  95.754
+  Cell 9: P  2.092  3.512  1.736  92.747  95.706 123.113
+  Cell 10: P  2.212  3.228  3.111 124.239  96.056 120.065
+  Cell 11: P  2.418  2.421  1.105  91.232 105.455 146.970
+  Cell 12: P  2.778  1.881  3.996 114.240  97.653  94.507
+  Cell 13: P  2.891  2.299  3.839  90.545 118.914 100.136
+  Cell 14: P  2.973  2.869  1.853  93.424 114.956 138.239
+  Cell 15: P  3.286  1.671  1.295  98.790  90.427 114.783
+  Cell 16: P  3.345  3.397  1.230  91.705 101.386 151.360
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 1
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 2
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 3
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 4
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 5
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 6
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 7
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 8
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 9
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 10
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 11
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 12
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 13
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 14
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 15
+  HasFailureExpectation (resolves after remediation): PASS --
+      HasFailure()==false (expected false) for cell 16
+OVERALL: PASS
+; Test 19 elapsed: 12206 ms
+
+--- Test 20 of 22 ---
+=== TEST: P3345_ShortlistWidensWithoutChainFailure ===
+Description: Unlike Test 19's other 15 cells, this one has no Grimmer chain violation at
+             all (HasFailure()==false before and after remediation) -- what actually
+             changes is RemediateIfShortlistChanges widening the matched-type shortlist
+             from empty to M1A/M1B/M2A, a different code path than the chain-failure repair
+             loop (Remediation168) every other historical cell exercises. Asserted here via
+             M2A's widened raw fit, since HasFailureExpectation alone would be trivially
+             true and wouldn't test the shortlist widening itself.
+Input cells:
+  Cell 1: P  3.345  3.397  1.230  91.705 101.386 151.360
+
+Checking fit-range expectations:
+  FitRangeExpectation (M2A widened into the shortlist by
+      RemediateIfShortlistChanges (observed 0.124645)): PASS -- M2A fit 0.124645
+      (expected [0.124, 0.125] for cell 1)
+
+Checking HasFailure() expectations:
+  HasFailureExpectation (no chain violation, before or after remediation):
+      PASS -- HasFailure()==false (expected false) for cell 1
+OVERALL: PASS
+; Test 20 elapsed: 213 ms
+
+--- Test 21 of 22 ---
+=== TEST: R1_R3_CubicSeed_NoIssueFound ===
+Description: Perturbations of an exact cubic cell, sitting on the R1/R3 boundary. Both
+             types fit small throughout -- no issue, consistent with Test 17.
+Input cells:
+  Cell 1: P 10 10 10 90 90 90
+  Cell 2: P 9.994 9.992 9.988 89.958 89.937 89.957
+  Cell 3: P 10.002 10.003 9.996 89.957 90.036 90.011
+  Cell 4: P 9.996 9.992 9.993 89.994 89.950 89.946
+  Cell 5: P 9.990 9.999 10.005 90.058 89.971 89.938
+  Cell 6: P 9.997 9.999 9.998 90.051 89.949 89.967
+  Cell 7: P 9.996 9.998 9.990 89.966 89.916 90.033
+  Cell 8: P 10.002 9.993 9.996 89.980 90.028 89.940
+  Cell 9: P 10.002 9.992 9.988 89.931 89.977 89.993
+  Cell 10: P 9.991 9.992 9.991 89.934 89.936 89.982
+  Cell 11: P 10.002 9.998 10.012 90.030 90.042 89.996
+
+; No expectations defined -- manual verification needed
+  Cell 1 fits:
+    cP C5 0
+    hR R1 0
+    hR R3 0
+  Cell 1 HasFailure(): false
+  Cell 2 fits:
+    cP C5 0.125444
+    hR R1 0.174161
+    hR R3 0.101275
+  Cell 2 HasFailure(): false
+  Cell 3 fits:
+    cP C5 0.161248
+    hR R1 0.160223
+    hR R3 0.153664
+  Cell 3 HasFailure(): false
+  Cell 4 fits:
+    cP C5 0.115886
+    hR R1 0.0885978
+    hR R3 0.0797907
+  Cell 4 HasFailure(): false
+  Cell 5 fits:
+    cP C5 0.197751
+    hR R1 0.222283
+    hR R3 0.19117
+  Cell 5 HasFailure(): false
+  Cell 6 fits:
+    cP C5 0.143543
+    hR R1 0.0459772
+    hR R3 0.184895
+  Cell 6 HasFailure(): false
+  Cell 7 fits:
+    cP C5 0.243315
+    hR R1 0.190012
+    hR R3 0.237345
+  Cell 7 HasFailure(): false
+  Cell 8 fits:
+    cP C5 0.142105
+    hR R1 0.131211
+    hR R3 0.133442
+  Cell 8 HasFailure(): false
+  Cell 9 fits:
+    cP C5 0.166881
+    hR R1 0.162215
+    hR R3 0.231413
+  Cell 9 HasFailure(): false
+  Cell 10 fits:
+    cP C5 0.141999
+    hR R1 0.173257
+    hR R3 0.110443
+  Cell 10 HasFailure(): false
+  Cell 11 fits:
+    cP C5 0.171022
+    hR R1 0.156655
+    hR R3 0.163915
+  Cell 11 HasFailure(): false
+;OVERALL: MANUAL CHECK REQUIRED
+; Test 21 elapsed: 2334 ms
+
+--- Test 22 of 22 ---
+=== TEST: M4_ReachesTrueMinimum_Remediation168 ===
+Description: M4's true minimum was missed by Remediation168 as of 2026-08-27 (13.0716 vs
+             true 9.243, 49.3992 vs true 34.9305), but now reaches it -- confirmed same
+             day. Regression guard: should stay passing.
+Input cells:
+  Cell 1: P 6.080 10.329 10.329 85.030 72.882 72.882
+  Cell 2: P 11.820 13.679 13.679 79.240 64.401 64.401
+
+Checking fit-range expectations:
+  FitRangeExpectation (should stay at true minimum ~9.243, not regress toward
+      old 13.0716): PASS -- M4 fit 9.23988 (expected [9, 9.5] for cell 1)
+  FitRangeExpectation (should stay at true minimum ~34.9305, not regress
+      toward old 49.3992): PASS -- M4 fit 34.926 (expected [34.5, 35.5] for cell 2)
+OVERALL: PASS
+; Test 22 elapsed: 420 ms
+
+========================================
+TEST SUMMARY
+========================================
+Total time: 32225 ms
+Passed: 15
+Failed: 1
+Manual: 6
+Total:  22
+SOME TESTS FAILED!

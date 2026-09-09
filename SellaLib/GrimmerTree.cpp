@@ -410,7 +410,7 @@ std::map<std::string, double> MapOfBravaisFits::CreateMapOFBravaisFits(std::vect
    std::map<std::string, double> valuemap;
    for (const auto& fit : fits) {
       const double fitvalue = fit.GetRawFit();
-      const std::string bravaisName = fit.GetDeloneType();
+      const std::string bravaisName = fit.GetBravaisType();   // was fit.GetDeloneType()
       if (valuemap.find(bravaisName) == valuemap.end()) {
          valuemap[bravaisName] = fitvalue;
       }
@@ -1095,11 +1095,8 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
 
 
    // Use the filtered datasets for the plots
-   std::string stCell = st;
    std::string upper = LRL_StringTools::strToupper(st);
-   if (upper.find("RANDOM") != std::string::npos) {
-      stCell += "   " + LRL_ToString(LRL_Cell_Degrees(m_s6));
-   }
+   std::string stCell = st + "   " + LRL_ToString(LRL_Cell_Degrees(m_s6));
    // Now build the SVG components
    const std::string& titleGroup = createTitle("SELLA Lattice Fit Analysis", stCell, width);
    const std::string& delonePlotGroup = this->createDelonePlot(

@@ -246,6 +246,18 @@ public:
          }
       );
 
+      // CLASSIFYDIRECT -- diverges CmdSella.cpp's main() right after
+// input/controls setup into the new from-scratch classification
+// rewrite (see chat, Sept 2026), bypassing the existing
+// SellaFit/RemediateIfShortlistChanges/GrimmerChains pipeline
+// entirely. One-way: prints and exits, existing pipeline below is
+// untouched, for side-by-side comparison during the rebuild.
+      InputHandler::registerHandler("CLASSIFYDIRECT", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            classifyDirect = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
       // SEED / RANDOMSEED moved to BaseControlVariables.h (2026-08-29) --
       // registered there instead of here so every program built on this
       // framework gets it, not just CmdSella. randomSeed/getRandomSeed()
@@ -281,6 +293,7 @@ public:
 
    bool shouldTestTransforms() const { return testTransforms; };
    bool shouldUseHarness() const { return useTestHarness; };
+   bool shouldClassifyDirect() const { return classifyDirect; }
 
 private:
 
@@ -381,7 +394,7 @@ private:
    std::vector<std::string> requestedTypes;  // empty == show all (see TYPES handler above)
    std::string seedBoundariesMode;  // "", "PRINT", or "USE" (see SEEDBOUNDARIES handler above)
    bool useTestHarness = false;
-
+   bool classifyDirect = true;
 };
 
 #endif // INPUTHANDLER_CMD_SELLA_FEATURES_H

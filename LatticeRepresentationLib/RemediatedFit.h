@@ -48,10 +48,14 @@
 #include "S6.h"
 #include "Sella.h"
 #include "Selling.h"
+#include "TransformationMatrices.h"
+#include "ScoredReservoir.h"
 
+#include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
+#include <set>
 
 inline S6 GetInputSellingReducedVectors(const LatticeCell& input, MatS6& mat) {
    const S6 s6 = LatticeConverter::SellingReduceCell(input.getLatticeType(), input.getCell(), mat);
@@ -288,32 +292,94 @@ inline std::vector<StabilityClassification> ClassifyViaStabilityRemediation(
 inline DeloneFitResults Remediation168ForOneSubtype(
    const S6& s6, const std::shared_ptr<GenerateDeloneBase>& sptype,
    const int maxRounds, const std::vector<S6>& extraSeeds) {
-   static const std::vector<MatS6> boundaryTransforms = Selling::GetBoundaryTransforms();
+   static const std::vector<MatS6> unimodularCandidates = [] {
+      std::vector<MatS6> out;
+      const std::vector<Matrix_3x3> m3 = TransformationMatrices::generateUnimodularMatrices(1);
+      out.reserve(m3.size());
+      for (const auto& m : m3) {
+         const std::vector<double> flat = {
+            m[0], m[1], m[2],
+            m[3], m[4], m[5],
+            m[6], m[7], m[8]
+         };
+         out.push_back(MatS6::e3Tos6(flat));
+      }
+      return out;
+      }();
+
+   static bool printedCount = false;
+   if (!printedCount) {
+      std::cout << ";   [DIAG] unimodularCandidates.size() = " << unimodularCandidates.size() << std::endl;
+      printedCount = true;
+   }
 
    S6 currentPoint = s6;
    DeloneFitResults currentFit = Sella::SellaFitXXXXXX(sptype, s6);
    S6 currentBestCandidate = s6;
 
    for (int round = 0; round < maxRounds; ++round) {
+      const auto roundStart = std::chrono::steady_clock::now();
+
       std::vector<S6> candidates = BuildVCPCandidates(currentPoint);
-      for (const auto& first : boundaryTransforms) {
-         const S6 afterFirst = first * currentPoint;
-         for (const auto& second : boundaryTransforms) {
-            candidates.push_back(second * afterFirst);
+
+      // First hop: score all 3480 candidates from currentPoint once, keep
+      // the best beamWidth (by raw fit) as the beam to expand in the
+      // second hop. Cache each first-hop candidate's DeloneFitResults so
+      // the final scan below never re-scores it.
+      static const size_t beamWidth = 5;
+      ScoredReservoir<S6> firstHop(beamWidth);
+      std::vector<std::pair<S6, DeloneFitResults>> firstHopScored;
+      firstHopScored.reserve(unimodularCandidates.size());
+      for (const auto& mat : unimodularCandidates) {
+         const S6 candidate = mat * currentPoint;
+         const DeloneFitResults dfrTemp = Sella::SellaFitXXXXXX(sptype, candidate);
+         firstHop.add(dfrTemp.GetRawFit(), candidate);
+         firstHopScored.emplace_back(candidate, dfrTemp);
+      }
+
+      // Second hop: from each of the beamWidth survivors, apply the full
+      // 3480 set again -- 3480 + beamWidth*3480 candidates total, not
+      // 3480^2. These haven't been scored yet, so they go through the
+      // normal scan below along with VCP candidates and seeds.
+      for (const auto& scoredSurvivor : firstHop.getFloor()) {
+         const S6& survivor = scoredSurvivor.second;
+         for (const auto& mat : unimodularCandidates) {
+            candidates.push_back(mat * survivor);
          }
       }
+
       for (const auto& seed : extraSeeds) {
          candidates.push_back(seed);
       }
 
       DeloneFitResults roundBest = currentFit;
       S6 roundBestCandidate = currentBestCandidate;
+
+      // Cached first-hop results -- no re-scoring.
+      for (const auto& scored : firstHopScored) {
+         if (scored.second.GetRawFit() < roundBest.GetRawFit()) {
+            roundBest = scored.second;
+            roundBestCandidate = scored.first;
+         }
+      }
+
+      // Everything else (VCP, second-hop, seeds) -- not yet scored.
       for (const auto& candidate : candidates) {
          const DeloneFitResults dfrTemp = Sella::SellaFitXXXXXX(sptype, candidate);
          if (dfrTemp.GetRawFit() < roundBest.GetRawFit()) {
             roundBest = dfrTemp;
             roundBestCandidate = candidate;
          }
+      }
+
+      static std::set<std::string> printedTypes;
+      if (printedTypes.find(sptype->GetName()) == printedTypes.end()) {
+         const double ms = std::chrono::duration<double, std::milli>(
+            std::chrono::steady_clock::now() - roundStart).count();
+         std::cout << ";   [DIAG] " << sptype->GetName() << " round " << round
+            << " total_candidates=" << (unimodularCandidates.size() + candidates.size())
+            << " time=" << ms << " ms" << std::endl;
+         printedTypes.insert(sptype->GetName());
       }
 
       if (roundBest.GetRawFit() < currentFit.GetRawFit() - 1.0E-8) {
@@ -327,9 +393,12 @@ inline DeloneFitResults Remediation168ForOneSubtype(
       }
    }
 
+
+
    currentFit.SetOriginalInput(currentBestCandidate);
    return currentFit;
 }
+
 
 // Remediation168 -- tries EVERY Delone type GenerateDeloneBase::Select
 // returns for bravaisName, not just sptypes[0]. For single-valued Bravais
