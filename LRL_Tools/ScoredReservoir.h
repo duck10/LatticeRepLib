@@ -189,7 +189,8 @@ std::ostream& operator<<(std::ostream& os, const ScoredReservoir<RT>& r) {
    os << "Floor (lowest scores):\n";
    if (r.m_floor.empty()) {
       os << "  (empty)\n";
-   } else {
+   }
+   else {
       for (const auto& [score, result] : r.m_floor) {
          os << "  [" << std::fixed << std::setprecision(3) << score << "] " << result << "\n";
       }
@@ -198,7 +199,8 @@ std::ostream& operator<<(std::ostream& os, const ScoredReservoir<RT>& r) {
    os << "Ceiling (highest scores):\n";
    if (r.m_ceiling.empty()) {
       os << "  (empty)\n";
-   } else {
+   }
+   else {
       for (const auto& [score, result] : r.m_ceiling) {
          os << "  [" << std::fixed << std::setprecision(3) << score << "] " << result << "\n";
       }
@@ -208,4 +210,5 @@ std::ostream& operator<<(std::ostream& os, const ScoredReservoir<RT>& r) {
 }
 
 #endif // SCORED_RESERVOIR_H
+
 

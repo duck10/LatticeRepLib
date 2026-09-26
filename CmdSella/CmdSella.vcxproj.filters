@@ -82,5 +82,8 @@
     <ClInclude Include="DirectClassify.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MethodLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

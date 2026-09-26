@@ -1036,6 +1036,31 @@ public:
          1e-2, 1.0, 5.99, 6.01, "[SUPERCELL] independent 2x/3x axis multipliers det~6 dist~0"));
       addTestCase(test52);
 
+      // Test 53: [SUPERCELL] CuSO4.5H2O pressure-induced phase pair
+      // (Simon Parsons, personal communication). 1 atm phase vs 5-6 GPa
+      // phase; primitive volume ratio 1.939, so the matcher swaps order
+      // and uses the high-pressure cell as reference. Best match is
+      // order-2 with P3 distance 0.340 (2.2% of P3 norm), S6 angle 0.99 deg.
+      // Independent check: comparing the experimental orientation matrices
+      // of the two phases gives
+      //    [  0.996436 -0.992217  0.004600 ]
+      //    [ -0.953339 -0.987698 -0.005615 ]
+      //    [ -0.006338  0.029284 -1.004780 ]
+      // which rounds to the matcher's matrix [1 -1 0; -1 -1 0; 0 0 -1].
+      // The presence check guards that experimentally confirmed matrix.
+      FlexibleTestCase test53("CuSO4_5H2O_HighPressure",
+         "[SUPERCELL] CuSO4.5H2O 1 atm vs 5-6 GPa -- order-2, dist=0.340, confirmed by orientation matrices");
+      test53.addInputCell(LatticeCell(LRL_Cell(5.8699, 5.9614, 10.0883,
+         76.9978 * M_PI / 180, 82.8643 * M_PI / 180, 72.3787 * M_PI / 180), "P"));
+      test53.addInputCell(LatticeCell(LRL_Cell(6.9425, 9.2826, 10.1032,
+         77.6881 * M_PI / 180, 86.0909 * M_PI / 180, 88.5508 * M_PI / 180), "P"));
+      test53.addQualityExpectation(FlexibleTestCase::QualityThresholds(
+         0.40, 5.0, 1.99, 2.01, "[SUPERCELL] order-2 det~2 dist~0.340"));
+      test53.addContainsExpectation(FlexibleTestCase::ContainsExpectation(
+         Matrix_3x3(1, -1, 0, -1, -1, 0, 0, 0, -1), 1e-3,
+         "matrix confirmed by comparing experimental orientation matrices (S. Parsons)"));
+      addTestCase(test53);
+
 
    }  // end setupStandardTests
 

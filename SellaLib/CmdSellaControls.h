@@ -32,6 +32,11 @@ public:
       os << std::endl;
       os << ";   seed boundaries mode " << (csc.seedBoundariesMode.empty() ? "(off)" : csc.seedBoundariesMode);
       os << ";   test transforms " << ((csc.testTransforms) ? "true" : "false") << std::endl;
+      os << ";   sequence spec " << (csc.sequenceSpec.empty() ? "(off)" : csc.sequenceSpec) << std::endl;
+      os << ";   best-of spec " << (csc.bestOfSpec.empty() ? "(off)" : csc.bestOfSpec) << std::endl;
+      os << ";   near-tie epsilon " << csc.nearTieEpsilon << std::endl;
+      os << ";   target type " << (csc.targetTypeName.empty() ? "(all 24)" : csc.targetTypeName) << std::endl;
+      os << ";   full detail " << (csc.fullDetail ? "true" : "false") << std::endl;
       os << ";   random seed " << csc.getRandomSeed() << std::endl;
       return os;
    }
@@ -258,6 +263,77 @@ public:
          }
       );
 
+      // SEQUENCE -- interpreter #1 for the method-library research pipeline
+      // (see chat, Sept 2026): applies the named/numbered methods in
+      // GetMethodRegistry() (RemediatedFit.h's 6/25/144/168/3480-candidate
+      // libraries) in strict left-to-right order, each stage's output
+      // feeding the next stage's input. "168(2)" means apply method 168,
+      // then apply method 168 again to that result (2 total rounds), not
+      // a parallel/independent second run. Empty by default: costs
+      // nothing unless requested, matches SEEDBOUNDARIES/BUILD's
+      // opt-in shape.
+      InputHandler::registerHandler("SEQUENCE", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            sequenceSpec = value;
+         }
+      );
+
+      // BESTOF -- interpreter #2 for the same method-library pipeline:
+      // applies each listed method independently to the SAME starting
+      // input, then keeps -- per original input cell -- whichever
+      // result(s) scored within NEARTIEEPS of the best fit found across
+      // every method tried. Same per-method spec syntax as SEQUENCE
+      // (name or number, optional "(n)" repeat count applied before that
+      // method's result enters the comparison). Empty by default.
+      InputHandler::registerHandler("BESTOF", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            bestOfSpec = value;
+         }
+      );
+
+      // NEARTIEEPS -- shared absolute-fit tolerance used by every method
+      // in RemediatedFit.h's registry (see chat, Sept 2026) to decide
+      // which of its own candidates -- including the input itself, always
+      // in the comparison pool -- survive into its output vector, and by
+      // BESTOF to decide which methods' final results count as tied.
+      // Deliberately a single shared value for now (Larry's call, chat
+      // Sept 2026) rather than a per-method value like NESTINGDELTA;
+      // revisit if the method-comparison research shows methods need
+      // different bands.
+      InputHandler::registerHandler("NEARTIEEPS", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            setNearTieEpsilon(std::stod(value));
+         }
+      );
+
+      // TARGETTYPE -- restricts SEQUENCE/BESTOF to one or several Delone
+      // types (e.g. "M4" or "M4 O4" -- SelectTargetTypes in
+      // MethodLibrary.h splits on whitespace and calls
+      // GenerateDeloneBase::Select once per name, since Select itself
+      // takes only one name at a time) instead of looping all 24 (chat,
+      // Sept 2026: output volume concern, same pattern as
+      // FlexibleSellaTestMode.h's relevantTypeNames). Empty by default
+      // (loop all 24). Print detail is controlled separately by
+      // FULLDETAIL below, not by whether TARGETTYPE is set -- a batch
+      // comparison run wants a handful of types restricted for speed
+      // WITHOUT the full per-candidate dump (chat, Sept 2026).
+      InputHandler::registerHandler("TARGETTYPE", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            targetTypeName = value;
+         }
+      );
+
+      // FULLDETAIL -- independent of TARGETTYPE (chat, Sept 2026): prints
+      // every surviving near-tie candidate per type instead of the
+      // compact one-line summary. Off by default, so restricting to a
+      // handful of types via TARGETTYPE for a batch/comparison run stays
+      // compact unless full detail is explicitly requested too.
+      InputHandler::registerHandler("FULLDETAIL", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            fullDetail = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
       // SEED / RANDOMSEED moved to BaseControlVariables.h (2026-08-29) --
       // registered there instead of here so every program built on this
       // framework gets it, not just CmdSella. randomSeed/getRandomSeed()
@@ -294,6 +370,14 @@ public:
    bool shouldTestTransforms() const { return testTransforms; };
    bool shouldUseHarness() const { return useTestHarness; };
    bool shouldClassifyDirect() const { return classifyDirect; }
+   std::string getSequenceSpec() const { return sequenceSpec; }
+   bool shouldRunSequence() const { return !sequenceSpec.empty(); }
+   std::string getBestOfSpec() const { return bestOfSpec; }
+   bool shouldRunBestOf() const { return !bestOfSpec.empty(); }
+   double getNearTieEpsilon() const { return nearTieEpsilon; }
+   std::string getTargetTypeName() const { return targetTypeName; }
+   bool shouldRestrictTypes() const { return !targetTypeName.empty(); }
+   bool shouldShowFullDetail() const { return fullDetail; }
 
 private:
 
@@ -355,6 +439,16 @@ private:
       }
    }
 
+   void setNearTieEpsilon(const double d) {
+      if (d < 0.0) {
+         std::cerr << ";Warning: NEARTIEEPS cannot be negative, using "
+            << nearTieEpsilon << std::endl;
+      }
+      else {
+         nearTieEpsilon = d;
+      }
+   }
+
    static constexpr size_t MIN_BLOCKSIZE = BlockUtils::MIN_BLOCKSIZE;
    static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE / 2; // divided by 2 because there are 
    // two output files !!!!!!!!!!!!!!!!!!
@@ -395,6 +489,15 @@ private:
    std::string seedBoundariesMode;  // "", "PRINT", or "USE" (see SEEDBOUNDARIES handler above)
    bool useTestHarness = false;
    bool classifyDirect = true;
+   std::string sequenceSpec;   // "" == off (see SEQUENCE handler above)
+   std::string bestOfSpec;     // "" == off (see BESTOF handler above)
+   std::string targetTypeName; // "" == loop all 24 (see TARGETTYPE handler above)
+   bool fullDetail = false;    // see FULLDETAIL handler above
+
+   // Default is a placeholder, not calibrated -- same caveat as
+   // nestingDelta above. Needs checking against real method-comparison
+   // data once the method-library research (chat, Sept 2026) has some.
+   double nearTieEpsilon = 1.0E-4;
 };
 
 #endif // INPUTHANDLER_CMD_SELLA_FEATURES_H

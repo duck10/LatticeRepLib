@@ -1403,7 +1403,7 @@ Delone_A2::Delone_A2() {
    m_bravaisType = "aP";
    m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 1";
    m_character = "rs0 tuv";
-   m_freeParams = 6;
+   m_freeParams = 5;
    m_prjPrefix = 1.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
 
@@ -1417,7 +1417,7 @@ Delone_A3::Delone_A3() {
    m_bravaisType = "aP";
    m_strProjector = "1 0 0 0 0 0  0 1 0 0 0 0  0 0 0 0 0 0  0 0 0 1 0 0  0 0 0 0 1 0  0 0 0 0 0 0";
    m_character = "rs0 tu0";
-   m_freeParams = 6;
+   m_freeParams = 4;
    m_prjPrefix = 1.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
 

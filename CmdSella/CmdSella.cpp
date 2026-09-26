@@ -55,6 +55,7 @@
 
 
 #include "StoreResults.h"
+#include "MethodLibrary.h"
 #include "RemediatedFit.h"
 
 #include "TestHarness.h"
@@ -494,6 +495,50 @@ inline DeloneFitResults SellaFitCanonical(
 
 int main(int argc, char* argv[])
 {
+   std::vector<MatS6> unimodularCandidates;
+   {
+      const std::vector<Matrix_3x3> m3 = TransformationMatrices::generateUnimodularMatrices(1);
+      unimodularCandidates.reserve(m3.size());
+      for (const auto& m : m3) {
+         const std::vector<double> flat = {
+            m[0], m[1], m[2],
+            m[3], m[4], m[5],
+            m[6], m[7], m[8]
+         };
+         unimodularCandidates.push_back(MatS6::e3Tos6(flat));
+      }
+   }
+
+   //const S6 startPoint(-473.99413, -0.02083, -741.29191, -0.07866, -0.11176, -473.57936);
+   //const std::vector<std::shared_ptr<GenerateDeloneBase>> m4type = GenerateDeloneBase().Select("M4");
+
+   //S6 currentPoint = startPoint;
+   //double currentFit = SellaFitCanonical(m4type[0], currentPoint).GetRawFit();
+   //std::cout << ";   [DIAG] M4 start fit = " << currentFit << std::endl;
+
+   //const int maxRounds = 10;
+   //for (int round = 0; round < maxRounds; ++round) {
+   //   double bestFit = DBL_MAX;
+   //   S6 bestCandidate = currentPoint;
+   //   for (const auto& mat : unimodularCandidates) {
+   //      const S6 candidate = mat * currentPoint;
+   //      const double fit = SellaFitCanonical(m4type[0], candidate).GetRawFit();
+   //      if (fit < bestFit) {
+   //         bestFit = fit;
+   //         bestCandidate = candidate;
+   //      }
+   //   }
+   //   std::cout << ";   [DIAG] M4 round " << round << " best fit = " << bestFit << std::endl;
+   //   if (bestFit < currentFit - 1.0E-8) {
+   //      currentFit = bestFit;
+   //      MatS6 reductionMatrix;
+   //      currentPoint = LatticeConverter::SellingReduceCell("P", bestCandidate, reductionMatrix);
+   //   }
+   //   else {
+   //      std::cout << ";   [DIAG] M4 no further improvement, stopping" << std::endl;
+   //      break;
+   //   }
+   //}
    //const S6 vecA(-741.21325, -474.29631, -0.09949, 0.19042, -0.07866, -473.88154);
    //const S6 vecB(0.07866, -0.19042, -0.09949, -473.91546, -741.37057, -473.65801);
 
@@ -724,6 +769,39 @@ int main(int argc, char* argv[])
    }
 
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
+
+   // NEW: method-library research pipeline (see chat, Sept 2026) --
+   // separate from classifydirect and the existing SellaFit pipeline,
+   // since this exercises MethodLibrary.h's 6/24/144/168/3480 registry
+   // directly through the SEQUENCE/BESTOF interpreters, not either
+   // existing classification path. SEQUENCE and BESTOF are independent
+   // of each other (both can be set together -- each just produces its
+   // own labeled output block).
+   if (controls.shouldRunSequence() || controls.shouldRunBestOf()) {
+      for (const auto& inputCell : inputList) {
+         MatS6 oneReductionMatrix;
+         const S6 oneLattice = GetInputSellingReducedVectors(inputCell, oneReductionMatrix);
+
+         std::cout << "; " << inputCell.GetInput() << std::endl;
+
+         const std::vector<std::shared_ptr<GenerateDeloneBase>> sptypes =
+            controls.shouldRestrictTypes()
+            ? SelectTargetTypes(controls.getTargetTypeName())
+            : GenerateDeloneBase().Select("");
+
+         if (controls.shouldRunSequence()) {
+            RunAndPrintOneInterpreter("SEQUENCE", RunSequenceInterpreter,
+               controls.getSequenceSpec(), sptypes, oneLattice,
+               controls.getNearTieEpsilon(), controls.shouldShowFullDetail());
+         }
+         if (controls.shouldRunBestOf()) {
+            RunAndPrintOneInterpreter("BESTOF", RunBestOfInterpreter,
+               controls.getBestOfSpec(), sptypes, oneLattice,
+               controls.getNearTieEpsilon(), controls.shouldShowFullDetail());
+         }
+      }
+      exit(0);
+   }
 
    if (controls.shouldClassifyDirect()) {
       int cellIndex = 1;

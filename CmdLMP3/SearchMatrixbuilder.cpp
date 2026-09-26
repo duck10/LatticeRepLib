@@ -37,7 +37,7 @@ namespace {
       for (const auto& a : u)
          for (const auto& b : hnf)
             result.push_back(a * b);
-      for (const auto& b : hnf)
+      for (const auto& b : hnf)  // improves some timings (not all)
          for (const auto& a : u)
             result.push_back(b * a);
       return result;
@@ -89,11 +89,11 @@ namespace {
 
       g_det3 = TransformationMatrices::generateSupercellMatrices({ 3 }, 3);
       const auto hnf3 = TransformationMatrices::generateHNFMatrices({ 3 });
-      g_det3.insert(g_det3.end(), hnf3.begin(), hnf3.end());
+      g_det3.insert(g_det3.end(), hnf3.begin(), hnf3.end()); // improves some timings (not all)
 
       g_det4 = TransformationMatrices::generateSupercellMatrices({ 4 }, 4);
       const auto hnf4 = TransformationMatrices::generateHNFMatrices({ 4 });
-      g_det4.insert(g_det4.end(), hnf4.begin(), hnf4.end());
+      g_det4.insert(g_det4.end(), hnf4.begin(), hnf4.end()); // improves some timings (not all)
 
       const auto hnf5 = TransformationMatrices::generateHNFMatrices({ 5 });
       g_det5 = composeBothOrders(unimodular1, hnf5);

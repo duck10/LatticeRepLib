@@ -244,8 +244,14 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
          line.pop_back();
       }
 
-      // Apply comprehensive input cleaning
-      line = cleanLatticeInput(line);
+      // NOTE (chat, Sept 2026): cleanLatticeInput's regex used to run here,
+      // unconditionally, on every line -- including control-command values
+      // like SEQUENCE's "168(2)" -- stripping characters (e.g. parentheses)
+      // that a lattice-specific cleaner had no business touching on a
+      // non-lattice line. Moved below, into the isLattice branch only, so
+      // it still does its job (stripping stray characters from a pasted
+      // cell) without corrupting control values that were never lattice
+      // input in the first place.
 
       // Additional cleanup for any remaining non-printable characters
       for (char& c : line) {
@@ -284,7 +290,18 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
                reorderedLine += tokens[i];
                if (i < tokens.size() - 1) reorderedLine += " ";
             }
-            handleLatticeInput(cells, upperKey, tokens, reorderedLine);
+
+            // Lattice-specific character cleaning, now applied here rather
+            // than unconditionally at the top of the loop (chat, Sept
+            // 2026) -- strips stray characters (commas, parentheses, etc.)
+            // from a pasted lattice line, without touching control-command
+            // values that reach this function on other lines. Re-tokenize
+            // afterward since cleaning can change token boundaries (e.g. a
+            // stripped comma merging or separating fields).
+            reorderedLine = cleanLatticeInput(reorderedLine);
+            const std::vector<std::string> cleanedTokens = parseInputLine(reorderedLine);
+
+            handleLatticeInput(cells, upperKey, cleanedTokens, reorderedLine);
             continue;
          }
 

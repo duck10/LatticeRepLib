@@ -175,6 +175,7 @@
     <ClInclude Include="ExpandAcrossBoundaryZeros.h" />
     <ClInclude Include="ExploreReductionTies.h" />
     <ClInclude Include="FlexibleSellaTestMode.h" />
+    <ClInclude Include="MethodLibrary.h" />
     <ClInclude Include="RemediatedFit.h" />
     <ClInclude Include="SearchAllBoundaryTies.h" />
     <ClInclude Include="SearchBoundaryNeighborsByTransform.h" />
