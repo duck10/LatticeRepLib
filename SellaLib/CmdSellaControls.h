@@ -106,10 +106,10 @@ public:
             testMode = true;
             testNumbers.clear();
             const std::string upper = LRL_StringTools::strToupper(value);
-            if (value.empty() || value == "1" || upper == "TRUE") {
+            if (value.empty() || value == "0" || upper == "TRUE") {
                return; // run-all: testNumbers stays empty
             }
-            if (upper == "0" || upper == "FALSE") {
+            if (upper == "FALSE") {
                testMode = false;
                return;
             }
