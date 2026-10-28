@@ -278,6 +278,35 @@ inline std::vector<StabilityClassification> ClassifyViaStabilityRemediation(
    return results;
 }
 
+
+// BuildExactBoundaryCandidates -- 24 reflections of p, plus 24 reflections
+// of R_i * p for each of the 6 Selling boundary transforms: 168
+// candidates, every one a genuine (unimodular) representation of the SAME
+// lattice as p. Replaces BuildVCPCandidates in the fitting search:
+// vcp_i = R_i*pbi - pai differs from R_i*p by s_i*(e_i + R_i*e_i)
+// (|.| = sqrt(5)|s_i| for R_1), i.e. it is p mirrored through s_i = 0 --
+// correct for the paper's point-to-point distance, not a representative
+// of p's lattice unless s_i = 0.
+inline std::vector<S6> BuildExactBoundaryCandidates(const S6& p) {
+   static const std::vector<MatS6> reflections = MatS6::GetReflections();
+   static const std::vector<MatS6> boundaryTransforms = Selling::GetBoundaryTransforms();
+
+   std::vector<S6> candidates;
+   candidates.reserve(reflections.size() * (1 + boundaryTransforms.size()));
+   for (const auto& M : reflections) {
+      candidates.push_back(M * p);
+   }
+   for (const auto& R : boundaryTransforms) {
+      const S6 rp = R * p;
+      for (const auto& M : reflections) {
+         candidates.push_back(M * rp);
+      }
+   }
+   return candidates;
+}
+
+
+
 // Remediation168ForOneSubtype -- the original Remediation168 search body,
 // fixed to a single specific Delone subtype (e.g. "M1A"). Factored out so
 // Remediation168 can run it once per sibling when a Bravais name resolves
@@ -285,17 +314,32 @@ inline std::vector<StabilityClassification> ClassifyViaStabilityRemediation(
 // this matters -- GenerateDeloneBase::Select("mC") returns five types,
 // and the previously-used sptypes[0]-only approach could keep widening
 // the wrong sibling while a much better fit sat untouched on another).
+// Largest scalar of an S6; > 0 means the setting is outside the reduced region.
+inline double MaxS6Scalar(const S6& s) {
+   double m = s[0];
+   for (size_t i = 1; i < 6; ++i) if (s[i] > m) m = s[i];
+   return m;
+}
+
+// A candidate setting is admissible only if it is at most slightly outside
+// the reduced region: largest scalar <= fraction * |reduced input|.
+inline bool IsNearlyReduced(const S6& candidate, const double limit) {
+   return MaxS6Scalar(candidate) <= limit;
+}
+
 inline DeloneFitResults Remediation168ForOneSubtype(
    const S6& s6, const std::shared_ptr<GenerateDeloneBase>& sptype,
    const int maxRounds, const std::vector<S6>& extraSeeds) {
    static const std::vector<MatS6> boundaryTransforms = Selling::GetBoundaryTransforms();
+   static const double outsideFraction = 0.10;
+   const double limit = outsideFraction * s6.norm();
 
    S6 currentPoint = s6;
    DeloneFitResults currentFit = Sella::SellaFitXXXXXX(sptype, s6);
    S6 currentBestCandidate = s6;
 
    for (int round = 0; round < maxRounds; ++round) {
-      std::vector<S6> candidates = BuildVCPCandidates(currentPoint);
+      std::vector<S6> candidates = BuildExactBoundaryCandidates(currentPoint);
       for (const auto& first : boundaryTransforms) {
          const S6 afterFirst = first * currentPoint;
          for (const auto& second : boundaryTransforms) {
@@ -309,6 +353,7 @@ inline DeloneFitResults Remediation168ForOneSubtype(
       DeloneFitResults roundBest = currentFit;
       S6 roundBestCandidate = currentBestCandidate;
       for (const auto& candidate : candidates) {
+         if (!IsNearlyReduced(candidate, limit)) continue;
          const DeloneFitResults dfrTemp = Sella::SellaFitXXXXXX(sptype, candidate);
          if (dfrTemp.GetRawFit() < roundBest.GetRawFit()) {
             roundBest = dfrTemp;

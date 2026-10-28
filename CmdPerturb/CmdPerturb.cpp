@@ -12,8 +12,8 @@
 #include "S6.h"
 
 
-double delta = 1.0;
-size_t ngen = 20;
+//double delta = 1.0;
+//size_t ngen = 20;
 
 const std::string latticeNames = "pifrhcPIFRHC";
 static RHrand ran;
@@ -32,80 +32,81 @@ T CreateTotallyRandomUnitOrthogonalComponent(const T& t) {
    return ortho / ortho.norm();
 }
 
-S6 MakeMorePerturbationAttempts(const double scale, const S6& s6, S6& out) {
-   LRL_Cell cell;
-   out = s6;
-   out.SetValid(false);
-
-   const int maxCount = 10;
-   int count = 0;
-   const bool outIsValid = out.IsValid() && out.GetValid();
-   while (!out.GetValid() && count < maxCount) {
-      ++count;
-      const S6 perturber = scale * CreateTotallyRandomUnitOrthogonalComponent(out) / 1000.0;
-      const S6 perturbation = delta * perturber;
-      out = out + perturbation;
-      cell = out;
-      const bool b = cell.IsValid();
-      const G6 g6(out);
-      const LRL_Cell cell2(out);
-      out.SetValid(cell.IsValid());
-   }
-   if (count == maxCount) {
-      const S6 s = S6::randDeloneReduced();
-      out = scale * s / 1000.0;
-   }
-   return out;
-}
-
-G6 PerturbOneVector(const S6& base, const double delta)
-{
-   const double scale = base.norm();
-   const S6 perturber = scale * CreateTotallyRandomUnitOrthogonalComponent(base) / 1000.0;
-   const S6 perturbation = delta * perturber;
-   S6 perturbed = base + perturbation;
-   LRL_Cell cell(perturbed);  //lca test on cell.isvalid and cycle
-   if (!cell.IsValid()) {
-      S6 toReturn;
-      perturbed = MakeMorePerturbationAttempts(scale, base, toReturn); //xxxxxxxxxxxxxxx should be base
-      cell = perturbed;  //lca test on cell.isvalid and cycle
-   }
-   //std::cout << "scale = norm of base " << scale << std::endl;
-   //std::cout << "norm of perturber " << perturber.norm() << std::endl;
-   //std::cout << "norm of perturbed " << perturbed.norm() << std::endl;
-
-   //std::cout << " in PerturbOneVector, ratio of input to output = " <<
-   //   base.norm() / perturbed.norm() << std::endl;
-   //std::cout << " in PerturbOneVector,difference ratio of input and perturbed  = " <<
-   //   (base - perturbed).norm()/scale << std::endl;
-   perturbed *= base.norm() / perturbed.norm();
-   return perturbed;
-}
-
-void OutputPerturbedCell(const std::string& lattice, const S6& perturbed,
-   const std::string& label) {
-   LRL_Cell_Degrees cell(perturbed);
-
+static bool IsAcceptablePerturbedCell(const S6& s6) {
+   const LRL_Cell_Degrees cell(s6);
+   if (!cell.IsValid()) return false;
    const double alpha = cell[3];
    const double beta = cell[4];
    const double gamma = cell[5];
-   const bool b5 = (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) >= 0.0 - 0.00001;
+   return (alpha + beta + gamma - 2.0 * maxNC(alpha, beta, gamma)) >= -0.00001;
+}
 
-   if (!cell.IsValid() || !b5) {
-      std::cout << "; S6 " << perturbed << "  invalid perturbed cell  " + label << std::endl;
+
+//S6 MakeMorePerturbationAttempts(const double scale, const S6& s6, S6& out) {
+//   LRL_Cell cell;
+//   out = s6;
+//   out.SetValid(false);
+//
+//   const int maxCount = 10;
+//   int count = 0;
+//   const bool outIsValid = out.IsValid() && out.GetValid();
+//   while (!out.GetValid() && count < maxCount) {
+//      ++count;
+//      const S6 perturber = scale * CreateTotallyRandomUnitOrthogonalComponent(out) / 1000.0;
+//      const S6 perturbation = delta * perturber;
+//      out = out + perturbation;
+//      cell = out;
+//      const bool b = cell.IsValid();
+//      const G6 g6(out);
+//      const LRL_Cell cell2(out);
+//      out.SetValid(cell.IsValid());
+//   }
+//   if (count == maxCount) {
+//      const S6 s = S6::randDeloneReduced();
+//      out = scale * s / 1000.0;
+//   }
+//   return out;
+//}
+
+// Tries up to maxAttempts random orthogonal perturbations of length
+// (delta/1000)*|base|, each starting from base. On success sets perturbed
+// (rescaled to |base|) and returns true; on failure sets perturbed = base
+// and returns false.
+static bool PerturbOneVector(const S6& base, const double delta, S6& perturbed) {
+   static const int maxAttempts = 100;
+   const double scale = base.norm();
+   for (int attempt = 0; attempt < maxAttempts; ++attempt) {
+      const S6 perturber = scale * CreateTotallyRandomUnitOrthogonalComponent(base) / 1000.0;
+      const S6 perturbation = delta * perturber;
+      S6 trial = base + perturbation;
+      if (IsAcceptablePerturbedCell(trial)) {
+         trial *= scale / trial.norm();
+         perturbed = trial;
+         return true;
+      }
    }
-   else if (latticeNames.find(lattice) == std::string::npos)
+   perturbed = base;
+   return false;
+}
+
+static void OutputPerturbedCell(const std::string& lattice, const S6& perturbed,
+   const std::string& label) {
+   const LRL_Cell_Degrees cell(perturbed);
+   if (latticeNames.find(lattice) == std::string::npos)
       std::cout << "S6 " << perturbed << "  perturbed  " + label << std::endl;
    else
       std::cout << lattice + " " << cell << "  perturbed  " + label << std::endl;
 }
 
+static void OutputUnperturbableCell(const S6& base, const std::string& label) {
+   std::cout << "; S6 " << base
+      << "  no valid perturbation found at this delta  " + label << std::endl;
+}
 
 void HandleOneInputCell(const LatticeCell& inputlattice, const CmdPerturbControls& controls) {
    const std::string lattice = inputlattice.getLatticeType();
    const std::string strcel = inputlattice.GetInput();
 
-   const std::string inputText = LRL_StringTools::strToupper(strcel);
    if (LRL_StringTools::strToupper(strcel).find("RANDOM") != std::string::npos) {
       std::cout << "\n;" << strcel << "    original input cell" << std::endl;
    }
@@ -115,9 +116,14 @@ void HandleOneInputCell(const LatticeCell& inputlattice, const CmdPerturbControl
 
    const size_t pos = strcel.find("IT#");
    const std::string label = (pos != std::string::npos) ? strcel.substr(pos) : "";
-   for (size_t k = 0; k < controls.getPerturbCount(); ++k) {
-      const G6 perturbed = PerturbOneVector(inputlattice.getCell(), controls.getPerturbDelta());
-      OutputPerturbedCell(lattice, perturbed, label);
+   const S6 base(inputlattice.getCell());
+   const size_t count = static_cast<size_t>(controls.getPerturbCount());
+   for (size_t k = 0; k < count; ++k) {
+      S6 perturbed;
+      if (PerturbOneVector(base, controls.getPerturbDelta(), perturbed))
+         OutputPerturbedCell(lattice, perturbed, label);
+      else
+         OutputUnperturbableCell(base, label);
    }
 }
 

@@ -30,7 +30,7 @@ public:
       if (csc.requestedTypes.empty()) os << "(all)";
       else for (const auto& t : csc.requestedTypes) os << t << " ";
       os << std::endl;
-      os << ";   seed boundaries mode " << (csc.seedBoundariesMode.empty() ? "(off)" : csc.seedBoundariesMode);
+      os << ";   seed boundaries mode " << (csc.seedBoundariesMode.empty() ? "(off)" : csc.seedBoundariesMode) << std::endl;
       os << ";   test transforms " << ((csc.testTransforms) ? "true" : "false") << std::endl;
       os << ";   sequence spec " << (csc.sequenceSpec.empty() ? "(off)" : csc.sequenceSpec) << std::endl;
       os << ";   best-of spec " << (csc.bestOfSpec.empty() ? "(off)" : csc.bestOfSpec) << std::endl;
@@ -38,6 +38,8 @@ public:
       os << ";   target type " << (csc.targetTypeName.empty() ? "(all 24)" : csc.targetTypeName) << std::endl;
       os << ";   full detail " << (csc.fullDetail ? "true" : "false") << std::endl;
       os << ";   random seed " << csc.getRandomSeed() << std::endl;
+      
+      os << ";   classify Direct " << (csc.classifyDirect ? "true" : "false") << std::endl;
       return os;
    }
 
@@ -334,6 +336,29 @@ public:
          }
       );
 
+      // DIAGNOSEPAIR parent child -- e.g. "DIAGNOSEPAIR O4 T5". Runs
+// DiagnoseParentAgainstChildWinner (DiagnoseNesting.h) on every input
+// cell and exits. Empty by default.
+      InputHandler::registerHandler("DIAGNOSEPAIR", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            diagnoseParent.clear();
+            diagnoseChild.clear();
+            std::istringstream istr(value);
+            istr >> diagnoseParent >> diagnoseChild;
+            diagnoseParent = LRL_StringTools::strToupper(diagnoseParent);
+            diagnoseChild = LRL_StringTools::strToupper(diagnoseChild);
+         }
+      );
+
+      InputHandler::registerHandler("PRECISION", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            std::istringstream istr(value);
+            int n = 0;
+            istr >> n;
+            outputPrecision = (n < 0) ? 0 : n;
+         });
+
+
       // SEED / RANDOMSEED moved to BaseControlVariables.h (2026-08-29) --
       // registered there instead of here so every program built on this
       // framework gets it, not just CmdSella. randomSeed/getRandomSeed()
@@ -378,6 +403,13 @@ public:
    std::string getTargetTypeName() const { return targetTypeName; }
    bool shouldRestrictTypes() const { return !targetTypeName.empty(); }
    bool shouldShowFullDetail() const { return fullDetail; }
+
+   bool shouldDiagnosePair() const { return !diagnoseParent.empty() && !diagnoseChild.empty(); }
+   std::string getDiagnoseParent() const { return diagnoseParent; }
+   std::string getDiagnoseChild() const { return diagnoseChild; }
+
+   int getOutputPrecision() const { return outputPrecision; }
+   bool useExtendedPrecision() const { return outputPrecision > 0; }
 
 private:
 
@@ -488,7 +520,7 @@ private:
    std::vector<std::string> requestedTypes;  // empty == show all (see TYPES handler above)
    std::string seedBoundariesMode;  // "", "PRINT", or "USE" (see SEEDBOUNDARIES handler above)
    bool useTestHarness = false;
-   bool classifyDirect = true;
+   bool classifyDirect = false;
    std::string sequenceSpec;   // "" == off (see SEQUENCE handler above)
    std::string bestOfSpec;     // "" == off (see BESTOF handler above)
    std::string targetTypeName; // "" == loop all 24 (see TARGETTYPE handler above)
@@ -498,6 +530,13 @@ private:
    // nestingDelta above. Needs checking against real method-comparison
    // data once the method-library research (chat, Sept 2026) has some.
    double nearTieEpsilon = 1.0E-4;
+
+
+   std::string diagnoseParent;  // "" == off (see DIAGNOSEPAIR handler)
+   std::string diagnoseChild;
+
+   int outputPrecision = 0;   // 0 = current formatting
+
 };
 
 #endif // INPUTHANDLER_CMD_SELLA_FEATURES_H

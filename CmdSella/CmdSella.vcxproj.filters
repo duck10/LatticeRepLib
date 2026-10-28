@@ -40,9 +40,6 @@
     <ClInclude Include="FlexibleSellaTestMode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeloneFitComputation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ExpandAcrossBoundaryZeros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -83,6 +80,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MethodLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiagnoseNesting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

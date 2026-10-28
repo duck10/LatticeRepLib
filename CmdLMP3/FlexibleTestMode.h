@@ -196,7 +196,10 @@ private:
          return;
       }
 
-      std::cout << "   ; Found " << results.size() << " results" << std::endl;
+      if (controls.shouldShowDetails())
+      {
+         std::cout << "   ; Found " << results.size() << " results" << std::endl;
+      }
 
       // Use production display dispatch so test output matches production exactly
       displayMatchResult(mr.layer2, controls, mr.reference, mr.mobile);

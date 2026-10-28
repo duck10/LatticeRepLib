@@ -53,6 +53,8 @@
 #include "SearchAllBoundaryTies.h"
 #include "SearchBoundaryNeighborsByTransform.h"
 
+#include "DiagnoseNesting.h"
+
 
 #include "StoreResults.h"
 #include "MethodLibrary.h"
@@ -171,6 +173,12 @@
 // (now defined in DeloneFitComputation.cpp, in SellaLib -- see that
 // file's header comment for why it moved) inlines "" directly instead.
 
+inline std::string FormatS6Precise(const S6& s, const int precision) {
+   std::ostringstream os;
+   os << std::fixed << std::setprecision(precision) << "S";
+   for (size_t i = 0; i < 6; ++i) os << " " << s[i];
+   return os.str();
+}
 
 std::vector<std::pair<std::string, double> > DeloneFitToScores(const std::vector< DeloneFitResults>& fits) {
 
@@ -256,13 +264,21 @@ std::tuple<std::string, std::string, std::string> ProcessSella(
    std::cout << "; " << input.GetInput() << " input data" << std::endl << std::endl;
 
    std::cout << "Fits for Types" << std::endl;
-   for (const auto xxxx : vDeloneFitResultsForOneInputLattice) {
-      if (!controls.shouldShowType(xxxx.GetGeneralType())) continue;
-      std::cout << xxxx.GetBravaisType() << " ";
-      std::cout << xxxx.GetDeloneType() << " ";
-      std::cout << xxxx.GetGeneralType() << " ";
-      std::cout << xxxx.GetRawFit() << " ";
-      std::cout << std::endl;
+   for (const auto& fit : vDeloneFitResultsForOneInputLattice) {
+      if (!controls.shouldShowType(fit.GetGeneralType())) continue;
+      std::cout << fit.GetBravaisType() << " ";
+      std::cout << fit.GetDeloneType() << " ";
+      std::cout << fit.GetGeneralType() << " ";
+      if (controls.useExtendedPrecision()) {
+         const int p = controls.getOutputPrecision();
+         std::cout << std::fixed << std::setprecision(p) << fit.GetRawFit() << std::endl;
+         std::cout << ";    candidate " << FormatS6Precise(fit.GetWinningCandidate(), p) << std::endl;
+         std::cout << ";    projected " << FormatS6Precise(fit.GetBestFit(), p) << std::endl;
+         std::cout << std::defaultfloat << std::setprecision(6);
+      }
+      else {
+         std::cout << fit.GetRawFit() << " " << std::endl;
+      }
    }
 
    const std::vector<DeloneFitResults> vFilteredDeloneFitResults =
@@ -768,7 +784,18 @@ int main(int argc, char* argv[])
       exit(0);
    }
 
+
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
+
+
+   if (controls.shouldDiagnosePair()) {
+      for (const auto& inputCell : inputList) {
+         DiagnoseParentAgainstChildWinner(inputCell,
+            controls.getDiagnoseParent(), controls.getDiagnoseChild());
+      }
+      exit(0);
+   }
+
 
    // NEW: method-library research pipeline (see chat, Sept 2026) --
    // separate from classifydirect and the existing SellaFit pipeline,

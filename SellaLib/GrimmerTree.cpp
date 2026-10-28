@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
+#include <iostream>
 #include <map>
 #include <set>
 #include <sstream>
@@ -406,24 +407,60 @@ std::string wrapInGroup(const std::string& content, const std::string& id, int t
 
 
 
+// Lattice containment between Bravais types, derived from projector-form
+// containment of the CreatePrjs library (every lattice of each listed child
+// type is also a lattice of the parent). Lists are transitively closed, so
+// one pass suffices.
+static const std::map<std::string, std::vector<std::string>>& BravaisContainment() {
+   static const std::map<std::string, std::vector<std::string>> contains = {
+      { "hR", { "cI", "cF", "cP" } },
+      { "tI", { "cI", "cF" } },
+      { "tP", { "cP" } },
+      { "oF", { "cI", "cF", "tI" } },
+      { "oI", { "cI", "cF", "tI" } },
+      { "oC", { "cP", "tP", "hP" } },
+      { "oP", { "cP", "tP" } },
+      { "mC", { "cI", "cF", "cP", "hR", "tI", "tP", "oF", "oI", "oC", "hP" } },
+      { "mP", { "cP", "tP", "oC", "oP", "hP" } },
+      { "aP", { "cI", "cF", "cP", "hR", "tI", "tP", "oF", "oI", "oC", "oP", "mC", "mP", "hP" } }
+   };
+   return contains;
+}
+
+// A parent Bravais type's fit is the best over its own Delone types AND over
+// every Bravais type it contains. Each value lowered by containment is
+// reported, so search gaps stay visible.
+static std::map<std::string, double> ApplyBravaisContainment(
+   const std::map<std::string, double>& siblingMinima) {
+   std::map<std::string, double> closed = siblingMinima;
+   for (const auto& entry : BravaisContainment()) {
+      const std::string& parent = entry.first;
+      const auto parentIt = siblingMinima.find(parent);
+      if (parentIt == siblingMinima.end()) continue;
+      for (const auto& child : entry.second) {
+         const auto childIt = siblingMinima.find(child);
+         if (childIt == siblingMinima.end()) continue;
+         if (childIt->second < closed[parent]) {
+            std::cout << "; containment: " << parent << " lowered from " << parentIt->second
+               << " to " << childIt->second << " via " << child << std::endl;
+            closed[parent] = childIt->second;
+         }
+      }
+   }
+   return closed;
+}
+
 std::map<std::string, double> MapOfBravaisFits::CreateMapOFBravaisFits(std::vector<DeloneFitResults>& fits) {
    std::map<std::string, double> valuemap;
    for (const auto& fit : fits) {
       const double fitvalue = fit.GetRawFit();
-      const std::string bravaisName = fit.GetBravaisType();   // was fit.GetDeloneType()
-      if (valuemap.find(bravaisName) == valuemap.end()) {
+      const std::string bravaisName = fit.GetBravaisType();
+      if (valuemap.find(bravaisName) == valuemap.end() || valuemap[bravaisName] > fitvalue) {
          valuemap[bravaisName] = fitvalue;
       }
-      else
-      {
-         if (valuemap[bravaisName] > fitvalue)
-         {
-            valuemap[bravaisName] = fitvalue;
-         }
-      }
    }
-   m_valuemap = valuemap;
-   return valuemap;
+   m_valuemap = ApplyBravaisContainment(valuemap);
+   return m_valuemap;
 }
 
 std::map<std::string, double> MapOFDeloneFits::CreateMapOFDeloneFits(std::vector<DeloneFitResults>& fits) {

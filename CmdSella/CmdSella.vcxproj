@@ -167,8 +167,8 @@
   <ItemGroup>
     <ClInclude Include="CheckABReflection.h" />
     <ClInclude Include="CompareBoundaryTransformsTest.h" />
-    <ClInclude Include="DeloneFitComputation.h" />
     <ClInclude Include="DiagnoseBoundaryCandidates.h" />
+    <ClInclude Include="DiagnoseNesting.h" />
     <ClInclude Include="DiagnoseO1BCoverage.h" />
     <ClInclude Include="DiagnoseO2Gap.h" />
     <ClInclude Include="DirectClassify.h" />

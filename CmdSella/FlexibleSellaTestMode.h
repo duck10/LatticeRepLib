@@ -665,30 +665,30 @@ public:
       }
 
       // Test 8 -- the O1B/O2/O3 boundary-point fixture that originally
-      // motivated this session (SELLA_handoff.md item 1). Deliberately left
-      // as a MANUAL test (no expectations): the handoff explicitly warns
-      // against guessing parentage (which type nests inside which) from the
-      // Delone-grid SVG's letter patterns -- that was tried twice and got
-      // it wrong. Once parentage is established the reliable way (testing
-      // whether a candidate parent's projector leaves a candidate child's
-      // canonical representative unchanged across the 24-reflection orbit,
-      // per SellaBuild::vDeloneTypes / LabeledDeloneTypeMatrices), replace
-      // this with a NestingInequalityExpectation(parent, child) -- the
-      // machinery for that check is already implemented above.
+      // motivated this session (SELLA_handoff.md item 1). The cell is an
+      // exact O3 point whose reduced form has the pattern ab0ab0, which lies
+      // on an O1B form and, after a face permutation, on an O2 form. All
+      // three fits must therefore be zero (was O1B=10 before the
+      // boundary-transform fix).
+      // Parentage (checked 2026-10-10 from the projector forms): every O3
+      // lattice is O1B and O2, but of O3's 9 forms, 3 lie on O1B forms and
+      // 6 on O2 forms, none on both. A general NestingInequalityExpectation
+      // (O1B or O2 over O3) is valid only after the missing face-crossed
+      // projectors are added (O1B 6, O2 3); until then use exact-fit ranges.
       {
          FlexibleSellaTestCase test8("O1B_O2_O3_BoundaryPoint",
-            "Ready-made regression fixture for the original motivating "
-            "issue: at this exact boundary point the raw fit table gives "
-            "O1B=10, O2=0, O3=0, apparently violating fit(O1B) <= fit(O3) "
-            "if O3 nests inside O1B -- but that parentage has NOT been "
-            "verified (see SELLA_handoff.md item 1). Left MANUAL on "
-            "purpose: do not add a NestingInequalityExpectation here until "
-            "parentage is confirmed via the projector-invariance test, not "
-            "by reading the SVG.");
+            "Exact O3 point S -10 -20 0 -10 -20 0 (form ab0ab0): O1B, O2 and O3 "
+            "must all fit at zero. Original motivating issue: the raw fit table "
+            "gave O1B=10, O2=0, O3=0. Now a regression guard.");
          test8.addInputCell(LatticeCell("S -10 -20 0 -10 -20 0"));
+         static const char* const o3Family8[3] = { "O1B", "O2", "O3" };
+         for (size_t t = 0; t < 3; ++t) {
+            test8.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+               o3Family8[t], 0.0, 1.0E-6, 0,
+               std::string(o3Family8[t]) + " exactly 0 on exact O3 point"));
+         }
          addTestCase(test8);
       }
-
       // Test 9 -- O2 within-type library gap, minimal 3-cell fixture
             // (confirmed live this session via CmdSella COMPARE, TYPES O2 O3 O1B).
             // Cell 1 is the exact O3 boundary point (baseline), given in its own
@@ -824,13 +824,15 @@ public:
       // kind of chain failure). Cell 1 (the exact, degenerate M3 point)
       // is NOT asserted here -- its HasFailure() status was not part of
       // Test 14's dump and remains unchecked.
+
+      
       {
          FlexibleSellaTestCase test11("M1B_M2A_OrientationSwap_M3Boundary",
-            "M1B/M2A best-fit rank flips near an M3 boundary point, same "
-            "signature as the O1B/O2/O3 case. M3 and M2B themselves stay "
-            "stable throughout (not part of the instability). Expected "
-            "to keep FAILING until Remediation-style correction is "
-            "confirmed for this pair (not yet attempted).");
+            "M1B/M2A near an M3 boundary point, same signature as the O1B/O2/O3 case. "
+            "M3 and M2B stay stable throughout. Cell 2 must show no chain violation. "
+            "Cell 3 had an oC>tP violation (28.6862 vs 28.6679); it is now resolved by "
+            "Bravais containment (oC includes tP's lattices). M1B/M2A best-fit rank "
+            "must not flip across the three cells. Now a regression guard.");
          test11.addInputCell(LatticeCell("S -43.40350 -47.63950 0.00000 -28.62950 -43.40350 -0.00000"));  // cell 1: exact M3 point (round-trip UNCHECKED, see caveat above)
          test11.addInputCell(LatticeCell("S -47.59416 -28.66333 -0.02968 -43.33617 -43.38776 -0.05159"));  // cell 2: normal (M2A=0.06319, M1B=3.01090)
          test11.addInputCell(LatticeCell("S -47.62349 -43.35998 -0.01838 -28.66778 -43.42698 -0.04721"));  // cell 3: swap (M1B=0.05157, M2A=2.96744)
@@ -839,8 +841,10 @@ public:
             "M1B/M2A best-fit rank must not flip across these three cells"));
          test11.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
             false, 1, "normal point (cell 2): no chain violation, confirmed via Test 14"));
+         // 2026-10-10: cell 3's violation was oC > tP (28.6862 vs 28.6679);
+         // resolved by Bravais containment (oC includes tP's lattices).
          test11.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
-            true, 2, "swap point (cell 3): real chain violation, confirmed via Test 14"));
+            false, 2, "swap point (cell 3): oC>tP violation resolved by containment"));
          addTestCase(test11);
       }
 
@@ -1178,9 +1182,11 @@ public:
          test20.addInputCell(LatticeCell("P  3.345  3.397  1.230  91.705 101.386 151.360"));
          test20.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
             false, 0, "no chain violation, before or after remediation"));
+         // 2026-10-10: the old 0.124645 came from a candidate setting with a
+         // scalar of +9.97 (10x the 10%-of-|S6| limit of 1.01 for this cell).
          test20.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "M2A", 0.1240, 0.1250, 0,
-            "M2A widened into the shortlist by RemediateIfShortlistChanges (observed 0.124645)"));
+            "M2A", 0.2075, 0.2085, 0,
+            "M2A inside-cone fit (observed 0.208044); was 0.124645 from a far-outside setting"));
          addTestCase(test20);
       }
 
@@ -1224,51 +1230,314 @@ public:
          addTestCase(test21);
       }
 
-      // Test 22 -- mP (M4) search-coverage gap. CONFIRMED this session
-      // (2026-08-27) via TestHarness.h's RunStabilityTrace: on both cells
-      // below, RunStabilityTrace's very first search step lands exactly
-      // on the true minimum and holds it for 30 rounds (residual deltas
-      // at 1e-14 floating-point-noise scale). At the time, Remediation168
-      // reported a distinctly worse fit -- 13.0716 vs. true 9.243 on cell
-      // 1, 49.3992 vs. true 34.9305 on cell 2.
-      //
-      // RESOLVED 2026-08-27, same day, before this test was even first
-      // run: M4 now reaches the true minimum on both cells (9.23988,
-      // 34.926) -- confirmed live, matching the pattern already seen for
-      // Tests 2-7 (oC-vs-tP) and Tests 17/21 (R1/R3): three separate
-      // previously-confirmed problems all turned out already fixed when
-      // actually tested, none touched deliberately this session. Cause
-      // not confirmed -- plausibly the same general 2-hop Remediation
-      // search widening (RemediatedFit.h), but that's inference. Nesting
-      // itself was always fine (M4 genuinely nests O4); this was a
-      // candidate-generation gap in Remediation168's search for M4
-      // specifically, apparently since fixed.
-      //
-      // Cells originally identified in G6 form (RunStabilityTrace
-      // output); converted to P form via `checkinput` (Larry,
-      // 2026-08-27) since LatticeCell's accepted string prefixes were
-      // not confirmed for G6 this session:
-      //   G6 36.972 106.683 106.683 18.486 36.972 36.972   -> cell 1 below
-      //   G6 139.722 187.104 187.104 69.861 139.722 139.722 -> cell 2 below
-      //
-      // Bounds stay tight around the TRUE minimum -- now a regression
-      // guard: if Remediation168's search regresses and lands short of
-      // the true minimum again, this should go back to failing.
+      // Test 22 -- M4 on two cells. HISTORY: Remediation168 reported 13.0716
+      // and 49.3992 (2026-08-27), later "fixed" to 9.243 and 34.9305. The
+      // 2026-10-10 analysis showed those lower values came from points with
+      // a scalar of +97 and +152 (cells with |S6| 126 and 180) -- far outside
+      // the reduced cone. With far-outside candidate settings rejected, the
+      // fits return to the inside-cone values 13.0685 and 49.3934. This test
+      // now guards those.
       {
-         FlexibleSellaTestCase test22("M4_ReachesTrueMinimum_Remediation168",
-            "M4's true minimum was missed by Remediation168 as of "
-            "2026-08-27 (13.0716 vs true 9.243, 49.3992 vs true 34.9305), "
-            "but now reaches it -- confirmed same day. Regression guard: "
-            "should stay passing.");
-         test22.addInputCell(LatticeCell("P 6.080 10.329 10.329 85.030 72.882 72.882"));    // true M4 min 9.243, was Remediation168-reported 13.0716
-         test22.addInputCell(LatticeCell("P 11.820 13.679 13.679 79.240 64.401 64.401"));   // true M4 min 34.9305, was Remediation168-reported 49.3992
+         FlexibleSellaTestCase test22("M4_InsideConeFits_NotFarOutside",
+            "M4 must stay at the inside-cone values (13.0685, 49.3934), not "
+            "drop to the far-outside values 9.24 / 34.93.");
+         test22.addInputCell(LatticeCell("P 6.080 10.329 10.329 85.030 72.882 72.882"));
+         test22.addInputCell(LatticeCell("P 11.820 13.679 13.679 79.240 64.401 64.401"));
          test22.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "M4", 9.0, 9.5, 0,
-            "should stay at true minimum ~9.243, not regress toward old 13.0716"));
+            "M4", 13.06, 13.08, 0,
+            "inside-cone M4 fit 13.0685 (far-outside value was 9.24)"));
          test22.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "M4", 34.5, 35.5, 1,
-            "should stay at true minimum ~34.9305, not regress toward old 49.3992"));
+            "M4", 49.38, 49.41, 1,
+            "inside-cone M4 fit 49.3934 (far-outside value was 34.93)"));
          addTestCase(test22);
+      }
+
+      // Test 23 -- exact O3 cells from `cmdgen 10 O3` (originally run
+      // 2026-08-16; re-run 2026-10-09 through the main pipeline with
+      // CLASSIFYDIRECT FALSE, TYPES O3 O2 O1B). All three types should fit
+      // an exact O3 cell at ~0: O3 trivially, O1B and O2 because O3 lies on
+      // their boundary. Input is rounded to 3 decimals, which by itself
+      // produces fits of ~1e-4 to ~1e-3 (observed 2e-4 to 9e-4 on the good
+      // cells), so the [0, 0.01] window is about ten times that noise.
+      //
+      // Cell 1 is the one sample of the ten that still fails: O2 = 1.24496
+      // vs O1B 0.00075 / O3 0.00087. Same value as in the August run --
+      // untouched by every remediation change since. Its angles are near
+      // 120, and O2's best projection lands on the cF/oF/tI junction cell
+      // (9.103 9.103 9.103 120 120 90, same 1.24496 as cF/oF/tI), i.e. O2
+      // reaches this O3 point only through the orientation that passes
+      // through cF. Expected to FAIL until that is fixed.
+      //
+      // Cells 2-4 are passing samples from the same batch, kept as
+      // regression guards. Cell 4's O2 winner is a strongly transformed
+      // representation (9.227 13.108 11.335 ...), so it also guards the
+      // remediation path, not only the direct projector fit.
+      {
+         FlexibleSellaTestCase test23("ExactO3Cells_O1B_O2_O3_NearZero",
+            "Exact O3 cells from cmdgen 10 O3: O1B, O2 and O3 should all fit "
+            "at ~0 (window [0, 0.01], ~10x the 3-decimal rounding noise). "
+            "Cell 1 (angles near 120, near the cF/tI junction) still gives "
+            "O2 = 1.245 -- unchanged since August -- and is expected to FAIL "
+            "until fixed. Cells 2-4 currently pass and guard against "
+            "regression.");
+         test23.addInputCell(LatticeCell("P  9.103  9.103  9.103 119.504 120.498 90.000"));  // cell 1: FAILS (O2 1.24496)
+         test23.addInputCell(LatticeCell("P  9.030  9.030  9.030 117.884 122.162 90.000"));  // cell 2: passes (~2e-4)
+         test23.addInputCell(LatticeCell("P  8.608  8.608  8.608 111.647 129.132 90.000"));  // cell 3: passes (~4e-4)
+         test23.addInputCell(LatticeCell("P 11.335 11.335 11.335 109.351 131.963 90.000"));  // cell 4: passes (~9e-4)
+         static const char* const o3Family[3] = { "O1B", "O2", "O3" };
+         for (size_t cell = 0; cell < 4; ++cell) {
+            for (size_t t = 0; t < 3; ++t) {
+               test23.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+                  o3Family[t], 0.0, 0.01, cell,
+                  std::string(o3Family[t]) + " ~0 on exact O3 cell " + std::to_string(cell + 1)));
+            }
+         }
+         addTestCase(test23);
+      }
+
+      // Test 24 -- 20 M4 cells, each a genuine 10% orthogonal S6 perturbation
+      // of a cmdgen M4 cell (cmdgen 20 M4 | cmdperturb 1 100, after the
+      // 2026-10-10 CmdPerturb fallback fix; every output verified at exactly
+      // 0.100 of its parent's S6 length). Expected values are the 2026-10-10
+      // results after rejecting candidate settings whose largest scalar exceeds
+      // 10% of |S6| (Remediation168ForOneSubtype). Before that filter, all 20
+      // came from points 19 to 99 outside the reduced cone and were 15-40%
+      // lower. Each value is also <= the distance to its own known M4 parent.
+      {
+         FlexibleSellaTestCase test24("M4_Perturbed10pct_InsideConeFits",
+            "20 genuine 10% perturbations of cmdgen M4 cells. M4 fit must match "
+            "the inside-cone (filtered) value within 0.005 -- guards against "
+            "far-outside candidate settings returning.");
+         test24.addInputCell(LatticeCell("P     7.531     8.559     8.810    93.967    87.746   122.429"));
+         test24.addInputCell(LatticeCell("P     7.613     7.968     8.625    89.643    86.978   114.713"));
+         test24.addInputCell(LatticeCell("P     8.175    11.195     1.979    74.018    94.635   115.416"));
+         test24.addInputCell(LatticeCell("P     8.216     8.762     6.196    85.817    85.743   145.338"));
+         test24.addInputCell(LatticeCell("P     8.247     7.876     5.429    86.058    89.148    91.891"));
+         test24.addInputCell(LatticeCell("P     8.971     7.324     5.386    91.526    97.263    95.398"));
+         test24.addInputCell(LatticeCell("P     9.128     8.080     2.019   100.035    77.050   107.182"));
+         test24.addInputCell(LatticeCell("P     9.182    11.702     6.396    83.638    87.358   132.657"));
+         test24.addInputCell(LatticeCell("P     9.432    11.535     8.412    86.898    93.129   124.107"));
+         test24.addInputCell(LatticeCell("P     9.696    12.229     6.336    85.283    80.983   126.615"));
+         test24.addInputCell(LatticeCell("P     9.852    12.953     3.185    86.241    96.666   123.350"));
+         test24.addInputCell(LatticeCell("P    10.033     9.318     3.526    83.034    90.830    99.547"));
+         test24.addInputCell(LatticeCell("P    10.580     7.484     2.934    82.709    77.196   119.320"));
+         test24.addInputCell(LatticeCell("P    10.652    13.117     2.201    76.330    64.400   129.005"));
+         test24.addInputCell(LatticeCell("P    10.702     8.848     4.749    87.214    87.218   114.318"));
+         test24.addInputCell(LatticeCell("P    11.025    11.252     5.658    96.462    83.404   103.515"));
+         test24.addInputCell(LatticeCell("P    11.328    10.505     3.813    90.328    98.333   101.100"));
+         test24.addInputCell(LatticeCell("P    12.099    11.380     4.626    93.780    94.957   131.093"));
+         test24.addInputCell(LatticeCell("P    13.159    12.314     6.516    87.034    96.041   111.932"));
+         test24.addInputCell(LatticeCell("P    13.321    11.490     4.172    90.883    86.579   126.717"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 3.68373, 3.69373, 0, "inside-cone M4 fit 3.68873"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 3.48305, 3.49305, 1, "inside-cone M4 fit 3.48805"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 1.56883, 1.57883, 2, "inside-cone M4 fit 1.57383"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 5.46865, 5.47865, 3, "inside-cone M4 fit 5.47365"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 1.61565, 1.62565, 4, "inside-cone M4 fit 1.62065"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 5.16097, 5.17097, 5, "inside-cone M4 fit 5.16597"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 1.22990, 1.23990, 6, "inside-cone M4 fit 1.23490"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 8.71929, 8.72929, 7, "inside-cone M4 fit 8.72429"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 4.42245, 4.43245, 8, "inside-cone M4 fit 4.42745"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 11.54077, 11.55077, 9, "inside-cone M4 fit 11.54577"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 2.85765, 2.86765, 10, "inside-cone M4 fit 2.86265"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 3.50486, 3.51486, 11, "inside-cone M4 fit 3.50986"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 2.02185, 2.03185, 12, "inside-cone M4 fit 2.02685"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 2.02646, 2.03646, 13, "inside-cone M4 fit 2.03146"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 3.19755, 3.20755, 14, "inside-cone M4 fit 3.20255"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 7.15999, 7.16999, 15, "inside-cone M4 fit 7.16499"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 6.25909, 6.26909, 16, "inside-cone M4 fit 6.26409"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 5.94767, 5.95767, 17, "inside-cone M4 fit 5.95267"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 6.39601, 6.40601, 18, "inside-cone M4 fit 6.40101"));
+         test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M4", 2.67634, 2.68634, 19, "inside-cone M4 fit 2.68134"));
+         addTestCase(test24);
+      }
+
+      // Test 25 -- 22 cells near the O1B/O2/O3 boundary (from the
+      // 2026-10-10 COMPARE run). Expected values are PREDICTED for the
+      // filtered search (same method that reproduced Test 24's 20 values
+      // to 4 decimals); confirm on the first run. O2 rises on 15 of 22
+      // cells versus the unfiltered search, whose O2 points were 25-46
+      // outside the cone. NOTE: O2 > O3 on several cells is expected until
+      // O2's projector list gains its missing face-crossed forms (3 forms,
+      // all on O1B/O3 forms) -- do not add an O2 <= O3 nesting check yet.
+      {
+         FlexibleSellaTestCase test25("O1B_O2_O3_Cluster_InsideConeFits",
+            "22 cells near the O1B/O2/O3 boundary. O1B, O2, O3 fits must match "
+            "the filtered-search values within 0.005.");
+         test25.addInputCell(LatticeCell("S -43.40350 -38.13450 0.00000 -38.13450 -43.40350 -0.00000"));
+         test25.addInputCell(LatticeCell("S -35.66501 -32.05498 -0.70909 -37.39343 -38.40192 -4.78523"));
+         test25.addInputCell(LatticeCell("S -41.64855 -30.13990 -4.98163 -30.20533 -42.94219 -4.11050"));
+         test25.addInputCell(LatticeCell("S -33.37402 -40.51017 -2.93534 -36.06738 -41.04267 -5.46859"));
+         test25.addInputCell(LatticeCell("S -37.20884 -31.66894 -4.90828 -35.48589 -38.59513 -8.75683"));
+         test25.addInputCell(LatticeCell("S -36.91726 -39.58748 -0.31677 -37.93953 -37.06459 -2.91900"));
+         test25.addInputCell(LatticeCell("S -36.12952 -38.66622 -1.81097 -41.96920 -45.78201 -4.02314"));
+         test25.addInputCell(LatticeCell("S -29.64020 -36.15816 -5.21508 -38.85461 -36.80094 -1.28571"));
+         test25.addInputCell(LatticeCell("S -39.21542 -29.93236 -2.48184 -40.43034 -40.36510 -3.10222"));
+         test25.addInputCell(LatticeCell("S -38.23595 -30.62884 -2.52444 -29.30673 -37.94946 -6.44290"));
+         test25.addInputCell(LatticeCell("S -40.27396 -36.00550 -0.32174 -46.50095 -38.32976 -5.06335"));
+         test25.addInputCell(LatticeCell("S -27.33250 -46.76050 0.00000 -27.33250 -46.76050 0.00000"));
+         test25.addInputCell(LatticeCell("S -19.09182 -25.70450 -4.63218 -44.53773 -39.44671 -5.95650"));
+         test25.addInputCell(LatticeCell("S -37.68675 -24.61739 -4.36708 -21.31871 -45.39452 -4.70646"));
+         test25.addInputCell(LatticeCell("S -25.49638 -48.44328 -5.40932 -24.36373 -47.25758 -3.71168"));
+         test25.addInputCell(LatticeCell("S -42.68949 -24.65813 -9.16684 -19.34947 -40.91043 -4.90237"));
+         test25.addInputCell(LatticeCell("S -23.77561 -22.99289 -1.25834 -42.36701 -51.16149 -0.92580"));
+         test25.addInputCell(LatticeCell("S -23.83560 -43.32917 -1.28589 -31.79002 -49.01062 -2.77500"));
+         test25.addInputCell(LatticeCell("S -23.53057 -48.87165 -0.54992 -30.41265 -44.44479 -4.91463"));
+         test25.addInputCell(LatticeCell("S -46.47390 -23.85286 -4.98516 -26.83013 -38.21334 -3.32396"));
+         test25.addInputCell(LatticeCell("S -43.24616 -19.55483 -4.67494 -23.07062 -37.81048 -5.95627"));
+         test25.addInputCell(LatticeCell("S -20.79748 -18.41420 -4.39473 -42.09021 -45.92328 -5.46142"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 0.00000, 0.00100, 0, "O1B filtered fit 0.00000"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 0.00000, 0.00100, 0, "O2 filtered fit 0.00000"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 0.00000, 0.00100, 0, "O3 filtered fit 0.00000"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 4.26656, 4.27656, 1, "O1B filtered fit 4.27156"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 4.29589, 4.30589, 1, "O2 filtered fit 4.30089"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 4.90849, 4.91849, 1, "O3 filtered fit 4.91349"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 3.63467, 3.64467, 2, "O1B filtered fit 3.63967"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 5.06013, 5.07013, 2, "O2 filtered fit 5.06513"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 4.29546, 4.30546, 2, "O3 filtered fit 4.30046"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 2.63651, 2.64651, 3, "O1B filtered fit 2.64151"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 3.18659, 3.19659, 3, "O2 filtered fit 3.19159"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 4.33118, 4.34118, 3, "O3 filtered fit 4.33618"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 5.72876, 5.73876, 4, "O1B filtered fit 5.73376"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 5.68153, 5.69153, 4, "O2 filtered fit 5.68653"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 6.86144, 6.87144, 4, "O3 filtered fit 6.86644"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 1.18617, 1.19617, 5, "O1B filtered fit 1.19117"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.20705, 1.21705, 5, "O2 filtered fit 1.21205"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 2.86566, 2.87566, 5, "O3 filtered fit 2.87066"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 4.30534, 4.31534, 6, "O1B filtered fit 4.31034"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 5.15948, 5.16948, 6, "O2 filtered fit 5.16448"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 4.31466, 4.32466, 6, "O3 filtered fit 4.31966"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 4.91203, 4.92203, 7, "O1B filtered fit 4.91703"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 4.99537, 5.00537, 7, "O2 filtered fit 5.00037"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 6.35453, 6.36453, 7, "O3 filtered fit 6.35953"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 6.91610, 6.92610, 8, "O1B filtered fit 6.92110"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 7.25541, 7.26541, 8, "O2 filtered fit 7.26041"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 7.04015, 7.05015, 8, "O3 filtered fit 7.04515"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 2.02020, 2.03020, 9, "O1B filtered fit 2.02520"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 2.69460, 2.70460, 9, "O2 filtered fit 2.69960"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 4.75338, 4.76338, 9, "O3 filtered fit 4.75838"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 5.76823, 5.77823, 10, "O1B filtered fit 5.77323"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 6.67120, 6.68120, 10, "O2 filtered fit 6.67620"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 6.67895, 6.68895, 10, "O3 filtered fit 6.68395"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 0.00000, 0.00100, 11, "O1B filtered fit 0.00000"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 0.00000, 0.00100, 11, "O2 filtered fit 0.00000"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 0.00000, 0.00100, 11, "O3 filtered fit 0.00000"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 7.24503, 7.25503, 12, "O1B filtered fit 7.25003"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 8.37968, 8.38968, 12, "O2 filtered fit 8.38468"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 7.61300, 7.62300, 12, "O3 filtered fit 7.61800"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 6.67940, 6.68940, 13, "O1B filtered fit 6.68440"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 7.35821, 7.36821, 13, "O2 filtered fit 7.36321"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 7.36603, 7.37603, 13, "O3 filtered fit 7.37103"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 1.66395, 1.67395, 14, "O1B filtered fit 1.66895"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 2.05081, 2.06081, 14, "O2 filtered fit 2.05581"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 4.23799, 4.24799, 14, "O3 filtered fit 4.24299"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 7.59032, 7.60032, 15, "O1B filtered fit 7.59532"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 9.98021, 9.99021, 15, "O2 filtered fit 9.98521"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 7.60371, 7.61371, 15, "O3 filtered fit 7.60871"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 6.27245, 6.28245, 16, "O1B filtered fit 6.27745"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 6.30649, 6.31649, 16, "O2 filtered fit 6.31149"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 6.31524, 6.32524, 16, "O3 filtered fit 6.32024"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 6.98675, 6.99675, 17, "O1B filtered fit 6.99175"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 7.06559, 7.07559, 17, "O2 filtered fit 7.07059"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 7.18157, 7.19157, 17, "O3 filtered fit 7.18657"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 6.55285, 6.56285, 18, "O1B filtered fit 6.55785"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 7.24281, 7.25281, 18, "O2 filtered fit 7.24781"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 7.26364, 7.27364, 18, "O3 filtered fit 7.26864"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 7.13478, 7.14478, 19, "O1B filtered fit 7.13978"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 7.95756, 7.96756, 19, "O2 filtered fit 7.96256"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 7.23094, 7.24094, 19, "O3 filtered fit 7.23594"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 5.64135, 5.65135, 20, "O1B filtered fit 5.64635"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 6.53784, 6.54784, 20, "O2 filtered fit 6.54284"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 6.66213, 6.67213, 20, "O3 filtered fit 6.66713"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 5.00497, 5.01497, 21, "O1B filtered fit 5.00997"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 6.32061, 6.33061, 21, "O2 filtered fit 6.32561"));
+         test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 5.53013, 5.54013, 21, "O3 filtered fit 5.53513"));
+         addTestCase(test25);
       }
 
    }

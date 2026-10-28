@@ -13,19 +13,49 @@
 // this gap only surfaced now as a link error rather than at either of the
 // earlier compile stages.
 //
-// RemediateIfShortlistChanges and SearchForToCanon moved here too, since
-// ComputeDeloneFits calls both directly and neither has any other call
-// site left in CmdSella.cpp once ComputeDeloneFits itself moves out --
-// both kept internal (static) rather than added to DeloneFitComputation.h,
-// since nothing outside this file needs to call them individually.
+// 2026-10-09 -- UNGATED SEARCH. ComputeDeloneFits used to compute fits in
+// three layers: a raw SellaFit pass (baked per-type projectors applied to
+// the one Selling-reduced representative), RemediateIfShortlistChanges
+// (36-candidate 2-hop Remediation, adopted only when the reported
+// shortlist changed), and a reactive repair loop that ran Remediation168
+// only on a type named by a Grimmer-chain violation. Chain checks compare
+// Bravais nodes, and a Bravais node takes its best Delone sibling, so a
+// type that fits badly next to a well-fitting sibling never triggered a
+// violation and never got the full search.
+//
+// Confirmed case: exact O3 cell P 9.103 9.103 9.103 119.504 120.498 90.000
+// (Test 23, cell 1). Main pipeline gave O2 = 1.24496 (unchanged since
+// Aug 2026); SEQUENCE 168 alone gives O2 = 0.000613, below O3 (0.000866).
+// The method was sufficient; the gate kept it from running.
+//
+// Now every type gets Remediation168ForOneSubtype (VCP candidates plus all
+// 36 two-hop boundary-transform products, iterated with re-reduction)
+// unconditionally and independently. This is the same per-type loop as
+// DirectClassify.h's PopulateDirectFitsForAllTypes, moved into the main
+// pipeline so COMPARE, TYPES, the SVGs and the test suite all use it.
+// Remediation168 starts from the raw SellaFitXXXXXX fit and only accepts
+// improvements, so no type's fit can be worse than the old raw value.
+// After the independent pass, cross-seeding passes rerun every type with
+// all types' winning candidates as extra seeds (see
+// SearchAllTypesWithCrossSeeding) -- this recovers what the old reactive
+// loop's extraSeeds did for one repaired type at a time.
+//
+// GrimmerChains is still built from the final fits and returned (ProcessSella
+// draws from it; tests read HasFailure()), but there is no repair loop any
+// more: every type has already had the full search, so a remaining chain
+// violation is a real finding (genuine geometric edge case or a gap the
+// 168 search itself cannot close), not a trigger for more searching.
+//
+// SearchForToCanon kept: validation only (throws if a type name is missing
+// from LabeledSellaMatrices), does not affect any fit.
 //
 // selectBravaisCase (a CmdSella.cpp global, always "" and never
-// reassigned anywhere in that file) is inlined as a literal "" below
-// rather than carried over as a second copy of a shared mutable global --
-// simpler, and there was never a second value it actually took.
+// reassigned anywhere in that file) is no longer needed -- the raw
+// SellaFit("", ...) call it fed is gone.
 
 #include "DeloneFitComputation.h"
 #include "DeloneFitFiltering.h"
+#include "GenerateLatticeTypeExamples.h"
 #include "GrimmerTree.h"
 #include "LabeledSellaMatrices.h"
 #include "LatticeConverter.h"
@@ -34,61 +64,11 @@
 #include "S6.h"
 #include "Sella.h"
 
+#include <cmath>
 #include <iostream>
-#include <set>
+#include <memory>
 #include <string>
 #include <vector>
-
-// RemediateIfShortlistChanges -- computes remediated fit for every type in
-// vDeloneFitResultsForOneInputLattice, then checks whether the reported
-// shortlist (GetMatchedTypeNames, the same threshold test ListMatchingTypes
-// uses to decide what gets displayed) would differ if the remediated fits
-// were used instead of the raw ones. Remediated fit is provably <= raw fit
-// (Remediation tries the naive orientation plus 6 boundary-crossed
-// alternatives and keeps the best), so this can only add a correctly-missed
-// type to the shortlist or tighten an existing one, never wrongly demote a
-// genuine match -- adopting it is always safe.
-//
-// Only ADOPTED when it actually changes the shortlist, so unaffected inputs
-// pay the compute cost but produce identical output and no log noise.
-// Returns the fit vector to use going forward: either the original
-// (unchanged) vector, or the fully-remediated vector, never a mix -- so
-// downstream code (SearchForToCanon, the Grimmer-chain loop, printing)
-// always sees one internally consistent set of fits.
-static std::vector<DeloneFitResults> RemediateIfShortlistChanges(
-   const std::vector<DeloneFitResults>& vDeloneFitResultsForOneInputLattice,
-   const S6& oneLattice,
-   const CmdSellaControls& controls,
-   const LatticeCell& input) {
-
-   std::vector<DeloneFitResults> remediatedFitResults;
-   remediatedFitResults.reserve(vDeloneFitResultsForOneInputLattice.size());
-   for (const auto& f : vDeloneFitResultsForOneInputLattice) {
-      remediatedFitResults.emplace_back(
-         Remediation(oneLattice, f.GetGeneralType(), -1.0));
-   }
-
-   const double latticeNorm = oneLattice.norm();
-   const double maxDeltaForMatch = controls.getMaxDeltaForMatch();
-   const std::set<std::string> rawMatchNames = GetMatchedTypeNames(
-      FilterForBestExample(vDeloneFitResultsForOneInputLattice), latticeNorm, maxDeltaForMatch);
-   const std::set<std::string> remediatedMatchNames = GetMatchedTypeNames(
-      FilterForBestExample(remediatedFitResults), latticeNorm, maxDeltaForMatch);
-
-   if (remediatedMatchNames == rawMatchNames) {
-      return vDeloneFitResultsForOneInputLattice;
-   }
-
-   if (controls.shouldDebug()) {
-      std::cout << "; remediation changed shortlist for " << input.GetInput()
-         << " -- raw: ";
-      for (const auto& n : rawMatchNames) std::cout << n << " ";
-      std::cout << " remediated: ";
-      for (const auto& n : remediatedMatchNames) std::cout << n << " ";
-      std::cout << std::endl;
-   }
-   return remediatedFitResults;
-}
 
 static void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
    std::vector<LabeledSellaMatrices> matrices = LabeledSellaMatrices().GetPrjs();
@@ -123,20 +103,108 @@ static void SearchForToCanon(const std::vector<DeloneFitResults>& vfit) {
    }
 }
 
+// SearchAllTypesWithCrossSeeding -- the per-type search itself, before any
+// field filling. Returned fits carry each type's own winning transformed
+// cell in OriginalInput (as Remediation168ForOneSubtype sets it).
+//
+// Pass 0: one independent Remediation168ForOneSubtype per type.
+//
+// Cross-seeding passes (2026-10-09): every type's search is rerun with ALL
+// types' current winning candidates as extraSeeds, keeping a result only
+// if it improves that type's fit; repeated until a pass improves nothing,
+// capped at maxCrossSeedPasses. Reason: a child type's winning
+// representation is also a good representation for any parent it nests
+// in, and independent per-type search throws that away. Confirmed on
+// Test 10 cell 2 (S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403
+// -0.04436): independent search gave M4 = 38.0721 above O4 = 33.2674
+// (M4 nests O4, so a search failure), while the old reactive loop --
+// which seeded Remediation168 with the previously repaired type's winner
+// -- reached M4 = 25.6631. This pass generalizes that seeding to all
+// types, with no type names or nesting tables involved.
+//
+// Ungated on purpose: a cheaper "only rerun if some foreign winner scores
+// better directly" check would miss seeds that win only after the search
+// expands from them, which is plausibly how the old loop found 25.66.
+// Cost is at least one extra full pass per cell; revisit with timing data.
+static std::vector<DeloneFitResults> SearchAllTypesWithCrossSeeding(
+   const S6& oneLattice,
+   const std::vector<std::shared_ptr<GenerateDeloneBase>>& sptypes) {
+
+   static const int maxCrossSeedPasses = 3;
+
+   std::vector<DeloneFitResults> fits;
+   fits.reserve(sptypes.size());
+   for (const auto& sptype : sptypes) {
+      fits.emplace_back(Remediation168ForOneSubtype(oneLattice, sptype, 10, {}));
+   }
+
+   for (int pass = 0; pass < maxCrossSeedPasses; ++pass) {
+      std::vector<S6> winners;
+      winners.reserve(fits.size());
+      for (const auto& f : fits) {
+         winners.push_back(f.GetOriginalInput());
+      }
+
+      bool anyImproved = false;
+      for (size_t i = 0; i < sptypes.size(); ++i) {
+         const DeloneFitResults seeded =
+            Remediation168ForOneSubtype(oneLattice, sptypes[i], 10, winners);
+         if (seeded.GetRawFit() < fits[i].GetRawFit() - 1.0E-8) {
+            fits[i] = seeded;
+            anyImproved = true;
+         }
+      }
+      if (!anyImproved) break;
+   }
+   return fits;
+}
+
+// ComputeFullSearchFitsForAllTypes -- runs SearchAllTypesWithCrossSeeding,
+// then fills in the fields Sella::SellaFit used to set on top of
+// SellaFitXXXXXX (Zscore, ReductionMatrix, Difference, Bravais/Delone/
+// General type names), and sets OriginalInput to the shared reduced input
+// cell -- SearchForToCanon and PrintCompareSummary both assume
+// OriginalInput is identical across every type for one input. Each type's
+// own winning transformed cell is kept separately as WinningCandidate.
+static std::vector<DeloneFitResults> ComputeFullSearchFitsForAllTypes(
+   const S6& oneLattice,
+   const S6& oneErrors,
+   const MatS6& oneReductionMatrix,
+   Sella& sella) {
+
+   static const std::vector<std::shared_ptr<GenerateDeloneBase>> sptypes =
+      GenerateDeloneBase().Select("");
+
+   const std::vector<DeloneFitResults> searched = SearchAllTypesWithCrossSeeding(oneLattice, sptypes);
+
+   std::vector<DeloneFitResults> results;
+   results.reserve(sptypes.size());
+
+   for (size_t i = 0; i < sptypes.size(); ++i) {
+      const std::shared_ptr<GenerateDeloneBase>& sptype = sptypes[i];
+      DeloneFitResults fit = searched[i];
+      fit.SetWinningCandidate(fit.GetOriginalInput());  // capture before
+      // OriginalInput below is repurposed to mean "the shared input cell"
+
+      const double zscore = sella.Zscore(oneLattice - fit.GetBestFit(), oneErrors, oneReductionMatrix)
+         * sqrt(static_cast<double>(sptype->GetFreeParams()));
+      fit.SetZscore(zscore);
+      fit.SetLatticeType(sptype->GetBravaisType());
+      fit.SetDeloneType(sptype->GetName());
+      fit.SetReductionMatrix(oneReductionMatrix);
+      fit.SetBavaisType(sptype->GetBravaisType());
+      fit.SetGeneralType(sptype->GetName());
+      fit.SetDifference(oneLattice - fit.GetBestFit());
+      fit.SetOriginalInput(oneLattice);
+
+      results.emplace_back(fit);
+   }
+   return results;
+}
+
 // ComputeDeloneFits -- computes the Delone/Bravais type fits for one input
-// cell, including Grimmer-chain violation detection and remediation.
-//
-// Factored out of ProcessSella (CmdSella.cpp) so the fit computation can
-// be reused (by COMPARE mode, by CmdSella's own tests, and now by
-// CellClassify) without paying for or emitting the per-cell
-// graphics/printing that ProcessSella also does.
-//
-// NOTE: remediation now loops (while) rather than firing once (if), so a
-// cell with more than one simultaneous Grimmer-chain violation gets every
-// fixable violation repaired, not just the first one detected. The pass
-// count is bounded by maxRemediationPasses as a safety cap, in case some
-// violation is not actually resolvable by Remediation and would otherwise
-// keep gcs.HasFailure() == true forever.
+// cell. See the file header (2026-10-09) for why every type now gets the
+// full search unconditionally and the reactive repair loop is gone.
 DeloneFitComputation ComputeDeloneFits(
    const LatticeCell& input,
    const CmdSellaControls& controls,
@@ -147,47 +215,20 @@ DeloneFitComputation ComputeDeloneFits(
    const S6 oneErrors = 0.1 * input.getCell();
 
    if (controls.shouldDebug()) {
-      std::cout << "; DEBUG oneLattice (post-SellingReduceCell, this is what SellaFit actually sees): "
+      std::cout << "; DEBUG oneLattice (post-SellingReduceCell, starting point for every type's search): "
          << oneLattice << std::endl;
    }
 
-   if (controls.shouldDebug()) {
-      const auto perps = sella.GetPerps();
-      const auto prjs = sella.GetProjectors();
-      if (perps.size() != prjs.size()) {
-         std::cout << "ERROR: the sizes of perps and projectors do not match" << std::endl;
-         std::cout << "size of pjrs  " << prjs.size() << std::endl;
-         std::cout << "size of perps " << perps.size() << std::endl;
-      }
-      else {
-         std::cout << "size(prjs)   size(perps)" << std::endl;
-         for (size_t i = 0; i < prjs.size(); ++i) {
-            std::cout << prjs[i].size() << "    " << perps[i].size() << std::endl;
-         }
-      }
-   }
+   const std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice =
+      ComputeFullSearchFitsForAllTypes(oneLattice, oneErrors, oneReductionMatrix, sella);
 
-   // selectBravaisCase in CmdSella.cpp was always "" (never reassigned
-   // anywhere in that file) -- inlined directly rather than carried over
-   // as a second copy of a shared mutable global that only ever held one
-   // value.
-   std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice =
-      sella.SellaFit("", oneLattice, oneErrors, oneReductionMatrix);
-
-
-   // NEW: remediate every type and adopt the correction only if it changes
-// the reported shortlist. See RemediateIfShortlistChanges for why this
-// is always safe (remediated fit <= raw fit) and why it's gated rather
-// than unconditional (no log noise / no behavior change on unaffected
-// inputs).
-   vDeloneFitResultsForOneInputLattice = RemediateIfShortlistChanges(
-      vDeloneFitResultsForOneInputLattice, oneLattice, controls, input);
-
-
+   // CreateMapOFDeloneFits / CreateMapOFBravaisFits take non-const refs
+   // (they do not appear to mutate), so build from a local copy.
+   std::vector<DeloneFitResults> fitsForMaps = vDeloneFitResultsForOneInputLattice;
    MapOFDeloneFits theDelonefits;
-   theDelonefits.CreateMapOFDeloneFits(vDeloneFitResultsForOneInputLattice);
+   theDelonefits.CreateMapOFDeloneFits(fitsForMaps);
    MapOfBravaisFits theBravaisfits;
-   theBravaisfits.CreateMapOFBravaisFits(vDeloneFitResultsForOneInputLattice);
+   theBravaisfits.CreateMapOFBravaisFits(fitsForMaps);
    SearchForToCanon(vDeloneFitResultsForOneInputLattice);
 
    GrimmerChains gcs(oneLattice);
@@ -195,16 +236,10 @@ DeloneFitComputation ComputeDeloneFits(
    gcs.updateChains(theDelonefits, theBravaisfits);
    gcs.CheckAllGrimmerChains();
 
-   // TEMPORARY: gated on shouldDebug() (DETAILS) rather than
-   // shouldShowChainFailures() (SHOWCHAINFAILURES), since only DETAILS has
-   // been merged into the live CmdSellaControls.h so far. Switch all four
-   // sites below back to shouldShowChainFailures() once SHOWCHAINFAILURES
-   // is merged, so this output doesn't require enabling all of DETAILS's
-   // other (much noisier) output just to see chain-failure detail.
    if (controls.shouldDebug()) {
       if (gcs.HasFailure()) {
          const auto failures = gcs.GetFirstFailure().GetFailures();
-         std::cout << "; Grimmer chain violation (before remediation) for "
+         std::cout << "; Grimmer chain violation after full per-type search for "
             << input.GetInput() << ":" << std::endl;
          for (const auto& f : failures) {
             std::cout << ";   " << f.first << " = " << f.second << std::endl;
@@ -214,82 +249,6 @@ DeloneFitComputation ComputeDeloneFits(
          std::cout << "; No Grimmer chain violation for "
             << input.GetInput() << std::endl;
       }
-   }
-
-   static const int maxRemediationPasses = 10; // generous cap; no catalogued
-   // Delone type has more than a handful of structural zeros, so a
-   // well-formed input should never need anywhere near this many passes.
-   // Also serves as a hard backstop now that CheckAllGrimmerChains can be
-   // re-run mid-loop (via ReplaceRemediation) and could in principle keep
-   // surfacing new violations pass after pass.
-   int remediationPasses = 0;
-   std::string lastRepairedType;
-   double lastRepairedFit = -1.0;
-   std::vector<S6> lastRepairedCandidates;  // winning point(s) from the
-   // previous pass, fed forward as extra seeds -- see Remediation168's
-   // extraSeeds parameter for why.
-   bool madeProgress = true;
-   while (gcs.HasFailure() && remediationPasses < maxRemediationPasses && madeProgress) {
-      GrimmerChainFailure gcf = gcs.GetFirstFailure();
-      const std::vector<std::pair<std::string, double>> firstFail = gcf.GetFailures();
-      const std::string& targetType = firstFail[1].first;
-      if (controls.shouldDebug()) {
-         std::cout << ";   remediation pass " << (remediationPasses + 1)
-            << ": repairing " << targetType
-            << " (fit " << firstFail[1].second << ")" << std::endl;
-      }
-      const DeloneFitResults revisedFit = Remediation168(oneLattice, targetType,
-         firstFail[1].second, 10, lastRepairedCandidates);
-
-      // "No progress" means Remediation was asked to fix the SAME type
-      // again and returned the SAME fit (within numerical noise) as last
-      // time -- i.e. it has genuinely exhausted its search for that
-      // target, not just that this pass's fit differs numerically from
-      // whatever unrelated type was repaired in a previous pass. A newly
-      // surfaced, different violation (different targetType) is always
-      // worth attempting, regardless of how its fit compares to the last
-      // pass's target.
-      const double newFit = revisedFit.GetRawFit();
-      madeProgress = (targetType != lastRepairedType) ||
-         (remediationPasses == 0 && std::abs(newFit - firstFail[1].second) > 1.0E-8) ||
-         (remediationPasses > 0 && std::abs(newFit - lastRepairedFit) > 1.0E-8);
-
-      if (madeProgress) {
-         vDeloneFitResultsForOneInputLattice.emplace_back(revisedFit);
-         gcs = gcs.ReplaceRemediation(revisedFit);
-         lastRepairedType = targetType;
-         lastRepairedFit = newFit;
-         lastRepairedCandidates = { revisedFit.GetOriginalInput() };
-      }
-      else if (controls.shouldDebug()) {
-         std::cout << ";   remediation pass " << (remediationPasses + 1)
-            << " made no progress (fit unchanged at " << newFit
-            << ") -- stopping" << std::endl;
-      }
-      ++remediationPasses;
-   }
-
-
-   if (controls.shouldDebug() && remediationPasses > 0) {
-      if (gcs.HasFailure()) {
-         const auto failuresAfter = gcs.GetFirstFailure().GetFailures();
-         std::cout << "; Grimmer chain violation REMAINS after "
-            << remediationPasses << " remediation pass(es) for "
-            << input.GetInput() << ":" << std::endl;
-         for (const auto& f : failuresAfter) {
-            std::cout << ";   " << f.first << " = " << f.second << std::endl;
-         }
-      }
-      else {
-         std::cout << "; Grimmer chain violation resolved after "
-            << remediationPasses << " remediation pass(es) for "
-            << input.GetInput() << std::endl;
-      }
-   }
-   if (remediationPasses >= maxRemediationPasses && controls.shouldDebug()) {
-      std::cout << "; WARNING: remediation pass cap reached for input "
-         << input.GetInput() << " -- a chain violation may remain unresolved"
-         << std::endl;
    }
 
    return DeloneFitComputation{ vDeloneFitResultsForOneInputLattice, gcs };

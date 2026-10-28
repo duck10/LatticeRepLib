@@ -505,6 +505,7 @@ std::string GrimmerDeloneTree::RenderHeader(const LatticeCell& input, const S6& 
       << "</text>" << std::endl;
    return ss.str();
 }
+
 std::string GrimmerDeloneTree::RenderProjectedFits(const std::vector<std::string>& matches) {
    std::ostringstream ss;
 
