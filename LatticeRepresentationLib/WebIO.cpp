@@ -4,19 +4,21 @@
 #include "LRL_CreateFileName.h"
 #include "WebIO.h"
 
-#include <iostream>
-#include <vector>
+#include <algorithm>
 #include <cstdlib>
+#include <iostream>
+#include <string>
+#include <vector>
 
-static std::string  StringFinder(const std::string& toFind, const std::string& defaultvalue, const std::vector<std::string>& args) {
+static std::string StringFinder(const std::string& toFind, const std::string& defaultvalue, const std::vector<std::string>& args) {
    const auto f = std::find(args.begin(), args.end(), toFind);
-   if (f == args.end()) return defaultvalue;
+   if (f == args.end() || (f + 1) == args.end()) return defaultvalue;
    return *(f + 1);
 }
 
 static bool BoolFinder(const std::string& toFind, const bool defaultvalue, const std::vector<std::string>& args) {
    const auto f = std::find(args.begin(), args.end(), toFind);
-   if (f == args.end()) return defaultvalue;
+   if (f == args.end() || (f + 1) == args.end()) return defaultvalue;
    return *(f + 1) == "true";
 }
 
@@ -46,7 +48,7 @@ std::ostream& operator<< (std::ostream& o, const WebIO& w) {
    for (const auto& name : w.m_FileNameList)
       o << ";\tm_FileNameList   \t" << name << "\n";
 
-   std::cout << std::endl;
+   o << std::endl;
    return o;
 }
 
@@ -61,7 +63,7 @@ WebIO::WebIO(int argc, char* argv[], const std::string& progName, const size_t f
    , m_fileNameCount(fileCount)
 {
    std::vector<std::string> args;
-   for (size_t i = 0; i < argc; ++i) {
+   for (size_t i = 0; i < static_cast<size_t>(argc); ++i) {
       args.emplace_back(argv[i]);
    }
 
@@ -81,17 +83,22 @@ WebIO::WebIO(int argc, char* argv[], const std::string& progName, const size_t f
    if (m_hasWebInstructions) m_usetimestamp = true;
 
    m_usehttps = BoolFinder("--usehttps", m_usehttps, args);
+
+   // NOTE: reads --usetimestamp, almost certainly meant --usetarget.
+   // Not changed (Oct 2026) until the web front end's arguments are checked;
+   // fixing it changes link behavior if the front end sends --usetimestamp false
+   // or --usetarget with a value other than "true".
    m_usetarget = BoolFinder("--usetimestamp", m_usetarget, args);
 
 }
 
 void WebIO::GetWebBlockSize(int argc, char* argv[]) {
 
-   char * blocksizelimit;
+   char* blocksizelimit;
    long lblocksizelimit;
 
    std::vector<std::string> args;
-   for (size_t i = 0; i < argc; ++i) {
+   for (size_t i = 0; i < static_cast<size_t>(argc); ++i) {
       args.emplace_back(argv[i]);
    }
 
@@ -99,9 +106,9 @@ void WebIO::GetWebBlockSize(int argc, char* argv[]) {
    m_blocksize = std::stoul(StringFinder("--blocksize", std::to_string(m_blocksize), args));
    blocksizelimit = getenv(std::string("WEBIO_BLOCKSIZELIMIT").c_str());
    if (blocksizelimit != NULL) {
-      lblocksizelimit=atol(blocksizelimit);
-      if (lblocksizelimit < 0 ) lblocksizelimit = 0;
-      if (m_blocksize > lblocksizelimit) m_blocksize = lblocksizelimit;
+      lblocksizelimit = atol(blocksizelimit);
+      if (lblocksizelimit < 0) lblocksizelimit = 0;
+      if (m_blocksize > static_cast<size_t>(lblocksizelimit)) m_blocksize = static_cast<size_t>(lblocksizelimit);
    }
 
    if (m_blockstart >= m_fileNameCount) {
@@ -117,11 +124,52 @@ void WebIO::GetWebBlockSize(int argc, char* argv[]) {
    }
 }
 
+// Final authority on block size and start (Oct 2026). Call after any values
+// from stdin controls have been copied in.
+// Web run:     the number of output FILES is capped at WEB_MAX_BLOCKSIZE;
+//              WEBIO_BLOCKSIZELIMIT can only lower that cap, never raise it.
+//              With filesPerItem files per item, the item count is capped at
+//              (file cap) / filesPerItem, whole items only. filesPerItem = 0
+//              means the items write no files, so no file cap applies.
+// Desktop run: no cap.
+// Both:        the block is clamped to itemCount. The comparison is written
+//              as size > count - start (not start + size > count) so huge
+//              values cannot wrap around past the check.
+void WebIO::ApplyBlockLimits(const size_t itemCount, const bool isWebRun,
+   const size_t filesPerItem) {
+   if (isWebRun && filesPerItem > 0) {
+      size_t fileLimit = WEB_MAX_BLOCKSIZE;
+      const char* const env = std::getenv("WEBIO_BLOCKSIZELIMIT");
+      if (env != nullptr) {
+         const long envLimit = std::atol(env);
+         const size_t envSize = (envLimit < 0) ? 0 : static_cast<size_t>(envLimit);
+         fileLimit = std::min(fileLimit, envSize);
+      }
+      const size_t itemLimit = fileLimit / filesPerItem;
+      if (m_blocksize > itemLimit) m_blocksize = itemLimit;
+   }
+
+   if (m_blockstart >= itemCount) {
+      m_blockstart = 0;
+      m_blocksize = 0;
+   }
+   else if (m_blocksize > itemCount - m_blockstart) {
+      m_blocksize = itemCount - m_blockstart;
+   }
+}
+
 void WebIO::CreateFilenamesAndLinks(const size_t n,
    const std::string& programName, const std::string& extension)
 {
+   std::string safeName = programName;
+   if (!IsSafeFileNameComponent(safeName)) {
+      std::cerr << ";Warning: invalid file name prefix '" << programName
+         << "' replaced by '" << m_programName << "'" << std::endl;
+      safeName = m_programName;
+   }
+
    m_basicfileNameList = LRL_CreateFileName::CreateListOfFilenames(n,
-      programName, extension, m_usetimestamp, m_blockstart, m_blocksize);
+      safeName, extension, m_usetimestamp, m_blockstart, m_blocksize);
    m_FileNameList = LRL_CreateFileName::CreateRawListOfFilenames(m_basicfileNameList, m_rawprefix);
 
    if (m_hasWebInstructions) {
@@ -131,25 +179,6 @@ void WebIO::CreateFilenamesAndLinks(const size_t n,
    else {
       m_FullfileNameList = m_FileNameList;
    }
-
-   //std::cout << " m_basicfileNameListfrom CreateListOfFilenames \n";
-   //for (const auto& m :  m_basicfileNameList) {
-   //   std::cout << m << std::endl;
-   //};
-   //std::cout << std::endl;
-
-   //std::cout << " m_FileNameList from CreateRawListOfFilenames \n";
-   //for (const auto& m : m_FileNameList) {
-   //   std::cout << m << std::endl;
-   //};
-   //std::cout << std::endl;
-
-   //std::cout << " m_FullfileNameList from either CreateHTMLListOfFilenames or m_FileNameList \n";
-   //for (const auto& m : m_FullfileNameList) {
-   //   std::cout << m << std::endl;
-   //};
-   //std::cout << std::endl;
-
 }
 
 void WebIO::CompareHtmlFromWebIO(

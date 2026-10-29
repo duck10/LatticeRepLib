@@ -656,12 +656,21 @@ int main(int argc, char* argv[])
    // there, not a reason to keep two parallel mechanisms.
 
    controls.setHasWebInput(webio.m_hasWebInstructions);
-   const int initblockstart = controls.getBlockStart();
-   const int initblocksize = controls.getBlockSize();
    const WebFileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella", 0, controls);
-   const size_t blockstart = dc_setup.getBlockStart();
-   const size_t blocksize = dc_setup.getBlockSize();
-   const size_t blockend = dc_setup.getBlockEnd();
+
+   // Block limits and file names (Oct 2026), computed here from main's own
+   // WebIO -- the same pattern as Follow -- because CmdSella writes THREE
+   // files per cell (main plot, _fit_plots, _delonetree), and the web
+   // limit counts files, not cells. With graphics off no files are
+   // written, so no file cap applies. Desktop runs have no limit.
+   const size_t filesPerCell = controls.DoGraphics() ? 3 : 0;
+   webio.m_blockstart = controls.getBlockStart();
+   webio.m_blocksize = controls.getBlockSize();
+   webio.ApplyBlockLimits(dc_setup.getInputList().size(),
+      webio.m_hasWebInstructions || controls.getWebRun(), filesPerCell);
+   webio.CreateFilenamesAndLinks(dc_setup.getInputList().size(), controls.getPrefix());
+   const size_t blockstart = webio.m_blockstart;
+   const size_t blockend = webio.m_blockstart + webio.m_blocksize;
    if (controls.getShowControls()) {
       std::cout << controls << std::endl;
    }
@@ -881,41 +890,37 @@ int main(int argc, char* argv[])
       PrintCompareSummary(compareResults, controls);
    }
    else {
-      for (size_t whichCell = blockstart;
-         whichCell < inputList.size() && whichCell < blockstart + blocksize; ++whichCell) {
+      // File name lists hold only the current block: entry k belongs to
+      // cell blockstart + k.
+      for (size_t whichCell = blockstart; whichCell < blockend; ++whichCell) {
+         const size_t k = whichCell - blockstart;
+         const std::string& rawFileName = webio.m_FileNameList[k];
+         const std::string& basicFileName = webio.m_basicfileNameList[k];
+         const std::string& fullFileName = webio.m_FullfileNameList[k];
+
          // Get all three SVGs - pass sella by reference
          const auto [sellaSvg, fitPlotsSvg, deloneTreeSvg] = ProcessSella(
             doProduceSellaGraphics,
             inputList[whichCell],
-            dc_setup.getRawFileNames()[whichCell - blockstart],
+            rawFileName,
             controls,
             sella);  // NEW: pass sella
          if (doProduceSellaGraphics) {
             // Write Sella plot
             std::cout << "; Send Sella Plot to graphics file "
-               << dc_setup.getFullFileNameAt(whichCell) << std::endl;
+               << fullFileName << std::endl;
             std::cout << "; Send Sella Plot to graphics file "
-               << AddSuffixToAllSvgOccurrences(dc_setup.getFullFileNameAt(whichCell), "_fit_plots") << std::endl;
+               << AddSuffixToAllSvgOccurrences(fullFileName, "_fit_plots") << std::endl;
             std::cout << "; Send Sella Plot to graphics file "
-               << AddSuffixToAllSvgOccurrences(dc_setup.getFullFileNameAt(whichCell), "_delonetree") << std::endl;
-            if (webio.m_hasWebInstructions) {
-               SendSellaToFile(sellaSvg, dc_setup.getRawFileNames()[whichCell - blockstart]);
-               // Write fit plots immediately after
-               const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getRawFileNames()[whichCell - blockstart], "_fit_plots");
-               SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
-               // Write delone tree plot immediately after
-               const std::string deloneTreeFilename = AddSuffixToAllSvgOccurrences(dc_setup.getRawFileNames()[whichCell - blockstart], "_delonetree");
-               SendSellaToFile(deloneTreeSvg, deloneTreeFilename);
-            }
-            else {
-               SendSellaToFile(sellaSvg, dc_setup.getBasicFileNames()[whichCell - blockstart]);
-               // Write fit plots immediately after
-               const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(dc_setup.getBasicFileNames()[whichCell - blockstart], "_fit_plots");
-               SendSellaToFile(fitPlotsSvg, fitPlotsFilename);
-               // Write delone tree plot immediately after
-               const std::string deloneTreeFilename = AddSuffixToAllSvgOccurrences(dc_setup.getBasicFileNames()[whichCell - blockstart], "_delonetree");
-               SendSellaToFile(deloneTreeSvg, deloneTreeFilename);
-            }
+               << AddSuffixToAllSvgOccurrences(fullFileName, "_delonetree") << std::endl;
+
+            // Web runs write under --rawprefix; desktop runs write the bare name.
+            const std::string& outName = webio.m_hasWebInstructions ? rawFileName : basicFileName;
+            SendSellaToFile(sellaSvg, outName);
+            // Write fit plots immediately after
+            SendSellaToFile(fitPlotsSvg, AddSuffixToAllSvgOccurrences(outName, "_fit_plots"));
+            // Write delone tree plot immediately after
+            SendSellaToFile(deloneTreeSvg, AddSuffixToAllSvgOccurrences(outName, "_delonetree"));
          }
       }
    }

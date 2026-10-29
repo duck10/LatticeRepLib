@@ -4,6 +4,21 @@
 #include <string>
 #include <vector>
 
+#include <cctype>
+#include <string>
+
+// True only for a non-empty, short name built from letters, digits, '_' and '-'.
+// Rejects path separators, "..", quotes, angle brackets, and anything else
+// that could escape a directory or break out of an HTML attribute.
+inline bool IsSafeFileNameComponent(const std::string& s) {
+   if (s.empty() || s.size() > 64) return false;
+   for (const char c : s) {
+      const unsigned char u = static_cast<unsigned char>(c);
+      if (!(std::isalnum(u) || c == '_' || c == '-')) return false;
+   }
+   return true;
+}
+
 class LRL_CreateFileName
 {
 public:

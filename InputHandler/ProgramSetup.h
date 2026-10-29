@@ -7,6 +7,32 @@
 #include "LatticeCell.h"
 #include <regex>
 
+// Shared by FileBlockProgramInput and WebFileBlockProgramInput.
+// index is the position in the full input list; blockStart maps it to the
+// position in the per-block file name lists.
+inline void WriteBlockOutputFile(const std::string& content,
+   const size_t index,
+   const size_t blockStart,
+   const std::vector<std::string>& rawFileNames,
+   const std::vector<std::string>& fullFileNames,
+   const std::string& programName)
+{
+   if (content.empty()) return;
+
+   if (index < blockStart) {
+      throw std::out_of_range("writeOutputFile: index " + std::to_string(index)
+         + " is before block start " + std::to_string(blockStart));
+   }
+   const size_t fileIndex = index - blockStart;
+   if (fileIndex >= rawFileNames.size() || fileIndex >= fullFileNames.size()) {
+      throw std::out_of_range("writeOutputFile: file index " + std::to_string(fileIndex)
+         + " is out of range");
+   }
+
+   FileOperations::Write(rawFileNames[fileIndex], content);
+   std::cout << "; " << programName << " graphics file " << fullFileNames[fileIndex] << std::endl;
+}
+
 class Writer {
 public:
    static void Write(const std::string& fileName, const std::string& fcontent) {
@@ -110,21 +136,13 @@ public:
    }
 
    void writeOutputFile(const std::string& content, size_t index) const {
-      if (content.empty()) return;
-
-      const size_t fileIndex = index - m_blockStart;
-      const std::string fileName = getRawFileNames()[fileIndex];
-      const std::string& fullFileName = getFullFileNames()[fileIndex];
-
-      Writer::Write(fileName, content);
-      std::cout << "; " << m_programName << " graphics file " << fullFileName << std::endl;
+      WriteBlockOutputFile(content, index, getBlockStart(),
+         getRawFileNames(), getFullFileNames(), m_programName);
    }
 
 private:
    ControlType& m_controls;
    std::vector<LatticeCell> m_inputList;
-   size_t m_blockStart;
-   size_t m_blockSize;
    std::string m_programName;
    std::vector<std::string> m_basicfileNameList;
    std::vector<std::string> m_FileNameList;
@@ -226,14 +244,8 @@ public:
    }
 
    void writeOutputFile(const std::string& content, size_t index) const {
-      if (content.empty()) return;
-
-      const size_t fileIndex = index - getBlockStart();
-      const std::string& fileName = getRawFileNames()[fileIndex];
-      const std::string& fullFileName = getFullFileNames()[fileIndex];
-
-      Writer::Write(fileName, content);
-      std::cout << "; " << m_webio.m_programName << " graphics file " << fullFileName << std::endl;
+      WriteBlockOutputFile(content, index, getBlockStart(),
+         getRawFileNames(), getFullFileNames(), m_webio.m_programName);
    }
 
 private:

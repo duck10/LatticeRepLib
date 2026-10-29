@@ -86,6 +86,15 @@ LRL_Cell::LRL_Cell(const std::string& s)
    if (m_valid) {
       for (size_t i = 0; i < 6; ++i)
          m_cell[i] = parsed[i];
+
+      // Oct 2026: reject non-finite values (nan, inf) and zero or negative
+      // lengths and angles. Previously only the angles were checked, so a
+      // cell such as "P 10 10 inf 90 90 90" or "P -10 10 10 90 90 90" was
+      // accepted as valid. (A NaN angle was already rejected, because every
+      // comparison with NaN is false.)
+      for (size_t i = 0; i < 6; ++i)
+         m_valid = m_valid && std::isfinite(m_cell[i]) && m_cell[i] > 0.0;
+
       m_valid = m_valid &&
          m_cell[3] < oneeightyDegrees &&
          m_cell[4] < oneeightyDegrees &&

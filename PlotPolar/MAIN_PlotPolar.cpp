@@ -1,11 +1,14 @@
 #include <algorithm>
+#include <cmath>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
-#include <cmath>
 
 #include "PlotPolarControls.h"
 #include "ColorTables.h"
@@ -192,6 +195,9 @@ int main(int argc, char* argv[]) {
       WebIO webio(argc, argv, programName, 1);
 
       PlotPolarControls controls;
+      // Set web mode before input is read, so input limits (e.g. the RANDOM
+      // count) use the web values in web runs (Oct 2026).
+      controls.setWebRun(webio.m_hasWebInstructions);
       const BasicProgramInput<PlotPolarControls> dc_setup("CmdPlotPolar", controls);
 
       if (dc_setup.getInputList().empty()) {
@@ -240,22 +246,25 @@ int main(int argc, char* argv[]) {
          {3, 500, 1100, 500}    // Plot 3
       };
 
-      // Create and render all plots - track zoom insets
+      // Create the three plots once. The legend needs to know whether any
+      // plot has a zoom inset, so the plots are built before the legend and
+      // written after it. (Oct 2026: previously the plots were built and
+      // written twice, so every SVG contained each plot twice.)
+      std::vector<IndividualPlot> plots;
+      plots.reserve(plotConfigs.size());
       bool hasAnyZoomInsets = false;
       for (const auto& config : plotConfigs) {
-         auto [coordinate, x, y, size] = config;
-         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colorRange, scaleFactor);  // Add scaleFactor
-         if (plot.hasInset()) {
+         const auto [coordinate, x, y, size] = config;
+         plots.emplace_back(createPlot(coordinate, x, y, size, controls,
+            plottedData, colorRange, scaleFactor));
+         if (plots.back().hasInset()) {
             hasAnyZoomInsets = true;
          }
-         svgOutput += plot.writeSVG();
       }
 
       ListInput(dc_setup.getInputList());
 
-      // Create legend with zoom information
-
-// Add data range and legend section
+      // Add data range and legend section
       svgOutput += "<!-- ===== LEGEND AND DATA INFO ===== -->\n";
       const std::string legend = AddTextAtBottom(1150, 800, dataRange, programName, controls.getTitle(),
          controls.getClusterPercent(), vData.size(), hasAnyZoomInsets) +
@@ -264,12 +273,7 @@ int main(int argc, char* argv[]) {
       svgOutput += "<!-- End legend section -->\n\n";
 
       svgOutput += "<!-- ===== COORDINATE PLOTS ===== -->\n";
-      for (const auto& config : plotConfigs) {
-         auto [coordinate, x, y, size] = config;
-         IndividualPlot plot = createPlot(coordinate, x, y, size, controls, plottedData, colorRange, scaleFactor);
-         if (plot.hasInset()) {
-            hasAnyZoomInsets = true;
-         }
+      for (auto& plot : plots) {
          svgOutput += plot.writeSVG();
       }
       svgOutput += "<!-- End coordinate plots -->\n\n";
@@ -282,15 +286,27 @@ int main(int argc, char* argv[]) {
 
          Stereo3DData stereoData(vData);
 
-         // Create 3D filename from regular filename: change PPL prefix to P3D
-         std::string stereo3DFilename = graphicsFileName;
-         if (stereo3DFilename.substr(0, 3) == "PPL") {
-            stereo3DFilename = "P3D" + stereo3DFilename.substr(3);
+         // 3D file name: the main plot's name with its PPL prefix replaced by
+         // P3D (Oct 2026). The replacement is done on the BARE file name, then
+         // the same directory (--rawprefix) is added and, in web runs, the
+         // same kind of link is built as for the main plot. Previously the
+         // replacement was done on the full path, which on the web begins
+         // with the directory, not PPL, so the name became "P3D_/dir/..."
+         // (unwritable) and only a raw path was printed, with no link.
+         std::string basic3DName = webio.m_basicfileNameList[0];
+         const std::string mainPrefix = controls.getPrefix();  // "PPL"
+         if (basic3DName.compare(0, mainPrefix.size(), mainPrefix) == 0) {
+            basic3DName = "P3D" + basic3DName.substr(mainPrefix.size());
          }
          else {
-            // Fallback: just add P3D prefix
-            stereo3DFilename = "P3D_" + stereo3DFilename;
+            basic3DName = "P3D_" + basic3DName;
          }
+         const std::string stereo3DFilename = webio.m_rawprefix + basic3DName;
+         const std::string stereo3DLink = webio.m_hasWebInstructions
+            ? LRL_CreateFileName::CreateHTMLListOfFilenames(
+               std::vector<std::string>{ basic3DName }, webio.m_host, webio.m_htmlprefix,
+               webio.m_usehttps, webio.m_usetarget)[0]
+            : stereo3DFilename;
 
          // Use controls for canvas size, with fallback to reasonable defaults
          int width = controls.getCanvas3DWidth();
@@ -303,17 +319,17 @@ int main(int argc, char* argv[]) {
          std::ofstream stereoFile(stereo3DFilename);
          if (stereoFile.is_open()) {
             stereoFile << stereoSVG;
-            std::cout << "; 3D stereo SVG written to " << stereo3DFilename << std::endl;
+            std::cout << "; 3D stereo SVG written to " << stereo3DLink << std::endl;
          }
          else {
             std::cerr << "; Error: Could not write 3D stereo file " << stereo3DFilename << std::endl;
          }
       }
+
+      return 0;
    }
    catch (const std::exception& e) {
       std::cerr << "; An error occurred: " << e.what() << std::endl;
       return 1;
    }
 }
-
-

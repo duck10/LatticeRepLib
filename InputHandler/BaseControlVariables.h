@@ -4,12 +4,14 @@
 
 #include "ControlFeature.h"
 #include "InputHandler.h"
+#include "Polar.h"
 #include "S6.h"
 
-#include <vector>
 #include <memory>
 #include <ostream>
 #include <sstream>
+#include <string>
+#include <vector>
 
 class BaseControlVariables {
 protected:
@@ -21,11 +23,24 @@ protected:
    // displays honestly when SEED/RANDOMSEED is never set.
    int randomSeed = 19195;
 
-   //BaseControlVariables(const BaseControlVariables&) = delete;
-   //BaseControlVariables& operator=(const BaseControlVariables&) = delete;
-
 public:
-   virtual ~BaseControlVariables() = default;
+   // Oct 2026: the handlers registered in the constructors (here and in
+   // every derived Controls class) capture 'this'. A copy would not
+   // re-register, so its handlers would still point at the original object,
+   // and input would silently go to the wrong object -- or to a destroyed
+   // one. Copying is therefore forbidden. If the build fails with
+   // "attempting to reference a deleted function", that code was copying a
+   // controls object; pass it by reference instead.
+   BaseControlVariables(const BaseControlVariables&) = delete;
+   BaseControlVariables& operator=(const BaseControlVariables&) = delete;
+
+   // Oct 2026: remove all registered handlers when the controls object is
+   // destroyed, so nothing in InputHandler's static registry can point at a
+   // dead object. Any input read afterwards gets "Unrecognized command"
+   // instead of writing into freed memory.
+   virtual ~BaseControlVariables() {
+      InputHandler::clearHandlers();
+   }
 
    BaseControlVariables() {
       InputHandler::registerHandler("ECHO", .5,
@@ -46,9 +61,14 @@ public:
          }
       );
 
+      // WEB_INPUT can only turn web mode ON (Oct 2026). Stdin is untrusted
+      // in web runs, and web mode is what enforces the output-file and
+      // RANDOM-count limits, so input must never be able to switch it off.
       InputHandler::registerHandler("WEB_INPUT", .5,
-         [this](BaseControlVariables& controls, const std::string& value) {
-            webRun = (value == "1" || value == "TRUE" || value.empty());
+         [](BaseControlVariables& controls, const std::string& value) {
+            if (value == "1" || value == "TRUE" || value.empty()) {
+               controls.webRun = true;
+            }
          }
       );
 
@@ -72,7 +92,8 @@ public:
       const auto seedHandler = [this](BaseControlVariables&, const std::string& value) {
          randomSeed = std::stoi(value);
          S6::SetSeed(randomSeed);
-         };
+         Polar::SetSeed(randomSeed);
+      };
       InputHandler::registerHandler("SEED", .5, seedHandler);
       InputHandler::registerHandler("RANDOMSEED", .5, seedHandler);
    }
@@ -120,7 +141,7 @@ public:
 };
 
 inline std::ostream& operator<<(std::ostream& os, const BaseControlVariables& cv) {
-   os << ";Control Variables:\n";
+   os << ";Control Variables:" << std::endl;
    for (const auto& feature : cv.features) {
       feature->writeToStream(os);
    }

@@ -4,15 +4,24 @@
 #include "CommandSystem.h"
 
 #include "P3.h"
+#include <cmath>
 #include <regex>
+#include <stdexcept>
 
 // Initialize static member
 CommandSystem InputHandler::commandSystem;
 std::vector<std::string> InputHandler::globalInputLines;
 
-// Input cleaning utility function
-std::string cleanLatticeInput(std::string str) {
-   const std::regex reg("[^a-zA-Z0-9.; +\\-?]");
+// Character whitelist applied to EVERY input line, lattice and control alike.
+// Anything outside the set becomes a space. This is the only sanitization that
+// control values (PREFIX in particular, which becomes part of output file
+// names and HTML links in web runs) receive before reaching their handlers,
+// so it must not be restricted to lattice lines.
+// Parentheses are allowed so SEQUENCE values such as 168(2) survive.
+// Parentheses are allowed so SEQUENCE values such as 168(2) survive;
+// underscore so command names such as WEB_INPUT survive.
+std::string cleanInputLine(std::string str) {
+   const std::regex reg("[^a-zA-Z0-9.; +\\-?()_]");
    return std::regex_replace(str, reg, " ");
 }
 
@@ -25,18 +34,31 @@ bool InputHandler::isLattice(const std::string& s) {
       upperKey == "DC7U" || upperKey == "P3");
 }
 
+// Parses one numeric field of a lattice line. std::stod accepts "nan",
+// "inf" and "infinity"; those are rejected here so a non-finite value can
+// never become part of a cell. Trailing text is allowed, so a value with a
+// standard uncertainty such as 10.512(3) still parses as 10.512.
+static double ParseFiniteDouble(const std::string& token, const std::string& what) {
+   double value = 0.0;
+   try {
+      value = std::stod(token);
+   }
+   catch (const std::exception&) {
+      throw std::runtime_error("Invalid " + what + " input: failed to parse " + token + " as a number");
+   }
+   if (!std::isfinite(value)) {
+      throw std::runtime_error("Invalid " + what + " input: " + token + " is not a finite number");
+   }
+   return value;
+}
+
 G6 InputHandler::parseG6(const std::vector<std::string>& tokens) {
    if (tokens.size() < 7) {
       throw std::runtime_error("Invalid G6 input: expected 7 tokens, got " + std::to_string(tokens.size()));
    }
    G6 result;
    for (int i = 0; i < 6; ++i) {
-      try {
-         result[i] = std::stod(tokens[i + 1]);
-      }
-      catch (const std::exception&) {
-         throw std::runtime_error("Invalid G6 input: failed to parse " + tokens[i + 1] + " as double");
-      }
+      result[i] = ParseFiniteDouble(tokens[i + 1], "G6");
    }
    return result;
 }
@@ -47,12 +69,7 @@ S6 InputHandler::parseS6(const std::vector<std::string>& tokens) {
    }
    S6 result;
    for (int i = 0; i < 6; ++i) {
-      try {
-         result[i] = std::stod(tokens[i + 1]);
-      }
-      catch (const std::exception&) {
-         throw std::runtime_error("Invalid S6 input: failed to parse " + tokens[i + 1] + " as double");
-      }
+      result[i] = ParseFiniteDouble(tokens[i + 1], "S6");
    }
    return result;
 }
@@ -168,30 +185,63 @@ std::vector<std::string> InputHandler::parseInputLine(const std::string& line) {
 }
 
 
+// Number of random cells requested by "RANDOM <n>".
+//   no count, or a count that is not a number  -> 1 (single random cell)
+//   zero or negative                           -> 0 (line ignored, warning)
+//   above the limit for this run               -> the limit (warning)
+size_t InputHandler::RandomCellCount(const std::vector<std::string>& tokens, const bool isWebRun) {
+   if (tokens.size() < 2) return 1;
+
+   const std::string& token = tokens[1];
+   const size_t limit = isWebRun ? MAX_RANDOM_COUNT_WEB : MAX_RANDOM_COUNT_DESKTOP;
+
+   long long requested = 0;
+   try {
+      size_t pos = 0;
+      requested = std::stoll(token, &pos);
+      if (pos != token.size()) return 1;   // e.g. "10abc": not a count
+   }
+   catch (const std::out_of_range&) {
+      if (!token.empty() && token[0] == '-') {
+         std::cerr << ";Warning: RANDOM count must be positive, line ignored" << std::endl;
+         return 0;
+      }
+      std::cerr << ";Warning: RANDOM count exceeds limit, using " << limit << std::endl;
+      return limit;
+   }
+   catch (const std::exception&) {
+      return 1;   // not a number
+   }
+
+   if (requested <= 0) {
+      std::cerr << ";Warning: RANDOM count must be positive, line ignored" << std::endl;
+      return 0;
+   }
+   if (static_cast<unsigned long long>(requested) > limit) {
+      std::cerr << ";Warning: RANDOM count " << requested << " exceeds limit, using "
+         << limit << std::endl;
+      return limit;
+   }
+   return static_cast<size_t>(requested);
+}
+
 void InputHandler::handleLatticeInput(std::vector<LatticeCell>& inputVectors,
    const std::string& key,
    const std::vector<std::string>& tokens,
-   const std::string& line) {
+   const std::string& line,
+   const bool isWebRun) {
    try {
-      if (key == "RANDOM" && tokens.size() > 1) {
-         try {
-            const size_t count = std::stoul(tokens[1]);
-            if (count > 1) {
-               std::vector<LatticeCell> randomResults = parseRandom(count);
-               inputVectors.insert(
-                  inputVectors.end(),
-                  randomResults.begin(),
-                  randomResults.end()
-               );
-               return;
-            }
-         }
-         catch (const std::exception&) {
-            // Fall through to single lattice case if count parsing fails
+      if (key == "RANDOM") {
+         const size_t count = RandomCellCount(tokens, isWebRun);
+         if (count == 0) return;
+         if (count > 1) {
+            std::vector<LatticeCell> randomResults = parseRandom(count);
+            inputVectors.insert(inputVectors.end(), randomResults.begin(), randomResults.end());
+            return;
          }
       }
 
-      // Handle single lattice case
+      // Single lattice (including a single RANDOM cell)
       handleSingleLattice(inputVectors, key, tokens, line);
    }
    catch (const std::exception& e) {
@@ -244,14 +294,12 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
          line.pop_back();
       }
 
-      // NOTE (chat, Sept 2026): cleanLatticeInput's regex used to run here,
-      // unconditionally, on every line -- including control-command values
-      // like SEQUENCE's "168(2)" -- stripping characters (e.g. parentheses)
-      // that a lattice-specific cleaner had no business touching on a
-      // non-lattice line. Moved below, into the isLattice branch only, so
-      // it still does its job (stripping stray characters from a pasted
-      // cell) without corrupting control values that were never lattice
-      // input in the first place.
+      // Oct 2026: whitelist cleaning restored to run unconditionally on every
+      // line. The Sept 2026 change confined it to lattice lines, which let
+      // characters such as / < > " = & through to control values (PREFIX ->
+      // file paths and HTML hrefs in web runs). Parentheses were added to the
+      // whitelist instead, which fixes the original SEQUENCE "168(2)" problem.
+      line = cleanInputLine(line);
 
       // Additional cleanup for any remaining non-printable characters
       for (char& c : line) {
@@ -290,18 +338,7 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
                reorderedLine += tokens[i];
                if (i < tokens.size() - 1) reorderedLine += " ";
             }
-
-            // Lattice-specific character cleaning, now applied here rather
-            // than unconditionally at the top of the loop (chat, Sept
-            // 2026) -- strips stray characters (commas, parentheses, etc.)
-            // from a pasted lattice line, without touching control-command
-            // values that reach this function on other lines. Re-tokenize
-            // afterward since cleaning can change token boundaries (e.g. a
-            // stripped comma merging or separating fields).
-            reorderedLine = cleanLatticeInput(reorderedLine);
-            const std::vector<std::string> cleanedTokens = parseInputLine(reorderedLine);
-
-            handleLatticeInput(cells, upperKey, cleanedTokens, reorderedLine);
+            handleLatticeInput(cells, upperKey, tokens, reorderedLine, controls.getWebRun());
             continue;
          }
 
@@ -326,7 +363,7 @@ void InputHandler::readMixedInput(BaseControlVariables& controls,
 
 LatticeCell InputHandler::processSingleLatticeInput(const std::string& line) {
    // Clean and parse the input line
-   std::string cleanedLine = cleanLatticeInput(line);
+   std::string cleanedLine = cleanInputLine(line);
 
    // Additional cleanup for any remaining non-printable characters
    for (char& c : cleanedLine) {

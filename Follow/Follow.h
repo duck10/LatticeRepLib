@@ -31,6 +31,17 @@ public:
       FollowControls& controls,
       const std::vector<LatticeCell>& cells);
 
+   static std::vector<FollowInstance> CreateFollowInstanceList(
+      const FollowControls& controls,
+      const std::vector<LatticeCell>& cells);
+
+   static void assignFilenamesToInstances(
+      const std::vector<std::string>& rawNames,
+      const std::vector<std::string>& basicNames,
+      const std::vector<std::string>& fullNames,
+      const size_t blockStart,
+      std::vector<FollowInstance>& instances);
+
 private:
 
    std::vector<Glitch> DetectGlitchesWithS6Data(
@@ -43,16 +54,6 @@ private:
       const std::vector<std::unique_ptr<Distance>>& distfuncs,
       const std::vector<S6>& path,
       int trialNum, int perturbationNum);
-
-   static std::vector<FollowInstance> CreateFollowInstanceList(
-      const FollowControls& controls,
-      const std::vector<LatticeCell>& cells);
-
-   static void assignFilenamesToInstances(
-      const std::vector<std::string>& rawNames,
-      const std::vector<std::string>& basicNames,
-      const std::vector<std::string>& fullNames,
-      std::vector<FollowInstance>& instances);
 
    FollowControls& controls;
    std::vector<std::vector<double>> allDistances;

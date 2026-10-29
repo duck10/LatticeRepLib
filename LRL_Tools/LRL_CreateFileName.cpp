@@ -75,7 +75,7 @@
    std::vector<std::string> out;
    const int pid = getpid();
 
-   for (size_t i = block_start; (i < nFiles) && (i < block_start+block_size); ++i) {
+   for (size_t i = block_start; (i < nFiles) && (i - block_start < block_size); ++i) {
       std::ostringstream o;
       o << std::hex << pid;
       o << "_";

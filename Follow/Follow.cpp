@@ -225,10 +225,15 @@ void Follow::assignFilenamesToInstances(
    const std::vector<std::string>& rawNames,
    const std::vector<std::string>& basicNames,
    const std::vector<std::string>& fullNames,
+   const size_t blockStart,
    std::vector<FollowInstance>& instances)
 {
-   for (size_t i = 0; i < instances.size() && i < rawNames.size(); ++i) {
-      instances[i].AddFileNames(rawNames[i], basicNames[i], fullNames[i]);
+   // The name lists hold only the current block: entry k belongs to
+   // instance blockStart + k (see LRL_CreateFileName::CreateListOfFilenames).
+   for (size_t k = 0; k < rawNames.size(); ++k) {
+      const size_t i = blockStart + k;
+      if (i >= instances.size()) break;
+      instances[i].AddFileNames(rawNames[k], basicNames[k], fullNames[k]);
    }
 }
 

@@ -2,11 +2,18 @@
 #define WEBIO_H
 
 #include <algorithm>
-
+#include <cstddef>
+#include <ostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
+
+// Maximum number of output files per web run. Web servers run out of disk
+// space otherwise. WEBIO_BLOCKSIZELIMIT can lower this but never raise it.
+// Desktop runs have no limit.
+inline constexpr size_t WEB_MAX_BLOCKSIZE = 20;
 
 class WebIO {
 public:
@@ -14,6 +21,17 @@ public:
    WebIO(int argc, char* argv[], const std::string& progName, const size_t fileCount);
    std::string RecreateFileNames(const std::string& name);
    void GetWebBlockSize(int argc, char* argv[]);
+
+   // Final authority on block size and start. Call after any values from
+   // stdin controls have been copied into m_blockstart / m_blocksize.
+   // In web runs the number of OUTPUT FILES is capped at WEB_MAX_BLOCKSIZE
+   // (or lower, from WEBIO_BLOCKSIZELIMIT); with filesPerItem files written
+   // per item, that allows WEB_MAX_BLOCKSIZE / filesPerItem items.
+   // filesPerItem = 0 means the items write no files, so no file cap.
+   // In all runs the block is clamped to itemCount.
+   void ApplyBlockLimits(const size_t itemCount, const bool isWebRun,
+      const size_t filesPerItem = 1);
+
    void CreateFilenamesAndLinks(const size_t n, const std::string& programName,
       const std::string& extension = "svg");
    void CompareHtmlFromWebIO(
@@ -36,7 +54,7 @@ public:
    bool m_usehttps = false;
    bool m_usetarget = true;
    const size_t m_fileNameCount;
-   size_t m_blocksize = 20;
+   size_t m_blocksize = WEB_MAX_BLOCKSIZE;
    size_t m_blockstart = 0;
 
    std::vector<std::string> m_FullfileNameList;
@@ -47,7 +65,7 @@ class WebLimits {
 public:
 
    friend std::ostream& operator<<(std::ostream& os, const WebLimits& wl) {
-      os << ";WebLimits\n";
+      os << ";WebLimits" << std::endl;
       os << ";   block size " << wl.blocksize << std::endl;
       os << ";   block start " << wl.blockstart << std::endl;
       os << ";   block size max " << wl.blocksizemax << std::endl;
@@ -73,13 +91,13 @@ public:
          if ((ntotalFiles > blocksize) && (ntotalFiles - blockstart) > blocksize) {
             // limits load to blocksize svg files
             ss
-               << ";the total number files generated in a single web\n"
+               << ";the total number files generated in a single web" << std::endl
                << ";run is limited to blocksize (" << blocksize
-               << "). If you need more, consider\n"
-               << ";running directly on a computer from a command interface.\n"
-               << ";On the web the blocksize limit is usually 20.\n"
-               << ";Try with a smaller number of files and/or perturbations\n"
-               << ";or do multiple runs using control variable blockstart\n\n";
+               << "). If you need more, consider" << std::endl
+               << ";running directly on a computer from a command interface." << std::endl
+               << ";On the web the blocksize limit is usually 20." << std::endl
+               << ";Try with a smaller number of files and/or perturbations" << std::endl
+               << ";or do multiple runs using control variable blockstart" << std::endl << std::endl;
          }
          // exit(-1);
       }
@@ -105,7 +123,7 @@ public:
       int runEnd;
 
       if (isWeb) {
-         newBlockSize = std::min(newBlockSize, 20);
+         newBlockSize = std::min(newBlockSize, static_cast<int>(WEB_MAX_BLOCKSIZE));
          runEnd = std::min(totalFiles, newBlockStart + newBlockSize);
       }
       else {
@@ -120,7 +138,7 @@ public:
    int GetGlockSizeMax() const { return blocksizemax; }
 
 private:
-   const int blocksizemax = 20;
+   const int blocksizemax = static_cast<int>(WEB_MAX_BLOCKSIZE);
    int blocksize = blocksizemax;
    int blockstart = 0;
 }; // end of class WebLimits

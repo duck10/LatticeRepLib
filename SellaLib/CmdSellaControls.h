@@ -8,7 +8,10 @@
 #include "LRL_StringTools.h"
 #include "S6.h"
 
+#include <iostream>
+#include <limits>
 #include <sstream>
+#include <string>
 #include <vector>
 
 class CmdSellaControls : public BaseControlVariables {
@@ -18,7 +21,8 @@ public:
       os << "; CmdSellaControls\n";
       os << ";   file prefix " << csc.prefix << std::endl;
       os << ";   blockstart " << csc.blockstart << std::endl;
-      os << ";   blocksize  " << csc.blocksize << std::endl;
+      os << ";   blocksize  " << ((csc.blocksize == std::numeric_limits<size_t>::max())
+         ? std::string("all") : std::to_string(csc.blocksize)) << std::endl;
       os << ";   from the web " << ((csc.webRun) ? "true" : "false") << std::endl;
       os << ";   test mode " << ((csc.testMode) ? "true" : "false") << std::endl;
       os << ";   compare mode " << ((csc.compareMode) ? "true" : "false") << std::endl;
@@ -38,7 +42,7 @@ public:
       os << ";   target type " << (csc.targetTypeName.empty() ? "(all 24)" : csc.targetTypeName) << std::endl;
       os << ";   full detail " << (csc.fullDetail ? "true" : "false") << std::endl;
       os << ";   random seed " << csc.getRandomSeed() << std::endl;
-      
+
       os << ";   classify Direct " << (csc.classifyDirect ? "true" : "false") << std::endl;
       return os;
    }
@@ -365,8 +369,10 @@ public:
       // are now inherited from the base class too.
    }
 
-   int getBlockSize() const { return  static_cast<int>(blocksize); }
-   int getBlockStart() const { return static_cast<int>(blockstart); }
+   // size_t, not int (Oct 2026): the unlimited default is the largest size_t,
+   // which would become -1 if cast to int.
+   size_t getBlockSize() const { return blocksize; }
+   size_t getBlockStart() const { return blockstart; }
    std::string getPrefix() const { return prefix; }
    bool DoGraphics() const { return doGraphics; }
    bool shouldBuildMatrices() const { return buildMatrices; }
@@ -413,17 +419,13 @@ public:
 
 private:
 
+   // The web limit is no longer applied here (Oct 2026): WebIO::ApplyBlockLimits
+   // enforces it in CmdSella.cpp, counting the files actually written per cell.
    void setBlockSize(int size) {
       long long val = static_cast<long long>(size);
       if (val <= 0) {
-         std::cerr << ";Warning: Blocksize must be positive, using "
-            << DEFAULT_BLOCKSIZE << std::endl;
-         blocksize = DEFAULT_BLOCKSIZE;
-      }
-      else if (webRun && val > MAX_BLOCKSIZE) {
-         std::cerr << ";Warning: Blocksize exceeds web limit, using "
-            << MAX_BLOCKSIZE << std::endl;
-         blocksize = MAX_BLOCKSIZE;
+         std::cerr << ";Warning: Blocksize must be positive, using all" << std::endl;
+         blocksize = std::numeric_limits<size_t>::max();
       }
       else {
          blocksize = static_cast<size_t>(val);
@@ -481,13 +483,13 @@ private:
       }
    }
 
-   static constexpr size_t MIN_BLOCKSIZE = BlockUtils::MIN_BLOCKSIZE;
-   static constexpr size_t MAX_BLOCKSIZE = BlockUtils::MAX_BLOCKSIZE / 2; // divided by 2 because there are 
-   // two output files !!!!!!!!!!!!!!!!!!
-   static constexpr size_t DEFAULT_BLOCKSIZE = MAX_BLOCKSIZE;
-
+   // Default block size: no limit (Oct 2026). Previously MAX_BLOCKSIZE / 2
+   // (= 10, "because there are two output files" -- there are actually
+   // three per cell), which also silently limited desktop runs to 10 cells.
+   // Web runs are now capped in CmdSella.cpp by WebIO::ApplyBlockLimits,
+   // which counts the three files written per cell.
    size_t blockstart = BlockUtils::MIN_BLOCKSTART;
-   size_t blocksize = MAX_BLOCKSIZE;
+   size_t blocksize = std::numeric_limits<size_t>::max();
 
    // File prefix member
    const std::string prefix = "SEL";

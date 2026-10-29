@@ -12,8 +12,20 @@
 #include <memory>
 #include <functional>
 #include <sstream>
+#include <cctype>
+#include <iostream>
+#include <string>
+
+// Upper limits on the count in "RANDOM n". The web limit protects the server
+// from memory and CPU exhaustion; the desktop limit is a sanity bound.
+inline constexpr size_t MAX_RANDOM_COUNT_WEB = 2000;
+inline constexpr size_t MAX_RANDOM_COUNT_DESKTOP = 100000;
 
 class BaseControlVariables;  // Forward declaration
+
+// Character whitelist applied to every input line (defined in InputHandler.cpp).
+std::string cleanInputLine(std::string str);
+
 
 class InputHandler {
 private:
@@ -21,6 +33,7 @@ private:
 
    // Keep only the parsing helpers private
    static std::vector<std::string> reorderLatticeTokens(const std::vector<std::string>& tokens);
+   static size_t RandomCellCount(const std::vector<std::string>& tokens, const bool isWebRun);
 
 public:
    // Global container to store input lines
@@ -57,7 +70,8 @@ public:
    static void handleLatticeInput(std::vector<LatticeCell>& inputVectors,
       const std::string& key,
       const std::vector<std::string>& tokens,
-      const std::string& line);
+      const std::string& line,
+      const bool isWebRun);
 
    // NEW: Direct lattice processing method that returns the parsed cell
    static LatticeCell processSingleLatticeInput(const std::string& line);
@@ -82,7 +96,11 @@ public:
       return inputVectors;
    }
 
-   // NEW: Command-based overload that processes everything through registered handlers
+   // Command-only input mode (used by HR_info): every line goes through the
+   // registered command handlers; no lattice parsing.
+   // Oct 2026: lines now get the same whitelist cleaning as readMixedInput,
+   // and a handler that throws (e.g. "SEED abc") produces a warning instead
+   // of terminating the program.
    template<typename T>
    static std::vector<LatticeCell> handleInput(T& controls, bool useCommandSystem) {
       if (!useCommandSystem) {
@@ -90,13 +108,11 @@ public:
       }
 
       std::vector<LatticeCell> inputVectors;  // Not used in command mode, but returned for compatibility
-      std::cout << "; Enter control variables and input vectors (type 'end' to finish):\n";
+      std::cout << "; Enter control variables and input vectors (type 'end' to finish):" << std::endl;
 
       std::string line;
       while (std::getline(std::cin, line)) {
-         if (line.empty() || line[0] == ';') continue;
-
-         // Apply input cleaning
+         line = cleanInputLine(line);
          for (char& c : line) {
             if (!std::isprint(static_cast<unsigned char>(c))) {
                c = ' ';
@@ -105,13 +121,12 @@ public:
 
          globalInputLines.emplace_back(line);
 
-         // Check for end condition
-         std::string upperLine = LRL_StringTools::strToupper(line);
-         if (upperLine == "END") break;
-
          // Parse the input line
-         std::vector<std::string> tokens = parseInputLine(line);
-         if (tokens.empty()) continue;
+         const std::vector<std::string> tokens = parseInputLine(line);
+         if (tokens.empty() || tokens[0][0] == ';') continue;
+
+         // Check for end condition
+         if (LRL_StringTools::strToupper(tokens[0]) == "END") break;
 
          // Handle echo
          if (controls.getEcho() || LRL_StringTools::strToupper(tokens[0]) == "ECHO") {
@@ -119,7 +134,7 @@ public:
          }
 
          // Extract command and parameters
-         std::string command = tokens[0];
+         const std::string& command = tokens[0];
          std::string parameters;
          for (size_t i = 1; i < tokens.size(); ++i) {
             parameters += tokens[i];
@@ -127,14 +142,20 @@ public:
          }
 
          // Process through command system
-         if (!handleCommand(controls, command, parameters)) {
-            std::cout << "Unknown command: " << command << "\n";
-            std::cout << "Type 'help' for available commands.\n";
+         try {
+            if (!handleCommand(controls, command, parameters)) {
+               std::cout << "Unknown command: " << command << std::endl;
+               std::cout << "Type 'help' for available commands." << std::endl;
+            }
+         }
+         catch (const std::exception& e) {
+            std::cerr << ";Warning: Failed to parse input: " << e.what() << std::endl;
          }
       }
 
       return inputVectors;
    }
+
 
    static std::vector<std::string> GetInputLines() {
       return InputHandler::globalInputLines;

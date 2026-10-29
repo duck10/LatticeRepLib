@@ -188,6 +188,7 @@ int main(int argc, char* argv[]) {
       WebIO webio(argc, argv, programName, 1);
 
       CmdPlotC3Controls controls;
+      controls.setWebRun(webio.m_hasWebInstructions);
       const BasicProgramInput<CmdPlotC3Controls> dc_setup("CmdPlotC3", controls);
 
 
