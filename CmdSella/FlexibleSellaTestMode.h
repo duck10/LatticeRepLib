@@ -829,7 +829,7 @@ public:
       // is NOT asserted here -- its HasFailure() status was not part of
       // Test 14's dump and remains unchecked.
 
-
+      
       {
          FlexibleSellaTestCase test11("M1B_M2A_OrientationSwap_M3Boundary",
             "M1B/M2A near an M3 boundary point, same signature as the O1B/O2/O3 case. "
@@ -1573,6 +1573,136 @@ public:
                "O2", "O3", 1.0E-6, cell, "O2 <= O3, cell " + std::to_string(cell + 1)));
          }
          addTestCase(test25);
+      }
+
+      // Test 26 (2026-11-04) -- the 10 cells with the largest O2 > O3 gap in
+      // the 220-cell batch (cmdgen 20 O3 | cmdperturb 10 10, i.e. 1%
+      // perturbations of exact O3 cells; COMPARE TYPES O1B O2 O3). Without
+      // the face arrangements O2 fit worse than O3 on 93 of the 220 cells;
+      // these are the worst ten (gap 0.31 to 0.44). With FACECROSSED on, O2
+      // equals O3 on every one. Cells are the reduced S6 forms printed by
+      // COMPARE, rounded to 5 decimals. Guards the O2 face arrangements
+      // (three borrowed O3 forms, Appendix B).
+      {
+         FlexibleSellaTestCase test26("O2_O3_PerturbedBatch_WorstGaps",
+            "Worst 10 of 93 O2 > O3 nesting violations from a 1% O3 perturbation "
+            "batch. With FACECROSSED on: O2 <= O3 and O1B <= O3 on every cell, "
+            "and O2 equal to O3 within 0.005. Fails with FACECROSSED 0.");
+         test26.addInputCell(LatticeCell("S -84.53054 -41.94090 -1.61148 -42.11853 -85.25417 -0.85722"));
+         test26.addInputCell(LatticeCell("S -66.40445 -47.52225 -1.55024 -48.08136 -66.53153 -0.84167"));
+         test26.addInputCell(LatticeCell("S -86.70862 -88.20316 -0.72031 -94.08331 -94.79407 -1.90061"));
+         test26.addInputCell(LatticeCell("S -53.93641 -54.63274 -0.80099 -76.10422 -75.97609 -1.52340"));
+         test26.addInputCell(LatticeCell("S -33.76551 -68.91324 -1.46886 -68.74946 -33.35640 -0.62815"));
+         test26.addInputCell(LatticeCell("S -59.08488 -59.86765 -0.83031 -68.98858 -68.95271 -1.51263"));
+         test26.addInputCell(LatticeCell("S -94.60383 -88.14536 -1.72712 -86.36404 -93.93528 -0.90751"));
+         test26.addInputCell(LatticeCell("S -75.91755 -54.12860 -1.58612 -54.61158 -75.15713 -1.05635"));
+         test26.addInputCell(LatticeCell("S -66.69698 -47.76546 -1.38036 -48.56256 -66.37047 -0.64899"));
+         test26.addInputCell(LatticeCell("S -42.18369 -85.31241 -1.22931 -84.76345 -42.65861 -0.73687"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.25251, 1.26251, 0, "O2 = O3 = 1.25751 (was 1.69543 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.16754, 1.17754, 1, "O2 = O3 = 1.17254 (was 1.60238 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.80645, 1.81645, 2, "O2 = O3 = 1.81145 (was 2.23198 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.18417, 1.19417, 3, "O2 = O3 = 1.18917 (was 1.60356 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.08974, 1.09974, 4, "O2 = O3 = 1.09474 (was 1.50155 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.20412, 1.21412, 5, "O2 = O3 = 1.20912 (was 1.61091 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.81307, 1.82307, 6, "O2 = O3 = 1.81807 (was 2.18929 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.33749, 1.34749, 7, "O2 = O3 = 1.34249 (was 1.70925 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.14699, 1.15699, 8, "O2 = O3 = 1.15199 (was 1.50877 without face arrangements)"));
+         test26.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 1.01917, 1.02917, 9, "O2 = O3 = 1.02417 (was 1.33216 without face arrangements)"));
+         for (size_t cell = 0; cell < 10; ++cell) {
+            test26.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "O2", "O3", 1.0E-6, cell, "O2 <= O3, cell " + std::to_string(cell + 1)));
+            test26.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "O1B", "O3", 1.0E-6, cell, "O1B <= O3, cell " + std::to_string(cell + 1)));
+         }
+         addTestCase(test26);
+      }
+
+      // Test 27 (2026-11-04) -- R1 and R3 against C5 (every cP lattice is an
+      // hR lattice). Cells are those of Test 10 (2), Test 17 (3) and Test 21
+      // (11). Without the face arrangements several violate nesting: Test 10
+      // cell 1 gave R1 = 47.13 against C5 = 38.37, and Tests 17/21 gave R1/R3
+      // above C5 on several cells. Guards the R1 (12) and R3 (4) face
+      // arrangements, borrowed from C5 (Appendix B).
+      {
+         FlexibleSellaTestCase test27("R1_R3_vs_C5_Nesting",
+            "R1 <= C5 and R3 <= C5 on the cells of Tests 10, 17 and 21. "
+            "Fails with FACECROSSED 0 (e.g. Test 10 cell 1: R1 47.13 > C5 38.37).");
+         test27.addInputCell(LatticeCell("S -43.34318 -38.15350 -0.00055 -38.13490 -43.34264 -0.02616"));
+         test27.addInputCell(LatticeCell("S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403 -0.04436"));
+         test27.addInputCell(LatticeCell("S 0.00000 0.00000 -0.17453 -99.82547 -99.82547 -100.00000"));
+         test27.addInputCell(LatticeCell("S -0.10976 -0.07316 -0.09934 -99.66756 -99.67093 -99.57723"));
+         test27.addInputCell(LatticeCell("S -0.06282 -0.01222 -99.84618 -99.85396 -0.13101 -99.84497"));
+         test27.addInputCell(LatticeCell("P 10 10 10 90 90 90"));
+         test27.addInputCell(LatticeCell("P 9.994 9.992 9.988 89.958 89.937 89.957"));
+         test27.addInputCell(LatticeCell("P 10.002 10.003 9.996 89.957 90.036 90.011"));
+         test27.addInputCell(LatticeCell("P 9.996 9.992 9.993 89.994 89.950 89.946"));
+         test27.addInputCell(LatticeCell("P 9.990 9.999 10.005 90.058 89.971 89.938"));
+         test27.addInputCell(LatticeCell("P 9.997 9.999 9.998 90.051 89.949 89.967"));
+         test27.addInputCell(LatticeCell("P 9.996 9.998 9.990 89.966 89.916 90.033"));
+         test27.addInputCell(LatticeCell("P 10.002 9.993 9.996 89.980 90.028 89.940"));
+         test27.addInputCell(LatticeCell("P 10.002 9.992 9.988 89.931 89.977 89.993"));
+         test27.addInputCell(LatticeCell("P 9.991 9.992 9.991 89.934 89.936 89.982"));
+         test27.addInputCell(LatticeCell("P 10.002 9.998 10.012 90.030 90.042 89.996"));
+         for (size_t cell = 0; cell < 16; ++cell) {
+            test27.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "R1", "C5", 1.0E-6, cell, "R1 <= C5, cell " + std::to_string(cell + 1)));
+            test27.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "R3", "C5", 1.0E-6, cell, "R3 <= C5, cell " + std::to_string(cell + 1)));
+         }
+         addTestCase(test27);
+      }
+
+      // Test 28 (2026-11-04) -- O4 against T5 (every tP lattice is an oC
+      // lattice, but only 36 of T5's 48 arrangements lie on O4's own list;
+      // the other 12 are O4's face arrangements). Cells are those of Tests
+      // 2-7, 11 and 19, where Bravais containment used to log "oC lowered
+      // ... via tP": the Delone O4 fit was worse than T5 and only the
+      // reported Bravais value was patched. With FACECROSSED on, O4 reaches
+      // the tP lattices directly and those log lines disappear.
+      {
+         FlexibleSellaTestCase test28("O4_vs_T5_Nesting",
+            "O4 <= T5 on the cells of Tests 2-7, 11 and 19 (formerly patched by "
+            "oC-via-tP containment). Fails with FACECROSSED 0.");
+         test28.addInputCell(LatticeCell("S -240.86238 -24.92865 -8.64775 -7.17380 -34.21200 -8.19574"));
+         test28.addInputCell(LatticeCell("S -230.17565 -17.27155 -54.34361 -23.25853 -11.49257 -55.62911"));
+         test28.addInputCell(LatticeCell("S -2.78162 -34.43272 -237.34522 -10.96929 -43.32243 -21.83436"));
+         test28.addInputCell(LatticeCell("S -11.10601 -81.30216 -222.54748 -5.31460 -54.25901 -27.69384"));
+         test28.addInputCell(LatticeCell("S -9.12428 -0.87504 -63.50943 -233.55358 -4.41117 -36.27397"));
+         test28.addInputCell(LatticeCell("S -3.00480 -19.63201 -241.04017 -9.76684 -34.86767 -13.93003"));
+         test28.addInputCell(LatticeCell("S -43.40350 -47.63950 0.00000 -28.62950 -43.40350 -0.00000"));
+         test28.addInputCell(LatticeCell("S -47.59416 -28.66333 -0.02968 -43.33617 -43.38776 -0.05159"));
+         test28.addInputCell(LatticeCell("S -47.62349 -43.35998 -0.01838 -28.66778 -43.42698 -0.04721"));
+         test28.addInputCell(LatticeCell("P 21.775 21.785 27.232  90.028  89.974  90.023"));
+         test28.addInputCell(LatticeCell("P  1.307  3.134  3.150 144.338  90.898 113.499"));
+         test28.addInputCell(LatticeCell("P  1.447  2.154  1.448  93.001  93.077 118.555"));
+         test28.addInputCell(LatticeCell("P  1.511  3.987  3.918 149.756 103.646  94.613"));
+         test28.addInputCell(LatticeCell("P  1.909  3.372  3.412 140.217  95.846 108.922"));
+         test28.addInputCell(LatticeCell("P  1.916  4.033  1.656 105.411 101.400  96.056"));
+         test28.addInputCell(LatticeCell("P  1.918  1.118  1.899  94.267 130.788 116.312"));
+         test28.addInputCell(LatticeCell("P  2.044  2.594  3.604 121.251  93.338  95.754"));
+         test28.addInputCell(LatticeCell("P  2.092  3.512  1.736  92.747  95.706 123.113"));
+         test28.addInputCell(LatticeCell("P  2.212  3.228  3.111 124.239  96.056 120.065"));
+         test28.addInputCell(LatticeCell("P  2.418  2.421  1.105  91.232 105.455 146.970"));
+         test28.addInputCell(LatticeCell("P  2.778  1.881  3.996 114.240  97.653  94.507"));
+         test28.addInputCell(LatticeCell("P  2.891  2.299  3.839  90.545 118.914 100.136"));
+         test28.addInputCell(LatticeCell("P  2.973  2.869  1.853  93.424 114.956 138.239"));
+         test28.addInputCell(LatticeCell("P  3.286  1.671  1.295  98.790  90.427 114.783"));
+         test28.addInputCell(LatticeCell("P  3.345  3.397  1.230  91.705 101.386 151.360"));
+         for (size_t cell = 0; cell < 25; ++cell) {
+            test28.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "O4", "T5", 1.0E-6, cell, "O4 <= T5, cell " + std::to_string(cell + 1)));
+         }
+         addTestCase(test28);
       }
 
    }

@@ -546,6 +546,52 @@ inline void SearchAllTypeBoundaryDistances(
    distanceResults.ShowResults();
 }
 
+// SeededPerturbation -- one random perturbation of base, of length
+// fraction * |base|, orthogonal to base. The direction comes from
+// S6::rand(), so it follows the SEED control (BaseControlVariables.h
+// calls S6::SetSeed); CmdPerturb's own generator (RHrand) does not.
+// The difference of two draws gives a direction symmetric about zero.
+// Returns false if no valid cell was found in maxAttempts tries.
+inline bool SeededPerturbation(const S6& base, const double fraction, S6& out,
+   const size_t maxAttempts = 100) {
+   const double baseNorm = base.norm();
+   if (baseNorm <= 0.0) return false;
+   for (size_t attempt = 0; attempt < maxAttempts; ++attempt) {
+      const S6 direction = S6::rand() - S6::rand();
+      double dot = 0.0;
+      for (size_t i = 0; i < 6; ++i) dot += direction[i] * base[i];
+      const S6 ortho = direction - (dot / (baseNorm * baseNorm)) * base;
+      const double orthoNorm = ortho.norm();
+      if (orthoNorm < 1.0E-12) continue;
+      S6 trial = base + (fraction * baseNorm / orthoNorm) * ortho;
+      trial.SetValid(true);
+      if (LRL_Cell(trial).IsValid()) {
+         out = trial;
+         return true;
+      }
+   }
+   return false;
+}
+
+// FitsForPair -- raw fits of parent and child for one S6 point, through
+// the same parser and fit pipeline as typed input. Returns false if
+// either type is missing from the results.
+inline bool FitsForPair(const S6& point, const std::string& parentName,
+   const std::string& childName, const CmdSellaControls& controls, Sella& sella,
+   double& fitParent, double& fitChild) {
+   std::ostringstream cellStr;
+   cellStr << "S " << point;
+   const LatticeCell probeCell = InputHandler::processSingleLatticeInput(cellStr.str());
+   const DeloneFitComputation probeFits = ComputeDeloneFits(probeCell, controls, sella);
+   fitParent = -1.0;
+   fitChild = -1.0;
+   for (const auto& f : probeFits.fits) {
+      if (f.GetGeneralType() == parentName) fitParent = f.GetRawFit();
+      if (f.GetGeneralType() == childName) fitChild = f.GetRawFit();
+   }
+   return fitParent >= 0.0 && fitChild >= 0.0;
+}
+
 // RunNestingConsistencyCheck -- general, name-free version of the
 // O1B/O2/O3 diagnostic that started this investigation (see chat with
 // Claude, 2026-08-14 through 2026-08-15). For every pair of Delone types
@@ -561,6 +607,13 @@ inline void SearchAllTypeBoundaryDistances(
 // times the boundary example's own norm, same relative-tolerance
 // convention as MAXDELTA.
 //
+// Perturbed phase (2026-11-04): each representative also gets
+// nPerturbations random 1% perturbations (SeededPerturbation, controlled
+// by SEED). Nesting is a set property -- if C lies inside P, every point
+// is at least as close to P as to C -- so fit(P) <= fit(C) must hold off
+// the boundary too. This is the check that would have caught the O2/O3
+// gap: the exact representatives passed, the perturbed O3 cells did not.
+//
 // Enabled via the CHECKNESTING control (CmdSellaControls.h) -- off by
 // default, so this needs no attention during normal use.
 void RunNestingConsistencyCheck(const CmdSellaControls& controls, Sella& sella) {
@@ -574,6 +627,14 @@ void RunNestingConsistencyCheck(const CmdSellaControls& controls, Sella& sella) 
    size_t representativesTested = 0;
    size_t violatingPairs = 0;
    size_t errors = 0;
+
+   const size_t nPerturbations = 3;
+   const double perturbFraction = 0.01;
+   const size_t maxPrintedPerPair = 3;
+   size_t perturbedTested = 0;
+   size_t perturbedFailedToGenerate = 0;
+   size_t perturbedViolations = 0;
+   size_t perturbedViolatingPairs = 0;
 
    for (const auto& parent : allTypes) {
       for (const auto& child : allTypes) {
@@ -610,30 +671,19 @@ void RunNestingConsistencyCheck(const CmdSellaControls& controls, Sella& sella) 
 
             bool pairTested = false;
             bool pairViolated = false;
+            bool pairPerturbedViolated = false;
+            size_t printedThisPair = 0;
 
             for (const auto& representative : crossing.representatives) {
-               // Route through InputHandler::processSingleLatticeInput --
-               // the same parser the console uses for typed "S ..."
-               // input (InputHandler::parseS6, via
-               // isLattice/handleSingleLattice) -- rather than
-               // LatticeCell's string constructor, which doesn't
-               // recognize "S" as a designator at all (see chat with
-               // Claude, 2026-08-15).
-               std::ostringstream cellStr;
-               cellStr << "S " << representative;
-               const LatticeCell probeCell = InputHandler::processSingleLatticeInput(cellStr.str());
-
-               const DeloneFitComputation probeFits = ComputeDeloneFits(probeCell, controls, sella);
-
+               // FitsForPair goes through InputHandler::processSingleLatticeInput,
+               // the console's own "S ..." parser (LatticeCell's string
+               // constructor doesn't recognize "S"; chat 2026-08-15).
                double fitParent = -1.0;
                double fitChild = -1.0;
-               for (const auto& f : probeFits.fits) {
-                  if (f.GetGeneralType() == parent->GetName()) fitParent = f.GetRawFit();
-                  if (f.GetGeneralType() == child->GetName()) fitChild = f.GetRawFit();
-               }
                // Type not present in this representative's fit results --
                // skip this representative rather than guess.
-               if (fitParent < 0.0 || fitChild < 0.0) continue;
+               if (!FitsForPair(representative, parent->GetName(), child->GetName(),
+                  controls, sella, fitParent, fitChild)) continue;
 
                pairTested = true;
                ++representativesTested;
@@ -649,10 +699,37 @@ void RunNestingConsistencyCheck(const CmdSellaControls& controls, Sella& sella) 
                      << " epsilon=" << epsilon
                      << " gap=" << (fitParent - fitChild) << std::endl;
                }
+
+               for (size_t k = 0; k < nPerturbations; ++k) {
+                  S6 perturbed;
+                  if (!SeededPerturbation(representative, perturbFraction, perturbed)) {
+                     ++perturbedFailedToGenerate;
+                     continue;
+                  }
+                  double pertParent = -1.0;
+                  double pertChild = -1.0;
+                  if (!FitsForPair(perturbed, parent->GetName(), child->GetName(),
+                     controls, sella, pertParent, pertChild)) continue;
+                  ++perturbedTested;
+                  if (pertParent > pertChild + epsilon) {
+                     ++perturbedViolations;
+                     pairPerturbedViolated = true;
+                     if (printedThisPair < maxPrintedPerPair) {
+                        ++printedThisPair;
+                        std::cout << "; PERTURBED NESTING VIOLATION: parent=" << parent->GetName()
+                           << " child=" << child->GetName()
+                           << " cell=S " << perturbed
+                           << " fit(parent)=" << pertParent
+                           << " fit(child)=" << pertChild
+                           << " gap=" << (pertParent - pertChild) << std::endl;
+                     }
+                  }
+               }
             }
 
             if (pairTested) ++pairsTested;
             if (pairViolated) ++violatingPairs;
+            if (pairPerturbedViolated) ++perturbedViolatingPairs;
          }
          catch (const std::exception& e) {
             ++errors;
@@ -672,6 +749,12 @@ void RunNestingConsistencyCheck(const CmdSellaControls& controls, Sella& sella) 
       << " pair(s) tested (" << representativesTested << " representative(s) total), "
       << violatingPairs << " pair(s) with at least one violation, "
       << errors << " error(s)" << std::endl;
+   std::cout << "; CHECKNESTING perturbed: " << perturbedTested
+      << " perturbed cell(s) tested (" << nPerturbations << " per representative, "
+      << perturbFraction * 100.0 << "% of |s6|), "
+      << perturbedViolations << " violation(s) in "
+      << perturbedViolatingPairs << " pair(s), "
+      << perturbedFailedToGenerate << " could not be generated" << std::endl;
 }
 
 // SweepRemediatedFitTowardA2 -- targeted follow-up to A1|A2 showing up

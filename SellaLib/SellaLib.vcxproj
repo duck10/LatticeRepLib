@@ -159,6 +159,7 @@
     <ClInclude Include="RemediatedFit.h" />
     <ClInclude Include="SearchBoundaryNeighborsByTransform.h" />
     <ClInclude Include="Sella.h" />
+    <ClInclude Include="TestHarness.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BravaisHeirarchy.cpp" />
