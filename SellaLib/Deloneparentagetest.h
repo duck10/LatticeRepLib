@@ -3,6 +3,34 @@
 
 // DeloneParentageTest.h
 //
+// 2026-11-04 -- TestDeloneParentage REPLACED (sixth revision). The VCP
+// search below gave false "nested" answers: CHECKNESTING reported 18
+// violating pairs, and for every one of them none of the child's
+// arrangements lies on any arrangement of the parent (checked against
+// LabeledSellaMatrices.cpp plus the Appendix B face arrangements), while
+// all 117 other pairs are genuinely nested. Cause: a VCP candidate
+// vcp_i = R_i*pbi - pai is p MIRRORED through s_i = 0, not another
+// representation of p's lattice unless s_i = 0 (the same flaw already
+// fixed in the fitting search -- see BuildExactBoundaryCandidates in
+// RemediatedFit.h). E.g. for an O3 point (a,b,0,a,b,0), vcp_1 =
+// (-a,b,b,a,0,0) lies on O4's canonical arrangement 00abbc, but it is not
+// a reduced form of that lattice (its first scalar -a is positive).
+//
+// New rule (white paper v4): a reduced sample of the child is a parent
+// lattice iff it lies on some arrangement of the parent's COMPLETE list --
+// its own projectors plus its face arrangements (FaceCrossedArrangements.h).
+// No candidate search is needed: the complete list is closed under the
+// reflections and the face permutations, so every reduced form of every
+// parent lattice is already on it. The face arrangements are required here
+// regardless of the FACECROSSED switch, since nesting is geometry, not a
+// fitting option: without them 15 genuine pairs are missed (e.g. O3 in M1A
+// and M2A, C5 in R3, M3 in M2A). Checked offline against all 135 pairs
+// CHECKNESTING tests: 117 nested, 18 not, matching the arrangement rule.
+//
+// The VCP functions below are kept (BuildVCPCandidates, VCPResidualSearch)
+// in case anything else calls them, but TestDeloneParentage no longer uses
+// them.
+//
 // Deterministic replacement for guessing Delone-type parentage from the
 // Delone-grid SVG letter patterns (tried twice, wrong both times -- see
 // SELLA_handoff.md item 1, escalation 1). 
@@ -51,6 +79,7 @@
 //     in EnhancedS6.cpp's operator*, the latter in CmdSella.cpp's
 //     SearchForToCanon).
 
+#include "FaceCrossedArrangements.h"
 #include "GenerateLatticeTypeExamples.h"
 #include "LRL_Cell.h"
 #include "MatS6.h"
@@ -263,6 +292,23 @@ inline VCPSearchResult VCPResidualSearch(const S6& seed, const MatS6& targetProj
 // guess. This version seeds ONE valid child sample, then hands it to
 // VCPResidualSearch, which builds the 168 published candidates and keeps
 // the global best.
+// CompleteProjectorList -- a type's own projectors (m_sellaProjectors) plus
+// its face arrangements from white paper v4, Appendix B.
+inline std::vector<MatS6> CompleteProjectorList(const GenerateDeloneBase& type) {
+   std::vector<MatS6> prjs = type.GetSellaProjectors();
+   const FaceCrossedMatrices& fc = GetFaceCrossedMatrices(type.GetName());
+   prjs.insert(prjs.end(), fc.prjs.begin(), fc.prjs.end());
+   return prjs;
+}
+
+// TestDeloneParentage -- does childType genuinely nest inside parentType?
+// (2026-11-04 rule; see the file header.) The child sample is reduced by
+// construction: GetValidTypeSample projects a Selling-reduced vector onto
+// the child's canonical arrangement, and averaging non-positive scalars
+// keeps them non-positive, with zero slots exactly 0. It is a generic member
+// of the child type (random letter values), so if it lies on a parent
+// arrangement, every child lattice does. tol is an absolute residual on
+// that one sample; a nested pair gives ~1e-15.
 inline DeloneParentageResult TestDeloneParentage(
    const GenerateDeloneBase& parent,
    const GenerateDeloneBase& child,
@@ -277,10 +323,13 @@ inline DeloneParentageResult TestDeloneParentage(
       return result;
    }
 
-   const VCPSearchResult search = VCPResidualSearch(childExample, parent.GetPrj());
-   const bool nested = (search.residual < tol);
-   return DeloneParentageResult(parent.GetName(), child.GetName(),
-      search.residual, nested);
+   double best = -1.0;
+   for (const auto& prj : CompleteProjectorList(parent)) {
+      const double r = (childExample - prj * childExample).norm();
+      if (best < 0.0 || r < best) best = r;
+   }
+   const bool nested = (best >= 0.0 && best < tol);
+   return DeloneParentageResult(parent.GetName(), child.GetName(), best, nested);
 }
 
 #endif  // DELONE_PARENTAGE_TEST_H

@@ -42,6 +42,7 @@
 #include "SellaBuild.h"
 #include "LabeledDeloneTypeMatrices.h"
 #include "DeloneFitComputation.h"
+#include "FaceCrossedArrangements.h"
 #include "FlexibleSellaTestMode.h"
 
 #include "CompareBoundaryTransformsTest.h"
@@ -657,8 +658,14 @@ int main(int argc, char* argv[])
 
    controls.setHasWebInput(webio.m_hasWebInstructions);
    const WebFileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella", 0, controls);
-
-   // Block limits and file names (Oct 2026), computed here from main's own
+   Sella::SetUseFaceCrossed(controls.shouldUseFaceCrossed());
+   Sella::SetUseFaceCrossed(controls.shouldUseFaceCrossed());
+   if (Sella::GetUseFaceCrossed()) {
+      const size_t problems = VerifyFaceCrossedArrangements(std::cout);
+      std::cout << "; FACECROSSED on: " << CountFaceCrossedArrangements()
+         << " face arrangements for 11 types, "
+         << ((problems == 0) ? "all verified" : "PROBLEMS FOUND") << std::endl;
+   }   // Block limits and file names (Oct 2026), computed here from main's own
    // WebIO -- the same pattern as Follow -- because CmdSella writes THREE
    // files per cell (main plot, _fit_plots, _delonetree), and the web
    // limit counts files, not cells. With graphics off no files are

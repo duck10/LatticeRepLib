@@ -48,6 +48,7 @@ public:
    bool operator< (const SellaResult& sr) {
       return m_distance < sr.m_distance;
    }
+
 private:
    std::string m_label;
    double m_distance;
@@ -57,6 +58,7 @@ private:
    S6 m_perped;
    std::string m_BravaisType;
    std::string m_generalBravaisType;
+   inline static bool s_useFaceCrossed = false;
 };
 
 class Sella {
@@ -96,6 +98,14 @@ public:
       const S6& s6);
    static double Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix);
 
+   // FACECROSSED (Nov 2026): when on, SellaFitXXXXXX appends the missing
+   // face arrangements (white paper v4, Appendix B) to the type's own
+   // projector list. Static because SellaFitXXXXXX is static and is called
+   // from many places (SellaFit, Remediation168ForOneSubtype, diagnostics).
+   static void SetUseFaceCrossed(const bool b) { s_useFaceCrossed = b; }
+   static bool GetUseFaceCrossed() { return s_useFaceCrossed; }
+
+
 private:
    // NEW: Instance variables to hold the matrices in use (either hard-coded or dynamically built)
    std::vector<LabeledSellaMatrices> m_projectors;
@@ -104,6 +114,7 @@ private:
    // Keep static members for backward compatibility and hard-coded matrices
    static const std::vector<LabeledSellaMatrices> projectors;
    static const std::vector<LabeledSellaMatrices> perps;
+      inline static bool s_useFaceCrossed = false;
 };
 
 #endif // SELLA_H

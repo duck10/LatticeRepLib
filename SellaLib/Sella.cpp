@@ -3,6 +3,7 @@
 #include "GenerateRandomLattice.h"
 #include "DeloneTypeList.h"
 #include "DeloneType.h"
+#include "FaceCrossedArrangements.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_MaximaTools.h"
 #include "LRL_StringTools.h"
@@ -107,6 +108,18 @@ double Sella::GetFitForDeloneType(const std::string& type, const S6& s6) {
    return bestFit;
 }
 
+// Appends the FaceCrossed projectors/perps for types that have them (O1B, O2
+// so far). The lists are built once and cached, since SellaFitXXXXXX is
+// called for every remediation candidate.
+// Appends the missing face arrangements (white paper v4, Appendix B) for
+// this type; does nothing for the 13 types that need none.
+static void AppendFaceCrossed(const std::string& name,
+   std::vector<MatS6>& prjs, std::vector<MatS6>& perps) {
+   const FaceCrossedMatrices& fc = GetFaceCrossedMatrices(name);
+   prjs.insert(prjs.end(), fc.prjs.begin(), fc.prjs.end());
+   perps.insert(perps.end(), fc.perps.begin(), fc.perps.end());
+}
+
 DeloneFitResults Sella::SellaFitXXXXXX(
    const std::shared_ptr<GenerateDeloneBase>& sptype,
    const S6& s6) {
@@ -114,8 +127,9 @@ DeloneFitResults Sella::SellaFitXXXXXX(
    const std::string name = sptype->GetName();
    size_t nBest = 0;
    double bestFit = DBL_MAX;
-   const std::vector<MatS6> perps = sptype->GetSellaPerps();
-   const std::vector<MatS6> prjs = sptype->GetSellaProjectors();
+   std::vector<MatS6> perps = sptype->GetSellaPerps();
+   std::vector<MatS6> prjs = sptype->GetSellaProjectors();
+   if (s_useFaceCrossed) AppendFaceCrossed(name, prjs, perps);
 
    if (prjs.size() != perps.size()) {
       std::cout << name << "  there are not the same number of lattice types in prjs"

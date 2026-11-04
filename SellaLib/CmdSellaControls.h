@@ -43,6 +43,7 @@ public:
       os << ";   full detail " << (csc.fullDetail ? "true" : "false") << std::endl;
       os << ";   random seed " << csc.getRandomSeed() << std::endl;
 
+      os << ";   face crossed " << ((csc.faceCrossed) ? "true" : "false") << std::endl;
       os << ";   classify Direct " << (csc.classifyDirect ? "true" : "false") << std::endl;
       return os;
    }
@@ -363,6 +364,20 @@ public:
          });
 
 
+      // FACECROSSED -- adds the missing face arrangements (SELLA white paper
+      // v4, Appendix B) to the projector lists used for fitting: for O1B, six
+      // projectors borrowed from O3; for O2, the other three. These cover
+      // reduced forms of special lattices on cone faces that the type's own
+      // list misses, so that nesting such as fit(O2) <= fit(O3) holds by
+      // construction rather than only when remediation finds the right
+      // boundary transform. Off by default, so fits can be compared with and
+      // without the extra arrangements (e.g. COMPARE with FACECROSSED 0 vs 1).
+      InputHandler::registerHandler("FACECROSSED", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            faceCrossed = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
       // SEED / RANDOMSEED moved to BaseControlVariables.h (2026-08-29) --
       // registered there instead of here so every program built on this
       // framework gets it, not just CmdSella. randomSeed/getRandomSeed()
@@ -416,6 +431,7 @@ public:
 
    int getOutputPrecision() const { return outputPrecision; }
    bool useExtendedPrecision() const { return outputPrecision > 0; }
+   bool shouldUseFaceCrossed() const { return faceCrossed; }
 
 private:
 
@@ -538,7 +554,7 @@ private:
    std::string diagnoseChild;
 
    int outputPrecision = 0;   // 0 = current formatting
-
+   bool faceCrossed = true;  // see FACECROSSED handler above
 };
 
 #endif // INPUTHANDLER_CMD_SELLA_FEATURES_H

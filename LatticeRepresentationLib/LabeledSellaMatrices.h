@@ -18,6 +18,7 @@ public:
    static std::vector<LabeledSellaMatrices> CreateAllPerps();
    static std::vector<LabeledSellaMatrices> CreateAllPrjs();
    static std::vector<LabeledSellaMatrices> CreateAllToCanon( );
+
    std::string GetLabel() const { return m_label; }
 
    std::vector<MatS6>  GetMatrices() const { return m_vector; }

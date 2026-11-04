@@ -150,6 +150,7 @@
     <ClInclude Include="DiagnoseBoundaryCandidates.h" />
     <ClInclude Include="DiagnoseO1BCoverage.h" />
     <ClInclude Include="DiagnoseO2Gap.h" />
+    <ClInclude Include="FaceCrossedArrangements.h" />
     <ClInclude Include="FlexibleSellaTestMode.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GrimmerDeloneTree.h" />

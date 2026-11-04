@@ -2607,3 +2607,18 @@ std::vector<LabeledSellaMatrices> LabeledSellaMatrices::CreateAllPerps() {
 
    return vlsm;
 }
+
+// ===========================================================================
+// FaceCrossed projector/perp lists (Oct 2026) -- SELLA white paper v4,
+// Appendix B. Missing face arrangements for O1B and O2: reduced forms of
+// special members (on cone faces) that no projector of the type's own list
+// covers. Every one is already an O3 projector, so these functions return
+// exact copies of O3 entries (generated from CreatePrjs_O3/CreatePerps_O3,
+// not retyped). Comments give each arrangement and its index in O3's list.
+//   O3 #1-#6 lie on O2 arrangements but on no O1B arrangement -> O1B.
+//   O3 #7-#9 lie on the O1B arrangement but on no O2 arrangement -> O2.
+// Kept separate from CreatePrjs_O1B/O2 so fits can be compared with and
+// without them. The label is the type's own ("O1B"/"O2"), so the lists can
+// be appended to the type's ordinary list.
+// ===========================================================================
+
