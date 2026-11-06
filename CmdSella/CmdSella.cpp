@@ -659,13 +659,21 @@ int main(int argc, char* argv[])
    controls.setHasWebInput(webio.m_hasWebInstructions);
    const WebFileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella", 0, controls);
    Sella::SetUseFaceCrossed(controls.shouldUseFaceCrossed());
-   Sella::SetUseFaceCrossed(controls.shouldUseFaceCrossed());
+   Sella::SetUseConeFit(controls.shouldUseConeFit());
    if (Sella::GetUseFaceCrossed()) {
       const size_t problems = VerifyFaceCrossedArrangements(std::cout);
       std::cout << "; FACECROSSED on: " << CountFaceCrossedArrangements()
          << " face arrangements for 11 types, "
          << ((problems == 0) ? "all verified" : "PROBLEMS FOUND") << std::endl;
-   }   // Block limits and file names (Oct 2026), computed here from main's own
+   }
+   if (!Sella::GetUseConeFit()) {
+      std::cout << "; CONEFIT off: plain subspace projection" << std::endl;
+   }
+   if (!controls.shouldRemediate()) {
+      std::cout << "; REMEDIATION off: direct fits only" << std::endl;
+   }
+
+   // Block limits and file names (Oct 2026), computed here from main's own
    // WebIO -- the same pattern as Follow -- because CmdSella writes THREE
    // files per cell (main plot, _fit_plots, _delonetree), and the web
    // limit counts files, not cells. With graphics off no files are
@@ -803,6 +811,11 @@ int main(int argc, char* argv[])
 
    const std::vector<LatticeCell>& inputList = dc_setup.getInputList();
 
+
+   if (controls.shouldCheckRemediation()) {
+      RunRemediationCheck(inputList, controls);
+      exit(0);
+   }
 
    if (controls.shouldDiagnosePair()) {
       for (const auto& inputCell : inputList) {

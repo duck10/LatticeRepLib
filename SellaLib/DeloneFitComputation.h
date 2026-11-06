@@ -33,4 +33,6 @@ DeloneFitComputation ComputeDeloneFits(
    const CmdSellaControls& controls,
    Sella& sella);
 
+void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSellaControls& controls);
+
 #endif // DELONE_FIT_COMPUTATION_H

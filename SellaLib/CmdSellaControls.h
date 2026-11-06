@@ -44,6 +44,9 @@ public:
       os << ";   random seed " << csc.getRandomSeed() << std::endl;
 
       os << ";   face crossed " << ((csc.faceCrossed) ? "true" : "false") << std::endl;
+      os << ";   remediation " << ((csc.remediation) ? "true" : "false") << std::endl;
+      os << ";   cone fit " << ((csc.coneFit) ? "true" : "false") << std::endl;
+      os << ";   check remediation " << ((csc.checkRemediation) ? "true" : "false") << std::endl;
       os << ";   classify Direct " << (csc.classifyDirect ? "true" : "false") << std::endl;
       return os;
    }
@@ -378,6 +381,45 @@ public:
          }
       );
 
+      // REMEDIATION -- on (default): every type's fit gets the full
+      // Remediation168 search (boundary-transform and reflection candidates,
+      // iterated, cross-seeded; DeloneFitComputation.cpp). Off: each type's
+      // fit is the direct fit of the reduced cell, SellaFitXXXXXX with its
+      // projector list (plus the face arrangements when FACECROSSED is on).
+      // Added 2026-11-06 to test whether Remediation is still needed now
+      // that the face arrangements are in place.
+      InputHandler::registerHandler("REMEDIATION", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            remediation = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
+      // CONEFIT -- on (default): Sella::SellaFitXXXXXX clamps each projection
+      // to the reduced cone (each letter group gets min(0, group mean), the
+      // white paper's constrained projection) before taking the distance.
+      // Changes nothing for reduced input; corrects Remediation's
+      // candidates outside the cone, which could otherwise report fits
+      // that are too small (CHECKREMEDIATION "ARTIFACT" lines, 2026-11-06).
+      // Off: the plain subspace projection, as before.
+      InputHandler::registerHandler("CONEFIT", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            coneFit = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
+      // CHECKREMEDIATION -- diagnostic (RunRemediationCheck,
+      // DeloneFitComputation.cpp): for every input cell and every type,
+      // computes the direct fit and the remediated fit, and reports each
+      // type where Remediation found a lower fit, with the winning
+      // candidate's largest scalar (> 0 means outside the reduced cone) and
+      // its cone fit (projection with each group value clamped to <= 0).
+      // Prints a summary and exits. Off by default.
+      InputHandler::registerHandler("CHECKREMEDIATION", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            checkRemediation = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+         }
+      );
+
       // SEED / RANDOMSEED moved to BaseControlVariables.h (2026-08-29) --
       // registered there instead of here so every program built on this
       // framework gets it, not just CmdSella. randomSeed/getRandomSeed()
@@ -432,6 +474,9 @@ public:
    int getOutputPrecision() const { return outputPrecision; }
    bool useExtendedPrecision() const { return outputPrecision > 0; }
    bool shouldUseFaceCrossed() const { return faceCrossed; }
+   bool shouldRemediate() const { return remediation; }
+   bool shouldUseConeFit() const { return coneFit; }
+   bool shouldCheckRemediation() const { return checkRemediation; }
 
 private:
 
@@ -555,6 +600,9 @@ private:
 
    int outputPrecision = 0;   // 0 = current formatting
    bool faceCrossed = true;  // see FACECROSSED handler above
+   bool remediation = true;  // see REMEDIATION handler above
+   bool coneFit = true;  // see CONEFIT handler above
+   bool checkRemediation = false;  // see CHECKREMEDIATION handler above
 };
 
 #endif // INPUTHANDLER_CMD_SELLA_FEATURES_H

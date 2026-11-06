@@ -851,17 +851,43 @@ public:
             // the fit values at cell 3 (O1B 0.0646, O2 0.0672) no longer
             // match the failure described above (O1B ~0.065, O2 ~5.25).
             // Kept as a regression guard.
+            //
+            // 2026-11-06 (CONEFIT): the 2026-10-29 pass came from outside-cone
+            // artifacts -- Remediation's candidates projected to points
+            // outside the reduced cone, which are not O1B/O2/O3 lattices.
+            // With the cone fit the order flips between cells again (O2 best
+            // on cell 2, O1B best on cell 3). Nothing requires the best type
+            // to keep its rank across two different cells near a triple
+            // point, so the rank check is replaced by the nesting bounds
+            // O1B <= O3 and O2 <= O3, which must hold, plus fit-range guards
+            // on the cone-fit values.
       {
          FlexibleSellaTestCase test9("O2_WithinType_LibraryGap_MinimalFixture",
-            "O1B/O2/O3 rank stability at a former O2 library-gap failure "
-            "point. Passes as of 2026-10-29 (O1B best, O2 second, no flip); "
-            "what fixed it was not recorded. Now a regression guard.");
+            "Three cells at a former O2 library-gap point near the O1B/O2/O3 "
+            "triple point. O1B <= O3 and O2 <= O3 on every cell, and O1B, O2 "
+            "fits at the cone-fit values (2026-11-06). The former rank check "
+            "passed only because of outside-cone artifacts.");
          test9.addInputCell(LatticeCell("S -38.13450 -43.40350 0.00000 -38.13450 -43.40350 -0.00000"));
          test9.addInputCell(LatticeCell("S -43.34318 -38.15350 -0.00055 -38.13490 -43.34264 -0.02616"));
          test9.addInputCell(LatticeCell("S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403 -0.04436"));
-         test9.addRankStabilityExpectation(FlexibleSellaTestCase::RankStabilityExpectation(
-            { "O1B", "O2", "O3" },
-            "O1B/O2/O3 best-fit rank must not flip across these three cells"));
+         test9.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 0.0, 0.001, 0, "cell 1 (exact point): O1B cone fit 0"));
+         test9.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 0.0, 0.001, 0, "cell 1 (exact point): O2 cone fit 0"));
+         test9.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 0.0237976, 0.0337976, 1, "cell 2: O1B cone fit 0.0287976"));
+         test9.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 0.0081692, 0.0181692, 1, "cell 2: O2 cone fit 0.0131692"));
+         test9.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 0.0596143, 0.0696143, 2, "cell 3: O1B cone fit 0.0646143"));
+         test9.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 0.0646545, 0.0746545, 2, "cell 3: O2 cone fit 0.0696545"));
+         for (size_t cell = 0; cell < 3; ++cell) {
+            test9.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "O1B", "O3", 1.0E-6, cell, "O1B <= O3, cell " + std::to_string(cell + 1)));
+            test9.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "O2", "O3", 1.0E-6, cell, "O2 <= O3, cell " + std::to_string(cell + 1)));
+         }
          addTestCase(test9);
       }
 
@@ -880,6 +906,12 @@ public:
       // it -- one of the earlier fit-pipeline fixes did. The test is now a
       // regression guard: if the swing returns, the O1B range on cell A
       // fails.
+      //
+      // 2026-11-06 (CONEFIT): O1B on cell A rises from 0.0131635 to
+      // 0.0287976 (= O3, the nesting bound met with equality) and O2 on
+      // cell B from 0.06715 to 0.0696545 (= O3). The old values came from
+      // Remediation candidates whose projections lay outside the reduced
+      // cone, i.e. distances to points that are not O1B/O2 lattices.
       {
          FlexibleSellaTestCase test10("O1B_O2_O3_TriplePoint_FitSensitivity",
             "Two close cells (NCDist 0.137) near the O1B/O2/O3 triple point. "
@@ -889,7 +921,7 @@ public:
          test10.addInputCell(LatticeCell("S -43.34318 -38.15350 -0.00055 -38.13490 -43.34264 -0.02616"));  // candidate A
          test10.addInputCell(LatticeCell("S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403 -0.04436"));  // candidate B
          test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 0.0081635, 0.0181635, 0, "cell A: O1B = 0.0131635 (was 5.19875 for O1B on A)"));
+            "O1B", 0.0237976, 0.0337976, 0, "cell A: O1B cone fit 0.0287976 (was 0.0131635)"));
          test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 0.0081692, 0.0181692, 0, "cell A: O2 = 0.0131692"));
          test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
@@ -897,7 +929,7 @@ public:
          test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O1B", 0.0596143, 0.0696143, 1, "cell B: O1B = 0.0646143"));
          test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 0.0621500, 0.0721500, 1, "cell B: O2 = 0.0671500"));
+            "O2", 0.0646545, 0.0746545, 1, "cell B: O2 cone fit 0.0696545 (was 0.0671500)"));
          test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 0.0646545, 0.0746545, 1, "cell B: O3 = 0.0696545"));
          for (size_t cell = 0; cell < 2; ++cell) {
@@ -1001,18 +1033,41 @@ public:
       // Note the pass is by a tie, not by a stable ordering: if M1A and
       // M1B ever diverge again, this fixture is where it will show.
       // The change that produced the tie was not recorded.
+      //
+      // 2026-11-06 (CONEFIT): the tie came from outside-cone artifacts. With
+      // the cone fit the original swap is back: M1B best on cell 2 (0.02068
+      // vs M1A 0.0713908), M1A best on cell 3 (0.0680599 vs M1B 0.0924576).
+      // A swap between two mC siblings on either side of an M2B point is
+      // allowed geometry, so the rank check is replaced by the nesting
+      // bounds M1A <= M2B and M1B <= M2B (both are confirmed nested pairs,
+      // Test 29) plus fit-range guards on the cone-fit values.
       {
          FlexibleSellaTestCase test12("M1A_M1B_OrientationSwap_M2BBoundary",
-            "M1A/M1B rank stability near an M2B boundary point (formerly "
-            "a confirmed swap). Passes as of 2026-10-29: M1A and M1B now "
-            "fit identically on all three cells, so no flip; what changed "
-            "was not recorded. Now a regression guard.");
+            "M1A/M1B near an M2B boundary point. M1A <= M2B and M1B <= M2B on "
+            "every cell, and M1A, M1B fits at the cone-fit values "
+            "(2026-11-06): M1B better on cell 2, M1A better on cell 3. The "
+            "former tie came from outside-cone artifacts.");
          test12.addInputCell(LatticeCell("S -38.13450 -43.40350 0.00000 -38.13450 -43.40350 -59.44700"));  // cell 1: exact M2B point (round-trip UNCHECKED)
          test12.addInputCell(LatticeCell("S -38.10203 -43.40929 -0.06833 -38.08135 -43.38861 -59.50431"));  // cell 2: normal (M1B=0.02068, M1A=5.30726)
          test12.addInputCell(LatticeCell("S -38.05796 -38.14164 -0.06258 -43.30057 -43.34813 -59.49953"));  // cell 3: swap (M1A=0.06806, M1B=5.22458)
-         test12.addRankStabilityExpectation(FlexibleSellaTestCase::RankStabilityExpectation(
-            { "M1A", "M1B" },
-            "M1A/M1B best-fit rank must not flip across these three cells"));
+         test12.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1A", 0.0, 0.001, 0, "cell 1 (exact M2B point): M1A cone fit 0"));
+         test12.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1B", 0.0, 0.001, 0, "cell 1 (exact M2B point): M1B cone fit 0"));
+         test12.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1B", 0.01568, 0.02568, 1, "cell 2: M1B cone fit 0.02068"));
+         test12.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1A", 0.0663908, 0.0763908, 1, "cell 2: M1A cone fit 0.0713908"));
+         test12.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1A", 0.0630599, 0.0730599, 2, "cell 3: M1A cone fit 0.0680599"));
+         test12.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1B", 0.0874576, 0.0974576, 2, "cell 3: M1B cone fit 0.0924576"));
+         for (size_t cell = 0; cell < 3; ++cell) {
+            test12.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "M1A", "M2B", 1.0E-6, cell, "M1A <= M2B, cell " + std::to_string(cell + 1)));
+            test12.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "M1B", "M2B", 1.0E-6, cell, "M1B <= M2B, cell " + std::to_string(cell + 1)));
+         }
          addTestCase(test12);
       }
 
@@ -1446,6 +1501,12 @@ public:
       // 10% of |S6| (Remediation168ForOneSubtype). Before that filter, all 20
       // came from points 19 to 99 outside the reduced cone and were 15-40%
       // lower. Each value is also <= the distance to its own known M4 parent.
+      //
+      // 2026-11-06 (CONEFIT): cells 5 and 6 rise (1.62065 -> 2.24436,
+      // 5.16597 -> 6.19820) to their direct fits: the 10% filter limited how
+      // far outside the cone a candidate could be, but a candidate inside
+      // the limit could still project outside the cone. Both new values stay
+      // below the distance to the known parent (9.04 and 8.58).
       {
          FlexibleSellaTestCase test24("M4_Perturbed10pct_InsideConeFits",
             "20 genuine 10% perturbations of cmdgen M4 cells. M4 fit must match "
@@ -1480,17 +1541,17 @@ public:
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "M4", 5.46865, 5.47865, 3, "inside-cone M4 fit 5.47365"));
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "M4", 1.61565, 1.62565, 4, "inside-cone M4 fit 1.62065"));
+            "M4", 2.23936, 2.24936, 4, "M4 cone fit 2.24436 (was 1.62065, outside-cone artifact)"));
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "M4", 5.16097, 5.17097, 5, "inside-cone M4 fit 5.16597"));
+            "M4", 6.1932, 6.2032, 5, "M4 cone fit 6.19820 (was 5.16597, outside-cone artifact)"));
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "M4", 1.22990, 1.23990, 6, "inside-cone M4 fit 1.23490"));
+            "M4", 1.2299, 1.2399, 6, "inside-cone M4 fit 1.23490"));
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "M4", 8.71929, 8.72929, 7, "inside-cone M4 fit 8.72429"));
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "M4", 4.42245, 4.43245, 8, "inside-cone M4 fit 4.42745"));
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "M4", 11.54077, 11.55077, 9, "inside-cone M4 fit 11.54577"));
+            "M4", 11.5408, 11.5508, 9, "inside-cone M4 fit 11.54577"));
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "M4", 2.85765, 2.86765, 10, "inside-cone M4 fit 2.86265"));
          test24.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
@@ -1528,6 +1589,11 @@ public:
       // exactly fit(O3) on those cells; nothing else changes. The O2 <= O3
       // and O1B <= O3 nesting checks are now added for every cell.
       // Run with FACECROSSED 0 and this test fails on those 7 cells.
+      //
+      // 2026-11-06 (CONEFIT): 18 O1B/O2 values rise (descriptions give the
+      // old values), most to exactly fit(O3) -- the nesting bound met with
+      // equality. The old values were distances to projected points outside
+      // the reduced cone, which are not O1B/O2 lattices.
       {
          FlexibleSellaTestCase test25("O1B_O2_O3_Cluster_InsideConeFits",
             "22 cells near the O1B/O2/O3 boundary. O1B, O2, O3 fits must match "
@@ -1556,19 +1622,19 @@ public:
          test25.addInputCell(LatticeCell("S -43.24616 -19.55483 -4.67494 -23.07062 -37.81048 -5.95627"));
          test25.addInputCell(LatticeCell("S -20.79748 -18.41420 -4.39473 -42.09021 -45.92328 -5.46142"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 0.00000, 0.00100, 0, "O1B filtered fit 0.00000"));
+            "O1B", 0, 0.001, 0, "O1B filtered fit 0.00000"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 0.00000, 0.00100, 0, "O2 filtered fit 0.00000"));
+            "O2", 0, 0.001, 0, "O2 filtered fit 0.00000"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O3", 0.00000, 0.00100, 0, "O3 filtered fit 0.00000"));
+            "O3", 0, 0.001, 0, "O3 filtered fit 0.00000"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 4.26656, 4.27656, 1, "O1B filtered fit 4.27156"));
+            "O1B", 4.29313, 4.30313, 1, "O1B cone fit 4.29813 (was 4.27156, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 4.29589, 4.30589, 1, "O2 filtered fit 4.30089"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 4.90849, 4.91849, 1, "O3 filtered fit 4.91349"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 3.63467, 3.64467, 2, "O1B filtered fit 3.63967"));
+            "O1B", 4.29546, 4.30546, 2, "O1B cone fit 4.30046 (was 3.63967, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 4.29546, 4.30546, 2, "O2 fit 4.30046 with FACECROSSED (= O3; was 5.06513)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
@@ -1576,7 +1642,7 @@ public:
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O1B", 2.63651, 2.64651, 3, "O1B filtered fit 2.64151"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 3.18659, 3.19659, 3, "O2 filtered fit 3.19159"));
+            "O2", 4.33118, 4.34118, 3, "O2 cone fit 4.33618 (was 3.19159, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 4.33118, 4.34118, 3, "O3 filtered fit 4.33618"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
@@ -1586,7 +1652,7 @@ public:
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 6.86144, 6.87144, 4, "O3 filtered fit 6.86644"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 1.18617, 1.19617, 5, "O1B filtered fit 1.19117"));
+            "O1B", 2.65786, 2.66786, 5, "O1B cone fit 2.66286 (was 1.19117, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 1.20705, 1.21705, 5, "O2 filtered fit 1.21205"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
@@ -1598,43 +1664,43 @@ public:
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 4.31466, 4.32466, 6, "O3 filtered fit 4.31966"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 4.91203, 4.92203, 7, "O1B filtered fit 4.91703"));
+            "O1B", 6.35453, 6.36453, 7, "O1B cone fit 6.35953 (was 4.91703, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 4.99537, 5.00537, 7, "O2 filtered fit 5.00037"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 6.35453, 6.36453, 7, "O3 filtered fit 6.35953"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 6.91610, 6.92610, 8, "O1B filtered fit 6.92110"));
+            "O1B", 7.04015, 7.05015, 8, "O1B cone fit 7.04515 (was 6.92110, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 7.04015, 7.05015, 8, "O2 fit 7.04515 with FACECROSSED (= O3; was 7.26041)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 7.04015, 7.05015, 8, "O3 filtered fit 7.04515"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 2.02020, 2.03020, 9, "O1B filtered fit 2.02520"));
+            "O1B", 4.75338, 4.76338, 9, "O1B cone fit 4.75838 (was 2.02520, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 2.69460, 2.70460, 9, "O2 filtered fit 2.69960"));
+            "O2", 2.6946, 2.7046, 9, "O2 filtered fit 2.69960"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 4.75338, 4.76338, 9, "O3 filtered fit 4.75838"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O1B", 5.76823, 5.77823, 10, "O1B filtered fit 5.77323"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 6.67120, 6.68120, 10, "O2 filtered fit 6.67620"));
+            "O2", 6.67895, 6.68895, 10, "O2 cone fit 6.68395 (was 6.67620, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 6.67895, 6.68895, 10, "O3 filtered fit 6.68395"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 0.00000, 0.00100, 11, "O1B filtered fit 0.00000"));
+            "O1B", 0, 0.001, 11, "O1B filtered fit 0.00000"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 0.00000, 0.00100, 11, "O2 filtered fit 0.00000"));
+            "O2", 0, 0.001, 11, "O2 filtered fit 0.00000"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O3", 0.00000, 0.00100, 11, "O3 filtered fit 0.00000"));
+            "O3", 0, 0.001, 11, "O3 filtered fit 0.00000"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 7.24503, 7.25503, 12, "O1B filtered fit 7.25003"));
+            "O1B", 7.613, 7.623, 12, "O1B cone fit 7.61800 (was 7.25003, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 7.61300, 7.62300, 12, "O2 fit 7.61800 with FACECROSSED (= O3; was 8.38468)"));
+            "O2", 7.613, 7.623, 12, "O2 fit 7.61800 with FACECROSSED (= O3; was 8.38468)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O3", 7.61300, 7.62300, 12, "O3 filtered fit 7.61800"));
+            "O3", 7.613, 7.623, 12, "O3 filtered fit 7.61800"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 6.67940, 6.68940, 13, "O1B filtered fit 6.68440"));
+            "O1B", 7.36603, 7.37603, 13, "O1B cone fit 7.37103 (was 6.68440, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 7.35821, 7.36821, 13, "O2 filtered fit 7.36321"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
@@ -1642,17 +1708,17 @@ public:
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O1B", 1.66395, 1.67395, 14, "O1B filtered fit 1.66895"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 2.05081, 2.06081, 14, "O2 filtered fit 2.05581"));
+            "O2", 4.23799, 4.24799, 14, "O2 cone fit 4.24299 (was 2.05581, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 4.23799, 4.24799, 14, "O3 filtered fit 4.24299"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 7.59032, 7.60032, 15, "O1B filtered fit 7.59532"));
+            "O1B", 7.60371, 7.61371, 15, "O1B cone fit 7.60871 (was 7.59532, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 7.60371, 7.61371, 15, "O2 fit 7.60871 with FACECROSSED (= O3; was 9.98521)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 7.60371, 7.61371, 15, "O3 filtered fit 7.60871"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 6.27245, 6.28245, 16, "O1B filtered fit 6.27745"));
+            "O1B", 6.31524, 6.32524, 16, "O1B cone fit 6.32024 (was 6.27745, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 6.30649, 6.31649, 16, "O2 filtered fit 6.31149"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
@@ -1660,29 +1726,29 @@ public:
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O1B", 6.98675, 6.99675, 17, "O1B filtered fit 6.99175"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 7.06559, 7.07559, 17, "O2 filtered fit 7.07059"));
+            "O2", 7.18157, 7.19157, 17, "O2 cone fit 7.18657 (was 7.07059, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 7.18157, 7.19157, 17, "O3 filtered fit 7.18657"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O1B", 6.55285, 6.56285, 18, "O1B filtered fit 6.55785"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O2", 7.24281, 7.25281, 18, "O2 filtered fit 7.24781"));
+            "O2", 7.26364, 7.27364, 18, "O2 cone fit 7.26864 (was 7.24781, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 7.26364, 7.27364, 18, "O3 filtered fit 7.26864"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 7.13478, 7.14478, 19, "O1B filtered fit 7.13978"));
+            "O1B", 7.23094, 7.24094, 19, "O1B cone fit 7.23594 (was 7.13978, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 7.23094, 7.24094, 19, "O2 fit 7.23594 with FACECROSSED (= O3; was 7.96256)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 7.23094, 7.24094, 19, "O3 filtered fit 7.23594"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 5.64135, 5.65135, 20, "O1B filtered fit 5.64635"));
+            "O1B", 6.66213, 6.67213, 20, "O1B cone fit 6.66713 (was 5.64635, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 6.53784, 6.54784, 20, "O2 filtered fit 6.54284"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O3", 6.66213, 6.67213, 20, "O3 filtered fit 6.66713"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
-            "O1B", 5.00497, 5.01497, 21, "O1B filtered fit 5.00997"));
+            "O1B", 5.53013, 5.54013, 21, "O1B cone fit 5.53513 (was 5.00997, outside-cone artifact)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
             "O2", 5.53013, 5.54013, 21, "O2 fit 5.53513 with FACECROSSED (= O3; was 6.32561)"));
          test25.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(

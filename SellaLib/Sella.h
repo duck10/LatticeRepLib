@@ -105,6 +105,12 @@ public:
    static void SetUseFaceCrossed(const bool b) { s_useFaceCrossed = b; }
    static bool GetUseFaceCrossed() { return s_useFaceCrossed; }
 
+   // public:
+   static void SetUseConeFit(const bool b) { s_useConeFit = b; }
+   static bool GetUseConeFit() { return s_useConeFit; }
+   // private:
+   inline static bool s_useConeFit = true;
+
 
 private:
    // NEW: Instance variables to hold the matrices in use (either hard-coded or dynamically built)

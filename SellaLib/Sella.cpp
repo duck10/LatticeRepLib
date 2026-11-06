@@ -120,6 +120,33 @@ static void AppendFaceCrossed(const std::string& name,
    perps.insert(perps.end(), fc.perps.begin(), fc.perps.end());
 }
 
+// ClampToCone -- sets every positive component of a projected vector to 0.
+// All members of a letter group share one projected value, so this is
+// min(0, group mean) per group: the nearest point of the arrangement's
+// subspace that lies inside the reduced cone (s_i <= 0). Returns true if
+// anything changed. A Selling-reduced input never changes; only
+// non-reduced inputs (Remediation's candidates, which may lie up to
+// 0.10 * |s6| outside the cone) can.
+static bool ClampToCone(S6& v) {
+   bool changed = false;
+   for (size_t i = 0; i < 6; ++i) {
+      if (v[i] > 0.0) {
+         v[i] = 0.0;
+         changed = true;
+      }
+   }
+   return changed;
+}
+
+// SellaFitXXXXXX -- best fit of s6 to one Delone type over the type's
+// projector list (plus the face arrangements when s_useFaceCrossed).
+// With s_useConeFit (CONEFIT, default on, 2026-11-06) each projection is
+// clamped to the reduced cone before the distance is taken, so every
+// reported fit is the distance to a genuine reduced form of the type.
+// Without it, a candidate outside the cone could project to a point
+// outside the cone -- a vector with the type's zero/equality pattern that
+// is not a lattice of that type -- and report a fit that is too small.
+// When nothing is clamped the fit is perps[i] * s6, exactly as before.
 DeloneFitResults Sella::SellaFitXXXXXX(
    const std::shared_ptr<GenerateDeloneBase>& sptype,
    const S6& s6) {
@@ -149,18 +176,22 @@ DeloneFitResults Sella::SellaFitXXXXXX(
 
    if (errors != 0) throw("prjs[i] count != perps[i] count");
 
+   S6 bestv = prjs[0] * s6;
+   S6 smallestPerp = perps[0] * s6;
    for (size_t i = 0; i < perps.size(); ++i) {
-      const S6 perpv = perps[i] * s6;
+      S6 projected = prjs[i] * s6;
+      const bool clamped = s_useConeFit && ClampToCone(projected);
+      const S6 perpv = clamped ? S6(s6 - projected) : S6(perps[i] * s6);
       const double testFit = perpv.norm();
 
-      if (bestFit > testFit && LRL_Cell_Degrees(prjs[i] * s6).IsValid()) {
+      if (bestFit > testFit && LRL_Cell_Degrees(projected).IsValid()) {
          nBest = i;
          bestFit = testFit;
+         bestv = projected;
+         smallestPerp = perpv;
       }
    }
    if (bestFit < 1.0E-8) bestFit = 0.0;
-   const S6 smallestPerp = perps[nBest] * s6;
-   const S6 bestv = prjs[nBest] * s6;
    const MatS6 toCanonicalDeloneType/* = sptypes[nBest]->GetToCanon(nBest)*/;
 
    DeloneFitResults temp(bestFit, bestv, smallestPerp, MatS6().unit());
@@ -206,4 +237,3 @@ std::vector<DeloneFitResults> Sella::SellaFit(
    }
    return vDeloneFitResults;
 }
-
