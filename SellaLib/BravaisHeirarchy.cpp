@@ -367,7 +367,7 @@ std::map<std::string, double> BravaisHeirarchy::GetBestOfEachBravaisType(
    std::map<std::string, double>  bravaisMap;
 
    for (auto it = msdfr.begin(); it != msdfr.end(); ++it) {
-      bravaisMap.insert(make_pair((*it).first, (*it).second.GetDifference().norm()));
+      bravaisMap.insert(make_pair((*it).first, (*it).second.GetRawFit()));
    }
    return bravaisMap;
 }
@@ -404,13 +404,13 @@ std::map<std::string, DeloneFitResults>  BravaisHeirarchy::CreateMapForBestExamp
    for (const auto& result : vDeloneFitResults) {
       std::string name = result.GetGeneralType();
       //if (name == "oC") name = "oS";
-      const double& delta = result.GetDifference().norm();
+      const double delta = result.GetRawFit();
 
       const auto mapElement = bravaisMap.find(name);
       if (mapElement == bravaisMap.end())
          bravaisMap.insert(std::make_pair(name, result));
       else
-         if (delta < (*mapElement).second.GetDifference().norm())
+         if (delta < (*mapElement).second.GetRawFit())
             (*mapElement).second = result;
    }
    return bravaisMap;

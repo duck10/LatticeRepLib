@@ -859,46 +859,46 @@ int main(int argc, char* argv[])
       exit(0);
    }
 
-   if (controls.shouldClassifyDirect()) {
-      int cellIndex = 1;
-      for (const auto& inputCell : inputList) {
-         MatS6 oneReductionMatrix;
-         const S6 oneLattice = GetInputSellingReducedVectors(inputCell, oneReductionMatrix);
-         const S6 oneErrors = 0.1 * inputCell.getCell();
+   //if (controls.shouldClassifyDirect()) {
+   //   int cellIndex = 1;
+   //   for (const auto& inputCell : inputList) {
+   //      MatS6 oneReductionMatrix;
+   //      const S6 oneLattice = GetInputSellingReducedVectors(inputCell, oneReductionMatrix);
+   //      const S6 oneErrors = 0.1 * inputCell.getCell();
 
-         std::cout << "; " << inputCell.GetInput() << std::endl;
-         const std::vector<DeloneFitResults> fits =
-            PopulateDirectFitsForAllTypes(oneLattice, oneErrors, oneReductionMatrix, sella);
-         for (const auto& fit : fits) {
-            PrintCompact(fit);
-         }
+   //      std::cout << "; " << inputCell.GetInput() << std::endl;
+   //      const std::vector<DeloneFitResults> fits =
+   //         PopulateDirectFitsForAllTypes(oneLattice, oneErrors, oneReductionMatrix, sella);
+   //      for (const auto& fit : fits) {
+   //         PrintCompact(fit);
+   //      }
 
-         // NEW: Bravais-type fit grouping -- min raw fit per Bravais type
-         // across its Delone siblings. CreateMapOFBravaisFits takes a
-         // non-const ref (doesn't appear to mutate fits) so a local copy
-         // is needed since fits is const here.
-         std::vector<DeloneFitResults> fitsForGrouping = fits;
-         MapOfBravaisFits bravaisFits;
-         bravaisFits.CreateMapOFBravaisFits(fitsForGrouping);
-         std::cout << bravaisFits;
+   //      // NEW: Bravais-type fit grouping -- min raw fit per Bravais type
+   //      // across its Delone siblings. CreateMapOFBravaisFits takes a
+   //      // non-const ref (doesn't appear to mutate fits) so a local copy
+   //      // is needed since fits is const here.
+   //      std::vector<DeloneFitResults> fitsForGrouping = fits;
+   //      MapOfBravaisFits bravaisFits;
+   //      bravaisFits.CreateMapOFBravaisFits(fitsForGrouping);
+   //      std::cout << bravaisFits;
 
-         const std::string fitPlotsSvg =
-            GenerateDirectFitPlotsSvg(fits, oneLattice, inputCell.getInput());
-         const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(
-            LRL_CreateFileName::Create("SEL", LRL_DataToSVG(cellIndex), "svg", true), "_fit_plots");
-         WriteDirectSvg(fitPlotsSvg, fitPlotsFilename);
-         std::cout << "; Send Sella Plot to graphics file " << fitPlotsFilename << std::endl;
+   //      const std::string fitPlotsSvg =
+   //         GenerateDirectFitPlotsSvg(fits, oneLattice, inputCell.getInput());
+   //      const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(
+   //         LRL_CreateFileName::Create("SEL", LRL_DataToSVG(cellIndex), "svg", true), "_fit_plots");
+   //      WriteDirectSvg(fitPlotsSvg, fitPlotsFilename);
+   //      std::cout << "; Send Sella Plot to graphics file " << fitPlotsFilename << std::endl;
 
-         const std::string deloneTreeSvg = GenerateDirectDeloneTreeSvg(
-            fits, oneLattice, inputCell, controls.getMaxDeltaForMatch());
-         const std::string deloneTreeFilename = AddSuffixToAllSvgOccurrences(
-            LRL_CreateFileName::Create("SEL", LRL_DataToSVG(cellIndex), "svg", true), "_delonetree");
-         WriteDirectSvg(deloneTreeSvg, deloneTreeFilename);
-         std::cout << "; Send Sella Plot to graphics file " << deloneTreeFilename << std::endl;
-         ++cellIndex;
-      }
-      exit(0);
-   }
+   //      const std::string deloneTreeSvg = GenerateDirectDeloneTreeSvg(
+   //         fits, oneLattice, inputCell, controls.getMaxDeltaForMatch());
+   //      const std::string deloneTreeFilename = AddSuffixToAllSvgOccurrences(
+   //         LRL_CreateFileName::Create("SEL", LRL_DataToSVG(cellIndex), "svg", true), "_delonetree");
+   //      WriteDirectSvg(deloneTreeSvg, deloneTreeFilename);
+   //      std::cout << "; Send Sella Plot to graphics file " << deloneTreeFilename << std::endl;
+   //      ++cellIndex;
+   //   }
+   //   exit(0);
+   //}
 
    const bool doProduceSellaGraphics = controls.DoGraphics();
 

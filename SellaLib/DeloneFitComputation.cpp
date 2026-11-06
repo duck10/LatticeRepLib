@@ -215,7 +215,19 @@ static std::vector<DeloneFitResults> ComputeFullSearchFitsForAllTypes(
       fit.SetWinningCandidate(fit.GetOriginalInput());  // capture before
       // OriginalInput below is repurposed to mean "the shared input cell"
 
-      const double zscore = sella.Zscore(oneLattice - fit.GetBestFit(), oneErrors, oneReductionMatrix)
+      // The fit vector is candidate - target, in the candidate's own
+      // representation; its norm is the raw fit. The target (GetBestFit)
+      // is the nearest reduced lattice of the type to the WINNING
+      // CANDIDATE, so subtracting it from oneLattice (a different
+      // representation whenever Remediation won) mixes two bases and is
+      // not the fit vector (fixed 2026-11-06; the mismatch dates from the
+      // 2026-10-09 ungated search). The target is used only as the end of
+      // that distance and for display, never as a representation of the
+      // input lattice. The Z-score still uses oneReductionMatrix and
+      // oneErrors, which belong to oneLattice -- an approximation when the
+      // winning candidate is a different representation.
+      const S6 fitVector = fit.GetWinningCandidate() - fit.GetBestFit();
+      const double zscore = sella.Zscore(fitVector, oneErrors, oneReductionMatrix)
          * sqrt(static_cast<double>(sptype->GetFreeParams()));
       fit.SetZscore(zscore);
       fit.SetLatticeType(sptype->GetBravaisType());
@@ -223,7 +235,7 @@ static std::vector<DeloneFitResults> ComputeFullSearchFitsForAllTypes(
       fit.SetReductionMatrix(oneReductionMatrix);
       fit.SetBavaisType(sptype->GetBravaisType());
       fit.SetGeneralType(sptype->GetName());
-      fit.SetDifference(oneLattice - fit.GetBestFit());
+      fit.SetDifference(fitVector);
       fit.SetOriginalInput(oneLattice);
 
       results.emplace_back(fit);

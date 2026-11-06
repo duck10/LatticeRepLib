@@ -34,16 +34,18 @@ inline std::map<std::string, DeloneFitResults> CreateMapForBestExamples(
    std::map<std::string, DeloneFitResults>  bravaisMap;
 
    for (size_t i = 0; i < vDeloneFitResults.size(); ++i) {
-      std::string name = vDeloneFitResults[i].GetGeneralType();
-      const double& delta = vDeloneFitResults[i].GetDifference().norm();
+      const std::string name = vDeloneFitResults[i].GetGeneralType();
+      const double fit = vDeloneFitResults[i].GetRawFit();
 
       auto mapElement = bravaisMap.find(name);
-      if (mapElement == bravaisMap.end())
+      if (mapElement == bravaisMap.end()) {
          bravaisMap.insert(std::make_pair(name, vDeloneFitResults[i]));
-      else
-         if (delta < (*mapElement).second.GetDifference().norm())
-            (*mapElement).second = vDeloneFitResults[i];
+      }
+      else if (fit < mapElement->second.GetRawFit()) {
+         mapElement->second = vDeloneFitResults[i];
+      }
    }
+
    return bravaisMap;
 }
 

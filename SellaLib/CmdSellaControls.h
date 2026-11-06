@@ -47,7 +47,7 @@ public:
       os << ";   remediation " << ((csc.remediation) ? "true" : "false") << std::endl;
       os << ";   cone fit " << ((csc.coneFit) ? "true" : "false") << std::endl;
       os << ";   check remediation " << ((csc.checkRemediation) ? "true" : "false") << std::endl;
-      os << ";   classify Direct " << (csc.classifyDirect ? "true" : "false") << std::endl;
+      //os << ";   classify Direct " << (csc.classifyDirect ? "true" : "false") << std::endl;
       return os;
    }
 
@@ -261,17 +261,17 @@ public:
          }
       );
 
-      // CLASSIFYDIRECT -- diverges CmdSella.cpp's main() right after
-// input/controls setup into the new from-scratch classification
-// rewrite (see chat, Sept 2026), bypassing the existing
-// SellaFit/RemediateIfShortlistChanges/GrimmerChains pipeline
-// entirely. One-way: prints and exits, existing pipeline below is
-// untouched, for side-by-side comparison during the rebuild.
-      InputHandler::registerHandler("CLASSIFYDIRECT", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            classifyDirect = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
+//      // CLASSIFYDIRECT -- diverges CmdSella.cpp's main() right after
+//// input/controls setup into the new from-scratch classification
+//// rewrite (see chat, Sept 2026), bypassing the existing
+//// SellaFit/RemediateIfShortlistChanges/GrimmerChains pipeline
+//// entirely. One-way: prints and exits, existing pipeline below is
+//// untouched, for side-by-side comparison during the rebuild.
+//      InputHandler::registerHandler("CLASSIFYDIRECT", .35,
+//         [this](BaseControlVariables&, const std::string& value) {
+//            classifyDirect = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
+//         }
+//      );
 
       // SEQUENCE -- interpreter #1 for the method-library research pipeline
       // (see chat, Sept 2026): applies the named/numbered methods in
@@ -457,7 +457,7 @@ public:
 
    bool shouldTestTransforms() const { return testTransforms; };
    bool shouldUseHarness() const { return useTestHarness; };
-   bool shouldClassifyDirect() const { return classifyDirect; }
+   //bool shouldClassifyDirect() const { return classifyDirect; }
    std::string getSequenceSpec() const { return sequenceSpec; }
    bool shouldRunSequence() const { return !sequenceSpec.empty(); }
    std::string getBestOfSpec() const { return bestOfSpec; }
@@ -583,7 +583,7 @@ private:
    std::vector<std::string> requestedTypes;  // empty == show all (see TYPES handler above)
    std::string seedBoundariesMode;  // "", "PRINT", or "USE" (see SEEDBOUNDARIES handler above)
    bool useTestHarness = false;
-   bool classifyDirect = false;
+   //bool classifyDirect = false;
    std::string sequenceSpec;   // "" == off (see SEQUENCE handler above)
    std::string bestOfSpec;     // "" == off (see BESTOF handler above)
    std::string targetTypeName; // "" == loop all 24 (see TARGETTYPE handler above)
