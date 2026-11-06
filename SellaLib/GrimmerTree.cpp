@@ -22,6 +22,10 @@
 #include <utility>
 #include <vector>
 
+// Containment lowerings smaller than this (relative) are rounding noise:
+// the value is still taken, but not reported.
+const double CONTAINMENT_REPORT_TOLERANCE = 1.0E-6;
+
 
 // Define the static maps first
 const std::map<std::string, double> GrimmerChains::baseDeloneMap = {
@@ -440,9 +444,12 @@ static std::map<std::string, double> ApplyBravaisContainment(
       for (const auto& child : entry.second) {
          const auto childIt = siblingMinima.find(child);
          if (childIt == siblingMinima.end()) continue;
-         if (childIt->second < closed[parent]) {
-            std::cout << "; containment: " << parent << " lowered from " << parentIt->second
-               << " to " << childIt->second << " via " << child << std::endl;
+         const double drop = closed[parent] - childIt->second;
+         if (drop > 0.0) {
+            if (drop > CONTAINMENT_REPORT_TOLERANCE * std::max(1.0, std::abs(closed[parent]))) {
+               std::cout << "; containment: " << parent << " lowered from " << parentIt->second
+                  << " to " << childIt->second << " via " << child << std::endl;
+            }
             closed[parent] = childIt->second;
          }
       }

@@ -31,6 +31,7 @@ public:
    }
 
    bool shouldShowControls() const { return showControls; }
+   bool shouldShowDetails() const { return showDetails; }
    bool getHasWebInput() const { return hasWebInput; }
    void setWebRun(bool webInput) { hasWebInput = webInput; }
    std::string getScaleType() const { return scaleType; }
@@ -49,6 +50,7 @@ public:
 
    std::string scaleType = "VOLUME";  // Default to VOLUME
    bool hasWebInput = false;
+   bool showDetails = false;
 };
 
 #endif // INPUTHANDLER_CMD_SCALE_FEATURES_H

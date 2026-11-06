@@ -55,6 +55,9 @@
 #include "CmdSellaControls.h"
 #include "DeloneFitComputation.h"
 #include "DeloneFitResults.h"
+#include "DeloneParentageTest.h"
+#include "FaceCrossedArrangements.h"
+#include "GenerateLatticeTypeExamples.h"
 #include "GrimmerTree.h"
 #include "LatticeCell.h"
 #include "MatS6.h"
@@ -67,6 +70,8 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -167,6 +172,35 @@ public:
       }
    };
 
+   // ParentageTableExpectation -- checks TestDeloneParentage
+   // (DeloneParentageTest.h) over every ordered pair of Delone types with
+   // child free parameters < parent free parameters, the same pair set
+   // CHECKNESTING uses. expectedPairs ("PARENT>CHILD") must be exactly the
+   // pairs found nested: a missing pair or an extra pair both fail. Needs
+   // no input cells.
+   struct ParentageTableExpectation {
+      std::set<std::string> expectedPairs;
+      std::string description;
+
+      ParentageTableExpectation(const std::set<std::string>& pairs, const std::string& desc = "")
+         : expectedPairs(pairs), description(desc) {
+      }
+   };
+
+   // FaceCrossedLibraryExpectation -- checks FaceCrossedArrangements.h:
+   // VerifyFaceCrossedArrangements reports no problems, and each type has
+   // the expected number of face arrangements (Appendix B). Needs no
+   // input cells.
+   struct FaceCrossedLibraryExpectation {
+      std::map<std::string, size_t> expectedCounts;
+      std::string description;
+
+      FaceCrossedLibraryExpectation(const std::map<std::string, size_t>& counts,
+         const std::string& desc = "")
+         : expectedCounts(counts), description(desc) {
+      }
+   };
+
    std::string name;
    std::string description;
    std::vector<LatticeCell> inputCells;
@@ -182,6 +216,8 @@ public:
    std::vector<RankStabilityExpectation> rankStabilityExpectations;
    std::vector<ReflectionRelationExpectation> reflectionRelationExpectations;
    std::vector<ReflectionCheck> reflectionChecks;   // manual, not in hasAnyExpectation()
+   std::vector<ParentageTableExpectation> parentageTableExpectations;
+   std::vector<FaceCrossedLibraryExpectation> faceCrossedLibraryExpectations;
 
    FlexibleSellaTestCase(const std::string& testName, const std::string& desc)
       : name(testName), description(desc) {
@@ -196,11 +232,24 @@ public:
    void addRankStabilityExpectation(const RankStabilityExpectation& e) { rankStabilityExpectations.push_back(e); }
    void addReflectionRelationExpectation(const ReflectionRelationExpectation& e) { reflectionRelationExpectations.push_back(e); }
    void addReflectionCheck(const ReflectionCheck& c) { reflectionChecks.push_back(c); }
+   void addParentageTableExpectation(const ParentageTableExpectation& e) { parentageTableExpectations.push_back(e); }
+   void addFaceCrossedLibraryExpectation(const FaceCrossedLibraryExpectation& e) { faceCrossedLibraryExpectations.push_back(e); }
+
+   // True if any expectation needs fits computed from input cells. Tests
+   // with only library checks (parentage table, face-crossed library)
+   // need no cells.
+   bool needsInputCells() const {
+      return !fitRangeExpectations.empty() || !hasFailureExpectations.empty()
+         || !nestingExpectations.empty() || !rankStabilityExpectations.empty()
+         || (parentageTableExpectations.empty() && faceCrossedLibraryExpectations.empty()
+            && reflectionRelationExpectations.empty());
+   }
 
    bool hasAnyExpectation() const {
       return !fitRangeExpectations.empty() || !hasFailureExpectations.empty()
          || !nestingExpectations.empty() || !rankStabilityExpectations.empty()
-         || !reflectionRelationExpectations.empty();
+         || !reflectionRelationExpectations.empty()
+         || !parentageTableExpectations.empty() || !faceCrossedLibraryExpectations.empty();
       // NOTE: reflectionChecks deliberately excluded -- see its comment above.
    }
 };
@@ -408,13 +457,74 @@ private:
       return ok;
    }
 
+   bool checkParentageTable(const FlexibleSellaTestCase::ParentageTableExpectation& e) const {
+      const auto allTypes = GenerateDeloneBase().Select("");
+      std::set<std::string> found;
+      size_t pairsChecked = 0;
+      for (const auto& parent : allTypes) {
+         for (const auto& child : allTypes) {
+            if (parent->GetName() == child->GetName()) continue;
+            if (child->GetFreeParams() >= parent->GetFreeParams()) continue;
+            ++pairsChecked;
+            if (TestDeloneParentage(*parent, *child).isNested) {
+               found.insert(parent->GetName() + ">" + child->GetName());
+            }
+         }
+      }
+      size_t missing = 0;
+      size_t extra = 0;
+      for (const auto& pr : e.expectedPairs) {
+         if (found.count(pr) == 0) {
+            ++missing;
+            std::cout << "    missing nested pair: " << pr << std::endl;
+         }
+      }
+      for (const auto& pr : found) {
+         if (e.expectedPairs.count(pr) == 0) {
+            ++extra;
+            std::cout << "    unexpected nested pair: " << pr << std::endl;
+         }
+      }
+      const bool ok = (missing == 0 && extra == 0);
+      std::ostringstream detail;
+      detail << pairsChecked << " pair(s) checked, " << found.size() << " nested (expected "
+         << e.expectedPairs.size() << "), " << missing << " missing, " << extra << " unexpected";
+      PrintCheckResult("ParentageTableExpectation", e.description, ok ? "PASS" : "FAIL", detail.str());
+      return ok;
+   }
+
+   bool checkFaceCrossedLibrary(const FlexibleSellaTestCase::FaceCrossedLibraryExpectation& e) const {
+      std::ostringstream problemsText;
+      const size_t problems = VerifyFaceCrossedArrangements(problemsText);
+      if (problems > 0) std::cout << problemsText.str();
+      size_t countMismatches = 0;
+      size_t expectedTotal = 0;
+      for (const auto& entry : e.expectedCounts) {
+         expectedTotal += entry.second;
+         const size_t actual = FaceCrossedArrangements(entry.first).size();
+         if (actual != entry.second) {
+            ++countMismatches;
+            std::cout << "    " << entry.first << ": " << actual
+               << " face arrangement(s), expected " << entry.second << std::endl;
+         }
+      }
+      const size_t total = CountFaceCrossedArrangements();
+      const bool ok = (problems == 0 && countMismatches == 0 && total == expectedTotal);
+      std::ostringstream detail;
+      detail << total << " arrangement(s) (expected " << expectedTotal << "), "
+         << problems << " verification problem(s), " << countMismatches
+         << " per-type count mismatch(es)";
+      PrintCheckResult("FaceCrossedLibraryExpectation", e.description, ok ? "PASS" : "FAIL", detail.str());
+      return ok;
+   }
+
    void runTest(const FlexibleSellaTestCase& test, const CmdSellaControls& controls, Sella& sella) {
       std::cout << "\n=== TEST: " << test.name << " ===" << std::endl;
       std::cout << "Description: ";
       PrintWrapped(test.description, 78, "             ");
       displayTestInputs(test);
 
-      if (test.inputCells.empty()) {
+      if (test.inputCells.empty() && test.needsInputCells()) {
          std::cout << "FAIL: Test has no input cells" << std::endl;
          ++failedTests;
          return;
@@ -476,6 +586,16 @@ private:
          std::cout << "\nChecking rank-stability expectations:" << std::endl;
          for (const auto& e : test.rankStabilityExpectations)
             testPassed = checkRankStability(e, computations) && testPassed;
+      }
+      if (!test.parentageTableExpectations.empty()) {
+         std::cout << "\nChecking parentage-table expectations:" << std::endl;
+         for (const auto& e : test.parentageTableExpectations)
+            testPassed = checkParentageTable(e) && testPassed;
+      }
+      if (!test.faceCrossedLibraryExpectations.empty()) {
+         std::cout << "\nChecking face-crossed library expectations:" << std::endl;
+         for (const auto& e : test.faceCrossedLibraryExpectations)
+            testPassed = checkFaceCrossedLibrary(e) && testPassed;
       }
 
       if (testPassed) {
@@ -745,45 +865,47 @@ public:
          addTestCase(test9);
       }
 
-      // Test 10 -- O1B/O2/O3 triple-point fit sensitivity. ORIGINALLY
-      // written as a FitRangeExpectation tripwire predicting an O1B
-      // orientation-coverage gap (CreatePrjs_O1B() has only 1 stored
-      // entry vs O2's 6). That prediction was tested directly and
-      // DISPROVEN, same session: DiagnoseO1BCoverage.h applied all 24
-      // reflections to candidate B and got back the IDENTICAL residual
-      // (0.064614) for every single one, to 6 decimal places -- meaning
-      // O1B's one stored projector is invariant under the full 24-element
-      // reflection group. There is no orientation-coverage gap in O1B.
-      // In hindsight this makes sense: O1B sits near the top of the
-      // Delone hierarchy as a minimally-constrained, highly generic type,
-      // so a single orientation-agnostic projector may be exactly correct
-      // for it, unlike O2/O3 which have genuine pairwise-equality/zero
-      // constraints that reflections can break apart.
+      // Test 10 -- O1B/O2/O3 triple-point fit sensitivity. Both cells sit
+      // very close to the O1B/O2/O3 triple point (cmddists NCDist = 0.137
+      // between them). Originally fit(O1B) swung 5.19875 (A) vs 0.06462
+      // (B) and the test was left MANUAL until the cause was known. The
+      // orientation-coverage-gap hypothesis was disproven earlier
+      // (DiagnoseO1BCoverage.h: identical residual across all 24
+      // reflections).
       //
-      // Left as MANUAL (no automated expectation), same convention as
-      // Test 8, because the real explanation for the 5.19875 (A) vs
-      // 0.06462 (B) fit(O1B) swing is NOT YET KNOWN. Candidates A, B, and
-      // the original cell all sit extremely close to the literal
-      // O1B/O2/O3 triple point -- a genuine stratification singularity
-      // where fit functions could be legitimately discontinuous as a
-      // matter of geometry, not a library or code bug. Alternatively,
-      // something in ComputeDeloneFits/SellaFit's handling of points this
-      // close to a cusp could still be at fault -- now that the library
-      // itself is cleared, that code path is the next place to look, not
-      // any static perp/prj table. Do not add an automated expectation
-      // here until one of those two explanations is actually confirmed.
+      // Automated 2026-11-04: the swing is gone. Cell A now gives
+      // O1B 0.0131635, O2 0.0131692, O3 0.0287976; cell B gives
+      // O1B 0.0646143, O2 0.0671500, O3 0.0696545. The values are the same
+      // with FACECROSSED on and off, so the face arrangements did not fix
+      // it -- one of the earlier fit-pipeline fixes did. The test is now a
+      // regression guard: if the swing returns, the O1B range on cell A
+      // fails.
       {
          FlexibleSellaTestCase test10("O1B_O2_O3_TriplePoint_FitSensitivity",
-            "MANUAL: candidates A and B are physically close (cmddists "
-            "NCDist=0.137) but fit(O1B) swings 5.19875 (A) vs 0.06462 (B). "
-            "The original orientation-coverage-gap hypothesis was tested "
-            "and disproven this session (DiagnoseO1BCoverage.h: identical "
-            "residual across all 24 reflections). Real cause not yet "
-            "known -- possibly a genuine triple-point stratification "
-            "singularity, possibly a ComputeDeloneFits/SellaFit issue near "
-            "the cusp. Left manual until one is confirmed.");
+            "Two close cells (NCDist 0.137) near the O1B/O2/O3 triple point. "
+            "fit(O1B) once swung 5.19875 (A) vs 0.06462 (B); now small on both. "
+            "Guards against the swing returning: O1B, O2, O3 ranges on both "
+            "cells, plus O1B <= O3 and O2 <= O3 nesting.");
          test10.addInputCell(LatticeCell("S -43.34318 -38.15350 -0.00055 -38.13490 -43.34264 -0.02616"));  // candidate A
          test10.addInputCell(LatticeCell("S -38.11642 -43.36206 -0.01851 -38.17840 -43.42403 -0.04436"));  // candidate B
+         test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 0.0081635, 0.0181635, 0, "cell A: O1B = 0.0131635 (was 5.19875 for O1B on A)"));
+         test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 0.0081692, 0.0181692, 0, "cell A: O2 = 0.0131692"));
+         test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 0.0237976, 0.0337976, 0, "cell A: O3 = 0.0287976"));
+         test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O1B", 0.0596143, 0.0696143, 1, "cell B: O1B = 0.0646143"));
+         test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O2", 0.0621500, 0.0721500, 1, "cell B: O2 = 0.0671500"));
+         test10.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "O3", 0.0646545, 0.0746545, 1, "cell B: O3 = 0.0696545"));
+         for (size_t cell = 0; cell < 2; ++cell) {
+            test10.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "O1B", "O3", 1.0E-6, cell, "O1B <= O3, cell " + std::to_string(cell + 1)));
+            test10.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "O2", "O3", 1.0E-6, cell, "O2 <= O3, cell " + std::to_string(cell + 1)));
+         }
          addTestCase(test10);
       }
 
@@ -829,7 +951,7 @@ public:
       // is NOT asserted here -- its HasFailure() status was not part of
       // Test 14's dump and remains unchecked.
 
-      
+
       {
          FlexibleSellaTestCase test11("M1B_M2A_OrientationSwap_M3Boundary",
             "M1B/M2A near an M3 boundary point, same signature as the O1B/O2/O3 case. "
@@ -1703,6 +1825,68 @@ public:
                "O4", "T5", 1.0E-6, cell, "O4 <= T5, cell " + std::to_string(cell + 1)));
          }
          addTestCase(test28);
+      }
+
+      // Test 29 (2026-11-04) -- Delone parentage regression. Runs
+      // TestDeloneParentage over every type pair with fewer child free
+      // parameters (the CHECKNESTING pair set) and requires exactly these
+      // 120 nested pairs, taken from the CHECKNESTING run of 2026-11-04.
+      // The old VCP-based test reported 135, 18 of them false (e.g. O4>O3:
+      // vcp_1 of an O3 cell lies on O4's 00abbc but is a mirror image, not
+      // the same lattice), and missed 3 genuine pairs (O2>O3, O5>C5,
+      // O5>T5). A missing or an extra pair fails. Needs no input cells.
+      {
+         FlexibleSellaTestCase test29("DeloneParentage_Table",
+            "TestDeloneParentage must find exactly the 120 confirmed nested "
+            "parent/child pairs: no false pairs (the old VCP test had 18) and "
+            "none missing (it missed O2>O3, O5>C5, O5>T5).");
+         const std::set<std::string> expectedPairs = {
+            "R1>C1", "R1>C5", "R3>C3", "R3>C5", "T1>C1", "T1>C3",
+            "T2>C3", "T5>C5", "O1A>C1", "O1A>C3", "O1A>T1", "O1A>T2",
+            "O1B>C1", "O1B>C3", "O1B>T1", "O1B>O3", "O2>C3", "O2>T2",
+            "O2>O3", "O3>C3", "O4>C5", "O4>T5", "O4>H4", "O5>C5",
+            "O5>T5", "M1A>C1", "M1A>C3", "M1A>C5", "M1A>R1", "M1A>T1",
+            "M1A>T2", "M1A>T5", "M1A>O1A", "M1A>O2", "M1A>O3", "M1A>O4",
+            "M1A>M2B", "M1A>H4", "M1B>C1", "M1B>C3", "M1B>C5", "M1B>R3",
+            "M1B>T1", "M1B>T2", "M1B>T5", "M1B>O1A", "M1B>O1B", "M1B>O3",
+            "M1B>M2B", "M1B>M3", "M2B>C3", "M2B>C5", "M2B>T2", "M2B>T5",
+            "M2B>O3", "M2A>C3", "M2A>C5", "M2A>R3", "M2A>T2", "M2A>T5",
+            "M2A>O2", "M2A>O3", "M2A>O4", "M2A>M3", "M2A>H4", "M3>C3",
+            "M3>C5", "M3>R3", "M3>T5", "M3>O3", "M4>C5", "M4>T5",
+            "M4>O4", "M4>O5", "M4>H4", "A1>C1", "A1>C3", "A1>C5",
+            "A1>R1", "A1>R3", "A1>T1", "A1>T2", "A1>T5", "A1>O1A",
+            "A1>O1B", "A1>O2", "A1>O3", "A1>O4", "A1>O5", "A1>M1A",
+            "A1>M1B", "A1>M2B", "A1>M2A", "A1>M3", "A1>M4", "A1>A2",
+            "A1>A3", "A1>H4", "A2>C3", "A2>C5", "A2>R3", "A2>T2",
+            "A2>T5", "A2>O2", "A2>O3", "A2>O4", "A2>O5", "A2>M2B",
+            "A2>M2A", "A2>M3", "A2>M4", "A2>A3", "A2>H4", "A3>C3",
+            "A3>C5", "A3>R3", "A3>T5", "A3>O3", "A3>O5", "A3>M3"
+         };
+         test29.addParentageTableExpectation(FlexibleSellaTestCase::ParentageTableExpectation(
+            expectedPairs, "120 nested pairs, exact match"));
+         addTestCase(test29);
+      }
+
+      // Test 30 (2026-11-04) -- face-crossed library check. Every one of the
+      // 143 face arrangements (SELLA white paper v4, Appendix B) must be a
+      // projector already stored for some other type and not for its own
+      // type (VerifyFaceCrossedArrangements), and the per-type counts must
+      // match Appendix B. Independent of the FACECROSSED switch. Needs no
+      // input cells.
+      {
+         FlexibleSellaTestCase test30("FaceCrossed_Library",
+            "143 face arrangements for 11 types (Appendix B): each matches a "
+            "stored projector of another type and none of its own type; "
+            "per-type counts R1 12, R3 4, O1B 6, O2 3, O4 12, M1A 30, M1B 18, "
+            "M2A 18, M2B 24, M3 12, A3 4.");
+         const std::map<std::string, size_t> expectedCounts = {
+            { "R1", 12 }, { "R3", 4 }, { "O1B", 6 }, { "O2", 3 }, { "O4", 12 },
+            { "M1A", 30 }, { "M1B", 18 }, { "M2A", 18 }, { "M2B", 24 }, { "M3", 12 },
+            { "A3", 4 }
+         };
+         test30.addFaceCrossedLibraryExpectation(FlexibleSellaTestCase::FaceCrossedLibraryExpectation(
+            expectedCounts, "Appendix B counts, all verified"));
+         addTestCase(test30);
       }
 
    }
