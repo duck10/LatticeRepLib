@@ -49,6 +49,7 @@
 #include "Sella.h"
 #include "Selling.h"
 
+#include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
@@ -327,12 +328,43 @@ inline bool IsNearlyReduced(const S6& candidate, const double limit) {
    return MaxS6Scalar(candidate) <= limit;
 }
 
+// The fraction used by IsNearlyReduced in Remediation168ForOneSubtype:
+// candidates whose largest scalar exceeds this fraction of |reduced input|
+// are rejected.
+inline constexpr double REMEDIATION_OUTSIDE_FRACTION = 0.10;
+
+// Smallest |s_i| of an S6.
+inline double MinAbsS6Scalar(const S6& s) {
+   double m = std::fabs(s[0]);
+   for (size_t i = 1; i < 6; ++i) if (std::fabs(s[i]) < m) m = std::fabs(s[i]);
+   return m;
+}
+
+// RemediationCanImprove (2026-11-07) -- false when Remediation cannot change
+// any fit for this reduced cell, so the search can be skipped.
+//
+// Let L = REMEDIATION_OUTSIDE_FRACTION * |x| and suppose every |s_k(x)| > L.
+// R_i negates s_i, adds s_i to the four slots that share a vector with
+// slot i, and subtracts it from the opposite slot. Then:
+//   one hop R_i x:         slot i holds |s_i| > L -- rejected (and so are
+//                          its 24 reflections, same largest scalar);
+//   R_j R_i x, j not i or opposite: slot j holds |s_m| + |s_i| > L --
+//                          rejected;
+//   R_j R_i x, j opposite i: slot i holds |s_j| > L -- rejected;
+//   R_i R_i x = x; reflections of x give the same fit (projector lists are
+//                          closed under the reflections).
+// So round 1 finds no improvement, no later round runs, every winner is x,
+// and the cross-seeding passes (seeded only with winners) change nothing:
+// the result equals the direct fit for every type.
+inline bool RemediationCanImprove(const S6& reduced) {
+   return MinAbsS6Scalar(reduced) <= REMEDIATION_OUTSIDE_FRACTION * reduced.norm();
+}
+
 inline DeloneFitResults Remediation168ForOneSubtype(
    const S6& s6, const std::shared_ptr<GenerateDeloneBase>& sptype,
    const int maxRounds, const std::vector<S6>& extraSeeds) {
    static const std::vector<MatS6> boundaryTransforms = Selling::GetBoundaryTransforms();
-   static const double outsideFraction = 0.10;
-   const double limit = outsideFraction * s6.norm();
+   const double limit = REMEDIATION_OUTSIDE_FRACTION * s6.norm();
 
    S6 currentPoint = s6;
    DeloneFitResults currentFit = Sella::SellaFitXXXXXX(sptype, s6);

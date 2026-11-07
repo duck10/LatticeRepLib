@@ -63,13 +63,6 @@ public:
          }
       );
 
-
-      InputHandler::registerHandler("BUILD", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            buildMatrices = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
-
       InputHandler::registerHandler("DETAILS", .35,
          [this](BaseControlVariables&, const std::string& value) {
             debug = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
@@ -78,17 +71,6 @@ public:
       InputHandler::registerHandler("DEBUG", .35,
          [this](BaseControlVariables&, const std::string& value) {
             debug = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
-      InputHandler::registerHandler("HARNESS", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            useTestHarness = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
-
-      InputHandler::registerHandler("PRINTMATRICES", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            printMatrices = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
 
@@ -118,20 +100,6 @@ public:
             std::istringstream istr(value);
             int n;
             while (istr >> n) testNumbers.push_back(n);
-         }
-      );
-
-      // TESTTRANSFORMS -- runs CompareBoundaryTransformSets (see
-// CompareBoundaryTransformsTest.h): generates one random cell and
-// checks S6BoundaryTransforms::generateOneBoundaryTransform against
-// Selling::GetBoundaryTransforms at all 6 boundaries. Standalone
-// diagnostic, not part of the fit-based FlexibleSellaTestMode suite
-// (operates on raw S6/MatS6, no LatticeCell input) -- kept as its
-// own keyword rather than folded into TEST for that reason. Off by
-// default, matching CHECKNESTING's convention.
-      InputHandler::registerHandler("TESTTRANSFORMS", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            testTransforms = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
 
@@ -181,27 +149,13 @@ public:
          }
       );
 
-      // MAXBOUNDARYCYCLES -- per-branch cycle cap for the boundary-tie
-      // exploration used when building a type's library near its own
-      // boundary strata (see this session's discussion of Selling::Reduce's
-      // tie-breaking at O1B/O2/O3). Same role as Selling::Reduce's
-      // limitReductionCycles, but for the offline exploratory walk, not
-      // production reduction -- default kept small (tens, per instruction)
-      // since pathological single paths are known to run to hundreds of
-      // cycles or loop forever without a cap.
-      InputHandler::registerHandler("MAXBOUNDARYCYCLES", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            setMaxBoundaryWalkCycles(std::stoul(value));
-         }
-      );
-
       // CHECKNESTING -- runs the general, name-free nesting-consistency
       // check (RunNestingConsistencyCheck in CmdSella.cpp) instead of
       // normal cell processing: for every pair of Delone types (P, C)
       // where C has strictly fewer free parameters than P, tests via
       // TestDeloneParentage whether C genuinely nests inside P, and for
-      // every confirmed pair checks fit(P) <= fit(C) + NESTINGDELTA using
-      // whatever matrix library is currently active (static or BUILD).
+      // every confirmed pair checks fit(P) <= fit(C) + NESTINGDELTA with 
+      // the full fit pipeline.
       // This is the generalized form of the O1B/O2/O3 diagnostic that
       // started this investigation -- covers all 24 Delone types, not
       // just the three named degenerate boundary types (O3, M2B, M3), and
@@ -234,7 +188,7 @@ public:
          }
       );
 
-      InputHandler::registerHandler("SIGMSA", .35,
+      InputHandler::registerHandler("SIGMAS", .35,
          [this](BaseControlVariables&, const std::string& value) {
             sigmas.clear();
             std::istringstream istr(value);
@@ -242,41 +196,6 @@ public:
             while (istr >> token) sigmas.push_back(std::stod(token));
          }
 
-      );
-
-      // SEEDBOUNDARIES -- runs SellaBuild::SeedBoundaryGaps during BUILD:
-      // for every (parent, child) pair TestDeloneParentage confirms as
-      // genuinely nested, seeds parent's raw sample map with
-      // representatives reachable by crossing child's own zero-boundaries
-      // (ExpandAcrossBoundaryZeros) -- closing exactly the coverage gap
-      // this session traced through O1B/O3, O1B/M2B, O1B/M3, R1/C5,
-      // M1A/O4, etc. (CHECKNESTING/COMPARE). Off by default (empty
-      // string): costs nothing unless requested, matches BUILD's own
-      // opt-in shape.
-      //   SEEDBOUNDARIES PRINT -- run the scan, report what would be
-      //     seeded, change nothing (see chat with Claude, 2026-08-16:
-      //     print-vs-use was left as an open choice, not decided here).
-      //   SEEDBOUNDARIES USE -- run the scan and actually seed the map.
-      // Only meaningful alongside BUILD; seeding a map that never gets
-      // used has no effect.
-      InputHandler::registerHandler("SEEDBOUNDARIES", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            seedBoundariesMode = LRL_StringTools::strToupper(value);
-         }
-      );
-
-      // DIAGNOSEPAIR parent child -- e.g. "DIAGNOSEPAIR O4 T5". Runs
-// DiagnoseParentAgainstChildWinner (DiagnoseNesting.h) on every input
-// cell and exits. Empty by default.
-      InputHandler::registerHandler("DIAGNOSEPAIR", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            diagnoseParent.clear();
-            diagnoseChild.clear();
-            std::istringstream istr(value);
-            istr >> diagnoseParent >> diagnoseChild;
-            diagnoseParent = LRL_StringTools::strToupper(diagnoseParent);
-            diagnoseChild = LRL_StringTools::strToupper(diagnoseChild);
-         }
       );
 
       InputHandler::registerHandler("PRECISION", .35,
@@ -288,14 +207,13 @@ public:
          });
 
 
-      // FACECROSSED -- adds the missing face arrangements (SELLA white paper
-      // v4, Appendix B) to the projector lists used for fitting: for O1B, six
-      // projectors borrowed from O3; for O2, the other three. These cover
-      // reduced forms of special lattices on cone faces that the type's own
-      // list misses, so that nesting such as fit(O2) <= fit(O3) holds by
-      // construction rather than only when remediation finds the right
-      // boundary transform. Off by default, so fits can be compared with and
-      // without the extra arrangements (e.g. COMPARE with FACECROSSED 0 vs 1).
+      // FACECROSSED -- on (default): adds the 143 face arrangements (SELLA
+      // white paper v5, Appendix B) for 11 Delone types to the projector
+      // lists used for fitting, each borrowed from a more symmetric type
+      // (e.g. O2 gets three of O3's). These cover reduced forms of special
+      // lattices on cone faces that the type's own list misses, so nesting
+      // such as fit(O2) <= fit(O3) holds by construction. Off: the type's
+      // own list only, for comparison (e.g. COMPARE with FACECROSSED 0 vs 1).
       InputHandler::registerHandler("FACECROSSED", .35,
          [this](BaseControlVariables&, const std::string& value) {
             faceCrossed = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
@@ -353,7 +271,6 @@ public:
    size_t getBlockStart() const { return blockstart; }
    std::string getPrefix() const { return prefix; }
    bool DoGraphics() const { return doGraphics; }
-   bool shouldBuildMatrices() const { return buildMatrices; }
    bool shouldDebug() const { return debug; }
    bool shouldPrintMatrices() const { return printMatrices; }
    bool shouldRunTests() const { return testMode; }
@@ -361,7 +278,6 @@ public:
    // Empty vector means "run all" (or list, if 999 is present).
    std::vector<int> getTestNumbers() const { return testNumbers; }
    bool shouldCompare() const { return compareMode; }
-   bool shouldShowChainFailures() const { return showChainFailures; }
    double getMaxDeltaForMatch() const { return maxDeltaForMatch; }
    double getNestingDelta() const { return nestingDelta; }
    size_t getMaxBoundaryWalkCycles() const { return maxBoundaryWalkCycles; }
@@ -377,11 +293,6 @@ public:
    std::string getSeedBoundariesMode() const { return seedBoundariesMode; }
 
    bool shouldTestTransforms() const { return testTransforms; };
-   bool shouldUseHarness() const { return useTestHarness; };
-
-   bool shouldDiagnosePair() const { return !diagnoseParent.empty() && !diagnoseChild.empty(); }
-   std::string getDiagnoseParent() const { return diagnoseParent; }
-   std::string getDiagnoseChild() const { return diagnoseChild; }
 
    int getOutputPrecision() const { return outputPrecision; }
    bool useExtendedPrecision() const { return outputPrecision > 0; }
@@ -436,16 +347,6 @@ private:
       }
    }
 
-   void setMaxBoundaryWalkCycles(const size_t n) {
-      if (n == 0) {
-         std::cerr << ";Warning: MAXBOUNDARYCYCLES must be positive, using "
-            << maxBoundaryWalkCycles << std::endl;
-      }
-      else {
-         maxBoundaryWalkCycles = n;
-      }
-   }
-
    // Default block size: no limit (Oct 2026). Previously MAX_BLOCKSIZE / 2
    // (= 10, "because there are two output files" -- there are actually
    // three per cell), which also silently limited desktop runs to 10 cells.
@@ -485,16 +386,6 @@ private:
    std::vector<std::string> requestedTypes;  // empty == show all (see TYPES handler above)
    std::vector<double> sigmas;
    std::string seedBoundariesMode;  // "", "PRINT", or "USE" (see SEEDBOUNDARIES handler above)
-   bool useTestHarness = false;
-
-   // Default is a placeholder, not calibrated -- same caveat as
-   // nestingDelta above. Needs checking against real method-comparison
-   // data once the method-library research (chat, Sept 2026) has some.
-   double nearTieEpsilon = 1.0E-4;
-
-
-   std::string diagnoseParent;  // "" == off (see DIAGNOSEPAIR handler)
-   std::string diagnoseChild;
 
    int outputPrecision = 0;   // 0 = current formatting
    bool faceCrossed = true;  // see FACECROSSED handler above

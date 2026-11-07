@@ -143,11 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ApplyVCPSequence.cpp" />
-    <ClCompile Include="ApplyVCPSequence2.cpp" />
     <ClCompile Include="CmdSella.cpp" />
     <ClCompile Include="Cmdsellatests.cpp" />
-    <ClCompile Include="SellaBuild.cpp" />
     <ClCompile Include="VCPVector..cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -167,18 +164,11 @@
   <ItemGroup>
     <ClInclude Include="CheckABReflection.h" />
     <ClInclude Include="CompareBoundaryTransformsTest.h" />
-    <ClInclude Include="DiagnoseBoundaryCandidates.h" />
-    <ClInclude Include="DiagnoseNesting.h" />
-    <ClInclude Include="DiagnoseO1BCoverage.h" />
-    <ClInclude Include="DiagnoseO2Gap.h" />
     <ClInclude Include="DirectClassify.h" />
     <ClInclude Include="ExpandAcrossBoundaryZeros.h" />
     <ClInclude Include="ExploreReductionTies.h" />
     <ClInclude Include="FlexibleSellaTestMode.h" />
     <ClInclude Include="RemediatedFit.h" />
-    <ClInclude Include="SearchAllBoundaryTies.h" />
-    <ClInclude Include="SearchBoundaryNeighborsByTransform.h" />
-    <ClInclude Include="SellaBuild.h" />
     <ClInclude Include="TestHarness.h" />
     <ClInclude Include="TestRemediationOnBoundaryCandidates.h" />
     <ClInclude Include="VCPVector.h" />

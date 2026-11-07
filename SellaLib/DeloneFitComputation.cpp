@@ -185,7 +185,12 @@ static std::vector<DeloneFitResults> DirectFitsForAllTypes(
 }
 
 // ComputeFullSearchFitsForAllTypes -- runs SearchAllTypesWithCrossSeeding
-// (or, with REMEDIATION off, DirectFitsForAllTypes),
+// (or, with REMEDIATION off, DirectFitsForAllTypes). The search is also
+// skipped when RemediationCanImprove(oneLattice) is false (RemediatedFit.h,
+// 2026-11-07): no scalar is within 10% of |oneLattice| of zero, so every
+// Remediation candidate is rejected and the result would equal the direct
+// fit anyway. CHECKREMEDIATION still runs the full search on every cell and
+// reports any win on such a cell. It
 // then fills in the fields Sella::SellaFit used to set on top of
 // SellaFitXXXXXX (Zscore, ReductionMatrix, Difference, Bravais/Delone/
 // General type names), and sets OriginalInput to the shared reduced input
@@ -202,7 +207,7 @@ static std::vector<DeloneFitResults> ComputeFullSearchFitsForAllTypes(
    static const std::vector<std::shared_ptr<GenerateDeloneBase>> sptypes =
       GenerateDeloneBase().Select("");
 
-   const std::vector<DeloneFitResults> searched = remediate
+   const std::vector<DeloneFitResults> searched = (remediate && RemediationCanImprove(oneLattice))
       ? SearchAllTypesWithCrossSeeding(oneLattice, sptypes)
       : DirectFitsForAllTypes(oneLattice, sptypes);
 
@@ -528,6 +533,11 @@ static void ReportInsideConeWin(const std::shared_ptr<GenerateDeloneBase>& sptyp
 // cell lying exactly on several faces (expected), or a missing arrangement
 // that some other type stores (a real gap, listed by type in the summary).
 // If no win survives on a large enough set of cells, Remediation can go.
+//
+// 2026-11-07: each win also prints minRatio = min |s_i| / |reduced cell|.
+// ComputeDeloneFits skips the search when minRatio > 0.10
+// (RemediationCanImprove); the summary counts cells the skip applies to and
+// any win on such a cell ("wins the skip would lose", expected 0).
 void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSellaControls& controls) {
    static const std::vector<std::shared_ptr<GenerateDeloneBase>> sptypes =
       GenerateDeloneBase().Select("");
@@ -553,11 +563,17 @@ void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSel
    size_t insideNotPermutation = 0;
    size_t insideCrossRepresentation = 0;
    std::map<std::string, std::map<std::string, std::string>> missingByType;
+   size_t cellsSkippable = 0;
+   size_t winsSkipWouldLose = 0;
+   double largestWinRatio = 0.0;
 
    for (size_t c = 0; c < inputList.size(); ++c) {
       MatS6 reductionMatrix;
       const S6 oneLattice = GetInputSellingReducedVectors(inputList[c], reductionMatrix);
       const double tolerance = 1.0E-6 * oneLattice.norm();
+      const double minRatio = MinAbsS6Scalar(oneLattice) / oneLattice.norm();
+      const bool skippable = !RemediationCanImprove(oneLattice);
+      if (skippable) ++cellsSkippable;
 
       const auto t0 = std::chrono::steady_clock::now();
       const std::vector<DeloneFitResults> direct = DirectFitsForAllTypes(oneLattice, sptypes);
@@ -576,6 +592,8 @@ void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSel
          if (remediatedFit >= directFit - tolerance) continue;
 
          ++wins;
+         if (skippable) ++winsSkipWouldLose;
+         if (minRatio > largestWinRatio) largestWinRatio = minRatio;
          const S6 candidate = remediated[i].GetOriginalInput();
          const double maxScalar = MaxS6Scalar(candidate);
          if (maxScalar > 0.0) ++winsOutsideCone;
@@ -601,6 +619,7 @@ void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSel
             << " remediated=" << remediatedFit
             << " cone=" << cone
             << " maxScalar=" << maxScalar
+            << " minRatio=" << minRatio
             << (survives ? " SURVIVES" : " ARTIFACT") << std::endl;
          if (survives && maxScalar <= 0.0) {
             ++insideWins;
@@ -638,6 +657,10 @@ void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSel
       }
       std::cout << std::endl;
    }
+   std::cout << "; skip check: " << cellsSkippable << " of " << inputList.size()
+      << " cell(s) have min |s_i| / |s6| > " << REMEDIATION_OUTSIDE_FRACTION
+      << " (search skipped in ComputeDeloneFits); wins the skip would lose: "
+      << winsSkipWouldLose << "; largest minRatio among wins " << largestWinRatio << std::endl;
    std::cout << "; time: direct " << directSeconds << " s, remediated "
       << remediatedSeconds << " s" << std::endl;
 }

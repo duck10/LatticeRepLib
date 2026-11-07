@@ -53,7 +53,6 @@
     <ClCompile Include="Niggli.cpp" />
     <ClCompile Include="S6_Matrices.cpp" />
     <ClCompile Include="S6_Ordinals.cpp" />
-    <ClCompile Include="SellaBuild.cpp" />
     <ClCompile Include="Selling.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="VecN.cpp" />
@@ -151,7 +150,6 @@
     <ClInclude Include="S6M_SellingReduce.h" />
     <ClInclude Include="S6_Matrices.h" />
     <ClInclude Include="S6_Ordinals.h" />
-    <ClInclude Include="SellaBuild.h" />
     <ClInclude Include="Selling.h" />
     <ClInclude Include="svd.h" />
     <ClInclude Include="Transformations.h" />

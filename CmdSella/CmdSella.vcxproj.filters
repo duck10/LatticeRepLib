@@ -14,26 +14,14 @@
     <ClCompile Include="CmdSella.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SellaBuild.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VCPVector..cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplyVCPSequence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cmdsellatests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ApplyVCPSequence2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SellaBuild.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VCPVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -49,37 +37,19 @@
     <ClInclude Include="CompareBoundaryTransformsTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiagnoseO2Gap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DiagnoseBoundaryCandidates.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CheckABReflection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DiagnoseO1BCoverage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestRemediationOnBoundaryCandidates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SearchAllBoundaryTies.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SearchBoundaryNeighborsByTransform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RemediatedFit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestHarness.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectClassify.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiagnoseNesting.h">
+    <ClInclude Include="TestHarness.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

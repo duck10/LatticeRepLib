@@ -39,30 +39,24 @@
 #include "TransformationMatrices.h"
 #include "WebIO.h"
 
-#include "SellaBuild.h"
 #include "LabeledDeloneTypeMatrices.h"
 #include "DeloneFitComputation.h"
 #include "FaceCrossedArrangements.h"
 #include "FlexibleSellaTestMode.h"
 
-#include "CompareBoundaryTransformsTest.h"
-#include "DiagnoseO2Gap.h"
-#include "DiagnoseBoundaryCandidates.h"
+//#include "DiagnoseO2Gap.h"
+//#include "DiagnoseBoundaryCandidates.h"
 #include "CheckABReflection.h"
-#include "DiagnoseO1BCoverage.h"
-#include "TestRemediationOnBoundaryCandidates.h"
-#include "SearchAllBoundaryTies.h"
-#include "SearchBoundaryNeighborsByTransform.h"
+//#include "DiagnoseO1BCoverage.h"
+//#include "SearchAllBoundaryTies.h"
+//#include "SearchBoundaryNeighborsByTransform.h"
 
-#include "DiagnoseNesting.h"
+#include "TestHarness.h"
 
 
 #include "StoreResults.h"
 #include "RemediatedFit.h"
 
-#include "TestHarness.h"
-
-#include "DirectClassify.h"
 
 
 // 2023/12/23
@@ -201,14 +195,6 @@ std::vector<std::pair<std::string, double> > DeloneFitToScores(const std::vector
    std::vector<std::pair<std::string, double> > out;
    for (auto i = best.begin(); i != best.end(); ++i) {
       out.emplace_back((*i).second);
-   }
-   return out;
-}
-
-std::vector<S6> CreateS6Errors(const std::vector< S6>& vs) {
-   std::vector<S6> out;
-   for (size_t i = 0; i < vs.size(); ++i) {
-      out.push_back(0.1 * vs[i]);
    }
    return out;
 }
@@ -352,35 +338,6 @@ std::string SendSellaToFile(const std::string& svg, const std::string& filename)
    return filename;
 }
 
-static std::vector<std::string> CreateAllFileNames(const size_t n) {
-   std::vector<std::string> out;
-
-   for (size_t i = 0; i < n; ++i) {
-      const std::string filename = LRL_CreateFileName::Create("SEL", LRL_DataToSVG(i + 1), "svg", true);
-      out.emplace_back(filename);
-   }
-   return out;
-}
-
-void AnalyzeS6(const S6 s6) {
-
-   const double average = (abs(s6[0]) + abs(s6[1]) + abs(s6[2]) + abs(s6[3]) + abs(s6[4]) + abs(s6[5])) / s6.size();
-   std::vector<double> vec(s6.GetVector());
-   std::sort(vec.begin(), vec.end());
-
-   for (size_t i = 0; i < 6; ++i) {
-      vec[i] = abs(vec[i]);
-   }
-   int lowCount = 0;
-   for (size_t i = 0; i < 6; ++i) {
-      if (vec[i] < average) ++lowCount;
-   }
-   std::cout << "average " << average << std::endl;
-   std::cout << "s6 " << s6 << std::endl;
-   std::cout << "sorted and positive " << S6(vec) << std::endl;
-   std::cout << "lowCount " << lowCount << std::endl;
-}
-
 std::string AddSuffixToAllSvgOccurrences(const std::string& input, const std::string& suffix) {
    std::string result = input;
    std::string pattern = ".svg";
@@ -486,133 +443,9 @@ std::vector<std::pair<std::string, std::vector<DeloneFitResults>>> BuildCompareR
    }
    return compareResults;
 }
-inline DeloneFitResults SellaFitCanonical(
-   const std::shared_ptr<GenerateDeloneBase>& sptype,
-   const S6& s6) {
-
-   const MatS6 perp = sptype->GetPerp();
-   const MatS6 prj = sptype->GetPrj();
-
-   const S6 perpv = perp * s6;
-   const double testFit = perpv.norm();
-   const bool valid = LRL_Cell_Degrees(prj * s6).IsValid();
-   const double bestFit = (valid && testFit >= 1.0E-8) ? testFit
-      : (valid ? 0.0 : DBL_MAX);
-
-   const S6 bestv = prj * s6;
-   DeloneFitResults temp(bestFit, bestv, perpv, MatS6().unit());
-   temp.SetLatticeType(sptype->GetBravaisLatticeGeneral());
-   temp.SetDeloneType(sptype->GetBravaisType());
-   temp.SetGeneralType(sptype->GetName());
-   temp.SetBavaisType(sptype->GetBravaisType());
-   return temp;
-}
-
 
 int main(int argc, char* argv[])
 {
-   std::vector<MatS6> unimodularCandidates;
-   {
-      const std::vector<Matrix_3x3> m3 = TransformationMatrices::generateUnimodularMatrices(1);
-      unimodularCandidates.reserve(m3.size());
-      for (const auto& m : m3) {
-         const std::vector<double> flat = {
-            m[0], m[1], m[2],
-            m[3], m[4], m[5],
-            m[6], m[7], m[8]
-         };
-         unimodularCandidates.push_back(MatS6::e3Tos6(flat));
-      }
-   }
-
-   //const S6 startPoint(-473.99413, -0.02083, -741.29191, -0.07866, -0.11176, -473.57936);
-   //const std::vector<std::shared_ptr<GenerateDeloneBase>> m4type = GenerateDeloneBase().Select("M4");
-
-   //S6 currentPoint = startPoint;
-   //double currentFit = SellaFitCanonical(m4type[0], currentPoint).GetRawFit();
-   //std::cout << ";   [DIAG] M4 start fit = " << currentFit << std::endl;
-
-   //const int maxRounds = 10;
-   //for (int round = 0; round < maxRounds; ++round) {
-   //   double bestFit = DBL_MAX;
-   //   S6 bestCandidate = currentPoint;
-   //   for (const auto& mat : unimodularCandidates) {
-   //      const S6 candidate = mat * currentPoint;
-   //      const double fit = SellaFitCanonical(m4type[0], candidate).GetRawFit();
-   //      if (fit < bestFit) {
-   //         bestFit = fit;
-   //         bestCandidate = candidate;
-   //      }
-   //   }
-   //   std::cout << ";   [DIAG] M4 round " << round << " best fit = " << bestFit << std::endl;
-   //   if (bestFit < currentFit - 1.0E-8) {
-   //      currentFit = bestFit;
-   //      MatS6 reductionMatrix;
-   //      currentPoint = LatticeConverter::SellingReduceCell("P", bestCandidate, reductionMatrix);
-   //   }
-   //   else {
-   //      std::cout << ";   [DIAG] M4 no further improvement, stopping" << std::endl;
-   //      break;
-   //   }
-   //}
-   //const S6 vecA(-741.21325, -474.29631, -0.09949, 0.19042, -0.07866, -473.88154);
-   //const S6 vecB(0.07866, -0.19042, -0.09949, -473.91546, -741.37057, -473.65801);
-
-   //const std::vector<std::shared_ptr<GenerateDeloneBase>> o4type = GenerateDeloneBase().Select("O4");
-
-   //const DeloneFitResults fitA = Sella::SellaFitXXXXXX(o4type[0], vecA);
-   //const DeloneFitResults fitB = Sella::SellaFitXXXXXX(o4type[0], vecB);
-
-   //std::cout << ";   [DIAG] vecA fit " << fitA.GetRawFit() << std::endl;
-   //std::cout << ";   [DIAG] vecB fit " << fitB.GetRawFit() << std::endl;
-
-
-   //RunHistoricalBadCaseCheck();
-   //exit(0);
-
-
-   //RunRemediation2HopComparison();
-   //   exit(0);
-
-   //RunMpOcTpLastDigitCheck();
-   //exit(0);
-
-   //RunzyComparison();
-   //exit(0);
-
-   //RunRemediationShortlistSanityCheck();
-   //exit(0);
-
-   //RunGeneralSweepOverIncomparablePairsV2();
-   //exit(0);
-
-   //RerunFailingPairsWithBestProjector();
-   //exit(0);
-
-   //PrintOneSweepEndpoints(Delone_T5(), Delone_O5());
-   //exit(0);
-
-
-   //RunReflectionRescueCheck();
-   //exit(0);
-
-
-   //RunGeneralSweepOverIncomparablePairs();
-   //exit(0);
-
-
-   //RunThreeCalibrationSweeps();
-   //exit(0);
-
-
-   //SweepRemediatedFitTowardA3ViaM1B();
-   //exit(0);
-
-
-   //SweepRemediatedFitTowardA2();
-   //exit(0);
-
-
    std::cout << "; SELLA method symmetry searching\n";
    WebIO webio(argc, argv, "CmdSella", 0);
 #ifdef LRL_DEBUG
@@ -622,27 +455,6 @@ int main(int argc, char* argv[])
    std::cout << "webio: " << webio << std::endl;
 #endif
    CmdSellaControls controls;
-
-   // TEST -- runs the real regression suite (FlexibleSellaTestMode.h).
-   // TEST N / TEST N1 N2 N3 / TEST 999 all handled inside
-   // runFlexibleSellaTestMode via controls.getTestNumbers().
-   if (controls.shouldRunTests()) {
-      runFlexibleSellaTestMode(controls);
-      return 0;
-   }
-
-
-
-   // TESTTRANSFORMS -- standalone diagnostic, not part of the fit-based
-   // FlexibleSellaTestMode framework (S6BoundaryTransforms vs
-   // Selling::GetBoundaryTransforms operate on raw S6/MatS6, not
-   // LatticeCell -> DeloneFitComputation, so they don't fit that shape).
-   // See CompareBoundaryTransformsTest.h.
-   //if (controls.shouldTestTransforms()) {
-   //   std::cout << "; Compare boundary transform sets" << std::endl;
-   //   CompareBoundaryTransformSets();
-   //   return 0;
-   //}
 
    // NOTE: the ad hoc TestDeloneParentage(O2,O3)/(O1B,O3) sanity block
    // that used to live here (see chat with Claude, 2026-08-15) has been
@@ -696,64 +508,6 @@ int main(int argc, char* argv[])
 
    //==============================================================================
 
-   if (controls.shouldUseHarness())
-   {
-      RunR1R3RemediatedFitCheck();
-      // RunItem8NestingAudit() and RunFullNestingSweep() removed
-      // (2026-08-29): both used TestDeloneNesting.h's P*Q=Q idempotency
-      // test against one fixed canonical projector per type, no boundary
-      // crossing -- shown to systematically under-detect real nestings
-      // once compared against RunNestingConsistencyCheck (CHECKNESTING),
-      // which uses the existing, already-validated TestDeloneParentage
-      // (168-candidate VCP search, per Andrews/Bernstein/Sauter). Running
-      // both under `harness` produced two different answers to the same
-      // question with no signal about which to trust. CHECKNESTING is
-      // the one to use; TestDeloneNesting.h/RunItem8NestingAudit.h/
-      // RunFullNestingSweep.h are kept on disk but no longer called here.
-      exit(0);
-
-
-      G6 g1("36.972 106.683 106.683 18.486 36.972 36.972");  // tI
-      G6 g2("139.722 187.104 187.104 69.861 139.722 139.722");  // tI
-      RunStabilityTrace(g1, "M4");
-      RunStabilityTrace(g2, "M4");
-      exit(0);
-
-      if (controls.shouldUseHarness())
-      {
-         RunRemediation168Check(controls);
-         exit(0);
-      }
-
-      if (controls.shouldUseHarness())
-      {
-         RunRawFitCheck(controls);
-         exit(0);
-      }
-
-
-      //RunHistoricalBadCaseCheck(controls);
-      RunStabilityVsCurrentComparison(controls);
-      //const LatticeCell traceCell("P 21.775 21.785 27.232  90.028  89.974  90.023");
-      //MatS6 traceReductionMatrix;
-      //const S6 traceLattice = GetInputSellingReducedVectors(traceCell, traceReductionMatrix);
-      //RunStabilityTrace(traceLattice, "M2A");
-      exit(0);
-   }
-
-
-   if (controls.shouldUseHarness())
-   {
-      //RunHistoricalBadCaseCheck(controls);
-      RunStabilityVsCurrentComparison(controls);
-      exit(0);
-   }
-   if (controls.shouldUseHarness())
-   {
-      //RunHistoricalBadCaseCheck(controls);
-      RunHistorical144And2HopCheck(controls);
-      exit(0);
-   }
 
    // TEST -- runs the generalized FlexibleSellaTestMode suite (see
    // FlexibleSellaTestMode.h / SELLA_handoff.md item 5) instead of normal
@@ -768,38 +522,6 @@ int main(int argc, char* argv[])
    }
 
    Sella sella;
-   // NEW: Build matrices ONCE before processing any inputs
-    //SearchAllTypeBoundaryDistances();
-    //exit(0);
-
-    //SweepRemediatedFitNearR1R3Boundary(controls, sella);
-    //exit(0);
-
-
-
-   if (controls.shouldBuildMatrices()) {
-      SellaBuild builder;
-      const bool shouldPrintMatrices = controls.shouldPrintMatrices();
-      std::vector<LabeledDeloneTypeMatrices> deloneTypes =
-         builder.Build(shouldPrintMatrices, controls.getSeedBoundariesMode());
-
-      std::vector<LabeledSellaMatrices> dynamicPerps;
-      std::vector<LabeledSellaMatrices> dynamicProjectors;
-
-      for (const auto& dt : deloneTypes) {
-         const std::string label = dt.GetLabel();
-         const std::vector<MatS6> perps = dt.GetPerp(label);
-         const std::vector<MatS6> prjs = dt.GetPrj(label);
-         if (!perps.empty())
-            dynamicPerps.push_back(LabeledSellaMatrices(label, perps));
-         if (!prjs.empty())
-            dynamicProjectors.push_back(LabeledSellaMatrices(label, prjs));
-      }
-
-      sella.SetPerps(dynamicPerps);
-      sella.SetProjectors(dynamicProjectors);
-      std::cout << "; Matrices built once and stored for all inputs" << std::endl;
-   }
 
    if (controls.shouldCheckNesting()) {
       RunRandomSeedSpotCheck();
@@ -813,14 +535,6 @@ int main(int argc, char* argv[])
 
    if (controls.shouldCheckRemediation()) {
       RunRemediationCheck(inputList, controls);
-      exit(0);
-   }
-
-   if (controls.shouldDiagnosePair()) {
-      for (const auto& inputCell : inputList) {
-         DiagnoseParentAgainstChildWinner(inputCell,
-            controls.getDiagnoseParent(), controls.getDiagnoseChild());
-      }
       exit(0);
    }
 

@@ -6,7 +6,6 @@
 //#include "SanMatrix.h"
 #include "LRL_inverse.h"
 #include "MatG6.h"
-#include "SellaBuild.h"
 //
 #include <set>
 #include <sstream>

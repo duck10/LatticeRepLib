@@ -1,0 +1,150 @@
+CellClassify\CellClassify.cpp:58:// TestHarness.h's MakeUnorderedPairKey: that header (and the boundary-
+CmdSella\CmdSella.cpp:53:#include "TestRemediationOnBoundaryCandidates.h"
+CmdSella\CmdSella.cpp:61:#include "RemediatedFit.h"
+CmdSella\CmdSella.cpp:63:#include "TestHarness.h"
+CmdSella\CmdSella.cpp:65:#include "DirectClassify.h"
+CmdSella\CmdSella.cpp:699:   if (controls.shouldUseHarness())
+CmdSella\CmdSella.cpp:722:      if (controls.shouldUseHarness())
+CmdSella\CmdSella.cpp:728:      if (controls.shouldUseHarness())
+CmdSella\CmdSella.cpp:745:   if (controls.shouldUseHarness())
+CmdSella\CmdSella.cpp:751:   if (controls.shouldUseHarness())
+CmdSella\CmdSella.vcxproj:174:    <ClInclude Include="DirectClassify.h" />
+CmdSella\CmdSella.vcxproj:178:    <ClInclude Include="RemediatedFit.h" />
+CmdSella\CmdSella.vcxproj:182:    <ClInclude Include="TestHarness.h" />
+CmdSella\CmdSella.vcxproj:183:    <ClInclude Include="TestRemediationOnBoundaryCandidates.h" />
+CmdSella\DiagnoseNesting.h:23://      child and for the parent independently (same call DirectClassify.h
+CmdSella\DiagnoseNesting.h:49:#include "RemediatedFit.h"
+CmdSella\DirectClassify.h:4:// DirectClassify.h
+CmdSella\DirectClassify.h:14:// (VCP candidates + boundary transforms, from RemediatedFit.h) directly,
+CmdSella\DirectClassify.h:51:#include "RemediatedFit.h"
+CmdSella\FlexibleSellaTestMode.h:752:      // historical set (RunHistoricalBadCaseCheck, TestHarness.h,
+CmdSella\FlexibleSellaTestMode.h:1364:      // the same set TestHarness.h::RunHistoricalBadCaseCheck loops over
+CmdSella\TestHarness.h:4:// TestHarness.h
+CmdSella\TestHarness.h:26:#include "RemediatedFit.h"
+CmdSella\TestHarness.h:46:// RemediatedFit.h's GetRemediatedFitForType comment).
+CmdSella\TestHarness.h:1722:// RunRemediation168Check -- verifies Remediation168 (RemediatedFit.h) against
+CmdSella\TestHarness.h:1759:      const DeloneFitResults widened = Remediation168(oneLattice, "O4", -1.0);
+deadcode.txt:3:CmdSella\DirectClassify.h:19:// cases that plain Remediation()/RemediateToStability() left unresolved
+deadcode.txt:4:CmdSella\TestHarness.h:46:// RemediatedFit.h's GetRemediatedFitForType comment).
+deadcode.txt:5:CmdSella\TestHarness.h:57:// GetRemediatedFitForType spot-check, not as evidence for the
+deadcode.txt:6:CmdSella\TestHarness.h:73:         const double remediated = GetRemediatedFitForType(cell, type);
+deadcode.txt:7:CmdSella\TestHarness.h:75:            << "  fit (GetRemediatedFitForType, bypasses reactive gate) = "
+deadcode.txt:8:CmdSella\TestHarness.h:80:      << "; This is a direct spot-check of GetRemediatedFitForType only --"
+deadcode.txt:9:CmdSella\TestHarness.h:494:      const double remediatedR1 = GetRemediatedFitForType(cell, "R1");
+deadcode.txt:10:CmdSella\TestHarness.h:502:// exact-tie search, using GetRemediatedFitForType instead of exact
+deadcode.txt:11:CmdSella\TestHarness.h:532:            const double remediatedFit = GetRemediatedFitForType(cell, otherName);
+deadcode.txt:12:CmdSella\TestHarness.h:776:      const double remediatedA2 = GetRemediatedFitForType(cell, "A2");
+deadcode.txt:13:CmdSella\TestHarness.h:802:      const double remediatedA3 = GetRemediatedFitForType(cell, "A3");
+deadcode.txt:14:CmdSella\TestHarness.h:859:      step.remediatedFit = GetRemediatedFitForType(cell, targetType.GetName());
+deadcode.txt:15:CmdSella\TestHarness.h:1064:         finalFit = GetRemediatedFitForType(cell, targetType.GetName());
+deadcode.txt:16:CmdSella\TestHarness.h:1188:         step.remediatedFit = GetRemediatedFitForType(cell, targetType.GetName());
+deadcode.txt:17:CmdSella\TestHarness.h:1332://// Remediation144 -- like Remediation, but searches the full 144-candidate
+deadcode.txt:18:CmdSella\TestHarness.h:1349://inline DeloneFitResults Remediation144(const S6& s6, const std::string& bravaisName) {
+deadcode.txt:19:CmdSella\TestHarness.h:1378:// RunRemediation144Comparison -- hand-compare Remediation (6-candidate)
+deadcode.txt:20:CmdSella\TestHarness.h:1379:// against Remediation144 (144-candidate) on the oC violation that stalled
+deadcode.txt:21:CmdSella\TestHarness.h:1385:void RunRemediation144Comparison() {
+deadcode.txt:22:CmdSella\TestHarness.h:1391:   const DeloneFitResults r6 = Remediation(oneLattice, targetType, -1.0);
+deadcode.txt:23:CmdSella\TestHarness.h:1392:   const DeloneFitResults r144 = Remediation144(oneLattice, targetType);
+deadcode.txt:24:CmdSella\TestHarness.h:1396:   std::cout << "; Remediation144:     " << r144.GetRawFit() << std::endl;
+deadcode.txt:25:CmdSella\TestHarness.h:1442://// Remediation2Hop -- like Remediation, but composes TWO boundary transforms
+deadcode.txt:26:CmdSella\TestHarness.h:1445://// candidate space Remediation and Remediation144 do NOT cover: both of
+deadcode.txt:27:CmdSella\TestHarness.h:1449://// 122.126 90.013" (Remediation and Remediation144 both stall at 38.135,
+deadcode.txt:28:CmdSella\TestHarness.h:1453://inline DeloneFitResults Remediation2Hop(const S6& s6, const std::string& bravaisName) {
+deadcode.txt:29:CmdSella\TestHarness.h:1475:// RunRemediation2HopComparison -- extends RunRemediation144Comparison with
+deadcode.txt:30:CmdSella\TestHarness.h:1478:void RunRemediation2HopComparison() {
+deadcode.txt:31:CmdSella\TestHarness.h:1484:   const DeloneFitResults r6 = Remediation(oneLattice, targetType, -1.0);
+deadcode.txt:32:CmdSella\TestHarness.h:1485:   const DeloneFitResults r144 = Remediation144(oneLattice, targetType);
+deadcode.txt:33:CmdSella\TestHarness.h:1486:   const DeloneFitResults r2hop = Remediation2Hop(oneLattice, targetType);
+deadcode.txt:34:CmdSella\TestHarness.h:1490:   std::cout << "; Remediation144 (144):   " << r144.GetRawFit() << std::endl;
+deadcode.txt:35:CmdSella\TestHarness.h:1491:   std::cout << "; Remediation2Hop (36):   " << r2hop.GetRawFit() << std::endl;
+deadcode.txt:36:CmdSella\TestHarness.h:1538:// fit via the 6-candidate Remediation, the 144-candidate Remediation144,
+deadcode.txt:37:CmdSella\TestHarness.h:1539:// and the 36-candidate Remediation2Hop, alongside tP's fit, to see which
+deadcode.txt:38:CmdSella\TestHarness.h:1542:// RunRemediation2HopComparison's method, applied to the historical set
+deadcode.txt:39:CmdSella\TestHarness.h:1561:      const DeloneFitResults r6 = Remediation(oneLattice, "oC", -1.0);
+deadcode.txt:40:CmdSella\TestHarness.h:1562:      const DeloneFitResults r144 = Remediation144(oneLattice, "oC");
+deadcode.txt:41:CmdSella\TestHarness.h:1563:      const DeloneFitResults r2hop = Remediation2Hop(oneLattice, "oC");
+deadcode.txt:42:CmdSella\TestHarness.h:1564:      const DeloneFitResults tP = Remediation(oneLattice, "tP", -1.0);
+deadcode.txt:43:CmdSella\TestHarness.h:1585:// mechanism) and ClassifyViaStabilityRemediation (new, standalone) on the
+deadcode.txt:44:CmdSella\TestHarness.h:1614:      std::vector<StabilityClassification> stabilityResult = ClassifyViaStabilityRemediation(cell);
+deadcode.txt:45:CmdSella\TestHarness.h:1640:// RunStabilityTrace -- prints the fit at every round of RemediateToStability
+deadcode.txt:46:CmdSella\TestHarness.h:1646:// components + P-cell degrees form) at every round of RemediateToStability,
+deadcode.txt:47:CmdSella\TestHarness.h:1651:   DeloneFitResults currentFit = Remediation(currentPoint, bravaisName, -1.0);
+deadcode.txt:48:CmdSella\TestHarness.h:1660:      const DeloneFitResults nextFit = Remediation(reducedNextPoint, bravaisName, -1.0);
+deadcode.txt:49:CmdSella\TestHarness.h:1758:      const DeloneFitResults current = Remediation(oneLattice, "O4", -1.0);
+deadcode.txt:50:CmdSella\TestHarness.h:1760:      const DeloneFitResults tP = Remediation(oneLattice, "tP", -1.0);
+deadcode.txt:51:LatticeRepresentationLib\RemediatedFit.h:15:// GetRemediatedFitForType -- thin wrapper: reduces a raw input cell and
+deadcode.txt:52:LatticeRepresentationLib\RemediatedFit.h:22:// Remediation144 / Remediation2Hop -- diagnostic-only variants, built
+deadcode.txt:53:LatticeRepresentationLib\RemediatedFit.h:32:// RemediateToStability / ClassifyViaStabilityRemediation -- 2026-08-22,
+deadcode.txt:54:LatticeRepresentationLib\RemediatedFit.h:80:// SetOriginalInput, so callers (RemediateToStability) can feed the actual
+deadcode.txt:55:LatticeRepresentationLib\RemediatedFit.h:94:inline DeloneFitResults Remediation(const S6& s6, const std::string& bravaisName,
+deadcode.txt:56:LatticeRepresentationLib\RemediatedFit.h:131:inline double GetRemediatedFitForType(
+deadcode.txt:57:LatticeRepresentationLib\RemediatedFit.h:138:   const DeloneFitResults revised = Remediation(oneLattice, targetType, -1.0);
+deadcode.txt:58:LatticeRepresentationLib\RemediatedFit.h:142:// Remediation144 -- 6 boundary transforms x 24 reflections (144
+deadcode.txt:59:LatticeRepresentationLib\RemediatedFit.h:145:inline DeloneFitResults Remediation144(const S6& s6, const std::string& bravaisName) {
+deadcode.txt:60:LatticeRepresentationLib\RemediatedFit.h:168:// Remediation2Hop -- identical in method to Remediation's current 2-hop
+deadcode.txt:61:LatticeRepresentationLib\RemediatedFit.h:172:inline DeloneFitResults Remediation2Hop(const S6& s6, const std::string& bravaisName) {
+deadcode.txt:62:LatticeRepresentationLib\RemediatedFit.h:194:// StabilityResult / RemediateToStability -- iterates Remediation (2-hop
+deadcode.txt:63:LatticeRepresentationLib\RemediatedFit.h:216:inline StabilityResult RemediateToStability(const S6& s6, const std::string& bravaisName,
+deadcode.txt:64:LatticeRepresentationLib\RemediatedFit.h:219:   DeloneFitResults currentFit = Remediation(currentPoint, bravaisName, -1.0);
+deadcode.txt:65:LatticeRepresentationLib\RemediatedFit.h:226:      const DeloneFitResults nextFit = Remediation(reducedNextPoint, bravaisName, -1.0);
+deadcode.txt:66:LatticeRepresentationLib\RemediatedFit.h:239:// ClassifyViaStabilityRemediation -- standalone alternative to
+deadcode.txt:67:LatticeRepresentationLib\RemediatedFit.h:241:// then for each of the 24 Delone types calls RemediateToStability
+deadcode.txt:68:LatticeRepresentationLib\RemediatedFit.h:244:// ClassifyViaStabilityRemediation -- standalone alternative to
+deadcode.txt:69:LatticeRepresentationLib\RemediatedFit.h:246:// then for each of the 24 Delone types calls RemediateToStability
+deadcode.txt:70:LatticeRepresentationLib\RemediatedFit.h:260:inline std::vector<StabilityClassification> ClassifyViaStabilityRemediation(
+deadcode.txt:71:LatticeRepresentationLib\RemediatedFit.h:279:      const StabilityResult stability = RemediateToStability(oneLattice, typeName);
+deadcode.txt:72:LatticeRepresentationLib\RemediatedFit.h:323:      std::vector<S6> candidates = BuildVCPCandidates(currentPoint);
+deadcode.txt:73:LatticeRepresentationLib\RemediatedFit.h:427:// GetRemediatedFitForType's own comment: a type near a boundary can go
+deadcode.txt:74:LatticeRepresentationLib\RemediatedFit.h:451:      const double remediatedFit = GetRemediatedFitForType(cell, type);
+deadcode.txt:76:SellaLib\Deloneparentagetest.h:30:// The VCP functions below are kept (BuildVCPCandidates, VCPResidualSearch)
+deadcode.txt:83:SellaLib\GrimmerTree.cpp:765:GrimmerChains GrimmerChains::ReplaceRemediation(const DeloneFitResults& newFit) const {
+deadcode.txt:85:SellaLib\GrimmerTree.h:240:   GrimmerChains ReplaceRemediation(const DeloneFitResults& newFit) const;
+deadcode.txt:86:SellaLib\RemediatedFit.h:15:// GetRemediatedFitForType -- thin wrapper: reduces a raw input cell and
+deadcode.txt:87:SellaLib\RemediatedFit.h:22:// Remediation144 / Remediation2Hop -- diagnostic-only variants, built
+deadcode.txt:88:SellaLib\RemediatedFit.h:32:// RemediateToStability / ClassifyViaStabilityRemediation -- 2026-08-22,
+deadcode.txt:89:SellaLib\RemediatedFit.h:77:// SetOriginalInput, so callers (RemediateToStability) can feed the actual
+deadcode.txt:90:SellaLib\RemediatedFit.h:91:inline DeloneFitResults Remediation(const S6& s6, const std::string& bravaisName,
+deadcode.txt:91:SellaLib\RemediatedFit.h:128:inline double GetRemediatedFitForType(
+deadcode.txt:92:SellaLib\RemediatedFit.h:135:   const DeloneFitResults revised = Remediation(oneLattice, targetType, -1.0);
+deadcode.txt:93:SellaLib\RemediatedFit.h:139:// Remediation144 -- 6 boundary transforms x 24 reflections (144
+deadcode.txt:94:SellaLib\RemediatedFit.h:142:inline DeloneFitResults Remediation144(const S6& s6, const std::string& bravaisName) {
+deadcode.txt:95:SellaLib\RemediatedFit.h:165:// Remediation2Hop -- identical in method to Remediation's current 2-hop
+deadcode.txt:96:SellaLib\RemediatedFit.h:169:inline DeloneFitResults Remediation2Hop(const S6& s6, const std::string& bravaisName) {
+deadcode.txt:97:SellaLib\RemediatedFit.h:191:// StabilityResult / RemediateToStability -- iterates Remediation (2-hop
+deadcode.txt:98:SellaLib\RemediatedFit.h:213:inline StabilityResult RemediateToStability(const S6& s6, const std::string& bravaisName,
+deadcode.txt:99:SellaLib\RemediatedFit.h:216:   DeloneFitResults currentFit = Remediation(currentPoint, bravaisName, -1.0);
+deadcode.txt:100:SellaLib\RemediatedFit.h:223:      const DeloneFitResults nextFit = Remediation(reducedNextPoint, bravaisName, -1.0);
+deadcode.txt:101:SellaLib\RemediatedFit.h:236:// ClassifyViaStabilityRemediation -- standalone alternative to
+deadcode.txt:102:SellaLib\RemediatedFit.h:238:// then for each of the 24 Delone types calls RemediateToStability
+deadcode.txt:103:SellaLib\RemediatedFit.h:241:// ClassifyViaStabilityRemediation -- standalone alternative to
+deadcode.txt:104:SellaLib\RemediatedFit.h:243:// then for each of the 24 Delone types calls RemediateToStability
+deadcode.txt:105:SellaLib\RemediatedFit.h:257:inline std::vector<StabilityClassification> ClassifyViaStabilityRemediation(
+deadcode.txt:106:SellaLib\RemediatedFit.h:276:      const StabilityResult stability = RemediateToStability(oneLattice, typeName);
+deadcode.txt:107:SellaLib\RemediatedFit.h:286:// lattice as p. Replaces BuildVCPCandidates in the fitting search:
+deadcode.txt:108:SellaLib\TestRemediationOnBoundaryCandidates.h:39:   const DeloneFitResults result = gc.Remediation(typeName, 1.0E-6);  // second param unused, see note above
+deadcode.txt:109:SellaLib\TestRemediationOnBoundaryCandidates.h:43:   std::cout << "  Remediation(\"" << typeName << "\") result:"
+LatticeRepresentationLib\RemediatedFit.h:4:// RemediatedFit.h
+LatticeRepresentationLib\RemediatedFit.h:409:inline DeloneFitResults Remediation168(const S6& s6, const std::string& bravaisName,
+SellaLib\CmdSellaControls.h:379:   bool shouldUseHarness() const { return useTestHarness; };
+SellaLib\DeloneFitComputation.cpp:34:// DirectClassify.h's PopulateDirectFitsForAllTypes, moved into the main
+SellaLib\DeloneFitComputation.cpp:65:#include "RemediatedFit.h"
+SellaLib\DeloneFitComputation.cpp:189:// skipped when RemediationCanImprove(oneLattice) is false (RemediatedFit.h,
+SellaLib\DeloneFitFiltering.h:17:// loop (see RemediatedFit.h / CmdSella.cpp's remediation loop). Any code
+SellaLib\Deloneparentagetest.h:15:// RemediatedFit.h). E.g. for an O3 point (a,b,0,a,b,0), vcp_1 =
+SellaLib\Deloneparentagetest.h:30:// The VCP functions below are kept (BuildVCPCandidates, VCPResidualSearch)
+SellaLib\Deloneparentagetest.h:45:// for a different reason: VCPResidualSearch already reorients the CHILD
+SellaLib\Deloneparentagetest.h:50:// Design (fifth revision -- see VCPResidualSearch's own comment for why
+SellaLib\Deloneparentagetest.h:56://   2. VCPResidualSearch: build the 168 candidate representatives via
+SellaLib\Deloneparentagetest.h:236:inline VCPSearchResult VCPResidualSearch(const S6& seed, const MatS6& targetProjector) {
+SellaLib\Deloneparentagetest.h:250:// VCPResidualSearch's early-out and the final "is this nested"
+SellaLib\Deloneparentagetest.h:293:// VCPResidualSearch, which builds the 168 published candidates and keeps
+SellaLib\GrimmerDeloneTree.h:29:// reducedLattice parameter (added chat, Sept 2026, DirectClassify.h work):
+SellaLib\GrimmerTree.cpp:493:   // second call (e.g. from ReplaceRemediation, after a fit is repaired)
+SellaLib\GrimmerTree.cpp:765:GrimmerChains GrimmerChains::ReplaceRemediation(const DeloneFitResults& newFit) const {
+SellaLib\GrimmerTree.h:240:   GrimmerChains ReplaceRemediation(const DeloneFitResults& newFit) const;
+SellaLib\RemediatedFit.h:4:// RemediatedFit.h
+SellaLib\RemediatedFit.h:417:inline DeloneFitResults Remediation168(const S6& s6, const std::string& bravaisName,
+SellaLib\SellaLib.vcxproj:159:    <ClInclude Include="RemediatedFit.h" />
+SellaLib\SellaLib.vcxproj:162:    <ClInclude Include="TestHarness.h" />
+SellaLib\TestRemediationOnBoundaryCandidates.h:4:// TestRemediationOnBoundaryCandidates.h
+SellaLib\TestRemediationOnBoundaryCandidates.h:50:inline void TestRemediationOnBoundaryCandidates() {

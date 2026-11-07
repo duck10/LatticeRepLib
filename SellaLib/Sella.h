@@ -58,32 +58,11 @@ private:
    S6 m_perped;
    std::string m_BravaisType;
    std::string m_generalBravaisType;
-   inline static bool s_useFaceCrossed = false;
 };
 
 class Sella {
 public:
-   Sella(const bool useDynamicMatrices=false);  // NEW: constructor with flag to choose matrix source
-
-   double TestOneType(const std::string& label, const S6& s6, const std::vector<MatS6>& vm);
-   std::vector<std::pair<std::string, double> > GetVectorOfFits(const S6& s6);
-
-   std::vector<LabeledSellaMatrices> GetPerps(void) const {
-      return m_perps;  // CHANGED: use member variable instead of static
-   }
-   std::vector<LabeledSellaMatrices> GetProjectors(void) const {
-      return m_projectors;  // CHANGED: use member variable instead of static
-   }
-
-   // NEW: Methods to set matrices externally (for dynamic building in CmdSella)
-   void SetPerps(const std::vector<LabeledSellaMatrices>& newPerps) { m_perps = newPerps; }
-   void SetProjectors(const std::vector<LabeledSellaMatrices>& newProjectors) { m_projectors = newProjectors; }
-
-   std::pair<std::string, double>  GetBestFitForCrystalSystem(const std::string& type, const S6& s6);
-   double GetFitForDeloneType(const std::string& type, const S6& s6);
-   std::vector<std::pair<std::string, double> > GetAllFitsForCrystalSystem(const std::string& type);
-   void GetDeloneTypesForCrystalType();
-   void GetCrystalTypesForDeloneType();
+   Sella(const bool useDynamicMatrices = false);  // NEW: constructor with flag to choose matrix source
 
    // CHANGED: Made non-static to use instance matrices
    std::vector<DeloneFitResults> SellaFit(
@@ -99,28 +78,24 @@ public:
    static double Zscore(const S6& s6, const S6& sigmas, const MatS6& reductionMatrix);
 
    // FACECROSSED (Nov 2026): when on, SellaFitXXXXXX appends the missing
-   // face arrangements (white paper v4, Appendix B) to the type's own
+   // face arrangements (white paper v5, Appendix B) to the type's own
    // projector list. Static because SellaFitXXXXXX is static and is called
    // from many places (SellaFit, Remediation168ForOneSubtype, diagnostics).
    static void SetUseFaceCrossed(const bool b) { s_useFaceCrossed = b; }
    static bool GetUseFaceCrossed() { return s_useFaceCrossed; }
 
-   // public:
+   // CONEFIT (Nov 2026): when on, each projection is clamped to the reduced
+   // cone before the distance is taken (see SellaFitXXXXXX).
    static void SetUseConeFit(const bool b) { s_useConeFit = b; }
    static bool GetUseConeFit() { return s_useConeFit; }
-   // private:
-   inline static bool s_useConeFit = true;
 
 
 private:
-   // NEW: Instance variables to hold the matrices in use (either hard-coded or dynamically built)
-   std::vector<LabeledSellaMatrices> m_projectors;
-   std::vector<LabeledSellaMatrices> m_perps;
 
-   // Keep static members for backward compatibility and hard-coded matrices
-   static const std::vector<LabeledSellaMatrices> projectors;
-   static const std::vector<LabeledSellaMatrices> perps;
-      inline static bool s_useFaceCrossed = false;
+   // Defaults match CmdSellaControls (FACECROSSED and CONEFIT both on), so
+   // a caller that never sets them gets the same fits as CmdSella.
+   inline static bool s_useFaceCrossed = true;
+   inline static bool s_useConeFit = true;
 };
 
 #endif // SELLA_H
