@@ -79,9 +79,6 @@
     <ClInclude Include="DirectClassify.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MethodLibrary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DiagnoseNesting.h">
       <Filter>Header Files</Filter>
     </ClInclude>

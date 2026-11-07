@@ -58,7 +58,6 @@
 
 
 #include "StoreResults.h"
-#include "MethodLibrary.h"
 #include "RemediatedFit.h"
 
 #include "TestHarness.h"
@@ -824,81 +823,6 @@ int main(int argc, char* argv[])
       }
       exit(0);
    }
-
-
-   // NEW: method-library research pipeline (see chat, Sept 2026) --
-   // separate from classifydirect and the existing SellaFit pipeline,
-   // since this exercises MethodLibrary.h's 6/24/144/168/3480 registry
-   // directly through the SEQUENCE/BESTOF interpreters, not either
-   // existing classification path. SEQUENCE and BESTOF are independent
-   // of each other (both can be set together -- each just produces its
-   // own labeled output block).
-   if (controls.shouldRunSequence() || controls.shouldRunBestOf()) {
-      for (const auto& inputCell : inputList) {
-         MatS6 oneReductionMatrix;
-         const S6 oneLattice = GetInputSellingReducedVectors(inputCell, oneReductionMatrix);
-
-         std::cout << "; " << inputCell.GetInput() << std::endl;
-
-         const std::vector<std::shared_ptr<GenerateDeloneBase>> sptypes =
-            controls.shouldRestrictTypes()
-            ? SelectTargetTypes(controls.getTargetTypeName())
-            : GenerateDeloneBase().Select("");
-
-         if (controls.shouldRunSequence()) {
-            RunAndPrintOneInterpreter("SEQUENCE", RunSequenceInterpreter,
-               controls.getSequenceSpec(), sptypes, oneLattice,
-               controls.getNearTieEpsilon(), controls.shouldShowFullDetail());
-         }
-         if (controls.shouldRunBestOf()) {
-            RunAndPrintOneInterpreter("BESTOF", RunBestOfInterpreter,
-               controls.getBestOfSpec(), sptypes, oneLattice,
-               controls.getNearTieEpsilon(), controls.shouldShowFullDetail());
-         }
-      }
-      exit(0);
-   }
-
-   //if (controls.shouldClassifyDirect()) {
-   //   int cellIndex = 1;
-   //   for (const auto& inputCell : inputList) {
-   //      MatS6 oneReductionMatrix;
-   //      const S6 oneLattice = GetInputSellingReducedVectors(inputCell, oneReductionMatrix);
-   //      const S6 oneErrors = 0.1 * inputCell.getCell();
-
-   //      std::cout << "; " << inputCell.GetInput() << std::endl;
-   //      const std::vector<DeloneFitResults> fits =
-   //         PopulateDirectFitsForAllTypes(oneLattice, oneErrors, oneReductionMatrix, sella);
-   //      for (const auto& fit : fits) {
-   //         PrintCompact(fit);
-   //      }
-
-   //      // NEW: Bravais-type fit grouping -- min raw fit per Bravais type
-   //      // across its Delone siblings. CreateMapOFBravaisFits takes a
-   //      // non-const ref (doesn't appear to mutate fits) so a local copy
-   //      // is needed since fits is const here.
-   //      std::vector<DeloneFitResults> fitsForGrouping = fits;
-   //      MapOfBravaisFits bravaisFits;
-   //      bravaisFits.CreateMapOFBravaisFits(fitsForGrouping);
-   //      std::cout << bravaisFits;
-
-   //      const std::string fitPlotsSvg =
-   //         GenerateDirectFitPlotsSvg(fits, oneLattice, inputCell.getInput());
-   //      const std::string fitPlotsFilename = AddSuffixToAllSvgOccurrences(
-   //         LRL_CreateFileName::Create("SEL", LRL_DataToSVG(cellIndex), "svg", true), "_fit_plots");
-   //      WriteDirectSvg(fitPlotsSvg, fitPlotsFilename);
-   //      std::cout << "; Send Sella Plot to graphics file " << fitPlotsFilename << std::endl;
-
-   //      const std::string deloneTreeSvg = GenerateDirectDeloneTreeSvg(
-   //         fits, oneLattice, inputCell, controls.getMaxDeltaForMatch());
-   //      const std::string deloneTreeFilename = AddSuffixToAllSvgOccurrences(
-   //         LRL_CreateFileName::Create("SEL", LRL_DataToSVG(cellIndex), "svg", true), "_delonetree");
-   //      WriteDirectSvg(deloneTreeSvg, deloneTreeFilename);
-   //      std::cout << "; Send Sella Plot to graphics file " << deloneTreeFilename << std::endl;
-   //      ++cellIndex;
-   //   }
-   //   exit(0);
-   //}
 
    const bool doProduceSellaGraphics = controls.DoGraphics();
 

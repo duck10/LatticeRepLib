@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 #include "CmdBgaolControls.h"
 #include "ProgramSetup.h"
@@ -14,6 +15,8 @@ void proc_bgaol(const LatticeCell& cell, BgaolControls& controls) {
    const double alpha = cell.getCell()[3] * 180.0 / pi;
    const double beta  = cell.getCell()[4] * 180.0 / pi;
    const double gamma = cell.getCell()[5] * 180.0 / pi;
+
+   const std::vector<double> sigmas = controls.getSigmas();
 }
 
 int main(int argc, char* argv[])

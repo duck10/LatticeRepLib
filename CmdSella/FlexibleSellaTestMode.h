@@ -1199,15 +1199,41 @@ public:
       // and cell 2 (swap) once run, then report back so this can be
       // promoted to a confirmed HasFailureExpectation the same way
       // Test 11's was.
+      //
+      // ANSWERED and AUTOMATED 2026-11-06: HasFailure() is false on both
+      // cells, so the M2B swap point does not trip a chain violation (the
+      // M3 correlation in Test 11 is not general). With the cone fit, M1B
+      // is better on cell 1 (0.02068 vs M1A 0.0713908) and M1A on cell 2
+      // (0.0680599 vs M1B 0.0924576) -- the swap, which is allowed geometry
+      // (see Test 12). Guards: HasFailure false, M1A/M1B fit ranges, and
+      // M1A <= M2B, M1B <= M2B.
       {
          FlexibleSellaTestCase test16("M2BBoundary_SwapPoint_HasFailureCheck",
-            "MANUAL: does the M2B-boundary M1A/M1B swap point also trip a "
-            "real Grimmer chain violation, the way Test 11's M3 swap "
-            "point did? Not yet known -- read HasFailure() for cell 1 "
-            "(normal) vs cell 2 (swap) below, then report back so this "
-            "can be promoted to a confirmed HasFailureExpectation.");
+            "M2B-boundary M1A/M1B swap point: no Grimmer chain violation on "
+            "either cell (answered 2026-11-06). Guards HasFailure false, the "
+            "M1A/M1B cone-fit values, and M1A, M1B <= M2B.");
          test16.addInputCell(LatticeCell("S -38.10203 -43.40929 -0.06833 -38.08135 -43.38861 -59.50431"));  // cell 1: normal (M1B=0.02068, M1A=5.30726)
          test16.addInputCell(LatticeCell("S -38.05796 -38.14164 -0.06258 -43.30057 -43.34813 -59.49953"));  // cell 2: swap (M1A=0.06806, M1B=5.22458)
+         test16.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 0, "cell 1 (normal): no chain violation"));
+         test16.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 1, "cell 2 (swap): no chain violation"));
+         test16.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1B", 0.01568, 0.02568, 0, "cell 1: M1B cone fit 0.02068"));
+         test16.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1A", 0.0663908, 0.0763908, 0, "cell 1: M1A cone fit 0.0713908"));
+         test16.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1A", 0.0630599, 0.0730599, 1, "cell 2: M1A cone fit 0.0680599"));
+         test16.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1B", 0.0874576, 0.0974576, 1, "cell 2: M1B cone fit 0.0924576"));
+         for (size_t cell = 0; cell < 2; ++cell) {
+            test16.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "M1A", "M2B", 1.0E-6, cell, "M1A <= M2B, cell " + std::to_string(cell + 1)));
+         }
+         for (size_t cell = 0; cell < 2; ++cell) {
+            test16.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "M1B", "M2B", 1.0E-6, cell, "M1B <= M2B, cell " + std::to_string(cell + 1)));
+         }
          addTestCase(test16);
       }
 
@@ -1239,17 +1265,43 @@ public:
       // COMPARE), possibly stale from an earlier build. Not asserted
       // either way; flagged here rather than guessed at further.
       //
-      // No expectation is asserted -- MANUAL, like Test 21, since this
-      // documents observed behavior rather than a pass/fail claim.
+      // AUTOMATED 2026-11-06: was MANUAL (observed behavior only). Now a
+      // regression guard on the current cone-fit values of C5, R1 and R3,
+      // plus HasFailure false. The R1/R3 <= C5 nesting on these cells is
+      // checked in Test 27.
       {
          FlexibleSellaTestCase test17("R1_R3_NearBoundary_NoIssueFound",
-            "Cells near the R1/R3 boundary. Resolved: not a swap bug -- "
-            "both types fit small on every cell. See source comment for "
-            "full history.");
+            "Cells near the R1/R3 boundary: not a swap bug -- both types fit "
+            "small on every cell. Guards the C5/R1/R3 cone-fit values and "
+            "HasFailure false (nesting in Test 27).");
          test17.setRelevantTypes({ "R1", "R3", "C5" });
          test17.addInputCell(LatticeCell("S 0.00000 0.00000 -0.17453 -99.82547 -99.82547 -100.00000"));  // cell 1
          test17.addInputCell(LatticeCell("S -0.10976 -0.07316 -0.09934 -99.66756 -99.67093 -99.57723"));  // cell 2
          test17.addInputCell(LatticeCell("S -0.06282 -0.01222 -99.84618 -99.85396 -0.13101 -99.84497"));  // cell 3
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.220317, 0.230317, 0, "cell 1: C5 0.225317"));
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.19653, 0.20653, 0, "cell 1: R1 0.20153"));
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.220317, 0.230317, 0, "cell 1: R3 0.225317"));
+         test17.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 0, "cell 1: no chain violation"));
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.176434, 0.186434, 1, "cell 2: C5 0.181434"));
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.0747581, 0.0847581, 1, "cell 2: R1 0.0797581"));
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.176434, 0.186434, 1, "cell 2: R3 0.181434"));
+         test17.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 1, "cell 2: no chain violation"));
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.136206, 0.146206, 2, "cell 3: C5 0.141206"));
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.136206, 0.146206, 2, "cell 3: R1 0.141206"));
+         test17.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.114616, 0.124616, 2, "cell 3: R3 0.119616"));
+         test17.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 2, "cell 3: no chain violation"));
          addTestCase(test17);
       }
 
@@ -1267,17 +1319,43 @@ public:
       // particular M1A/M2A -- the one pair in the (freeParams=4, mC)
       // sibling group still without a confirmed swap example -- remains
       // genuinely open, not ruled out by this result.
+      //
+      // CLOSED and AUTOMATED 2026-11-06: the swap question no longer needs
+      // an answer. Test 12 (with the cone fit) showed a sibling swap is
+      // allowed geometry, not a library-gap symptom, and library gaps are
+      // now checked directly for every type (Tests 29, 30; CHECKNESTING
+      // with perturbed cells; CHECKREMEDIATION found 0 missing
+      // arrangements). These two cells could not show an M1A/M2A swap in
+      // any case: cell 1 is an exact M1A cell and M1B, M2A are far away
+      // (about 24 and 27). Kept as a regression guard.
       {
          FlexibleSellaTestCase test18("M1A_M1B_M2A_NoSwapFound_InconclusiveSample",
-            "MANUAL, inconclusive: M1A dominates M1B and M2A throughout "
-            "this 10-point sample near a different seed than Test 12's. "
-            "Does NOT establish that M1A/M2A (the one still-untested pair "
-            "in the freeParams=4 mC sibling group) lacks a swap -- only "
-            "that this particular region doesn't expose one. A denser or "
-            "differently-seeded sweep is needed before concluding "
-            "anything about M1A/M2A specifically.");
+            "An exact M1A cell and a perturbation of it: M1A near 0, M1B and "
+            "M2A far (about 24 and 27). Guards those cone-fit values, "
+            "HasFailure false and M1A <= M2B. The former swap question is "
+            "closed (see source comment).");
          test18.addInputCell(LatticeCell("S -25.10300 -25.10300 -71.96250 -56.43450 -56.43450 -59.44700"));
          test18.addInputCell(LatticeCell("S -25.05836 -25.02022 -71.96804 -56.52384 -56.43615 -59.41671"));
+         test18.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1A", 0, 0.001, 0, "cell 1 (exact M1A): M1A 0"));
+         test18.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1B", 23.8519, 23.8619, 0, "cell 1: M1B 23.8569"));
+         test18.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M2A", 27.3943, 27.4043, 0, "cell 1: M2A 27.3993"));
+         test18.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1A", 0.0626173, 0.0726173, 1, "cell 2: M1A 0.0676173"));
+         test18.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M1B", 23.9167, 23.9267, 1, "cell 2: M1B 23.9217"));
+         test18.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "M2A", 27.2947, 27.3047, 1, "cell 2: M2A 27.2997"));
+         test18.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 0, "cell 1: no chain violation"));
+         test18.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 1, "cell 2: no chain violation"));
+         for (size_t cell = 0; cell < 2; ++cell) {
+            test18.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+               "M1A", "M2B", 1.0E-6, cell, "M1A <= M2B, cell " + std::to_string(cell + 1)));
+         }
          addTestCase(test18);
       }
 
@@ -1402,13 +1480,16 @@ public:
       // Test 17 live disproved that -- see Test 17's own comment. Both
       // tests now show the same thing: small, comparable fits on both
       // sides of the boundary, no real R1/R3 issue anywhere.
-      // MANUAL/no expectation asserted: this documents observed boundary
-      // behavior for reference, not a pass/fail claim.
+      // AUTOMATED 2026-11-06: was MANUAL. Now a regression guard on the
+      // current cone-fit values of C5, R1 and R3 on all 11 cells, plus
+      // HasFailure false. (The per-cell comments on the input lines are
+      // the older values; several changed with FACECROSSED/CONEFIT.) The
+      // R1/R3 <= C5 nesting on these cells is checked in Test 27.
       {
          FlexibleSellaTestCase test21("R1_R3_CubicSeed_NoIssueFound",
-            "Perturbations of an exact cubic cell, sitting on the R1/R3 "
-            "boundary. Both types fit small throughout -- no issue, "
-            "consistent with Test 17.");
+            "Perturbations of an exact cubic cell, on the R1/R3 boundary. "
+            "Both types fit small throughout. Guards the C5/R1/R3 cone-fit "
+            "values and HasFailure false (nesting in Test 27).");
          test21.setRelevantTypes({ "R1", "R3", "C5" });
          test21.addInputCell(LatticeCell("P 10 10 10 90 90 90"));                          // origin: C5=0.00000 R1=0.00000 R3=0.00000
          test21.addInputCell(LatticeCell("P 9.994 9.992 9.988 89.958 89.937 89.957"));      // C5=0.12544 R1=0.17416 R3=0.10127
@@ -1421,6 +1502,94 @@ public:
          test21.addInputCell(LatticeCell("P 10.002 9.992 9.988 89.931 89.977 89.993"));     // C5=0.16688 R1=0.16221 R3=0.23141
          test21.addInputCell(LatticeCell("P 9.991 9.992 9.991 89.934 89.936 89.982"));      // C5=0.14200 R1=0.17326 R3=0.11044
          test21.addInputCell(LatticeCell("P 10.002 9.998 10.012 90.030 90.042 89.996"));    // C5=0.17102 R1=0.15666 R3=0.16392
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0, 0.001, 0, "cell 1: C5 0"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0, 0.001, 0, "cell 1: R1 0"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0, 0.001, 0, "cell 1: R3 0"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 0, "cell 1: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.120444, 0.130444, 1, "cell 2: C5 0.125444"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.120444, 0.130444, 1, "cell 2: R1 0.125444"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.096275, 0.106275, 1, "cell 2: R3 0.101275"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 1, "cell 2: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.156248, 0.166248, 2, "cell 3: C5 0.161248"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.155223, 0.165223, 2, "cell 3: R1 0.160223"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.148664, 0.158664, 2, "cell 3: R3 0.153664"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 2, "cell 3: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.110886, 0.120886, 3, "cell 4: C5 0.115886"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.0835978, 0.0935978, 3, "cell 4: R1 0.0885978"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.0747907, 0.0847907, 3, "cell 4: R3 0.0797907"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 3, "cell 4: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.192751, 0.202751, 4, "cell 5: C5 0.197751"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.192751, 0.202751, 4, "cell 5: R1 0.197751"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.18617, 0.19617, 4, "cell 5: R3 0.19117"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 4, "cell 5: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.138543, 0.148543, 5, "cell 6: C5 0.143543"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.0409772, 0.0509772, 5, "cell 6: R1 0.0459772"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.138543, 0.148543, 5, "cell 6: R3 0.143543"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 5, "cell 6: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.238315, 0.248315, 6, "cell 7: C5 0.243315"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.185012, 0.195012, 6, "cell 7: R1 0.190012"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.232345, 0.242345, 6, "cell 7: R3 0.237345"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 6, "cell 7: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.137105, 0.147105, 7, "cell 8: C5 0.142105"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.126211, 0.136211, 7, "cell 8: R1 0.131211"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.128442, 0.138442, 7, "cell 8: R3 0.133442"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 7, "cell 8: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.161881, 0.171881, 8, "cell 9: C5 0.166881"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.161881, 0.171881, 8, "cell 9: R1 0.166881"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.161881, 0.171881, 8, "cell 9: R3 0.166881"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 8, "cell 9: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.136999, 0.146999, 9, "cell 10: C5 0.141999"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.136999, 0.146999, 9, "cell 10: R1 0.141999"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.105443, 0.115443, 9, "cell 10: R3 0.110443"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 9, "cell 10: no chain violation"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 0.166022, 0.176022, 10, "cell 11: C5 0.171022"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 0.151655, 0.161655, 10, "cell 11: R1 0.156655"));
+         test21.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 0.158915, 0.168915, 10, "cell 11: R3 0.163915"));
+         test21.addHasFailureExpectation(FlexibleSellaTestCase::HasFailureExpectation(
+            false, 10, "cell 11: no chain violation"));
          addTestCase(test21);
       }
 
