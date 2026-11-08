@@ -10,7 +10,7 @@
 #include <cfloat>
 #include <iostream>
 
-Sella::Sella(const bool /*useDynamicMatrices*/ /*=false*/)
+Sella::Sella(const bool)
 {
 }
 
