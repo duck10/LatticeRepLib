@@ -24,6 +24,7 @@
 #include "GenerateLatticeTypeExamples.h"
 #include "GrimmerDeloneTree.h"
 #include "GrimmerTree.h"
+#include "HelpSella.h"
 #include "InputHandler.h"
 #include "LRL_Cell_Degrees.h"
 #include "LRL_CoordinateConversionMatrices.h"
@@ -558,6 +559,10 @@ int main(int argc, char* argv[])
 
    controls.setHasWebInput(webio.m_hasWebInstructions);
    const WebFileBlockProgramInput<CmdSellaControls> dc_setup(argc, argv, "CmdSella", 0, controls);
+   if (controls.shouldShowHelp()) {
+      ShowSellaHelp();
+      exit(0);
+   }
    Sella::SetUseFaceCrossed(controls.shouldUseFaceCrossed());
    Sella::SetUseConeFit(controls.shouldUseConeFit());
    if (Sella::GetUseFaceCrossed()) {
@@ -672,5 +677,4 @@ int main(int argc, char* argv[])
       }
    }
    exit(0);
-
 }

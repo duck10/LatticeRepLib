@@ -28,14 +28,11 @@ public:
       os << ";   compare mode " << ((csc.compareMode) ? "true" : "false") << std::endl;
       os << ";   max delta for match " << csc.maxDeltaForMatch << std::endl;
       os << ";   nesting delta " << csc.nestingDelta << std::endl;
-      os << ";   max boundary walk cycles " << csc.maxBoundaryWalkCycles << std::endl;
       os << ";   check nesting " << ((csc.checkNesting) ? "true" : "false") << std::endl;
       os << ";   requested types ";
       if (csc.requestedTypes.empty()) os << "(all)";
       else for (const auto& t : csc.requestedTypes) os << t << " ";
       os << std::endl;
-      os << ";   seed boundaries mode " << (csc.seedBoundariesMode.empty() ? "(off)" : csc.seedBoundariesMode) << std::endl;
-      os << ";   test transforms " << ((csc.testTransforms) ? "true" : "false") << std::endl;
       os << ";   random seed " << csc.getRandomSeed() << std::endl;
 
       os << ";   face crossed " << ((csc.faceCrossed) ? "true" : "false") << std::endl;
@@ -46,6 +43,16 @@ public:
    }
 
    CmdSellaControls() {
+
+      // HELP or ? (2026-11-10) -- print the help text (HelpSella.h) and exit.
+      InputHandler::registerHandler("HELP", .35,
+         [this](BaseControlVariables&, const std::string&) {
+            helpRequested = true;
+         });
+      InputHandler::registerHandler("?", .35,
+         [this](BaseControlVariables&, const std::string&) {
+            helpRequested = true;
+         });
 
       InputHandler::registerHandler("BLOCKSIZE", 0.34,
          [this](const BaseControlVariables&, const std::string& value) {
@@ -103,24 +110,13 @@ public:
          }
       );
 
-      // COMPARE -- accumulates DeloneFitResults across all input cells in this
-      // run (rather than printing each cell's fits immediately/independently)
-      // and prints one summary table at the end: candidate types down the
-      // rows, labeled input cells across the columns. Intended for exactly the
-      // O1B/O2/O3-style side-by-side comparisons.
+      // COMPARE -- computes the fits for every input cell and prints one
+      // summary table instead of the per-cell output: one row per type and
+      // input cell (fit, type, cell), grouped by type (PrintCompareSummary in
+      // CmdSella.cpp). Ignores BLOCKSTART/BLOCKSIZE.
       InputHandler::registerHandler("COMPARE", .35,
          [this](BaseControlVariables&, const std::string& value) {
             compareMode = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
-         }
-      );
-
-      // SHOWCHAINFAILURES -- prints Grimmer-chain violation detail (which
-      // chain, which types, before/after remediation) for each input cell.
-      // Split out from DEBUG/DETAILS so chain-failure visibility doesn't
-      // require turning on all of DEBUG's other (much noisier) output.
-      InputHandler::registerHandler("SHOWCHAINFAILURES", .35,
-         [this](BaseControlVariables&, const std::string& value) {
-            showChainFailures = (value == "1" || LRL_StringTools::strToupper(value) == "TRUE" || value.empty());
          }
       );
 
@@ -272,7 +268,6 @@ public:
    std::string getPrefix() const { return prefix; }
    bool DoGraphics() const { return doGraphics; }
    bool shouldDebug() const { return debug; }
-   bool shouldPrintMatrices() const { return printMatrices; }
    bool shouldRunTests() const { return testMode; }
    // Matches FlexibleTestMode.h's MultiTransformFinderControls convention.
    // Empty vector means "run all" (or list, if 999 is present).
@@ -280,7 +275,6 @@ public:
    bool shouldCompare() const { return compareMode; }
    double getMaxDeltaForMatch() const { return maxDeltaForMatch; }
    double getNestingDelta() const { return nestingDelta; }
-   size_t getMaxBoundaryWalkCycles() const { return maxBoundaryWalkCycles; }
    bool shouldCheckNesting() const { return checkNesting; }
    std::vector<std::string> getRequestedTypes() const { return requestedTypes; }
    // true if this type should be shown -- either nothing was requested
@@ -290,9 +284,7 @@ public:
       for (const auto& t : requestedTypes) if (t == generalType) return true;
       return false;
    }
-   std::string getSeedBoundariesMode() const { return seedBoundariesMode; }
-
-   bool shouldTestTransforms() const { return testTransforms; };
+   bool shouldShowHelp() const { return helpRequested; }
 
    int getOutputPrecision() const { return outputPrecision; }
    bool useExtendedPrecision() const { return outputPrecision > 0; }
@@ -359,13 +351,11 @@ private:
    const std::string prefix = "SEL";
    bool doGraphics = true;
 
-   bool buildMatrices = false;
-   bool printMatrices = false;
+   bool helpRequested = false;
    bool debug = false;
    bool testMode = false;
    std::vector<int> testNumbers; // empty == run all (see TEST handler above)
    bool compareMode = false;
-   bool showChainFailures = false;
 
    // Default 0.02 matches the value the old file-scope global
    // g_maxDeltaForMatch had in CmdSella.cpp -- unchanged behavior until
@@ -378,14 +368,9 @@ private:
    // trusting it for real NestingInequalityExpectation fixtures.
    double nestingDelta = 1.0E-4;
 
-   // Default "tens" per instruction -- adjust once real warning counts are
-   // seen against actual boundary types.
-   size_t maxBoundaryWalkCycles = 50;
    bool checkNesting = false;
-   bool testTransforms = false;
    std::vector<std::string> requestedTypes;  // empty == show all (see TYPES handler above)
-   std::vector<double> sigmas;
-   std::string seedBoundariesMode;  // "", "PRINT", or "USE" (see SEEDBOUNDARIES handler above)
+   std::vector<double> sigmas;   // parsed, not yet used (the Z-score uses 0.1 * cell); kept on purpose
 
    int outputPrecision = 0;   // 0 = current formatting
    bool faceCrossed = true;  // see FACECROSSED handler above

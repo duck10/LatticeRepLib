@@ -48,8 +48,8 @@ inline void ShowProgramHeader(const std::string& programName) {
    std::cout << border << std::endl;
    std::cout << "  " << programName << std::endl;
    std::cout << std::format("  {:<23}: {}", "Run date (UTC)", runDateStr) << std::endl;
-   std::cout << std::format("  {:<23}: {}", "Compiled (local time)", compileDateStr) << std::endl;
-   std::cout << std::format("  {:<23}: {}", "Compiled (local time)", sourceStr) << std::endl;
+   std::cout << std::format("  {:<23}: {}", "Source Compiled (local time)", compileDateStr) << std::endl;
+   std::cout << std::format("  {:<23}: {}", "Source Compiled (local time)", sourceStr) << std::endl;
    std::cout << border << std::endl;
    std::cout << std::endl;
 }

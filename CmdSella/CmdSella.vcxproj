@@ -168,6 +168,7 @@
     <ClInclude Include="ExpandAcrossBoundaryZeros.h" />
     <ClInclude Include="ExploreReductionTies.h" />
     <ClInclude Include="FlexibleSellaTestMode.h" />
+    <ClInclude Include="HelpSella.h" />
     <ClInclude Include="RemediatedFit.h" />
     <ClInclude Include="TestHarness.h" />
     <ClInclude Include="TestRemediationOnBoundaryCandidates.h" />
