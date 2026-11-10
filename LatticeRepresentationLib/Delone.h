@@ -14,28 +14,28 @@ class MatD7;
 class Delone {
 
 public:
-   template<typename TVEC>
-   static bool Reduce(const TVEC& d, TVEC& dd) {
-      S6 s6out;
-      const S6 s6in(d);
-      const bool b = Selling::Reduce(s6in, s6out);
-      MatD7 mat;
-      D7 d7(s6out);
-      dd = S6(sort(d7, mat));
+   //template<typename TVEC>
+   //static bool Reduce(const TVEC& d, TVEC& dd) {
+   //   S6 s6out;
+   //   const S6 s6in(d);
+   //   const bool b = Selling::Reduce(s6in, s6out);
+   //   MatD7 mat;
+   //   D7 d7(s6out);
+   //   dd = S6(sort(d7, mat));
 
-      return b;
-   }
+   //   return b;
+   //}
 
-   template<typename TVEC, typename TMAT>
-   static bool Reduce(const TVEC& d, TMAT& m, TVEC& dd) {
-      MatS6 mS6;
-      S6 s6out;
-      const bool b = Reduce(S6(d), mS6, s6out, 0.0);
-      MatD7 mD7(mS6);
-      dd = S6(sort(D7(s6out), mD7));
-      m = mD7;
-      return b;
-   }
+   //template<typename TVEC, typename TMAT>
+   //static bool Reduce(const TVEC& d, TMAT& m, TVEC& dd) {
+   //   MatS6 mS6;
+   //   S6 s6out;
+   //   const bool b = Reduce(S6(d), mS6, s6out, 0.0);
+   //   MatD7 mD7(mS6);
+   //   dd = S6(sort(D7(s6out), mD7));
+   //   m = mD7;
+   //   return b;
+   //}
 
    static bool Reduce(const S6& d, MatS6& m, S6& dd, const double delta);
    static bool Reduce(const S6& d, S6& dd, const bool sellingFirst);
