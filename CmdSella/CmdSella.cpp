@@ -1,6 +1,7 @@
 /* define LRL_DEBUG 1 */
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -13,6 +14,7 @@
 #include "BlockUtils.h"
 #include "BravaisHeirarchy.h"
 #include "CmdSellaControls.h"
+#include "ConventionalCell.h"
 #include "DeloneFitFiltering.h"
 #include "DeloneParentageTest.h"
 #include "ExpandAcrossBoundaryZeros.h"
@@ -43,6 +45,9 @@
 #include "DeloneFitComputation.h"
 #include "FaceCrossedArrangements.h"
 #include "FlexibleSellaTestMode.h"
+#include "G6.h"
+#include "LRL_Cell.h"
+#include "MatG6.h"
 
 //#include "DiagnoseO2Gap.h"
 //#include "DiagnoseBoundaryCandidates.h"
@@ -222,6 +227,83 @@ static std::vector<std::string> ListMatchingTypes(const std::vector<DeloneFitRes
 }
 
 
+// PrintConventionalCells (2026-11-08) -- for each matched type, two cells in
+// the conventional setting of its Bravais type (ConventionalCell.h):
+//   idealized -- the projected fit, with the type's exact symmetry;
+//   input -- the input lattice itself in the same setting.
+// mC is C-centered with b unique; hR is given in the rhombohedral setting.
+// For mC with C-centered beta above MONOCLINIC_I_BETA_THRESHOLD (120), the I-centered
+// cells are printed as well.
+// Each cell line has the same layout as the projected-fit lines (cell, then
+// labels), so it can be passed to the other programs.
+// Basis lines (2026-11-09): after each pair of cells, a comment line gives the
+// 3x3 whose rows are the conventional A, B, C in terms of the cell as typed
+// (AddTypedBasis). typedToReduced is the matrix from
+// GetInputSellingReducedVectors; typedS6 is the typed cell itself.
+const double TYPED_BASIS_TOLERANCE = 1.0E-8;
+
+static void PrintTypedBasisLine(const Matrix3& M, const double roundTripError,
+   const double gramError) {
+   std::cout << ";   basis " << FormatBasisMatrix(M)
+      << "   (rows A B C in terms of the typed a b c)";
+   if (roundTripError > TYPED_BASIS_TOLERANCE || gramError > TYPED_BASIS_TOLERANCE) {
+      std::cout << "  CHECK FAILED: round trip " << roundTripError
+         << ", Gram " << gramError;
+   }
+   std::cout << std::endl;
+}
+
+static void PrintConventionalCells(const std::vector<DeloneFitResults>& vFilteredDeloneFitResults,
+   const S6& LatI, const double maxDeltaForMatch,
+   const MatS6& typedToReduced, const S6& typedS6) {
+   const std::set<std::string> matchedNames =
+      GetMatchedTypeNames(vFilteredDeloneFitResults, LatI.norm(), maxDeltaForMatch);
+   std::cout << "; conventional cells (idealized = projected fit; input = the input lattice in the same setting)"
+      << std::endl;
+   for (const auto& fit : vFilteredDeloneFitResults) {
+      if (matchedNames.find(fit.GetGeneralType()) == matchedNames.end()) continue;
+      ConventionalCellResult r = ConventionalCellsForFit(fit);
+      AddTypedBasis(r, fit, typedToReduced, typedS6);
+      if (!r.ok) {
+         std::cout << "; " << fit.GetGeneralType() << " " << fit.GetBravaisType()
+            << ": no conventional cell (canonical arrangement not reached)" << std::endl;
+         continue;
+      }
+      std::cout << FormatConventionalCell(r.ideal) << "  " << fit.GetGeneralType()
+         << " " << fit.GetBravaisType() << " idealized" << std::endl;
+      std::cout << FormatConventionalCell(r.input) << "  " << fit.GetGeneralType()
+         << " " << fit.GetBravaisType() << " input" << std::endl;
+      PrintTypedBasisLine(r.typedToConventional, r.typedBasisRoundTripError, r.typedBasisGramError);
+      if (r.hasAlternateI) {
+         std::cout << FormatConventionalCell(r.idealI) << "  " << fit.GetGeneralType()
+            << " " << fit.GetBravaisType() << " idealized" << std::endl;
+         std::cout << FormatConventionalCell(r.inputI) << "  " << fit.GetGeneralType()
+            << " " << fit.GetBravaisType() << " input" << std::endl;
+         PrintTypedBasisLine(r.typedToConventionalI, r.typedBasisRoundTripError, r.typedBasisGramError);
+      }
+   }
+}
+
+// PrintRhombohedralReading (2026-11-09) -- for R or H input, says how the
+// cell was read. LatSymMatG6 chooses by the cell's shape (hexagonal axes if
+// the cell is closer to a = b, 90, 90, 120 than to a = b = c with equal
+// angles), not by the letter, and assumes the obverse setting. The decision
+// is taken from LatSymMatG6 itself (unit matrix = rhombohedral axes), so this
+// line cannot disagree with the reduction.
+static void PrintRhombohedralReading(const LatticeCell& input) {
+   const std::string lattice = input.getLatticeType();
+   if (lattice.empty()) return;
+   const char letter = static_cast<char>(std::toupper(static_cast<unsigned char>(lattice[0])));
+   if (letter != 'R' && letter != 'H') return;
+   const MatG6 mLattice = LRL_Cell::LatSymMatG6(lattice, input.getCell());
+   if (mLattice.IsUnit()) {
+      std::cout << "; " << letter << " input read as rhombohedral axes (primitive cell)" << std::endl;
+   }
+   else {
+      std::cout << "; " << letter << " input read as rhombohedral centering on hexagonal axes (obverse)"
+         << std::endl;
+   }
+}
 
 // RemediateIfShortlistChanges, SearchForToCanon, and ComputeDeloneFits
 // moved to DeloneFitComputation.cpp (in SellaLib) -- this was the ONLY
@@ -247,7 +329,9 @@ std::tuple<std::string, std::string, std::string> ProcessSella(
    std::vector<DeloneFitResults> vDeloneFitResultsForOneInputLattice = computation.fits;
    GrimmerChains gcs = computation.chains;
 
-   std::cout << "; " << input.GetInput() << " input data" << std::endl << std::endl;
+   std::cout << "; " << input.GetInput() << " input data" << std::endl;
+   PrintRhombohedralReading(input);
+   std::cout << std::endl;
 
    std::cout << "Fits for Types" << std::endl;
    for (const auto& fit : vDeloneFitResultsForOneInputLattice) {
@@ -301,6 +385,11 @@ std::tuple<std::string, std::string, std::string> ProcessSella(
          os << "<text x = \"" << x << "\" y = \"" << y
             << "\" font-size = \"15\" >" << cell << " </text>\n";
       }
+      // the cell as typed (not made primitive); GetInputSellingReducedVectors
+      // reduces the same input.getCell() with input.getLatticeType()
+      const S6 typedS6 = S6(G6(input.getCell()));
+      PrintConventionalCells(vFilteredDeloneFitResults, oneLattice, controls.getMaxDeltaForMatch(),
+         oneReductionMatrix, typedS6);
    }
 
    std::vector<std::string> matchesForMainSvg;
@@ -583,4 +672,5 @@ int main(int argc, char* argv[])
       }
    }
    exit(0);
+
 }

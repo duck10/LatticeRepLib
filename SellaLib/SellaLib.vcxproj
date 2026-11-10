@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="BravaisHeirarchy.h" />
     <ClInclude Include="CmdSellaControls.h" />
+    <ClInclude Include="ConventionalCell.h" />
     <ClInclude Include="DeloneFitComputation.h" />
     <ClInclude Include="DeloneFitFiltering.h" />
     <ClInclude Include="Deloneparentagetest.h" />

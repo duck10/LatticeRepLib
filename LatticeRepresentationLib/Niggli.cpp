@@ -1210,7 +1210,7 @@ bool Niggli::NearRed(const G6& gvec, const double delta)
 } // end NearRed
 
 bool Niggli::IsNiggli(const S6& s) {
-   G6 g{ D7{ s } };
+   G6 g{ { s } };
    return IsNiggli(g);
 }
 

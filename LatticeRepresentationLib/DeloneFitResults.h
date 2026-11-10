@@ -22,6 +22,7 @@ public:
       os << ";   difference      " << dfr.m_S6Difference << std::endl;
       os << ";   original input  " << dfr.m_originalS6Input << std::endl;
       os << ";   winning cand.   " << dfr.m_winningCandidate << std::endl;
+      os << ";   candidate mat   " << dfr.m_candidateMatrix << std::endl;
       os << ";   reduction mat   " << dfr.m_reductionMatrix << std::endl;
       os << ";   toCanon mat     " << dfr.m_toCanonicalDeloneType << std::endl;
       return os;
@@ -51,6 +52,12 @@ public:
    std::string GetGeneralType() const { return m_generalLatticeType; }
    void SetWinningCandidate(const S6& s6) { m_winningCandidate = s6; }
    S6 GetWinningCandidate() const { return m_winningCandidate; }
+   // Matrix taking the Selling-reduced input (oneLattice) to the winning
+   // candidate: winning candidate = GetCandidateMatrix() * oneLattice. A
+   // change of superbase, so the candidate is the same lattice as the
+   // input. Identity when the direct fit wins (2026-11-08).
+   void SetCandidateMatrix(const MatS6& m) { m_candidateMatrix = m; }
+   MatS6 GetCandidateMatrix() const { return m_candidateMatrix; }
 
 protected:
    std::string m_latticeType;
@@ -65,6 +72,7 @@ protected:
    S6 m_S6Difference;
    MatS6 m_toCanonicalDeloneType;
    MatS6 m_reductionMatrix;
+   MatS6 m_candidateMatrix = MatS6().unit();
 };
 
 #endif  // DELONEFITRESULTS_H

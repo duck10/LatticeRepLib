@@ -53,18 +53,24 @@
 
 #include "CheckABReflection.h"
 #include "CmdSellaControls.h"
+#include "ConventionalCell.h"
 #include "DeloneFitComputation.h"
 #include "DeloneFitResults.h"
 #include "DeloneParentageTest.h"
 #include "FaceCrossedArrangements.h"
+#include "G6.h"
 #include "GenerateLatticeTypeExamples.h"
 #include "GrimmerTree.h"
 #include "LatticeCell.h"
+#include "LRL_Cell.h"
+#include "MatG6.h"
 #include "MatS6.h"
+#include "RemediatedFit.h"
 #include "S6.h"
 #include "Sella.h"
 
 #include <algorithm>
+#include <cctype>
 #include <chrono>
 #include <cmath>
 #include <iomanip>
@@ -201,6 +207,76 @@ public:
       }
    };
 
+   // ConventionalCellLibraryExpectation (2026-11-08) -- runs
+   // CheckConventionalCellsAllArrangements (ConventionalCell.h): generic
+   // members of every library and face arrangement of every Delone type
+   // reach the type's canonical arrangement, and their conventional cells
+   // have the type's symmetry and centering. Needs no input cells.
+   struct ConventionalCellLibraryExpectation {
+      size_t expectedArrangements;
+      size_t samplesPerArrangement;
+      std::string description;
+
+      ConventionalCellLibraryExpectation(const size_t arrangements, const size_t samples,
+         const std::string& desc = "")
+         : expectedArrangements(arrangements), samplesPerArrangement(samples), description(desc) {
+      }
+   };
+
+   // ConventionalCellExpectation (2026-11-08) -- for one input cell and one
+   // Delone type, the two conventional cells from ConventionalCellsForFit:
+   //   ideal -- centering letter, a b c alpha beta gamma, each within tolerance;
+   //   input -- sorted edges, and sorted |angle - 90|, each within tolerance
+   //            (independent of which axis comes first).
+   struct ConventionalCellExpectation {
+      std::string typeName;
+      size_t cellIndex;
+      char centering;
+      std::vector<double> idealCell;                 // a b c alpha beta gamma
+      std::vector<double> inputSortedEdges;          // 3 values, ascending
+      std::vector<double> inputSortedAngleOffsets;   // 3 values of |angle - 90|, ascending
+      double edgeTol;
+      double angleTol;
+      std::string description;
+      std::vector<double> idealCellI;   // optional: the I-centered ideal cell (mC, large beta); empty = not checked
+
+      ConventionalCellExpectation(const std::string& type, const size_t cell, const char cent,
+         const std::vector<double>& ideal, const std::vector<double>& edges,
+         const std::vector<double>& angleOffsets, const double eTol, const double aTol,
+         const std::string& desc = "")
+         : typeName(type), cellIndex(cell), centering(cent), idealCell(ideal),
+         inputSortedEdges(edges), inputSortedAngleOffsets(angleOffsets),
+         edgeTol(eTol), angleTol(aTol), description(desc) {
+      }
+   };
+
+   // TypedBasisExpectation (2026-11-09) -- the 3x3 from the typed cell to each
+   // conventional cell (AddTypedBasis, ConventionalCell.h), checked without
+   // freezing any matrix, so a later choice of setting (status note item 7)
+   // does not break it. The input cells must all be the SAME lattice, typed
+   // in different settings. For each cell and each named type:
+   //   1. round-trip and Gram errors <= basisTol;
+   //   2. det = conventional lattice points / typed lattice points;
+   //   3. every row, and every centering vector of the conventional cell,
+   //      is a vector of the typed lattice;
+   // and the same for the I2/m cell when there is one. Against cell 1: the
+   // same fit within fitTol, and the same ideal conventional cell (centering,
+   // sorted edges within edgeTol, sorted angles within angleTol).
+   struct TypedBasisExpectation {
+      std::vector<std::string> typeNames;
+      double basisTol;
+      double fitTol;
+      double edgeTol;
+      double angleTol;
+      std::string description;
+
+      TypedBasisExpectation(const std::vector<std::string>& types, const double bTol,
+         const double fTol, const double eTol, const double aTol, const std::string& desc = "")
+         : typeNames(types), basisTol(bTol), fitTol(fTol), edgeTol(eTol), angleTol(aTol),
+         description(desc) {
+      }
+   };
+
    std::string name;
    std::string description;
    std::vector<LatticeCell> inputCells;
@@ -218,6 +294,9 @@ public:
    std::vector<ReflectionCheck> reflectionChecks;   // manual, not in hasAnyExpectation()
    std::vector<ParentageTableExpectation> parentageTableExpectations;
    std::vector<FaceCrossedLibraryExpectation> faceCrossedLibraryExpectations;
+   std::vector<ConventionalCellLibraryExpectation> conventionalCellLibraryExpectations;
+   std::vector<ConventionalCellExpectation> conventionalCellExpectations;
+   std::vector<TypedBasisExpectation> typedBasisExpectations;
 
    FlexibleSellaTestCase(const std::string& testName, const std::string& desc)
       : name(testName), description(desc) {
@@ -234,6 +313,9 @@ public:
    void addReflectionCheck(const ReflectionCheck& c) { reflectionChecks.push_back(c); }
    void addParentageTableExpectation(const ParentageTableExpectation& e) { parentageTableExpectations.push_back(e); }
    void addFaceCrossedLibraryExpectation(const FaceCrossedLibraryExpectation& e) { faceCrossedLibraryExpectations.push_back(e); }
+   void addConventionalCellLibraryExpectation(const ConventionalCellLibraryExpectation& e) { conventionalCellLibraryExpectations.push_back(e); }
+   void addConventionalCellExpectation(const ConventionalCellExpectation& e) { conventionalCellExpectations.push_back(e); }
+   void addTypedBasisExpectation(const TypedBasisExpectation& e) { typedBasisExpectations.push_back(e); }
 
    // True if any expectation needs fits computed from input cells. Tests
    // with only library checks (parentage table, face-crossed library)
@@ -241,7 +323,9 @@ public:
    bool needsInputCells() const {
       return !fitRangeExpectations.empty() || !hasFailureExpectations.empty()
          || !nestingExpectations.empty() || !rankStabilityExpectations.empty()
+         || !conventionalCellExpectations.empty() || !typedBasisExpectations.empty()
          || (parentageTableExpectations.empty() && faceCrossedLibraryExpectations.empty()
+            && conventionalCellLibraryExpectations.empty()
             && reflectionRelationExpectations.empty());
    }
 
@@ -249,7 +333,9 @@ public:
       return !fitRangeExpectations.empty() || !hasFailureExpectations.empty()
          || !nestingExpectations.empty() || !rankStabilityExpectations.empty()
          || !reflectionRelationExpectations.empty()
-         || !parentageTableExpectations.empty() || !faceCrossedLibraryExpectations.empty();
+         || !parentageTableExpectations.empty() || !faceCrossedLibraryExpectations.empty()
+         || !conventionalCellLibraryExpectations.empty() || !conventionalCellExpectations.empty()
+         || !typedBasisExpectations.empty();
       // NOTE: reflectionChecks deliberately excluded -- see its comment above.
    }
 };
@@ -518,6 +604,267 @@ private:
       return ok;
    }
 
+   bool checkConventionalCellLibrary(const FlexibleSellaTestCase::ConventionalCellLibraryExpectation& e) const {
+      const ConventionalCellCheckCounts counts =
+         CheckConventionalCellsAllArrangements(std::cout, e.samplesPerArrangement);
+      const bool ok = (counts.failures == 0 && counts.arrangements == e.expectedArrangements
+         && counts.samples > 0);
+      std::ostringstream detail;
+      detail << counts.arrangements << " arrangement(s) (expected " << e.expectedArrangements
+         << "), " << counts.samples << " sample(s), " << counts.skippedInvalid
+         << " invalid sample(s) skipped, " << counts.failures << " failure(s)";
+      PrintCheckResult("ConventionalCellLibraryExpectation", e.description, ok ? "PASS" : "FAIL", detail.str());
+      return ok;
+   }
+
+   static std::vector<double> SortedValues(const double x, const double y, const double z) {
+      std::vector<double> v = { x, y, z };
+      std::sort(v.begin(), v.end());
+      return v;
+   }
+
+   static bool WithinTolerance(const std::vector<double>& actual, const std::vector<double>& expected,
+      const double tol) {
+      if (actual.size() != expected.size()) return false;
+      for (size_t i = 0; i < actual.size(); ++i) {
+         if (std::fabs(actual[i] - expected[i]) > tol) return false;
+      }
+      return true;
+   }
+
+   bool checkConventionalCell(const FlexibleSellaTestCase::ConventionalCellExpectation& e,
+      const std::vector<DeloneFitComputation>& computations) const {
+      if (e.cellIndex >= computations.size()) {
+         PrintCheckResult("ConventionalCellExpectation", e.description, "FAIL", "no such input cell");
+         return false;
+      }
+      const DeloneFitResults* fit = nullptr;
+      for (const auto& f : computations[e.cellIndex].fits) {
+         if (f.GetGeneralType() == e.typeName) {
+            fit = &f;
+            break;
+         }
+      }
+      if (fit == nullptr) {
+         PrintCheckResult("ConventionalCellExpectation", e.description, "FAIL", "type not in the fits");
+         return false;
+      }
+      const ConventionalCellResult r = ConventionalCellsForFit(*fit);
+      if (!r.ok) {
+         PrintCheckResult("ConventionalCellExpectation", e.description, "FAIL",
+            "no conventional cell (canonical arrangement not reached)");
+         return false;
+      }
+      const std::vector<double> ideal = { r.ideal.a, r.ideal.b, r.ideal.c,
+         r.ideal.alpha, r.ideal.beta, r.ideal.gamma };
+      const std::vector<double> idealEdges(ideal.begin(), ideal.begin() + 3);
+      const std::vector<double> idealAngles(ideal.begin() + 3, ideal.end());
+      const std::vector<double> expectedEdges(e.idealCell.begin(), e.idealCell.begin() + 3);
+      const std::vector<double> expectedAngles(e.idealCell.begin() + 3, e.idealCell.end());
+      const std::vector<double> inputEdges = SortedValues(r.input.a, r.input.b, r.input.c);
+      const std::vector<double> inputOffsets = SortedValues(std::fabs(r.input.alpha - 90.0),
+         std::fabs(r.input.beta - 90.0), std::fabs(r.input.gamma - 90.0));
+
+      bool ok = r.ideal.centering == e.centering && r.input.centering == e.centering
+         && WithinTolerance(idealEdges, expectedEdges, e.edgeTol)
+         && WithinTolerance(idealAngles, expectedAngles, e.angleTol)
+         && WithinTolerance(inputEdges, e.inputSortedEdges, e.edgeTol)
+         && WithinTolerance(inputOffsets, e.inputSortedAngleOffsets, e.angleTol);
+      std::vector<std::string> cellLines;
+      cellLines.push_back("idealized " + FormatConventionalCell(r.ideal));
+      cellLines.push_back("input   " + FormatConventionalCell(r.input));
+      std::string note;
+      if (!e.idealCellI.empty()) {
+         if (!r.hasAlternateI) {
+            ok = false;
+            note = "no I-centered cell";
+         }
+         else {
+            const std::vector<double> idealI = { r.idealI.a, r.idealI.b, r.idealI.c,
+               r.idealI.alpha, r.idealI.beta, r.idealI.gamma };
+            ok = ok && r.idealI.centering == 'I'
+               && WithinTolerance(std::vector<double>(idealI.begin(), idealI.begin() + 3),
+                  std::vector<double>(e.idealCellI.begin(), e.idealCellI.begin() + 3), e.edgeTol)
+               && WithinTolerance(std::vector<double>(idealI.begin() + 3, idealI.end()),
+                  std::vector<double>(e.idealCellI.begin() + 3, e.idealCellI.end()), e.angleTol);
+            cellLines.push_back("idealized " + FormatConventionalCell(r.idealI));
+            cellLines.push_back("input   " + FormatConventionalCell(r.inputI));
+         }
+      }
+      PrintCheckResult("ConventionalCellExpectation", e.description, ok ? "PASS" : "FAIL", note);
+      for (const auto& line : cellLines) std::cout << "      " << line << std::endl;
+      return ok;
+   }
+
+   // --- TypedBasisExpectation helpers (2026-11-09) ---
+
+   // The entry of a type with the smallest raw fit, or nullptr.
+   static const DeloneFitResults* FindBestFit(const std::vector<DeloneFitResults>& fits,
+      const std::string& typeName) {
+      const DeloneFitResults* best = nullptr;
+      for (const auto& f : fits) {
+         if (f.GetGeneralType() != typeName) continue;
+         if (best == nullptr || f.GetRawFit() < best->GetRawFit()) best = &f;
+      }
+      return best;
+   }
+
+   // Centering of the cell as typed: P, I, A, B, C, F, or R (rhombohedral
+   // centering on hexagonal axes). R or H read as rhombohedral axes
+   // (LatSymMatG6 gives the unit matrix) is primitive. Other letters (S, G,
+   // ...) are primitive representations.
+   static char TypedCentering(const LatticeCell& cell) {
+      const std::string lattice = cell.getLatticeType();
+      if (lattice.empty()) return 'P';
+      const char letter = static_cast<char>(std::toupper(static_cast<unsigned char>(lattice[0])));
+      if (letter == 'R' || letter == 'H') {
+         return LRL_Cell::LatSymMatG6(lattice, cell.getCell()).IsUnit() ? 'P' : 'R';
+      }
+      if (letter == 'I' || letter == 'A' || letter == 'B' || letter == 'C' || letter == 'F') return letter;
+      return 'P';
+   }
+
+   static size_t LatticePointsPerCell(const char centering) {
+      if (centering == 'P') return 1;
+      if (centering == 'F') return 4;
+      if (centering == 'R') return 3;
+      return 2;   // I, A, B, C
+   }
+
+   // Centering translations of a cell, in its own coordinates.
+   static std::vector<std::vector<double>> CenteringTranslations(const char centering) {
+      if (centering == 'I') return { { 0.5, 0.5, 0.5 } };
+      if (centering == 'A') return { { 0.0, 0.5, 0.5 } };
+      if (centering == 'B') return { { 0.5, 0.0, 0.5 } };
+      if (centering == 'C') return { { 0.5, 0.5, 0.0 } };
+      if (centering == 'F') return { { 0.0, 0.5, 0.5 }, { 0.5, 0.0, 0.5 }, { 0.5, 0.5, 0.0 } };
+      if (centering == 'R') return { { 2.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0 }, { 1.0 / 3.0, 2.0 / 3.0, 2.0 / 3.0 } };
+      return {};
+   }
+
+   static bool IsIntegerVector(const double v[3]) {
+      const double tol = 1.0E-6;
+      for (size_t i = 0; i < 3; ++i) {
+         if (std::fabs(v[i] - std::round(v[i])) > tol) return false;
+      }
+      return true;
+   }
+
+   // True if v (in the typed axes) is a lattice vector of the typed cell.
+   static bool InTypedLattice(const double v[3], const char typedCentering) {
+      if (IsIntegerVector(v)) return true;
+      for (const auto& t : CenteringTranslations(typedCentering)) {
+         const double w[3] = { v[0] - t[0], v[1] - t[1], v[2] - t[2] };
+         if (IsIntegerVector(w)) return true;
+      }
+      return false;
+   }
+
+   // Checks 2 and 3 for one basis matrix M (rows: the conventional axes in
+   // the typed axes). Empty if both hold, else what failed.
+   static std::string CheckBasisLattice(const Matrix3& M, const char conventionalCentering,
+      const char typedCentering) {
+      const double expectedDet = static_cast<double>(LatticePointsPerCell(conventionalCentering))
+         / static_cast<double>(LatticePointsPerCell(typedCentering));
+      const double det = Determinant3(M);
+      if (std::fabs(det - expectedDet) > 1.0E-6) {
+         std::ostringstream os;
+         os << "det " << det << " (expected " << expectedDet << ")";
+         return os.str();
+      }
+      for (size_t i = 0; i < 3; ++i) {
+         double row[3];
+         MatrixRow(M, i, row);
+         if (!InTypedLattice(row, typedCentering)) {
+            return "row " + std::to_string(i + 1) + " is not a lattice vector";
+         }
+      }
+      for (const auto& t : CenteringTranslations(conventionalCentering)) {
+         double v[3];
+         for (size_t j = 0; j < 3; ++j) {
+            v[j] = t[0] * M.m[0][j] + t[1] * M.m[1][j] + t[2] * M.m[2][j];
+         }
+         if (!InTypedLattice(v, typedCentering)) return "a centering vector is not a lattice vector";
+      }
+      return std::string();
+   }
+
+   // Same centering, sorted edges and sorted angles within tolerance.
+   static bool SameCellUpToAxisOrder(const ConventionalCellParameters& p,
+      const ConventionalCellParameters& q, const double edgeTol, const double angleTol) {
+      return p.centering == q.centering
+         && WithinTolerance(SortedValues(p.a, p.b, p.c), SortedValues(q.a, q.b, q.c), edgeTol)
+         && WithinTolerance(SortedValues(p.alpha, p.beta, p.gamma),
+            SortedValues(q.alpha, q.beta, q.gamma), angleTol);
+   }
+
+   bool checkTypedBasis(const FlexibleSellaTestCase::TypedBasisExpectation& e,
+      const FlexibleSellaTestCase& test, const std::vector<DeloneFitComputation>& computations) const {
+      std::vector<std::string> problems;
+      size_t matricesChecked = 0;
+      double worstError = 0.0;
+      for (size_t c = 0; c < computations.size() && c < test.inputCells.size(); ++c) {
+         const LatticeCell& cell = test.inputCells[c];
+         MatS6 typedToReduced;
+         GetInputSellingReducedVectors(cell, typedToReduced);
+         const S6 typedS6 = S6(G6(cell.getCell()));
+         const char typedCentering = TypedCentering(cell);
+         for (const auto& type : e.typeNames) {
+            const std::string where = "cell " + std::to_string(c + 1) + " " + type;
+            const DeloneFitResults* fit = FindBestFit(computations[c].fits, type);
+            if (fit == nullptr) {
+               problems.push_back(where + ": type not in the fits");
+               continue;
+            }
+            ConventionalCellResult r = ConventionalCellsForFit(*fit);
+            AddTypedBasis(r, *fit, typedToReduced, typedS6);
+            if (!r.ok || !r.hasTypedBasis) {
+               problems.push_back(where + ": no conventional cell");
+               continue;
+            }
+            worstError = std::max(worstError,
+               std::max(r.typedBasisRoundTripError, r.typedBasisGramError));
+            if (r.typedBasisRoundTripError > e.basisTol || r.typedBasisGramError > e.basisTol) {
+               std::ostringstream os;
+               os << where << ": round trip " << r.typedBasisRoundTripError
+                  << ", Gram " << r.typedBasisGramError;
+               problems.push_back(os.str());
+            }
+            ++matricesChecked;
+            std::string p = CheckBasisLattice(r.typedToConventional, r.ideal.centering, typedCentering);
+            if (!p.empty()) problems.push_back(where + ": " + p);
+            if (r.hasAlternateI) {
+               ++matricesChecked;
+               p = CheckBasisLattice(r.typedToConventionalI, 'I', typedCentering);
+               if (!p.empty()) problems.push_back(where + " (I2/m): " + p);
+            }
+            if (c == 0) continue;
+            const DeloneFitResults* first = FindBestFit(computations[0].fits, type);
+            if (first == nullptr) continue;   // reported for cell 1
+            if (std::fabs(fit->GetRawFit() - first->GetRawFit()) > e.fitTol) {
+               std::ostringstream os;
+               os << where << ": fit " << fit->GetRawFit() << ", cell 1 " << first->GetRawFit();
+               problems.push_back(os.str());
+            }
+            const ConventionalCellResult r0 = ConventionalCellsForFit(*first);
+            if (r0.ok && !SameCellUpToAxisOrder(r.ideal, r0.ideal, e.edgeTol, e.angleTol)) {
+               problems.push_back(where + ": ideal cell " + FormatConventionalCell(r.ideal)
+                  + ", cell 1 " + FormatConventionalCell(r0.ideal));
+            }
+         }
+      }
+      const bool ok = problems.empty();
+      std::ostringstream detail;
+      detail << matricesChecked << " basis matrices over " << computations.size()
+         << " cells, largest check error " << worstError << ", " << problems.size() << " problem(s)";
+      PrintCheckResult("TypedBasisExpectation", e.description, ok ? "PASS" : "FAIL", detail.str());
+      const size_t maxPrinted = 10;
+      for (size_t i = 0; i < problems.size() && i < maxPrinted; ++i) {
+         std::cout << "      " << problems[i] << std::endl;
+      }
+      return ok;
+   }
+
    void runTest(const FlexibleSellaTestCase& test, const CmdSellaControls& controls, Sella& sella) {
       std::cout << "\n=== TEST: " << test.name << " ===" << std::endl;
       std::cout << "Description: ";
@@ -596,6 +943,21 @@ private:
          std::cout << "\nChecking face-crossed library expectations:" << std::endl;
          for (const auto& e : test.faceCrossedLibraryExpectations)
             testPassed = checkFaceCrossedLibrary(e) && testPassed;
+      }
+      if (!test.conventionalCellLibraryExpectations.empty()) {
+         std::cout << "\nChecking conventional-cell library expectations:" << std::endl;
+         for (const auto& e : test.conventionalCellLibraryExpectations)
+            testPassed = checkConventionalCellLibrary(e) && testPassed;
+      }
+      if (!test.conventionalCellExpectations.empty()) {
+         std::cout << "\nChecking conventional-cell expectations:" << std::endl;
+         for (const auto& e : test.conventionalCellExpectations)
+            testPassed = checkConventionalCell(e, computations) && testPassed;
+      }
+      if (!test.typedBasisExpectations.empty()) {
+         std::cout << "\nChecking typed-cell basis expectations:" << std::endl;
+         for (const auto& e : test.typedBasisExpectations)
+            testPassed = checkTypedBasis(e, test, computations) && testPassed;
       }
 
       if (testPassed) {
@@ -2122,6 +2484,254 @@ public:
          test30.addFaceCrossedLibraryExpectation(FlexibleSellaTestCase::FaceCrossedLibraryExpectation(
             expectedCounts, "Appendix B counts, all verified"));
          addTestCase(test30);
+      }
+
+      // Test 31 (2026-11-08) -- conventional cells, library check. For every
+      // library and face arrangement of every Delone type (249 + 143 = 392),
+      // generic members must reach the type's canonical arrangement
+      // (ToCanonicalArrangement), and the conventional cell from the
+      // centering table must have the type's symmetry and centering: mC
+      // C-centered with b unique and beta >= 90, mP b unique, hR in the
+      // rhombohedral setting. Needs no input cells.
+      {
+         FlexibleSellaTestCase test31("ConventionalCell_Library",
+            "Every library and face arrangement (392) reaches its type's "
+            "canonical arrangement, and the conventional cell has the type's "
+            "symmetry and centering.");
+         test31.addConventionalCellLibraryExpectation(
+            FlexibleSellaTestCase::ConventionalCellLibraryExpectation(
+               392, 3, "392 arrangements, 3 samples each, 0 failures"));
+         addTestCase(test31);
+      }
+
+      // Test 32 (2026-11-08) -- conventional cells for one input, end to
+      // end. The input is the primitive reduced cell of
+      // I 10 10.01 10.02 90.1 90.2 90.3 (computed to 8 decimals). Its C1
+      // (cI) fit is 0.503905. Expected:
+      //   ideal: I 10.0100 10.0100 10.0100 90 90 90
+      //          (a = sqrt(-4 x mean scalar) = 10.0100);
+      //   input: I-centered, edges 10.00, 10.01, 10.02 and angles 90.1,
+      //          90.2, 90.3 in some order -- the cell that was typed in.
+      {
+         FlexibleSellaTestCase test32("ConventionalCell_C1_EndToEnd",
+            "Primitive cell of I 10 10.01 10.02 90.1 90.2 90.3: the C1 fit "
+            "gives ideal I 10.0100 x3, 90 x3, and the input in the same "
+            "setting is the typed cell.");
+         test32.addInputCell(LatticeCell("S -25.23765339 -25.22495664 -25.21198499 -25.06259661 -24.87519336 -24.68786501"));
+         test32.addConventionalCellExpectation(FlexibleSellaTestCase::ConventionalCellExpectation(
+            "C1", 0, 'I',
+            { 10.0100, 10.0100, 10.0100, 90.0, 90.0, 90.0 },
+            { 10.000, 10.010, 10.020 },
+            { 0.1, 0.2, 0.3 },
+            2.0E-4, 1.0E-3,
+            "C1 conventional cells, ideal and input"));
+         addTestCase(test32);
+      }
+
+      // ----------------------------------------------------------------
+      // Test 33: mC conventional cells are reduced in the a-c plane.
+      // Before ReduceMonoclinicPlane (2026-11-08) the centering table gave
+      // valid but unreduced C cells: cell 1 M2A had beta 130.70
+      // (C 16.6133 9.2475 8.6952) and cell 2 M1B had beta 155.67
+      // (C 22.2548 12.8627 16.2639). Expected (C-centered, b unique, beta > 90):
+      //   cell 1 M2A ideal C 14.1998 9.2475 8.6952 90 117.5018 90
+      //              input C 14.2028 9.2520 8.7001 89.9401 117.5230 89.9076
+      //   cell 2 M1B ideal C 15.3020 12.8627 10.0100 90 103.1776 90
+      //              input C 15.3020 12.8627 10.0100 89.9313 103.1776 89.9418
+      // Cell 1 is a perturbed M3 from nb.txt; cell 2 is near-rhombohedral
+      // (also used in Test 34).
+      {
+         FlexibleSellaTestCase test33("ConventionalCell_mC_Reduced",
+            "mC conventional cells are C-centered, b unique, beta > 90, and reduced "
+            "in the a-c plane (formerly beta 130.7 and 155.7 for these fits).");
+         test33.addInputCell(LatticeCell("P 8.469 9.519 9.499 121.780 122.422 89.689"));
+         test33.addInputCell(LatticeCell("P 10.01 10.00 9.99 80.1 79.9 80.0"));
+         test33.addConventionalCellExpectation(FlexibleSellaTestCase::ConventionalCellExpectation(
+            "M2A", 0, 'C',
+            { 14.1998, 9.2475, 8.6952, 90.0, 117.5018, 90.0 },
+            { 8.7001, 9.2520, 14.2028 },
+            { 0.0599, 0.0924, 27.5230 },
+            2.0E-4, 1.0E-3,
+            "cell 1 M2A conventional cells"));
+         test33.addConventionalCellExpectation(FlexibleSellaTestCase::ConventionalCellExpectation(
+            "M1B", 1, 'C',
+            { 15.3020, 12.8627, 10.0100, 90.0, 103.1776, 90.0 },
+            { 10.0100, 12.8627, 15.3020 },
+            { 0.0582, 0.0687, 13.1776 },
+            2.0E-4, 1.0E-3,
+            "cell 2 M1B conventional cells"));
+         addTestCase(test33);
+      }
+
+      // ----------------------------------------------------------------
+      // Test 34: hR conventional cell, rhombohedral setting (printed as P,
+      // since R in LRL input means hexagonal axes). Expected for R3:
+      //   ideal P 10.0017 10.0017 10.0017 79.9934 79.9934 79.9934
+      //   input P 10.0100 10.0000 9.9900 80.1 79.9 80.0 -- the typed cell.
+      {
+         FlexibleSellaTestCase test34("ConventionalCell_hR_Rhombohedral",
+            "R3 fit of P 10.01 10.00 9.99 80.1 79.9 80.0: ideal rhombohedral "
+            "cell 10.0017 x3, 79.9934 x3, and the input in the same setting "
+            "is the typed cell.");
+         test34.addInputCell(LatticeCell("P 10.01 10.00 9.99 80.1 79.9 80.0"));
+         test34.addConventionalCellExpectation(FlexibleSellaTestCase::ConventionalCellExpectation(
+            "R3", 0, 'P',
+            { 10.0017, 10.0017, 10.0017, 79.9934, 79.9934, 79.9934 },
+            { 9.9900, 10.0000, 10.0100 },
+            { 9.9, 10.0, 10.1 },
+            2.0E-4, 1.0E-3,
+            "R3 conventional cells, ideal and input"));
+         addTestCase(test34);
+      }
+
+      // ----------------------------------------------------------------
+      // Test 35: tP, oP, oC and mP conventional cells of the near-tP cell
+      // T19c01 (also the input of Test 28, cell 10). Expected:
+      //   T5 ideal P 21.7736 21.7736 27.2252 90 90 90
+      //   O5 ideal P 21.7688 21.7783 27.2252 90 90 90
+      //   O4 ideal C 30.7925 30.7925 27.2252 90 90 90
+      //   M4 ideal P 21.7806 21.7688 27.2271 90 90.0096 90 (b unique)
+      // Inputs: P edges 21.7750 21.7850 27.2320, angles 90.0280 90.0260
+      // 89.9770; C edges 27.2320 30.7954 30.8078 (the tP diagonals).
+      // The O4 ideal has a = b, i.e. the nearest O4 point here is on its
+      // tP boundary (fit(O4) = fit(T5), as in Test 28); if that changes,
+      // this test should fail and be looked at.
+      {
+         FlexibleSellaTestCase test35("ConventionalCell_tP_oP_oC_mP",
+            "Near-tP cell P 21.775 21.785 27.232 90.028 89.974 90.023: tP, oP, "
+            "oC and mP conventional cells, ideal and input.");
+         test35.addInputCell(LatticeCell("P 21.775 21.785 27.232  90.028  89.974  90.023"));
+         test35.addConventionalCellExpectation(FlexibleSellaTestCase::ConventionalCellExpectation(
+            "T5", 0, 'P',
+            { 21.7736, 21.7736, 27.2252, 90.0, 90.0, 90.0 },
+            { 21.7750, 21.7850, 27.2320 },
+            { 0.0230, 0.0260, 0.0280 },
+            2.0E-4, 1.0E-3,
+            "T5 conventional cells"));
+         test35.addConventionalCellExpectation(FlexibleSellaTestCase::ConventionalCellExpectation(
+            "O5", 0, 'P',
+            { 21.7688, 21.7783, 27.2252, 90.0, 90.0, 90.0 },
+            { 21.7750, 21.7850, 27.2320 },
+            { 0.0230, 0.0260, 0.0280 },
+            2.0E-4, 1.0E-3,
+            "O5 conventional cells"));
+         test35.addConventionalCellExpectation(FlexibleSellaTestCase::ConventionalCellExpectation(
+            "O4", 0, 'C',
+            { 30.7925, 30.7925, 27.2252, 90.0, 90.0, 90.0 },
+            { 27.2320, 30.7954, 30.8078 },
+            { 0.0014, 0.0263, 0.0382 },
+            2.0E-4, 1.0E-3,
+            "O4 conventional cells"));
+         test35.addConventionalCellExpectation(FlexibleSellaTestCase::ConventionalCellExpectation(
+            "M4", 0, 'P',
+            { 21.7806, 21.7688, 27.2271, 90.0, 90.0096, 90.0 },
+            { 21.7750, 21.7850, 27.2320 },
+            { 0.0230, 0.0260, 0.0280 },
+            2.0E-4, 1.0E-3,
+            "M4 conventional cells"));
+         addTestCase(test35);
+      }
+
+      // ----------------------------------------------------------------
+      // Test 36: R1 reaches its cubic special case through the face
+      // arrangements. FaceCrossedArrangements.h gives R1 12 arrangements
+      // borrowed from C5 (cP is hR with r = 0). Cell 1 (a 1% perturbed
+      // M3 cell): R1's own 4 arrangements give about 47.7; a borrowed C5
+      // arrangement gives 28.7331, so fit(R1) = fit(C5) = 28.7331 and no
+      // containment line is printed. Cell 2 (an exact M3 cell from cmdgen,
+      // G6 158.574 65.368 65.368 -6.970 -123.765 0.000 as S6): R1 finds a
+      // non-cubic point, 23.4319 < fit(C5) = 23.5181; R3 (4 borrowed C5
+      // arrangements) equals C5. Expected to fail with FACECROSSED 0.
+      {
+         FlexibleSellaTestCase test36("R1_R3_ReachCubic_ViaFaceArrangements",
+            "fit(R1) = fit(C5) = 28.7331 on a perturbed M3 cell through R1's "
+            "borrowed C5 face arrangements (own arrangements give about 47.7); "
+            "on an exact M3 cell R1 = 23.4319 < C5 = 23.5181 = R3. Fails with "
+            "FACECROSSED 0.");
+         test36.addInputCell(LatticeCell("P 8.469 9.519 9.499 121.780 122.422 89.689"));
+         test36.addInputCell(LatticeCell("S -3.485 -61.8825 0.000 -96.6915 -61.883 -0.0005"));
+         test36.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 28.7330, 28.7332, 0, "cell 1 R1 = 28.7331 (cubic, via face arrangement)"));
+         test36.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 28.7330, 28.7332, 0, "cell 1 C5 = 28.7331"));
+         test36.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+            "R1", "C5", 1.0E-6, 0, "R1 <= C5, cell 1"));
+         test36.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R1", 23.4318, 23.4320, 1, "cell 2 R1 = 23.4319 (non-cubic)"));
+         test36.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "C5", 23.5180, 23.5182, 1, "cell 2 C5 = 23.5181"));
+         test36.addFitRangeExpectation(FlexibleSellaTestCase::FitRangeExpectation(
+            "R3", 23.5180, 23.5182, 1, "cell 2 R3 = 23.5181 (cubic, via face arrangement)"));
+         test36.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+            "R1", "C5", 1.0E-6, 1, "R1 <= C5, cell 2"));
+         test36.addNestingExpectation(FlexibleSellaTestCase::NestingInequalityExpectation(
+            "R3", "C5", 1.0E-6, 1, "R3 <= C5, cell 2"));
+         addTestCase(test36);
+      }
+
+      // ----------------------------------------------------------------
+      // Test 37: I-centered alternative for a strongly oblique mC cell. A 1%
+      // orthogonal perturbation of an exact M1A cell (a library sample from
+      // Test 31, S -53.70492 -53.70492 -71.29379 -44.82996 -44.82996
+      // -3.31836). The reduced C-centered beta, 131.44, exceeds
+      // MONOCLINIC_I_BETA_THRESHOLD (120), so the I-centered cell is also
+      // given. Recorded 2026-11-09 (M1A fit 0.573858):
+      //   idealized C 13.9965 22.0043 9.5784 90 131.4425 90
+      //   input     C 13.9965 22.0043 9.5784 89.9529 131.4425 90.1797
+      //   idealized I 9.5784 22.0043 10.4968 90 91.7171 90
+      //   input     I 9.5784 22.0043 10.4968 90.1967 91.7171 90.0471
+      // I cell a = C cell c; I cell c = |C cell a + c|; same b and volume.
+      // The fit changes only alpha and gamma: edges and beta of idealized and
+      // input agree.
+      {
+         FlexibleSellaTestCase test37("ConventionalCell_mC_ICentered_Alternative",
+            "Perturbed M1A cell with reduced C-centered beta 131.44: the "
+            "I-centered cell I 9.5784 22.0043 10.4968, beta 91.72, is also "
+            "given; input cells differ from idealized only in alpha and gamma.");
+         test37.addInputCell(LatticeCell("S -53.18832 -53.98118 -72.07240 -44.45272 -44.27952 -3.01266"));
+         FlexibleSellaTestCase::ConventionalCellExpectation e37(
+            "M1A", 0, 'C',
+            { 13.9965, 22.0043, 9.5784, 90.0, 131.4425, 90.0 },
+            { 9.5784, 13.9965, 22.0043 },
+            { 0.0471, 0.1797, 41.4425 },
+            2.0E-4, 1.0E-3,
+            "M1A C-centered and I-centered cells");
+         e37.idealCellI = { 9.5784, 22.0043, 10.4968, 90.0, 91.7171, 90.0 };
+         test37.addConventionalCellExpectation(e37);
+         addTestCase(test37);
+      }
+
+      // ----------------------------------------------------------------
+      // Test 38: basis matrices from the typed cell (2026-11-09). One lattice
+      // typed five ways: Test 32's I 10 10.01 10.02 90.1 90.2 90.3, its
+      // primitive cell, the M1A C cell, the O1A F cell, and R on hexagonal
+      // axes (obverse) from the R1 cell. Rows of each typed cell in terms of
+      // the I axes:
+      //   P  -1/2 1/2 1/2   1/2 -1/2 1/2   1/2 1/2 -1/2
+      //   C  -1 0 0   0 -1 1   1/2 1/2 1/2
+      //   F  0 0 1   -1 1 0   -1 -1 0
+      //   R  -1 1 0   1 0 -1   -1/2 -1/2 -1/2
+      // All five gave the same fits to about 1e-5 (2026-11-09; C1 0.5039,
+      // M1A 0.1328, R1 0.2656). The R cell is near-hexagonal, not exact:
+      // before LatSymMatG6 used the G6 shape comparison it was read as
+      // primitive (H4 0.37, C1 110.5), which the fit check here catches.
+      // No basis matrix is frozen (see TypedBasisExpectation).
+      {
+         FlexibleSellaTestCase test38("TypedBasis_FiveSettings",
+            "One lattice typed as I, P, C, F and R (hexagonal axes): basis "
+            "matrices from the typed cell are lattice bases with the right "
+            "determinant, and all five settings give the same fits and ideal "
+            "conventional cells.");
+         test38.addInputCell(LatticeCell("I 10 10.01 10.02 90.1 90.2 90.3"));
+         test38.addInputCell(LatticeCell("P 8.689047 8.678988 8.668937 109.599257 109.565391 109.531354"));
+         test38.addInputCell(LatticeCell("C 10.000000 14.175705 8.638614 89.912353 125.011339 90.070472"));
+         test38.addInputCell(LatticeCell("F 10.020000 14.186202 14.112117 90.057268 89.787346 89.929580"));
+         test38.addInputCell(LatticeCell("R 14.186202 14.180971 8.638614 89.824736 90.087617 120.036763"));
+         test38.addTypedBasisExpectation(FlexibleSellaTestCase::TypedBasisExpectation(
+            { "C1", "M1A", "M1B", "O1A", "O1B", "R1", "T1" },
+            1.0E-9, 5.0E-5, 2.0E-4, 1.0E-3,
+            "basis matrices, five typed settings of one lattice"));
+         addTestCase(test38);
       }
 
    }

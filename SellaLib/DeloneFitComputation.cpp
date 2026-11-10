@@ -146,10 +146,10 @@ static std::vector<DeloneFitResults> SearchAllTypesWithCrossSeeding(
    }
 
    for (int pass = 0; pass < maxCrossSeedPasses; ++pass) {
-      std::vector<S6> winners;
+      std::vector<RemediationCandidate> winners;
       winners.reserve(fits.size());
       for (const auto& f : fits) {
-         winners.push_back(f.GetOriginalInput());
+         winners.push_back(RemediationCandidate{ f.GetOriginalInput(), f.GetCandidateMatrix() });
       }
 
       bool anyImproved = false;
@@ -179,6 +179,7 @@ static std::vector<DeloneFitResults> DirectFitsForAllTypes(
    for (const auto& sptype : sptypes) {
       DeloneFitResults fit = Sella::SellaFitXXXXXX(sptype, oneLattice);
       fit.SetOriginalInput(oneLattice);
+      fit.SetCandidateMatrix(MatS6().unit());
       fits.emplace_back(fit);
    }
    return fits;
@@ -564,6 +565,9 @@ void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSel
    size_t insideCrossRepresentation = 0;
    std::map<std::string, std::map<std::string, std::string>> missingByType;
    size_t cellsSkippable = 0;
+   size_t matrixChecks = 0;
+   size_t matrixMismatches = 0;
+   double largestMatrixError = 0.0;
    size_t winsSkipWouldLose = 0;
    double largestWinRatio = 0.0;
 
@@ -587,6 +591,17 @@ void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSel
       bool cellHasSurvivor = false;
       for (size_t i = 0; i < sptypes.size(); ++i) {
          ++typeFits;
+         // 2026-11-08: the recorded matrix must reproduce the winning
+         // candidate from the reduced cell, for every type.
+         ++matrixChecks;
+         const double matrixError = (remediated[i].GetCandidateMatrix() * oneLattice
+            - remediated[i].GetOriginalInput()).norm() / oneLattice.norm();
+         if (matrixError > largestMatrixError) largestMatrixError = matrixError;
+         if (matrixError > 1.0E-8) {
+            ++matrixMismatches;
+            std::cout << ";   CANDIDATE MATRIX MISMATCH type=" << sptypes[i]->GetName()
+               << " cell " << (c + 1) << " relative error " << matrixError << std::endl;
+         }
          const double directFit = direct[i].GetRawFit();
          const double remediatedFit = remediated[i].GetRawFit();
          if (remediatedFit >= directFit - tolerance) continue;
@@ -661,6 +676,9 @@ void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSel
       << " cell(s) have min |s_i| / |s6| > " << REMEDIATION_OUTSIDE_FRACTION
       << " (search skipped in ComputeDeloneFits); wins the skip would lose: "
       << winsSkipWouldLose << "; largest minRatio among wins " << largestWinRatio << std::endl;
+   std::cout << "; candidate matrix check: " << matrixChecks << " type fit(s), "
+      << matrixMismatches << " mismatch(es), largest relative error "
+      << largestMatrixError << std::endl;
    std::cout << "; time: direct " << directSeconds << " s, remediated "
       << remediatedSeconds << " s" << std::endl;
 }
