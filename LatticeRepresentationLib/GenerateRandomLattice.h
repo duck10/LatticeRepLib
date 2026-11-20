@@ -280,7 +280,7 @@ private:
       S6 s6;
       for (size_t i = 0; i < 6; ++i)
          s6[i] = -rhrandGRL.urand() * LRL_Cell::randomLatticeNormalizationConstantSquared;
-      s6.m_valid = true;
+      s6.SetValid(true);
       return s6;
    }
 
