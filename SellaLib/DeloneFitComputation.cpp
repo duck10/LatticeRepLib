@@ -673,7 +673,7 @@ void RunRemediationCheck(const std::vector<LatticeCell>& inputList, const CmdSel
       std::cout << std::endl;
    }
    std::cout << "; skip check: " << cellsSkippable << " of " << inputList.size()
-      << " cell(s) have min |s_i| / |s6| > " << REMEDIATION_OUTSIDE_FRACTION
+      << " cell(s) have min |s_i| / |s6| > " << RemediationOutsideFraction()
       << " (search skipped in ComputeDeloneFits); wins the skip would lose: "
       << winsSkipWouldLose << "; largest minRatio among wins " << largestWinRatio << std::endl;
    std::cout << "; candidate matrix check: " << matrixChecks << " type fit(s), "

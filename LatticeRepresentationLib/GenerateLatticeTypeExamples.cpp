@@ -36,15 +36,15 @@ std::ostream& operator<< (std::ostream& o, const GenerateNiggliBase& g)
 
 static const double g_delta = 1.0E-6;
 
- bool GenerateNiggliBase::Approx(const double d1, const double d2) {
+bool GenerateNiggliBase::Approx(const double d1, const double d2) {
    return abs(d1 - d2) < g_delta;
 }
 
- bool GenerateNiggliBase::Approx(const double d1, const double d2, const double d3) {
+bool GenerateNiggliBase::Approx(const double d1, const double d2, const double d3) {
    return Approx(d1, d2) && Approx(d2, d3);
 }
 
- bool GenerateNiggliBase::Approx(const G6& g1, const G6& g2) {
+bool GenerateNiggliBase::Approx(const G6& g1, const G6& g2) {
    return (g1 - g2).norm() < g_delta;
 }
 
@@ -138,7 +138,7 @@ IT_2::IT_2() : GenerateNiggliBase() {
    m_freeParams = 2;
    m_character = "[r, r, r, s, s, s]";
    //m_DC7_character = "[r,r,r,2r-s,2-s,3r-s]";
-   m_prjPrefix = 1.0/3.0;
+   m_prjPrefix = 1.0 / 3.0;
    m_strProjector = "1 1 1 0 0 0  1 1 1 0 0 0  1 1 1 0 0 0  0 0 0 1 1 1  0 0 0 1 1 1  0 0 0 1 1 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "1 -1 0 -1 0 1 -1 -1 -1 ";
@@ -183,7 +183,7 @@ IT_4::IT_4() : GenerateNiggliBase() {
    m_ITnumber = "4";
    m_freeParams = 2;
    m_character = "[r, r, r, -s, -s, -s]";
-   m_prjPrefix = 1.0/3.0;
+   m_prjPrefix = 1.0 / 3.0;
    m_strProjector = "1 1 1 0 0 0  1 1 1 0 0 0  1 1 1 0 0 0  0 0 0 1 1 1  0 0 0 1 1 1  0 0 0 1 1 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "1 -1 0 -1 0 1 -1 -1 -1 ";
@@ -206,7 +206,7 @@ IT_5::IT_5() : GenerateNiggliBase() {
    m_freeParams = 1;
    m_character = "[3r, 3r, 3r, -2r, -2r, -2r]";
    //m_DC7_character = "[r,r,r,r,4r/3,4r/3,4r/3]";
-   m_prjPrefix = 1.0/39.;
+   m_prjPrefix = 1.0 / 39.;
    m_strProjector = "9 9 9 -6 -6 -6  9 9 9 -6 -6 -6  9 9 9 -6 -6 -6 -6 -6 -6 4 4 4 -6 -6 -6 4 4 4 -6 -6 -6 4 4 4";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "1 0 1 1 1 0 0 1 1 ";
@@ -228,7 +228,7 @@ IT_6::IT_6() : GenerateNiggliBase() {
    m_ITnumber = "6";
    m_freeParams = 2;
    m_character = "[r, r, r, -r+s, -r+s, -2s]";
-   m_prjPrefix = 1.0/26.0;
+   m_prjPrefix = 1.0 / 26.0;
    m_strProjector = "6 6 6 -4 -4 -4  6 6 6 -4 -4 -4  6 6 6 -4 -4 -4   -4 -4 -4 7 7 -6  -4 -4 -4 7 7 -6  -4 -4 -4 -6 -6 20";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "0 1 1 1 0 1 1 1 0 ";
@@ -250,7 +250,7 @@ IT_7::IT_7() : GenerateNiggliBase() {
    m_ITnumber = "7";
    m_freeParams = 2;
    m_character = "[r, r, r, 2s, -r -s, -r -s]";
-   m_prjPrefix = 1.0/26.0;
+   m_prjPrefix = 1.0 / 26.0;
    m_strProjector = "6 6 6 -4 -4 -4  6 6 6 -4 -4 -4  6 6 6 -4 -4 -4 -4 -4 -4 20 -6 -6 -4 -4 -4 -6 7 7 -4 -4 -4 -6 7 7";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "1 0 1 1 1 0 0 1 1 ";
@@ -493,7 +493,7 @@ IT_18::IT_18() : GenerateNiggliBase() {
    m_ITnumber = "18";
    m_freeParams = 2;
    m_character = "[2r, s, s, r, 2r, 2r]";
-   m_prjPrefix = 1.0/26.0;
+   m_prjPrefix = 1.0 / 26.0;
    m_strProjector = "8 0 0 4 8 8  0 13 13 0 0 0  0 13 13 0 0 0  4 0 0 2 4 4  8 0 0 4 8 8  8 0 0 4 8 8";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "0 -1 1   1 -1 -1   1 0 0 ";
@@ -515,7 +515,7 @@ IT_19::IT_19() : GenerateNiggliBase() {
    m_ITnumber = "19";
    m_freeParams = 3;
    m_character = "[r, s, s, t, r, r]";
-   m_prjPrefix = 1.0/6.0;
+   m_prjPrefix = 1.0 / 6.0;
    m_strProjector = "2 0 0 0 2 2  0 3 3 0 0 0  0 3 3 0 0 0  0 0 0 6 0 0  2 0 0 0 2 2  2 0 0 0 2 2";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = " -1 0 0   0 -1 1   -1 1 1 ";
@@ -672,7 +672,7 @@ IT_26::IT_26() : GenerateNiggliBase() {
    m_ITnumber = "26";
    m_freeParams = 3;
    m_character = "[2r, s, t, r, 2r, 2r]";
-   m_prjPrefix = 1.0/13.0;
+   m_prjPrefix = 1.0 / 13.0;
    m_strProjector = "4 0 0 2 4 4  0 13 0 0 0 0  0 0 13 0 0 0  2 0 0 1 2 2  4 0 0 2 4 4  4 0 0 2 4 4";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "1 0 0   -1 2 0   -1 0 2 ";
@@ -694,7 +694,7 @@ IT_27::IT_27() : GenerateNiggliBase() {
    m_ITnumber = "27";
    m_freeParams = 4;
    m_character = "[r, s, t, u, r, r]";
-   m_prjPrefix = 1.0/3.0;
+   m_prjPrefix = 1.0 / 3.0;
    m_strProjector = "1 0 0 0 1 1  0 3 0 0 0 0  0 0 3 0 0 0  0 0 0 3 0 0  1 0 0 0 1 1  1 0 0 0 1 1";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = "-1 2 0   -1 0 0   0 -1 1 ";
@@ -1044,7 +1044,7 @@ IT_43::IT_43() : GenerateNiggliBase() {
    m_ITnumber = "43";
    m_freeParams = 4;
    m_character = "[r, s, t, -s -u, -r -u, 2u]";
-   m_prjPrefix = 1.0/20.0;
+   m_prjPrefix = 1.0 / 20.0;
    m_strProjector = "11 1 0 1 -9 -4  1 11 0 -9 1 -4  0 0 20 0 0 0  1 -9 0 11 1 -4 -9 1 0 1 11 -4 -4 -4 0 -4 -4 16";
    m_projector = m_prjPrefix * MatG6(m_strProjector);
    m_toCentered_E3 = " -1 0 0 -1 -1 -2 0 -1 0 ";
@@ -1096,7 +1096,7 @@ Delone_C3::Delone_C3() {
    m_strProjector = "1 1 0 1 1 0  1 1 0 1 1 0  0 0 0 0 0 0  1 1 0 1 1 0  1 1 0 1 1 0  0 0 0 0 0 0";
    m_character = "rr0 rr0";
    m_freeParams = 1;
-   m_prjPrefix = 1.0 / 4.0 ;
+   m_prjPrefix = 1.0 / 4.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
 
    m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_C3().GetMatrices();
@@ -1110,7 +1110,7 @@ Delone_C5::Delone_C5() {
    m_strProjector = "0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 0 0 0  0 0 0 1 1 1  0 0 0 1 1 1  0 0 0 1 1 1";
    m_character = "000 rrr";
    m_freeParams = 1;
-   m_prjPrefix = 1.0/3.0;
+   m_prjPrefix = 1.0 / 3.0;
    m_projector = m_prjPrefix * MatS6(m_strProjector);
 
    m_sellaProjectors = LabeledSellaMatrices::CreatePrjs_C5().GetMatrices();
@@ -1519,6 +1519,10 @@ GenerateLatticeTypeExamples::CreateListOfDeloneTypes()
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_C5));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_R1));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_R3));
+   // H4 (hP) next to the rhombohedral types, so the list runs by crystal
+   // family: cubic, hexagonal (hR, hP), tetragonal, orthorhombic,
+   // monoclinic, triclinic (2026-11-11; it was last).
+   vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_H4));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_T1));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_T2));
    vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_T5));
@@ -1538,7 +1542,6 @@ GenerateLatticeTypeExamples::CreateListOfDeloneTypes()
    if (includeTriclinic) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A1));
    if (includeTriclinic) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A2));
    if (includeTriclinic) vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_A3));
-   vglb.push_back(std::shared_ptr<GenerateDeloneBase>(new Delone_H4));
    return vglb;
 }
 
@@ -1591,7 +1594,7 @@ RetrieveByGeneralBravaisType(const std::string& s,
    std::vector<std::shared_ptr<T> > out;
    for (size_t i = 0; i < v.size(); ++i) {
       const std::string type = v[i]->GetBravaisLatticeGeneral();
-      if ( type == s ) 
+      if (type == s)
       {
          out.emplace_back(v[i]);;
       }
@@ -1648,7 +1651,7 @@ GenerateNiggliBase::Select(const std::string& s/* = ""*/) const {
 std::vector<std::shared_ptr<GenerateDeloneBase> >
 GenerateDeloneBase::Select(const std::string& s/* = ""*/) const {
 
-  static const std::vector<std::shared_ptr<GenerateDeloneBase> > vglb =
+   static const std::vector<std::shared_ptr<GenerateDeloneBase> > vglb =
       GenerateLatticeTypeExamples::CreateListOfDeloneTypes();
 
    if (s.empty()) {
@@ -1686,5 +1689,3 @@ G6 GenerateLatticesBase::GeneratePerturbation(const G6& v, const double amountTo
    modVector = v.norm() * modVector / modVector.norm();
    return v + amountToPerturb * modVector;
 }
-
-

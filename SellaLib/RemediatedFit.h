@@ -11,7 +11,7 @@
 // RemediationCandidate -- a representation of the input lattice and the
 //    matrix that produced it from the reduced input.
 // BuildExactBoundaryCandidates -- the 24 reflections of p and of each R_i p.
-// MaxS6Scalar, IsNearlyReduced, REMEDIATION_OUTSIDE_FRACTION -- the filter
+// MaxS6Scalar, IsNearlyReduced, RemediationOutsideFraction -- the filter
 //    that rejects candidates more than 10% of |s6| outside the reduced cone.
 // MinAbsS6Scalar, RemediationCanImprove -- when the search can be skipped.
 // Remediation168ForOneSubtype -- the search itself.
@@ -102,8 +102,26 @@ inline bool IsNearlyReduced(const S6& candidate, const double limit) {
 
 // The fraction used by IsNearlyReduced in Remediation168ForOneSubtype:
 // candidates whose largest scalar exceeds this fraction of |reduced input|
-// are rejected.
-inline constexpr double REMEDIATION_OUTSIDE_FRACTION = 0.10;
+// are rejected. Default 0.10; set with the OUTSIDEFRACTION control
+// (2026-11-11). Any fixed cutoff makes the fit discontinuous where a
+// winning candidate crosses it: on the test path of 2026-11-11, O1A and T1
+// jumped by up to 16 at 0.10 and were continuous at 0.30.
+inline constexpr double REMEDIATION_OUTSIDE_FRACTION_DEFAULT = 0.10;
+
+// One value for the whole program (a function-local static in an inline
+// function has a single instance across translation units).
+inline double& RemediationOutsideFractionStorage() {
+   static double fraction = REMEDIATION_OUTSIDE_FRACTION_DEFAULT;
+   return fraction;
+}
+
+inline double RemediationOutsideFraction() {
+   return RemediationOutsideFractionStorage();
+}
+
+inline void SetRemediationOutsideFraction(const double fraction) {
+   RemediationOutsideFractionStorage() = fraction;
+}
 
 // Smallest |s_i| of an S6.
 inline double MinAbsS6Scalar(const S6& s) {
@@ -115,7 +133,7 @@ inline double MinAbsS6Scalar(const S6& s) {
 // RemediationCanImprove (2026-11-07) -- false when Remediation cannot change
 // any fit for this reduced cell, so the search can be skipped.
 //
-// Let L = REMEDIATION_OUTSIDE_FRACTION * |x| and suppose every |s_k(x)| > L.
+// Let L = RemediationOutsideFraction() * |x| and suppose every |s_k(x)| > L.
 // R_i negates s_i, adds s_i to the four slots that share a vector with
 // slot i, and subtracts it from the opposite slot. Then:
 //   one hop R_i x:         slot i holds |s_i| > L -- rejected (and so are
@@ -129,7 +147,7 @@ inline double MinAbsS6Scalar(const S6& s) {
 // and the cross-seeding passes (seeded only with winners) change nothing:
 // the result equals the direct fit for every type.
 inline bool RemediationCanImprove(const S6& reduced) {
-   return MinAbsS6Scalar(reduced) <= REMEDIATION_OUTSIDE_FRACTION * reduced.norm();
+   return MinAbsS6Scalar(reduced) <= RemediationOutsideFraction() * reduced.norm();
 }
 
 // Remediation168ForOneSubtype -- the search for one Delone type. Candidates:
@@ -148,7 +166,7 @@ inline DeloneFitResults Remediation168ForOneSubtype(
    const S6& s6, const std::shared_ptr<GenerateDeloneBase>& sptype,
    const int maxRounds, const std::vector<RemediationCandidate>& extraSeeds) {
    static const std::vector<MatS6> boundaryTransforms = Selling::GetBoundaryTransforms();
-   const double limit = REMEDIATION_OUTSIDE_FRACTION * s6.norm();
+   const double limit = RemediationOutsideFraction() * s6.norm();
 
    RemediationCandidate currentPoint = StartingCandidate(s6);
    DeloneFitResults currentFit = Sella::SellaFitXXXXXX(sptype, s6);

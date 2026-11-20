@@ -577,6 +577,11 @@ int main(int argc, char* argv[])
    if (!controls.shouldRemediate()) {
       std::cout << "; REMEDIATION off: direct fits only" << std::endl;
    }
+   if (controls.hasOutsideFraction()) {
+      SetRemediationOutsideFraction(controls.getOutsideFraction());
+      std::cout << "; OUTSIDEFRACTION " << RemediationOutsideFraction()
+         << " (default " << REMEDIATION_OUTSIDE_FRACTION_DEFAULT << ")" << std::endl;
+   }
 
    // Block limits and file names (Oct 2026), computed here from main's own
    // WebIO -- the same pattern as Follow -- because CmdSella writes THREE

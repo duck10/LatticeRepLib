@@ -39,6 +39,8 @@ public:
       os << ";   remediation " << ((csc.remediation) ? "true" : "false") << std::endl;
       os << ";   cone fit " << ((csc.coneFit) ? "true" : "false") << std::endl;
       os << ";   check remediation " << ((csc.checkRemediation) ? "true" : "false") << std::endl;
+      os << ";   outside fraction " << (csc.outsideFractionSet
+         ? std::to_string(csc.outsideFraction) : std::string("(default)")) << std::endl;
       return os;
    }
 
@@ -255,6 +257,17 @@ public:
          }
       );
 
+      // OUTSIDEFRACTION <x> (2026-11-11) -- Remediation rejects candidates
+      // whose largest scalar exceeds x * |reduced S6| (RemediatedFit.h,
+      // RemediationOutsideFraction; default 0.10). The same value sets when
+      // Remediation is skipped (RemediationCanImprove). Not named
+      // REMEDIATION..., so fuzzy matching cannot take it for REMEDIATION.
+      InputHandler::registerHandler("OUTSIDEFRACTION", .35,
+         [this](BaseControlVariables&, const std::string& value) {
+            setOutsideFraction(std::stod(value));
+         }
+      );
+
       // SEED / RANDOMSEED moved to BaseControlVariables.h (2026-08-29) --
       // registered there instead of here so every program built on this
       // framework gets it, not just CmdSella. randomSeed/getRandomSeed()
@@ -292,6 +305,8 @@ public:
    bool shouldRemediate() const { return remediation; }
    bool shouldUseConeFit() const { return coneFit; }
    bool shouldCheckRemediation() const { return checkRemediation; }
+   bool hasOutsideFraction() const { return outsideFractionSet; }
+   double getOutsideFraction() const { return outsideFraction; }
 
 private:
 
@@ -326,6 +341,16 @@ private:
       }
       else {
          maxDeltaForMatch = d;
+      }
+   }
+
+   void setOutsideFraction(const double d) {
+      if (d <= 0.0) {
+         std::cerr << ";Warning: OUTSIDEFRACTION must be positive, ignored" << std::endl;
+      }
+      else {
+         outsideFraction = d;
+         outsideFractionSet = true;
       }
    }
 
@@ -377,6 +402,8 @@ private:
    bool remediation = true;  // see REMEDIATION handler above
    bool coneFit = true;  // see CONEFIT handler above
    bool checkRemediation = false;  // see CHECKREMEDIATION handler above
+   bool outsideFractionSet = false;  // see OUTSIDEFRACTION handler above;
+   double outsideFraction = 0.0;     // used only when outsideFractionSet
 };
 
 #endif // INPUTHANDLER_CMD_SELLA_FEATURES_H
