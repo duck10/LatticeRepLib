@@ -174,11 +174,10 @@ std::string GrimmerDeloneTree::FormatFitValue(const double fit) {
       os << "--";
    }
    else {
-      // Fit values are stored as squared (A^2) distances, same as
-      // DeloneFitResults::GetDifference().norm() elsewhere; the displayed
-      // plots show Angstroms, so take the square root here, matching
-      // BravaisHeirarchy::ScoreLabels' sqrt(scr.second) before display.
-      os << std::fixed << std::setprecision(4) << std::sqrt(fit);
+      // The fit itself (A^2), the same quantity as in the projected-fits
+      // list, the fit plots and BravaisHeirarchy::ScoreLabels
+      // (2026-11-23; previously its square root).
+      os << std::fixed << std::setprecision(4) << fit;
    }
    return os.str();
 }
@@ -495,11 +494,11 @@ std::string GrimmerDeloneTree::RenderHeader(const LatticeCell& input, const S6& 
       << "xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << std::endl;
    ss << "<g transform=\"scale(0.75)\">" << std::endl;
    ss << "<g transform=\"translate(20,30)\">" << std::endl;
-   ss << "  <text x=\"0\" y=\"0\" font-family=\"Arial\" font-size=\"22\">SELLA RESULTS by Delone type (Angstroms)</text>" << std::endl;
+   ss << "  <text x=\"0\" y=\"0\" font-family=\"Arial\" font-size=\"22\">SELLA RESULTS by Delone type (fits in A^2)</text>" << std::endl;
 
    std::ostringstream resolved;
    resolved << LRL_Cell_Degrees(reducedLattice);
-   const std::string stCell = input.GetInput() + "   " + resolved.str();
+   const std::string stCell = input.GetInput();
 
    ss << "  <text x=\"0\" y=\"22\" font-family=\"Arial\" font-size=\"16\">" << EscapeForSVG(stCell)
       << "</text>" << std::endl;

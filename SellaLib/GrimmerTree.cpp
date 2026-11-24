@@ -731,7 +731,7 @@ std::string GrimmerChains::createPearsonPlot(const std::vector<FitData>& pearson
    const int plotHeight,
    const std::string& lineColor,
    const double s6Norm) {
-   return createPlot("Pearson Types (Sorted by Fit Value)",
+   return createPlot("Bravais Types (Sorted by Fit Value)",
       pearsonFits,
       maxPearsonFit,
       plotWidth,
@@ -877,65 +877,106 @@ std::string GrimmerChains::createTitle(const std::string& mainTitle, const std::
    return ss.str();
 }
 
-// Also need to fix the createFitListColumn function to ensure proper asterisk display
+// Vertical spacing of the fit list (pixels); shared by drawing and measuring.
+const int FIT_LIST_TITLE_HEIGHT = 20;
+const int FIT_LIST_ITEM_HEIGHT = 18;
+const int FIT_LIST_GROUP_SPACE = 5;
+
+// Splits the Bravais list into the left and right columns of the fit list.
+static void SplitFitListColumns(
+   const std::vector<std::pair<std::string, double>>& sortedPearsonList,
+   const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap,
+   std::vector<std::pair<std::string, double>>& leftColumnItems,
+   std::vector<std::pair<std::string, double>>& rightColumnItems)
+{
+   leftColumnItems.clear();
+   rightColumnItems.clear();
+
+   int totalItems = 0;
+   for (const auto& pearsonPair : sortedPearsonList) {
+      totalItems += 1 + static_cast<int>(pearsonToDeloneMap.at(pearsonPair.first).size()) + 1;
+   }
+   const int itemsPerColumn = totalItems / 2 + (totalItems % 2);
+
+   int currentCount = 0;
+   for (const auto& item : sortedPearsonList) {
+      const int itemSize = 1 + static_cast<int>(pearsonToDeloneMap.at(item.first).size()) + 1;
+      if (currentCount + itemSize <= itemsPerColumn) {
+         leftColumnItems.push_back(item);
+         currentCount += itemSize;
+      }
+      else {
+         break;
+      }
+   }
+   for (size_t i = leftColumnItems.size(); i < sortedPearsonList.size(); ++i) {
+      rightColumnItems.push_back(sortedPearsonList[i]);
+   }
+}
+
+// Height in pixels of one column as drawn by createFitListColumn.
+static int FitListColumnHeight(
+   const std::vector<std::pair<std::string, double>>& items,
+   const std::map<std::string, std::vector<std::pair<std::string, double>>>& itemDetails)
+{
+   int height = 0;
+   for (const auto& item : items) {
+      height += FIT_LIST_TITLE_HEIGHT;
+      const auto it = itemDetails.find(item.first);
+      if (it != itemDetails.end()) {
+         height += FIT_LIST_ITEM_HEIGHT * static_cast<int>(it->second.size());
+      }
+      height += FIT_LIST_GROUP_SPACE;
+   }
+   return height;
+}
+
+// One column of the fit list: each Bravais type with its fit, then its
+// Delone types with their fits. Invalid values are shown as an asterisk.
 std::string createFitListColumn(
    const std::vector<std::pair<std::string, double>>& items,
    const std::map<std::string, std::vector<std::pair<std::string, double>>>& itemDetails) {
 
    std::stringstream ss;
-   const int titleHeight = 20;
-   const int itemHeight = 18;
-   const int spaceBetweenGroups = 5;
    int yPos = 0;
 
    for (const auto& item : items) {
       const std::string& typeName = item.first;
       const double typeValue = item.second;
 
-      // Draw type with fit value, marking invalid values
       ss << "  <text x=\"0\" y=\"" << yPos << "\" font-family=\"Arial\" "
          << "font-size=\"14\" font-weight=\"bold\">"
          << typeName << " (";
-
-      // Explicitly check for DBL_MAX values and negative values
       if (typeValue >= DBL_MAX || typeValue < 0.0) {
-         ss << "*";  // Use asterisk for invalid values
+         ss << "*";
       }
       else {
          ss << std::fixed
             << (typeValue < 1.5 ? std::setprecision(3) : std::setprecision(2))
             << typeValue;
       }
-
       ss << ")</text>\n";
+      yPos += FIT_LIST_TITLE_HEIGHT;
 
-      yPos += titleHeight;
-
-      // Draw associated details
       if (itemDetails.find(typeName) != itemDetails.end()) {
          for (const auto& detail : itemDetails.at(typeName)) {
             ss << "  <text x=\"20\" y=\"" << yPos << "\" font-family=\"Arial\" "
                << "font-size=\"12\">"
                << detail.first << ": ";
-
             if (detail.second >= DBL_MAX || detail.second < 0.0) {
-               ss << "*";  // Use asterisk for invalid values
+               ss << "*";
             }
             else {
                ss << std::fixed
                   << (detail.second < 1.5 ? std::setprecision(3) : std::setprecision(2))
                   << detail.second;
             }
-
             ss << "</text>\n";
-
-            yPos += itemHeight;
+            yPos += FIT_LIST_ITEM_HEIGHT;
          }
       }
-
-      yPos += spaceBetweenGroups;
+      yPos += FIT_LIST_GROUP_SPACE;
    }
-
    return ss.str();
 }
 
@@ -945,51 +986,15 @@ std::string GrimmerChains::createFitList(const std::vector<std::pair<std::string
    const std::map<std::string, std::vector<std::pair<std::string, double>>>& pearsonToDeloneMap) const
 {
    std::stringstream ss;
-
-   // Title for fit list
    ss << "  <text x=\"0\" y=\"-20\" font-family=\"Arial\" font-size=\"16\" font-weight=\"bold\">"
-      << "Delone Types by Pearson Type</text>\n";
+      << "Delone Types by Bravais Type</text>\n";
 
-   // Count and divide items between columns
-   int totalItems = 0;
-   for (const auto& pearsonPair : sortedPearsonList) {
-      totalItems += 1 + static_cast<int>(pearsonToDeloneMap.at(pearsonPair.first).size()) + 1;
-   }
-
-   int itemsPerColumn = totalItems / 2 + (totalItems % 2);
-
-   // Prepare left column items
    std::vector<std::pair<std::string, double>> leftColumnItems;
-   int currentCount = 0;
-
-   for (const auto& item : sortedPearsonList) {
-      const int itemSize = 1 + static_cast<int>(pearsonToDeloneMap.at(item.first).size()) + 1;
-
-      if (currentCount + itemSize <= itemsPerColumn) {
-         leftColumnItems.push_back(item);
-         currentCount += itemSize;
-      }
-      else {
-         break;
-      }
-   }
-
-   // Prepare right column items
    std::vector<std::pair<std::string, double>> rightColumnItems;
-   for (size_t i = leftColumnItems.size(); i < sortedPearsonList.size(); ++i) {
-      rightColumnItems.push_back(sortedPearsonList[i]);
-   }
+   SplitFitListColumns(sortedPearsonList, pearsonToDeloneMap, leftColumnItems, rightColumnItems);
 
-   // Create left column
-   std::string leftColumn = createFitListColumn(leftColumnItems, pearsonToDeloneMap);
-
-   // Create right column
-   std::string rightColumn = createFitListColumn(rightColumnItems, pearsonToDeloneMap);
-
-   // Wrap columns in groups with proper translation
-   ss << wrapInGroup(leftColumn, "leftFitColumn", 0, 0);
-   ss << wrapInGroup(rightColumn, "rightFitColumn", 160, 0);
-
+   ss << wrapInGroup(createFitListColumn(leftColumnItems, pearsonToDeloneMap), "leftFitColumn", 0, 0);
+   ss << wrapInGroup(createFitListColumn(rightColumnItems, pearsonToDeloneMap), "rightFitColumn", 160, 0);
    return ss.str();
 }
 
@@ -1033,11 +1038,11 @@ std::string GrimmerChains::createLegend(const std::string& lineColorDelone, cons
    ss << "  <text x=\"60\" y=\"125\" font-family=\"Arial\" font-size=\"12\">"
       << "Delone types</text>\n";
 
-   // Pearson types line
+   // Bravais types line
    ss << "  <line x1=\"20\" y1=\"140\" x2=\"50\" y2=\"140\" stroke=\""
       << lineColorPearson << "\" stroke-width=\"2\" />\n";
    ss << "  <text x=\"60\" y=\"145\" font-family=\"Arial\" font-size=\"12\">"
-      << "Pearson types</text>\n";
+      << "Bravais types</text>\n";
 
    // Additional explanation
    ss << "  <text x=\"0\" y=\"165\" font-family=\"Arial\" font-size=\"12\" font-style=\"italic\">"
@@ -1122,8 +1127,18 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
    const int topPlotY = titleAreaHeight + 20;
    const int bottomPlotY = topPlotY + plotHeight + 120;
    const int listX = plotX + plotWidth + 40;
-   const int legendY = bottomPlotY + 60;
-   const int footerY = height - 40;
+   // Place the legend below the taller fit-list column, and enlarge the SVG
+   // if the legend would otherwise run off the bottom.
+   std::vector<std::pair<std::string, double>> leftListItems;
+   std::vector<std::pair<std::string, double>> rightListItems;
+   SplitFitListColumns(sortedPearsonList, m_pearsonToDeloneMap, leftListItems, rightListItems);
+   const int listHeight = std::max(
+      FitListColumnHeight(leftListItems, m_pearsonToDeloneMap),
+      FitListColumnHeight(rightListItems, m_pearsonToDeloneMap));
+   const int legendHeight = 210;
+   const int legendY = std::max(bottomPlotY + 60, topPlotY + listHeight + 20);
+   const int svgHeight = std::max(height, legendY + legendHeight + 50);
+   const int footerY = svgHeight - 40;
 
    // Find max values for scaling from the filtered plot data
    double maxDeloneFit = 1.0;  // Default to 1.0 if no data
@@ -1140,7 +1155,7 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
 
    // Use the filtered datasets for the plots
    std::string upper = LRL_StringTools::strToupper(st);
-   std::string stCell = st + "   " + LRL_ToString(LRL_Cell_Degrees(m_s6));
+   std::string stCell = st;
    // Now build the SVG components
    const std::string& titleGroup = createTitle("SELLA Lattice Fit Analysis", stCell, width);
    const std::string& delonePlotGroup = this->createDelonePlot(
@@ -1177,7 +1192,7 @@ std::string GrimmerChains::GenerateSortedFitPlots(const int width, const int hei
    // Assemble the SVG
    std::stringstream ss;
    ss << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-   ss << "<svg width=\"" << width << "\" height=\"" << height
+   ss << "<svg width=\"" << width << "\" height=\"" << svgHeight
       << "\" xmlns=\"http://www.w3.org/2000/svg\">\n";
 
    // Add all positioned components
