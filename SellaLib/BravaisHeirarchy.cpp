@@ -26,7 +26,7 @@ std::string createBHFooter(int width) {
    std::stringstream ss;
    ss << "  <text x=\"" << width / 3 << "\" y=\"980\" text-anchor=\"middle\" "
       << "font-family=\"Arial\" font-size=\"12\" fill=\"#666666\">"
-      << "Created by SELLA - " <<GetCurrentDate() << "</text>\n";
+      << "Created by SELLA - " << GetCurrentDate() << "</text>\n";
    return ss.str();
 }
 
@@ -34,7 +34,7 @@ std::string createBHFooter(int width) {
 std::string BravaisHeirarchy::BoilerPlate_2() {
 
    return
-      createBHFooter(980)+
+      createBHFooter(980) +
       "\n"
       "   </g>\n"
       "\n"
@@ -43,11 +43,19 @@ std::string BravaisHeirarchy::BoilerPlate_2() {
       ;
 }
 
+// Formats a fit (A^2) for a box in the diagram. Fits are squared distances
+// and can be large; from 1000 up they are shown as whole numbers so they
+// never switch to exponent notation.
 std::string SetWP(const double d) {
    std::ostringstream os;
-   int precision = 4;
-   if (d < 10.0) precision = 3;
-   os << std::setw(11) << std::setprecision(precision) << d;
+   if (d >= 1000.0) {
+      os << std::setw(11) << std::fixed << std::setprecision(0) << d;
+   }
+   else {
+      int precision = 4;
+      if (d < 10.0) precision = 3;
+      os << std::setw(11) << std::setprecision(precision) << d;
+   }
    return os.str();
 }
 
@@ -90,7 +98,9 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
 
    for (size_t i = 0; i < scores.size(); ++i) {
       const std::pair<std::string, double>& scr = scores[i];
-      const std::string strAngstroms = SetWP(sqrt(scr.second));
+      // The fit itself (A^2), the same quantity as in the projected-fits
+      // list and the fit plots (2026-11-23; previously its square root).
+      const std::string strFit = SetWP(scr.second);
 
       auto it = elementMap.find(scr.first);
       if (it != elementMap.end()) {
@@ -107,7 +117,7 @@ std::string BravaisHeirarchy::ScoreLabels(const std::vector<std::pair<std::strin
 
          out += "   <text id=\"" + elem.id + "\" x=\"" + std::to_string(elem.text_x) +
             "\" y=\"" + std::to_string(elem.text_y) + "\" font-size=\"18\">" +
-            strAngstroms + " </text>\n";
+            strFit + " </text>\n";
 
          if (!elem.transform.empty()) {
             out += "</g>\n";
@@ -312,7 +322,7 @@ std::string BravaisHeirarchy::ProduceSVG(
    const std::vector<std::pair<std::string, double> >& scores,
    const std::vector<std::string>& projectedCells) {
 
-   const std::string inputText = "<text x=\"175\" y=\"175\" font-size=\"25\" >SELLA RESULTS  (Angstroms)"
+   const std::string inputText = "<text x=\"175\" y=\"175\" font-size=\"25\" >SELLA RESULTS  (fits in A^2)"
       "</text>\n";
    const std::string reduced = "<text x=\"175\" y=\"210\" font-size=\"25\" >      " +
       input.GetInput() + "</text>\n";
@@ -416,7 +426,7 @@ std::map<std::string, DeloneFitResults>  BravaisHeirarchy::CreateMapForBestExamp
    return bravaisMap;
 }
 
-inline int BravaisChainFailures::countC3Zeros(const C3& c, const double upperLimit=1.0E-3) {
+inline int BravaisChainFailures::countC3Zeros(const C3& c, const double upperLimit = 1.0E-3) {
    int count = 0;
    if (abs(c[0]) < 1.01 * upperLimit) ++count;
    if (abs(c[1]) < 1.01 * upperLimit) ++count;

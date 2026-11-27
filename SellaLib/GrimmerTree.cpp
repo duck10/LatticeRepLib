@@ -22,6 +22,17 @@
 #include <utility>
 #include <vector>
 
+// The code keeps "oC" and "mC" as the names of the one-face-centered
+// orthorhombic and monoclinic Bravais types; the drawings show the IUCr
+// symbols oS and mS (de Wolff et al., 1985), as the Grimmer and Delone-tree
+// diagrams already do (2026-11-24). All other names are shown unchanged,
+// including the Delone type names.
+static std::string DisplayBravaisName(const std::string& name) {
+   if (name == "oC") return "oS";
+   if (name == "mC") return "mS";
+   return name;
+}
+
 // Containment lowerings smaller than this (relative) are rounding noise:
 // the value is still taken, but not reported.
 const double CONTAINMENT_REPORT_TOLERANCE = 1.0E-6;
@@ -657,7 +668,7 @@ std::string plotDataPoints(const std::vector<FitData>& data,
          ss << SVGUtil::createCircle(static_cast<int>(xPos), static_cast<int>(yPos), pointRadius, lineColor);
 
          // Draw value tooltip on hover
-         ss << "  <title>" << item.typeName << ": "
+         ss << "  <title>" << DisplayBravaisName(item.typeName) << ": "
             << std::fixed
             << (item.fitValue < 1.5 ? std::setprecision(3) : std::setprecision(2))
             << item.fitValue << "</title>\n";
@@ -666,7 +677,7 @@ std::string plotDataPoints(const std::vector<FitData>& data,
          ss << "  <text x=\"" << xPos << "\" y=\"" << (plotHeight + 15)
             << "\" text-anchor=\"middle\" font-family=\"Arial\" font-size=\"10\" "
             << "transform=\"rotate(45," << xPos << "," << (plotHeight + 15) << ")\">"
-            << item.typeName << "</text>\n";
+            << DisplayBravaisName(item.typeName) << "</text>\n";
 
          // Draw vertical guide line for each point
          ss << SVGUtil::createLine(static_cast<int>(xPos), static_cast<int>(yPos), static_cast<int>(xPos), plotHeight, "#DDDDDD", 1, "2,2");
@@ -946,7 +957,7 @@ std::string createFitListColumn(
 
       ss << "  <text x=\"0\" y=\"" << yPos << "\" font-family=\"Arial\" "
          << "font-size=\"14\" font-weight=\"bold\">"
-         << typeName << " (";
+         << DisplayBravaisName(typeName) << " (";
       if (typeValue >= DBL_MAX || typeValue < 0.0) {
          ss << "*";
       }

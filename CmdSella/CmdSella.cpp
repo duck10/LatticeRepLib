@@ -565,7 +565,7 @@ int main(int argc, char* argv[])
    }
    Sella::SetUseFaceCrossed(controls.shouldUseFaceCrossed());
    Sella::SetUseConeFit(controls.shouldUseConeFit());
-   if (Sella::GetUseFaceCrossed()) {
+   if (Sella::GetUseFaceCrossed() && controls.shouldDebug()) {
       const size_t problems = VerifyFaceCrossedArrangements(std::cout);
       std::cout << "; FACECROSSED on: " << CountFaceCrossedArrangements()
          << " face arrangements for 11 types, "
