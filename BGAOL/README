@@ -1,0 +1,213 @@
+README for BGAOL 1 July 2012
+
+     Bravais General Analysis of Lattices (BGAOL)
+     The Program formerly known as ITERATE
+
+     Lawrence C Andrews[1] and Herbert J. Bernstein[2,*]
+
+     [1] Micro Encoder Inc., 11533 NE 118th St, #200,
+         Kirkland, WA 98034-7111 USA
+     [2] Dowling College, 1300 William Floyd Parkway,
+         Shirley, NY 11967 USA
+     [*] To whom correspondence should be addressed.
+         Email: yaya@dowling.edu
+
+     Copyright 1996, 2012, all rights reserved
+
+*******************************************************
+    You may redistribute this program under the terms
+    of the GPL.
+
+    ALternatively you may redistribute this functions
+    and subroutines of this program as an API under the
+    terms of the LGPL
+*******************************************************
+*************************** GPL NOTICES ******************************
+*                                                                    *
+* This program is free software; you can redistribute it and/or      *
+* modify it under the terms of the GNU General Public License as     *
+* published by the Free Software Foundation; either version 2 of     *
+* (the License, or (at your option) any later version.               *
+*                                                                    *
+* This program is distributed in the hope that it will be useful,    *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of     *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the      *
+* GNU General Public License for more details.                       *
+*                                                                    *
+* You should have received a copy of the GNU General Public License  *
+* along with this program; if not, write to the Free Software        *
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA           *
+* 02111-1307  USA                                                    *
+*                                                                    *
+**********************************************************************/
+
+************************* LGPL NOTICES *******************************
+*                                                                    *
+* This library is free software; you can redistribute it and/or      *
+* modify it under the terms of the GNU Lesser General Public         *
+* License as published by the Free Software Foundation; either       *
+* version 2.1 of the License, or (at your option) any later version. *
+*                                                                    *
+* This library is distributed in the hope that it will be useful,    *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of     *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU  *
+* Lesser General Public License for more details.                    *
+*                                                                    *
+* You should have received a copy of the GNU Lesser General Public   *
+* License along with this library; if not, write to the Free         *
+* Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,    *
+* MA  02110-1301  USA                                                *
+*                                                                    *
+**********************************************************************/
+
+
+ In simple terms, what this program does is to find
+ the cells which are "close" to the cell given, in
+ order to help find the Bravais lattice of highest
+ symmetry consistent with the cell.
+
+ A central problem in the solution of every crystal
+ structure is to determine the correct Bravais lattice
+ of the crystal. The Bravais lattices as they are
+ usually listed are:
+
+ aP  triclinic (anorthic) primitive
+ mP  monoclinic primitive
+ mS  monoclinic side-centered (C-centered)
+ oP  orthorhombic primitive
+ oC  orthorhombic side-centered (C-centered)
+ oF  orthorhombic face-centered
+ oI  orthorhombic body-centered
+ hP  hexagonal primitive
+ hR  hexagonal rhombohedrally-centered
+ tP  tetragonal primitive
+ tI  tetragonal body-centered
+ cP  cubic primitive
+ cF  cubic face-centered
+ cI  cubic body-centered
+
+ Failure to find the highest correct symmetry has several
+ consequences, the worst of which is that the structure
+ may not be solved. The least of the consequences is that
+ some successor to Richard Marsh may publish a paper that
+ points out the error, corrects it, and finds a better
+ solution to the structure. Many methods have been
+ described for finding the correct Bravais lattice. A
+ summary of the published methods was published in the
+ paper that described the G6 formalism (which is used
+ in the program on this web page).
+
+ L. C. Andrews and H. J. Bernstein
+ "Lattices and Reduced Cells as Points in 6-Space and
+ Selection of Bravais Lattice Type by Projections"
+ Acta Crystallographica, A44, 1009-1018 (1988).
+ 
+ L. C. Andrews and H. J. Bernstein "The Geometry of 
+ Niggli Reduction" arXiv, 1203.5146v1 [math-ph], 2012. 
+ arxiv.org/abs/1203.5146
+
+ The program on BGAOL implements a search in G6 for the
+ various Bravais lattices that the user's cell may fit.
+ For each lattice type, the best metric match is reported.
+ If the higher symmetry type is actually correct, then
+ that is likely to be the best cell from which to start
+ further refinement. However, the possibility exists
+ that one of the rejected cells (which did not match as
+ well) was actually the correct one to use. The reason
+ for this ambiguity is experimental error and its
+ propagation in the transformations of the lattices
+ in the program. Fortunately, the rejected cells are
+ usually quite similar to the accepted one.
+
+ A note on standard deviations: First, even in the best
+ of circumstances, standard deviations of unit cell
+ dimensions from 4-circle diffractometer data are always
+ underestimated (by at least a factor of 2). In addition,
+ the points chosen for the determination are often not
+ well distributed (for example all in the first octant
+ of orthorhombic lattices). These less than optimal
+ choices cause substantial systematic error. The
+ experimental errors are amplified in the mathematical
+ conversions between various lattices that any lattice
+ search program must perform. It is not a rare occurrence
+ for angles to be incorrect by 0.5 degrees in initial
+ unit cell determinations.
+
+ Note: Even in most well determined unit cells, the actual
+ errors in the edge lengths are 0.2 to 0.5 parts per
+ thousand. (Note that reproducibility of the measurements
+ is substantially better, leading to the illusion that
+ diffractometers produce excellent unit cell parameters).
+ Use of standard deviations that are too small is a
+ common reason for failure of Bravais lattice searches.
+ For small molecules, 0.1 Angstroms is a reasonable error
+ for the edge lengths, for proteins, 0.4 to 0.5 (or even
+ more for preliminary measurements). Accurate unit cell
+ parameters must by determined by a number of more complex
+ methods and must include extrapolation to remove systematic
+ effects. For an excellent summary, see "Xray Structure
+ Determination", G.H.Stout and L.H.Jensen, Wiley, 1989.
+
+ Note on the name BGAOL -- gaols have lots of cells
+
+
+
+INSTALLATION
+
+
+The complete BGAOL suite consists of a the fortran
+program BGAOL.FOR, which uses MKGAOL.FOR, near6.for
+E3TOG6.FOR and MKREFL.FOR, the web page bgaol.html and
+the cgi-bin script bgaol.csh.  The web page and script
+need some definitions for each system.  They are built
+from m4 macro documents by make, using a command file
+Makefile, which must contain the appropriate definitions
+or those definitions must be provided by defining environment
+variables.
+
+In order to install the program, you need to edit the file
+Makefile, setting the following parameters appropriately for
+your system:
+
+HTTPDSERVER is the name of the server on which the installation 
+is being made.  YOU MUST CHANGE THIS DEFINITION TO PERMIT 
+REMOTE ACCESS.  The default definition is:
+
+HTTPDSERVER	=	HOST.DOMAIN
+
+The other variables you may need to change are
+
+SEARCHURL, the URL what will be used to start searches
+BINDEST, the path that will be used by the cgi-bin script to run
+    the program, which will have the execution name bgaol
+HTDOCS, the path of the directory into which to store the
+    web page
+CGIPATH, the URL of the cgi-bin directory
+FC, the name of the fortran compiler to use (anything capable of
+    fortran 77 compilations will do.  Builds have been tested
+    with gfortran, g95, f77 and f2c
+FFLAGS, compilation flags to use
+
+You can see the starting vlaues for these variables by typing
+
+make
+
+Once you have edited them to suitable values
+
+make install
+
+will build and install the pieces of the program.
+
+
+OPERATION
+
+The program may be operated as a stand-alone program, reading
+data from stdin, writing output to stdout and messages to stderr
+or as a server program for the provided cgi-bin script.
+
+
+You can see how the web version of the program runs at
+
+http://www.bernstein-plus-sons.com/software/bgaol
+
+which you are welcome to use routinely.
